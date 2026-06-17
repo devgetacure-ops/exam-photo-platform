@@ -17,6 +17,7 @@ from exam_photo.suitability.issue_codes import SuitabilityIssueCode
 from exam_photo.suitability.models import (
     IssueSeverity,
     IssueStatus,
+    SuitabilityCheck,
     SuitabilityIssue,
     SuitabilityReport,
     SuitabilityStatus,
@@ -45,15 +46,15 @@ class SuitabilityEvaluator:
 
         issues: List[SuitabilityIssue] = []
         warnings: List[str] = []
-        checks_completed: List[str] = [
-            "dimensions",
-            "pixel_count",
-            "luminance",
-            "contrast",
-            "transparency",
-            "sharpness",
+        checks_completed: List[SuitabilityCheck] = [
+            SuitabilityCheck.DIMENSIONS,
+            SuitabilityCheck.PIXEL_COUNT,
+            SuitabilityCheck.LUMINANCE,
+            SuitabilityCheck.CONTRAST,
+            SuitabilityCheck.TRANSPARENCY,
+            SuitabilityCheck.SHARPNESS,
         ]
-        checks_unavailable: List[str] = []
+        checks_unavailable: List[SuitabilityCheck] = []
         provider_status: Dict[str, str] = {
             "face_detector": "not_configured",
             "head_estimator": "not_configured",
@@ -67,7 +68,12 @@ class SuitabilityEvaluator:
         if self.face_provider is None:
             provider_status["face_detector"] = "unavailable"
             checks_unavailable.extend(
-                ["face_presence", "pose", "eyes_visibility", "occlusion"]
+                [
+                    SuitabilityCheck.FACE_PRESENCE,
+                    SuitabilityCheck.POSE,
+                    SuitabilityCheck.EYES_VISIBILITY,
+                    SuitabilityCheck.OCCLUSION,
+                ]
             )
             # Record face check unavailable issue
             issues.append(
@@ -85,7 +91,9 @@ class SuitabilityEvaluator:
             try:
                 # Run provider
                 face_result = self.face_provider.detect_faces(image)
-                checks_completed.append("face_presence")
+                checks_completed.append(SuitabilityCheck.FACE_PRESENCE)
+                if face_result.warnings:
+                    warnings.extend(face_result.warnings)
 
                 # Check face count
                 faces = face_result.detections
@@ -101,13 +109,17 @@ class SuitabilityEvaluator:
                         )
                     )
                 elif len(faces) > 1:
+                    policy = self.thresholds.multiple_face_handling_policy
+                    is_reject = policy == "reject"
                     issues.append(
                         self._create_issue(
                             code=SuitabilityIssueCode.SUITABILITY_MULTIPLE_FACES,
-                            severity=IssueSeverity.ERROR,
+                            severity=IssueSeverity.ERROR
+                            if is_reject
+                            else IssueSeverity.WARNING,
                             category="face",
                             message=f"Multiple faces ({len(faces)}) detected in the image.",
-                            blocking=True,
+                            blocking=is_reject,
                             status=IssueStatus.CONFIRMED,
                         )
                     )
@@ -134,7 +146,7 @@ class SuitabilityEvaluator:
         # 4. Call Complete Head Estimation Provider
         if self.head_provider is None:
             provider_status["head_estimator"] = "unavailable"
-            checks_unavailable.append("head_completeness")
+            checks_unavailable.append(SuitabilityCheck.HEAD_COMPLETENESS)
             issues.append(
                 self._create_issue(
                     code=SuitabilityIssueCode.SUITABILITY_HEAD_COMPLETENESS_UNAVAILABLE,
@@ -152,7 +164,9 @@ class SuitabilityEvaluator:
                 head_result = self.head_provider.estimate_head(
                     image, face, face.landmarks
                 )
-                checks_completed.append("head_completeness")
+                checks_completed.append(SuitabilityCheck.HEAD_COMPLETENESS)
+                if head_result.warnings:
+                    warnings.extend(head_result.warnings)
                 self._apply_head_checks(
                     head_result, issues, warnings, checks_completed, checks_unavailable
                 )
@@ -172,7 +186,7 @@ class SuitabilityEvaluator:
         else:
             # Head estimation check is skipped because face is missing, multiple, or face provider failed
             provider_status["head_estimator"] = "skipped"
-            checks_unavailable.append("head_completeness")
+            checks_unavailable.append(SuitabilityCheck.HEAD_COMPLETENESS)
 
         # 5. Determine Overall Status
         has_blocking = any(
@@ -189,9 +203,9 @@ class SuitabilityEvaluator:
             or self.head_provider is None
             or provider_status["face_detector"] == "failed"
             or provider_status["head_estimator"] == "failed"
-            or "top_hair_boundary" in checks_unavailable
-            or "side_head_boundary" in checks_unavailable
-            or "chin_boundary" in checks_unavailable
+            or SuitabilityCheck.TOP_HAIR_BOUNDARY in checks_unavailable
+            or SuitabilityCheck.SIDE_HEAD_BOUNDARY in checks_unavailable
+            or SuitabilityCheck.CHIN_BOUNDARY in checks_unavailable
         )
 
         if has_blocking:
@@ -412,13 +426,40 @@ class SuitabilityEvaluator:
                 )
             )
 
+        # Shadow / Highlight Clipping
+        clipped_shadow = metrics["clipped_shadow_ratio"]
+        if clipped_shadow > self.thresholds.shadow_clipping_threshold:
+            issues.append(
+                self._create_issue(
+                    code=SuitabilityIssueCode.SUITABILITY_UNDEREXPOSED_WARNING,
+                    severity=IssueSeverity.WARNING,
+                    category="exposure",
+                    message=f"High ratio of shadow clipping ({clipped_shadow * 100:.1f}%) exceeds threshold ({self.thresholds.shadow_clipping_threshold * 100:.1f}%).",
+                    blocking=False,
+                    status=IssueStatus.CONFIRMED,
+                )
+            )
+
+        clipped_highlight = metrics["clipped_highlight_ratio"]
+        if clipped_highlight > self.thresholds.highlight_clipping_threshold:
+            issues.append(
+                self._create_issue(
+                    code=SuitabilityIssueCode.SUITABILITY_OVEREXPOSED_WARNING,
+                    severity=IssueSeverity.WARNING,
+                    category="exposure",
+                    message=f"High ratio of highlight clipping ({clipped_highlight * 100:.1f}%) exceeds threshold ({self.thresholds.highlight_clipping_threshold * 100:.1f}%).",
+                    blocking=False,
+                    status=IssueStatus.CONFIRMED,
+                )
+            )
+
     def _apply_face_checks(
         self,
         face: Any,
         issues: List[SuitabilityIssue],
         warnings: List[str],
-        checks_completed: List[str],
-        checks_unavailable: List[str],
+        checks_completed: List[SuitabilityCheck],
+        checks_unavailable: List[SuitabilityCheck],
     ) -> None:
         # Confidence
         if face.confidence < self.thresholds.face_confidence_threshold:
@@ -429,7 +470,7 @@ class SuitabilityEvaluator:
 
         # Pose Checks
         if face.pose is not None:
-            checks_completed.append("pose")
+            checks_completed.append(SuitabilityCheck.POSE)
             yaw_abs = abs(face.pose.yaw)
             pitch_abs = abs(face.pose.pitch)
             roll_abs = abs(face.pose.roll)
@@ -465,7 +506,7 @@ class SuitabilityEvaluator:
                     )
                 )
         else:
-            checks_unavailable.append("pose")
+            checks_unavailable.append(SuitabilityCheck.POSE)
             issues.append(
                 self._create_issue(
                     code=SuitabilityIssueCode.SUITABILITY_POSE_CHECK_UNAVAILABLE,
@@ -479,7 +520,7 @@ class SuitabilityEvaluator:
 
         # Occlusion Indicators
         if face.occlusion_indicators is not None:
-            checks_completed.append("occlusion")
+            checks_completed.append(SuitabilityCheck.OCCLUSION)
             occluded = face.occlusion_indicators.get("face_occluded", False)
             eyes_covered = face.occlusion_indicators.get("eyes_occluded", False)
             if occluded:
@@ -505,7 +546,7 @@ class SuitabilityEvaluator:
                     )
                 )
         else:
-            checks_unavailable.append("occlusion")
+            checks_unavailable.append(SuitabilityCheck.OCCLUSION)
             issues.append(
                 self._create_issue(
                     code=SuitabilityIssueCode.SUITABILITY_OCCLUSION_CHECK_UNAVAILABLE,
@@ -522,8 +563,8 @@ class SuitabilityEvaluator:
         head: HeadEstimationResult,
         issues: List[SuitabilityIssue],
         warnings: List[str],
-        checks_completed: List[str],
-        checks_unavailable: List[str],
+        checks_completed: List[SuitabilityCheck],
+        checks_unavailable: List[SuitabilityCheck],
     ) -> None:
         visibility = head.boundary_visibility
 
@@ -539,9 +580,9 @@ class SuitabilityEvaluator:
                     status=IssueStatus.CONFIRMED,
                 )
             )
-            checks_completed.append("top_hair_boundary")
+            checks_completed.append(SuitabilityCheck.TOP_HAIR_BOUNDARY)
         elif visibility.top_hair_boundary.state == BoundaryVisibilityValue.UNKNOWN:
-            checks_unavailable.append("top_hair_boundary")
+            checks_unavailable.append(SuitabilityCheck.TOP_HAIR_BOUNDARY)
             issues.append(
                 self._create_issue(
                     code=SuitabilityIssueCode.SUITABILITY_HEAD_COMPLETENESS_UNAVAILABLE,
@@ -553,7 +594,7 @@ class SuitabilityEvaluator:
                 )
             )
         else:
-            checks_completed.append("top_hair_boundary")
+            checks_completed.append(SuitabilityCheck.TOP_HAIR_BOUNDARY)
 
         if (
             visibility.left_head_boundary.state == BoundaryVisibilityValue.NOT_VISIBLE
@@ -570,12 +611,12 @@ class SuitabilityEvaluator:
                     status=IssueStatus.CONFIRMED,
                 )
             )
-            checks_completed.append("side_head_boundary")
+            checks_completed.append(SuitabilityCheck.SIDE_HEAD_BOUNDARY)
         elif (
             visibility.left_head_boundary.state == BoundaryVisibilityValue.UNKNOWN
             or visibility.right_head_boundary.state == BoundaryVisibilityValue.UNKNOWN
         ):
-            checks_unavailable.append("side_head_boundary")
+            checks_unavailable.append(SuitabilityCheck.SIDE_HEAD_BOUNDARY)
             issues.append(
                 self._create_issue(
                     code=SuitabilityIssueCode.SUITABILITY_HEAD_COMPLETENESS_UNAVAILABLE,
@@ -587,7 +628,7 @@ class SuitabilityEvaluator:
                 )
             )
         else:
-            checks_completed.append("side_head_boundary")
+            checks_completed.append(SuitabilityCheck.SIDE_HEAD_BOUNDARY)
 
         if visibility.chin_boundary.state == BoundaryVisibilityValue.NOT_VISIBLE:
             issues.append(
@@ -600,9 +641,9 @@ class SuitabilityEvaluator:
                     status=IssueStatus.CONFIRMED,
                 )
             )
-            checks_completed.append("chin_boundary")
+            checks_completed.append(SuitabilityCheck.CHIN_BOUNDARY)
         elif visibility.chin_boundary.state == BoundaryVisibilityValue.UNKNOWN:
-            checks_unavailable.append("chin_boundary")
+            checks_unavailable.append(SuitabilityCheck.CHIN_BOUNDARY)
             issues.append(
                 self._create_issue(
                     code=SuitabilityIssueCode.SUITABILITY_HEAD_COMPLETENESS_UNAVAILABLE,
@@ -614,7 +655,7 @@ class SuitabilityEvaluator:
                 )
             )
         else:
-            checks_completed.append("chin_boundary")
+            checks_completed.append(SuitabilityCheck.CHIN_BOUNDARY)
 
         if visibility.lower_beard_boundary.state == BoundaryVisibilityValue.NOT_VISIBLE:
             issues.append(
@@ -627,11 +668,11 @@ class SuitabilityEvaluator:
                     status=IssueStatus.CONFIRMED,
                 )
             )
-            checks_completed.append("beard_boundary")
+            checks_completed.append(SuitabilityCheck.BEARD_BOUNDARY)
         elif visibility.lower_beard_boundary.state == BoundaryVisibilityValue.UNKNOWN:
-            checks_unavailable.append("beard_boundary")
+            checks_unavailable.append(SuitabilityCheck.BEARD_BOUNDARY)
         else:
-            checks_completed.append("beard_boundary")
+            checks_completed.append(SuitabilityCheck.BEARD_BOUNDARY)
 
         # Check overall head estimation confidence
         if head.confidence < 0.5:

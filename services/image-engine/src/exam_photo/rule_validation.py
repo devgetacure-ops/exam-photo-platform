@@ -54,7 +54,9 @@ def validate_exam_rule(rule_dict: Dict[str, Any]) -> List[ValidationErrorModel]:
         try:
             with open(schema_path, "r", encoding="utf-8") as f:
                 schema_data = json.load(f)
-            validator = jsonschema.Draft202012Validator(schema_data)
+            validator = jsonschema.Draft202012Validator(
+                schema_data, format_checker=jsonschema.FormatChecker()
+            )
             for err in validator.iter_errors(rule_dict):
                 field_path = format_field_path(tuple(err.absolute_path))
                 errors.append(

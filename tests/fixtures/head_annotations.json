@@ -189,7 +189,7 @@
       }
     },
     "config": {
-      "beard_allowance_ratio": 0.2
+      "lower_margin_ratio": 0.2
     },
     "ground_truth_head_box": {
       "left": 150.0,

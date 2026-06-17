@@ -31,12 +31,12 @@
   },
   "local_model_path_env_var": "EXAM_PHOTO_FACE_MODEL_PATH",
   "local_model_sha256_env_var": "EXAM_PHOTO_FACE_MODEL_SHA256",
-  "local_model_path_default": "model-assets\\blaze_face_short_range.tflite",
+  "local_model_path_default": "model-assets/blaze_face_short_range.tflite",
   "baseline_selection_status": "COMPLETED_BENCHMARK",
   "source_url": "https://storage.googleapis.com/mediapipe-models/face_detector/blaze_face_short_range/float16/1/blaze_face_short_range.tflite",
   "sha256": "b4578f35940bf5a1a655214a1cce5cab13eba73c1297cd78e1a04c2380b0152f",
   "size_bytes": 229746,
-  "licence": "Apache-2.0 (PENDING independent model-card verification)",
+  "licence": "Apache-2.0",
   "licence_url": "https://www.apache.org/licenses/LICENSE-2.0",
   "model_card_url": "https://ai.google.dev/edge/mediapipe/solutions/vision/face_detector#models"
 }

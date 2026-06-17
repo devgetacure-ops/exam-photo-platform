@@ -54,7 +54,8 @@ output/
 downloads/
 *.metadata.json
 # Ignore model weight files and caches
-models/
+/model-assets/
+/model-cache/
 weights/
 .cache/
 model_cache/

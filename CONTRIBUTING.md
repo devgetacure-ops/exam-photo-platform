@@ -30,7 +30,8 @@ All code changes and contributions must follow this sequence:
 
 ## 2. Code Quality & Standards
 
-- **Python**: Target version Python 3.11+. Use strict typing, type checking (`mypy`), linting (`ruff`), and testing (`pytest`).
+- **Python**: Target version Python 3.10+. Use strict typing, type checking (`mypy`), linting (`ruff`), and testing (`pytest`).
+
 - **Error Handling**: Placeholders must explicitly raise `NotImplementedError` rather than returning mocked compliance outcomes.
 - **Privacy-Safe Fixture Rules**:
   - Never commit real candidate photos or generated processed outputs.

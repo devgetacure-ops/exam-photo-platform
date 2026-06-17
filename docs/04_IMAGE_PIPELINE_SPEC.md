@@ -1,7 +1,7 @@
 # Image Pipeline Specification (04_IMAGE_PIPELINE_SPEC.md)
 
 > [!IMPORTANT]
-> Pipeline stage 1 (file signature validation), stage 2 (secure image decoding), stage 3 (EXIF orientation normalization), and stage 4 (source metadata extraction) are implemented in Milestone 3. All other stages detailed in this document are planned future implementations.
+> Pipeline stage 1 (file signature validation), stage 2 (secure image decoding), stage 3 (EXIF orientation normalization), and stage 4 (source metadata extraction) are implemented in Milestone 3. Stage 5 (face detection), stage 6 (complete-head estimation), and stage 7 (source suitability analysis) are implemented in Milestones 5 and 6. All other stages detailed in this document are planned future implementations.
 
 ---
 
@@ -11,7 +11,7 @@
 [Source File]
       │
       ├── 1. File-signature validation
-      ├── 2. Secure image decoding
+      ├── 2. Magic-bytes check (JPEG/PNG only)
       ├── 3. EXIF orientation normalization
       ├── 4. Source metadata extraction
       ├── 5. Face detection
@@ -36,7 +36,8 @@
 ## Detailed Pipeline Stages
 
 ### 1. File-signature Validation
-- **Purpose**: Verify that the input file starts with valid magic numbers corresponding to JPEG/PNG/WebP, rejecting spoofed uploads.
+- **Purpose**: Verify that the input file starts with valid magic numbers corresponding to JPEG/PNG, rejecting spoofed uploads.
+
 - **Inputs**: Raw byte stream.
 - **Outputs**: Verified byte stream.
 - **Failure Conditions**: Invalid magic bytes, unknown extensions.
@@ -97,8 +98,8 @@
 - **Failure Conditions**: Unable to resolve head contours.
 - **Warning Conditions**: Side-profile posing, tilted neck.
 - **Privacy Considerations**: In-memory only.
-- **Planned Tests**: Verify calculation on diverse hairstyles and beards.
-- **Dependencies**: Future computer-vision framework.
+- **Status**: **Implemented (Milestone 6) as a landmark-assisted geometric baseline**
+- **Dependencies**: `FaceDetection` output.
 
 ### 7. Source Suitability Analysis
 - **Purpose**: Decide if the photograph is suitable for processing.
@@ -107,8 +108,9 @@
 - **Failure Conditions**: High tilt angle, severe blur, or key feature occlusion.
 - **Warning Conditions**: Uneven shadow, low light.
 - **Privacy Considerations**: No embeddings retained.
-- **Planned Tests**: Assert rejection of severely blurred images.
-- **Dependencies**: Face detection results.
+- **Status**: **Implemented (Milestone 6) suitability evaluation framework**
+- **Dependencies**: Normalized image metadata, face detection reference, and head estimation result.
+
 
 ### 8. Background Processing
 - **Purpose**: Clean up background clutter and replace it with clean white or light color.

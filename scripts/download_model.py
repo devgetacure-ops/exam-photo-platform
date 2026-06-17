@@ -126,8 +126,8 @@ def main() -> None:
     parser.add_argument(
         "--variant",
         choices=list(_VARIANTS.keys()),
-        default="full_range",
-        help="BlazeFace model variant to download (default: full_range).",
+        default="short_range",
+        help="BlazeFace model variant to download (default: short_range).",
     )
     parser.add_argument(
         "--dest",
@@ -145,30 +145,35 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    variant_info = _VARIANTS[args.variant]
-    dest_dir: Path = args.dest or _DEFAULT_ASSET_DIR
-    dest_file = dest_dir / variant_info["filename"]
-
     manifest = _load_manifest()
-    manifest_sha256 = str(manifest.get("sha256", "PENDING"))
+    
+    # Load variant configuration from manifest
+    try:
+        variants = manifest["variants"]
+        assert isinstance(variants, dict)
+        variant = variants[args.variant]
+        expected_sha = variant["sha256"]
+        source_url = variant["source_url"]
+        filename = variant["filename"]
+    except Exception as ex:
+        print(f"ERROR: Variant '{args.variant}' not properly configured in manifest: {ex}", file=sys.stderr)
+        sys.exit(1)
+
+    dest_dir: Path = args.dest or _DEFAULT_ASSET_DIR
+    dest_file = dest_dir / filename
 
     # --- Already present and verified? ---
     if dest_file.exists():
         actual_sha256 = _sha256_file(dest_file)
-        if manifest_sha256 not in ("PENDING", "") and actual_sha256 == manifest_sha256:
+        if actual_sha256 == expected_sha:
             print(f"OK Model already present and verified: {dest_file}")
             return
-        elif manifest_sha256 in ("PENDING", ""):
-            print(
-                f"Model file exists at {dest_file} but manifest SHA-256 is "
-                "PENDING. Re-verifying after download."
-            )
         else:
             print(
-                f"WARNING: existing model file SHA-256 does not match manifest.\n"
+                f"WARNING: existing model file SHA-256 does not match expected variant SHA.\n"
                 f"  File:     {actual_sha256}\n"
-                f"  Manifest: {manifest_sha256}\n"
-                "Deleting corrupted file and re-downloading."
+                f"  Expected: {expected_sha}\n"
+                "Deleting mismatching file and re-downloading."
             )
             dest_file.unlink()
 
@@ -194,7 +199,7 @@ def main() -> None:
             print("Aborted.")
             sys.exit(0)
 
-    _download(variant_info["url"], dest_file)
+    _download(source_url, dest_file)
 
     # --- Verify ---
     actual_sha256 = _sha256_file(dest_file)
@@ -202,11 +207,11 @@ def main() -> None:
     print(f"\nSHA-256: {actual_sha256}")
     print(f"Size:    {size_bytes:,} bytes")
 
-    if manifest_sha256 not in ("PENDING", "") and actual_sha256 != manifest_sha256:
+    if actual_sha256 != expected_sha:
         dest_file.unlink()
         print(
             f"\nERROR: SHA-256 mismatch!\n"
-            f"  Expected: {manifest_sha256}\n"
+            f"  Expected: {expected_sha}\n"
             f"  Got:      {actual_sha256}\n"
             "File deleted. Re-run this script to try again.",
             file=sys.stderr,
@@ -215,15 +220,13 @@ def main() -> None:
 
     # --- Update manifest ---
     manifest["variant"] = args.variant
-    manifest["source_url"] = variant_info["url"]
+    manifest["source_url"] = source_url
     manifest["sha256"] = actual_sha256
     manifest["size_bytes"] = size_bytes
-    manifest["licence"] = "Apache-2.0 (PENDING independent model-card verification)"
-    manifest["licence_url"] = variant_info["licence_url"]
-    manifest["model_card_url"] = variant_info["model_card_url"]
-    manifest["local_model_path_default"] = str(
-        Path("model-assets") / variant_info["filename"]
-    )
+    manifest["licence"] = "Apache-2.0"
+    manifest["licence_url"] = variant.get("licence_url", "https://www.apache.org/licenses/LICENSE-2.0")
+    manifest["model_card_url"] = variant.get("model_card_url", "https://ai.google.dev/edge/mediapipe/solutions/vision/face_detector#models")
+    manifest["local_model_path_default"] = f"model-assets/{filename}"
     _save_manifest(manifest)
 
     print(

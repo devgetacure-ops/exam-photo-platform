@@ -73,7 +73,8 @@
         "conducting_body",
         "examination_year",
         "application_cycle"
-      ]
+      ],
+      "additionalProperties": false
     },
     "source_evidence": {
       "type": "array",
@@ -134,7 +135,8 @@
           "source_type",
           "official_source",
           "captured_wording"
-        ]
+        ],
+        "additionalProperties": false
       }
     },
     "image_requirements": {
@@ -211,7 +213,8 @@
           },
           "required": [
             "mode"
-          ]
+          ],
+          "additionalProperties": false
         },
         "file_size": {
           "type": "object",
@@ -245,7 +248,8 @@
           },
           "required": [
             "maximum_bytes"
-          ]
+          ],
+          "additionalProperties": false
         },
         "formats": {
           "type": "object",
@@ -277,7 +281,8 @@
           "required": [
             "allowed_formats",
             "preferred_format"
-          ]
+          ],
+          "additionalProperties": false
         },
         "background": {
           "type": "object",
@@ -316,7 +321,8 @@
           },
           "required": [
             "mode"
-          ]
+          ],
+          "additionalProperties": false
         },
         "composition": {
           "type": "object",
@@ -373,7 +379,8 @@
             "additional_instructions": {
               "type": "string"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "filename": {
           "type": "object",
@@ -413,7 +420,8 @@
           },
           "required": [
             "mode"
-          ]
+          ],
+          "additionalProperties": false
         },
         "exceptional_instructions": {
           "type": "object",
@@ -460,7 +468,8 @@
           },
           "required": [
             "processing_support_status"
-          ]
+          ],
+          "additionalProperties": false
         }
       },
       "required": [
@@ -470,7 +479,8 @@
         "background",
         "filename",
         "exceptional_instructions"
-      ]
+      ],
+      "additionalProperties": false
     },
     "provenance": {
       "type": "object",
@@ -510,7 +520,8 @@
           "type",
           "confidence",
           "approved"
-        ]
+        ],
+        "additionalProperties": false
       }
     },
     "verification": {
@@ -541,7 +552,8 @@
       },
       "required": [
         "verification_status"
-      ]
+      ],
+      "additionalProperties": false
     },
     "effective_period": {
       "type": "object",
@@ -554,7 +566,8 @@
           "type": "string",
           "format": "date"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "supersession": {
       "type": "object",
@@ -568,7 +581,8 @@
         "change_summary": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "notes": {
       "type": "string"
@@ -588,5 +602,6 @@
     "provenance",
     "verification",
     "fictional_example"
-  ]
+  ],
+  "additionalProperties": false
 }

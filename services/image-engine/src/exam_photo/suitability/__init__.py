@@ -4,6 +4,8 @@ from exam_photo.suitability.issue_codes import SuitabilityIssueCode
 from exam_photo.suitability.models import (
     IssueSeverity,
     IssueStatus,
+    PublicSuitabilityIssue,
+    PublicSuitabilityReport,
     SuitabilityIssue,
     SuitabilityReport,
     SuitabilityStatus,
@@ -16,6 +18,8 @@ __all__ = [
     "IssueStatus",
     "SuitabilityIssue",
     "SuitabilityReport",
+    "PublicSuitabilityIssue",
+    "PublicSuitabilityReport",
     "SuitabilityThresholds",
     "SuitabilityEvaluator",
 ]

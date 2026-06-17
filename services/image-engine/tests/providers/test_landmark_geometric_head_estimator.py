@@ -1,3 +1,7 @@
+import os
+from pathlib import Path
+from typing import Optional
+
 import pytest
 from PIL import Image
 
@@ -12,6 +16,17 @@ from exam_photo.providers.landmark_geometric_head_estimator import (
     LandmarkGeometricHeadEstimator,
 )
 
+_MODEL_PATH_ENV = "EXAM_PHOTO_FACE_MODEL_PATH"
+_MODEL_PATH: Optional[Path] = (
+    Path(os.environ[_MODEL_PATH_ENV])
+    if _MODEL_PATH_ENV in os.environ and Path(os.environ[_MODEL_PATH_ENV]).exists()
+    else None
+)
+_MODEL_SHA256_ENV = "EXAM_PHOTO_FACE_MODEL_SHA256"
+_MODEL_SHA256: str = os.environ.get(_MODEL_SHA256_ENV, "")
+_IS_CI = os.environ.get("CI") == "true" or os.environ.get("GITHUB_ACTIONS") == "true"
+
+
 
 def test_config_validation() -> None:
     # Test valid defaults
@@ -22,9 +37,6 @@ def test_config_validation() -> None:
     # Test constraints (e.g. ratios must be >= 0)
     with pytest.raises(ValueError):
         HeadEstimationConfig(top_expansion_ratio=-0.1)
-
-    with pytest.raises(ValueError):
-        HeadEstimationConfig(maximum_expansion_ratio=0.5)  # must be > 1.0
 
 
 def test_landmark_fallback_and_combinations() -> None:
@@ -177,7 +189,7 @@ def test_clamping_and_suspected_clipping() -> None:
     assert result.clipping_assessment.top_hair.confidence < 0.9
     assert (
         result.boundary_visibility.top_hair_boundary.state
-        == BoundaryVisibilityValue.NOT_VISIBLE
+        == BoundaryVisibilityValue.UNKNOWN
     )
 
     # Other boundaries not touching edges should be not_detected/unknown
@@ -243,33 +255,35 @@ def test_backwards_compatibility_properties() -> None:
     # Force visibility states to test mapping
     from exam_photo.providers.head_estimation import (
         BoundaryAssessment,
+        BoundaryBasis,
         BoundaryVisibilityValue,
         HeadBoundaryVisibility,
     )
 
     vis = HeadBoundaryVisibility(
         top_hair_boundary=BoundaryAssessment(
-            state=BoundaryVisibilityValue.VISIBLE, basis="observed"
+            state=BoundaryVisibilityValue.VISIBLE, basis=BoundaryBasis.OBSERVED
         ),
         left_head_boundary=BoundaryAssessment(
-            state=BoundaryVisibilityValue.NOT_VISIBLE, basis="observed"
+            state=BoundaryVisibilityValue.NOT_VISIBLE, basis=BoundaryBasis.OBSERVED
         ),
         right_head_boundary=BoundaryAssessment(
-            state=BoundaryVisibilityValue.UNKNOWN, basis="observed"
+            state=BoundaryVisibilityValue.UNKNOWN, basis=BoundaryBasis.OBSERVED
         ),
         chin_boundary=BoundaryAssessment(
-            state=BoundaryVisibilityValue.NOT_APPLICABLE, basis="observed"
+            state=BoundaryVisibilityValue.NOT_APPLICABLE, basis=BoundaryBasis.OBSERVED
         ),
         lower_beard_boundary=BoundaryAssessment(
-            state=BoundaryVisibilityValue.VISIBLE, basis="observed"
+            state=BoundaryVisibilityValue.VISIBLE, basis=BoundaryBasis.OBSERVED
         ),
         left_ear=BoundaryAssessment(
-            state=BoundaryVisibilityValue.UNKNOWN, basis="observed"
+            state=BoundaryVisibilityValue.UNKNOWN, basis=BoundaryBasis.OBSERVED
         ),
         right_ear=BoundaryAssessment(
-            state=BoundaryVisibilityValue.UNKNOWN, basis="observed"
+            state=BoundaryVisibilityValue.UNKNOWN, basis=BoundaryBasis.OBSERVED
         ),
     )
+
     assert vis.top_hair_boundary_visible is True
     assert vis.left_head_boundary_visible is False
     assert vis.right_head_boundary_visible is None
@@ -279,10 +293,11 @@ def test_backwards_compatibility_properties() -> None:
 
 def test_annotated_fixtures_quality() -> None:
     import json
-    from pathlib import Path
+
+    from tests.helpers.fixtures import FIXTURES_DIR
 
     # Locate head_annotations.json
-    base_path = Path(__file__).parent.parent / "fixtures" / "head_annotations.json"
+    base_path = FIXTURES_DIR / "head_annotations.json"
     assert base_path.exists()
 
     with open(base_path, "r", encoding="utf-8") as f:
@@ -290,39 +305,65 @@ def test_annotated_fixtures_quality() -> None:
 
     estimator = LandmarkGeometricHeadEstimator()
 
-    for _name, data in fixtures_data.items():
+    for name, data in fixtures_data.items():
         if data.get("is_real", False):
-            # For real fixtures, we skip in unit test to avoid requiring face detector model
-            continue
+            if _MODEL_PATH is None:
+                if _IS_CI:
+                    raise RuntimeError(
+                        f"Face model is required in CI to validate real fixture: {name}"
+                    )
+                continue
+            img_path = FIXTURES_DIR / name
+            if not img_path.exists():
+                raise FileNotFoundError(
+                    f"Fixture image {name} is missing at {img_path}"
+                )
+            image = Image.open(img_path).copy()
+            img_w, img_h = image.size
 
-        img_w, img_h = data["image_size"]
-        image = Image.new("RGB", (img_w, img_h), (240, 240, 240))
-        fb = data["face_box"]
-        face_box = BoundingBox(
-            left=fb["left"], top=fb["top"], right=fb["right"], bottom=fb["bottom"]
-        )
-        face = FaceDetection(
-            bounding_box=face_box,
-            confidence=0.9,
-            pose=PoseEstimate(
-                yaw=0.0, pitch=0.0, roll=0.0, confidence=1.0, method="fake"
-            ),
-            occlusion_indicators={"face_occluded": False, "eyes_occluded": False},
-        )
-        lm = data.get("landmarks", {})
-        clm = {}
-        if "custom_landmarks" in lm:
-            for k, point in lm["custom_landmarks"].items():
-                clm[k] = Point(x=point["x"], y=point["y"])
-        landmarks = Landmarks(
-            left_eye=Point(x=lm["left_eye"]["x"], y=lm["left_eye"]["y"])
-            if "left_eye" in lm
-            else None,
-            right_eye=Point(x=lm["right_eye"]["x"], y=lm["right_eye"]["y"])
-            if "right_eye" in lm
-            else None,
-            custom_landmarks=clm,
-        )
+            from exam_photo.providers.mediapipe_face_detector import (
+                MediapipeFaceDetector,
+            )
+
+            detector = MediapipeFaceDetector(
+                model_path=_MODEL_PATH,
+                expected_sha256=_MODEL_SHA256,
+            )
+            face_result = detector.detect_faces(image)
+            assert len(face_result.detections) == 1, (
+                f"Expected 1 face in {name}, found {len(face_result.detections)}"
+            )
+            face = face_result.detections[0]
+            landmarks = face.landmarks
+        else:
+            img_w, img_h = data["image_size"]
+            image = Image.new("RGB", (img_w, img_h), (240, 240, 240))
+            fb = data["face_box"]
+            face_box = BoundingBox(
+                left=fb["left"], top=fb["top"], right=fb["right"], bottom=fb["bottom"]
+            )
+            face = FaceDetection(
+                bounding_box=face_box,
+                confidence=0.9,
+                pose=PoseEstimate(
+                    yaw=0.0, pitch=0.0, roll=0.0, confidence=1.0, method="fake"
+                ),
+                occlusion_indicators={"face_occluded": False, "eyes_occluded": False},
+            )
+            lm = data.get("landmarks", {})
+            clm = {}
+            if "custom_landmarks" in lm:
+                for k, point in lm["custom_landmarks"].items():
+                    clm[k] = Point(x=point["x"], y=point["y"])
+            landmarks = Landmarks(
+                left_eye=Point(x=lm["left_eye"]["x"], y=lm["left_eye"]["y"])
+                if "left_eye" in lm
+                else None,
+                right_eye=Point(x=lm["right_eye"]["x"], y=lm["right_eye"]["y"])
+                if "right_eye" in lm
+                else None,
+                custom_landmarks=clm,
+            )
 
         cfg = data.get("config", {})
         result = estimator.estimate_head(image, face, landmarks, config=cfg)

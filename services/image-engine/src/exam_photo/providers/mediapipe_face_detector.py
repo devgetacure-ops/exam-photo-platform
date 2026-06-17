@@ -44,11 +44,12 @@ from exam_photo.providers.model_errors import ModelChecksumError, ModelNotFoundE
 # Import is deferred to initialisation time so the module remains importable
 # without mediapipe installed.
 try:
-    import mediapipe as mp
-    from mediapipe.tasks import python as mp_python
-    from mediapipe.tasks.python import (
+    import mediapipe as mp  # type: ignore[import-untyped]
+    from mediapipe.tasks import python as mp_python  # type: ignore[import-untyped]
+    from mediapipe.tasks.python import (  # type: ignore[import-untyped]
         vision as mp_vision,
     )
+
 
     _MEDIAPIPE_AVAILABLE = True
 except ImportError:  # pragma: no cover
@@ -124,11 +125,28 @@ class MediapipeFaceDetector:
         model_path: Path,
         expected_sha256: str,
         min_detection_confidence: float = 0.5,
+        min_suppression_threshold: float = 0.3,
+        max_num_faces: int = 10,
     ) -> None:
+        if not (0.0 <= min_detection_confidence <= 1.0):
+            raise ValueError(
+                f"min_detection_confidence must be between 0.0 and 1.0, got {min_detection_confidence}"
+            )
+        if not (0.0 <= min_suppression_threshold <= 1.0):
+            raise ValueError(
+                f"min_suppression_threshold must be between 0.0 and 1.0, got {min_suppression_threshold}"
+            )
+        if max_num_faces <= 0:
+            raise ValueError(f"max_num_faces must be positive, got {max_num_faces}")
+
         self._model_path = Path(model_path)
         self._expected_sha256 = expected_sha256.lower().strip()
         self._min_detection_confidence = min_detection_confidence
+        self._min_suppression_threshold = min_suppression_threshold
+        self._max_num_faces = max_num_faces
         self._detector: Optional[Any] = None
+        self._active_min_detection_confidence: Optional[float] = None
+        self._active_min_suppression_threshold: Optional[float] = None
         self._lock = threading.Lock()
 
     # ------------------------------------------------------------------
@@ -148,18 +166,48 @@ class MediapipeFaceDetector:
             Normalised PIL Image.  Internally converted to RGB uint8 for
             MediaPipe.
         config:
-            Reserved for future per-call overrides; currently unused.
+            Optional overrides for min_detection_confidence, min_suppression_threshold,
+            or max_num_faces.
 
         Returns
         -------
         FaceDetectionResult
             Contains zero or more ``FaceDetection`` objects.  Detections whose
-            confidence is below ``min_detection_confidence`` are excluded.
+            confidence is below the configured threshold are excluded.
         """
         start = time.perf_counter()
 
+        min_detection_confidence = self._min_detection_confidence
+        min_suppression_threshold = self._min_suppression_threshold
+        max_num_faces = self._max_num_faces
+
+        if config:
+            if "min_detection_confidence" in config:
+                val = float(config["min_detection_confidence"])
+                if not (0.0 <= val <= 1.0):
+                    raise ValueError(
+                        f"min_detection_confidence override must be between 0.0 and 1.0, got {val}"
+                    )
+                min_detection_confidence = val
+            if "min_suppression_threshold" in config:
+                val = float(config["min_suppression_threshold"])
+                if not (0.0 <= val <= 1.0):
+                    raise ValueError(
+                        f"min_suppression_threshold override must be between 0.0 and 1.0, got {val}"
+                    )
+                min_suppression_threshold = val
+            if "max_num_faces" in config:
+                val = int(config["max_num_faces"])
+                if val <= 0:
+                    raise ValueError(
+                        f"max_num_faces override must be positive, got {val}"
+                    )
+                max_num_faces = val
+
         with self._lock:
-            self._ensure_initialized()
+            self._ensure_initialized(
+                min_detection_confidence, min_suppression_threshold
+            )
             assert self._detector is not None  # narrow Optional for mypy
 
             img_w, img_h = image.size
@@ -171,10 +219,10 @@ class MediapipeFaceDetector:
 
         for raw in mp_result.detections:
             score = float(raw.categories[0].score) if raw.categories else 0.0
-            if score < self._min_detection_confidence:
+            if score < min_detection_confidence:
                 warnings.append(
                     f"Detection discarded: confidence {score:.3f} below "
-                    f"threshold {self._min_detection_confidence}."
+                    f"threshold {min_detection_confidence}."
                 )
                 continue
 
@@ -192,9 +240,14 @@ class MediapipeFaceDetector:
                     pose=None,
                     occlusion_indicators=None,
                     quality_indicators=None,
-                    provider_metadata={"mediapipe_score": score},
+                    provider_metadata=None,
                 )
             )
+
+        # Sort detections by confidence in descending order
+        detections.sort(key=lambda d: d.confidence, reverse=True)
+        # Limit the number of detections to max_num_faces
+        detections = detections[:max_num_faces]
 
         duration_ms = (time.perf_counter() - start) * 1000.0
         return FaceDetectionResult(
@@ -219,6 +272,8 @@ class MediapipeFaceDetector:
                 except Exception:  # noqa: BLE001
                     pass
                 self._detector = None
+                self._active_min_detection_confidence = None
+                self._active_min_suppression_threshold = None
 
     def __enter__(self) -> "MediapipeFaceDetector":
         return self
@@ -230,10 +285,23 @@ class MediapipeFaceDetector:
     # Internal helpers
     # ------------------------------------------------------------------
 
-    def _ensure_initialized(self) -> None:
-        """Initialise the detector on first use.  Must be called under lock."""
+    def _ensure_initialized(
+        self,
+        min_detection_confidence: float,
+        min_suppression_threshold: float,
+    ) -> None:
+        """Initialise the detector on first use or if options override is needed. Must be called under lock."""
         if self._detector is not None:
-            return
+            if (
+                self._active_min_detection_confidence == min_detection_confidence
+                and self._active_min_suppression_threshold == min_suppression_threshold
+            ):
+                return
+            try:
+                self._detector.close()
+            except Exception:  # noqa: BLE001
+                pass
+            self._detector = None
 
         if not _MEDIAPIPE_AVAILABLE:
             raise ImportError(
@@ -245,9 +313,12 @@ class MediapipeFaceDetector:
         base_options = mp_python.BaseOptions(model_asset_path=str(self._model_path))
         options = mp_vision.FaceDetectorOptions(
             base_options=base_options,
-            min_detection_confidence=self._min_detection_confidence,
+            min_detection_confidence=min_detection_confidence,
+            min_suppression_threshold=min_suppression_threshold,
         )
         self._detector = mp_vision.FaceDetector.create_from_options(options)
+        self._active_min_detection_confidence = min_detection_confidence
+        self._active_min_suppression_threshold = min_suppression_threshold
 
     def _verify_model(self) -> None:
         """Check that the model file exists and its SHA-256 matches."""
@@ -328,8 +399,8 @@ class MediapipeFaceDetector:
         custom: Dict[str, Point] = {}
 
         for idx, kp in enumerate(keypoints):
-            px = max(0, min(img_w, int(round(kp.x * img_w))))
-            py = max(0, min(img_h, int(round(kp.y * img_h))))
+            px = max(0, min(img_w - 1, int(round(kp.x * img_w))))
+            py = max(0, min(img_h - 1, int(round(kp.y * img_h))))
             pt = Point(x=float(px), y=float(py))
 
             if idx in _KEYPOINT_INDEX_TO_FIELD:

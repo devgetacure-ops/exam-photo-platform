@@ -57,7 +57,7 @@ Benchmarks were executed on a machine running Windows with Python 3.10 and an AM
 - **Finding**: The MediaPipe Python Tasks API `vision.FaceDetector` expects a specific flatbuffer structure. The raw `blaze_face_full_range.tflite` model has a tensor shape mismatch and cannot be used directly without a `.task` bundle wrapper which was not available from Google's official TF Lite model downloads at this time.
 
 ### Baseline Selection
-Short-range was successfully integrated and benchmarked. The tested regular full-range asset failed to initialize with the current Tasks configuration. Sparse full-range has not yet been successfully benchmarked. Short-range is selected as the provisional Milestone-5 baseline.
+Short-range was successfully integrated and benchmarked. The tested regular full-range asset failed to initialize with the current Tasks configuration. Sparse full-range is currently left as an unresolved/unexplored evaluation, rather than implying all full-range options are exhausted. Short-range is selected as the provisional Milestone-5 baseline.
 
 ---
 

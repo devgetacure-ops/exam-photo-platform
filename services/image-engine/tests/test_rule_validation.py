@@ -1,15 +1,15 @@
 import json
 import os
+from typing import Any
 
 from exam_photo.rule_validation import validate_exam_rule
+from tests.helpers.fixtures import FIXTURES_DIR as CANONICAL_FIXTURES_DIR
 
-FIXTURES_DIR = os.path.join(os.path.dirname(__file__), "fixtures")
+FIXTURES_DIR = str(CANONICAL_FIXTURES_DIR)
 EXAMPLES_DIR = os.path.join(
     os.path.dirname(__file__), "..", "..", "..", "examples", "rules"
 )
 
-
-from typing import Any
 
 
 def load_json(path: str) -> dict[str, Any]:

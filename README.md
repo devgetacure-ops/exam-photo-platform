@@ -11,11 +11,11 @@ This platform processes candidate photographs by checking and conforming them to
 
 ## 2. Current Repository Status & Milestone Scope
 
-> [!WARNING]
-> This repository is in **Phase 2 (Milestone 4 - Suitability Framework & Pipeline Foundations)**.
-> - **The core image normalization and suitability evaluation framework are implemented.**
-> - **No real/heavy computer-vision machine learning models are running (fake provider implementations are used).**
-> - **The automated cropping and output photo generation stages are not yet implemented.**
+> [!NOTE]
+> This repository has completed **Milestone 6 (Landmark-Assisted Geometric Head-Box Estimation)**.
+> - **Input image normalization and suitability evaluation are fully implemented.**
+> - **Local face-detection (MediaPipe) and landmark-assisted geometric head-box estimation are fully integrated and verified.**
+> - **Automated cropping and background replacement are scheduled for next milestones.**
 
 ### What is Implemented:
 * Repository directory structure, configuration templates, and Git policies.
@@ -23,14 +23,15 @@ This platform processes candidate photographs by checking and conforming them to
 * Permanent product documentation under `docs/` detailing architectural choices, MVP scope, rules schemas, pipeline specifications, and development roadmaps.
 * Canonical JSON Schema and Pydantic rules model validation checker (`validate-rule` CLI command).
 * Secure, limits-based input image normalization, orientation transpose correction, metadata stripping, sRGB profile mapping (`inspect-input` CLI command).
-* Suitability evaluation framework with fake face-detection and head-estimation provider interfaces.
+* Suitability evaluation framework with local offline face-detection (MediaPipe) and landmark-assisted geometric head-box estimation.
 * Geometry models (BoundingBox, Point) with safety clamping math.
 
 ### What is NOT Implemented:
-* Heavy production face-detection, segmentation, or head landmark models.
-* Bounded-crop mode cropping, resizing, and output compressed photo generation algorithms (scheduled for Milestone 5).
+* Background replacement/removal algorithms (scheduled for Milestone 7).
+* final cropping, resizing, and output compressed photo generation algorithms (scheduled for Milestone 8).
 * Public and admin console web applications.
 * Production databases, authentication, payments, storage lifecycle handlers.
+
 
 ---
 
@@ -76,8 +77,9 @@ exam-photo-platform/
 ## 4. Local Prerequisites & Setup
 
 ### Prerequisites
-* Python 3.11 or newer (Python 3.11/3.12 recommended)
+* Python 3.10 or newer (Python 3.11/3.12 recommended)
 * Git
+
 
 ### Python image-engine Setup
 All commands should be executed inside `services/image-engine`.

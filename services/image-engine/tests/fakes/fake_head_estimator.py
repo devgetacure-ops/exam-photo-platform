@@ -11,7 +11,9 @@ from exam_photo.providers.head_estimation import (
     HeadClippingFinding,
     HeadEstimationProvider,
     HeadEstimationResult,
+    ProviderStatusValue,
 )
+
 
 
 class FakeHeadEstimator(HeadEstimationProvider):
@@ -108,8 +110,9 @@ class FakeHeadEstimator(HeadEstimationProvider):
             boundary_visibility=self.boundary_visibility,
             clipping_assessment=clipping,
             warnings=self.warnings,
-            provider_status="success",
+            provider_status=ProviderStatusValue.SUCCESS,
             processing_duration=0.0,
+
             safe_internal_metadata={
                 "image_width": img_w,
                 "image_height": img_h,

@@ -1,15 +1,8 @@
 import os
+import threading
 from typing import List
 
 from PIL import Image, ImageFile, ImageOps
-
-try:
-    from PIL import ImageCms
-
-    HAS_IMAGE_CMS = True
-except ImportError:
-    ImageCms = None  # type: ignore[assignment,unused-ignore]
-    HAS_IMAGE_CMS = False
 
 from exam_photo.input.errors import (
     ImageInspectionError,
@@ -19,6 +12,18 @@ from exam_photo.input.errors import (
 from exam_photo.input.limits import InputLimits
 from exam_photo.input.metadata import SourceImageMetadata
 from exam_photo.input.signatures import detect_signature_format
+
+try:
+    from PIL import ImageCms
+
+    HAS_IMAGE_CMS = True
+except ImportError:
+    ImageCms = None  # type: ignore[assignment,unused-ignore]
+    HAS_IMAGE_CMS = False
+
+_pillow_load_lock = threading.Lock()
+
+
 
 
 class NormalizationResult:
@@ -146,23 +151,24 @@ def normalize_image_input(
         )
 
     # Truncation and corruption preflight checks by forcing pixel loading
-    old_load_truncated = ImageFile.LOAD_TRUNCATED_IMAGES
-    try:
-        if limits.truncated_image_policy == "allow":
-            ImageFile.LOAD_TRUNCATED_IMAGES = True
-        else:
-            ImageFile.LOAD_TRUNCATED_IMAGES = False
-        image.load()
-    except Exception as e:
-        # If it's a truncation error or load fail
-        raise ImageInspectionError(
-            InputErrorCode.INPUT_CORRUPTED,
-            "File data is corrupted or truncated.",
-            "Please re-upload a clean, complete image file.",
-            context={"internal_error": str(e)},
-        ) from e
-    finally:
-        ImageFile.LOAD_TRUNCATED_IMAGES = old_load_truncated
+    with _pillow_load_lock:
+        old_load_truncated = ImageFile.LOAD_TRUNCATED_IMAGES
+        try:
+            if limits.truncated_image_policy == "allow":
+                ImageFile.LOAD_TRUNCATED_IMAGES = True
+            else:
+                ImageFile.LOAD_TRUNCATED_IMAGES = False
+            image.load()
+        except Exception as e:
+            # If it's a truncation error or load fail
+            raise ImageInspectionError(
+                InputErrorCode.INPUT_CORRUPTED,
+                "File data is corrupted or truncated.",
+                "Please re-upload a clean, complete image file.",
+                context={"internal_error": str(e)},
+            ) from e
+        finally:
+            ImageFile.LOAD_TRUNCATED_IMAGES = old_load_truncated
 
     # 4. Multi-frame check
     frame_count = getattr(image, "n_frames", 1)

@@ -54,8 +54,15 @@ strict = true
 warn_return_any = true
 warn_unused_configs = true
 show_error_codes = true
+disable_error_code = [
+    "import-untyped"
+]
 
 [[tool.mypy.overrides]]
 module = "mediapipe.*"
 ignore_missing_imports = true
+
+
+
+
 

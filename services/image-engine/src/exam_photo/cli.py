@@ -196,7 +196,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     elif args.command == "estimate-head":
         input_path = args.input
         if not os.path.exists(input_path):
-            print(f"Error: File not found: {input_path}", file=sys.stderr)
+            print("Error: Input file not found. Code: FILE_NOT_FOUND", file=sys.stderr)
             return 1
 
         # 1. Normalize the image input
@@ -204,14 +204,20 @@ def main(argv: Optional[List[str]] = None) -> int:
         try:
             with open(input_path, "rb") as f:
                 data = f.read(limits.maximum_encoded_byte_size + 1)
-        except Exception as e:
-            print(f"Error: Unable to read file: {str(e)}", file=sys.stderr)
+        except Exception:
+            print(
+                "Error: Unable to read input file. Code: FILE_READ_FAILED",
+                file=sys.stderr,
+            )
             return 1
 
         try:
             norm_result = normalize_image_input(data, input_path, limits)
-        except Exception as e:
-            print(f"Error: Image normalization failed: {str(e)}", file=sys.stderr)
+        except Exception:
+            print(
+                "Error: Image normalization failed. Code: IMAGE_NORMALIZATION_FAILED",
+                file=sys.stderr,
+            )
             return 1
 
         # 2. Lazy load MediapipeFaceDetector
@@ -221,12 +227,13 @@ def main(argv: Optional[List[str]] = None) -> int:
             )
         except ImportError:
             print(
-                "Error: MediaPipe face detector provider dependencies are not installed. Run 'pip install -e .[face]'.",
+                "Error: MediaPipe face detector provider dependencies are not installed. Code: DEPENDENCY_MISSING",
                 file=sys.stderr,
             )
             return 1
 
-        # 3. Locate model path
+        # 3. Locate model path relative to package location
+        repo_root = Path(__file__).resolve().parent.parent.parent.parent
         model_path_str = args.model_path
         expected_sha256 = ""
 
@@ -235,8 +242,7 @@ def main(argv: Optional[List[str]] = None) -> int:
             expected_sha256 = os.environ.get("EXAM_PHOTO_FACE_MODEL_SHA256", "")
 
         if not model_path_str:
-            # Fallback to default path relative to cwd or repository root
-            manifest_path = Path("model-manifests/face-detector.json")
+            manifest_path = repo_root / "model-manifests" / "face-detector.json"
             if manifest_path.exists():
                 try:
                     with open(manifest_path, "r", encoding="utf-8") as mf:
@@ -249,33 +255,49 @@ def main(argv: Optional[List[str]] = None) -> int:
                 model_path_str = "model-assets/blaze_face_short_range.tflite"
 
         model_path = Path(model_path_str)
+        if not model_path.is_absolute():
+            model_path = repo_root / model_path
+
         if not model_path.exists():
             print(
-                f"Error: Face detection model file not found at '{model_path}'. "
-                "Please download it using: python scripts/download_model.py",
+                "Error: Face detection model file not found. Code: MODEL_NOT_FOUND",
                 file=sys.stderr,
             )
             return 1
 
-        # 4. Instantiate and run face detector
+        # 4. Instantiate and run face detector using context manager
         try:
             detector = MediapipeFaceDetector(
                 model_path=model_path,
-                expected_sha256=expected_sha256
-                or "b4578f35940bf5a1a655214a1cce5cab13eba73c1297cd78e1a04c2380b0152f",
+                expected_sha256=expected_sha256,
             )
-            face_result = detector.detect_faces(norm_result.image)
-        except Exception as e:
-            print(f"Error: Face detection failed: {str(e)}", file=sys.stderr)
+        except Exception:
+            print(
+                "Error: Face detector initialization failed. Code: DETECTOR_INIT_FAILED",
+                file=sys.stderr,
+            )
+            return 1
+
+        try:
+            with detector:
+                face_result = detector.detect_faces(norm_result.image)
+        except Exception:
+            print(
+                "Error: Face detection failed. Code: FACE_DETECTION_FAILED",
+                file=sys.stderr,
+            )
             return 1
 
         # 5. Verify exactly 1 face
         if len(face_result.detections) == 0:
-            print("Error: No faces detected in the image.", file=sys.stderr)
+            print(
+                "Error: No faces detected in the image. Code: NO_FACE_DETECTED",
+                file=sys.stderr,
+            )
             return 1
         elif len(face_result.detections) > 1:
             print(
-                f"Error: Multiple faces ({len(face_result.detections)}) detected in the image.",
+                f"Error: Multiple faces ({len(face_result.detections)}) detected. Code: MULTIPLE_FACES_DETECTED",
                 file=sys.stderr,
             )
             return 1
@@ -288,12 +310,17 @@ def main(argv: Optional[List[str]] = None) -> int:
             head_result = estimator.estimate_head(
                 norm_result.image, face, face.landmarks
             )
-        except Exception as e:
-            print(f"Error: Head estimation failed: {str(e)}", file=sys.stderr)
+        except Exception:
+            print(
+                "Error: Head estimation failed. Code: HEAD_ESTIMATION_FAILED",
+                file=sys.stderr,
+            )
             return 1
 
         # 7. Print results to stdout
-        print("Success: Complete head estimation finished successfully.")
+        print(
+            "Success: Provisional geometric head-box estimation finished successfully."
+        )
         print(
             f"  Provider: {head_result.provider_name} v{head_result.provider_version}"
         )

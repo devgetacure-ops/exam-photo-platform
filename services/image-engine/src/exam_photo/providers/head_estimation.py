@@ -2,7 +2,7 @@ from enum import Enum
 from typing import Any, Dict, Optional, Protocol, runtime_checkable
 
 from PIL import Image
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from exam_photo.models.geometry import BoundingBox, Landmarks
 from exam_photo.providers.face_detection import FaceDetection
@@ -15,12 +15,27 @@ class BoundaryVisibilityValue(str, Enum):
     NOT_APPLICABLE = "not_applicable"
 
 
+class BoundaryBasis(str, Enum):
+    OBSERVED = "observed"
+    LANDMARK_INFERRED = "landmark_inferred"
+    GEOMETRY_INFERRED = "geometry_inferred"
+    UNSUPPORTED = "unsupported"
+
+
+class ProviderStatusValue(str, Enum):
+    SUCCESS = "success"
+    FAILED = "failed"
+    UNAVAILABLE = "unavailable"
+
+
 class BoundaryAssessment(BaseModel):
+    model_config = ConfigDict(extra="forbid")
     state: BoundaryVisibilityValue
-    basis: str  # observed | landmark_inferred | geometry_inferred | unsupported
+    basis: BoundaryBasis
 
 
 class HeadBoundaryVisibility(BaseModel):
+    model_config = ConfigDict(extra="forbid")
     top_hair_boundary: BoundaryAssessment
     left_head_boundary: BoundaryAssessment
     right_head_boundary: BoundaryAssessment
@@ -134,8 +149,9 @@ class ClippingFindingValue(str, Enum):
 
 
 class HeadClippingFinding(BaseModel):
+    model_config = ConfigDict(extra="forbid")
     status: ClippingFindingValue
-    confidence: float
+    confidence: float = Field(ge=0.0, le=1.0)
     basis: str
     image_edge_distance: Optional[float] = None
     related_boundary: str
@@ -143,6 +159,7 @@ class HeadClippingFinding(BaseModel):
 
 
 class HeadClippingAssessment(BaseModel):
+    model_config = ConfigDict(extra="forbid")
     top_hair: HeadClippingFinding
     left_side: HeadClippingFinding
     right_side: HeadClippingFinding
@@ -151,17 +168,18 @@ class HeadClippingAssessment(BaseModel):
 
 
 class HeadEstimationResult(BaseModel):
+    model_config = ConfigDict(extra="forbid")
     provider_name: str
     provider_version: str
     method: str
     face_detection_reference: Optional[FaceDetection] = None
     head_bounding_box: BoundingBox  # Canonical pixel-space BoundingBox
-    confidence: float
+    confidence: float = Field(ge=0.0, le=1.0)
     confidence_basis: str
     boundary_visibility: HeadBoundaryVisibility
     clipping_assessment: HeadClippingAssessment
     warnings: list[str]
-    provider_status: str
+    provider_status: ProviderStatusValue
     processing_duration: float
     safe_internal_metadata: Optional[Dict[str, Any]] = None
 
@@ -202,45 +220,19 @@ class HeadEstimationResult(BaseModel):
                 )
             if "estimation_method" in data and "method" not in data:
                 data["method"] = data["estimation_method"]
-            if "provider_name" not in data:
-                data["provider_name"] = "FakeHeadEstimator"
-            if "provider_status" not in data:
-                data["provider_status"] = "success"
-            if "confidence_basis" not in data:
-                data["confidence_basis"] = "fake"
-            if "processing_duration" not in data:
-                data["processing_duration"] = 0.0
-            if "clipping_assessment" not in data:
-                not_clip = {
-                    "status": ClippingFindingValue.NOT_DETECTED,
-                    "confidence": 1.0,
-                    "basis": "fake",
-                    "related_boundary": "none",
-                }
-                data["clipping_assessment"] = {
-                    "top_hair": not_clip,
-                    "left_side": not_clip,
-                    "right_side": not_clip,
-                    "chin": not_clip,
-                    "lower_beard": not_clip,
-                }
             return data
         return data
 
 
 class HeadEstimationConfig(BaseModel):
+    model_config = ConfigDict(extra="forbid")
     top_expansion_ratio: float = Field(default=0.6, ge=0.0)
     side_expansion_ratio: float = Field(default=0.25, ge=0.0)
     lower_expansion_ratio: float = Field(default=0.35, ge=0.0)
-    beard_allowance_ratio: float = Field(default=0.15, ge=0.0)
-    maximum_expansion_ratio: float = Field(default=3.0, gt=1.0)
-    image_edge_clipping_threshold: float = Field(default=5.0, ge=0.0)
+    lower_margin_ratio: float = Field(default=0.15, ge=0.0)
     minimum_face_confidence: float = Field(default=0.5, ge=0.0, le=1.0)
-    minimum_landmark_confidence: float = Field(default=0.5, ge=0.0, le=1.0)
     min_aspect_ratio: float = Field(default=0.5, gt=0.0)
     max_aspect_ratio: float = Field(default=2.0, gt=0.0)
-    landmark_fallback_policy: str = "allow_fallback"  # allow_fallback | reject_missing
-    debug_output_policy: str = "disabled"
 
 
 @runtime_checkable

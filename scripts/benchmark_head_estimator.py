@@ -84,6 +84,11 @@ def main() -> None:
         default=5,
         help="Number of warm-up runs (default: 5).",
     )
+    parser.add_argument(
+        "--require-real",
+        action="store_true",
+        help="Fail if any real fixture is missing or face detection fails.",
+    )
     args = parser.parse_args()
 
     # Load annotations
@@ -137,12 +142,16 @@ def main() -> None:
         landmarks = None
 
         if is_real:
-            # Load real image
-            img_path = _REPO_ROOT / "services" / "image-engine" / "tests" / "fixtures" / name
-            if not img_path.exists():
-                img_path = _REPO_ROOT / "tests" / "fixtures" / name
+            # Load real image from canonical path
+            img_path = _REPO_ROOT / "tests" / "fixtures" / name
             
-            if img_path.exists() and detector is not None:
+            if args.require_real:
+                if not img_path.exists():
+                    print(f"Error: Required real fixture image '{name}' missing at '{img_path}'", file=sys.stderr)
+                    sys.exit(1)
+                if detector is None:
+                    print("Error: Face detector is required for --require-real but not available.", file=sys.stderr)
+                    sys.exit(1)
                 try:
                     limits = InputLimits()
                     with open(img_path, "rb") as fh:
@@ -150,18 +159,38 @@ def main() -> None:
                     norm_res = normalize_image_input(bytes_data, str(img_path), limits)
                     image = norm_res.image
                     face_res = detector.detect_faces(image)
-                    if face_res.detections:
-                        face = face_res.detections[0]
-                        landmarks = face.landmarks
-                        if name == "single_face_frontal.jpg":
-                            real_bench_image = image
-                            real_bench_face = face
-                            real_bench_landmarks = landmarks
+                    if not face_res.detections:
+                        print(f"Error: Face detection failed on required real fixture '{name}' (no faces detected).", file=sys.stderr)
+                        sys.exit(1)
+                    face = face_res.detections[0]
+                    landmarks = face.landmarks
+                    if name == "single_face_frontal.jpg":
+                        real_bench_image = image
+                        real_bench_face = face
+                        real_bench_landmarks = landmarks
                 except Exception as ex:
-                    print(f"Skipping real image {name} due to error: {ex}")
+                    print(f"Error processing real fixture '{name}': {ex}", file=sys.stderr)
+                    sys.exit(1)
             else:
-                # Fallback to simulated detections for the real image if detector or image is missing
-                is_real = False
+                if img_path.exists() and detector is not None:
+                    try:
+                        limits = InputLimits()
+                        with open(img_path, "rb") as fh:
+                            bytes_data = fh.read()
+                        norm_res = normalize_image_input(bytes_data, str(img_path), limits)
+                        image = norm_res.image
+                        face_res = detector.detect_faces(image)
+                        if face_res.detections:
+                            face = face_res.detections[0]
+                            landmarks = face.landmarks
+                            if name == "single_face_frontal.jpg":
+                                real_bench_image = image
+                                real_bench_face = face
+                                real_bench_landmarks = landmarks
+                    except Exception as ex:
+                        print(f"Skipping real image {name} due to error: {ex}")
+                else:
+                    is_real = False
 
         if not is_real:
             # Create synthetic blank image

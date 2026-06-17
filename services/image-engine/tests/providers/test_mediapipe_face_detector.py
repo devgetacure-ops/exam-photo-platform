@@ -27,16 +27,14 @@ from PIL import Image, ImageDraw
 # ---------------------------------------------------------------------------
 
 try:
-    import mediapipe  # noqa: F401
+    import mediapipe  # type: ignore[import-untyped]  # noqa: F401
 
     _MEDIAPIPE_INSTALLED = True
+
 except ImportError:
     _MEDIAPIPE_INSTALLED = False
 
-requires_mediapipe = pytest.mark.skipif(
-    not _MEDIAPIPE_INSTALLED,
-    reason="mediapipe not installed — run: pip install -e '.[face]'",
-)
+from tests.helpers.fixtures import FIXTURES_DIR
 
 _MODEL_PATH_ENV = "EXAM_PHOTO_FACE_MODEL_PATH"
 _MODEL_PATH: Optional[Path] = (
@@ -47,16 +45,37 @@ _MODEL_PATH: Optional[Path] = (
 _MODEL_SHA256_ENV = "EXAM_PHOTO_FACE_MODEL_SHA256"
 _MODEL_SHA256: str = os.environ.get(_MODEL_SHA256_ENV, "")
 
-requires_model = pytest.mark.skipif(
-    _MODEL_PATH is None,
-    reason=(
-        f"Model asset not available. Set {_MODEL_PATH_ENV}=<path/to/model.task> "
-        f"and {_MODEL_SHA256_ENV}=<sha256> to run inference tests."
-    ),
-)
+_IS_CI = os.environ.get("CI") == "true" or os.environ.get("GITHUB_ACTIONS") == "true"
 
-# Fixture image directory (relative to image-engine root)
-_FIXTURES = Path(__file__).parent.parent / "fixtures"
+if _IS_CI:
+    if not _MEDIAPIPE_INSTALLED:
+        raise RuntimeError("MediaPipe must be installed in CI.")
+    if _MODEL_PATH is None:
+        raise RuntimeError(
+            f"Face detection model path must be set via {_MODEL_PATH_ENV} in CI, and the file must exist."
+        )
+
+    def requires_mediapipe(f):
+        return f
+
+    def requires_model(f):
+        return f
+else:
+    requires_mediapipe = pytest.mark.skipif(
+        not _MEDIAPIPE_INSTALLED,
+        reason="mediapipe not installed — run: pip install -e '.[face]'",
+    )
+    requires_model = pytest.mark.skipif(
+        _MODEL_PATH is None,
+        reason=(
+            f"Model asset not available. Set {_MODEL_PATH_ENV}=<path/to/model.task> "
+            f"and {_MODEL_SHA256_ENV}=<sha256> to run inference tests."
+        ),
+    )
+
+
+# Fixture image directory
+_FIXTURES = FIXTURES_DIR
 
 
 # ---------------------------------------------------------------------------
@@ -82,6 +101,10 @@ def _make_geometric_image(width: int = 600, height: int = 800) -> Image.Image:
 def _load_fixture(name: str) -> Optional[Image.Image]:
     path = _FIXTURES / name
     if not path.exists():
+        if _IS_CI:
+            raise FileNotFoundError(
+                f"Fixture '{name}' is missing at canonical path '{path}'. It is required in CI."
+            )
         return None
     return Image.open(path).copy()
 
@@ -484,3 +507,87 @@ def test_no_absolute_model_path_in_output() -> None:
     assert str(_MODEL_PATH) not in result_str, (
         "Local model file path found in FaceDetectionResult output"
     )
+
+
+# ---------------------------------------------------------------------------
+# 19. Constructor validation and parameter configuration
+# ---------------------------------------------------------------------------
+
+
+@requires_mediapipe
+def test_constructor_parameter_validation() -> None:
+    """Validate constructor parameters for MediapipeFaceDetector."""
+    from exam_photo.providers.mediapipe_face_detector import MediapipeFaceDetector
+
+    # Invalid confidence
+    with pytest.raises(ValueError, match="min_detection_confidence"):
+        MediapipeFaceDetector(Path("dummy.task"), "", min_detection_confidence=-0.1)
+    with pytest.raises(ValueError, match="min_detection_confidence"):
+        MediapipeFaceDetector(Path("dummy.task"), "", min_detection_confidence=1.1)
+
+    # Invalid NMS threshold
+    with pytest.raises(ValueError, match="min_suppression_threshold"):
+        MediapipeFaceDetector(Path("dummy.task"), "", min_suppression_threshold=-0.1)
+    with pytest.raises(ValueError, match="min_suppression_threshold"):
+        MediapipeFaceDetector(Path("dummy.task"), "", min_suppression_threshold=1.5)
+
+    # Invalid max_num_faces
+    with pytest.raises(ValueError, match="max_num_faces"):
+        MediapipeFaceDetector(Path("dummy.task"), "", max_num_faces=0)
+    with pytest.raises(ValueError, match="max_num_faces"):
+        MediapipeFaceDetector(Path("dummy.task"), "", max_num_faces=-5)
+
+
+# ---------------------------------------------------------------------------
+# 20. Per-call overrides and validations
+# ---------------------------------------------------------------------------
+
+
+@requires_mediapipe
+@requires_model
+def test_detect_faces_config_overrides() -> None:
+    """Validate detect_faces per-call overrides and their validation."""
+    with _provider() as det:
+        # Invalid overrides
+        with pytest.raises(ValueError, match="min_detection_confidence"):
+            det.detect_faces(_make_blank_image(), {"min_detection_confidence": -0.5})
+        with pytest.raises(ValueError, match="min_suppression_threshold"):
+            det.detect_faces(_make_blank_image(), {"min_suppression_threshold": 1.2})
+        with pytest.raises(ValueError, match="max_num_faces"):
+            det.detect_faces(_make_blank_image(), {"max_num_faces": 0})
+
+        # Valid overrides (verify they run without crash)
+        res = det.detect_faces(
+            _make_blank_image(),
+            {
+                "min_detection_confidence": 0.8,
+                "min_suppression_threshold": 0.4,
+                "max_num_faces": 2,
+            },
+        )
+        assert len(res.detections) == 0
+
+
+# ---------------------------------------------------------------------------
+# 21. Metadata cleanup & sorting order
+# ---------------------------------------------------------------------------
+
+
+@requires_mediapipe
+@requires_model
+def test_metadata_cleanup_and_sorting_order() -> None:
+    """Verify that detections have no provider_metadata and are sorted by confidence."""
+    image = _load_fixture("multiple_faces.jpg")
+    if image is None:
+        pytest.skip("multiple_faces.jpg missing")
+
+    # Enforce limit of 2 and verify they are sorted by confidence descending
+    with _provider(confidence=0.3) as det:
+        res = det.detect_faces(image, {"max_num_faces": 2})
+
+    assert len(res.detections) <= 2
+    if len(res.detections) >= 2:
+        assert res.detections[0].confidence >= res.detections[1].confidence
+
+    for det_result in res.detections:
+        assert det_result.provider_metadata is None

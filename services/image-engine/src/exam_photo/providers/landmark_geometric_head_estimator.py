@@ -7,6 +7,7 @@ from exam_photo.models.geometry import BoundingBox, Landmarks
 from exam_photo.providers.face_detection import FaceDetection
 from exam_photo.providers.head_estimation import (
     BoundaryAssessment,
+    BoundaryBasis,
     BoundaryVisibilityValue,
     ClippingFindingValue,
     HeadBoundaryVisibility,
@@ -14,7 +15,9 @@ from exam_photo.providers.head_estimation import (
     HeadClippingFinding,
     HeadEstimationConfig,
     HeadEstimationResult,
+    ProviderStatusValue,
 )
+
 
 
 class LandmarkGeometricHeadEstimator:
@@ -71,12 +74,12 @@ class LandmarkGeometricHeadEstimator:
         side_exp = face_w * cfg.side_expansion_ratio
 
         # Determine boundaries and bases
-        top_basis = "geometry_inferred"
-        left_basis = "geometry_inferred"
-        right_basis = "geometry_inferred"
-        chin_basis = "geometry_inferred"
-        beard_basis = "unsupported"
-        ear_basis = "unsupported"
+        top_basis = BoundaryBasis.GEOMETRY_INFERRED
+        left_basis = BoundaryBasis.GEOMETRY_INFERRED
+        right_basis = BoundaryBasis.GEOMETRY_INFERRED
+        chin_basis = BoundaryBasis.GEOMETRY_INFERRED
+        beard_basis = BoundaryBasis.UNSUPPORTED
+        ear_basis = BoundaryBasis.UNSUPPORTED
 
         # Side boundaries (Left / Right)
         left_val = face_box.left - side_exp
@@ -98,8 +101,8 @@ class LandmarkGeometricHeadEstimator:
             ):
                 left_val = left_tragion.x - (face_w * 0.15)
                 right_val = right_tragion.x + (face_w * 0.15)
-                left_basis = "landmark_inferred"
-                right_basis = "landmark_inferred"
+                left_basis = BoundaryBasis.LANDMARK_INFERRED
+                right_basis = BoundaryBasis.LANDMARK_INFERRED
 
         # Top boundary (Crown of Head)
         top_val = face_box.top - top_exp
@@ -116,11 +119,12 @@ class LandmarkGeometricHeadEstimator:
             mouth = landmarks.custom_landmarks["mouth_center"]
             if mouth.y > face_box.top and mouth.y < img_h:
                 bottom_val = mouth.y + face_h * cfg.lower_expansion_ratio
-                chin_basis = "landmark_inferred"
+                chin_basis = BoundaryBasis.LANDMARK_INFERRED
 
-        # Apply beard allowance if configured
-        if cfg.beard_allowance_ratio > 0:
-            bottom_val += face_h * cfg.beard_allowance_ratio
+
+        # Apply generic lower chin margin if configured
+        if cfg.lower_margin_ratio > 0:
+            bottom_val += face_h * cfg.lower_margin_ratio
 
         # 4. Containment Constraints (Head box must contain face box)
         head_left = min(left_val, face_box.left)
@@ -212,27 +216,12 @@ class LandmarkGeometricHeadEstimator:
             lower_beard=clip_beard,
         )
 
-        # Boundary visibility tri-states
-        top_hair_state = (
-            BoundaryVisibilityValue.NOT_VISIBLE
-            if clip_top.status == ClippingFindingValue.SUSPECTED
-            else BoundaryVisibilityValue.UNKNOWN
-        )
-        left_head_state = (
-            BoundaryVisibilityValue.NOT_VISIBLE
-            if clip_left.status == ClippingFindingValue.SUSPECTED
-            else BoundaryVisibilityValue.UNKNOWN
-        )
-        right_head_state = (
-            BoundaryVisibilityValue.NOT_VISIBLE
-            if clip_right.status == ClippingFindingValue.SUSPECTED
-            else BoundaryVisibilityValue.UNKNOWN
-        )
-        chin_state = (
-            BoundaryVisibilityValue.NOT_VISIBLE
-            if clip_chin.status == ClippingFindingValue.SUSPECTED
-            else BoundaryVisibilityValue.UNKNOWN
-        )
+        # Boundary visibility states: a geometric heuristic cannot observe the actual boundaries,
+        # so they remain UNKNOWN even if clipping is suspected.
+        top_hair_state = BoundaryVisibilityValue.UNKNOWN
+        left_head_state = BoundaryVisibilityValue.UNKNOWN
+        right_head_state = BoundaryVisibilityValue.UNKNOWN
+        chin_state = BoundaryVisibilityValue.UNKNOWN
         lower_beard_state = BoundaryVisibilityValue.UNKNOWN
 
         visibility = HeadBoundaryVisibility(
@@ -274,8 +263,9 @@ class LandmarkGeometricHeadEstimator:
             boundary_visibility=visibility,
             clipping_assessment=clipping,
             warnings=warnings_list,
-            provider_status="success",
+            provider_status=ProviderStatusValue.SUCCESS,
             processing_duration=duration_ms,
+
             safe_internal_metadata={
                 "image_width": img_w,
                 "image_height": img_h,

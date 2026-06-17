@@ -6,8 +6,8 @@ from tests.fakes.fake_face_detector import FakeFaceDetector
 from tests.fakes.fake_head_estimator import FakeHeadEstimator
 from tests.helpers.synthetic_images import create_solid_image
 
-from exam_photo.input.normalization import NormalizationResult
 from exam_photo.input.metadata import SourceImageMetadata
+from exam_photo.input.normalization import NormalizationResult
 from exam_photo.models.geometry import BoundingBox, PoseEstimate
 from exam_photo.providers.face_detection import FaceDetection
 from exam_photo.suitability.configuration import SuitabilityThresholds
@@ -214,9 +214,10 @@ def test_head_boundary_unknown(
 # ---------------------------------------------------------------------------
 
 try:
-    import mediapipe  # noqa: F401
+    import mediapipe  # type: ignore[import-untyped]  # noqa: F401
 
     _MEDIAPIPE_INSTALLED = True
+
 except ImportError:
     _MEDIAPIPE_INSTALLED = False
 
@@ -264,3 +265,86 @@ def test_evaluator_with_real_mediapipe_no_head_provider(
         SuitabilityStatus.UNSUITABLE,
         SuitabilityStatus.INDETERMINATE,
     ), f"Unexpected status: {report.overall_status}"
+
+
+def test_multiple_faces_allowed_by_policy(
+    base_normalization_result: NormalizationResult,
+    lenient_thresholds: SuitabilityThresholds,
+) -> None:
+    # Set policy to allow
+    lenient_thresholds.multiple_face_handling_policy = "allow"
+
+    box = BoundingBox(left=0.1, top=0.1, right=0.4, bottom=0.4)
+    face1 = FaceDetection(bounding_box=box, confidence=0.9)
+    face2 = FaceDetection(bounding_box=box, confidence=0.8)
+
+    fake_face = FakeFaceDetector(detections=[face1, face2])
+    evaluator = SuitabilityEvaluator(lenient_thresholds, face_provider=fake_face)
+    report = evaluator.evaluate(base_normalization_result)
+
+    # Should not block since policy is "allow"
+    assert (
+        report.overall_status == SuitabilityStatus.INDETERMINATE
+    )  # due to missing head detector
+    assert any(
+        iss.code == SuitabilityIssueCode.SUITABILITY_MULTIPLE_FACES
+        and not iss.blocking
+        and iss.severity == "warning"
+        for iss in report.issues
+    )
+
+
+def test_shadow_and_highlight_clipping_detection(
+    base_normalization_result: NormalizationResult,
+    lenient_thresholds: SuitabilityThresholds,
+) -> None:
+    # Make thresholds strict for clipping
+    lenient_thresholds.shadow_clipping_threshold = 0.01
+    lenient_thresholds.highlight_clipping_threshold = 0.01
+
+    # Create solid black image to trigger shadow clipping (ratio = 1.0)
+    black_img = create_solid_image("RGB", (100, 100), color=(0, 0, 0))
+    norm_black = NormalizationResult(
+        image=black_img,
+        metadata=base_normalization_result.metadata,
+        warnings=[],
+    )
+
+    evaluator = SuitabilityEvaluator(lenient_thresholds)
+    report_black = evaluator.evaluate(norm_black)
+
+    assert any(
+        iss.code == SuitabilityIssueCode.SUITABILITY_UNDEREXPOSED_WARNING
+        and "shadow clipping" in iss.message
+        for iss in report_black.issues
+    )
+
+    # Create solid white image to trigger highlight clipping (ratio = 1.0)
+    white_img = create_solid_image("RGB", (100, 100), color=(255, 255, 255))
+    norm_white = NormalizationResult(
+        image=white_img,
+        metadata=base_normalization_result.metadata,
+        warnings=[],
+    )
+
+    report_white = evaluator.evaluate(norm_white)
+
+    assert any(
+        iss.code == SuitabilityIssueCode.SUITABILITY_OVEREXPOSED_WARNING
+        and "highlight clipping" in iss.message
+        for iss in report_white.issues
+    )
+
+
+def test_warnings_propagation(
+    base_normalization_result: NormalizationResult,
+    lenient_thresholds: SuitabilityThresholds,
+) -> None:
+    fake_face = FakeFaceDetector(
+        detections=[],
+        warnings=["Face detector experienced heavy camera noise warning"],
+    )
+    evaluator = SuitabilityEvaluator(lenient_thresholds, face_provider=fake_face)
+    report = evaluator.evaluate(base_normalization_result)
+
+    assert "Face detector experienced heavy camera noise warning" in report.warnings
