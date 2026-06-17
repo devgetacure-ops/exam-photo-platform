@@ -1,0 +1,113 @@
+{
+  "schema_version": "1.0",
+  "rule_id": "rule-range-002",
+  "rule_version": "1.0.0",
+  "status": "provisional",
+  "exam": {
+    "exam_id": "fictional-range-exam-2026",
+    "exam_name": "Fictional Civil Service Selection (FCSS)",
+    "aliases": ["FCSS Prelims"],
+    "conducting_body": "Fictional Recruitment Commission (FRC)",
+    "examination_year": 2026,
+    "application_cycle": "FRC-2026-B"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_notification",
+      "official_source": true,
+      "source_url": "https://example.gov.in/fcss2026/notifications.pdf",
+      "document_title": "FCSS 2026 Recruitment Notice",
+      "page_number": 22,
+      "section_name": "Appendix IV",
+      "captured_wording": "Upload photo with light background. Dimensions should be between 200px to 400px wide, and 250px to 500px high. Total size cannot exceed 100 KB. This is a fictional demonstration record and must not be used for a real examination application."
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "range",
+      "minimum_width_px": 200,
+      "maximum_width_px": 400,
+      "minimum_height_px": 250,
+      "maximum_height_px": 500,
+      "preferred_width_px": 300,
+      "preferred_height_px": 375,
+      "aspect_ratio": "4:5",
+      "aspect_ratio_policy": "fixed"
+    },
+    "file_size": {
+      "maximum_bytes": 102400,
+      "target_ceiling_ratio": 0.90,
+      "safety_margin_bytes": 4096,
+      "size_unit_as_published": "KB",
+      "published_maximum": 100.0
+    },
+    "formats": {
+      "allowed_formats": ["jpg", "jpeg", "png"],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB",
+      "extension_policy": "append_preferred"
+    },
+    "background": {
+      "mode": "plain_light",
+      "plain_background_required": true,
+      "shadows_allowed": false,
+      "gradient_allowed": false,
+      "fallback_colour": "#FFFFFF",
+      "instructions": "Plain light background requested."
+    },
+    "composition": {
+      "face_coverage_target": 75.0,
+      "face_coverage_minimum": 70.0,
+      "face_coverage_maximum": 80.0,
+      "coverage_is_strict": false,
+      "complete_hair_visible": true,
+      "ears_visible": true,
+      "chin_visible": true,
+      "beard_boundary_visible": true,
+      "face_centred": true,
+      "frontal_pose": true,
+      "eye_visibility": true
+    },
+    "filename": {
+      "mode": "unspecified",
+      "case_sensitive": false,
+      "extension_required": true,
+      "fallback_basename": "candidate_photo"
+    },
+    "exceptional_instructions": {
+      "printed_name": false,
+      "printed_date": false,
+      "signature_inclusion": false,
+      "black_and_white_restriction": false,
+      "recent_photo_requirement": true,
+      "spectacles_restriction": false,
+      "headwear_restriction": true,
+      "processing_support_status": "supported"
+    }
+  },
+  "provenance": {
+    "image_requirements.dimensions.minimum_width_px": {
+      "type": "official",
+      "evidence_reference": "https://example.gov.in/fcss2026/notifications.pdf",
+      "confidence": 5,
+      "approved": true
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "platform_default",
+      "reasoning": "Standard platform fallback to JPEG format when unspecified.",
+      "confidence": 4,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "provisional",
+    "verified_by": "qa-reviewer-02"
+  },
+  "effective_period": {
+    "effective_from": "2026-06-10"
+  },
+  "notes": "This is a fictional demonstration record and must not be used for a real examination application.",
+  "fictional_example": true
+}

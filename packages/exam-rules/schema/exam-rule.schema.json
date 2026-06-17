@@ -1,0 +1,592 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ExamRule",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "string"
+    },
+    "rule_id": {
+      "type": "string"
+    },
+    "rule_version": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "provisional",
+        "verified",
+        "verified_with_ambiguity",
+        "expired",
+        "superseded"
+      ]
+    },
+    "exam": {
+      "type": "object",
+      "properties": {
+        "exam_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9\\-]+$"
+        },
+        "exam_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "aliases": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "conducting_body": {
+          "type": "string",
+          "minLength": 1
+        },
+        "examination_year": {
+          "type": "integer",
+          "minimum": 1900
+        },
+        "application_cycle": {
+          "type": "string",
+          "minLength": 1
+        },
+        "application_stage": {
+          "type": "string"
+        },
+        "jurisdiction": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string"
+        },
+        "language_display_key": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "exam_id",
+        "exam_name",
+        "conducting_body",
+        "examination_year",
+        "application_cycle"
+      ]
+    },
+    "source_evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "source_type": {
+            "type": "string",
+            "enum": [
+              "official_webpage",
+              "official_notification",
+              "official_information_bulletin",
+              "official_application_portal",
+              "official_pdf",
+              "secondary_reference",
+              "internal_research_note"
+            ]
+          },
+          "official_source": {
+            "type": "boolean"
+          },
+          "source_url": {
+            "type": "string",
+            "pattern": "^(https?|file):\\/\\/"
+          },
+          "document_title": {
+            "type": "string"
+          },
+          "document_identifier": {
+            "type": "string"
+          },
+          "page_number": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "section_name": {
+            "type": "string"
+          },
+          "captured_wording": {
+            "type": "string"
+          },
+          "captured_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "access_checked_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "content_hash": {
+            "type": "string"
+          },
+          "evidence_notes": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "source_type",
+          "official_source",
+          "captured_wording"
+        ]
+      }
+    },
+    "image_requirements": {
+      "type": "object",
+      "properties": {
+        "dimensions": {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "type": "string",
+              "enum": [
+                "exact",
+                "range",
+                "unspecified"
+              ]
+            },
+            "width_px": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "height_px": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "aspect_ratio": {
+              "type": "string",
+              "pattern": "^[0-9]+:[0-9]+$"
+            },
+            "minimum_width_px": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "maximum_width_px": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "minimum_height_px": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "maximum_height_px": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "preferred_width_px": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "preferred_height_px": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "aspect_ratio_policy": {
+              "type": "string",
+              "enum": [
+                "fixed",
+                "flexible",
+                "derived",
+                "none"
+              ]
+            },
+            "platform_default_profile": {
+              "type": "string"
+            },
+            "permitted_pixel_range": {
+              "type": "string"
+            },
+            "recommended_aspect_ratio": {
+              "type": "string"
+            },
+            "fallback_reason": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "mode"
+          ]
+        },
+        "file_size": {
+          "type": "object",
+          "properties": {
+            "minimum_bytes": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "maximum_bytes": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "target_ceiling_ratio": {
+              "type": "number",
+              "minimum": 0.0,
+              "maximum": 1.0
+            },
+            "safety_margin_bytes": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "size_unit_as_published": {
+              "type": "string"
+            },
+            "published_minimum": {
+              "type": "number"
+            },
+            "published_maximum": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "maximum_bytes"
+          ]
+        },
+        "formats": {
+          "type": "object",
+          "properties": {
+            "allowed_formats": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "preferred_format": {
+              "type": "string"
+            },
+            "preserve_transparency": {
+              "type": "boolean"
+            },
+            "strip_metadata": {
+              "type": "boolean"
+            },
+            "colour_space": {
+              "type": "string"
+            },
+            "extension_policy": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "allowed_formats",
+            "preferred_format"
+          ]
+        },
+        "background": {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "type": "string",
+              "enum": [
+                "exact_colour",
+                "plain_light",
+                "plain_background",
+                "unspecified"
+              ]
+            },
+            "required_colour": {
+              "type": "string",
+              "pattern": "^#([A-Fa-f0-9]{6})$"
+            },
+            "tolerance": {
+              "type": "number"
+            },
+            "plain_background_required": {
+              "type": "boolean"
+            },
+            "shadows_allowed": {
+              "type": "boolean"
+            },
+            "gradient_allowed": {
+              "type": "boolean"
+            },
+            "fallback_colour": {
+              "type": "string"
+            },
+            "instructions": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "mode"
+          ]
+        },
+        "composition": {
+          "type": "object",
+          "properties": {
+            "face_coverage_target": {
+              "type": "number",
+              "minimum": 0.0,
+              "maximum": 100.0
+            },
+            "face_coverage_minimum": {
+              "type": "number",
+              "minimum": 0.0,
+              "maximum": 100.0
+            },
+            "face_coverage_maximum": {
+              "type": "number",
+              "minimum": 0.0,
+              "maximum": 100.0
+            },
+            "coverage_is_strict": {
+              "type": "boolean",
+              "default": false
+            },
+            "complete_hair_visible": {
+              "type": "boolean"
+            },
+            "ears_visible": {
+              "type": "boolean"
+            },
+            "chin_visible": {
+              "type": "boolean"
+            },
+            "beard_boundary_visible": {
+              "type": "boolean"
+            },
+            "face_centred": {
+              "type": "boolean"
+            },
+            "frontal_pose": {
+              "type": "boolean"
+            },
+            "eye_visibility": {
+              "type": "boolean"
+            },
+            "spectacles_policy": {
+              "type": "string"
+            },
+            "headwear_policy": {
+              "type": "string"
+            },
+            "expression_policy": {
+              "type": "string"
+            },
+            "additional_instructions": {
+              "type": "string"
+            }
+          }
+        },
+        "filename": {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "type": "string",
+              "enum": [
+                "exact",
+                "pattern",
+                "unspecified"
+              ]
+            },
+            "exact_filename": {
+              "type": "string"
+            },
+            "pattern": {
+              "type": "string"
+            },
+            "allowed_characters": {
+              "type": "string"
+            },
+            "case_sensitive": {
+              "type": "boolean"
+            },
+            "extension_required": {
+              "type": "boolean"
+            },
+            "fallback_basename": {
+              "type": "string"
+            },
+            "collision_policy": {
+              "type": "string"
+            },
+            "instructions": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "mode"
+          ]
+        },
+        "exceptional_instructions": {
+          "type": "object",
+          "properties": {
+            "printed_name": {
+              "type": "boolean"
+            },
+            "printed_date": {
+              "type": "boolean"
+            },
+            "signature_inclusion": {
+              "type": "boolean"
+            },
+            "black_and_white_restriction": {
+              "type": "boolean"
+            },
+            "recent_photo_requirement": {
+              "type": "boolean"
+            },
+            "spectacles_restriction": {
+              "type": "boolean"
+            },
+            "headwear_restriction": {
+              "type": "boolean"
+            },
+            "portal_specific_note": {
+              "type": "string"
+            },
+            "processing_support_status": {
+              "type": "string",
+              "enum": [
+                "supported",
+                "partially_supported",
+                "not_yet_supported",
+                "manual_review_required"
+              ]
+            },
+            "unsupported_requirement_reasons": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "processing_support_status"
+          ]
+        }
+      },
+      "required": [
+        "dimensions",
+        "file_size",
+        "formats",
+        "background",
+        "filename",
+        "exceptional_instructions"
+      ]
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "official",
+              "inferred",
+              "platform_default"
+            ]
+          },
+          "evidence_reference": {
+            "type": "string"
+          },
+          "reasoning": {
+            "type": "string"
+          },
+          "confidence": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "approved": {
+            "type": "boolean"
+          },
+          "approval_reference": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "confidence",
+          "approved"
+        ]
+      }
+    },
+    "verification": {
+      "type": "object",
+      "properties": {
+        "verification_status": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "provisional",
+            "verified",
+            "verified_with_ambiguity",
+            "expired",
+            "superseded"
+          ]
+        },
+        "verified_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "verified_by": {
+          "type": "string"
+        },
+        "review_due_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "verification_status"
+      ]
+    },
+    "effective_period": {
+      "type": "object",
+      "properties": {
+        "effective_from": {
+          "type": "string",
+          "format": "date"
+        },
+        "effective_until": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    },
+    "supersession": {
+      "type": "object",
+      "properties": {
+        "supersedes_rule_id": {
+          "type": "string"
+        },
+        "superseded_by_rule_id": {
+          "type": "string"
+        },
+        "change_summary": {
+          "type": "string"
+        }
+      }
+    },
+    "notes": {
+      "type": "string"
+    },
+    "fictional_example": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "schema_version",
+    "rule_id",
+    "rule_version",
+    "status",
+    "exam",
+    "source_evidence",
+    "image_requirements",
+    "provenance",
+    "verification",
+    "fictional_example"
+  ]
+}

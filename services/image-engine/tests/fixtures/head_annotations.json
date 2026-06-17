@@ -1,0 +1,283 @@
+{
+  "single_face_frontal.jpg": {
+    "is_real": true,
+    "image_size": [3250, 4332],
+    "face_box": {
+      "left": 956.0,
+      "top": 925.0,
+      "right": 2268.0,
+      "bottom": 2490.0
+    },
+    "landmarks": {
+      "left_eye": {
+        "x": 1350.0,
+        "y": 1400.0
+      },
+      "right_eye": {
+        "x": 1850.0,
+        "y": 1400.0
+      },
+      "custom_landmarks": {
+        "mouth_center": {
+          "x": 1600.0,
+          "y": 1950.0
+        },
+        "left_ear_tragion": {
+          "x": 800.0,
+          "y": 1600.0
+        },
+        "right_ear_tragion": {
+          "x": 2400.0,
+          "y": 1600.0
+        }
+      }
+    },
+    "ground_truth_head_box": {
+      "left": 591.8,
+      "top": 84.6,
+      "right": 2632.2,
+      "bottom": 3405.0
+    },
+    "expected_clipping": {
+      "top_hair": "not_detected",
+      "left_side": "not_detected",
+      "right_side": "not_detected",
+      "chin": "not_detected"
+    }
+  },
+  "head_close_to_top": {
+    "is_real": false,
+    "image_size": [600, 800],
+    "face_box": {
+      "left": 200.0,
+      "top": 50.0,
+      "right": 400.0,
+      "bottom": 250.0
+    },
+    "landmarks": {
+      "left_eye": {
+        "x": 260.0,
+        "y": 110.0
+      },
+      "right_eye": {
+        "x": 340.0,
+        "y": 110.0
+      },
+      "custom_landmarks": {
+        "mouth_center": {
+          "x": 300.0,
+          "y": 190.0
+        }
+      }
+    },
+    "ground_truth_head_box": {
+      "left": 150.0,
+      "top": 0.0,
+      "right": 450.0,
+      "bottom": 290.0
+    },
+    "expected_clipping": {
+      "top_hair": "suspected",
+      "left_side": "not_detected",
+      "right_side": "not_detected",
+      "chin": "not_detected"
+    }
+  },
+  "chin_close_to_bottom": {
+    "is_real": false,
+    "image_size": [600, 800],
+    "face_box": {
+      "left": 200.0,
+      "top": 570.0,
+      "right": 400.0,
+      "bottom": 770.0
+    },
+    "landmarks": {
+      "left_eye": {
+        "x": 260.0,
+        "y": 630.0
+      },
+      "right_eye": {
+        "x": 340.0,
+        "y": 630.0
+      },
+      "custom_landmarks": {
+        "mouth_center": {
+          "x": 300.0,
+          "y": 730.0
+        }
+      }
+    },
+    "ground_truth_head_box": {
+      "left": 150.0,
+      "top": 450.0,
+      "right": 450.0,
+      "bottom": 800.0
+    },
+    "expected_clipping": {
+      "top_hair": "not_detected",
+      "left_side": "not_detected",
+      "right_side": "not_detected",
+      "chin": "suspected"
+    }
+  },
+  "long_voluminous_hair": {
+    "is_real": false,
+    "image_size": [600, 800],
+    "face_box": {
+      "left": 200.0,
+      "top": 300.0,
+      "right": 400.0,
+      "bottom": 500.0
+    },
+    "landmarks": {
+      "left_eye": {
+        "x": 260.0,
+        "y": 360.0
+      },
+      "right_eye": {
+        "x": 340.0,
+        "y": 360.0
+      },
+      "custom_landmarks": {
+        "mouth_center": {
+          "x": 300.0,
+          "y": 440.0
+        }
+      }
+    },
+    "config": {
+      "top_expansion_ratio": 0.8,
+      "side_expansion_ratio": 0.4
+    },
+    "ground_truth_head_box": {
+      "left": 120.0,
+      "top": 140.0,
+      "right": 480.0,
+      "bottom": 540.0
+    },
+    "expected_clipping": {
+      "top_hair": "not_detected",
+      "left_side": "not_detected",
+      "right_side": "not_detected",
+      "chin": "not_detected"
+    }
+  },
+  "beard": {
+    "is_real": false,
+    "image_size": [600, 800],
+    "face_box": {
+      "left": 200.0,
+      "top": 300.0,
+      "right": 400.0,
+      "bottom": 500.0
+    },
+    "landmarks": {
+      "left_eye": {
+        "x": 260.0,
+        "y": 360.0
+      },
+      "right_eye": {
+        "x": 340.0,
+        "y": 360.0
+      },
+      "custom_landmarks": {
+        "mouth_center": {
+          "x": 300.0,
+          "y": 440.0
+        }
+      }
+    },
+    "config": {
+      "beard_allowance_ratio": 0.2
+    },
+    "ground_truth_head_box": {
+      "left": 150.0,
+      "top": 180.0,
+      "right": 450.0,
+      "bottom": 550.0
+    },
+    "expected_clipping": {
+      "top_hair": "not_detected",
+      "left_side": "not_detected",
+      "right_side": "not_detected",
+      "chin": "not_detected"
+    }
+  },
+  "ears_hidden_by_hair": {
+    "is_real": false,
+    "image_size": [600, 800],
+    "face_box": {
+      "left": 200.0,
+      "top": 300.0,
+      "right": 400.0,
+      "bottom": 500.0
+    },
+    "landmarks": {
+      "left_eye": {
+        "x": 260.0,
+        "y": 360.0
+      },
+      "right_eye": {
+        "x": 340.0,
+        "y": 360.0
+      },
+      "custom_landmarks": {
+        "mouth_center": {
+          "x": 300.0,
+          "y": 440.0
+        }
+      }
+    },
+    "ground_truth_head_box": {
+      "left": 150.0,
+      "top": 180.0,
+      "right": 450.0,
+      "bottom": 540.0
+    },
+    "expected_clipping": {
+      "top_hair": "not_detected",
+      "left_side": "not_detected",
+      "right_side": "not_detected",
+      "chin": "not_detected"
+    }
+  },
+  "head_covering": {
+    "is_real": false,
+    "image_size": [600, 800],
+    "face_box": {
+      "left": 200.0,
+      "top": 300.0,
+      "right": 400.0,
+      "bottom": 500.0
+    },
+    "landmarks": {
+      "left_eye": {
+        "x": 260.0,
+        "y": 360.0
+      },
+      "right_eye": {
+        "x": 340.0,
+        "y": 360.0
+      },
+      "custom_landmarks": {
+        "mouth_center": {
+          "x": 300.0,
+          "y": 440.0
+        }
+      }
+    },
+    "ground_truth_head_box": {
+      "left": 150.0,
+      "top": 180.0,
+      "right": 450.0,
+      "bottom": 540.0
+    },
+    "expected_clipping": {
+      "top_hair": "not_detected",
+      "left_side": "not_detected",
+      "right_side": "not_detected",
+      "chin": "not_detected"
+    }
+  }
+}

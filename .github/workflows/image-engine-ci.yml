@@ -1,0 +1,49 @@
+name: Image Engine CI
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main, dev ]
+
+jobs:
+  check-format-lint-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e services/image-engine[dev,face]
+
+    - name: Run Ruff format check
+      run: |
+        ruff format --check services/image-engine
+
+    - name: Run Ruff lint check
+      run: |
+        ruff check services/image-engine
+
+    - name: Run Mypy type check
+      run: |
+        mypy services/image-engine/src services/image-engine/tests
+
+    - name: Download Model Asset
+      run: |
+        python scripts/download_model.py --variant short_range --yes
+
+    - name: Run Pytest
+      env:
+        EXAM_PHOTO_FACE_MODEL_PATH: model-assets/blaze_face_short_range.tflite
+        EXAM_PHOTO_FACE_MODEL_SHA256: b4578f35940bf5a1a655214a1cce5cab13eba73c1297cd78e1a04c2380b0152f
+      run: |
+        pytest services/image-engine

@@ -1,0 +1,61 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "exam-photo-engine"
+version = "0.1.0"
+description = "Indian Exam-Photo Compliance image engine"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Proprietary" }
+authors = [
+    { name = "Indian Exam Photo compliance Platform team" }
+]
+classifiers = [
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Private :: Do Not Upload",
+]
+dependencies = [
+    "Pillow>=10.0.0",
+    "pydantic>=2.0.0",
+    "jsonschema>=4.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "mypy>=1.8.0",
+    "ruff>=0.3.0",
+    "types-Pillow>=10.0.0",
+]
+# Face-detection extra: install with  pip install -e ".[dev,face]"
+# Tests that require a real model are skipped unless EXAM_PHOTO_FACE_MODEL_PATH is set.
+face = [
+    "mediapipe~=0.10.35",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/exam_photo"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+src = ["src"]
+
+[tool.ruff.lint]
+select = ["E", "F", "B", "I", "N"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+show_error_codes = true
+
+[[tool.mypy.overrides]]
+module = "mediapipe.*"
+ignore_missing_imports = true
+

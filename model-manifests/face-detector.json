@@ -1,0 +1,42 @@
+{
+  "_comment": "Model manifest for the MediaPipe BlazeFace face-detection model assets. Both variants have been downloaded and verified. Baseline variant is set after benchmarking.",
+  "name": "BlazeFace",
+  "variant": "short_range",
+  "mediapipe_version_tested": "0.10.35",
+  "model_format": "tflite",
+  "_note_on_format": "MediaPipe Tasks Python API (FaceDetector) accepts .tflite files via model_asset_path. The .task container format was not available at confirmed public download URLs at the time of Milestone 5 implementation.",
+  "variants": {
+    "short_range": {
+      "filename": "blaze_face_short_range.tflite",
+      "source_url": "https://storage.googleapis.com/mediapipe-models/face_detector/blaze_face_short_range/float16/1/blaze_face_short_range.tflite",
+      "sha256": "b4578f35940bf5a1a655214a1cce5cab13eba73c1297cd78e1a04c2380b0152f",
+      "size_bytes": 229746,
+      "description": "Optimised for close-range selfie-style images. Best for faces occupying a large portion of the frame.",
+      "licence": "Apache-2.0",
+      "model_card_url": "https://ai.google.dev/edge/mediapipe/solutions/vision/face_detector#models",
+      "licence_url": "https://www.apache.org/licenses/LICENSE-2.0",
+      "redistribution_notes": "Licensed under the Apache License 2.0. Suitable for redistribution and commercial use."
+    },
+    "full_range": {
+      "filename": "blaze_face_full_range.tflite",
+      "source_url": "https://storage.googleapis.com/mediapipe-models/face_detector/blaze_face_full_range/float16/1/blaze_face_full_range.tflite",
+      "sha256": "3698b18f063835bc609069ef052228fbe86d9c9a6dc8dcb7c7c2d69aed2b181b",
+      "size_bytes": 1083786,
+      "description": "Designed for faces occupying a smaller portion of the frame (half-body, group photos). Note: Incompatible with the python Tasks FaceDetector API.",
+      "licence": "Apache-2.0",
+      "model_card_url": "https://ai.google.dev/edge/mediapipe/solutions/vision/face_detector#models",
+      "licence_url": "https://www.apache.org/licenses/LICENSE-2.0",
+      "redistribution_notes": "Licensed under the Apache License 2.0. Suitable for redistribution and commercial use."
+    }
+  },
+  "local_model_path_env_var": "EXAM_PHOTO_FACE_MODEL_PATH",
+  "local_model_sha256_env_var": "EXAM_PHOTO_FACE_MODEL_SHA256",
+  "local_model_path_default": "model-assets\\blaze_face_short_range.tflite",
+  "baseline_selection_status": "COMPLETED_BENCHMARK",
+  "source_url": "https://storage.googleapis.com/mediapipe-models/face_detector/blaze_face_short_range/float16/1/blaze_face_short_range.tflite",
+  "sha256": "b4578f35940bf5a1a655214a1cce5cab13eba73c1297cd78e1a04c2380b0152f",
+  "size_bytes": 229746,
+  "licence": "Apache-2.0 (PENDING independent model-card verification)",
+  "licence_url": "https://www.apache.org/licenses/LICENSE-2.0",
+  "model_card_url": "https://ai.google.dev/edge/mediapipe/solutions/vision/face_detector#models"
+}

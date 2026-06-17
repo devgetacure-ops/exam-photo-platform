@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0",
+  "rule_id": "test-invalid-evidence",
+  "rule_version": "1.0.0",
+  "status": "verified",
+  "exam": {
+    "exam_id": "test-exam",
+    "exam_name": "Test Exam",
+    "conducting_body": "Testing Body",
+    "examination_year": 2026,
+    "application_cycle": "Cycle-1"
+  },
+  "source_evidence": [],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "unspecified",
+      "platform_default_profile": "standard",
+      "fallback_reason": "Testing unspecified defaults."
+    },
+    "file_size": {
+      "maximum_bytes": 20000
+    },
+    "formats": {
+      "allowed_formats": ["jpg", "jpeg"],
+      "preferred_format": "jpeg"
+    },
+    "background": {
+      "mode": "plain_light"
+    },
+    "composition": {},
+    "filename": {
+      "mode": "unspecified"
+    },
+    "exceptional_instructions": {
+      "processing_support_status": "supported"
+    }
+  },
+  "provenance": {
+    "image_requirements.file_size.maximum_bytes": {
+      "type": "official",
+      "evidence_reference": "Test Notification",
+      "confidence": 5,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "verified"
+  },
+  "fictional_example": true
+}

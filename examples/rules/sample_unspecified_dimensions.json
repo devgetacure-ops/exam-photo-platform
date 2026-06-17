@@ -1,0 +1,107 @@
+{
+  "schema_version": "1.0",
+  "rule_id": "rule-unspecified-003",
+  "rule_version": "1.0.0",
+  "status": "provisional",
+  "exam": {
+    "exam_id": "fictional-unspecified-exam-2026",
+    "exam_name": "Fictional General Entrance Exam (FGEE)",
+    "aliases": ["FGEE Main"],
+    "conducting_body": "Fictional Testing Agency (FTA)",
+    "examination_year": 2026,
+    "application_cycle": "FTA-2026-C"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_webpage",
+      "official_source": true,
+      "source_url": "https://example.gov.in/fgee2026/faq.html",
+      "document_title": "FGEE 2026 Frequently Asked Questions",
+      "page_number": 1,
+      "section_name": "FAQ #9",
+      "captured_wording": "Please upload a clear, front-facing passport photograph under 20 KB. This is a fictional demonstration record and must not be used for a real examination application."
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "unspecified",
+      "platform_default_profile": "standard_passport_350_450",
+      "fallback_reason": "No dimensions specified in the bulletin notice FAQ."
+    },
+    "file_size": {
+      "maximum_bytes": 20480,
+      "target_ceiling_ratio": 0.90,
+      "safety_margin_bytes": 1024,
+      "size_unit_as_published": "KB",
+      "published_maximum": 20.0
+    },
+    "formats": {
+      "allowed_formats": ["jpg", "jpeg"],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB",
+      "extension_policy": "strip_and_append"
+    },
+    "background": {
+      "mode": "unspecified",
+      "plain_background_required": true,
+      "shadows_allowed": false,
+      "gradient_allowed": false,
+      "fallback_colour": "#FFFFFF",
+      "instructions": "No background color specified. Defaults to white."
+    },
+    "composition": {
+      "face_coverage_target": 75.0,
+      "face_coverage_minimum": 70.0,
+      "face_coverage_maximum": 80.0,
+      "coverage_is_strict": false,
+      "complete_hair_visible": true,
+      "ears_visible": true,
+      "chin_visible": true,
+      "beard_boundary_visible": true,
+      "face_centred": true,
+      "frontal_pose": true,
+      "eye_visibility": true
+    },
+    "filename": {
+      "mode": "unspecified",
+      "case_sensitive": false,
+      "extension_required": true,
+      "fallback_basename": "candidate_photo"
+    },
+    "exceptional_instructions": {
+      "printed_name": false,
+      "printed_date": false,
+      "signature_inclusion": false,
+      "black_and_white_restriction": false,
+      "recent_photo_requirement": true,
+      "spectacles_restriction": false,
+      "headwear_restriction": true,
+      "processing_support_status": "supported"
+    }
+  },
+  "provenance": {
+    "image_requirements.file_size.maximum_bytes": {
+      "type": "official",
+      "evidence_reference": "https://example.gov.in/fgee2026/faq.html",
+      "confidence": 5,
+      "approved": true
+    },
+    "image_requirements.dimensions.platform_default_profile": {
+      "type": "platform_default",
+      "reasoning": "Fallback profile standard selected due to blank dimension specifications.",
+      "confidence": 4,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "provisional",
+    "verified_by": "qa-reviewer-03"
+  },
+  "effective_period": {
+    "effective_from": "2026-06-12"
+  },
+  "notes": "This is a fictional demonstration record and must not be used for a real examination application.",
+  "fictional_example": true
+}

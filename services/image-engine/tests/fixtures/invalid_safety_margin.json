@@ -1,0 +1,57 @@
+{
+  "schema_version": "1.0",
+  "rule_id": "test-invalid-margin",
+  "rule_version": "1.0.0",
+  "status": "provisional",
+  "exam": {
+    "exam_id": "test-exam",
+    "exam_name": "Test Exam",
+    "conducting_body": "Testing Body",
+    "examination_year": 2026,
+    "application_cycle": "Cycle-1"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_notification",
+      "official_source": true,
+      "captured_wording": "Invalid safety margin."
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "unspecified",
+      "platform_default_profile": "standard",
+      "fallback_reason": "Testing unspecified defaults."
+    },
+    "file_size": {
+      "maximum_bytes": 20000,
+      "safety_margin_bytes": 25000
+    },
+    "formats": {
+      "allowed_formats": ["jpg", "jpeg"],
+      "preferred_format": "jpeg"
+    },
+    "background": {
+      "mode": "plain_light"
+    },
+    "composition": {},
+    "filename": {
+      "mode": "unspecified"
+    },
+    "exceptional_instructions": {
+      "processing_support_status": "supported"
+    }
+  },
+  "provenance": {
+    "image_requirements.file_size.maximum_bytes": {
+      "type": "official",
+      "evidence_reference": "Test Notification",
+      "confidence": 5,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "provisional"
+  },
+  "fictional_example": true
+}

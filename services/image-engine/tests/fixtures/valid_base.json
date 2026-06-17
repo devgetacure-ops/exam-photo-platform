@@ -1,0 +1,64 @@
+{
+  "schema_version": "1.0",
+  "rule_id": "test-valid-base",
+  "rule_version": "1.0.0",
+  "status": "provisional",
+  "exam": {
+    "exam_id": "test-exam",
+    "exam_name": "Test Exam",
+    "aliases": ["Test Alt Name"],
+    "conducting_body": "Testing Body",
+    "examination_year": 2026,
+    "application_cycle": "Cycle-1"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_notification",
+      "official_source": true,
+      "document_title": "Test Notification Doc",
+      "captured_wording": "A valid photo requirement rule. This is a fictional demonstration record."
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "exact",
+      "width_px": 300,
+      "height_px": 400,
+      "aspect_ratio": "3:4"
+    },
+    "file_size": {
+      "maximum_bytes": 50000,
+      "minimum_bytes": 1000,
+      "safety_margin_bytes": 1000
+    },
+    "formats": {
+      "allowed_formats": ["jpg", "jpeg"],
+      "preferred_format": "jpeg"
+    },
+    "background": {
+      "mode": "plain_light"
+    },
+    "composition": {
+      "face_coverage_target": 75.0,
+      "coverage_is_strict": false
+    },
+    "filename": {
+      "mode": "unspecified"
+    },
+    "exceptional_instructions": {
+      "processing_support_status": "supported"
+    }
+  },
+  "provenance": {
+    "image_requirements.dimensions.width_px": {
+      "type": "official",
+      "evidence_reference": "Test Notification Doc",
+      "confidence": 5,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "provisional"
+  },
+  "fictional_example": true
+}

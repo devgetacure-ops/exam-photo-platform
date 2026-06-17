@@ -1,0 +1,58 @@
+{
+  "schema_version": "1.0",
+  "rule_id": "test-invalid-range",
+  "rule_version": "1.0.0",
+  "status": "provisional",
+  "exam": {
+    "exam_id": "test-exam",
+    "exam_name": "Test Exam",
+    "conducting_body": "Testing Body",
+    "examination_year": 2026,
+    "application_cycle": "Cycle-1"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_notification",
+      "official_source": true,
+      "captured_wording": "Invalid range dimensions."
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "range",
+      "minimum_width_px": 500,
+      "maximum_width_px": 300,
+      "minimum_height_px": 200,
+      "maximum_height_px": 400
+    },
+    "file_size": {
+      "maximum_bytes": 50000
+    },
+    "formats": {
+      "allowed_formats": ["jpg", "jpeg"],
+      "preferred_format": "jpeg"
+    },
+    "background": {
+      "mode": "plain_light"
+    },
+    "composition": {},
+    "filename": {
+      "mode": "unspecified"
+    },
+    "exceptional_instructions": {
+      "processing_support_status": "supported"
+    }
+  },
+  "provenance": {
+    "image_requirements.dimensions.minimum_width_px": {
+      "type": "official",
+      "evidence_reference": "Test Notification",
+      "confidence": 5,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "provisional"
+  },
+  "fictional_example": true
+}

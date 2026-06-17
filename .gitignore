@@ -1,0 +1,78 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info/
+
+# Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+.project
+.pydevproject
+.settings/
+
+# Local configuration & secrets
+.env
+.env.*
+.secrets
+secrets/
+*.pem
+*.key
+*.cert
+credentials.json
+
+# Image Platform Specific Exclusions
+# Never commit real, uploaded, intermediate, or processed photographs
+uploads/
+tmp/
+temp/
+*test_uploads/
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.webp
+*.tiff
+*.bmp
+# Ignore generated outputs
+output/
+downloads/
+*.metadata.json
+# Ignore model weight files and caches
+models/
+weights/
+.cache/
+model_cache/
+# MediaPipe and other ML framework model asset files
+# These are large binary operator-acquired assets — never commit to VCS
+*.task
+*.tflite
+
+# Exceptions: Allow intentionally committed documentation PDFs and fictional examples
+!docs/source/*.pdf
+!examples/rules/*.json
+!tests/fixtures/*.png
+!tests/fixtures/*.jpg
+!tests/fixtures/*.jpeg
+
+# Databases & logs
+*.db
+*.sqlite3
+*.log
+signed_urls.log
+private_metadata_export.json
