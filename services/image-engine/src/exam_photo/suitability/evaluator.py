@@ -208,9 +208,9 @@ class SuitabilityEvaluator:
 
         # 5. Call Subject Segmentation Provider
         segmentation_diagnostic = None
-        single_face = None
-        if face_result is not None and len(face_result.detections) == 1:
-            single_face = face_result.detections[0]
+        faces_to_segment = None
+        if face_result is not None and len(face_result.detections) > 0:
+            faces_to_segment = face_result.detections
 
         head_box = None
         if head_result is not None:
@@ -293,7 +293,7 @@ class SuitabilityEvaluator:
             try:
                 seg_result = self.segmentation_provider.segment_subject(
                     image,
-                    face=single_face,
+                    face=faces_to_segment,
                     head_estimate=head_box,
                     config=self.segmentation_config,
                 )

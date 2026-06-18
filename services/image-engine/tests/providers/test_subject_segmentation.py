@@ -347,6 +347,9 @@ def test_close_and_reinitialize() -> None:
 @pytest.mark.mandatory_segmentation
 def test_real_fixtures_segmentation_and_iou() -> None:
     _ensure_prerequisites()
+    import hashlib
+
+    from exam_photo.providers.mediapipe_face_detector import MediapipeFaceDetector
     from exam_photo.providers.segmenters.mediapipe_segmenter import (
         MediapipeSubjectSegmenter,
     )
@@ -363,6 +366,14 @@ def test_real_fixtures_segmentation_and_iou() -> None:
     with open(anno_path) as f:
         manifest = json.load(f)
 
+    face_model_path = repo_root / "model-assets" / "blaze_face_short_range.tflite"
+    face_manifest = repo_root / "model-manifests" / "face-detector.json"
+    face_sha = ""
+    if face_manifest.exists():
+        with open(face_manifest) as f:
+            fm = json.load(f)
+            face_sha = fm.get("sha256", "")
+
     for entry in manifest["entries"]:
         src_name = entry["source_fixture"]
         mask_rel_path = entry["regression_mask_filename"]
@@ -376,12 +387,43 @@ def test_real_fixtures_segmentation_and_iou() -> None:
             f"Reviewed regression mask {mask_rel_path} is missing"
         )
 
+        # 1. Verify regression mask checksum
+        expected_sha = entry.get("mask_sha256")
+        if expected_sha:
+            h_sha = hashlib.sha256()
+            with open(mask_path, "rb") as mf:
+                h_sha.update(mf.read())
+            actual_sha = h_sha.hexdigest()
+            assert actual_sha == expected_sha, (
+                f"Checksum mismatch for regression mask {mask_rel_path}: expected {expected_sha}, got {actual_sha}"
+            )
+
         # Load images
         img = Image.open(src_path)
         gt_mask = Image.open(mask_path).convert("L")
 
+        # 2. Run face detection to get face(s)
+        faces = None
+        expected_faces = entry.get("expected_face_count", 1)
+        if expected_faces > 0:
+            conf = (
+                0.2
+                if src_name
+                in ("lincoln_low_contrast.jpg", "roosevelt_muir_yosemite.jpg")
+                else 0.5
+            )
+            detector = MediapipeFaceDetector(
+                face_model_path, face_sha, min_detection_confidence=conf
+            )
+            with detector:
+                face_res = detector.detect_faces(img)
+            assert len(face_res.detections) == expected_faces, (
+                f"Expected {expected_faces} faces in {src_name}, got {len(face_res.detections)}"
+            )
+            faces = face_res.detections
+
         with segmenter:
-            res = segmenter.segment_subject(img)
+            res = segmenter.segment_subject(img, face=faces)
 
         assert res.provider_status == SegmentationStatusValue.SUCCESS
 
@@ -514,13 +556,12 @@ def test_scenario_assertions() -> None:
     assert "SUITABILITY_MULTIPLE_FACES" in yosemite_report.issue_codes
     assert yosemite_report.processing_readiness == ProcessingReadinessStatus.BLOCKED
     assert yosemite_report.segmentation_diagnostic is not None
-    assert yosemite_report.segmentation_diagnostic.is_valid is False
+    assert yosemite_report.segmentation_diagnostic.is_valid is True
     assert (
-        "SEGMENTATION_MASK_EMPTY" in yosemite_report.segmentation_diagnostic.issue_codes
-        or "SEGMENTATION_FACE_NOT_CONTAINED"
+        "SEGMENTATION_MULTIPLE_MAJOR_COMPONENTS"
         in yosemite_report.segmentation_diagnostic.issue_codes
     )
-    assert yosemite_report.segmentation_diagnostic.can_proceed is False
+    assert yosemite_report.segmentation_diagnostic.can_proceed is True
 
     # 4. Beard/spectacles fixture assertions (freud_spectacles_beard.jpg)
     _, freud_report = process_image("freud_spectacles_beard.jpg")
@@ -548,13 +589,13 @@ def test_scenario_assertions() -> None:
     # 7. Head covering fixture assertions (vivekananda_head_covering.jpg)
     _, vivek_report = process_image("vivekananda_head_covering.jpg")
     assert vivek_report.segmentation_diagnostic is not None
-    assert vivek_report.segmentation_diagnostic.is_valid is False
+    assert vivek_report.segmentation_diagnostic.is_valid is True
     assert vivek_report.segmentation_diagnostic.foreground_coverage_ratio > 0.3
     assert (
         "SEGMENTATION_FACE_NOT_CONTAINED"
-        in vivek_report.segmentation_diagnostic.issue_codes
+        not in vivek_report.segmentation_diagnostic.issue_codes
     )
-    assert vivek_report.segmentation_diagnostic.can_proceed is False
+    assert vivek_report.segmentation_diagnostic.can_proceed is True
 
     # 8. Low contrast fixture assertions (lincoln_low_contrast.jpg)
     _, lincoln_report = process_image("lincoln_low_contrast.jpg")

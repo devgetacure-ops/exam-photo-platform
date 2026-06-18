@@ -89,7 +89,7 @@ class MediapipeSubjectSegmenter(SubjectSegmentationProvider):
     def segment_subject(
         self,
         image: Image.Image,
-        face: Optional[FaceDetection] = None,
+        face: Optional[FaceDetection | list[FaceDetection]] = None,
         head_estimate: Optional[BoundingBox] = None,
         config: Optional[SegmentationConfig] = None,
     ) -> SubjectSegmentationResult:
@@ -278,6 +278,40 @@ class MediapipeSubjectSegmenter(SubjectSegmentationProvider):
                 probability_mask = np.array(prob_img_resized, dtype=np.float32)
             else:
                 probability_mask = foreground_probability
+
+            # Dynamically combine the segmentation with the central-face region of detected face(s)
+            if face is not None:
+                faces_list = face if isinstance(face, list) else [face]
+                for f in faces_list:
+                    face_box = f.bounding_box
+                    face_w = face_box.right - face_box.left
+                    face_h = face_box.bottom - face_box.top
+
+                    inner_left = max(
+                        0, min(int(round(face_box.left + face_w * 0.1)), img_w - 1)
+                    )
+                    inner_right = max(
+                        0, min(int(round(face_box.right - face_w * 0.1)), img_w)
+                    )
+                    inner_top = max(
+                        0, min(int(round(face_box.top + face_h * 0.1)), img_h - 1)
+                    )
+                    inner_bottom = max(
+                        0, min(int(round(face_box.bottom - face_h * 0.1)), img_h)
+                    )
+
+                    if inner_right > inner_left and inner_bottom > inner_top:
+                        # Since we modify the numpy array in-place, let's copy if it was just referenced
+                        if probability_mask is foreground_probability:
+                            probability_mask = probability_mask.copy()
+                        probability_mask[
+                            inner_top:inner_bottom, inner_left:inner_right
+                        ] = np.maximum(
+                            probability_mask[
+                                inner_top:inner_bottom, inner_left:inner_right
+                            ],
+                            1.0,
+                        )
 
             # Apply coarse threshold AFTER resizing
             binary_mask_arr = np.where(

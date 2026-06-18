@@ -12,7 +12,7 @@ This platform processes candidate photographs by checking and conforming them to
 ## 2. Current Repository Status & Milestone Scope
 
 > [!NOTE]
-> This repository has completed **Milestone 7 completed: repository-verified provisional coarse subject-segmentation baseline.**
+> This repository has completed **Milestone 7: repository-verified provisional coarse subject-segmentation baseline.**
 > - **Input image normalization and suitability evaluation are fully implemented.**
 > - **Local face-detection (MediaPipe), geometric head-box estimation, and CPU-capable portrait segmentation are fully integrated and verified.**
 > - **Automated cropping and background replacement are scheduled for next milestones.**

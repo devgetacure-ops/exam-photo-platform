@@ -98,7 +98,7 @@ def validate_segmentation_mask(
     probability_mask: np.ndarray[Any, Any],
     binary_mask: np.ndarray[Any, Any],
     config: SegmentationConfig,
-    face: Optional[FaceDetection] = None,
+    face: Optional[FaceDetection | list[FaceDetection]] = None,
     head_estimate: Optional[BoundingBox] = None,
 ) -> MaskValidationReport:
     """Validates the generated probability and coarse binary foreground masks."""
@@ -246,32 +246,37 @@ def validate_segmentation_mask(
     # 6. Face containment (against whole foreground probability)
     face_contained: Optional[bool] = None
     if face is not None:
-        face_box = face.bounding_box
-        face_w = face_box.right - face_box.left
-        face_h = face_box.bottom - face_box.top
+        faces_list = face if isinstance(face, list) else [face]
+        all_contained = True
 
-        # Evaluate central face region (eroded by 10% to avoid edge noise)
-        inner_left = max(0, min(int(round(face_box.left + face_w * 0.1)), w - 1))
-        inner_right = max(0, min(int(round(face_box.right - face_w * 0.1)), w))
-        inner_top = max(0, min(int(round(face_box.top + face_h * 0.1)), h - 1))
-        inner_bottom = max(0, min(int(round(face_box.bottom - face_h * 0.1)), h))
+        for f in faces_list:
+            face_box = f.bounding_box
+            face_w = face_box.right - face_box.left
+            face_h = face_box.bottom - face_box.top
 
-        if inner_right > inner_left and inner_bottom > inner_top:
-            face_region_prob = probability_mask[
-                inner_top:inner_bottom, inner_left:inner_right
-            ]
-            face_pixels_above = np.sum(face_region_prob >= config.foreground_threshold)
-            face_coverage = face_pixels_above / face_region_prob.size
+            # Evaluate central face region (eroded by 10% to avoid edge noise)
+            inner_left = max(0, min(int(round(face_box.left + face_w * 0.1)), w - 1))
+            inner_right = max(0, min(int(round(face_box.right - face_w * 0.1)), w))
+            inner_top = max(0, min(int(round(face_box.top + face_h * 0.1)), h - 1))
+            inner_bottom = max(0, min(int(round(face_box.bottom - face_h * 0.1)), h))
 
-            face_contained = bool(face_coverage >= config.minimum_face_mask_coverage)
-            if not face_contained:
-                add_issue(
-                    SuitabilityIssueCode.SEGMENTATION_FACE_NOT_CONTAINED,
-                    IssueSeverity.ERROR,
-                    True,
+            if inner_right > inner_left and inner_bottom > inner_top:
+                face_region_prob = probability_mask[
+                    inner_top:inner_bottom, inner_left:inner_right
+                ]
+                face_pixels_above = np.sum(
+                    face_region_prob >= config.foreground_threshold
                 )
-        else:
-            face_contained = False
+                face_coverage = face_pixels_above / face_region_prob.size
+
+                f_contained = face_coverage >= config.minimum_face_mask_coverage
+                if not f_contained:
+                    all_contained = False
+            else:
+                all_contained = False
+
+        face_contained = all_contained
+        if not face_contained:
             add_issue(
                 SuitabilityIssueCode.SEGMENTATION_FACE_NOT_CONTAINED,
                 IssueSeverity.ERROR,

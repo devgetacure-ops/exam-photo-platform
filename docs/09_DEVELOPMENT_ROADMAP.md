@@ -64,43 +64,55 @@ This phase covers establishing directory, configuration, and interfaces foundati
 - **Exit Criteria**: All unit and integration tests pass; benchmark compares multiclass vs binary segmenters on licensed fixtures; mask validation detects empty, full frame, fragmented, and non-contained face masks.
 - **Status**: **Milestone 7 completed: repository-verified provisional coarse subject-segmentation baseline.**
 
-#### Milestone 8: Aspect Ratio & Crop Pipeline (Crop Mode A & B)
-- **Objective**: Implement the two cropping modes specified in the repository contract (Crop Mode A: exact aspect ratio centered face; Crop Mode B: tight crop with margined head).
-- **Dependencies**: Milestone 4, Milestone 6.
-- **Expected Deliverables**: Bounding-box crop calculator, face centering and scaling filter, and margin padding builders.
-- **Exit Criteria**: Tests verify output crop dimensions match required aspect ratios without subject stretching or distortion.
+#### Milestone 8: Coarse-Mask Edge Refinement and Foreground-Boundary Cleanup
+- **Objective**: Implement algorithms to refine the coarse portrait segmentation masks, smoothing boundaries and handling complex areas like hair/ears/shoulders.
+- **Dependencies**: Milestone 7.
+- **Expected Deliverables**: Edge refinement filter/model integration, alpha matting, and boundary cleanup logic.
+- **Exit Criteria**: Mask boundaries show improved transition smoothness and reduced artifacts compared to the coarse baseline.
 
-#### Milestone 9: Image Resizing & Enhancement
+#### Milestone 9: Exact-Dimension Crop (Crop Mode A)
+- **Objective**: Implement Crop Mode A: exact aspect ratio crop centered around the face, preserving hair, ears, chin, and beard before resizing.
+- **Dependencies**: Milestone 4, Milestone 6, Milestone 8.
+- **Expected Deliverables**: Aspect ratio crop calculator, face centering and centering preservation math.
+- **Exit Criteria**: Tests verify output crop dimensions match required aspect ratios without stretching or distortion.
+
+#### Milestone 10: Face/Head-Led Crop (Crop Mode B)
+- **Objective**: Implement Crop Mode B: tight crop with dimension range based on the estimated head region.
+- **Dependencies**: Milestone 4, Milestone 6, Milestone 8.
+- **Expected Deliverables**: Margined head crop calculator and padding builder.
+- **Exit Criteria**: Output images satisfy the rule range constraints and head margins.
+
+#### Milestone 11: Image Resizing & Enhancement
 - **Objective**: Implement high-quality image resizing (LANCZOS/Bicubic) and exposure, contrast, and sharpness adjustments.
-- **Dependencies**: Milestone 3, Milestone 8.
+- **Dependencies**: Milestone 3, Milestone 9, Milestone 10.
 - **Expected Deliverables**: Resize utility, luminance correction filter, and unsharp mask filter.
 - **Exit Criteria**: Output resolution matches rule criteria exactly, and processed image sharpness metrics pass suitability tests.
 
-#### Milestone 10: Quality-Aware Compression Loop
+#### Milestone 12: Quality-Aware Compression Loop
 - **Objective**: Implement an iterative file compression loop to compress the normalized, cropped image to be close to but strictly under the maximum byte size limit.
-- **Dependencies**: Milestone 3, Milestone 9.
+- **Dependencies**: Milestone 3, Milestone 11.
 - **Expected Deliverables**: Iterative encoder optimizer, target file size compliance validator.
 - **Exit Criteria**: Test cases assert output files comply with rules' file size limits while maintaining visual quality.
 
-#### Milestone 11: CLI Execution & Rule Matching
+#### Milestone 13: CLI Execution & Rule Matching
 - **Objective**: Connect the CLI to run the full pipeline (normalization, suitability, crop, remove background, enhance, compress) against configured rules.
-- **Dependencies**: Milestones 2, 7, 9, 10.
+- **Dependencies**: Milestones 2, 7, 8, 9, 10, 11, 12.
 - **Expected Deliverables**: Integrated end-to-end CLI command handlers.
 - **Exit Criteria**: Running CLI with a rule file and input image outputs a processed compliant photo or structured compliance failures.
 
-#### Milestone 12: Application API & Deletion Lifecycle
+#### Milestone 14: Application API & Deletion Lifecycle
 - **Objective**: Create a secure FastAPI backend to serve processing requests, retrieve cycle rules, and clean up uploaded files.
-- **Dependencies**: Milestone 11, docs/05_PRIVACY_SECURITY.md.
+- **Dependencies**: Milestone 13, docs/05_PRIVACY_SECURITY.md.
 - **Expected Deliverables**: REST endpoints, temporary upload handler, and background deletion worker tasks.
 - **Exit Criteria**: Audit logs verify complete removal of files after session expiry or download.
 
-#### Milestone 13: Web Frontend & Admin Dashboard
+#### Milestone 15: Web Frontend & Admin Dashboard
 - **Objective**: Build the public Next.js single-page application and the rule configuration admin dashboard.
-- **Dependencies**: Milestone 12, packages/exam-rules.
+- **Dependencies**: Milestone 14, packages/exam-rules.
 - **Expected Deliverables**: Interactive user interfaces, rule editor panels, and visual compliance check indicators.
 - **Exit Criteria**: E2E tests verify successful photo uploading, crop adjustment, and download compliance loops.
 
-*(Milestones 14 to 35: Advanced features, security reviews, and pre-launch hardening)*
+*(Milestones 16 to 35: Advanced features, security reviews, and pre-launch hardening)*
 
 ### Phase 1: Post-MVP & Future Operations
 - **Milestone 36**: Post-MVP crop adjustments editor tool.

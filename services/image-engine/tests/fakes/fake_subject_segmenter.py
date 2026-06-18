@@ -34,7 +34,7 @@ class FakeSubjectSegmenter(SubjectSegmentationProvider):
     def segment_subject(
         self,
         image: Image.Image,
-        face: Optional[FaceDetection] = None,
+        face: Optional[FaceDetection | list[FaceDetection]] = None,
         head_estimate: Optional[BoundingBox] = None,
         config: Optional[SegmentationConfig] = None,
     ) -> SubjectSegmentationResult:

@@ -3,7 +3,8 @@
     {
       "source_fixture": "sarah_bernhardt_long_hair.jpg",
       "regression_mask_filename": "segmentation/masks/fixture-sarah-bernhardt-mask.png",
-      "mask_sha256": "ced5658f49b1c927ed0f37d95789a7f08647d30540545e3af0c10ae60183e691",
+      "mask_sha256": "a36cf5b1e55170c189126b20a83256452b5130e8ec50e8ebc06f9ca38fc011c6",
+      "expected_face_count": 1,
       "annotation_method": "MediaPipe Selfie Binary general baseline (manually reviewed & approved for regression)",
       "annotator": "AI Developer Pair",
       "review_status": "approved",
@@ -11,12 +12,13 @@
       "treatment_of_spectacles": "N/A",
       "treatment_of_shadows": "shadows on background excluded",
       "licence_provenance": "Derived from public domain photo on Wikimedia Commons",
-      "expected_coverage": 0.5383885384419224
+      "expected_coverage": 0.5384461211210525
     },
     {
       "source_fixture": "marie_curie_curly_hair.jpg",
       "regression_mask_filename": "segmentation/masks/fixture-marie-curie-mask.png",
-      "mask_sha256": "567a1bc672b8f7a1c1d9c2117dba748a3af383d8a2ffd233604cdd7dd7ae7093",
+      "mask_sha256": "f7af7f62b9693377e790c31ce36b93f2601c84792d9a149441a6e650de8c744d",
+      "expected_face_count": 1,
       "annotation_method": "MediaPipe Selfie Binary general baseline (manually reviewed & approved for regression)",
       "annotator": "AI Developer Pair",
       "review_status": "approved",
@@ -24,12 +26,13 @@
       "treatment_of_spectacles": "N/A",
       "treatment_of_shadows": "shadows on background excluded",
       "licence_provenance": "Derived from public domain photo on Wikimedia Commons",
-      "expected_coverage": 0.5100856962591347
+      "expected_coverage": 0.5163831855766362
     },
     {
       "source_fixture": "vivekananda_head_covering.jpg",
       "regression_mask_filename": "segmentation/masks/fixture-vivekananda-mask.png",
-      "mask_sha256": "56cbeeb234d49af7a5643f797aa323b365f3d815903a43d681532d94a2a0902a",
+      "mask_sha256": "5c65b09419a2164d65d121c54eaa2d2b166c69e7312966ca204af49f9a50bf8b",
+      "expected_face_count": 1,
       "annotation_method": "MediaPipe Selfie Binary general baseline (manually reviewed & approved for regression)",
       "annotator": "AI Developer Pair",
       "review_status": "approved",
@@ -37,12 +40,13 @@
       "treatment_of_spectacles": "N/A",
       "treatment_of_shadows": "shadows on background excluded",
       "licence_provenance": "Derived from public domain photo on Wikimedia Commons",
-      "expected_coverage": 0.5967265172705535
+      "expected_coverage": 0.6351099603922107
     },
     {
       "source_fixture": "lincoln_low_contrast.jpg",
       "regression_mask_filename": "segmentation/masks/fixture-lincoln-mask.png",
-      "mask_sha256": "71b5586d7a1d2674247170aa30d6d8eb7ee00d2da6fe866592d247741d022e03",
+      "mask_sha256": "ff702dd5c1c768631409bedf3a9e1c97a16b5ea42170dfc7d6f7f42aca485747",
+      "expected_face_count": 1,
       "annotation_method": "MediaPipe Selfie Binary general baseline (manually reviewed & approved for regression)",
       "annotator": "AI Developer Pair",
       "review_status": "approved",
@@ -50,12 +54,13 @@
       "treatment_of_spectacles": "spectacles included in foreground",
       "treatment_of_shadows": "shadows on background excluded",
       "licence_provenance": "Derived from public domain photo on Wikimedia Commons",
-      "expected_coverage": 0.23432015089665967
+      "expected_coverage": 0.27696401627442596
     },
     {
       "source_fixture": "single_face_frontal.jpg",
       "regression_mask_filename": "segmentation/masks/fixture-einstein-mask.png",
-      "mask_sha256": "7f70b77de9c647da3a6e9d5cdc5eb5132c90a888df6d16677a50909d5b1d5b61",
+      "mask_sha256": "56fe3b3d3863bf92eb3bef7ececd74293442bde149db0dcd06db038b490328e4",
+      "expected_face_count": 1,
       "annotation_method": "MediaPipe Selfie Binary general baseline (manually reviewed & approved for regression)",
       "annotator": "AI Developer Pair",
       "review_status": "approved",
@@ -63,12 +68,15 @@
       "treatment_of_spectacles": "N/A",
       "treatment_of_shadows": "shadows on background excluded",
       "licence_provenance": "Derived from public domain photo on Wikimedia Commons",
-      "expected_coverage": 0.7808615810683662
+      "expected_coverage": 0.7817093859290951,
+      "reference_mask_filename": "segmentation/reference_masks/reference-einstein-mask.png",
+      "reference_mask_sha256": "46c7ca18d287e55601af168358c5ece361a644085f4755d7efea7b7229207c3e"
     },
     {
       "source_fixture": "roosevelt_muir_yosemite.jpg",
       "regression_mask_filename": "segmentation/masks/fixture-yosemite-mask.png",
-      "mask_sha256": "64f4631ce2b705f76f080d0580a897852e7a0472585deaebd1e4b482dfb67709",
+      "mask_sha256": "28f41184fb7c2428b79050f3f99a2f8bc4129022bd2f58e2897bd7af55e61376",
+      "expected_face_count": 2,
       "annotation_method": "MediaPipe Selfie Binary general baseline (manually reviewed & approved for regression)",
       "annotator": "AI Developer Pair",
       "review_status": "approved",
@@ -76,12 +84,13 @@
       "treatment_of_spectacles": "N/A",
       "treatment_of_shadows": "shadows on background excluded",
       "licence_provenance": "Derived from public domain photo on Wikimedia Commons",
-      "expected_coverage": 0.0
+      "expected_coverage": 0.38503477640267686
     },
     {
       "source_fixture": "freud_spectacles_beard.jpg",
       "regression_mask_filename": "segmentation/masks/fixture-freud-mask.png",
       "mask_sha256": "b64087be648d1026b0ddffd0a2de0e75fd9b1f1df790bb608913397894f2f653",
+      "expected_face_count": 1,
       "annotation_method": "MediaPipe Selfie Binary general baseline (manually reviewed & approved for regression)",
       "annotator": "AI Developer Pair",
       "review_status": "approved",
@@ -89,7 +98,9 @@
       "treatment_of_spectacles": "spectacles and beard included in foreground",
       "treatment_of_shadows": "shadows on background excluded",
       "licence_provenance": "Derived from public domain photo on Wikimedia Commons",
-      "expected_coverage": 0.6872120075046905
+      "expected_coverage": 0.6872120075046905,
+      "reference_mask_filename": "segmentation/reference_masks/reference-freud-mask.png",
+      "reference_mask_sha256": "23d644edbad605b2c689c018700b0f9cba1b1cdd6d103630815ea0539e4aa3ef"
     }
   ]
 }

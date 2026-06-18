@@ -82,7 +82,7 @@ We select **MediaPipe Selfie Binary General** (`selfie_bin_general` / `selfie_se
 ### Rationale
 1.  **Low Latency & Size**: It is extremely fast (~7-24ms pure inference on CPU) and has a tiny footprint (~0.25 MB) compared to multiclass (~16.4 MB) or ONNX matting models.
 2.  **No Extra Dependencies**: It uses the same `mediapipe` package already integrated for face detection. No additional runtime wheel installations are needed.
-3.  **Licensing**: The code, model, and weights are governed under **Apache 2.0**, making them safe for redistribution and commercial use.
+3.  **Licensing**: The code, model, and weights are governed under **Apache 2.0**, making them safe for redistribution and commercial use, subject to standard compliance obligations (such as preserving license notices, copyright headers, and attribution in downstream distributions).
 4.  **Offline CPU Capability**: Fully local, offline, deterministic execution.
 
 ---
@@ -97,4 +97,4 @@ We select **MediaPipe Selfie Binary General** (`selfie_bin_general` / `selfie_se
 
 ## 5. Unresolved Questions
 
-*   **Threshold values**: The optimal foreground confidence threshold (`default=0.5`) and uncertain-edge thresholds (`uncertain_low=0.2`, `uncertain_high=0.8`) remain provisional and will be tuned in subsequent edge-refinement and cropping milestones.nes.
+*   **Threshold values**: The optimal foreground confidence threshold (`default=0.5`) and uncertain-edge thresholds (`uncertain_low=0.2`, `uncertain_high=0.8`) remain provisional and will be tuned in subsequent edge-refinement and cropping milestones.
