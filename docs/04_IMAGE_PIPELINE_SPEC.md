@@ -1,7 +1,7 @@
 # Image Pipeline Specification (04_IMAGE_PIPELINE_SPEC.md)
 
 > [!IMPORTANT]
-> Pipeline stage 1 (file signature validation), stage 2 (secure image decoding), stage 3 (EXIF orientation normalization), and stage 4 (source metadata extraction) are implemented in Milestone 3. Stage 5 (face detection), stage 6 (complete-head estimation), and stage 7 (source suitability analysis) are implemented in Milestones 5 and 6. All other stages detailed in this document are planned future implementations.
+> Pipeline stage 1 (file signature validation), stage 2 (secure image decoding), stage 3 (EXIF orientation normalization), and stage 4 (source metadata extraction) are implemented in Milestone 3. Stage 5 (face detection), stage 6 (complete-head estimation), and stage 7 (source suitability analysis) are implemented in Milestones 5 and 6. Stage 8 (coarse foreground mask generation) is implemented in Milestone 7. All other stages detailed in this document are planned future implementations.
 
 ---
 
@@ -112,15 +112,15 @@
 - **Dependencies**: Normalized image metadata, face detection reference, and head estimation result.
 
 
-### 8. Background Processing
-- **Purpose**: Clean up background clutter and replace it with clean white or light color.
-- **Inputs**: Image, head segmentation map, target color.
-- **Outputs**: Segmented image with clean background.
-- **Failure Conditions**: Failed segmentation segmentation map.
-- **Warning Conditions**: Blending artifacts at edges.
-- **Privacy Considerations**: Keep ear/hair boundaries intact.
-- **Planned Tests**: Test masking edge preservation on frizzy/curly hair.
-- **Dependencies**: Future segmentation model.
+### 8. Coarse Foreground Mask Generation & Background Processing
+- **Purpose**: Generate a coarse foreground mask to separate the candidate subject from the original background, and validate mask properties (e.g. connectivity, face containment) to ensure suitability.
+- **Inputs**: Normalised image, face detection coordinates, head estimation bounding box.
+- **Outputs**: Probability mask (0-1 confidence), binary mask (0/255 foreground/background), validation metrics.
+- **Failure Conditions**: Segmentation failure (e.g., invalid dimensions, inference crash), low foreground coverage, excessive disjoint components, or failure to contain the detected face bounding box.
+- **Warning/Info Conditions**: Moderate mask imperfections or disjoint regions when background replacement is not requested.
+- **Privacy Considerations**: The raw probability/binary masks, model paths, and internal error traces are kept strictly in-memory/private and excluded from the public suitability report to prevent biometrics and model metadata leaks.
+- **Status**: **Coarse mask generation and validation implemented (Milestone 7)**; background replacement and composition are planned future implementations.
+- **Dependencies**: MediaPipe Selfie Multiclass (`selfie_multiclass_256x256.tflite`) or Selfie Binary (`selfie_segmentation.tflite`) model.
 
 ### 9. Crop-mode Selection
 - **Purpose**: Choose Crop Mode A (exact aspect/size) or B (natural head framing with margins) based on the rule configuration.

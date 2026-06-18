@@ -11,10 +11,13 @@ from exam_photo.providers.head_estimation import (
     HeadEstimationProvider,
     HeadEstimationResult,
 )
+from exam_photo.providers.model_errors import ModelChecksumError, ModelNotFoundError
+from exam_photo.providers.subject_segmentation import SubjectSegmentationProvider
 from exam_photo.suitability.configuration import SuitabilityThresholds
 from exam_photo.suitability.guidance import get_safe_user_guidance
 from exam_photo.suitability.issue_codes import SuitabilityIssueCode
 from exam_photo.suitability.models import (
+    InternalSegmentationDiagnostic,
     IssueSeverity,
     IssueStatus,
     SuitabilityCheck,
@@ -31,13 +34,21 @@ class SuitabilityEvaluator:
         thresholds: SuitabilityThresholds,
         face_provider: Optional[FaceDetectionProvider] = None,
         head_provider: Optional[HeadEstimationProvider] = None,
+        segmentation_provider: Optional[SubjectSegmentationProvider] = None,
+        segmentation_config: Optional[dict[str, Any]] = None,
     ) -> None:
         self.thresholds = thresholds
         self.face_provider = face_provider
         self.head_provider = head_provider
+        self.segmentation_provider = segmentation_provider
+        self.segmentation_config = segmentation_config
         self.version = "1.0.0"
 
-    def evaluate(self, norm_result: NormalizationResult) -> SuitabilityReport:
+    def evaluate(
+        self,
+        norm_result: NormalizationResult,
+        background_replacement_required: bool = False,
+    ) -> SuitabilityReport:
         start_time = time.perf_counter()
         image = norm_result.image
 
@@ -58,6 +69,7 @@ class SuitabilityEvaluator:
         provider_status: Dict[str, str] = {
             "face_detector": "not_configured",
             "head_estimator": "not_configured",
+            "subject_segmenter": "not_configured",
         }
 
         # 2. Apply preliminary image-wide checks
@@ -144,6 +156,7 @@ class SuitabilityEvaluator:
                 )
 
         # 4. Call Complete Head Estimation Provider
+        head_result: Optional[HeadEstimationResult] = None
         if self.head_provider is None:
             provider_status["head_estimator"] = "unavailable"
             checks_unavailable.append(SuitabilityCheck.HEAD_COMPLETENESS)
@@ -187,6 +200,293 @@ class SuitabilityEvaluator:
             # Head estimation check is skipped because face is missing, multiple, or face provider failed
             provider_status["head_estimator"] = "skipped"
             checks_unavailable.append(SuitabilityCheck.HEAD_COMPLETENESS)
+
+        # 5. Call Subject Segmentation Provider
+        segmentation_diagnostic = None
+        single_face = None
+        if face_result is not None and len(face_result.detections) == 1:
+            single_face = face_result.detections[0]
+
+        head_box = None
+        if head_result is not None:
+            head_box = head_result.head_bounding_box
+
+        if self.segmentation_provider is None:
+            if background_replacement_required:
+                provider_status["subject_segmenter"] = "unavailable"
+                code = SuitabilityIssueCode.SEGMENTATION_PROVIDER_UNAVAILABLE
+                issues.append(
+                    self._create_issue(
+                        code=code,
+                        severity=IssueSeverity.ERROR,
+                        category="background",
+                        message="Portrait segmentation provider is not configured but background replacement is required.",
+                        blocking=True,
+                        status=IssueStatus.CONFIRMED,
+                    )
+                )
+                segmentation_diagnostic = InternalSegmentationDiagnostic(
+                    is_valid=False,
+                    segmentation_status="unavailable",
+                    issue_codes=[code.value],
+                    safe_user_guidance=[get_safe_user_guidance(code)],
+                    can_proceed=False,
+                    provider_name="unknown",
+                    provider_version="unknown",
+                    model_name="unknown",
+                    model_version="unknown",
+                    threshold_used=0.0,
+                    processing_duration_ms=0.0,
+                    foreground_coverage_ratio=0.0,
+                    uncertain_edge_ratio=0.0,
+                    connected_components_count=0,
+                    largest_component_ratio=0.0,
+                    face_contained=None,
+                    head_region_coverage_ratio=None,
+                    mask_width=0,
+                    mask_height=0,
+                    warnings=["Segmentation provider not configured"],
+                )
+            else:
+                provider_status["subject_segmenter"] = "not_configured"
+                code = SuitabilityIssueCode.SEGMENTATION_PROVIDER_UNAVAILABLE
+                issues.append(
+                    self._create_issue(
+                        code=code,
+                        severity=IssueSeverity.INFORMATION,
+                        category="background",
+                        message="Portrait segmentation provider is not configured.",
+                        blocking=False,
+                        status=IssueStatus.UNAVAILABLE,
+                    )
+                )
+                segmentation_diagnostic = InternalSegmentationDiagnostic(
+                    is_valid=False,
+                    segmentation_status="unavailable",
+                    issue_codes=[code.value],
+                    safe_user_guidance=[get_safe_user_guidance(code)],
+                    can_proceed=True,
+                    provider_name="unknown",
+                    provider_version="unknown",
+                    model_name="unknown",
+                    model_version="unknown",
+                    threshold_used=0.0,
+                    processing_duration_ms=0.0,
+                    foreground_coverage_ratio=0.0,
+                    uncertain_edge_ratio=0.0,
+                    connected_components_count=0,
+                    largest_component_ratio=0.0,
+                    face_contained=None,
+                    head_region_coverage_ratio=None,
+                    mask_width=0,
+                    mask_height=0,
+                    warnings=["Segmentation provider not configured"],
+                )
+            checks_unavailable.append(SuitabilityCheck.BACKGROUND)
+        else:
+            provider_status["subject_segmenter"] = "active"
+            try:
+                seg_result = self.segmentation_provider.segment_subject(
+                    image,
+                    face=single_face,
+                    head_estimate=head_box,
+                    config=self.segmentation_config,
+                )
+                val_report = seg_result.mask_validation
+                checks_completed.append(SuitabilityCheck.BACKGROUND)
+
+                if seg_result.warnings:
+                    warnings.extend(seg_result.warnings)
+
+                for issue_code_str in val_report.issue_codes:
+                    issue_code = SuitabilityIssueCode(issue_code_str)
+                    is_blocking = False
+                    severity = (
+                        IssueSeverity.WARNING
+                        if background_replacement_required
+                        else IssueSeverity.INFORMATION
+                    )
+
+                    if background_replacement_required:
+                        if issue_code_str in [
+                            "SEGMENTATION_MASK_EMPTY",
+                            "SEGMENTATION_MASK_FULL_FRAME",
+                            "SEGMENTATION_FACE_NOT_CONTAINED",
+                            "SEGMENTATION_FOREGROUND_COVERAGE_LOW",
+                            "SEGMENTATION_FOREGROUND_COVERAGE_HIGH",
+                        ]:
+                            is_blocking = True
+                            severity = IssueSeverity.ERROR
+
+                    issues.append(
+                        self._create_issue(
+                            code=issue_code,
+                            severity=severity,
+                            category="background",
+                            message=f"Segmentation validation: {issue_code_str.replace('SEGMENTATION_', '').replace('_', ' ').lower()}",
+                            blocking=is_blocking,
+                            status=IssueStatus.CONFIRMED,
+                        )
+                    )
+
+                can_proceed = True
+                if background_replacement_required and not val_report.is_valid:
+                    can_proceed = False
+
+                segmentation_diagnostic = InternalSegmentationDiagnostic(
+                    is_valid=val_report.is_valid,
+                    segmentation_status="success",
+                    issue_codes=val_report.issue_codes,
+                    safe_user_guidance=[
+                        get_safe_user_guidance(SuitabilityIssueCode(c))
+                        for c in val_report.issue_codes
+                    ],
+                    can_proceed=can_proceed,
+                    provider_name=seg_result.provider_name,
+                    provider_version=seg_result.provider_version,
+                    model_name=seg_result.model_name,
+                    model_version=seg_result.model_version,
+                    threshold_used=seg_result.threshold_used,
+                    processing_duration_ms=seg_result.processing_duration,
+                    foreground_coverage_ratio=seg_result.foreground_coverage_ratio,
+                    uncertain_edge_ratio=val_report.uncertain_edge_ratio,
+                    connected_components_count=val_report.connected_components_count,
+                    largest_component_ratio=val_report.largest_component_ratio,
+                    face_contained=val_report.face_contained,
+                    head_region_coverage_ratio=val_report.head_region_coverage_ratio,
+                    mask_width=seg_result.mask_width,
+                    mask_height=seg_result.mask_height,
+                    warnings=seg_result.warnings,
+                )
+            except ModelNotFoundError as mne:
+                provider_status["subject_segmenter"] = "failed"
+                code = SuitabilityIssueCode.SEGMENTATION_MODEL_MISSING
+                issues.append(
+                    self._create_issue(
+                        code=code,
+                        severity=IssueSeverity.ERROR
+                        if background_replacement_required
+                        else IssueSeverity.INFORMATION,
+                        category="background",
+                        message="Segmentation model file is missing.",
+                        blocking=background_replacement_required,
+                        status=IssueStatus.CONFIRMED,
+                        internal_details=str(mne),
+                    )
+                )
+                segmentation_diagnostic = InternalSegmentationDiagnostic(
+                    is_valid=False,
+                    segmentation_status="failed",
+                    issue_codes=[code.value],
+                    safe_user_guidance=[get_safe_user_guidance(code)],
+                    can_proceed=not background_replacement_required,
+                    provider_name=getattr(
+                        self.segmentation_provider, "provider_name", "unknown"
+                    ),
+                    provider_version=getattr(
+                        self.segmentation_provider, "provider_version", "unknown"
+                    ),
+                    model_name="unknown",
+                    model_version="unknown",
+                    threshold_used=0.0,
+                    processing_duration_ms=0.0,
+                    foreground_coverage_ratio=0.0,
+                    uncertain_edge_ratio=0.0,
+                    connected_components_count=0,
+                    largest_component_ratio=0.0,
+                    face_contained=None,
+                    head_region_coverage_ratio=None,
+                    mask_width=0,
+                    mask_height=0,
+                    warnings=[str(mne)],
+                )
+                checks_unavailable.append(SuitabilityCheck.BACKGROUND)
+            except ModelChecksumError as mce:
+                provider_status["subject_segmenter"] = "failed"
+                code = SuitabilityIssueCode.SEGMENTATION_MODEL_CHECKSUM_FAILED
+                issues.append(
+                    self._create_issue(
+                        code=code,
+                        severity=IssueSeverity.ERROR
+                        if background_replacement_required
+                        else IssueSeverity.INFORMATION,
+                        category="background",
+                        message="Segmentation model checksum verification failed.",
+                        blocking=background_replacement_required,
+                        status=IssueStatus.CONFIRMED,
+                        internal_details=str(mce),
+                    )
+                )
+                segmentation_diagnostic = InternalSegmentationDiagnostic(
+                    is_valid=False,
+                    segmentation_status="failed",
+                    issue_codes=[code.value],
+                    safe_user_guidance=[get_safe_user_guidance(code)],
+                    can_proceed=not background_replacement_required,
+                    provider_name=getattr(
+                        self.segmentation_provider, "provider_name", "unknown"
+                    ),
+                    provider_version=getattr(
+                        self.segmentation_provider, "provider_version", "unknown"
+                    ),
+                    model_name="unknown",
+                    model_version="unknown",
+                    threshold_used=0.0,
+                    processing_duration_ms=0.0,
+                    foreground_coverage_ratio=0.0,
+                    uncertain_edge_ratio=0.0,
+                    connected_components_count=0,
+                    largest_component_ratio=0.0,
+                    face_contained=None,
+                    head_region_coverage_ratio=None,
+                    mask_width=0,
+                    mask_height=0,
+                    warnings=[str(mce)],
+                )
+                checks_unavailable.append(SuitabilityCheck.BACKGROUND)
+            except Exception as e:
+                provider_status["subject_segmenter"] = "failed"
+                code = SuitabilityIssueCode.SEGMENTATION_PROVIDER_FAILED
+                issues.append(
+                    self._create_issue(
+                        code=code,
+                        severity=IssueSeverity.ERROR
+                        if background_replacement_required
+                        else IssueSeverity.INFORMATION,
+                        category="background",
+                        message="Subject segmentation failed.",
+                        blocking=background_replacement_required,
+                        status=IssueStatus.CONFIRMED,
+                        internal_details=str(e),
+                    )
+                )
+                segmentation_diagnostic = InternalSegmentationDiagnostic(
+                    is_valid=False,
+                    segmentation_status="failed",
+                    issue_codes=[code.value],
+                    safe_user_guidance=[get_safe_user_guidance(code)],
+                    can_proceed=not background_replacement_required,
+                    provider_name=getattr(
+                        self.segmentation_provider, "provider_name", "unknown"
+                    ),
+                    provider_version=getattr(
+                        self.segmentation_provider, "provider_version", "unknown"
+                    ),
+                    model_name="unknown",
+                    model_version="unknown",
+                    threshold_used=0.0,
+                    processing_duration_ms=0.0,
+                    foreground_coverage_ratio=0.0,
+                    uncertain_edge_ratio=0.0,
+                    connected_components_count=0,
+                    largest_component_ratio=0.0,
+                    face_contained=None,
+                    head_region_coverage_ratio=None,
+                    mask_width=0,
+                    mask_height=0,
+                    warnings=[str(e)],
+                )
+                checks_unavailable.append(SuitabilityCheck.BACKGROUND)
 
         # 5. Determine Overall Status
         has_blocking = any(
@@ -253,6 +553,7 @@ class SuitabilityEvaluator:
             safe_user_guidance=guidance_messages,
             internal_summary=internal_summary,
             evaluator_version=self.version,
+            segmentation_diagnostic=segmentation_diagnostic,
         )
 
     def _create_issue(

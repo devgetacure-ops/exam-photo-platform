@@ -27,7 +27,6 @@ _MODEL_SHA256: str = os.environ.get(_MODEL_SHA256_ENV, "")
 _IS_CI = os.environ.get("CI") == "true" or os.environ.get("GITHUB_ACTIONS") == "true"
 
 
-
 def test_config_validation() -> None:
     # Test valid defaults
     config = HeadEstimationConfig()

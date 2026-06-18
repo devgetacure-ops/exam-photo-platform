@@ -160,3 +160,15 @@ This log tracks architectural and product decisions, open questions, and recomme
 - **Affected Modules**: `services/image-engine/providers`, `services/image-engine/suitability`.
 - **Approval Owner**: Lead Architect
 
+### DEC-014: Portrait Segmentation Technology and Baseline Selection
+- **Date**: 2026-06-18
+- **Status**: Approved
+- **Problem**: Selection and integration of local CPU-capable portrait segmentation technology and baseline model variant.
+- **Options Considered**:
+  - Option A: MediaPipe Selfie Multiclass (`selfie_multiclass_256x256.tflite`). Pros: 6-class output (background, hair, body skin, face skin, clothing, accessories) enables precise validation rules. Cons: ~16.4 MB model size, ~1112ms CPU latency for full 3250x4333 image resolution.
+  - Option B: MediaPipe Selfie Binary (`selfie_segmentation.tflite`). Pros: Highly lightweight (~0.25 MB), fast CPU latency (~708ms on Einstein portrait), robust foreground separation. Cons: Only outputs 2-class binary mask (person vs. background), no class-specific granularity.
+- **Decision**: Approve both models behind the `SubjectSegmentationProvider` interface. Use **MediaPipe Selfie Multiclass** as the default baseline due to 6-class annotation capability, and support **MediaPipe Selfie Binary** as a high-performance alternative.
+- **Reasoning**: Both models execute entirely locally on CPU, require no external APIs, use the pre-existing MediaPipe dependency, and are Apache-2.0 licensed.
+- **Affected Modules**: `services/image-engine/providers/segmenters`, `services/image-engine/suitability`.
+- **Approval Owner**: Lead Architect
+

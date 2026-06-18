@@ -43,6 +43,11 @@
       "left_side": "not_detected",
       "right_side": "not_detected",
       "chin": "not_detected"
+    },
+    "expected_segmentation": {
+      "is_valid": true,
+      "foreground_coverage_ratio_range": [0.7, 0.85],
+      "connected_components_count": 1
     }
   },
   "head_close_to_top": {

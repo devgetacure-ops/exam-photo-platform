@@ -57,11 +57,12 @@ This phase covers establishing directory, configuration, and interfaces foundati
 - **Status**: **Completed (Milestone 6: provisional landmark-assisted geometric head-box baseline)**
 
 
-#### Milestone 7: Background Removal & Segmentation
-- **Objective**: Integrate a lightweight portrait segmentation network to generate high-quality subject alpha-mattes and replace non-compliant backgrounds.
-- **Dependencies**: Milestone 3, Milestone 5.
-- **Expected Deliverables**: Image segmentation processor, background color replacement filter, and edge anti-aliasing utilities.
-- **Exit Criteria**: Tests verify background replacement matching rule colors (e.g. #FFFFFF) within target tolerance.
+#### Milestone 7: Portrait-Segmentation and Coarse Foreground-Mask Generation
+- **Objective**: Evaluate local CPU-capable portrait segmentation technologies, select a provisional baseline (MediaPipe Selfie Multiclass/Binary), integrate it behind a provider-neutral contract, and generate validated coarse foreground masks.
+- **Dependencies**: Milestone 5, Milestone 6.
+- **Expected Deliverables**: `SubjectSegmentationProvider` contract, `MediapipeSubjectSegmenter` implementation, `MaskValidationReport` (DSU connectivity component analysis, face containment, head coverage), `PublicSegmentationReport` and `InternalSegmentationDiagnostic` models, CLI `segment-subject` support, and benchmark tools.
+- **Exit Criteria**: All unit and integration tests pass; benchmark compares multiclass vs binary segmenters on licensed fixtures; mask validation detects empty, full frame, fragmented, and non-contained face masks.
+- **Status**: **Completed (Provisional baseline implementation with multiclass and binary model support)**
 
 #### Milestone 8: Aspect Ratio & Crop Pipeline (Crop Mode A & B)
 - **Objective**: Implement the two cropping modes specified in the repository contract (Crop Mode A: exact aspect ratio centered face; Crop Mode B: tight crop with margined head).

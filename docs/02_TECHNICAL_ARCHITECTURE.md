@@ -44,6 +44,13 @@ For the initial prototype and MVP phases, the following stack is recommended:
 - **Front-end Applications**: React with Vite for high performance and lightweight builds.
 - **Inter-service contracts**: JSON Schema definitions.
 
+### Image Processing Provider Abstractions
+
+To ensure the Image Processing Engine remains decoupled from specific computer vision backends (e.g., MediaPipe, OpenCV, or ONNX Runtime), it utilizes a provider-neutral abstraction layer defined via abstract base classes:
+- `FaceDetectionProvider`: Interface for face bounding-box detection and landmark extraction.
+- `HeadEstimationProvider`: Interface for estimating complete-head boundaries from facial geometry.
+- `SubjectSegmentationProvider`: Interface for portrait segmentation and coarse foreground-mask generation.
+
 ---
 
 ## 3. Deferred Infrastructure Decisions

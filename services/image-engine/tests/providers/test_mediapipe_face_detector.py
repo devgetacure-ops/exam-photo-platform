@@ -14,7 +14,7 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Any, Callable, Optional, TypeVar
 
 if TYPE_CHECKING:
     from exam_photo.providers.mediapipe_face_detector import MediapipeFaceDetector
@@ -27,7 +27,7 @@ from PIL import Image, ImageDraw
 # ---------------------------------------------------------------------------
 
 try:
-    import mediapipe  # type: ignore[import-untyped]  # noqa: F401
+    import mediapipe  # noqa: F401
 
     _MEDIAPIPE_INSTALLED = True
 
@@ -47,6 +47,8 @@ _MODEL_SHA256: str = os.environ.get(_MODEL_SHA256_ENV, "")
 
 _IS_CI = os.environ.get("CI") == "true" or os.environ.get("GITHUB_ACTIONS") == "true"
 
+F = TypeVar("F", bound=Callable[..., Any])
+
 if _IS_CI:
     if not _MEDIAPIPE_INSTALLED:
         raise RuntimeError("MediaPipe must be installed in CI.")
@@ -55,23 +57,29 @@ if _IS_CI:
             f"Face detection model path must be set via {_MODEL_PATH_ENV} in CI, and the file must exist."
         )
 
-    def requires_mediapipe(f):
+    def requires_mediapipe(f: F) -> F:
         return f
 
-    def requires_model(f):
+    def requires_model(f: F) -> F:
         return f
 else:
-    requires_mediapipe = pytest.mark.skipif(
-        not _MEDIAPIPE_INSTALLED,
-        reason="mediapipe not installed — run: pip install -e '.[face]'",
-    )
-    requires_model = pytest.mark.skipif(
-        _MODEL_PATH is None,
-        reason=(
-            f"Model asset not available. Set {_MODEL_PATH_ENV}=<path/to/model.task> "
-            f"and {_MODEL_SHA256_ENV}=<sha256> to run inference tests."
-        ),
-    )
+
+    def requires_mediapipe(f: F) -> F:
+        decorator = pytest.mark.skipif(
+            not _MEDIAPIPE_INSTALLED,
+            reason="mediapipe not installed — run: pip install -e '.[face]'",
+        )
+        return decorator(f)  # type: ignore[no-any-return]
+
+    def requires_model(f: F) -> F:
+        decorator = pytest.mark.skipif(
+            _MODEL_PATH is None,
+            reason=(
+                f"Model asset not available. Set {_MODEL_PATH_ENV}=<path/to/model.task> "
+                f"and {_MODEL_SHA256_ENV}=<sha256> to run inference tests."
+            ),
+        )
+        return decorator(f)  # type: ignore[no-any-return]
 
 
 # Fixture image directory

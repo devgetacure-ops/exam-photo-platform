@@ -81,9 +81,9 @@ It records the source, licence, expected properties, and acquisition date for ea
 
 | Field | Value |
 |---|---|
-| Source | Generated programmatically for Milestone 6 |
+| Source | Generated programmatically for Milestone 6 and 7 |
 | Licence | N/A |
-| Content | JSON file containing ground-truth characteristics and expected head coordinates for image fixtures |
+| Content | JSON file containing ground-truth characteristics, expected head coordinates, and expected segmentation parameters for image fixtures |
 | Used in tests | Verified programmatically |
 
 ---

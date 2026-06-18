@@ -2,7 +2,7 @@ import json
 import os
 from typing import Any, Dict, List
 
-import jsonschema  # type: ignore[import-untyped]
+import jsonschema
 from pydantic import ValidationError
 
 from exam_photo.models.exam_rule import ExamRule

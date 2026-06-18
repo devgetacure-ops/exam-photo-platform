@@ -105,6 +105,58 @@ _GUIDANCE_MAP: Dict[SuitabilityIssueCode, str] = {
     SuitabilityIssueCode.SUITABILITY_CHECK_INDETERMINATE: (
         "Verification was inconclusive. Please ensure the image is a standard JPG or PNG."
     ),
+    # Segmentation errors and warnings
+    SuitabilityIssueCode.SEGMENTATION_PROVIDER_UNAVAILABLE: (
+        "Portrait segmentation check is temporarily unavailable."
+    ),
+    SuitabilityIssueCode.SEGMENTATION_PROVIDER_FAILED: (
+        "Portrait segmentation failed. Please try again."
+    ),
+    SuitabilityIssueCode.SEGMENTATION_MODEL_MISSING: (
+        "Segmentation model file is missing."
+    ),
+    SuitabilityIssueCode.SEGMENTATION_MODEL_CHECKSUM_FAILED: (
+        "Segmentation model file checksum verification failed."
+    ),
+    SuitabilityIssueCode.SEGMENTATION_OUTPUT_INVALID: (
+        "Invalid output from portrait segmentation."
+    ),
+    SuitabilityIssueCode.SEGMENTATION_MASK_EMPTY: (
+        "No clear subject boundary could be detected in the photograph."
+    ),
+    SuitabilityIssueCode.SEGMENTATION_MASK_FULL_FRAME: (
+        "Could not separate the subject from the background."
+    ),
+    SuitabilityIssueCode.SEGMENTATION_MASK_DIMENSION_MISMATCH: (
+        "Internal dimension mismatch during segmentation."
+    ),
+    SuitabilityIssueCode.SEGMENTATION_MASK_NONFINITE: (
+        "Invalid values detected in subject segmentation."
+    ),
+    SuitabilityIssueCode.SEGMENTATION_FACE_NOT_CONTAINED: (
+        "The candidate's face is not correctly positioned within the detected subject region."
+    ),
+    SuitabilityIssueCode.SEGMENTATION_HEAD_REGION_LOW_COVERAGE: (
+        "The detected subject does not fully cover the estimated head region."
+    ),
+    SuitabilityIssueCode.SEGMENTATION_FOREGROUND_FRAGMENTED: (
+        "The detected subject region is fragmented or disconnected."
+    ),
+    SuitabilityIssueCode.SEGMENTATION_MULTIPLE_MAJOR_COMPONENTS: (
+        "Multiple disconnected subject regions detected."
+    ),
+    SuitabilityIssueCode.SEGMENTATION_FOREGROUND_COVERAGE_LOW: (
+        "The candidate covers too small a portion of the photograph."
+    ),
+    SuitabilityIssueCode.SEGMENTATION_FOREGROUND_COVERAGE_HIGH: (
+        "The candidate covers too large a portion of the photograph."
+    ),
+    SuitabilityIssueCode.SEGMENTATION_EDGE_CONTACT_WARNING: (
+        "The candidate is touching or cut off by the frame boundary."
+    ),
+    SuitabilityIssueCode.SEGMENTATION_UNCERTAIN_EDGE_HIGH: (
+        "The boundary between candidate and background is excessively blurry or uncertain."
+    ),
 }
 
 

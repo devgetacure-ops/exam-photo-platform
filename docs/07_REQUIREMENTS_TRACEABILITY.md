@@ -11,7 +11,8 @@ This matrix maps stable requirement identifiers to design documents, status indi
 | **PROD-001** | Selection of exam triggers rules | PDF Sec 1.1 | CONFIRMED | Documentation Complete | `apps/web`, `packages/exam-rules` | Search route assertions | Milestone 2 | First step in workflow |
 | **CROP-001** | Crop Mode A (Exact Size) | PDF Sec 5.3 | CONFIRMED | Not Implemented | `services/image-engine` | Aspect/dimension assertions | Milestone 8 | Aspect ratio preserved |
 | **CROP-002** | Crop Mode B (Ranges) | PDF Sec 5.3 | CONFIRMED | Not Implemented | `services/image-engine` | Tight cropping margins | Milestone 8 | Fallbacks applied |
-| **BG-001** | Background cleaning | PDF Sec 5.2 | CONFIRMED | Not Implemented | `services/image-engine` | Edge visual checks | Milestone 7 | White background standard |
+| **BG-001** | Background cleaning | PDF Sec 5.2 | CONFIRMED | Not Implemented | `services/image-engine` | Edge visual checks | Future | White background standard |
+| **SEG-001** | Portrait coarse segmentation | PDF Sec 5.2 | CONFIRMED | **Implemented (Milestone 7)** | `services/image-engine` | `test_subject_segmentation.py` | Milestone 7 | MediaPipe multiclass & binary segmenters |
 | **ID-001** | Identity preservation | PDF Sec 5.5 | CONFIRMED | Not Implemented | `services/image-engine` | Geometric similarity checks | Milestone 9 | Enhancements limited |
 | **RULE-001** | Versioned structured rules | PDF Sec 6 | CONFIRMED | **Implemented (Milestone 2)** | `packages/exam-rules`, `services/image-engine` | `test_rule_validation.py` | Milestone 2 | JSON schema & Python models |
 | **FILE-001** | Target output naming | PDF Sec 5.7 | CONFIRMED | Not Implemented | `services/image-engine` | Pattern check tests | Milestone 11 | Sanitize string output |

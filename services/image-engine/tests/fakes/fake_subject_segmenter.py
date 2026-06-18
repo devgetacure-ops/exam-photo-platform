@@ -1,0 +1,94 @@
+from typing import Any, Dict, List, Optional
+
+import numpy as np
+from PIL import Image
+
+from exam_photo.models.geometry import BoundingBox
+from exam_photo.providers.face_detection import FaceDetection
+from exam_photo.providers.subject_segmentation import (
+    MaskValidationReport,
+    SegmentationCapabilities,
+    SegmentationStatusValue,
+    SubjectSegmentationProvider,
+    SubjectSegmentationResult,
+)
+
+
+class FakeSubjectSegmenter(SubjectSegmentationProvider):
+    def __init__(
+        self,
+        is_valid: bool = True,
+        foreground_coverage_ratio: float = 0.5,
+        connected_components_count: int = 1,
+        issue_codes: Optional[List[str]] = None,
+        raise_error: Optional[Exception] = None,
+    ) -> None:
+        self.is_valid = is_valid
+        self.foreground_coverage_ratio = foreground_coverage_ratio
+        self.connected_components_count = connected_components_count
+        self.issue_codes = issue_codes or []
+        self.raise_error = raise_error
+
+    def segment_subject(
+        self,
+        image: Image.Image,
+        face: Optional[FaceDetection] = None,
+        head_estimate: Optional[BoundingBox] = None,
+        config: Optional[Dict[str, Any]] = None,
+    ) -> SubjectSegmentationResult:
+        if self.raise_error is not None:
+            raise self.raise_error
+
+        w, h = image.size
+        prob_mask = np.zeros((h, w), dtype=np.float32)
+        num_pixels = int(w * h * self.foreground_coverage_ratio)
+        prob_mask.flat[:num_pixels] = 1.0
+
+        binary_mask_arr = np.where(prob_mask >= 0.5, 255, 0).astype(np.uint8)
+        coarse_mask = Image.fromarray(binary_mask_arr, mode="L")
+
+        val_report = MaskValidationReport(
+            is_valid=self.is_valid,
+            foreground_coverage_ratio=self.foreground_coverage_ratio,
+            uncertain_edge_ratio=0.05,
+            connected_components_count=self.connected_components_count,
+            largest_component_ratio=1.0,
+            image_edge_contact=False,
+            face_contained=True if face is not None else None,
+            head_region_coverage_ratio=1.0 if head_estimate is not None else None,
+            issue_codes=self.issue_codes,
+        )
+
+        caps = SegmentationCapabilities(
+            probability_masks=True,
+            category_mask=False,
+            multiclass=True,
+            hair_class=True,
+            face_skin_class=True,
+            clothes_class=True,
+            accessories_class=True,
+            multiple_people_supported=True,
+            instance_separation=False,
+            cpu_execution=True,
+            local_execution=True,
+        )
+
+        return SubjectSegmentationResult(
+            provider_name="FakeSubjectSegmenter",
+            provider_version="0.0.1-fake",
+            model_name="fake_model",
+            model_version="1.0-fake",
+            capabilities=caps,
+            provider_status=SegmentationStatusValue.SUCCESS,
+            probability_mask=prob_mask,
+            coarse_mask=coarse_mask,
+            input_width=w,
+            input_height=h,
+            mask_width=w,
+            mask_height=h,
+            threshold_used=0.5,
+            foreground_coverage_ratio=self.foreground_coverage_ratio,
+            warnings=[],
+            processing_duration=0.1,
+            mask_validation=val_report,
+        )

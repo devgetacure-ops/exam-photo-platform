@@ -15,7 +15,6 @@ from exam_photo.providers.head_estimation import (
 )
 
 
-
 class FakeHeadEstimator(HeadEstimationProvider):
     def __init__(
         self,
@@ -112,7 +111,6 @@ class FakeHeadEstimator(HeadEstimationProvider):
             warnings=self.warnings,
             provider_status=ProviderStatusValue.SUCCESS,
             processing_duration=0.0,
-
             safe_internal_metadata={
                 "image_width": img_w,
                 "image_height": img_h,

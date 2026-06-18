@@ -68,6 +68,32 @@ def main(argv: Optional[List[str]] = None) -> int:
         "--model-path", help="Path to the face-detection model (.tflite)."
     )
 
+    # segment-subject subcommand
+    segment_parser = subparsers.add_parser(
+        "segment-subject",
+        help="Run subject segmentation and validate the coarse mask.",
+    )
+    segment_parser.add_argument(
+        "--input", required=True, help="Path to the image file to process."
+    )
+    segment_parser.add_argument(
+        "--face-model-path", help="Path to the face-detection model (.tflite)."
+    )
+    segment_parser.add_argument(
+        "--segmenter-model-path", help="Path to the segmenter model (.tflite)."
+    )
+    segment_parser.add_argument(
+        "--variant",
+        choices=["selfie_multiclass_256x256", "selfie_bin_general"],
+        help="Segmenter model variant to use.",
+    )
+    segment_parser.add_argument(
+        "--threshold",
+        type=float,
+        default=0.5,
+        help="Threshold value for the foreground probability mask.",
+    )
+
     args = parser.parse_args(argv)
 
     if args.command == "validate-rule":
@@ -376,6 +402,196 @@ def main(argv: Optional[List[str]] = None) -> int:
             print("\n  Warnings:")
             for w in head_result.warnings:
                 print(f"    - {w}")
+
+        return 0
+
+    elif args.command == "segment-subject":
+        input_path = args.input
+        if not os.path.exists(input_path):
+            print("Error: Input file not found. Code: FILE_NOT_FOUND", file=sys.stderr)
+            return 1
+
+        # 1. Normalize the image input
+        limits = InputLimits()  # use defaults
+        try:
+            with open(input_path, "rb") as f:
+                data = f.read(limits.maximum_encoded_byte_size + 1)
+        except Exception:
+            print(
+                "Error: Unable to read input file. Code: FILE_READ_FAILED",
+                file=sys.stderr,
+            )
+            return 1
+
+        try:
+            norm_result = normalize_image_input(data, input_path, limits)
+        except Exception:
+            print(
+                "Error: Image normalization failed. Code: IMAGE_NORMALIZATION_FAILED",
+                file=sys.stderr,
+            )
+            return 1
+
+        # 2. Lazy load MediapipeFaceDetector
+        try:
+            from exam_photo.providers.mediapipe_face_detector import (
+                MediapipeFaceDetector,
+            )
+        except ImportError:
+            print(
+                "Error: MediaPipe face detector provider dependencies are not installed. Code: DEPENDENCY_MISSING",
+                file=sys.stderr,
+            )
+            return 1
+
+        # 3. Locate face model path
+        repo_root = Path(__file__).resolve().parent.parent.parent.parent
+        face_model_path_str = args.face_model_path
+        face_expected_sha256 = ""
+
+        if not face_model_path_str:
+            face_model_path_str = os.environ.get("EXAM_PHOTO_FACE_MODEL_PATH")
+            face_expected_sha256 = os.environ.get("EXAM_PHOTO_FACE_MODEL_SHA256", "")
+
+        if not face_model_path_str:
+            manifest_path = repo_root / "model-manifests" / "face-detector.json"
+            if manifest_path.exists():
+                try:
+                    with open(manifest_path, "r", encoding="utf-8") as mf:
+                        manifest = json.load(mf)
+                    face_model_path_str = manifest.get("local_model_path_default")
+                    face_expected_sha256 = manifest.get("sha256", "")
+                except Exception:
+                    pass
+            if not face_model_path_str:
+                face_model_path_str = "model-assets/blaze_face_short_range.tflite"
+
+        face_model_path = Path(face_model_path_str)
+        if not face_model_path.is_absolute():
+            face_model_path = repo_root / face_model_path
+
+        # 4. Detect Face
+        face = None
+        if face_model_path.exists():
+            try:
+                detector = MediapipeFaceDetector(
+                    model_path=face_model_path,
+                    expected_sha256=face_expected_sha256,
+                )
+                with detector:
+                    face_result = detector.detect_faces(norm_result.image)
+                if len(face_result.detections) == 1:
+                    face = face_result.detections[0]
+            except Exception:
+                pass
+
+        # 5. Estimate Head Bounding Box if exactly one face
+        head_box = None
+        if face is not None:
+            try:
+                estimator = LandmarkGeometricHeadEstimator()
+                head_result = estimator.estimate_head(
+                    norm_result.image, face, face.landmarks
+                )
+                head_box = head_result.head_bounding_box
+            except Exception:
+                pass
+
+        # 6. Locate segmenter model path
+        model_path_str = args.segmenter_model_path
+        expected_sha256 = ""
+
+        if not model_path_str:
+            model_path_str = os.environ.get("EXAM_PHOTO_SEGMENTER_MODEL_PATH")
+            expected_sha256 = os.environ.get("EXAM_PHOTO_SEGMENTER_MODEL_SHA256", "")
+
+        if not model_path_str:
+            manifest_path = repo_root / "model-manifests" / "subject-segmenter.json"
+            if manifest_path.exists():
+                try:
+                    with open(manifest_path, "r", encoding="utf-8") as mf:
+                        manifest = json.load(mf)
+                    variant_name = args.variant or manifest.get(
+                        "selected_variant", "selfie_multiclass_256x256"
+                    )
+                    variants = manifest.get("variants", {})
+                    variant = variants.get(variant_name, {})
+                    model_path_str = variant.get(
+                        "filename", "selfie_multiclass_256x256.tflite"
+                    )
+                    model_path_str = "model-assets/" + model_path_str
+                    expected_sha256 = variant.get("sha256", "")
+                except Exception:
+                    pass
+            if not model_path_str:
+                model_path_str = "model-assets/selfie_multiclass_256x256.tflite"
+
+        model_path = Path(model_path_str)
+        if not model_path.is_absolute():
+            model_path = repo_root / model_path
+
+        if not model_path.exists():
+            print(
+                "Error: Segmenter model file not found. Code: MODEL_NOT_FOUND",
+                file=sys.stderr,
+            )
+            return 1
+
+        # 7. Run segmenter
+        try:
+            from exam_photo.providers.segmenters.mediapipe_segmenter import (
+                MediapipeSubjectSegmenter,
+            )
+        except ImportError:
+            print(
+                "Error: MediaPipe subject segmenter provider dependencies are not installed. Code: DEPENDENCY_MISSING",
+                file=sys.stderr,
+            )
+            return 1
+
+        try:
+            segmenter = MediapipeSubjectSegmenter(
+                model_path=model_path,
+                expected_sha256=expected_sha256,
+            )
+            with segmenter:
+                seg_result = segmenter.segment_subject(
+                    norm_result.image,
+                    face=face,
+                    head_estimate=head_box,
+                    config={"foreground_threshold": args.threshold},
+                )
+        except Exception as e:
+            print(
+                f"Error: Subject segmentation failed. Code: SEGMENTATION_FAILED. Details: {e}",
+                file=sys.stderr,
+            )
+            return 1
+
+        # 8. Print stats
+        print("Success: Subject segmentation finished successfully.")
+        print(f"  Provider: {seg_result.provider_name} v{seg_result.provider_version}")
+        print(f"  Model: {seg_result.model_name} v{seg_result.model_version}")
+        print(f"  Processing Duration: {seg_result.processing_duration:.2f}ms")
+        print(f"  Mask Dimensions: {seg_result.mask_width}x{seg_result.mask_height}")
+        print(f"  Foreground Coverage: {seg_result.foreground_coverage_ratio:.4f}")
+
+        val = seg_result.mask_validation
+        print("\n  Mask Validation Report:")
+        print(f"    Is Valid: {val.is_valid}")
+        print(f"    Uncertain Edge Ratio: {val.uncertain_edge_ratio:.4f}")
+        print(f"    Connected Components Count: {val.connected_components_count}")
+        print(f"    Largest Component Ratio: {val.largest_component_ratio:.4f}")
+        print(f"    Image Edge Contact: {val.image_edge_contact}")
+        print(f"    Face Contained: {val.face_contained}")
+        print(
+            f"    Head Region Coverage Ratio: {val.head_region_coverage_ratio if val.head_region_coverage_ratio is not None else 'N/A'}"
+        )
+
+        if val.issue_codes:
+            print("\n  Issue Codes Detected:")
+            for code in val.issue_codes:
+                print(f"    - {code}")
 
         return 0
 

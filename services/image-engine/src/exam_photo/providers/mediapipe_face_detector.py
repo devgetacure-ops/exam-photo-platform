@@ -44,12 +44,11 @@ from exam_photo.providers.model_errors import ModelChecksumError, ModelNotFoundE
 # Import is deferred to initialisation time so the module remains importable
 # without mediapipe installed.
 try:
-    import mediapipe as mp  # type: ignore[import-untyped]
-    from mediapipe.tasks import python as mp_python  # type: ignore[import-untyped]
-    from mediapipe.tasks.python import (  # type: ignore[import-untyped]
+    import mediapipe as mp
+    from mediapipe.tasks import python as mp_python
+    from mediapipe.tasks.python import (
         vision as mp_vision,
     )
-
 
     _MEDIAPIPE_AVAILABLE = True
 except ImportError:  # pragma: no cover

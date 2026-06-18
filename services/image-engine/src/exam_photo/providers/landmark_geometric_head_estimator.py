@@ -19,7 +19,6 @@ from exam_photo.providers.head_estimation import (
 )
 
 
-
 class LandmarkGeometricHeadEstimator:
     """Provisional geometric complete-head estimator.
 
@@ -120,7 +119,6 @@ class LandmarkGeometricHeadEstimator:
             if mouth.y > face_box.top and mouth.y < img_h:
                 bottom_val = mouth.y + face_h * cfg.lower_expansion_ratio
                 chin_basis = BoundaryBasis.LANDMARK_INFERRED
-
 
         # Apply generic lower chin margin if configured
         if cfg.lower_margin_ratio > 0:
@@ -265,7 +263,6 @@ class LandmarkGeometricHeadEstimator:
             warnings=warnings_list,
             provider_status=ProviderStatusValue.SUCCESS,
             processing_duration=duration_ms,
-
             safe_internal_metadata={
                 "image_width": img_w,
                 "image_height": img_h,

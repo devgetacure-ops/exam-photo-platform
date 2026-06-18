@@ -12,9 +12,9 @@ This platform processes candidate photographs by checking and conforming them to
 ## 2. Current Repository Status & Milestone Scope
 
 > [!NOTE]
-> This repository has completed **Milestone 6 (Landmark-Assisted Geometric Head-Box Estimation)**.
+> This repository has completed **Milestone 7 (Portrait-Segmentation and Coarse Foreground-Mask Generation)**.
 > - **Input image normalization and suitability evaluation are fully implemented.**
-> - **Local face-detection (MediaPipe) and landmark-assisted geometric head-box estimation are fully integrated and verified.**
+> - **Local face-detection (MediaPipe), geometric head-box estimation, and CPU-capable portrait segmentation are fully integrated and verified.**
 > - **Automated cropping and background replacement are scheduled for next milestones.**
 
 ### What is Implemented:
@@ -24,11 +24,12 @@ This platform processes candidate photographs by checking and conforming them to
 * Canonical JSON Schema and Pydantic rules model validation checker (`validate-rule` CLI command).
 * Secure, limits-based input image normalization, orientation transpose correction, metadata stripping, sRGB profile mapping (`inspect-input` CLI command).
 * Suitability evaluation framework with local offline face-detection (MediaPipe) and landmark-assisted geometric head-box estimation.
+* Coarse portrait segmentation (MediaPipe multiclass/binary) with connected component (DSU) and face/head containment mask validation.
 * Geometry models (BoundingBox, Point) with safety clamping math.
 
 ### What is NOT Implemented:
-* Background replacement/removal algorithms (scheduled for Milestone 7).
-* final cropping, resizing, and output compressed photo generation algorithms (scheduled for Milestone 8).
+* Background replacement/removal algorithms (scheduled for Milestone 8).
+* final cropping, resizing, and output compressed photo generation algorithms (scheduled for Milestone 9).
 * Public and admin console web applications.
 * Production databases, authentication, payments, storage lifecycle handlers.
 

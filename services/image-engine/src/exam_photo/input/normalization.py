@@ -24,8 +24,6 @@ except ImportError:
 _pillow_load_lock = threading.Lock()
 
 
-
-
 class NormalizationResult:
     def __init__(
         self,

@@ -371,7 +371,6 @@ class EffectivePeriod(BaseModel):
             except ValueError:
                 raise ValueError("Invalid date value.") from None
 
-
         return v
 
     @model_validator(mode="after")

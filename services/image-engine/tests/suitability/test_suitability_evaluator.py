@@ -214,7 +214,7 @@ def test_head_boundary_unknown(
 # ---------------------------------------------------------------------------
 
 try:
-    import mediapipe  # type: ignore[import-untyped]  # noqa: F401
+    import mediapipe  # noqa: F401
 
     _MEDIAPIPE_INSTALLED = True
 
@@ -348,3 +348,185 @@ def test_warnings_propagation(
     report = evaluator.evaluate(base_normalization_result)
 
     assert "Face detector experienced heavy camera noise warning" in report.warnings
+
+
+def test_evaluator_segmentation_optional_success(
+    base_normalization_result: NormalizationResult,
+    lenient_thresholds: SuitabilityThresholds,
+) -> None:
+    from tests.fakes.fake_subject_segmenter import FakeSubjectSegmenter
+
+    box = BoundingBox(left=0.1, top=0.1, right=0.4, bottom=0.4)
+    face = FaceDetection(
+        bounding_box=box,
+        confidence=0.9,
+        pose=PoseEstimate(yaw=0.0, pitch=0.0, roll=0.0, confidence=1.0, method="fake"),
+        occlusion_indicators={"face_occluded": False, "eyes_occluded": False},
+    )
+    fake_face = FakeFaceDetector(detections=[face])
+    fake_head = FakeHeadEstimator()
+    fake_seg = FakeSubjectSegmenter(is_valid=True)
+
+    evaluator = SuitabilityEvaluator(
+        lenient_thresholds,
+        face_provider=fake_face,
+        head_provider=fake_head,
+        segmentation_provider=fake_seg,
+    )
+    report = evaluator.evaluate(
+        base_normalization_result, background_replacement_required=False
+    )
+
+    assert report.overall_status == SuitabilityStatus.SUITABLE
+    assert report.segmentation_diagnostic is not None
+    assert report.segmentation_diagnostic.is_valid is True
+    assert report.segmentation_diagnostic.segmentation_status == "success"
+    assert report.segmentation_diagnostic.can_proceed is True
+
+
+def test_evaluator_segmentation_optional_failure(
+    base_normalization_result: NormalizationResult,
+    lenient_thresholds: SuitabilityThresholds,
+) -> None:
+    from tests.fakes.fake_subject_segmenter import FakeSubjectSegmenter
+
+    box = BoundingBox(left=0.1, top=0.1, right=0.4, bottom=0.4)
+    face = FaceDetection(
+        bounding_box=box,
+        confidence=0.9,
+        pose=PoseEstimate(yaw=0.0, pitch=0.0, roll=0.0, confidence=1.0, method="fake"),
+        occlusion_indicators={"face_occluded": False, "eyes_occluded": False},
+    )
+    fake_face = FakeFaceDetector(detections=[face])
+    fake_head = FakeHeadEstimator()
+    fake_seg = FakeSubjectSegmenter(
+        is_valid=False, issue_codes=["SEGMENTATION_MASK_EMPTY"]
+    )
+
+    evaluator = SuitabilityEvaluator(
+        lenient_thresholds,
+        face_provider=fake_face,
+        head_provider=fake_head,
+        segmentation_provider=fake_seg,
+    )
+    report = evaluator.evaluate(
+        base_normalization_result, background_replacement_required=False
+    )
+
+    # When replacement is not required, mask failures do not make the photo unsuitable
+    assert report.overall_status == SuitabilityStatus.SUITABLE
+    assert report.segmentation_diagnostic is not None
+    assert report.segmentation_diagnostic.is_valid is False
+    assert report.segmentation_diagnostic.can_proceed is True
+    assert "SEGMENTATION_MASK_EMPTY" in report.segmentation_diagnostic.issue_codes
+
+
+def test_evaluator_segmentation_mandatory_success(
+    base_normalization_result: NormalizationResult,
+    lenient_thresholds: SuitabilityThresholds,
+) -> None:
+    from tests.fakes.fake_subject_segmenter import FakeSubjectSegmenter
+
+    box = BoundingBox(left=0.1, top=0.1, right=0.4, bottom=0.4)
+    face = FaceDetection(
+        bounding_box=box,
+        confidence=0.9,
+        pose=PoseEstimate(yaw=0.0, pitch=0.0, roll=0.0, confidence=1.0, method="fake"),
+        occlusion_indicators={"face_occluded": False, "eyes_occluded": False},
+    )
+    fake_face = FakeFaceDetector(detections=[face])
+    fake_head = FakeHeadEstimator()
+    fake_seg = FakeSubjectSegmenter(is_valid=True)
+
+    evaluator = SuitabilityEvaluator(
+        lenient_thresholds,
+        face_provider=fake_face,
+        head_provider=fake_head,
+        segmentation_provider=fake_seg,
+    )
+    report = evaluator.evaluate(
+        base_normalization_result, background_replacement_required=True
+    )
+
+    assert report.overall_status == SuitabilityStatus.SUITABLE
+    assert report.segmentation_diagnostic is not None
+    assert report.segmentation_diagnostic.is_valid is True
+    assert report.segmentation_diagnostic.can_proceed is True
+
+
+def test_evaluator_segmentation_mandatory_failure(
+    base_normalization_result: NormalizationResult,
+    lenient_thresholds: SuitabilityThresholds,
+) -> None:
+    from tests.fakes.fake_subject_segmenter import FakeSubjectSegmenter
+
+    box = BoundingBox(left=0.1, top=0.1, right=0.4, bottom=0.4)
+    face = FaceDetection(
+        bounding_box=box,
+        confidence=0.9,
+        pose=PoseEstimate(yaw=0.0, pitch=0.0, roll=0.0, confidence=1.0, method="fake"),
+        occlusion_indicators={"face_occluded": False, "eyes_occluded": False},
+    )
+    fake_face = FakeFaceDetector(detections=[face])
+    fake_head = FakeHeadEstimator()
+    fake_seg = FakeSubjectSegmenter(
+        is_valid=False, issue_codes=["SEGMENTATION_MASK_EMPTY"]
+    )
+
+    evaluator = SuitabilityEvaluator(
+        lenient_thresholds,
+        face_provider=fake_face,
+        head_provider=fake_head,
+        segmentation_provider=fake_seg,
+    )
+    report = evaluator.evaluate(
+        base_normalization_result, background_replacement_required=True
+    )
+
+    # When replacement is required, serious mask failures block the photo
+    assert report.overall_status == SuitabilityStatus.UNSUITABLE
+    assert report.segmentation_diagnostic is not None
+    assert report.segmentation_diagnostic.is_valid is False
+    assert report.segmentation_diagnostic.can_proceed is False
+    assert "SEGMENTATION_MASK_EMPTY" in report.segmentation_diagnostic.issue_codes
+    assert any(
+        iss.blocking and iss.code == "SEGMENTATION_MASK_EMPTY" for iss in report.issues
+    )
+
+
+def test_evaluator_segmentation_provider_unavailable_mandatory(
+    base_normalization_result: NormalizationResult,
+    lenient_thresholds: SuitabilityThresholds,
+) -> None:
+    box = BoundingBox(left=0.1, top=0.1, right=0.4, bottom=0.4)
+    face = FaceDetection(
+        bounding_box=box,
+        confidence=0.9,
+        pose=PoseEstimate(yaw=0.0, pitch=0.0, roll=0.0, confidence=1.0, method="fake"),
+        occlusion_indicators={"face_occluded": False, "eyes_occluded": False},
+    )
+    fake_face = FakeFaceDetector(detections=[face])
+    fake_head = FakeHeadEstimator()
+
+    evaluator = SuitabilityEvaluator(
+        lenient_thresholds,
+        face_provider=fake_face,
+        head_provider=fake_head,
+        segmentation_provider=None,
+    )
+    report = evaluator.evaluate(
+        base_normalization_result, background_replacement_required=True
+    )
+
+    assert report.overall_status == SuitabilityStatus.UNSUITABLE
+    assert report.segmentation_diagnostic is not None
+    assert report.segmentation_diagnostic.segmentation_status == "unavailable"
+    assert report.segmentation_diagnostic.can_proceed is False
+    assert (
+        "SEGMENTATION_PROVIDER_UNAVAILABLE"
+        in report.segmentation_diagnostic.issue_codes
+    )
+    assert any(
+        iss.blocking and iss.code == "SEGMENTATION_PROVIDER_UNAVAILABLE"
+        for iss in report.issues
+    )

@@ -29,6 +29,7 @@ class SuitabilityCheck(str, Enum):
     SIDE_HEAD_BOUNDARY = "side_head_boundary"
     CHIN_BOUNDARY = "chin_boundary"
     BEARD_BOUNDARY = "beard_boundary"
+    BACKGROUND = "background"
 
 
 class IssueSeverity(str, Enum):
@@ -85,6 +86,48 @@ class SuitabilityIssue(BaseModel):
         )
 
 
+class PublicSegmentationReport(BaseModel):
+    is_valid: bool
+    segmentation_status: str  # "success", "failed", "unavailable"
+    issue_codes: List[str]
+    safe_user_guidance: List[str]
+    can_proceed: bool
+    foreground_coverage_ratio: float
+
+
+class InternalSegmentationDiagnostic(BaseModel):
+    is_valid: bool
+    segmentation_status: str
+    issue_codes: List[str]
+    safe_user_guidance: List[str]
+    can_proceed: bool
+    provider_name: str
+    provider_version: str
+    model_name: str
+    model_version: str
+    threshold_used: float
+    processing_duration_ms: float
+    foreground_coverage_ratio: float
+    uncertain_edge_ratio: float
+    connected_components_count: int
+    largest_component_ratio: float
+    face_contained: Optional[bool]
+    head_region_coverage_ratio: Optional[float]
+    mask_width: int
+    mask_height: int
+    warnings: List[str]
+
+    def to_public(self) -> PublicSegmentationReport:
+        return PublicSegmentationReport(
+            is_valid=self.is_valid,
+            segmentation_status=self.segmentation_status,
+            issue_codes=self.issue_codes,
+            safe_user_guidance=self.safe_user_guidance,
+            can_proceed=self.can_proceed,
+            foreground_coverage_ratio=self.foreground_coverage_ratio,
+        )
+
+
 class PublicSuitabilityReport(BaseModel):
     overall_status: SuitabilityStatus
     issues: List[PublicSuitabilityIssue]
@@ -95,6 +138,7 @@ class PublicSuitabilityReport(BaseModel):
     checks_unavailable: List[SuitabilityCheck]
     safe_user_guidance: List[str]
     evaluator_version: str
+    segmentation_report: Optional[PublicSegmentationReport] = None
 
 
 class SuitabilityReport(BaseModel):
@@ -108,8 +152,14 @@ class SuitabilityReport(BaseModel):
     safe_user_guidance: List[str]
     internal_summary: str
     evaluator_version: str
+    segmentation_diagnostic: Optional[InternalSegmentationDiagnostic] = None
 
     def to_public(self) -> PublicSuitabilityReport:
+        seg_report = (
+            self.segmentation_diagnostic.to_public()
+            if self.segmentation_diagnostic is not None
+            else None
+        )
         return PublicSuitabilityReport(
             overall_status=self.overall_status,
             issues=[issue.to_public() for issue in self.issues],
@@ -120,4 +170,5 @@ class SuitabilityReport(BaseModel):
             checks_unavailable=self.checks_unavailable,
             safe_user_guidance=self.safe_user_guidance,
             evaluator_version=self.evaluator_version,
+            segmentation_report=seg_report,
         )
