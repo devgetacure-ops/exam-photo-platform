@@ -603,3 +603,194 @@ def test_scenario_assertions() -> None:
     assert lincoln_report.segmentation_diagnostic.is_valid is True
     assert lincoln_report.segmentation_diagnostic.foreground_coverage_ratio > 0.1
     assert lincoln_report.segmentation_diagnostic.can_proceed is True
+
+
+@pytest.mark.mandatory_refinement
+def test_refinement_on_real_fixtures() -> None:
+    _ensure_prerequisites()
+    from exam_photo.providers.mediapipe_face_detector import MediapipeFaceDetector
+    from exam_photo.providers.refiners.morphological_refiner import (
+        MorphologicalForegroundRefiner,
+    )
+    from exam_photo.providers.segmenters.mediapipe_segmenter import (
+        MediapipeSubjectSegmenter,
+    )
+
+    repo_root = Path(__file__).resolve().parent.parent.parent.parent.parent
+    fixtures_dir = repo_root / "tests" / "fixtures"
+
+    # Load face detector info
+    face_model_path = repo_root / "model-assets" / "blaze_face_short_range.tflite"
+    face_sha = ""
+    face_manifest = repo_root / "model-manifests" / "face-detector.json"
+    if face_manifest.exists():
+        with open(face_manifest) as manifest_f:
+            fm = json.load(manifest_f)
+            face_sha = fm.get("sha256", "")
+
+    # Load segmenter info
+    assert _MODEL_PATH is not None
+    segmenter = MediapipeSubjectSegmenter(_MODEL_PATH, _MODEL_SHA256)
+    refiner = MorphologicalForegroundRefiner()
+
+    with open(fixtures_dir / "segmentation" / "annotations.json") as f:
+        manifest = json.load(f)
+
+    for entry in manifest["entries"]:
+        src_name = entry["source_fixture"]
+        # Skip yosemite because it expects 0 coverage / no subject
+        if src_name == "roosevelt_muir_yosemite.jpg":
+            continue
+
+        src_path = fixtures_dir / src_name
+        img = Image.open(src_path)
+
+        # Detect face
+        expected_faces = entry.get("expected_face_count", 1)
+        faces = None
+        if expected_faces > 0:
+            conf = (
+                0.2
+                if src_name
+                in ("lincoln_low_contrast.jpg", "roosevelt_muir_yosemite.jpg")
+                else 0.5
+            )
+            detector = MediapipeFaceDetector(
+                face_model_path, face_sha, min_detection_confidence=conf
+            )
+            with detector:
+                face_res = detector.detect_faces(img)
+            assert len(face_res.detections) == expected_faces
+            faces = face_res.detections
+
+        with segmenter:
+            seg_res = segmenter.segment_subject(img, face=faces)
+
+        assert seg_res.provider_status == SegmentationStatusValue.SUCCESS
+
+        # Run refiner
+        ref_res = refiner.refine_mask(
+            coarse_mask=seg_res.coarse_mask,
+            probability_mask=seg_res.probability_mask,
+            face=faces,
+        )
+
+        # Calculate coarse vs refined stats
+        coarse_arr = np.array(seg_res.coarse_mask) > 127
+        refined_arr = np.array(ref_res.refined_binary_mask) > 127
+
+        intersection = np.logical_and(coarse_arr, refined_arr).sum()
+        union = np.logical_or(coarse_arr, refined_arr).sum()
+        coarse_iou = intersection / union if union > 0 else 1.0
+
+        coarse_cov = float(np.mean(coarse_arr))
+        refined_cov = float(np.mean(refined_arr))
+
+        print(
+            f"Refinement Integration | Fixture: {src_name} | "
+            f"Coarse Cov: {coarse_cov:.4f} | Refined Cov: {refined_cov:.4f} | "
+            f"IoU: {coarse_iou:.4f} | Radius: {ref_res.effective_radius_px} | "
+            f"Duration: {ref_res.refinement_duration_ms:.2f}ms"
+        )
+
+        # Assertions
+        assert coarse_iou >= 0.90, (
+            f"Coarse-refined IoU too low for {src_name}: {coarse_iou:.4f}"
+        )
+        assert abs(refined_cov - coarse_cov) <= 0.15, (
+            f"Coverage diverged too much for {src_name}: {refined_cov:.4f} vs {coarse_cov:.4f}"
+        )
+        assert ref_res.validation.is_valid, (
+            f"Validation report failed for {src_name}: {ref_res.validation.issue_codes}"
+        )
+
+        # Check trimap values
+        trimap_vals = set(np.unique(np.array(ref_res.trimap)))
+        assert trimap_vals.issubset({0, 128, 255})
+
+        # Check alpha mask values
+        alpha = ref_res.refined_alpha_mask
+        assert alpha.dtype == np.float32
+        assert np.all(alpha >= 0.0)
+        assert np.all(alpha <= 1.0)
+
+
+@pytest.mark.mandatory_refinement
+def test_refinement_quality_vs_reference() -> None:
+    _ensure_prerequisites()
+    from exam_photo.providers.mediapipe_face_detector import MediapipeFaceDetector
+    from exam_photo.providers.refiners.morphological_refiner import (
+        MorphologicalForegroundRefiner,
+    )
+    from exam_photo.providers.segmenters.mediapipe_segmenter import (
+        MediapipeSubjectSegmenter,
+    )
+
+    repo_root = Path(__file__).resolve().parent.parent.parent.parent.parent
+    fixtures_dir = repo_root / "tests" / "fixtures"
+
+    # Load face detector info
+    face_model_path = repo_root / "model-assets" / "blaze_face_short_range.tflite"
+    face_sha = ""
+    face_manifest = repo_root / "model-manifests" / "face-detector.json"
+    if face_manifest.exists():
+        with open(face_manifest) as manifest_f:
+            fm = json.load(manifest_f)
+            face_sha = fm.get("sha256", "")
+
+    # Load segmenter info
+    assert _MODEL_PATH is not None
+    segmenter = MediapipeSubjectSegmenter(_MODEL_PATH, _MODEL_SHA256)
+    refiner = MorphologicalForegroundRefiner()
+
+    # Test single_face_frontal.jpg which has reference mask in reference_masks/
+    img = Image.open(fixtures_dir / "single_face_frontal.jpg")
+    ref_mask_path = (
+        fixtures_dir
+        / "segmentation"
+        / "reference_masks"
+        / "reference-einstein-mask.png"
+    )
+    assert ref_mask_path.exists(), "Reference Einstein mask is missing"
+    ref_mask_arr = np.array(Image.open(ref_mask_path).convert("L")) > 127
+
+    # Face detection
+    detector = MediapipeFaceDetector(face_model_path, face_sha)
+    with detector:
+        face_res = detector.detect_faces(img)
+    faces = face_res.detections
+
+    with segmenter:
+        seg_res = segmenter.segment_subject(img, face=faces)
+
+    ref_res = refiner.refine_mask(
+        coarse_mask=seg_res.coarse_mask,
+        probability_mask=seg_res.probability_mask,
+        face=faces,
+    )
+
+    coarse_arr = np.array(seg_res.coarse_mask) > 127
+    refined_arr = np.array(ref_res.refined_binary_mask) > 127
+
+    # 1. Coarse vs Reference IoU
+    coarse_ref_intersect = np.logical_and(coarse_arr, ref_mask_arr).sum()
+    coarse_ref_union = np.logical_or(coarse_arr, ref_mask_arr).sum()
+    coarse_ref_iou = (
+        coarse_ref_intersect / coarse_ref_union if coarse_ref_union > 0 else 1.0
+    )
+
+    # 2. Refined vs Reference IoU
+    refined_ref_intersect = np.logical_and(refined_arr, ref_mask_arr).sum()
+    refined_ref_union = np.logical_or(refined_arr, ref_mask_arr).sum()
+    refined_ref_iou = (
+        refined_ref_intersect / refined_ref_union if refined_ref_union > 0 else 1.0
+    )
+
+    print(
+        f"Quality IoU Check | Coarse vs Reference: {coarse_ref_iou:.6f} | Refined vs Reference: {refined_ref_iou:.6f}"
+    )
+
+    # Assertion: Refined mask should remain highly accurate vs reference mask (>= 0.98 IoU)
+    assert refined_ref_iou >= 0.98, (
+        f"Refinement mask quality too low vs reference: refined_ref_iou ({refined_ref_iou:.6f})"
+    )

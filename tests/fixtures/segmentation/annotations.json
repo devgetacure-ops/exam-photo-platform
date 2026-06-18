@@ -12,7 +12,9 @@
       "treatment_of_spectacles": "N/A",
       "treatment_of_shadows": "shadows on background excluded",
       "licence_provenance": "Derived from public domain photo on Wikimedia Commons",
-      "expected_coverage": 0.5384461211210525
+      "expected_coverage": 0.5384461211210525,
+      "refined_mask_filename": "segmentation/refined_masks/refined-sarah-mask.png",
+      "refined_mask_sha256": "e31e6abb9bbf80e11904bf5b8f870e6a1d6bce7d5a0f8c4e50f8d6891ebff852"
     },
     {
       "source_fixture": "marie_curie_curly_hair.jpg",
@@ -26,7 +28,9 @@
       "treatment_of_spectacles": "N/A",
       "treatment_of_shadows": "shadows on background excluded",
       "licence_provenance": "Derived from public domain photo on Wikimedia Commons",
-      "expected_coverage": 0.5163831855766362
+      "expected_coverage": 0.5163831855766362,
+      "refined_mask_filename": "segmentation/refined_masks/refined-marie-mask.png",
+      "refined_mask_sha256": "0e1dcc35fdd68292117c50ef08da6fd13e309888fb92cebdd74d780e295f7d68"
     },
     {
       "source_fixture": "vivekananda_head_covering.jpg",
@@ -40,7 +44,9 @@
       "treatment_of_spectacles": "N/A",
       "treatment_of_shadows": "shadows on background excluded",
       "licence_provenance": "Derived from public domain photo on Wikimedia Commons",
-      "expected_coverage": 0.6351099603922107
+      "expected_coverage": 0.6351099603922107,
+      "refined_mask_filename": "segmentation/refined_masks/refined-vivekananda-mask.png",
+      "refined_mask_sha256": "bf0c61ccb780d2ac473a41de2f49c3712898b359b7ca69bc51cee139e7a7eb97"
     },
     {
       "source_fixture": "lincoln_low_contrast.jpg",
@@ -54,7 +60,9 @@
       "treatment_of_spectacles": "spectacles included in foreground",
       "treatment_of_shadows": "shadows on background excluded",
       "licence_provenance": "Derived from public domain photo on Wikimedia Commons",
-      "expected_coverage": 0.27696401627442596
+      "expected_coverage": 0.27696401627442596,
+      "refined_mask_filename": "segmentation/refined_masks/refined-lincoln-mask.png",
+      "refined_mask_sha256": "aefe5035980f56027ff0f4ebfdd221d823afcdc0644a481aa1059453b6b31289"
     },
     {
       "source_fixture": "single_face_frontal.jpg",
@@ -70,7 +78,9 @@
       "licence_provenance": "Derived from public domain photo on Wikimedia Commons",
       "expected_coverage": 0.7817093859290951,
       "reference_mask_filename": "segmentation/reference_masks/reference-einstein-mask.png",
-      "reference_mask_sha256": "46c7ca18d287e55601af168358c5ece361a644085f4755d7efea7b7229207c3e"
+      "reference_mask_sha256": "46c7ca18d287e55601af168358c5ece361a644085f4755d7efea7b7229207c3e",
+      "refined_mask_filename": "segmentation/refined_masks/refined-einstein-mask.png",
+      "refined_mask_sha256": "c24d53964c4610d905635c99add65f23d25f2eebc3f3e6f34d6dc3548ea183e9"
     },
     {
       "source_fixture": "roosevelt_muir_yosemite.jpg",
@@ -100,7 +110,9 @@
       "licence_provenance": "Derived from public domain photo on Wikimedia Commons",
       "expected_coverage": 0.6872120075046905,
       "reference_mask_filename": "segmentation/reference_masks/reference-freud-mask.png",
-      "reference_mask_sha256": "23d644edbad605b2c689c018700b0f9cba1b1cdd6d103630815ea0539e4aa3ef"
+      "reference_mask_sha256": "23d644edbad605b2c689c018700b0f9cba1b1cdd6d103630815ea0539e4aa3ef",
+      "refined_mask_filename": "segmentation/refined_masks/refined-freud-mask.png",
+      "refined_mask_sha256": "d48428201a9349e5da7cd70ec09d87c06892065d895beec8d2edf7dcb1d38d89"
     }
   ]
 }

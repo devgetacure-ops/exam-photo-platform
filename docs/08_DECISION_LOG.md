@@ -172,3 +172,18 @@ This log tracks architectural and product decisions, open questions, and recomme
 - **Affected Modules**: `services/image-engine/providers/segmenters`, `services/image-engine/suitability`.
 - **Approval Owner**: Lead Architect
 
+
+### DEC-015: Foreground Refinement Technology Selection
+- **Date**: 2026-06-18
+- **Status**: Approved
+- **Problem**: Selection and integration of local CPU-capable foreground mask refinement technology.
+- **Options Considered**:
+  - Option A: Deterministic NumPy Morphology + PIL Gaussian Blur. Pros: Zero new dependencies, fully deterministic, 100% CPU-safe, fully auditable, lightweight. Cons: Slightly slower than optimized native C libraries.
+  - Option B: SciPy ndimage binary morphology. Pros: Extremely fast. Cons: Adds a large compiled C extension dependency, deployment risks.
+  - Option C: Deep learning-based matting (MODNet). Pros: High-quality hair boundaries. Cons: Requires ONNX runtime (~80MB library) and model file, heavy GPU/CPU overhead.
+- **Decision**: Adopt Option A (Deterministic NumPy Morphology + PIL Gaussian Blur) as the baseline refiner, named `MorphologicalForegroundRefiner`.
+- **Reasoning**: Ensures zero new dependencies, preserves 100% CPU portability, and is fully deterministic and auditable.
+- **Affected Modules**: `services/image-engine/providers/refiners`, `services/image-engine/providers/foreground_refinement.py`.
+- **Approval Owner**: Lead Architect
+
+

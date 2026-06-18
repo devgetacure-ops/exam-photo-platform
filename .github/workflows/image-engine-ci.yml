@@ -41,12 +41,12 @@ jobs:
       run: |
         python scripts/download_model.py --variant short_range --yes
 
-    - name: Run Core Unit Checks (Excluding mandatory segmenter tests)
+    - name: Run Core Unit Checks (Excluding mandatory segmenter and refinement tests)
       env:
         EXAM_PHOTO_FACE_MODEL_PATH: model-assets/blaze_face_short_range.tflite
         EXAM_PHOTO_FACE_MODEL_SHA256: b4578f35940bf5a1a655214a1cce5cab13eba73c1297cd78e1a04c2380b0152f
       run: |
-        pytest services/image-engine -m "not mandatory_segmentation"
+        pytest services/image-engine -m "not mandatory_segmentation and not mandatory_refinement"
 
     - name: Download Binary Segmenter Model Asset
       run: |
@@ -66,6 +66,24 @@ jobs:
     - name: Run Multiclass Smoke and Regression Benchmark Checks
       run: |
         python scripts/benchmark_subject_segmenter.py --require-real
+
+    - name: Run Refinement Integration Tests
+      env:
+        EXAM_PHOTO_SEGMENTER_MODEL_PATH: model-assets/selfie_segmentation.tflite
+        EXAM_PHOTO_SEGMENTER_MODEL_SHA256: 9ee168ec7c8f2a16c56fe8e1cfbc514974cbbb7e434051b455635f1bd1462f5c
+      run: |
+        pytest services/image-engine -m "mandatory_refinement"
+
+    - name: Run Mask Refinement Benchmark
+      run: |
+        python scripts/benchmark_mask_refinement.py --require-real
+
+    - name: Verify refine-mask CLI
+      env:
+        EXAM_PHOTO_SEGMENTER_MODEL_PATH: model-assets/selfie_segmentation.tflite
+        EXAM_PHOTO_SEGMENTER_MODEL_SHA256: 9ee168ec7c8f2a16c56fe8e1cfbc514974cbbb7e434051b455635f1bd1462f5c
+      run: |
+        python -m exam_photo refine-mask --input tests/fixtures/single_face_frontal.jpg
 
     - name: Build package
       run: |

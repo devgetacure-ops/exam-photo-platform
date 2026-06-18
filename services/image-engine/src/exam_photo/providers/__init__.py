@@ -4,6 +4,13 @@ from exam_photo.providers.face_detection import (
     FaceDetectionProvider,
     FaceDetectionResult,
 )
+from exam_photo.providers.foreground_refinement import (
+    ForegroundRefinementProvider,
+    RefinedMaskResult,
+    RefinedMaskValidationReport,
+    RefinementConfig,
+    RefinementValidationIssue,
+)
 from exam_photo.providers.head_estimation import (
     BoundaryVisibilityValue,
     HeadBoundaryVisibility,
@@ -15,6 +22,9 @@ from exam_photo.providers.landmark_geometric_head_estimator import (
     LandmarkGeometricHeadEstimator,
 )
 from exam_photo.providers.model_errors import ModelChecksumError, ModelNotFoundError
+from exam_photo.providers.refiners.morphological_refiner import (
+    MorphologicalForegroundRefiner,
+)
 from exam_photo.providers.subject_segmentation import (
     MaskValidationReport,
     SegmentationCapabilities,
@@ -47,6 +57,12 @@ __all__ = [
     "SubjectSegmentationProvider",
     "SegmentationClassCoverage",
     "SegmentationValidationIssue",
+    "ForegroundRefinementProvider",
+    "RefinedMaskResult",
+    "RefinedMaskValidationReport",
+    "RefinementConfig",
+    "RefinementValidationIssue",
+    "MorphologicalForegroundRefiner",
 ]
 
 # MediapipeFaceDetector and MediapipeSubjectSegmenter are exported lazily

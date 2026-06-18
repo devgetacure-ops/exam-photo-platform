@@ -65,10 +65,11 @@ This phase covers establishing directory, configuration, and interfaces foundati
 - **Status**: **Milestone 7 completed: repository-verified provisional coarse subject-segmentation baseline.**
 
 #### Milestone 8: Coarse-Mask Edge Refinement and Foreground-Boundary Cleanup
-- **Objective**: Implement algorithms to refine the coarse portrait segmentation masks, smoothing boundaries and handling complex areas like hair/ears/shoulders.
+- **Objective**: Convert the coarse portrait segmentation masks into a cleaner, smoothed foreground boundary, creating a high-resolution alpha mask and trimap (0/128/255) for downstream matting and background replacement.
 - **Dependencies**: Milestone 7.
-- **Expected Deliverables**: Edge refinement filter/model integration, alpha matting, and boundary cleanup logic.
-- **Exit Criteria**: Mask boundaries show improved transition smoothness and reduced artifacts compared to the coarse baseline.
+- **Expected Deliverables**: `ForegroundRefinementProvider` protocol, `RefinedMaskResult` and `RefinedMaskValidationReport` models, `MorphologicalForegroundRefiner` implementation, CLI `refine-mask` command, and `benchmark_mask_refinement.py` benchmark.
+- **Exit Criteria**: Stability and Quality IoU metrics tracked over real fixtures; CLI verify returns refined alpha/binary/trimap outputs; CI tests confirm boundary morphological closing/opening, size-aware radius scaling, and face protection are fully operational.
+- **Status**: **Completed (Milestone 8: morphological foreground-boundary refinement baseline)**
 
 #### Milestone 9: Exact-Dimension Crop (Crop Mode A)
 - **Objective**: Implement Crop Mode A: exact aspect ratio crop centered around the face, preserving hair, ears, chin, and beard before resizing.

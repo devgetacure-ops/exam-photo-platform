@@ -6,6 +6,9 @@ import sys
 from pathlib import Path
 from typing import List, Optional
 
+import numpy as np
+from PIL import Image
+
 from exam_photo.input.errors import ImageInspectionError
 from exam_photo.input.limits import InputLimits
 from exam_photo.input.normalization import normalize_image_input
@@ -131,6 +134,53 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
         type=float,
         default=0.5,
         help="Threshold value for the foreground probability mask.",
+    )
+
+    # refine-mask subcommand
+    refine_parser = subparsers.add_parser(
+        "refine-mask",
+        help="Run subject segmentation and mask refinement on an image.",
+    )
+    refine_parser.add_argument(
+        "--input", required=True, help="Path to the image file to process."
+    )
+    refine_parser.add_argument(
+        "--face-model-path", help="Path to the face-detection model (.tflite)."
+    )
+    refine_parser.add_argument(
+        "--segmenter-model-path", help="Path to the segmenter model (.tflite)."
+    )
+    refine_parser.add_argument(
+        "--variant",
+        choices=["selfie_multiclass_256x256", "selfie_bin_general"],
+        help="Segmenter model variant to use.",
+    )
+    refine_parser.add_argument(
+        "--threshold",
+        type=float,
+        default=0.5,
+        help="Threshold value for the foreground probability mask.",
+    )
+    refine_parser.add_argument(
+        "--radius",
+        type=int,
+        help="Optional override for the morphology radius in pixels.",
+    )
+    refine_parser.add_argument(
+        "--save-mask",
+        help="Optional path to save the refined binary mask PNG.",
+    )
+    refine_parser.add_argument(
+        "--save-alpha",
+        help="Optional path to save the refined alpha mask PNG (uint8 scaled).",
+    )
+    refine_parser.add_argument(
+        "--save-trimap",
+        help="Optional path to save the trimap PNG.",
+    )
+    refine_parser.add_argument(
+        "--output-dir",
+        help="Optional path to save all three refined mask outputs.",
     )
 
     args = parser.parse_args(argv)
@@ -673,6 +723,296 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
             print("\n  Issue Codes Detected:")
             for code in val.issue_codes:
                 print(f"    - {code}")
+
+        return 0
+
+    elif args.command == "refine-mask":
+        input_path = args.input
+        if not os.path.exists(input_path):
+            print("Error: Input file not found. Code: FILE_NOT_FOUND", file=sys.stderr)
+            return 1
+
+        # 1. Normalize the image input
+        limits = InputLimits()  # use defaults
+        try:
+            with open(input_path, "rb") as f:
+                data = f.read(limits.maximum_encoded_byte_size + 1)
+        except Exception:
+            print(
+                "Error: Unable to read input file. Code: FILE_READ_FAILED",
+                file=sys.stderr,
+            )
+            return 1
+
+        try:
+            norm_result = normalize_image_input(data, input_path, limits)
+        except Exception:
+            print(
+                "Error: Image normalization failed. Code: IMAGE_NORMALIZATION_FAILED",
+                file=sys.stderr,
+            )
+            return 1
+
+        # 2. Lazy load MediapipeFaceDetector
+        try:
+            from exam_photo.providers.mediapipe_face_detector import (
+                MediapipeFaceDetector,
+            )
+        except ImportError:
+            print(
+                "Error: MediaPipe face detector provider dependencies are not installed. Code: DEPENDENCY_MISSING",
+                file=sys.stderr,
+            )
+            return 1
+
+        # 3. Locate face model path
+        repo_root = find_repo_root()
+        face_model_path_str = args.face_model_path
+        face_expected_sha256 = ""
+
+        if not face_model_path_str:
+            face_model_path_str = os.environ.get("EXAM_PHOTO_FACE_MODEL_PATH")
+            face_expected_sha256 = os.environ.get("EXAM_PHOTO_FACE_MODEL_SHA256", "")
+
+        if not face_model_path_str:
+            manifest_path = repo_root / "model-manifests" / "face-detector.json"
+            if manifest_path.exists():
+                try:
+                    with open(manifest_path, "r", encoding="utf-8") as mf:
+                        manifest = json.load(mf)
+                    face_model_path_str = manifest.get("local_model_path_default")
+                    face_expected_sha256 = manifest.get("sha256", "")
+                except Exception:
+                    pass
+            if not face_model_path_str:
+                face_model_path_str = "model-assets/blaze_face_short_range.tflite"
+
+        face_model_path = Path(face_model_path_str)
+        if not face_model_path.is_absolute():
+            face_model_path = repo_root / face_model_path
+
+        # 4. Detect Face
+        face = None
+        if face_model_path.exists():
+            try:
+                detector = MediapipeFaceDetector(
+                    model_path=face_model_path,
+                    expected_sha256=face_expected_sha256,
+                )
+                with detector:
+                    face_result = detector.detect_faces(norm_result.image)
+                if len(face_result.detections) == 1:
+                    face = face_result.detections[0]
+            except Exception:
+                pass
+
+        # 5. Estimate Head Bounding Box if exactly one face
+        head_box = None
+        if face is not None:
+            try:
+                estimator = LandmarkGeometricHeadEstimator()
+                head_result = estimator.estimate_head(
+                    norm_result.image, face, face.landmarks
+                )
+                head_box = head_result.head_bounding_box
+            except Exception:
+                pass
+
+        # 6. Locate segmenter model path
+        model_path_str = args.segmenter_model_path
+        expected_sha256 = ""
+
+        if not model_path_str:
+            model_path_str = os.environ.get("EXAM_PHOTO_SEGMENTER_MODEL_PATH")
+            expected_sha256 = os.environ.get("EXAM_PHOTO_SEGMENTER_MODEL_SHA256", "")
+
+        if not model_path_str:
+            manifest_path = repo_root / "model-manifests" / "subject-segmenter.json"
+            if manifest_path.exists():
+                try:
+                    with open(manifest_path, "r", encoding="utf-8") as mf:
+                        manifest = json.load(mf)
+                    variant_name = args.variant or manifest.get(
+                        "selected_variant", "selfie_bin_general"
+                    )
+                    variants = manifest.get("variants", {})
+                    variant = variants.get(variant_name)
+                    if variant is None:
+                        print(
+                            f"Error: Selected variant '{variant_name}' not found in manifest. Code: VARIANT_NOT_FOUND",
+                            file=sys.stderr,
+                        )
+                        return 1
+                    filename = variant.get("filename")
+                    if not filename:
+                        print(
+                            "Error: Filename not found for selected variant in manifest. Code: MANIFEST_MALFORMED",
+                            file=sys.stderr,
+                        )
+                        return 1
+                    model_path_str = "model-assets/" + filename
+                    expected_sha256 = variant.get("sha256", "")
+                except Exception:
+                    print(
+                        "Error: Model manifest is malformed or could not be loaded. Code: MANIFEST_MALFORMED",
+                        file=sys.stderr,
+                    )
+                    return 1
+            else:
+                print(
+                    "Error: Model manifest not found. Code: MANIFEST_NOT_FOUND",
+                    file=sys.stderr,
+                )
+                return 1
+
+        model_path = Path(model_path_str)
+        if not model_path.is_absolute():
+            model_path = repo_root / model_path
+
+        if not model_path.exists():
+            print(
+                "Error: Segmenter model file not found. Code: MODEL_NOT_FOUND",
+                file=sys.stderr,
+            )
+            return 1
+
+        # 7. Run segmenter
+        try:
+            from exam_photo.providers.segmenters.mediapipe_segmenter import (
+                MediapipeSubjectSegmenter,
+            )
+        except ImportError:
+            print(
+                "Error: MediaPipe subject segmenter provider dependencies are not installed. Code: DEPENDENCY_MISSING",
+                file=sys.stderr,
+            )
+            return 1
+
+        try:
+            segmenter = MediapipeSubjectSegmenter(
+                model_path=model_path,
+                expected_sha256=expected_sha256,
+            )
+            config = SegmentationConfig(foreground_threshold=args.threshold)
+            with segmenter:
+                seg_result = segmenter.segment_subject(
+                    norm_result.image,
+                    face=face,
+                    head_estimate=head_box,
+                    config=config,
+                )
+        except Exception as e:
+            from exam_photo.providers.model_errors import (
+                ModelChecksumError,
+                ModelNotFoundError,
+            )
+
+            if isinstance(e, ModelNotFoundError):
+                print("Code: SEGMENTATION_MODEL_MISSING", file=sys.stderr)
+                print("Message: Segmentation model file is missing.", file=sys.stderr)
+            elif isinstance(e, ModelChecksumError):
+                print("Code: SEGMENTATION_MODEL_CHECKSUM_FAILED", file=sys.stderr)
+                print(
+                    "Message: Segmentation model checksum verification failed.",
+                    file=sys.stderr,
+                )
+            else:
+                logger.error("Subject segmentation failed internally", exc_info=True)
+                print("Code: SEGMENTATION_PROVIDER_FAILED", file=sys.stderr)
+                print(
+                    "Message: Subject segmentation could not be completed.",
+                    file=sys.stderr,
+                )
+            return 1
+
+        # 8. Run Refinement
+        try:
+            from exam_photo.providers.foreground_refinement import RefinementConfig
+            from exam_photo.providers.refiners.errors import (
+                RefinementInputError,
+                RefinementOutputError,
+            )
+            from exam_photo.providers.refiners.morphological_refiner import (
+                MorphologicalForegroundRefiner,
+            )
+
+            ref_config = RefinementConfig()
+            if args.radius is not None:
+                ref_config.morphology_radius_px = args.radius
+                ref_config.morphology_radius_ratio = None
+
+            refiner = MorphologicalForegroundRefiner()
+            ref_result = refiner.refine_mask(
+                coarse_mask=seg_result.coarse_mask,
+                probability_mask=seg_result.probability_mask,
+                face=face,
+                config=ref_config,
+            )
+        except Exception as e:
+            if isinstance(e, RefinementInputError):
+                print("Code: REFINEMENT_INPUT_INVALID", file=sys.stderr)
+                print("Message: Refinement input was invalid.", file=sys.stderr)
+            elif isinstance(e, RefinementOutputError):
+                print("Code: REFINEMENT_OUTPUT_INVALID", file=sys.stderr)
+                print("Message: Refinement output was invalid.", file=sys.stderr)
+            else:
+                logger.error("Refinement failed internally", exc_info=True)
+                print("Code: REFINEMENT_PROVIDER_UNAVAILABLE", file=sys.stderr)
+                print(
+                    "Message: Refinement provider failed or is unavailable.",
+                    file=sys.stderr,
+                )
+            return 1
+
+        # 9. Print stats
+        print("Success: Foreground mask refinement finished successfully.")
+        print(f"  Provider: {ref_result.provider_name} v{ref_result.provider_version}")
+        print(f"  Refinement Duration: {ref_result.refinement_duration_ms:.2f}ms")
+        print(f"  Effective Radius: {ref_result.effective_radius_px}px")
+
+        ref_val = ref_result.validation
+        print("\n  Refinement Validation Report:")
+        print(f"    Is Valid: {ref_val.is_valid}")
+        print(f"    Coarse IoU: {ref_val.coarse_iou:.4f}")
+        print(f"    Foreground Coverage Ratio: {ref_val.foreground_coverage_ratio:.4f}")
+        print(f"    Edge Transition Ratio: {ref_val.edge_transition_ratio:.4f}")
+        print(f"    Connectivity Improvement: {ref_val.connectivity_improvement}")
+
+        if ref_val.issue_codes:
+            print("\n  Issue Codes Detected:")
+            for code in ref_val.issue_codes:
+                print(f"    - {code}")
+
+        # 10. Save files if requested
+        try:
+            if args.save_mask:
+                ref_result.refined_binary_mask.save(args.save_mask)
+                print(f"  Saved refined binary mask to {args.save_mask}")
+
+            if args.save_alpha:
+                alpha_arr = (ref_result.refined_alpha_mask * 255.0).astype(np.uint8)
+                alpha_img = Image.fromarray(alpha_arr, mode="L")
+                alpha_img.save(args.save_alpha)
+                print(f"  Saved refined alpha mask to {args.save_alpha}")
+
+            if args.save_trimap:
+                ref_result.trimap.save(args.save_trimap)
+                print(f"  Saved trimap to {args.save_trimap}")
+
+            if args.output_dir:
+                out_dir = Path(args.output_dir)
+                out_dir.mkdir(parents=True, exist_ok=True)
+                ref_result.refined_binary_mask.save(out_dir / "refined_mask.png")
+
+                alpha_arr = (ref_result.refined_alpha_mask * 255.0).astype(np.uint8)
+                alpha_img = Image.fromarray(alpha_arr, mode="L")
+                alpha_img.save(out_dir / "refined_alpha.png")
+
+                ref_result.trimap.save(out_dir / "trimap.png")
+                print(f"  Saved all refined masks to directory: {out_dir}")
+        except Exception as e:
+            print(f"Error: Failed to save output files: {e}", file=sys.stderr)
+            return 1
 
         return 0
 

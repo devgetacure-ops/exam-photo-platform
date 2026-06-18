@@ -67,6 +67,7 @@ ignore_missing_imports = true
 addopts = "--strict-markers"
 markers = [
     "mandatory_segmentation: real segmentation tests required for Milestone 7 completion",
+    "mandatory_refinement: real refinement tests required for Milestone 8 completion",
 ]
 
 
