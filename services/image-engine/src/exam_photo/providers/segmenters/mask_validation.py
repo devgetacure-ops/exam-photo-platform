@@ -11,6 +11,7 @@ from exam_photo.providers.subject_segmentation import (
     SegmentationConfig,
     SegmentationValidationIssue,
 )
+from exam_photo.suitability.issue_codes import IssueSeverity, SuitabilityIssueCode
 
 
 def count_connected_components_dsu(
@@ -144,10 +145,12 @@ def validate_segmentation_mask(
     validation_issues: list[SegmentationValidationIssue] = []
 
     # Helper to append typed issues
-    def add_issue(code_str: str, severity: str, blocking: bool) -> None:
+    def add_issue(
+        code: SuitabilityIssueCode, severity: IssueSeverity, blocking: bool
+    ) -> None:
         validation_issues.append(
             SegmentationValidationIssue(
-                code=code_str,
+                code=code,
                 severity=severity,
                 blocking_for_processing=blocking,
                 confidence=1.0,
@@ -160,15 +163,29 @@ def validate_segmentation_mask(
     foreground_coverage = foreground_count / total_pixels
 
     if foreground_coverage < config.minimum_foreground_coverage:
-        add_issue("SEGMENTATION_FOREGROUND_COVERAGE_LOW", "error", True)
+        add_issue(
+            SuitabilityIssueCode.SEGMENTATION_FOREGROUND_COVERAGE_LOW,
+            IssueSeverity.ERROR,
+            True,
+        )
     if foreground_coverage > config.maximum_foreground_coverage:
-        add_issue("SEGMENTATION_FOREGROUND_COVERAGE_HIGH", "error", True)
+        add_issue(
+            SuitabilityIssueCode.SEGMENTATION_FOREGROUND_COVERAGE_HIGH,
+            IssueSeverity.ERROR,
+            True,
+        )
 
     # Empty/full frame checks
     if foreground_count == 0:
-        add_issue("SEGMENTATION_MASK_EMPTY", "error", True)
+        add_issue(
+            SuitabilityIssueCode.SEGMENTATION_MASK_EMPTY, IssueSeverity.ERROR, True
+        )
     if foreground_count == total_pixels:
-        add_issue("SEGMENTATION_MASK_FULL_FRAME", "error", True)
+        add_issue(
+            SuitabilityIssueCode.SEGMENTATION_MASK_FULL_FRAME,
+            IssueSeverity.ERROR,
+            True,
+        )
 
     # 3. Uncertain-pixel ratio (formerly uncertain_edge_ratio)
     uncertain_count = np.sum(
@@ -177,14 +194,26 @@ def validate_segmentation_mask(
     )
     uncertain_pixel_ratio = uncertain_count / total_pixels
     if uncertain_pixel_ratio > 0.35:
-        add_issue("SEGMENTATION_UNCERTAIN_EDGE_HIGH", "warning", False)
+        add_issue(
+            SuitabilityIssueCode.SEGMENTATION_UNCERTAIN_EDGE_HIGH,
+            IssueSeverity.WARNING,
+            False,
+        )
 
     # 4. Connected components & fragmentation
     comp_count, largest_ratio = count_connected_components_dsu(binary_mask)
     if comp_count > 1:
-        add_issue("SEGMENTATION_MULTIPLE_MAJOR_COMPONENTS", "warning", False)
+        add_issue(
+            SuitabilityIssueCode.SEGMENTATION_MULTIPLE_MAJOR_COMPONENTS,
+            IssueSeverity.WARNING,
+            False,
+        )
     if largest_ratio < 0.75:
-        add_issue("SEGMENTATION_FOREGROUND_FRAGMENTED", "warning", False)
+        add_issue(
+            SuitabilityIssueCode.SEGMENTATION_FOREGROUND_FRAGMENTED,
+            IssueSeverity.WARNING,
+            False,
+        )
 
     # 5. Bounding Box & edge contact
     foreground_indices = np.argwhere(binary_mask == 255)
@@ -208,7 +237,11 @@ def validate_segmentation_mask(
             top_idx == 0 or bottom_idx == h - 1 or left_idx == 0 or right_idx == w - 1
         )
         if edge_contact:
-            add_issue("SEGMENTATION_EDGE_CONTACT_WARNING", "warning", False)
+            add_issue(
+                SuitabilityIssueCode.SEGMENTATION_EDGE_CONTACT_WARNING,
+                IssueSeverity.WARNING,
+                False,
+            )
 
     # 6. Face containment (against whole foreground probability)
     face_contained: Optional[bool] = None
@@ -232,10 +265,18 @@ def validate_segmentation_mask(
 
             face_contained = bool(face_coverage >= config.minimum_face_mask_coverage)
             if not face_contained:
-                add_issue("SEGMENTATION_FACE_NOT_CONTAINED", "error", True)
+                add_issue(
+                    SuitabilityIssueCode.SEGMENTATION_FACE_NOT_CONTAINED,
+                    IssueSeverity.ERROR,
+                    True,
+                )
         else:
             face_contained = False
-            add_issue("SEGMENTATION_FACE_NOT_CONTAINED", "error", True)
+            add_issue(
+                SuitabilityIssueCode.SEGMENTATION_FACE_NOT_CONTAINED,
+                IssueSeverity.ERROR,
+                True,
+            )
 
     # 7. Head region overlap comparison
     head_coverage_ratio: Optional[float] = None
@@ -253,10 +294,18 @@ def validate_segmentation_mask(
 
             if head_coverage_ratio < config.minimum_head_mask_coverage:
                 # Disagreement with provisional estimate is a warning, NOT blocking/invalidating
-                add_issue("SEGMENTATION_HEAD_REGION_LOW_COVERAGE", "warning", False)
+                add_issue(
+                    SuitabilityIssueCode.SEGMENTATION_HEAD_REGION_LOW_COVERAGE,
+                    IssueSeverity.WARNING,
+                    False,
+                )
         else:
             head_coverage_ratio = 0.0
-            add_issue("SEGMENTATION_HEAD_REGION_LOW_COVERAGE", "warning", False)
+            add_issue(
+                SuitabilityIssueCode.SEGMENTATION_HEAD_REGION_LOW_COVERAGE,
+                IssueSeverity.WARNING,
+                False,
+            )
 
     is_valid = not any(issue.blocking_for_processing for issue in validation_issues)
 
@@ -270,6 +319,6 @@ def validate_segmentation_mask(
         image_edge_contact=edge_contact,
         face_contained=face_contained,
         head_region_coverage_ratio=head_coverage_ratio,
-        issue_codes=[iss.code for iss in validation_issues],
+        issue_codes=[iss.code.value for iss in validation_issues],
         issues=validation_issues,
     )

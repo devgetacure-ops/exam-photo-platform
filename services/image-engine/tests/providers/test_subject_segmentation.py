@@ -365,14 +365,16 @@ def test_real_fixtures_segmentation_and_iou() -> None:
 
     for entry in manifest["entries"]:
         src_name = entry["source_fixture"]
-        mask_rel_path = entry["ground_truth_mask_filename"]
+        mask_rel_path = entry["regression_mask_filename"]
         expected_cov = entry["expected_coverage"]
 
         src_path = fixtures_dir / src_name
         mask_path = fixtures_dir / mask_rel_path
 
         assert src_path.exists(), f"Source image {src_name} is missing"
-        assert mask_path.exists(), f"Ground-truth mask {mask_rel_path} is missing"
+        assert mask_path.exists(), (
+            f"Reviewed regression mask {mask_rel_path} is missing"
+        )
 
         # Load images
         img = Image.open(src_path)
@@ -404,3 +406,159 @@ def test_real_fixtures_segmentation_and_iou() -> None:
 
         # Assert IoU is highly matching (allowing minor OS floating point deviations)
         assert iou >= 0.99, f"IoU regression detected for {src_name}: {iou:.6f}"
+
+
+@pytest.mark.mandatory_segmentation
+def test_scenario_assertions() -> None:
+    _ensure_prerequisites()
+    from typing import Any
+
+    from exam_photo.providers.landmark_geometric_head_estimator import (
+        LandmarkGeometricHeadEstimator,
+    )
+    from exam_photo.providers.mediapipe_face_detector import MediapipeFaceDetector
+    from exam_photo.providers.segmenters.mediapipe_segmenter import (
+        MediapipeSubjectSegmenter,
+    )
+    from exam_photo.suitability.configuration import SuitabilityThresholds
+    from exam_photo.suitability.evaluator import SuitabilityEvaluator
+    from exam_photo.suitability.models import (
+        ProcessingReadinessStatus,
+        SuitabilityStatus,
+    )
+
+    repo_root = Path(__file__).resolve().parent.parent.parent.parent.parent
+    fixtures_dir = repo_root / "tests" / "fixtures"
+
+    # Initialize real providers
+    face_model_path = repo_root / "model-assets" / "blaze_face_short_range.tflite"
+    face_sha = ""
+    face_manifest = repo_root / "model-manifests" / "face-detector.json"
+    if face_manifest.exists():
+        with open(face_manifest) as manifest_f:
+            fm = json.load(manifest_f)
+            face_sha = fm.get("sha256", "")
+
+    face_detector = MediapipeFaceDetector(face_model_path, face_sha)
+    head_estimator = LandmarkGeometricHeadEstimator()
+    assert _MODEL_PATH is not None
+    segmenter = MediapipeSubjectSegmenter(_MODEL_PATH, _MODEL_SHA256)
+    thresholds = SuitabilityThresholds()
+    evaluator = SuitabilityEvaluator(
+        thresholds=thresholds,
+        face_provider=face_detector,
+        head_provider=head_estimator,
+        segmentation_provider=segmenter,
+    )
+
+    from exam_photo.input.limits import InputLimits
+    from exam_photo.input.normalization import normalize_image_input
+
+    limits = InputLimits()
+
+    def process_image(filename: str) -> tuple[Any, Any]:
+        path = fixtures_dir / filename
+        with open(path, "rb") as img_f:
+            data = img_f.read()
+        norm_res = normalize_image_input(data, str(path), limits)
+        report = evaluator.evaluate(norm_res, background_replacement_required=True)
+        return norm_res, report
+
+    # 1. Blank no-person fixture assertions
+    _, blank_report = process_image("blank_white_600x800.jpg")
+    assert blank_report.source_suitability == SuitabilityStatus.UNSUITABLE
+    assert "SUITABILITY_NO_FACE" in blank_report.issue_codes
+    assert blank_report.segmentation_diagnostic is not None
+    assert blank_report.segmentation_diagnostic.is_valid is False
+    assert blank_report.segmentation_diagnostic.foreground_coverage_ratio < 0.01
+    assert (
+        blank_report.segmentation_diagnostic.face_contained is None
+        or blank_report.segmentation_diagnostic.face_contained is False
+    )
+    assert "SEGMENTATION_MASK_EMPTY" in blank_report.segmentation_diagnostic.issue_codes
+    assert blank_report.segmentation_diagnostic.can_proceed is False
+
+    # 2. Geometric no-person fixture assertions
+    _, geom_report = process_image("geometric_shapes_600x800.jpg")
+    assert geom_report.source_suitability == SuitabilityStatus.UNSUITABLE
+    assert "SUITABILITY_NO_FACE" in geom_report.issue_codes
+    assert geom_report.segmentation_diagnostic is not None
+    assert geom_report.segmentation_diagnostic.is_valid is False
+    assert geom_report.segmentation_diagnostic.foreground_coverage_ratio < 0.05
+    assert (
+        geom_report.segmentation_diagnostic.face_contained is None
+        or geom_report.segmentation_diagnostic.face_contained is False
+    )
+    assert "SEGMENTATION_MASK_EMPTY" in geom_report.segmentation_diagnostic.issue_codes
+
+    # 3. Multiple-person fixture assertions (roosevelt_muir_yosemite.jpg)
+    # Instantiate custom face detector with lower confidence specifically for Yosemite to detect small faces
+    face_detector_yosemite = MediapipeFaceDetector(
+        face_model_path, face_sha, min_detection_confidence=0.2
+    )
+    evaluator_yosemite = SuitabilityEvaluator(
+        thresholds=thresholds,
+        face_provider=face_detector_yosemite,
+        head_provider=head_estimator,
+        segmentation_provider=segmenter,
+    )
+    path_yosemite = fixtures_dir / "roosevelt_muir_yosemite.jpg"
+    with open(path_yosemite, "rb") as yosemite_f:
+        data_yosemite = yosemite_f.read()
+    norm_res_yosemite = normalize_image_input(data_yosemite, str(path_yosemite), limits)
+    yosemite_report = evaluator_yosemite.evaluate(
+        norm_res_yosemite, background_replacement_required=True
+    )
+
+    assert yosemite_report.source_suitability == SuitabilityStatus.UNSUITABLE
+    assert "SUITABILITY_MULTIPLE_FACES" in yosemite_report.issue_codes
+    assert yosemite_report.processing_readiness == ProcessingReadinessStatus.BLOCKED
+    assert yosemite_report.segmentation_diagnostic is not None
+    assert yosemite_report.segmentation_diagnostic.is_valid is False
+    assert (
+        "SEGMENTATION_MASK_EMPTY" in yosemite_report.segmentation_diagnostic.issue_codes
+        or "SEGMENTATION_FACE_NOT_CONTAINED"
+        in yosemite_report.segmentation_diagnostic.issue_codes
+    )
+    assert yosemite_report.segmentation_diagnostic.can_proceed is False
+
+    # 4. Beard/spectacles fixture assertions (freud_spectacles_beard.jpg)
+    _, freud_report = process_image("freud_spectacles_beard.jpg")
+    assert freud_report.source_suitability == SuitabilityStatus.INDETERMINATE
+    assert freud_report.segmentation_diagnostic is not None
+    assert freud_report.segmentation_diagnostic.is_valid is True
+    assert freud_report.segmentation_diagnostic.foreground_coverage_ratio > 0.05
+    assert freud_report.segmentation_diagnostic.face_contained is True
+    assert freud_report.segmentation_diagnostic.can_proceed is True
+
+    # 5. Long hair fixture assertions (sarah_bernhardt_long_hair.jpg)
+    _, sarah_report = process_image("sarah_bernhardt_long_hair.jpg")
+    assert sarah_report.segmentation_diagnostic is not None
+    assert sarah_report.segmentation_diagnostic.is_valid is True
+    assert sarah_report.segmentation_diagnostic.foreground_coverage_ratio > 0.3
+    assert sarah_report.segmentation_diagnostic.can_proceed is True
+
+    # 6. Curly hair fixture assertions (marie_curie_curly_hair.jpg)
+    _, curie_report = process_image("marie_curie_curly_hair.jpg")
+    assert curie_report.segmentation_diagnostic is not None
+    assert curie_report.segmentation_diagnostic.is_valid is True
+    assert curie_report.segmentation_diagnostic.foreground_coverage_ratio > 0.3
+    assert curie_report.segmentation_diagnostic.can_proceed is True
+
+    # 7. Head covering fixture assertions (vivekananda_head_covering.jpg)
+    _, vivek_report = process_image("vivekananda_head_covering.jpg")
+    assert vivek_report.segmentation_diagnostic is not None
+    assert vivek_report.segmentation_diagnostic.is_valid is False
+    assert vivek_report.segmentation_diagnostic.foreground_coverage_ratio > 0.3
+    assert (
+        "SEGMENTATION_FACE_NOT_CONTAINED"
+        in vivek_report.segmentation_diagnostic.issue_codes
+    )
+    assert vivek_report.segmentation_diagnostic.can_proceed is False
+
+    # 8. Low contrast fixture assertions (lincoln_low_contrast.jpg)
+    _, lincoln_report = process_image("lincoln_low_contrast.jpg")
+    assert lincoln_report.segmentation_diagnostic is not None
+    assert lincoln_report.segmentation_diagnostic.is_valid is True
+    assert lincoln_report.segmentation_diagnostic.foreground_coverage_ratio > 0.1
+    assert lincoln_report.segmentation_diagnostic.can_proceed is True

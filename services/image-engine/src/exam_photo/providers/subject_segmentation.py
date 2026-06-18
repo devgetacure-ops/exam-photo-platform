@@ -8,6 +8,7 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from exam_photo.models.geometry import BoundingBox
 from exam_photo.providers.face_detection import FaceDetection
+from exam_photo.suitability.issue_codes import IssueSeverity, SuitabilityIssueCode
 
 
 class SegmentationStatusValue(str, Enum):
@@ -70,8 +71,8 @@ class SegmentationClassCoverage(BaseModel):
 
 class SegmentationValidationIssue(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    code: str  # maps to SuitabilityIssueCode value
-    severity: str  # "error" | "warning" | "information"
+    code: SuitabilityIssueCode
+    severity: IssueSeverity
     blocking_for_processing: bool
     confidence: Optional[float] = None
 
@@ -109,6 +110,10 @@ class SubjectSegmentationResult(BaseModel):
     foreground_coverage_ratio: float = Field(ge=0.0, le=1.0)
     warnings: list[str]
     processing_duration: float
+    inference_duration_ms: Optional[float] = None
+    mask_extraction_duration_ms: Optional[float] = None
+    resize_threshold_duration_ms: Optional[float] = None
+    validation_duration_ms: Optional[float] = None
     safe_internal_metadata: Optional[dict[str, Any]] = None
     class_coverage: Optional[SegmentationClassCoverage] = None
     mask_validation: MaskValidationReport

@@ -2,7 +2,7 @@
   "entries": [
     {
       "source_fixture": "sarah_bernhardt_long_hair.jpg",
-      "ground_truth_mask_filename": "segmentation/masks/fixture-sarah-bernhardt-mask.png",
+      "regression_mask_filename": "segmentation/masks/fixture-sarah-bernhardt-mask.png",
       "mask_sha256": "ced5658f49b1c927ed0f37d95789a7f08647d30540545e3af0c10ae60183e691",
       "annotation_method": "MediaPipe Selfie Binary general baseline (manually reviewed & approved for regression)",
       "annotator": "AI Developer Pair",
@@ -15,7 +15,7 @@
     },
     {
       "source_fixture": "marie_curie_curly_hair.jpg",
-      "ground_truth_mask_filename": "segmentation/masks/fixture-marie-curie-mask.png",
+      "regression_mask_filename": "segmentation/masks/fixture-marie-curie-mask.png",
       "mask_sha256": "567a1bc672b8f7a1c1d9c2117dba748a3af383d8a2ffd233604cdd7dd7ae7093",
       "annotation_method": "MediaPipe Selfie Binary general baseline (manually reviewed & approved for regression)",
       "annotator": "AI Developer Pair",
@@ -28,8 +28,8 @@
     },
     {
       "source_fixture": "vivekananda_head_covering.jpg",
-      "ground_truth_mask_filename": "segmentation/masks/fixture-vivekananda-mask.png",
-      "mask_sha256": "0b2c496723bfccd0efc59e94385ab9b1f6971ab709fc520b443f0d515d036dfe",
+      "regression_mask_filename": "segmentation/masks/fixture-vivekananda-mask.png",
+      "mask_sha256": "56cbeeb234d49af7a5643f797aa323b365f3d815903a43d681532d94a2a0902a",
       "annotation_method": "MediaPipe Selfie Binary general baseline (manually reviewed & approved for regression)",
       "annotator": "AI Developer Pair",
       "review_status": "approved",
@@ -37,12 +37,12 @@
       "treatment_of_spectacles": "N/A",
       "treatment_of_shadows": "shadows on background excluded",
       "licence_provenance": "Derived from public domain photo on Wikimedia Commons",
-      "expected_coverage": 0.5967264079051093
+      "expected_coverage": 0.5967265172705535
     },
     {
       "source_fixture": "lincoln_low_contrast.jpg",
-      "ground_truth_mask_filename": "segmentation/masks/fixture-lincoln-mask.png",
-      "mask_sha256": "f3f125c76390c77d807b59cc1b1ecad5a07ec716f39961be706864360fb07c48",
+      "regression_mask_filename": "segmentation/masks/fixture-lincoln-mask.png",
+      "mask_sha256": "71b5586d7a1d2674247170aa30d6d8eb7ee00d2da6fe866592d247741d022e03",
       "annotation_method": "MediaPipe Selfie Binary general baseline (manually reviewed & approved for regression)",
       "annotator": "AI Developer Pair",
       "review_status": "approved",
@@ -50,12 +50,12 @@
       "treatment_of_spectacles": "spectacles included in foreground",
       "treatment_of_shadows": "shadows on background excluded",
       "licence_provenance": "Derived from public domain photo on Wikimedia Commons",
-      "expected_coverage": 0.23432006474482603
+      "expected_coverage": 0.23432015089665967
     },
     {
       "source_fixture": "single_face_frontal.jpg",
-      "ground_truth_mask_filename": "segmentation/masks/fixture-einstein-mask.png",
-      "mask_sha256": "19090c54388327f4e5341633ec7719b5d77277efb4f0b8da33bb4ed856ab7eb5",
+      "regression_mask_filename": "segmentation/masks/fixture-einstein-mask.png",
+      "mask_sha256": "7f70b77de9c647da3a6e9d5cdc5eb5132c90a888df6d16677a50909d5b1d5b61",
       "annotation_method": "MediaPipe Selfie Binary general baseline (manually reviewed & approved for regression)",
       "annotator": "AI Developer Pair",
       "review_status": "approved",
@@ -63,11 +63,11 @@
       "treatment_of_spectacles": "N/A",
       "treatment_of_shadows": "shadows on background excluded",
       "licence_provenance": "Derived from public domain photo on Wikimedia Commons",
-      "expected_coverage": 0.7808615100569867
+      "expected_coverage": 0.7808615810683662
     },
     {
       "source_fixture": "roosevelt_muir_yosemite.jpg",
-      "ground_truth_mask_filename": "segmentation/masks/fixture-yosemite-mask.png",
+      "regression_mask_filename": "segmentation/masks/fixture-yosemite-mask.png",
       "mask_sha256": "64f4631ce2b705f76f080d0580a897852e7a0472585deaebd1e4b482dfb67709",
       "annotation_method": "MediaPipe Selfie Binary general baseline (manually reviewed & approved for regression)",
       "annotator": "AI Developer Pair",
@@ -77,6 +77,19 @@
       "treatment_of_shadows": "shadows on background excluded",
       "licence_provenance": "Derived from public domain photo on Wikimedia Commons",
       "expected_coverage": 0.0
+    },
+    {
+      "source_fixture": "freud_spectacles_beard.jpg",
+      "regression_mask_filename": "segmentation/masks/fixture-freud-mask.png",
+      "mask_sha256": "b64087be648d1026b0ddffd0a2de0e75fd9b1f1df790bb608913397894f2f653",
+      "annotation_method": "MediaPipe Selfie Binary general baseline (manually reviewed & approved for regression)",
+      "annotator": "AI Developer Pair",
+      "review_status": "approved",
+      "treatment_of_fine_hair": "fine details preserved via coarse probability baseline",
+      "treatment_of_spectacles": "spectacles and beard included in foreground",
+      "treatment_of_shadows": "shadows on background excluded",
+      "licence_provenance": "Derived from public domain photo on Wikimedia Commons",
+      "expected_coverage": 0.6872120075046905
     }
   ]
 }

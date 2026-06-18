@@ -1,20 +1,15 @@
 """Typed exceptions for subject segmentation operations."""
 
+from exam_photo.providers.model_errors import (
+    ModelChecksumError as ModelChecksumError,
+)
+from exam_photo.providers.model_errors import (
+    ModelNotFoundError as ModelNotFoundError,
+)
+
 
 class SegmentationError(RuntimeError):
     """Base exception class for all subject segmentation errors."""
-
-    pass
-
-
-class ModelNotFoundError(SegmentationError):
-    """Raised when the segmentation model asset file does not exist."""
-
-    pass
-
-
-class ModelChecksumError(SegmentationError):
-    """Raised when the SHA-256 digest of the model file does not match expected."""
 
     pass
 

@@ -140,17 +140,21 @@ class MediapipeSubjectSegmenter(SubjectSegmentationProvider):
             img_arr = np.array(image.convert("RGB"))
             mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=img_arr)
 
+            t_inf_start = time.perf_counter()
             try:
                 res = self._segmenter.segment(mp_image)
             except Exception as e:
                 raise RuntimeError(
                     f"MediaPipe segmentation inference failed: {e}"
                 ) from e
+            inf_dur = (time.perf_counter() - t_inf_start) * 1000.0
 
             if not res.confidence_masks:
                 raise SegmentationOutputError(
                     "MediaPipe segmenter returned no confidence masks."
                 )
+
+            t_ext_start = time.perf_counter()
 
             def get_2d_mask(m: Any) -> np.ndarray[Any, Any]:
                 arr: np.ndarray[Any, Any] = m.numpy_view()
@@ -259,8 +263,12 @@ class MediapipeSubjectSegmenter(SubjectSegmentationProvider):
                 )
 
             # Handle small floating point errors safely
-            foreground_probability = np.clip(foreground_probability, 0.0, 1.0).astype(np.float32)
+            foreground_probability = np.clip(foreground_probability, 0.0, 1.0).astype(
+                np.float32
+            )
+            ext_dur = (time.perf_counter() - t_ext_start) * 1000.0
 
+            t_res_start = time.perf_counter()
             # Resize probability mask if it differs from source dimensions
             if (mask_w, mask_h) != (img_w, img_h):
                 prob_img = Image.fromarray(foreground_probability, mode="F")
@@ -276,7 +284,9 @@ class MediapipeSubjectSegmenter(SubjectSegmentationProvider):
                 probability_mask >= cfg.foreground_threshold, 255, 0
             ).astype(np.uint8)
             coarse_mask = Image.fromarray(binary_mask_arr, mode="L")
+            res_dur = (time.perf_counter() - t_res_start) * 1000.0
 
+            t_val_start = time.perf_counter()
             # Run mask validation
             from exam_photo.providers.segmenters.mask_validation import (
                 validate_segmentation_mask,
@@ -289,6 +299,7 @@ class MediapipeSubjectSegmenter(SubjectSegmentationProvider):
                 face=face,
                 head_estimate=head_estimate,
             )
+            val_dur = (time.perf_counter() - t_val_start) * 1000.0
 
             capabilities = SegmentationCapabilities(
                 probability_masks=True,
@@ -334,6 +345,10 @@ class MediapipeSubjectSegmenter(SubjectSegmentationProvider):
                 foreground_coverage_ratio=validation_report.foreground_coverage_ratio,
                 warnings=[],
                 processing_duration=duration_ms,
+                inference_duration_ms=inf_dur,
+                mask_extraction_duration_ms=ext_dur,
+                resize_threshold_duration_ms=res_dur,
+                validation_duration_ms=val_dur,
                 safe_internal_metadata=safe_metadata,
                 class_coverage=class_coverage,
                 mask_validation=validation_report,

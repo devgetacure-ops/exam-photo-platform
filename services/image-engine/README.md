@@ -3,7 +3,7 @@
 This is the Python package foundation for the Indian Exam-Photo Compliance platform's image-processing engine.
 
 ## Status
-- **Status**: Portrait-Segmentation and Coarse Foreground-Mask Generation.
+- **Status**: Milestone 7 completed: repository-verified provisional coarse subject-segmentation baseline.
 - **Milestone Reference**: Milestone 7 (Portrait-Segmentation and Coarse Foreground-Mask Generation).
 
 ## Setup Instructions
@@ -23,7 +23,7 @@ pip install -e .[dev,face]
   ```
 * **Download segmenter model weights**:
   ```bash
-  python ../../scripts/download_segmenter.py --variant selfie_multiclass_256x256 --yes
+  python ../../scripts/download_segmenter.py --variant selfie_bin_general --yes
   ```
 * **Format**: `ruff format --check .`
 * **Lint**: `ruff check .`

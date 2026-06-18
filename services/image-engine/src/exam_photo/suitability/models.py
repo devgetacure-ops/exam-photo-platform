@@ -3,7 +3,11 @@ from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel
 
-from exam_photo.suitability.issue_codes import SuitabilityIssueCode
+from exam_photo.providers.subject_segmentation import SegmentationClassCoverage
+from exam_photo.suitability.issue_codes import IssueSeverity as IssueSeverity
+from exam_photo.suitability.issue_codes import (
+    SuitabilityIssueCode as SuitabilityIssueCode,
+)
 
 
 class SuitabilityStatus(str, Enum):
@@ -38,12 +42,6 @@ class SuitabilityCheck(str, Enum):
     BEARD_BOUNDARY = "beard_boundary"
     BACKGROUND = "background"
     SUBJECT_SEGMENTATION = "subject_segmentation"
-
-
-class IssueSeverity(str, Enum):
-    ERROR = "error"
-    WARNING = "warning"
-    INFORMATION = "information"
 
 
 class IssueStatus(str, Enum):
@@ -124,6 +122,7 @@ class InternalSegmentationDiagnostic(BaseModel):
     mask_width: int
     mask_height: int
     warnings: List[str]
+    class_coverage: Optional[SegmentationClassCoverage] = None
 
     def to_public(self) -> PublicSegmentationReport:
         return PublicSegmentationReport(
@@ -150,6 +149,10 @@ class PublicSuitabilityReport(BaseModel):
     evaluator_version: str
     segmentation_report: Optional[PublicSegmentationReport] = None
 
+    @property
+    def issue_codes(self) -> List[str]:
+        return [issue.code.value for issue in self.issues]
+
 
 class SuitabilityReport(BaseModel):
     overall_status: SuitabilityStatus  # legacy compat field
@@ -165,6 +168,10 @@ class SuitabilityReport(BaseModel):
     internal_summary: str
     evaluator_version: str
     segmentation_diagnostic: Optional[InternalSegmentationDiagnostic] = None
+
+    @property
+    def issue_codes(self) -> List[str]:
+        return [issue.code.value for issue in self.issues]
 
     def to_public(self) -> PublicSuitabilityReport:
         seg_report = (

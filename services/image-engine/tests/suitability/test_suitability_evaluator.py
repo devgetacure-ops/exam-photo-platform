@@ -534,3 +534,131 @@ def test_evaluator_segmentation_provider_unavailable_mandatory(
         not iss.blocking and iss.code == "SEGMENTATION_PROVIDER_UNAVAILABLE"
         for iss in report.issues
     )
+
+
+def test_evaluator_segmentation_model_missing(
+    base_normalization_result: NormalizationResult,
+    lenient_thresholds: SuitabilityThresholds,
+) -> None:
+    from tests.fakes.fake_subject_segmenter import FakeSubjectSegmenter
+
+    from exam_photo.providers.model_errors import ModelNotFoundError
+
+    box = BoundingBox(left=0.1, top=0.1, right=0.4, bottom=0.4)
+    face = FaceDetection(
+        bounding_box=box,
+        confidence=0.9,
+        pose=PoseEstimate(yaw=0.0, pitch=0.0, roll=0.0, confidence=1.0, method="fake"),
+        occlusion_indicators={"face_occluded": False, "eyes_occluded": False},
+    )
+    fake_face = FakeFaceDetector(detections=[face])
+    fake_head = FakeHeadEstimator()
+    fake_seg = FakeSubjectSegmenter(raise_error=ModelNotFoundError("Model not found"))
+
+    evaluator = SuitabilityEvaluator(
+        lenient_thresholds,
+        face_provider=fake_face,
+        head_provider=fake_head,
+        segmentation_provider=fake_seg,
+    )
+    report = evaluator.evaluate(
+        base_normalization_result, background_replacement_required=True
+    )
+
+    assert report.source_suitability == SuitabilityStatus.SUITABLE
+    assert report.processing_readiness == ProcessingReadinessStatus.BLOCKED
+    assert report.segmentation_diagnostic is not None
+    assert report.segmentation_diagnostic.segmentation_status == "failed"
+    assert report.segmentation_diagnostic.can_proceed is False
+    assert "SEGMENTATION_MODEL_MISSING" in report.segmentation_diagnostic.issue_codes
+    assert any(
+        not iss.blocking and iss.code == "SEGMENTATION_MODEL_MISSING"
+        for iss in report.issues
+    )
+
+
+def test_evaluator_segmentation_model_checksum_failed(
+    base_normalization_result: NormalizationResult,
+    lenient_thresholds: SuitabilityThresholds,
+) -> None:
+    from tests.fakes.fake_subject_segmenter import FakeSubjectSegmenter
+
+    from exam_photo.providers.model_errors import ModelChecksumError
+
+    box = BoundingBox(left=0.1, top=0.1, right=0.4, bottom=0.4)
+    face = FaceDetection(
+        bounding_box=box,
+        confidence=0.9,
+        pose=PoseEstimate(yaw=0.0, pitch=0.0, roll=0.0, confidence=1.0, method="fake"),
+        occlusion_indicators={"face_occluded": False, "eyes_occluded": False},
+    )
+    fake_face = FakeFaceDetector(detections=[face])
+    fake_head = FakeHeadEstimator()
+    fake_seg = FakeSubjectSegmenter(raise_error=ModelChecksumError("Checksum mismatch"))
+
+    evaluator = SuitabilityEvaluator(
+        lenient_thresholds,
+        face_provider=fake_face,
+        head_provider=fake_head,
+        segmentation_provider=fake_seg,
+    )
+    report = evaluator.evaluate(
+        base_normalization_result, background_replacement_required=True
+    )
+
+    assert report.source_suitability == SuitabilityStatus.SUITABLE
+    assert report.processing_readiness == ProcessingReadinessStatus.BLOCKED
+    assert report.segmentation_diagnostic is not None
+    assert report.segmentation_diagnostic.segmentation_status == "failed"
+    assert report.segmentation_diagnostic.can_proceed is False
+    assert (
+        "SEGMENTATION_MODEL_CHECKSUM_FAILED"
+        in report.segmentation_diagnostic.issue_codes
+    )
+    assert any(
+        not iss.blocking and iss.code == "SEGMENTATION_MODEL_CHECKSUM_FAILED"
+        for iss in report.issues
+    )
+
+
+def test_evaluator_segmentation_output_invalid(
+    base_normalization_result: NormalizationResult,
+    lenient_thresholds: SuitabilityThresholds,
+) -> None:
+    from tests.fakes.fake_subject_segmenter import FakeSubjectSegmenter
+
+    from exam_photo.providers.segmenters.errors import SegmentationOutputError
+
+    box = BoundingBox(left=0.1, top=0.1, right=0.4, bottom=0.4)
+    face = FaceDetection(
+        bounding_box=box,
+        confidence=0.9,
+        pose=PoseEstimate(yaw=0.0, pitch=0.0, roll=0.0, confidence=1.0, method="fake"),
+        occlusion_indicators={"face_occluded": False, "eyes_occluded": False},
+    )
+    fake_face = FakeFaceDetector(detections=[face])
+    fake_head = FakeHeadEstimator()
+    fake_seg = FakeSubjectSegmenter(
+        raise_error=SegmentationOutputError("Output is invalid")
+    )
+
+    evaluator = SuitabilityEvaluator(
+        lenient_thresholds,
+        face_provider=fake_face,
+        head_provider=fake_head,
+        segmentation_provider=fake_seg,
+    )
+    report = evaluator.evaluate(
+        base_normalization_result, background_replacement_required=True
+    )
+
+    assert report.source_suitability == SuitabilityStatus.SUITABLE
+    assert report.processing_readiness == ProcessingReadinessStatus.BLOCKED
+    assert report.segmentation_diagnostic is not None
+    assert report.segmentation_diagnostic.segmentation_status == "failed"
+    assert report.segmentation_diagnostic.can_proceed is False
+    assert "SEGMENTATION_OUTPUT_INVALID" in report.segmentation_diagnostic.issue_codes
+    assert any(
+        not iss.blocking and iss.code == "SEGMENTATION_OUTPUT_INVALID"
+        for iss in report.issues
+    )

@@ -16,7 +16,7 @@ We evaluated five realistic local portrait-segmentation technologies against the
 *   **Runtime Dependency**: `mediapipe` package (already installed in `[face]` extra).
 *   **Evaluation**:
     *   *Subject Coverage*: Segments the full visible person (hair, ears, beard, neck, shoulders, and upper clothing).
-    *   *Performance*: Highly optimized for CPU inference on both Windows and Linux. Cold initialization is `< 50ms`; warm inference is `< 15ms` on average CPU.
+    *   *Performance*: Highly optimized for CPU inference on both Windows and Linux. Cold initialization is `~308 ms`; warm pure inference is `~7 ms` to `~24 ms` depending on resolution. Total pipeline timing (including bilinear resizing and connected components analysis) ranges from `~22 ms` (600x800 input) to `~737 ms` (3250x4333 input) on standard CPU.
     *   *Hair Preservation*: Preserves general volume; ignores fine frizzy strands but captures a clean coarse outline.
     *   *Confidence Outputs*: Returns confidence/probability values (float32 values in `[0.0, 1.0]` representing background vs. foreground).
     *   *Windows/Linux Support*: Native.
@@ -26,11 +26,11 @@ We evaluated five realistic local portrait-segmentation technologies against the
 *   **Description**: A 6-class semantic segmenter identifying background, hair, body skin, face skin, clothing, and other/accessories.
 *   **Licence**: Apache 2.0.
 *   **Evaluation**:
-		*   *Subject Coverage*: Segments background (0), hair (1), body skin (2), face skin (3), clothes (4), and other/accessories (5). This is ideal for detailed face and head containment validation.
-    *   *Hair Preservation*: Excellent coarse detection.
-		*   *Ear, Neck, Shoulders, Beard*: Categorized under body skin (2), face skin (3) and clothes (4) respectively.
+    *   *Subject Coverage*: Segments background (0), hair (1), body skin (2), face skin (3), clothes (4), and other/accessories (5).
+    *   *Hair Preservation*: Coarse detection.
+    *   *Ear, Neck, Shoulders, Beard*: Categorized under body skin (2), face skin (3) and clothes (4) respectively.
     *   *Confidence Outputs*: Returns separate confidence masks for each of the 6 classes.
-    *   *Performance*: Slightly heavier than binary models due to multiple output channels but extremely fast (warm inference `< 20ms` on CPU). Model size is ~16.4 MB.
+    *   *Performance*: Heavy CPU latency. Cold initialization is `~455 ms`; warm pure inference is `~144 ms` on CPU. Total pipeline timing ranges from `~170 ms` (600x800 input) to `~1570 ms` (3250x4333 input). Model size is ~16.4 MB.
     *   *Windows/Linux Support*: Native.
 
 ### Category C: ONNX Portrait Matting (MODNet / MobileNetV2)
@@ -40,7 +40,7 @@ We evaluated five realistic local portrait-segmentation technologies against the
 *   **Evaluation**:
     *   *Performance*: High quality hair edges, but CPU inference latency is high (150ms to 400ms depending on CPU thread count).
     *   *Demographics/Bias*: Less tested compared to MediaPipe's global models.
-    *   *Replaceability*: Replaceable but requires shipping a heavy native binary dependency.
+    *   *Replaceability*: Replaceable but requires shipping a heavy native dependency.
 
 ### Category D: U²-Net / rembg-compatible architectures
 *   **Description**: Deep salient object detection networks.
@@ -62,7 +62,7 @@ We evaluated five realistic local portrait-segmentation technologies against the
 | Metric / Feature | MediaPipe Binary (General) | MediaPipe Multiclass | MODNet (ONNX) | U²-Net / rembg | DeepLabV3 |
 | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Local Offline** | Yes | Yes | Yes | Yes | Yes |
-| **CPU Latency** | **~12ms** | **~18ms** | ~250ms | ~900ms | ~180ms |
+| **CPU Latency (Inference)** | **~7ms - 24ms** | **~144ms** | ~250ms | ~900ms | ~180ms |
 | **Model Size** | **~0.25 MB** | **~16.4 MB** | ~25 MB | ~176 MB | ~40 MB |
 | **Package Licence**| Apache 2.0 | Apache 2.0 | Apache 2.0 / MIT | GPL / Custom | Apache 2.0 |
 | **Model Licence** | Apache 2.0 | Apache 2.0 | Apache 2.0 / Custom | Custom / Academic| Apache 2.0 |
@@ -77,16 +77,13 @@ We evaluated five realistic local portrait-segmentation technologies against the
 
 ## 3. Baseline Selection
 
-We select **MediaPipe Selfie Multiclass** (`selfie_multiclass_256x256.tflite`) as the **provisional Milestone 7 baseline**.
+We select **MediaPipe Selfie Binary General** (`selfie_bin_general` / `selfie_segmentation.tflite`) as the **default provisional Milestone 7 baseline**. MediaPipe Selfie Multiclass remains supported as an optional diagnostic and compatibility variant.
 
 ### Rationale
-1.  **Granular Validation**: The 6-class output enables robust, explicit validation rules:
-    *   **Hair class (1)**, **Body/Skin class (2)** and **Face/Skin class (3)** must contain the face region and align with the provisional head box.
-    *   **Clothes class (4)** and **Other/accessories class (5)** ensure shoulders and upper clothing/accessories are visible.
+1.  **Low Latency & Size**: It is extremely fast (~7-24ms pure inference on CPU) and has a tiny footprint (~0.25 MB) compared to multiclass (~16.4 MB) or ONNX matting models.
 2.  **No Extra Dependencies**: It uses the same `mediapipe` package already integrated for face detection. No additional runtime wheel installations are needed.
-3.  **Low Latency & Size**: It is extremely fast (~18ms on standard CPU) and has a small footprint (~16.4 MB) compared to heavy U²-Net or ONNX matting models.
-4.  **Licensing**: The code, model, and weights are governed under **Apache 2.0**, making them safe for redistribution and commercial use.
-5.  **Offline CPU Capability**: Fully local, offline, deterministic execution.
+3.  **Licensing**: The code, model, and weights are governed under **Apache 2.0**, making them safe for redistribution and commercial use.
+4.  **Offline CPU Capability**: Fully local, offline, deterministic execution.
 
 ---
 
@@ -100,4 +97,4 @@ We select **MediaPipe Selfie Multiclass** (`selfie_multiclass_256x256.tflite`) a
 
 ## 5. Unresolved Questions
 
-*   **Threshold values**: The optimal foreground confidence threshold (`default=0.5`) and uncertain-edge thresholds (`uncertain_low=0.2`, `uncertain_high=0.8`) remain provisional and will be tuned in subsequent edge-refinement and cropping milestones.
+*   **Threshold values**: The optimal foreground confidence threshold (`default=0.5`) and uncertain-edge thresholds (`uncertain_low=0.2`, `uncertain_high=0.8`) remain provisional and will be tuned in subsequent edge-refinement and cropping milestones.nes.

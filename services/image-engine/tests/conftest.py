@@ -1,6 +1,7 @@
-from typing import Any
-import pytest
 import sys
+from typing import Any
+
+import pytest
 
 # Track skipped mandatory segmentation tests
 _skipped_mandatory_nodes: list[str] = []

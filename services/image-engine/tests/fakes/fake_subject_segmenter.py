@@ -49,30 +49,35 @@ class FakeSubjectSegmenter(SubjectSegmentationProvider):
         binary_mask_arr = np.where(prob_mask >= 0.5, 255, 0).astype(np.uint8)
         coarse_mask = Image.fromarray(binary_mask_arr, mode="L")
 
-        issues_list = [
-            SegmentationValidationIssue(
-                code=code,
-                severity="error"
-                if code
-                in (
-                    "SEGMENTATION_MASK_EMPTY",
-                    "SEGMENTATION_MASK_FULL_FRAME",
-                    "SEGMENTATION_FACE_NOT_CONTAINED",
-                    "SEGMENTATION_FOREGROUND_COVERAGE_LOW",
-                    "SEGMENTATION_FOREGROUND_COVERAGE_HIGH",
-                )
-                else "warning",
-                blocking_for_processing=code
-                in (
-                    "SEGMENTATION_MASK_EMPTY",
-                    "SEGMENTATION_MASK_FULL_FRAME",
-                    "SEGMENTATION_FACE_NOT_CONTAINED",
-                    "SEGMENTATION_FOREGROUND_COVERAGE_LOW",
-                    "SEGMENTATION_FOREGROUND_COVERAGE_HIGH",
-                ),
+        from exam_photo.suitability.issue_codes import (
+            IssueSeverity,
+            SuitabilityIssueCode,
+        )
+
+        issues_list = []
+        clean_codes = []
+        for code in self.issue_codes:
+            # Map code to SuitabilityIssueCode
+            if isinstance(code, str):
+                issue_code = SuitabilityIssueCode(code)
+            else:
+                issue_code = code
+            clean_codes.append(issue_code.value)
+
+            is_error = issue_code in (
+                SuitabilityIssueCode.SEGMENTATION_MASK_EMPTY,
+                SuitabilityIssueCode.SEGMENTATION_MASK_FULL_FRAME,
+                SuitabilityIssueCode.SEGMENTATION_FACE_NOT_CONTAINED,
+                SuitabilityIssueCode.SEGMENTATION_FOREGROUND_COVERAGE_LOW,
+                SuitabilityIssueCode.SEGMENTATION_FOREGROUND_COVERAGE_HIGH,
             )
-            for code in self.issue_codes
-        ]
+            issues_list.append(
+                SegmentationValidationIssue(
+                    code=issue_code,
+                    severity=IssueSeverity.ERROR if is_error else IssueSeverity.WARNING,
+                    blocking_for_processing=is_error,
+                )
+            )
 
         val_report = MaskValidationReport(
             is_valid=self.is_valid,
@@ -83,7 +88,7 @@ class FakeSubjectSegmenter(SubjectSegmentationProvider):
             image_edge_contact=False,
             face_contained=True if face is not None else None,
             head_region_coverage_ratio=1.0 if head_estimate is not None else None,
-            issue_codes=self.issue_codes,
+            issue_codes=clean_codes,
             issues=issues_list,
         )
 

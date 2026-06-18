@@ -556,19 +556,37 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
                     with open(manifest_path, "r", encoding="utf-8") as mf:
                         manifest = json.load(mf)
                     variant_name = args.variant or manifest.get(
-                        "selected_variant", "selfie_multiclass_256x256"
+                        "selected_variant", "selfie_bin_general"
                     )
                     variants = manifest.get("variants", {})
-                    variant = variants.get(variant_name, {})
-                    model_path_str = variant.get(
-                        "filename", "selfie_multiclass_256x256.tflite"
-                    )
-                    model_path_str = "model-assets/" + model_path_str
+                    variant = variants.get(variant_name)
+                    if variant is None:
+                        print(
+                            f"Error: Selected variant '{variant_name}' not found in manifest. Code: VARIANT_NOT_FOUND",
+                            file=sys.stderr,
+                        )
+                        return 1
+                    filename = variant.get("filename")
+                    if not filename:
+                        print(
+                            "Error: Filename not found for selected variant in manifest. Code: MANIFEST_MALFORMED",
+                            file=sys.stderr,
+                        )
+                        return 1
+                    model_path_str = "model-assets/" + filename
                     expected_sha256 = variant.get("sha256", "")
                 except Exception:
-                    pass
-            if not model_path_str:
-                model_path_str = "model-assets/selfie_multiclass_256x256.tflite"
+                    print(
+                        "Error: Model manifest is malformed or could not be loaded. Code: MANIFEST_MALFORMED",
+                        file=sys.stderr,
+                    )
+                    return 1
+            else:
+                print(
+                    "Error: Model manifest not found. Code: MANIFEST_NOT_FOUND",
+                    file=sys.stderr,
+                )
+                return 1
 
         model_path = Path(model_path_str)
         if not model_path.is_absolute():
@@ -606,12 +624,28 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
                     head_estimate=head_box,
                     config=config,
                 )
-        except Exception:
-            logger.error("Subject segmentation failed internally", exc_info=True)
-            print("Code: SEGMENTATION_PROVIDER_FAILED", file=sys.stderr)
-            print(
-                "Message: Subject segmentation could not be completed.", file=sys.stderr
+        except Exception as e:
+            from exam_photo.providers.model_errors import (
+                ModelChecksumError,
+                ModelNotFoundError,
             )
+
+            if isinstance(e, ModelNotFoundError):
+                print("Code: SEGMENTATION_MODEL_MISSING", file=sys.stderr)
+                print("Message: Segmentation model file is missing.", file=sys.stderr)
+            elif isinstance(e, ModelChecksumError):
+                print("Code: SEGMENTATION_MODEL_CHECKSUM_FAILED", file=sys.stderr)
+                print(
+                    "Message: Segmentation model checksum verification failed.",
+                    file=sys.stderr,
+                )
+            else:
+                logger.error("Subject segmentation failed internally", exc_info=True)
+                print("Code: SEGMENTATION_PROVIDER_FAILED", file=sys.stderr)
+                print(
+                    "Message: Subject segmentation could not be completed.",
+                    file=sys.stderr,
+                )
             return 1
 
         # 8. Print stats

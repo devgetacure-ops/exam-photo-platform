@@ -360,6 +360,7 @@ class SuitabilityEvaluator:
                     mask_width=seg_result.mask_width,
                     mask_height=seg_result.mask_height,
                     warnings=seg_result.warnings,
+                    class_coverage=seg_result.class_coverage,
                 )
             except ModelNotFoundError as mne:
                 provider_status["subject_segmenter"] = "failed"

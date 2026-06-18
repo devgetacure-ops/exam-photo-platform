@@ -65,7 +65,7 @@ def main() -> None:
     # Set up fixtures
     fixtures_dir = _REPO_ROOT / "tests" / "fixtures"
     
-    # Load ground-truth masks metadata from annotations.json if available
+    # Load annotations metadata
     anno_path = fixtures_dir / "segmentation" / "annotations.json"
     annotations = {}
     fixture_images = []
@@ -78,7 +78,36 @@ def main() -> None:
                     if (fixtures_dir / entry["source_fixture"]).exists():
                         fixture_images.append(entry["source_fixture"])
         except Exception as e:
-            print(f"Warning: could not load annotations.json: {e}")
+            print(f"Error: could not load annotations.json: {e}", file=sys.stderr)
+            if args.require_real:
+                sys.exit(1)
+    else:
+        print("Error: annotations.json not found.", file=sys.stderr)
+        if args.require_real:
+            sys.exit(1)
+
+    expected_fixtures = [
+        "sarah_bernhardt_long_hair.jpg",
+        "marie_curie_curly_hair.jpg",
+        "vivekananda_head_covering.jpg",
+        "lincoln_low_contrast.jpg",
+        "single_face_frontal.jpg",
+        "roosevelt_muir_yosemite.jpg",
+        "freud_spectacles_beard.jpg"
+    ]
+    if args.require_real:
+        for fname in expected_fixtures:
+            if fname not in annotations:
+                print(f"Error: Required annotation entry '{fname}' is missing.", file=sys.stderr)
+                sys.exit(1)
+            entry = annotations[fname]
+            if not (fixtures_dir / fname).exists():
+                print(f"Error: Referenced source file '{fname}' is missing.", file=sys.stderr)
+                sys.exit(1)
+            mask_rel = entry.get("regression_mask_filename")
+            if not mask_rel or not (fixtures_dir / mask_rel).exists():
+                print(f"Error: Referenced mask file '{mask_rel}' is missing for '{fname}'.", file=sys.stderr)
+                sys.exit(1)
             
     # Fallback/ensure default images are included
     for extra_fix in ["blank_white_600x800.jpg", "geometric_shapes_600x800.jpg"]:
@@ -96,12 +125,18 @@ def main() -> None:
         try:
             face_detector = MediapipeFaceDetector(face_model_path, face_sha)
         except Exception as e:
-            print(f"Warning: could not initialize face detector: {e}")
+            print(f"Error: could not initialize face detector: {e}", file=sys.stderr)
+            if args.require_real:
+                sys.exit(1)
+    else:
+        print(f"Error: face detector model not found at {face_model_path}", file=sys.stderr)
+        if args.require_real:
+            sys.exit(1)
 
     for img_name in fixture_images:
         path = fixtures_dir / img_name
         if not path.exists():
-            print(f"Error: Fixture image {path} not found.")
+            print(f"Error: Fixture image {path} not found.", file=sys.stderr)
             sys.exit(1)
         
         with open(path, "rb") as f:
@@ -110,17 +145,33 @@ def main() -> None:
         
         face = None
         head_box = None
+        
+        expected_faces = 1
+        if img_name in (
+            "roosevelt_muir_yosemite.jpg",
+            "lincoln_low_contrast.jpg",
+            "blank_white_600x800.jpg",
+            "geometric_shapes_600x800.jpg",
+        ):
+            expected_faces = 0
+
         if face_detector:
             try:
                 with face_detector:
                     face_res = face_detector.detect_faces(norm_res.image)
-                    if len(face_res.detections) == 1:
+                    detected_count = len(face_res.detections)
+                    if args.require_real and detected_count != expected_faces:
+                        print(f"Error: Expected {expected_faces} face(s) in {img_name}, but detected {detected_count}.", file=sys.stderr)
+                        sys.exit(1)
+                    if detected_count == 1:
                         face = face_res.detections[0]
                         head_est = LandmarkGeometricHeadEstimator()
                         head_res = head_est.estimate_head(norm_res.image, face, face.landmarks)
                         head_box = head_res.head_bounding_box
             except Exception as e:
-                print(f"  Warning on {img_name}: {e}")
+                print(f"  Error on {img_name} face/head processing: {e}", file=sys.stderr)
+                if args.require_real:
+                    sys.exit(1)
 
         normalized_fixtures[img_name] = {
             "norm_res": norm_res,
@@ -164,8 +215,10 @@ def main() -> None:
             cold_init_ms = (time.perf_counter() - t_start) * 1000.0
             print(f"  Cold Initialization time: {cold_init_ms:.2f} ms")
         except Exception as e:
-            print(f"  Failed cold init: {e}")
+            print(f"  Failed cold init: {e}", file=sys.stderr)
             segmenter.close()
+            if args.require_real:
+                sys.exit(1)
             continue
 
         # Benchmark warm runs on each fixture
@@ -180,31 +233,39 @@ def main() -> None:
 
             print(f"  Benchmarking on {img_name} ({image.width}x{image.height})...")
             
-            # Print warm-up statistics separately
-            t_warm0 = time.perf_counter()
-            segmenter.segment_subject(image, face=face, head_estimate=head_box)
-            warmup_ms = (time.perf_counter() - t_warm0) * 1000.0
-            print(f"    Warm-up run: {warmup_ms:.2f} ms")
+            # At least three warm-up runs
+            warmup_durations = []
+            for wu in range(3):
+                t_w = time.perf_counter()
+                segmenter.segment_subject(image, face=face, head_estimate=head_box)
+                warmup_durations.append((time.perf_counter() - t_w) * 1000.0)
+            print(f"    3 Warm-up runs: {', '.join(f'{w:.2f}ms' for w in warmup_durations)}")
 
-            run_durations = []
+            inference_durations = []
+            mask_extraction_durations = []
+            resize_threshold_durations = []
+            validation_durations = []
+            total_durations = []
             val_reports = []
             
             for run_idx in range(args.runs):
-                t0 = time.perf_counter()
                 res = segmenter.segment_subject(image, face=face, head_estimate=head_box)
-                dur = (time.perf_counter() - t0) * 1000.0
-                run_durations.append(dur)
+                inference_durations.append(res.inference_duration_ms or 0.0)
+                mask_extraction_durations.append(res.mask_extraction_duration_ms or 0.0)
+                resize_threshold_durations.append(res.resize_threshold_duration_ms or 0.0)
+                validation_durations.append(res.validation_duration_ms or 0.0)
+                total_durations.append(res.processing_duration)
                 if run_idx == 0:
                     val_reports.append(res.mask_validation)
                     # Get internal post-processing time
                     results[var_name]["model_name"] = res.model_name
                     results[var_name]["model_version"] = res.model_version
                     
-                    # Calculate IoU if ground truth mask is available
+                    # Calculate IoU if regression mask is available
                     iou = None
                     gt_entry = annotations.get(img_name)
                     if gt_entry:
-                        gt_mask_path = fixtures_dir / gt_entry["ground_truth_mask_filename"]
+                        gt_mask_path = fixtures_dir / gt_entry["regression_mask_filename"]
                         if gt_mask_path.exists():
                             from PIL import Image
                             gt_mask = Image.open(gt_mask_path).convert("L")
@@ -219,15 +280,48 @@ def main() -> None:
                             else:
                                 iou = float(intersection / union)
             
-            mean_dur = np.mean(run_durations)
-            median_dur = np.median(run_durations)
-            min_dur = np.min(run_durations)
-            max_dur = np.max(run_durations)
+            mean_dur = np.mean(total_durations)
+            median_dur = np.median(total_durations)
+            p95_dur = np.percentile(total_durations, 95)
+            min_dur = np.min(total_durations)
+            max_dur = np.max(total_durations)
+
+            mean_inf = np.mean(inference_durations)
+            p95_inf = np.percentile(inference_durations, 95)
+
+            mean_ext = np.mean(mask_extraction_durations)
+            p95_ext = np.percentile(mask_extraction_durations, 95)
+
+            mean_res = np.mean(resize_threshold_durations)
+            p95_res = np.percentile(resize_threshold_durations, 95)
+
+            mean_val = np.mean(validation_durations)
+            p95_val = np.percentile(validation_durations, 95)
             
             val = val_reports[0]
             iou_str = f", IoU={iou:.4f}" if iou is not None else ""
-            print(f"    Warm runs ({args.runs} iterations): Mean={mean_dur:.2f}ms, Median={median_dur:.2f}ms, Min={min_dur:.2f}ms")
+            print(f"    Warm runs ({args.runs} iterations) Total Timing: Mean={mean_dur:.2f}ms, Median={median_dur:.2f}ms, p95={p95_dur:.2f}ms, Min={min_dur:.2f}ms")
+            print(f"    Timing Breakdowns (Mean / p95): Inference={mean_inf:.2f}ms/{p95_inf:.2f}ms, Extraction={mean_ext:.2f}ms/{p95_ext:.2f}ms, Resize/Threshold={mean_res:.2f}ms/{p95_res:.2f}ms, Validation={mean_val:.2f}ms/{p95_val:.2f}ms")
             print(f"    Validation: is_valid={val.is_valid}, components={val.connected_components_count}, coverage={val.foreground_coverage_ratio:.4f}{iou_str}")
+
+            if args.require_real:
+                is_invalid_expected = img_name in (
+                    "blank_white_600x800.jpg",
+                    "geometric_shapes_600x800.jpg",
+                    "roosevelt_muir_yosemite.jpg",
+                    "vivekananda_head_covering.jpg",
+                )
+                if is_invalid_expected:
+                    if val.is_valid:
+                        print(f"    [FAIL] Expected invalid result for {img_name}, but mask was valid.", file=sys.stderr)
+                        sys.exit(1)
+                    if img_name in ("blank_white_600x800.jpg", "geometric_shapes_600x800.jpg") and val.foreground_coverage_ratio > 0.05:
+                        print(f"    [FAIL] Expected coverage < 0.05 for {img_name}, got {val.foreground_coverage_ratio:.4f}", file=sys.stderr)
+                        sys.exit(1)
+                else:
+                    if not val.is_valid:
+                        print(f"    [FAIL] Expected valid result for {img_name}, but mask was invalid. Issues: {val.issue_codes}", file=sys.stderr)
+                        sys.exit(1)
             
             results[var_name]["fixtures"][img_name] = {
                 "mean_ms": mean_dur,
@@ -294,8 +388,13 @@ def main() -> None:
             # Only enforce quality checks on the primary binary baseline
             if "bin" in var_name:
                 for img_name, fix_res in var_res["fixtures"].items():
+                    # For real person fixtures, verify IoU exists and meets threshold
+                    is_special = img_name in ("blank_white_600x800.jpg", "geometric_shapes_600x800.jpg", "roosevelt_muir_yosemite.jpg")
                     iou_val = fix_res.get("iou")
-                    if iou_val is not None:
+                    if not is_special:
+                        if iou_val is None:
+                            print(f"  [FAIL] {var_name} on {img_name}: IoU metric is missing or could not be calculated.", file=sys.stderr)
+                            sys.exit(1)
                         expected_min_iou = 0.99
                         if iou_val < expected_min_iou:
                             print(f"  [FAIL] {var_name} on {img_name}: IoU is {iou_val:.4f} (expected >= {expected_min_iou})", file=sys.stderr)

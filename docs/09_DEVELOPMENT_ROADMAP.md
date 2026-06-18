@@ -62,7 +62,7 @@ This phase covers establishing directory, configuration, and interfaces foundati
 - **Dependencies**: Milestone 5, Milestone 6.
 - **Expected Deliverables**: `SubjectSegmentationProvider` contract, `MediapipeSubjectSegmenter` implementation, `MaskValidationReport` (DSU connectivity component analysis, face containment, head coverage), `PublicSegmentationReport` and `InternalSegmentationDiagnostic` models, CLI `segment-subject` support, and benchmark tools.
 - **Exit Criteria**: All unit and integration tests pass; benchmark compares multiclass vs binary segmenters on licensed fixtures; mask validation detects empty, full frame, fragmented, and non-contained face masks.
-- **Status**: **Completed (Provisional baseline implementation with multiclass and binary model support)**
+- **Status**: **Milestone 7 completed: repository-verified provisional coarse subject-segmentation baseline.**
 
 #### Milestone 8: Aspect Ratio & Crop Pipeline (Crop Mode A & B)
 - **Objective**: Implement the two cropping modes specified in the repository contract (Crop Mode A: exact aspect ratio centered face; Crop Mode B: tight crop with margined head).
