@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from enum import Enum
-from pathlib import Path
 from typing import Any, Optional, Protocol, runtime_checkable
 
 from PIL import Image
@@ -34,7 +33,6 @@ class SegmentationCapabilities(BaseModel):
 
 class SegmentationConfig(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    model_path: Optional[Path] = None
     foreground_threshold: float = Field(default=0.5, ge=0.0, le=1.0)
     uncertain_low_threshold: float = Field(default=0.2, ge=0.0, le=1.0)
     uncertain_high_threshold: float = Field(default=0.8, ge=0.0, le=1.0)
@@ -53,14 +51,36 @@ class SegmentationConfig(BaseModel):
             raise ValueError(
                 "Thresholds must satisfy: uncertain_low_threshold <= foreground_threshold <= uncertain_high_threshold"
             )
+        if not (self.minimum_foreground_coverage < self.maximum_foreground_coverage):
+            raise ValueError(
+                "Coverage limits must satisfy: minimum_foreground_coverage < maximum_foreground_coverage"
+            )
         return self
+
+
+class SegmentationClassCoverage(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    background: float = Field(ge=0.0, le=1.0)
+    hair: float = Field(ge=0.0, le=1.0)
+    body_skin: float = Field(ge=0.0, le=1.0)
+    face_skin: float = Field(ge=0.0, le=1.0)
+    clothing: float = Field(ge=0.0, le=1.0)
+    accessories: float = Field(ge=0.0, le=1.0)
+
+
+class SegmentationValidationIssue(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    code: str  # maps to SuitabilityIssueCode value
+    severity: str  # "error" | "warning" | "information"
+    blocking_for_processing: bool
+    confidence: Optional[float] = None
 
 
 class MaskValidationReport(BaseModel):
     model_config = ConfigDict(extra="forbid")
     is_valid: bool
     foreground_coverage_ratio: float = Field(ge=0.0, le=1.0)
-    uncertain_edge_ratio: float = Field(ge=0.0, le=1.0)
+    uncertain_pixel_ratio: float = Field(ge=0.0, le=1.0)
     connected_components_count: int
     largest_component_ratio: float = Field(ge=0.0, le=1.0)
     mask_bounding_box: Optional[BoundingBox] = None
@@ -68,6 +88,7 @@ class MaskValidationReport(BaseModel):
     face_contained: Optional[bool] = None
     head_region_coverage_ratio: Optional[float] = None
     issue_codes: list[str]
+    issues: list[SegmentationValidationIssue]
 
 
 class SubjectSegmentationResult(BaseModel):
@@ -89,6 +110,7 @@ class SubjectSegmentationResult(BaseModel):
     warnings: list[str]
     processing_duration: float
     safe_internal_metadata: Optional[dict[str, Any]] = None
+    class_coverage: Optional[SegmentationClassCoverage] = None
     mask_validation: MaskValidationReport
 
     @model_validator(mode="after")
@@ -136,7 +158,7 @@ class SubjectSegmentationProvider(Protocol):
         image: Image.Image,
         face: Optional[FaceDetection] = None,
         head_estimate: Optional[BoundingBox] = None,
-        config: Optional[dict[str, Any]] = None,
+        config: Optional[SegmentationConfig] = None,
     ) -> SubjectSegmentationResult:
         """Segments the foreground subject from the background.
 

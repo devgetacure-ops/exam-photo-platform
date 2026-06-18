@@ -3,11 +3,13 @@ from typing import Any, Optional
 import numpy as np
 from PIL import Image
 
+from exam_photo.input.limits import InputLimits
 from exam_photo.models.geometry import BoundingBox
 from exam_photo.providers.face_detection import FaceDetection
 from exam_photo.providers.subject_segmentation import (
     MaskValidationReport,
     SegmentationConfig,
+    SegmentationValidationIssue,
 )
 
 
@@ -99,45 +101,92 @@ def validate_segmentation_mask(
     head_estimate: Optional[BoundingBox] = None,
 ) -> MaskValidationReport:
     """Validates the generated probability and coarse binary foreground masks."""
-    h, w = binary_mask.shape
-    issue_codes: list[str] = []
+    # 1. Upfront input validations
+    if not isinstance(probability_mask, np.ndarray) or not isinstance(
+        binary_mask, np.ndarray
+    ):
+        raise ValueError("Input masks must be numpy arrays")
 
-    # 1. Basic properties
+    if len(probability_mask.shape) != 2 or len(binary_mask.shape) != 2:
+        raise ValueError("Input masks must be 2D arrays")
+
+    if probability_mask.shape != binary_mask.shape:
+        raise ValueError("Shape mismatch between probability_mask and binary_mask")
+
+    h, w = binary_mask.shape
+    if h == 0 or w == 0:
+        raise ValueError("Input masks cannot be empty")
+
+    limits = InputLimits()
+    if h > limits.maximum_height or w > limits.maximum_width:
+        raise ValueError(
+            f"Mask dimensions ({w}x{h}) exceed safety limits ({limits.maximum_width}x{limits.maximum_height})"
+        )
+    if h * w > limits.maximum_total_pixel_count:
+        raise ValueError(
+            f"Mask total pixels ({h * w}) exceed safety limits ({limits.maximum_total_pixel_count})"
+        )
+
+    if not np.all(np.isfinite(probability_mask)) or not np.all(
+        np.isfinite(binary_mask)
+    ):
+        raise ValueError("Input masks contain non-finite values (NaN or Inf)")
+
+    if np.any((probability_mask < -1e-5) | (probability_mask > 1.00001)):
+        raise ValueError("probability_mask values must lie in range [0.0, 1.0]")
+
+    # binary_mask must contain only 0 and 255 values
+    unique_binary = np.unique(binary_mask)
+    for val in unique_binary:
+        if val not in (0, 255):
+            raise ValueError("binary_mask must contain only 0 and 255 values")
+
+    validation_issues: list[SegmentationValidationIssue] = []
+
+    # Helper to append typed issues
+    def add_issue(code_str: str, severity: str, blocking: bool) -> None:
+        validation_issues.append(
+            SegmentationValidationIssue(
+                code=code_str,
+                severity=severity,
+                blocking_for_processing=blocking,
+                confidence=1.0,
+            )
+        )
+
+    # 2. Coverage validations
     total_pixels = h * w
     foreground_count = np.sum(binary_mask == 255)
     foreground_coverage = foreground_count / total_pixels
 
-    # Coverage validations
     if foreground_coverage < config.minimum_foreground_coverage:
-        issue_codes.append("SEGMENTATION_FOREGROUND_COVERAGE_LOW")
+        add_issue("SEGMENTATION_FOREGROUND_COVERAGE_LOW", "error", True)
     if foreground_coverage > config.maximum_foreground_coverage:
-        issue_codes.append("SEGMENTATION_FOREGROUND_COVERAGE_HIGH")
+        add_issue("SEGMENTATION_FOREGROUND_COVERAGE_HIGH", "error", True)
 
     # Empty/full frame checks
     if foreground_count == 0:
-        issue_codes.append("SEGMENTATION_MASK_EMPTY")
+        add_issue("SEGMENTATION_MASK_EMPTY", "error", True)
     if foreground_count == total_pixels:
-        issue_codes.append("SEGMENTATION_MASK_FULL_FRAME")
+        add_issue("SEGMENTATION_MASK_FULL_FRAME", "error", True)
 
-    # 2. Uncertain-edge ratio
+    # 3. Uncertain-pixel ratio (formerly uncertain_edge_ratio)
     uncertain_count = np.sum(
         (probability_mask >= config.uncertain_low_threshold)
         & (probability_mask <= config.uncertain_high_threshold)
     )
-    uncertain_edge_ratio = uncertain_count / total_pixels
-    if (
-        uncertain_edge_ratio > 0.35
-    ):  # threshold warning code if edge is excessively wide
-        issue_codes.append("SEGMENTATION_UNCERTAIN_EDGE_HIGH")
+    uncertain_pixel_ratio = uncertain_count / total_pixels
+    if uncertain_pixel_ratio > 0.35:
+        add_issue("SEGMENTATION_UNCERTAIN_EDGE_HIGH", "warning", False)
 
-    # 3. Connected components & fragmentation
+    # 4. Connected components & fragmentation
     comp_count, largest_ratio = count_connected_components_dsu(binary_mask)
     if comp_count > 1:
-        issue_codes.append("SEGMENTATION_MULTIPLE_MAJOR_COMPONENTS")
+        add_issue("SEGMENTATION_MULTIPLE_MAJOR_COMPONENTS", "warning", False)
     if largest_ratio < 0.75:
-        issue_codes.append("SEGMENTATION_FOREGROUND_FRAGMENTED")
+        add_issue("SEGMENTATION_FOREGROUND_FRAGMENTED", "warning", False)
 
-    # 4. Bounding Box & edge contact
+    # 5. Bounding Box & edge contact
     foreground_indices = np.argwhere(binary_mask == 255)
     bbox: Optional[BoundingBox] = None
     edge_contact = False
@@ -159,9 +208,9 @@ def validate_segmentation_mask(
             top_idx == 0 or bottom_idx == h - 1 or left_idx == 0 or right_idx == w - 1
         )
         if edge_contact:
-            issue_codes.append("SEGMENTATION_EDGE_CONTACT_WARNING")
+            add_issue("SEGMENTATION_EDGE_CONTACT_WARNING", "warning", False)
 
-    # 5. Face containment (against whole foreground probability)
+    # 6. Face containment (against whole foreground probability)
     face_contained: Optional[bool] = None
     if face is not None:
         face_box = face.bounding_box
@@ -178,18 +227,17 @@ def validate_segmentation_mask(
             face_region_prob = probability_mask[
                 inner_top:inner_bottom, inner_left:inner_right
             ]
-            # Calculate face coverage: fraction of pixels above the foreground threshold
             face_pixels_above = np.sum(face_region_prob >= config.foreground_threshold)
             face_coverage = face_pixels_above / face_region_prob.size
 
             face_contained = bool(face_coverage >= config.minimum_face_mask_coverage)
             if not face_contained:
-                issue_codes.append("SEGMENTATION_FACE_NOT_CONTAINED")
+                add_issue("SEGMENTATION_FACE_NOT_CONTAINED", "error", True)
         else:
             face_contained = False
-            issue_codes.append("SEGMENTATION_FACE_NOT_CONTAINED")
+            add_issue("SEGMENTATION_FACE_NOT_CONTAINED", "error", True)
 
-    # 6. Head region overlap comparison
+    # 7. Head region overlap comparison
     head_coverage_ratio: Optional[float] = None
     if head_estimate is not None:
         head_left = max(0, min(int(round(head_estimate.left)), w - 1))
@@ -204,33 +252,24 @@ def validate_segmentation_mask(
             )
 
             if head_coverage_ratio < config.minimum_head_mask_coverage:
-                issue_codes.append("SEGMENTATION_HEAD_REGION_LOW_COVERAGE")
+                # Disagreement with provisional estimate is a warning, NOT blocking/invalidating
+                add_issue("SEGMENTATION_HEAD_REGION_LOW_COVERAGE", "warning", False)
         else:
             head_coverage_ratio = 0.0
-            issue_codes.append("SEGMENTATION_HEAD_REGION_LOW_COVERAGE")
+            add_issue("SEGMENTATION_HEAD_REGION_LOW_COVERAGE", "warning", False)
 
-    is_valid = not any(
-        code
-        for code in issue_codes
-        if code
-        in [
-            "SEGMENTATION_MASK_EMPTY",
-            "SEGMENTATION_MASK_FULL_FRAME",
-            "SEGMENTATION_FACE_NOT_CONTAINED",
-            "SEGMENTATION_FOREGROUND_COVERAGE_LOW",
-            "SEGMENTATION_FOREGROUND_COVERAGE_HIGH",
-        ]
-    )
+    is_valid = not any(issue.blocking_for_processing for issue in validation_issues)
 
     return MaskValidationReport(
         is_valid=is_valid,
         foreground_coverage_ratio=foreground_coverage,
-        uncertain_edge_ratio=uncertain_edge_ratio,
+        uncertain_pixel_ratio=uncertain_pixel_ratio,
         connected_components_count=comp_count,
         largest_component_ratio=largest_ratio,
         mask_bounding_box=bbox,
         image_edge_contact=edge_contact,
         face_contained=face_contained,
         head_region_coverage_ratio=head_coverage_ratio,
-        issue_codes=issue_codes,
+        issue_codes=[iss.code for iss in validation_issues],
+        issues=validation_issues,
     )

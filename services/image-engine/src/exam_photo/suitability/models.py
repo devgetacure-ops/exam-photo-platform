@@ -13,6 +13,13 @@ class SuitabilityStatus(str, Enum):
     INDETERMINATE = "indeterminate"
 
 
+class ProcessingReadinessStatus(str, Enum):
+    READY = "ready"
+    READY_WITH_WARNINGS = "ready_with_warnings"
+    BLOCKED = "blocked"
+    INDETERMINATE = "indeterminate"
+
+
 class SuitabilityCheck(str, Enum):
     DIMENSIONS = "dimensions"
     PIXEL_COUNT = "pixel_count"
@@ -30,6 +37,7 @@ class SuitabilityCheck(str, Enum):
     CHIN_BOUNDARY = "chin_boundary"
     BEARD_BOUNDARY = "beard_boundary"
     BACKGROUND = "background"
+    SUBJECT_SEGMENTATION = "subject_segmentation"
 
 
 class IssueSeverity(str, Enum):
@@ -108,7 +116,7 @@ class InternalSegmentationDiagnostic(BaseModel):
     threshold_used: float
     processing_duration_ms: float
     foreground_coverage_ratio: float
-    uncertain_edge_ratio: float
+    uncertain_pixel_ratio: float
     connected_components_count: int
     largest_component_ratio: float
     face_contained: Optional[bool]
@@ -129,7 +137,9 @@ class InternalSegmentationDiagnostic(BaseModel):
 
 
 class PublicSuitabilityReport(BaseModel):
-    overall_status: SuitabilityStatus
+    overall_status: SuitabilityStatus  # legacy compat field
+    source_suitability: SuitabilityStatus
+    processing_readiness: ProcessingReadinessStatus
     issues: List[PublicSuitabilityIssue]
     warnings: List[str]
     measurements: Dict[str, Any]
@@ -142,7 +152,9 @@ class PublicSuitabilityReport(BaseModel):
 
 
 class SuitabilityReport(BaseModel):
-    overall_status: SuitabilityStatus
+    overall_status: SuitabilityStatus  # legacy compat field
+    source_suitability: SuitabilityStatus
+    processing_readiness: ProcessingReadinessStatus
     issues: List[SuitabilityIssue]
     warnings: List[str]
     measurements: Dict[str, Any]
@@ -162,6 +174,8 @@ class SuitabilityReport(BaseModel):
         )
         return PublicSuitabilityReport(
             overall_status=self.overall_status,
+            source_suitability=self.source_suitability,
+            processing_readiness=self.processing_readiness,
             issues=[issue.to_public() for issue in self.issues],
             warnings=self.warnings,
             measurements=self.measurements,

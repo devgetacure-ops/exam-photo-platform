@@ -13,7 +13,7 @@ from exam_photo.providers.face_detection import FaceDetection
 from exam_photo.suitability.configuration import SuitabilityThresholds
 from exam_photo.suitability.evaluator import SuitabilityEvaluator
 from exam_photo.suitability.issue_codes import SuitabilityIssueCode
-from exam_photo.suitability.models import SuitabilityStatus
+from exam_photo.suitability.models import ProcessingReadinessStatus, SuitabilityStatus
 
 
 @pytest.fixture
@@ -448,7 +448,8 @@ def test_evaluator_segmentation_mandatory_success(
         base_normalization_result, background_replacement_required=True
     )
 
-    assert report.overall_status == SuitabilityStatus.SUITABLE
+    assert report.source_suitability == SuitabilityStatus.SUITABLE
+    assert report.processing_readiness == ProcessingReadinessStatus.READY
     assert report.segmentation_diagnostic is not None
     assert report.segmentation_diagnostic.is_valid is True
     assert report.segmentation_diagnostic.can_proceed is True
@@ -484,13 +485,15 @@ def test_evaluator_segmentation_mandatory_failure(
     )
 
     # When replacement is required, serious mask failures block the photo
-    assert report.overall_status == SuitabilityStatus.UNSUITABLE
+    assert report.source_suitability == SuitabilityStatus.SUITABLE
+    assert report.processing_readiness == ProcessingReadinessStatus.BLOCKED
     assert report.segmentation_diagnostic is not None
     assert report.segmentation_diagnostic.is_valid is False
     assert report.segmentation_diagnostic.can_proceed is False
     assert "SEGMENTATION_MASK_EMPTY" in report.segmentation_diagnostic.issue_codes
     assert any(
-        iss.blocking and iss.code == "SEGMENTATION_MASK_EMPTY" for iss in report.issues
+        not iss.blocking and iss.code == "SEGMENTATION_MASK_EMPTY"
+        for iss in report.issues
     )
 
 
@@ -518,7 +521,8 @@ def test_evaluator_segmentation_provider_unavailable_mandatory(
         base_normalization_result, background_replacement_required=True
     )
 
-    assert report.overall_status == SuitabilityStatus.UNSUITABLE
+    assert report.source_suitability == SuitabilityStatus.SUITABLE
+    assert report.processing_readiness == ProcessingReadinessStatus.BLOCKED
     assert report.segmentation_diagnostic is not None
     assert report.segmentation_diagnostic.segmentation_status == "unavailable"
     assert report.segmentation_diagnostic.can_proceed is False
@@ -527,6 +531,6 @@ def test_evaluator_segmentation_provider_unavailable_mandatory(
         in report.segmentation_diagnostic.issue_codes
     )
     assert any(
-        iss.blocking and iss.code == "SEGMENTATION_PROVIDER_UNAVAILABLE"
+        not iss.blocking and iss.code == "SEGMENTATION_PROVIDER_UNAVAILABLE"
         for iss in report.issues
     )

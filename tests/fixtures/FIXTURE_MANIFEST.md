@@ -86,6 +86,72 @@ It records the source, licence, expected properties, and acquisition date for ea
 | Content | JSON file containing ground-truth characteristics, expected head coordinates, and expected segmentation parameters for image fixtures |
 | Used in tests | Verified programmatically |
 
+### `sarah_bernhardt_long_hair.jpg`
+
+| Field | Value |
+|---|---|
+| Source | Wikimedia Commons: [Sarah Bernhardt, par Nadar, 1864.jpg](https://commons.wikimedia.org/wiki/File:Sarah_Bernhardt,_par_Nadar,_1864.jpg) |
+| Author | Félix Nadar |
+| Licence | Public Domain |
+| Content | Portrait of Sarah Bernhardt showcasing long voluminous hair |
+| SHA-256 | `3989be5f57cd0cb79743c3d551e18cd9963f9b20757a3e7fa628c68ab2e6ab48` |
+| Expected face count | 1 |
+
+### `marie_curie_curly_hair.jpg`
+
+| Field | Value |
+|---|---|
+| Source | Wikimedia Commons: [Marie Curie 1903.jpg](https://commons.wikimedia.org/wiki/File:Marie_Curie_1903.jpg) |
+| Author | Unknown |
+| Licence | Public Domain |
+| Content | Portrait of Marie Curie showcasing curly/voluminous hair |
+| SHA-256 | `05b1c55cc179c3a37346fa01c3bfec0036688f8d672ea439c279c2a3ab38a8e1` |
+| Expected face count | 1 |
+
+### `vivekananda_head_covering.jpg`
+
+| Field | Value |
+|---|---|
+| Source | Wikimedia Commons: [Swami Vivekananda image London 1896.jpg](https://commons.wikimedia.org/wiki/File:Swami_Vivekananda_image_London_1896.jpg) |
+| Author | Unknown |
+| Licence | Public Domain |
+| Content | Portrait of Swami Vivekananda wearing a turban (head covering) |
+| SHA-256 | `e03e5c9a419c8f2b7d2777484df703c6210f9a2e6f47738f65e2363b92015df3` |
+| Expected face count | 1 |
+
+### `lincoln_low_contrast.jpg`
+
+| Field | Value |
+|---|---|
+| Source | Wikimedia Commons: [Abraham Lincoln O-79 by Gardner, 1863 bw.jpg](https://commons.wikimedia.org/wiki/File:Abraham_Lincoln_O-79_by_Gardner,_1863_bw.jpg) |
+| Author | Alexander Gardner |
+| Licence | Public Domain |
+| Content | Dark portrait of Lincoln wearing black coat against dark background |
+| SHA-256 | `0021b33230c1e48f7d9954df668ee0420794939a3ea8427f29235e12f601b0f5` |
+| Expected face count | 1 |
+
+### `freud_spectacles_beard.jpg`
+
+| Field | Value |
+|---|---|
+| Source | Wikimedia Commons: [Sigmund Freud LIFE.jpg](https://commons.wikimedia.org/wiki/File:Sigmund_Freud_LIFE.jpg) |
+| Author | Max Halberstadt |
+| Licence | Public Domain |
+| Content | Sigmund Freud portrait showcasing spectacles and beard |
+| SHA-256 | `448102e3a09a55743b35583b320875c74261be49495e7b235e1ff77f8670875c` |
+| Expected face count | 1 |
+
+### `roosevelt_muir_yosemite.jpg`
+
+| Field | Value |
+|---|---|
+| Source | Wikimedia Commons: [John Muir and Theodore Roosevelt on horseback...](https://commons.wikimedia.org/wiki/File:(John_Muir_and_Theodore_Roosevelt_on_horseback,_Yosemite_Valley)_(16963732370).jpg) |
+| Author | Underwood & Underwood |
+| Licence | Public Domain |
+| Content | Theodore Roosevelt and John Muir on horseback in Yosemite |
+| SHA-256 | `df430c5e786b62438596fe398dbd71d3dfdf86b45a6c3ef6d421de83cb9b06f5` |
+| Expected face count | 2 |
+
 ---
 
 ## Adding New Fixtures

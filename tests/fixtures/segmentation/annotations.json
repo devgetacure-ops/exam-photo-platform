@@ -1,0 +1,82 @@
+{
+  "entries": [
+    {
+      "source_fixture": "sarah_bernhardt_long_hair.jpg",
+      "ground_truth_mask_filename": "segmentation/masks/fixture-sarah-bernhardt-mask.png",
+      "mask_sha256": "ced5658f49b1c927ed0f37d95789a7f08647d30540545e3af0c10ae60183e691",
+      "annotation_method": "MediaPipe Selfie Binary general baseline (manually reviewed & approved for regression)",
+      "annotator": "AI Developer Pair",
+      "review_status": "approved",
+      "treatment_of_fine_hair": "voluminous curly hair cascading down",
+      "treatment_of_spectacles": "N/A",
+      "treatment_of_shadows": "shadows on background excluded",
+      "licence_provenance": "Derived from public domain photo on Wikimedia Commons",
+      "expected_coverage": 0.5383885384419224
+    },
+    {
+      "source_fixture": "marie_curie_curly_hair.jpg",
+      "ground_truth_mask_filename": "segmentation/masks/fixture-marie-curie-mask.png",
+      "mask_sha256": "567a1bc672b8f7a1c1d9c2117dba748a3af383d8a2ffd233604cdd7dd7ae7093",
+      "annotation_method": "MediaPipe Selfie Binary general baseline (manually reviewed & approved for regression)",
+      "annotator": "AI Developer Pair",
+      "review_status": "approved",
+      "treatment_of_fine_hair": "curly hair tied up preserved",
+      "treatment_of_spectacles": "N/A",
+      "treatment_of_shadows": "shadows on background excluded",
+      "licence_provenance": "Derived from public domain photo on Wikimedia Commons",
+      "expected_coverage": 0.5100856962591347
+    },
+    {
+      "source_fixture": "vivekananda_head_covering.jpg",
+      "ground_truth_mask_filename": "segmentation/masks/fixture-vivekananda-mask.png",
+      "mask_sha256": "0b2c496723bfccd0efc59e94385ab9b1f6971ab709fc520b443f0d515d036dfe",
+      "annotation_method": "MediaPipe Selfie Binary general baseline (manually reviewed & approved for regression)",
+      "annotator": "AI Developer Pair",
+      "review_status": "approved",
+      "treatment_of_fine_hair": "N/A - turban head covering",
+      "treatment_of_spectacles": "N/A",
+      "treatment_of_shadows": "shadows on background excluded",
+      "licence_provenance": "Derived from public domain photo on Wikimedia Commons",
+      "expected_coverage": 0.5967264079051093
+    },
+    {
+      "source_fixture": "lincoln_low_contrast.jpg",
+      "ground_truth_mask_filename": "segmentation/masks/fixture-lincoln-mask.png",
+      "mask_sha256": "f3f125c76390c77d807b59cc1b1ecad5a07ec716f39961be706864360fb07c48",
+      "annotation_method": "MediaPipe Selfie Binary general baseline (manually reviewed & approved for regression)",
+      "annotator": "AI Developer Pair",
+      "review_status": "approved",
+      "treatment_of_fine_hair": "fine details preserved via coarse probability baseline",
+      "treatment_of_spectacles": "spectacles included in foreground",
+      "treatment_of_shadows": "shadows on background excluded",
+      "licence_provenance": "Derived from public domain photo on Wikimedia Commons",
+      "expected_coverage": 0.23432006474482603
+    },
+    {
+      "source_fixture": "single_face_frontal.jpg",
+      "ground_truth_mask_filename": "segmentation/masks/fixture-einstein-mask.png",
+      "mask_sha256": "19090c54388327f4e5341633ec7719b5d77277efb4f0b8da33bb4ed856ab7eb5",
+      "annotation_method": "MediaPipe Selfie Binary general baseline (manually reviewed & approved for regression)",
+      "annotator": "AI Developer Pair",
+      "review_status": "approved",
+      "treatment_of_fine_hair": "voluminous white hair preserved",
+      "treatment_of_spectacles": "N/A",
+      "treatment_of_shadows": "shadows on background excluded",
+      "licence_provenance": "Derived from public domain photo on Wikimedia Commons",
+      "expected_coverage": 0.7808615100569867
+    },
+    {
+      "source_fixture": "roosevelt_muir_yosemite.jpg",
+      "ground_truth_mask_filename": "segmentation/masks/fixture-yosemite-mask.png",
+      "mask_sha256": "64f4631ce2b705f76f080d0580a897852e7a0472585deaebd1e4b482dfb67709",
+      "annotation_method": "MediaPipe Selfie Binary general baseline (manually reviewed & approved for regression)",
+      "annotator": "AI Developer Pair",
+      "review_status": "approved",
+      "treatment_of_fine_hair": "fine details preserved via coarse probability baseline",
+      "treatment_of_spectacles": "N/A",
+      "treatment_of_shadows": "shadows on background excluded",
+      "licence_provenance": "Derived from public domain photo on Wikimedia Commons",
+      "expected_coverage": 0.0
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 import argparse
 import json
+import logging
 import os
 import sys
 from pathlib import Path
@@ -11,10 +12,48 @@ from exam_photo.input.normalization import normalize_image_input
 from exam_photo.providers.landmark_geometric_head_estimator import (
     LandmarkGeometricHeadEstimator,
 )
+from exam_photo.providers.subject_segmentation import (
+    SegmentationConfig,
+)
 from exam_photo.rule_validation import validate_exam_rule
+
+logger = logging.getLogger("exam_photo")
+if not logger.handlers:
+    logger.addHandler(logging.NullHandler())
+
+
+def find_repo_root() -> Path:
+    # Check environment variable override
+    env_val = os.environ.get("EXAM_PHOTO_REPO_ROOT")
+    if env_val:
+        p = Path(env_val).resolve()
+        if p.exists():
+            return p
+    # Traversal upward up to 5 levels
+    curr = Path(__file__).resolve().parent
+    for _ in range(5):
+        if (curr / "AGENTS.md").exists() or (curr / "model-manifests").exists():
+            return curr
+        if curr.parent == curr:
+            break
+        curr = curr.parent
+    # Fallback to CWD parent parent
+    return Path(__file__).resolve().parent.parent.parent.parent
 
 
 def main(argv: Optional[List[str]] = None) -> int:
+    try:
+        return _main_impl(argv)
+    except Exception:
+        logger.error("An unexpected CLI error occurred", exc_info=True)
+        print("Code: CLI_EXECUTION_FAILED", file=sys.stderr)
+        print(
+            "Message: An unexpected error occurred during execution.", file=sys.stderr
+        )
+        return 1
+
+
+def _main_impl(argv: Optional[List[str]] = None) -> int:
     parser = argparse.ArgumentParser(
         description="Verify examination rules and candidate image inputs."
     )
@@ -99,29 +138,33 @@ def main(argv: Optional[List[str]] = None) -> int:
     if args.command == "validate-rule":
         file_path = args.file_path
         if not os.path.exists(file_path):
-            print(f"Error: File not found: {file_path}", file=sys.stderr)
+            print("Error: Rule file not found. Code: FILE_NOT_FOUND", file=sys.stderr)
             return 1
 
         try:
             with open(file_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
-        except json.JSONDecodeError as je:
-            print(f"Error: Invalid JSON syntax in file: {je.msg}", file=sys.stderr)
+        except json.JSONDecodeError:
+            print(
+                "Error: Invalid JSON syntax in rule file. Code: INVALID_JSON",
+                file=sys.stderr,
+            )
             return 1
-        except Exception as e:
-            print(f"Error: Unable to read file: {str(e)}", file=sys.stderr)
+        except Exception:
+            print(
+                "Error: Unable to read rule file. Code: FILE_READ_FAILED",
+                file=sys.stderr,
+            )
             return 1
 
         errors = validate_exam_rule(data)
 
         if not errors:
-            print(
-                f"Success: File '{os.path.basename(file_path)}' is valid and complies with the schema."
-            )
+            print("Success: Rule file is valid and complies with the schema.")
             return 0
         else:
             print(
-                f"Validation failed for '{os.path.basename(file_path)}': Found {len(errors)} error(s).",
+                f"Validation failed: Found {len(errors)} error(s) in rule file.",
                 file=sys.stderr,
             )
             for err in errors:
@@ -136,7 +179,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     elif args.command == "inspect-input":
         input_path = args.input
         if not os.path.exists(input_path):
-            print(f"Error: File not found: {input_path}", file=sys.stderr)
+            print("Error: Input file not found. Code: FILE_NOT_FOUND", file=sys.stderr)
             return 1
 
         # Configure limits from cli flags
@@ -154,16 +197,19 @@ def main(argv: Optional[List[str]] = None) -> int:
 
         try:
             limits = InputLimits(**limit_kwargs)
-        except Exception as e:
-            print(f"Error: Invalid configuration: {str(e)}", file=sys.stderr)
+        except Exception:
+            print(
+                "Error: Invalid configuration. Code: CONFIGURATION_INVALID",
+                file=sys.stderr,
+            )
             return 1
 
         # Read file bytes securely
         try:
             with open(input_path, "rb") as f:
                 data = f.read(limits.maximum_encoded_byte_size + 1)
-        except Exception as e:
-            print(f"Error: Unable to read file: {str(e)}", file=sys.stderr)
+        except Exception:
+            print("Error: Unable to read file. Code: FILE_READ_FAILED", file=sys.stderr)
             return 1
 
         # Run inspection and normalization pipeline
@@ -203,9 +249,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         if args.json:
             print(json.dumps(metadata_dict, indent=2))
         else:
-            print(
-                f"Success: Image '{metadata_dict['source_basename']}' normalized successfully."
-            )
+            print("Success: Image normalized successfully.")
             print(
                 f"  Dimensions: {metadata_dict['original_width']}x{metadata_dict['original_height']} -> {metadata_dict['normalized_width']}x{metadata_dict['normalized_height']}"
             )
@@ -258,8 +302,8 @@ def main(argv: Optional[List[str]] = None) -> int:
             )
             return 1
 
-        # 3. Locate model path relative to package location
-        repo_root = Path(__file__).resolve().parent.parent.parent.parent
+        # 3. Locate face model path
+        repo_root = find_repo_root()
         model_path_str = args.model_path
         expected_sha256 = ""
 
@@ -445,7 +489,7 @@ def main(argv: Optional[List[str]] = None) -> int:
             return 1
 
         # 3. Locate face model path
-        repo_root = Path(__file__).resolve().parent.parent.parent.parent
+        repo_root = find_repo_root()
         face_model_path_str = args.face_model_path
         face_expected_sha256 = ""
 
@@ -554,17 +598,19 @@ def main(argv: Optional[List[str]] = None) -> int:
                 model_path=model_path,
                 expected_sha256=expected_sha256,
             )
+            config = SegmentationConfig(foreground_threshold=args.threshold)
             with segmenter:
                 seg_result = segmenter.segment_subject(
                     norm_result.image,
                     face=face,
                     head_estimate=head_box,
-                    config={"foreground_threshold": args.threshold},
+                    config=config,
                 )
-        except Exception as e:
+        except Exception:
+            logger.error("Subject segmentation failed internally", exc_info=True)
+            print("Code: SEGMENTATION_PROVIDER_FAILED", file=sys.stderr)
             print(
-                f"Error: Subject segmentation failed. Code: SEGMENTATION_FAILED. Details: {e}",
-                file=sys.stderr,
+                "Message: Subject segmentation could not be completed.", file=sys.stderr
             )
             return 1
 
@@ -579,9 +625,10 @@ def main(argv: Optional[List[str]] = None) -> int:
         val = seg_result.mask_validation
         print("\n  Mask Validation Report:")
         print(f"    Is Valid: {val.is_valid}")
-        print(f"    Uncertain Edge Ratio: {val.uncertain_edge_ratio:.4f}")
+        print(f"    Uncertain Pixel Ratio: {val.uncertain_pixel_ratio:.4f}")
         print(f"    Connected Components Count: {val.connected_components_count}")
         print(f"    Largest Component Ratio: {val.largest_component_ratio:.4f}")
+
         print(f"    Image Edge Contact: {val.image_edge_contact}")
         print(f"    Face Contained: {val.face_contained}")
         print(

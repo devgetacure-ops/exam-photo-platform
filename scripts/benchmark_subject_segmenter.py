@@ -3,6 +3,7 @@
 
 import argparse
 import json
+import os
 import platform
 import sys
 import time
@@ -30,7 +31,7 @@ def get_cpu_info() -> str:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Benchmark subject segmenters.")
-    parser.add_argument("--require-real", action="store_true", help="Fail if real models are missing.")
+    parser.add_argument("--require-real", action="store_true", help="Fail if real models are missing or regression is detected.")
     parser.add_argument("--runs", type=int, default=5, help="Number of warm runs for averaging.")
     args = parser.parse_args()
 
@@ -63,11 +64,26 @@ def main() -> None:
 
     # Set up fixtures
     fixtures_dir = _REPO_ROOT / "tests" / "fixtures"
-    fixture_images = [
-        "single_face_frontal.jpg",
-        "blank_white_600x800.jpg",
-        "geometric_shapes_600x800.jpg",
-    ]
+    
+    # Load ground-truth masks metadata from annotations.json if available
+    anno_path = fixtures_dir / "segmentation" / "annotations.json"
+    annotations = {}
+    fixture_images = []
+    if anno_path.exists():
+        try:
+            with open(anno_path, "r", encoding="utf-8") as f:
+                manifest_data = json.load(f)
+                for entry in manifest_data.get("entries", []):
+                    annotations[entry["source_fixture"]] = entry
+                    if (fixtures_dir / entry["source_fixture"]).exists():
+                        fixture_images.append(entry["source_fixture"])
+        except Exception as e:
+            print(f"Warning: could not load annotations.json: {e}")
+            
+    # Fallback/ensure default images are included
+    for extra_fix in ["blank_white_600x800.jpg", "geometric_shapes_600x800.jpg"]:
+        if (fixtures_dir / extra_fix).exists() and extra_fix not in fixture_images:
+            fixture_images.append(extra_fix)
 
     # Run face detection and head estimation to have inputs ready
     normalized_fixtures = {}
@@ -136,7 +152,10 @@ def main() -> None:
         segmenter = MediapipeSubjectSegmenter(model_path, sha)
         try:
             # We run segmentation once on blank image to measure cold init (loading models)
-            dummy_res = normalized_fixtures["blank_white_600x800.jpg"]
+            dummy_res = normalized_fixtures.get("blank_white_600x800.jpg")
+            if not dummy_res:
+                # Fallback to the first available fixture
+                dummy_res = list(normalized_fixtures.values())[0]
             segmenter.segment_subject(
                 dummy_res["norm_res"].image,
                 face=dummy_res["face"],
@@ -161,6 +180,12 @@ def main() -> None:
 
             print(f"  Benchmarking on {img_name} ({image.width}x{image.height})...")
             
+            # Print warm-up statistics separately
+            t_warm0 = time.perf_counter()
+            segmenter.segment_subject(image, face=face, head_estimate=head_box)
+            warmup_ms = (time.perf_counter() - t_warm0) * 1000.0
+            print(f"    Warm-up run: {warmup_ms:.2f} ms")
+
             run_durations = []
             val_reports = []
             
@@ -174,6 +199,25 @@ def main() -> None:
                     # Get internal post-processing time
                     results[var_name]["model_name"] = res.model_name
                     results[var_name]["model_version"] = res.model_version
+                    
+                    # Calculate IoU if ground truth mask is available
+                    iou = None
+                    gt_entry = annotations.get(img_name)
+                    if gt_entry:
+                        gt_mask_path = fixtures_dir / gt_entry["ground_truth_mask_filename"]
+                        if gt_mask_path.exists():
+                            from PIL import Image
+                            gt_mask = Image.open(gt_mask_path).convert("L")
+                            gt_arr = np.array(gt_mask)
+                            pred_arr = np.array(res.coarse_mask)
+                            bin_pred = (pred_arr == 255)
+                            bin_gt = (gt_arr == 255)
+                            intersection = np.logical_and(bin_pred, bin_gt).sum()
+                            union = np.logical_or(bin_pred, bin_gt).sum()
+                            if union == 0:
+                                iou = 1.0
+                            else:
+                                iou = float(intersection / union)
             
             mean_dur = np.mean(run_durations)
             median_dur = np.median(run_durations)
@@ -181,8 +225,9 @@ def main() -> None:
             max_dur = np.max(run_durations)
             
             val = val_reports[0]
+            iou_str = f", IoU={iou:.4f}" if iou is not None else ""
             print(f"    Warm runs ({args.runs} iterations): Mean={mean_dur:.2f}ms, Median={median_dur:.2f}ms, Min={min_dur:.2f}ms")
-            print(f"    Validation: is_valid={val.is_valid}, components={val.connected_components_count}, coverage={val.foreground_coverage_ratio:.4f}")
+            print(f"    Validation: is_valid={val.is_valid}, components={val.connected_components_count}, coverage={val.foreground_coverage_ratio:.4f}{iou_str}")
             
             results[var_name]["fixtures"][img_name] = {
                 "mean_ms": mean_dur,
@@ -192,10 +237,11 @@ def main() -> None:
                 "is_valid": val.is_valid,
                 "components": val.connected_components_count,
                 "coverage": val.foreground_coverage_ratio,
-                "uncertain_edge_ratio": val.uncertain_edge_ratio,
+                "uncertain_pixel_ratio": val.uncertain_pixel_ratio,
                 "face_contained": val.face_contained,
                 "head_coverage": val.head_region_coverage_ratio,
                 "issue_codes": val.issue_codes,
+                "iou": iou,
             }
 
         segmenter.close()
@@ -206,9 +252,9 @@ def main() -> None:
     print("=" * 60)
     print(f"CPU: {get_cpu_info()}\n")
     
-    headers = ["Variant / Model", "Cold Init (ms)", "Fixture", "Mean Latency (ms)", "Coverage", "Components", "Is Valid?"]
-    row_fmt = "| {:<22} | {:<14} | {:<25} | {:<17} | {:<8} | {:<10} | {:<9} |"
-    sep = "|" + "-" * 24 + "|" + "-" * 16 + "|" + "-" * 27 + "|" + "-" * 19 + "|" + "-" * 10 + "|" + "-" * 12 + "|" + "-" * 11 + "|"
+    headers = ["Variant / Model", "Cold Init (ms)", "Fixture", "Mean Latency (ms)", "Coverage", "Components", "IoU", "Is Valid?"]
+    row_fmt = "| {:<22} | {:<14} | {:<25} | {:<17} | {:<8} | {:<10} | {:<6} | {:<9} |"
+    sep = "|" + "-" * 24 + "|" + "-" * 16 + "|" + "-" * 27 + "|" + "-" * 19 + "|" + "-" * 10 + "|" + "-" * 12 + "|" + "-" * 8 + "|" + "-" * 11 + "|"
     
     print(row_fmt.format(*headers))
     print(sep)
@@ -218,6 +264,8 @@ def main() -> None:
         model_str = f"{var_res['model_name']} ({var_name})"
         
         for img_name, fix_res in var_res["fixtures"].items():
+            iou_val = fix_res.get("iou")
+            iou_str = f"{iou_val:.4f}" if iou_val is not None else "N/A"
             print(row_fmt.format(
                 model_str[:22],
                 cold_str,
@@ -225,11 +273,41 @@ def main() -> None:
                 f"{fix_res['mean_ms']:.2f}",
                 f"{fix_res['coverage']:.3f}",
                 str(fix_res["components"]),
+                iou_str,
                 "YES" if fix_res["is_valid"] else "NO"
             ))
             cold_str = ""
             model_str = ""
     print("-" * 60)
+
+    # Hardened --require-real exit codes on quality errors
+    if args.require_real:
+        print("\nVerifying Quality Gate Requirements (--require-real)...")
+        # Ensure all variants in manifest are evaluated
+        for var_name in variants:
+            if var_name not in results:
+                print(f"ERROR: Model variant {var_name} was not evaluated.", file=sys.stderr)
+                sys.exit(1)
+        
+        has_regression = False
+        for var_name, var_res in results.items():
+            # Only enforce quality checks on the primary binary baseline
+            if "bin" in var_name:
+                for img_name, fix_res in var_res["fixtures"].items():
+                    iou_val = fix_res.get("iou")
+                    if iou_val is not None:
+                        expected_min_iou = 0.99
+                        if iou_val < expected_min_iou:
+                            print(f"  [FAIL] {var_name} on {img_name}: IoU is {iou_val:.4f} (expected >= {expected_min_iou})", file=sys.stderr)
+                            has_regression = True
+                        else:
+                            print(f"  [PASS] {var_name} on {img_name}: IoU is {iou_val:.4f}")
+        
+        if has_regression:
+            print("ERROR: Quality gate validation failed due to regressions.", file=sys.stderr)
+            sys.exit(1)
+        else:
+            print("All quality gate validations passed successfully.")
 
 
 if __name__ == "__main__":

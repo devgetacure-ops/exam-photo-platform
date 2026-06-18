@@ -18,8 +18,10 @@ from exam_photo.providers.model_errors import ModelChecksumError, ModelNotFoundE
 from exam_photo.providers.subject_segmentation import (
     MaskValidationReport,
     SegmentationCapabilities,
+    SegmentationClassCoverage,
     SegmentationConfig,
     SegmentationStatusValue,
+    SegmentationValidationIssue,
     SubjectSegmentationProvider,
     SubjectSegmentationResult,
 )
@@ -43,6 +45,8 @@ __all__ = [
     "MaskValidationReport",
     "SubjectSegmentationResult",
     "SubjectSegmentationProvider",
+    "SegmentationClassCoverage",
+    "SegmentationValidationIssue",
 ]
 
 # MediapipeFaceDetector and MediapipeSubjectSegmenter are exported lazily

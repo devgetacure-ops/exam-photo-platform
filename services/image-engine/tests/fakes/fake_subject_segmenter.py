@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import List, Optional
 
 import numpy as np
 from PIL import Image
@@ -8,7 +8,9 @@ from exam_photo.providers.face_detection import FaceDetection
 from exam_photo.providers.subject_segmentation import (
     MaskValidationReport,
     SegmentationCapabilities,
+    SegmentationConfig,
     SegmentationStatusValue,
+    SegmentationValidationIssue,
     SubjectSegmentationProvider,
     SubjectSegmentationResult,
 )
@@ -34,7 +36,7 @@ class FakeSubjectSegmenter(SubjectSegmentationProvider):
         image: Image.Image,
         face: Optional[FaceDetection] = None,
         head_estimate: Optional[BoundingBox] = None,
-        config: Optional[Dict[str, Any]] = None,
+        config: Optional[SegmentationConfig] = None,
     ) -> SubjectSegmentationResult:
         if self.raise_error is not None:
             raise self.raise_error
@@ -47,16 +49,42 @@ class FakeSubjectSegmenter(SubjectSegmentationProvider):
         binary_mask_arr = np.where(prob_mask >= 0.5, 255, 0).astype(np.uint8)
         coarse_mask = Image.fromarray(binary_mask_arr, mode="L")
 
+        issues_list = [
+            SegmentationValidationIssue(
+                code=code,
+                severity="error"
+                if code
+                in (
+                    "SEGMENTATION_MASK_EMPTY",
+                    "SEGMENTATION_MASK_FULL_FRAME",
+                    "SEGMENTATION_FACE_NOT_CONTAINED",
+                    "SEGMENTATION_FOREGROUND_COVERAGE_LOW",
+                    "SEGMENTATION_FOREGROUND_COVERAGE_HIGH",
+                )
+                else "warning",
+                blocking_for_processing=code
+                in (
+                    "SEGMENTATION_MASK_EMPTY",
+                    "SEGMENTATION_MASK_FULL_FRAME",
+                    "SEGMENTATION_FACE_NOT_CONTAINED",
+                    "SEGMENTATION_FOREGROUND_COVERAGE_LOW",
+                    "SEGMENTATION_FOREGROUND_COVERAGE_HIGH",
+                ),
+            )
+            for code in self.issue_codes
+        ]
+
         val_report = MaskValidationReport(
             is_valid=self.is_valid,
             foreground_coverage_ratio=self.foreground_coverage_ratio,
-            uncertain_edge_ratio=0.05,
+            uncertain_pixel_ratio=0.05,
             connected_components_count=self.connected_components_count,
             largest_component_ratio=1.0,
             image_edge_contact=False,
             face_contained=True if face is not None else None,
             head_region_coverage_ratio=1.0 if head_estimate is not None else None,
             issue_codes=self.issue_codes,
+            issues=issues_list,
         )
 
         caps = SegmentationCapabilities(
