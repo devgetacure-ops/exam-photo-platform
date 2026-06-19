@@ -794,3 +794,64 @@ def test_refinement_quality_vs_reference() -> None:
     assert refined_ref_iou >= 0.98, (
         f"Refinement mask quality too low vs reference: refined_ref_iou ({refined_ref_iou:.6f})"
     )
+
+
+@pytest.mark.mandatory_refinement
+def test_refinement_multiple_person_safety() -> None:
+    _ensure_prerequisites()
+    from exam_photo.providers.mediapipe_face_detector import MediapipeFaceDetector
+    from exam_photo.providers.refiners.morphological_refiner import (
+        MorphologicalForegroundRefiner,
+    )
+    from exam_photo.providers.segmenters.mediapipe_segmenter import (
+        MediapipeSubjectSegmenter,
+    )
+
+    repo_root = Path(__file__).resolve().parent.parent.parent.parent.parent
+    fixtures_dir = repo_root / "tests" / "fixtures"
+
+    # Load face detector info
+    face_model_path = repo_root / "model-assets" / "blaze_face_short_range.tflite"
+    face_sha = ""
+    face_manifest = repo_root / "model-manifests" / "face-detector.json"
+    if face_manifest.exists():
+        with open(face_manifest) as manifest_f:
+            fm = json.load(manifest_f)
+            face_sha = fm.get("sha256", "")
+
+    # Load segmenter info
+    assert _MODEL_PATH is not None
+    segmenter = MediapipeSubjectSegmenter(_MODEL_PATH, _MODEL_SHA256)
+    refiner = MorphologicalForegroundRefiner()
+
+    img = Image.open(fixtures_dir / "roosevelt_muir_yosemite.jpg")
+
+    # Detect faces
+    detector = MediapipeFaceDetector(
+        face_model_path, face_sha, min_detection_confidence=0.2
+    )
+    with detector:
+        face_res = detector.detect_faces(img)
+    assert len(face_res.detections) == 2
+    faces = face_res.detections
+
+    # Run segmenter
+    with segmenter:
+        seg_res = segmenter.segment_subject(img, face=faces)
+
+    # Run refiner: must not crash
+    ref_res = refiner.refine_mask(
+        coarse_mask=seg_res.coarse_mask,
+        probability_mask=seg_res.probability_mask,
+        face=faces,
+    )
+
+    assert ref_res is not None
+    assert ref_res.refined_alpha_mask is not None
+    assert ref_res.refined_binary_mask is not None
+    assert ref_res.trimap is not None
+    # Yosemite refined mask is expected to be marked as invalid (due to multiple disconnected components or similar refinement warning/error issues)
+    assert not ref_res.validation.is_valid or len(ref_res.validation.issues) > 0
+    print(
+        f"Yosemite Refinement Safety | is_valid: {ref_res.validation.is_valid} | Issue codes: {ref_res.validation.issue_codes}"
+    )

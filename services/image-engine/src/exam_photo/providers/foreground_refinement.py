@@ -75,6 +75,10 @@ class RefinedMaskResult(BaseModel):
             raise ValueError("refined_alpha_mask must be a 2D array")
         if self.refined_alpha_mask.shape != (self.input_height, self.input_width):
             raise ValueError("refined_alpha_mask dimensions mismatch")
+        if not np.all(np.isfinite(self.refined_alpha_mask)):
+            raise ValueError(
+                "refined_alpha_mask must only contain finite values (no NaN or inf)"
+            )
         if np.any(
             (self.refined_alpha_mask < -1e-5) | (self.refined_alpha_mask > 1.00001)
         ):
@@ -87,12 +91,20 @@ class RefinedMaskResult(BaseModel):
         if self.refined_binary_mask.size != (self.input_width, self.input_height):
             raise ValueError("refined_binary_mask size mismatch")
 
+        binary_arr = np.array(self.refined_binary_mask)
+        if np.any((binary_arr != 0) & (binary_arr != 255)):
+            raise ValueError("refined_binary_mask values must strictly be 0 or 255")
+
         if not isinstance(self.trimap, Image.Image):
             raise ValueError("trimap must be a PIL Image")
         if self.trimap.mode != "L":
             raise ValueError("trimap mode must be 'L'")
         if self.trimap.size != (self.input_width, self.input_height):
             raise ValueError("trimap size mismatch")
+
+        trimap_arr = np.array(self.trimap)
+        if np.any((trimap_arr != 0) & (trimap_arr != 128) & (trimap_arr != 255)):
+            raise ValueError("trimap values must strictly be 0, 128, or 255")
 
         return self
 

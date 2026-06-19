@@ -55,11 +55,18 @@ def main() -> int:
     results = []
     failed = False
 
+    if args.require_real:
+        required_refs = [
+            "segmentation/reference_masks/reference-einstein-mask.png",
+            "segmentation/reference_masks/reference-freud-mask.png",
+        ]
+        for ref_file in required_refs:
+            if not (fixtures_dir / ref_file).exists():
+                print(f"ERROR: Required reference mask is missing from disk: {ref_file}", file=sys.stderr)
+                failed = True
+
     for entry in annotations["entries"]:
         src_name = entry["source_fixture"]
-        # Skip Roosevelt/Yosemite as it has no face and is excluded from refinement benchmark
-        if src_name == "roosevelt_muir_yosemite.jpg":
-            continue
 
         src_path = fixtures_dir / src_name
         img = Image.open(src_path)
@@ -68,7 +75,7 @@ def main() -> int:
         expected_faces = entry.get("expected_face_count", 1)
         faces = None
         if expected_faces > 0:
-            detector = face_detector_02 if src_name == "lincoln_low_contrast.jpg" else face_detector_05
+            detector = face_detector_02 if src_name in ("lincoln_low_contrast.jpg", "roosevelt_muir_yosemite.jpg") else face_detector_05
             with detector:
                 face_res = detector.detect_faces(img)
             assert len(face_res.detections) == expected_faces, f"Expected {expected_faces} faces, got {len(face_res.detections)}"

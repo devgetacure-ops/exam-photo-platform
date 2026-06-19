@@ -182,6 +182,11 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
         "--output-dir",
         help="Optional path to save all three refined mask outputs.",
     )
+    refine_parser.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="Overwrite existing files when saving outputs.",
+    )
 
     args = parser.parse_args(argv)
 
@@ -256,8 +261,8 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
 
         # Read file bytes securely
         try:
-            with open(input_path, "rb") as f:
-                data = f.read(limits.maximum_encoded_byte_size + 1)
+            with open(input_path, "rb") as fb:
+                data = fb.read(limits.maximum_encoded_byte_size + 1)
         except Exception:
             print("Error: Unable to read file. Code: FILE_READ_FAILED", file=sys.stderr)
             return 1
@@ -322,8 +327,8 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
         # 1. Normalize the image input
         limits = InputLimits()  # use defaults
         try:
-            with open(input_path, "rb") as f:
-                data = f.read(limits.maximum_encoded_byte_size + 1)
+            with open(input_path, "rb") as fb:
+                data = fb.read(limits.maximum_encoded_byte_size + 1)
         except Exception:
             print(
                 "Error: Unable to read input file. Code: FILE_READ_FAILED",
@@ -508,8 +513,8 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
         # 1. Normalize the image input
         limits = InputLimits()  # use defaults
         try:
-            with open(input_path, "rb") as f:
-                data = f.read(limits.maximum_encoded_byte_size + 1)
+            with open(input_path, "rb") as fb:
+                data = fb.read(limits.maximum_encoded_byte_size + 1)
         except Exception:
             print(
                 "Error: Unable to read input file. Code: FILE_READ_FAILED",
@@ -732,11 +737,55 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
             print("Error: Input file not found. Code: FILE_NOT_FOUND", file=sys.stderr)
             return 1
 
+        # Validate output paths before running pipelines
+        input_path_abs = Path(input_path).resolve()
+
+        def validate_out_path(p_str: str) -> Path:
+            p = Path(p_str).resolve()
+            if p == input_path_abs:
+                raise ValueError(f"Output path cannot be equal to input path: {p_str}")
+            if p.exists() and not getattr(args, "overwrite", False):
+                raise ValueError(
+                    f"Output path already exists: {p_str}. Use --overwrite to replace it."
+                )
+            if not p.parent.exists():
+                raise ValueError(
+                    f"Parent directory for output path does not exist: {p.parent}. Please create it first."
+                )
+            return p
+
+        try:
+            if args.save_mask:
+                validate_out_path(args.save_mask)
+            if args.save_alpha:
+                validate_out_path(args.save_alpha)
+            if args.save_trimap:
+                validate_out_path(args.save_trimap)
+            if args.output_dir:
+                out_dir = Path(args.output_dir).resolve()
+                if out_dir == input_path_abs:
+                    raise ValueError(
+                        f"Output directory cannot be equal to input path: {args.output_dir}"
+                    )
+                for filename in ["refined_mask.png", "refined_alpha.png", "trimap.png"]:
+                    target_file = out_dir / filename
+                    if target_file.exists() and not getattr(args, "overwrite", False):
+                        raise ValueError(
+                            f"Output file already exists in output directory: {target_file}. Use --overwrite to replace it."
+                        )
+        except ValueError as ve:
+            print(
+                "Error: Invalid output path configuration. Code: CONFIGURATION_INVALID",
+                file=sys.stderr,
+            )
+            print(f"Message: {ve}", file=sys.stderr)
+            return 1
+
         # 1. Normalize the image input
         limits = InputLimits()  # use defaults
         try:
-            with open(input_path, "rb") as f:
-                data = f.read(limits.maximum_encoded_byte_size + 1)
+            with open(input_path, "rb") as fb:
+                data = fb.read(limits.maximum_encoded_byte_size + 1)
         except Exception:
             print(
                 "Error: Unable to read input file. Code: FILE_READ_FAILED",
