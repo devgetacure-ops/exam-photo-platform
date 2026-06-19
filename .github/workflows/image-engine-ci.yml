@@ -46,7 +46,7 @@ jobs:
         EXAM_PHOTO_FACE_MODEL_PATH: model-assets/blaze_face_short_range.tflite
         EXAM_PHOTO_FACE_MODEL_SHA256: b4578f35940bf5a1a655214a1cce5cab13eba73c1297cd78e1a04c2380b0152f
       run: |
-        pytest services/image-engine -m "not mandatory_segmentation and not mandatory_refinement"
+        pytest services/image-engine -m "not mandatory_segmentation and not mandatory_refinement and not mandatory_crop and not mandatory_crop_b"
 
     - name: Download Binary Segmenter Model Asset
       run: |

@@ -1,7 +1,10 @@
 # Image Pipeline Specification (04_IMAGE_PIPELINE_SPEC.md)
 
 > [!IMPORTANT]
-> Pipeline stage 1 (file signature validation), stage 2 (secure image decoding), stage 3 (EXIF orientation normalization), and stage 4 (source metadata extraction) are implemented in Milestone 3. Stage 5 (face detection), stage 6 (complete-head estimation), and stage 7 (source suitability analysis) are implemented in Milestones 5 and 6. Stage 8a (coarse foreground mask generation) is implemented in Milestone 7. Stage 8b (coarse-mask edge refinement and foreground-boundary cleanup) is implemented in Milestone 8. All other stages detailed in this document are planned future implementations.
+> Pipeline stage 1 (file signature validation), stage 2 (secure image decoding), stage 3 (EXIF orientation normalization), and stage 4 (source metadata extraction) are implemented in Milestone 3. Stage 5 (face detection), stage 6 (complete-head estimation), and stage 7 (source suitability analysis) are implemented in Milestones 5 and 6. Stage 8a (coarse foreground mask generation) is implemented in Milestone 7. Stage 8b (coarse-mask edge refinement and foreground-boundary cleanup) is implemented in Milestone 8. Stage 9 (crop-mode selection) and stage 10 (crop calculation) planning logic is implemented in Milestones 9 and 10. All other stages detailed in this document are planned future implementations.
+
+> [!NOTE]
+> **Implementation sequencing note**: Crop planning (stages 9–10) was implemented before background composition (stage 8's full background-replacement pipeline) because crop window calculation depends only on face, head, and mask geometry — not on the final composited image. The full pipeline orchestration will reconcile execution order when background replacement, resizing, and compression stages are integrated in later milestones.
 
 ---
 

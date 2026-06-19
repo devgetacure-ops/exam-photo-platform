@@ -164,9 +164,15 @@ def main() -> int:
             {
                 "fixture": src_name,
                 "expected_faces": expected_faces,
-                "expected_padding_required": expect_b.get("expected_padding_required", False),
-                "expected_valid_without_padding": expect_b.get("expected_valid_without_padding", True),
+                "expected_padding_required": expect_b.get(
+                    "expected_padding_required", False
+                ),
+                "expected_valid_without_padding": expect_b.get(
+                    "expected_valid_without_padding", True
+                ),
                 "expected_valid": expect_b.get("expected_valid", True),
+                "min_head_height_ratio": expect_b.get("min_head_height_ratio", 0.30),
+                "max_head_height_ratio": expect_b.get("max_head_height_ratio", 0.84),
                 "actual_faces": face_count,
                 "crop_width": crop_res.crop_box_width,
                 "crop_height": crop_res.crop_box_height,
@@ -256,11 +262,11 @@ def main() -> int:
                     )
                     failed = True
 
-                # Head-height ratio range check
+                # Head-height ratio range check — read from stored per-fixture values
                 if r["head_height_ratio"] is not None:
                     h_ratio = r["head_height_ratio"]
-                    min_ratio = expect_b.get("min_head_height_ratio", 0.30)
-                    max_ratio = expect_b.get("max_head_height_ratio", 0.84)
+                    min_ratio = r["min_head_height_ratio"]
+                    max_ratio = r["max_head_height_ratio"]
                     if not (min_ratio - 1e-4 <= h_ratio <= max_ratio + 1e-4):
                         print(
                             f"ERROR: Head-height ratio {h_ratio:.4f} for {r['fixture']} falls outside [{min_ratio}, {max_ratio}]",

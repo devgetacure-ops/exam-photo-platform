@@ -72,6 +72,7 @@ model_cache/
 !tests/fixtures/*.jpeg
 !tests/fixtures/segmentation/masks/*.png
 !tests/fixtures/segmentation/refined_masks/*.png
+!tests/fixtures/segmentation/reference_masks/*.png
 
 # Databases & logs
 *.db

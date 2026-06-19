@@ -81,8 +81,9 @@ This phase covers establishing directory, configuration, and interfaces foundati
 #### Milestone 10: Face/Head-Led Crop (Crop Mode B)
 - **Objective**: Implement Crop Mode B: tight crop with dimension range based on the estimated head region.
 - **Dependencies**: Milestone 4, Milestone 6, Milestone 8.
-- **Expected Deliverables**: Margined head crop calculator and padding builder.
-- **Exit Criteria**: Output images satisfy the rule range constraints and head margins.
+- **Expected Deliverables**: `DeterministicCropModeBPlanner`, `CropModeBConfig`, `CropModeBResult`, head-led crop window calculation, CLI `plan-crop-mode-b` command, and benchmark.
+- **Exit Criteria**: Tests verify crop windows satisfy head-height ratio constraints and natural margins; benchmark confirms deterministic execution on all licensed fixtures.
+- **Status**: **Completed (Milestone 10: head-led range crop planning baseline)**
 
 #### Milestone 11: Image Resizing & Enhancement
 - **Objective**: Implement high-quality image resizing (LANCZOS/Bicubic) and exposure, contrast, and sharpness adjustments.
