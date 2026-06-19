@@ -72,9 +72,14 @@ class CropConfig(BaseModel):
         if 2 * self.minimum_side_margin_ratio >= 1.0:
             raise ValueError("Double side margin must be less than 1.0.")
 
-        # Enforce aspect ratio presence
         has_dims = self.target_width is not None and self.target_height is not None
         has_aspect = self.target_aspect_ratio is not None
+
+        if (self.target_width is None) != (self.target_height is None):
+            if not has_aspect:
+                raise ValueError(
+                    "Both target_width and target_height must be provided unless target_aspect_ratio is specified."
+                )
 
         if not has_dims and not has_aspect:
             raise ValueError(
@@ -110,11 +115,14 @@ class CropValidationReport(BaseModel):
     issue_codes: List[CropIssueCode]
     issues: List[CropValidationIssue]
     crop_inside_source: bool
+    ideal_crop_inside_source: bool
     aspect_ratio_valid: bool
-    face_centering_valid: bool
+    face_contained: bool
     head_preservation_valid: Optional[bool] = None
     mask_preservation_valid: Optional[bool] = None
-    subject_clipping_detected: Optional[bool] = None
+    padding_required: bool
+    valid_without_padding: bool
+    subject_clipping_detected: bool
     top_margin_px: Optional[int] = None
     bottom_margin_px: Optional[int] = None
     left_margin_px: Optional[int] = None
@@ -123,6 +131,7 @@ class CropValidationReport(BaseModel):
     segmentation_refinement_failed_or_skipped: bool = False
     mask_aware_validation_unavailable: bool = False
     fallback_source: Optional[str] = None
+    face_centering_valid: bool = True
 
 
 class CropPlanResult(BaseModel):
@@ -132,22 +141,28 @@ class CropPlanResult(BaseModel):
     provider_version: str
     crop_mode: CropMode
     crop_box: BoundingBox
-    ideal_crop_box: Optional[BoundingBox] = None
-    crop_width: int
-    crop_height: int
     crop_box_width: int
     crop_box_height: int
-    ideal_crop_width: int
-    ideal_crop_height: int
-    crop_aspect_ratio: float
+    crop_box_aspect_ratio: float
+
+    ideal_crop_box: Optional[BoundingBox] = None
+    ideal_crop_width: Optional[int] = None
+    ideal_crop_height: Optional[int] = None
+    ideal_crop_aspect_ratio: Optional[float] = None
+
     target_aspect_ratio: float
     aspect_ratio_error: float
+    padding_required: bool
+    can_crop_without_padding: bool
+
+    # Deprecated / compatibility fields
+    crop_width: int
+    crop_height: int
+    crop_aspect_ratio: float
     face_center_x_ratio: float
     face_center_y_ratio: float
     head_coverage_ratio: Optional[float] = None
     mask_preservation_ratio: Optional[float] = None
-    can_crop_without_padding: bool
-    padding_required: bool
     validation: CropValidationReport
     processing_duration_ms: float
     preview_image: Optional[Image.Image] = Field(default=None, exclude=True)

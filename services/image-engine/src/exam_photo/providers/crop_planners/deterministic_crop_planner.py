@@ -214,14 +214,15 @@ class DeterministicCropPlanner(CropPlanner):
         )
 
         # Padding detection
-        crop_inside_source = (
+        ideal_crop_inside_source = (
             ideal_l_rounded >= 0
             and ideal_t_rounded >= 0
             and ideal_r_rounded <= image_width
             and ideal_b_rounded <= image_height
         )
-        padding_required = not crop_inside_source
-        can_crop_without_padding = crop_inside_source
+        padding_required = not ideal_crop_inside_source
+        can_crop_without_padding = ideal_crop_inside_source
+        crop_inside_source = True
 
         if padding_required:
             add_issue(CropIssueCode.CROP_PADDING_REQUIRED, IssueSeverity.WARNING, False)
@@ -290,10 +291,8 @@ class DeterministicCropPlanner(CropPlanner):
         if not face_contained:
             add_issue(
                 CropIssueCode.CROP_SOURCE_TOO_TIGHT,
-                IssueSeverity.ERROR
-                if not cfg.allow_subject_clipping
-                else IssueSeverity.WARNING,
-                not cfg.allow_subject_clipping,
+                IssueSeverity.ERROR,
+                True,
             )
 
         # 7. Margins calculations for validation
@@ -326,8 +325,18 @@ class DeterministicCropPlanner(CropPlanner):
         crop_box_width = clamped_r - clamped_l
         crop_box_height = clamped_b - clamped_t
 
-        crop_aspect_ratio = ideal_crop_width / ideal_crop_height
-        aspect_ratio_error = abs(crop_aspect_ratio - target_aspect)
+        crop_box_aspect_ratio = (
+            crop_box_width / crop_box_height if crop_box_height > 0 else 1.0
+        )
+        ideal_crop_aspect_ratio = (
+            ideal_crop_width / ideal_crop_height if ideal_crop_height > 0 else 1.0
+        )
+
+        if padding_required and not cfg.allow_padding:
+            aspect_ratio_error = abs(crop_box_aspect_ratio - target_aspect)
+        else:
+            aspect_ratio_error = abs(ideal_crop_aspect_ratio - target_aspect)
+
         aspect_ratio_valid = aspect_ratio_error <= 1e-4
 
         if not aspect_ratio_valid:
@@ -345,7 +354,15 @@ class DeterministicCropPlanner(CropPlanner):
             <= cfg.maximum_face_center_y_deviation
         )
 
-        if not face_centering_valid:
+        centering_severe = (
+            abs(face_center_x_ratio - 0.5) > 0.15
+            or abs(face_center_y_ratio - cfg.preferred_face_center_y_ratio)
+            > 2.0 * cfg.maximum_face_center_y_deviation
+        )
+
+        if centering_severe:
+            add_issue(CropIssueCode.CROP_FACE_NOT_CENTERED, IssueSeverity.ERROR, True)
+        elif not face_centering_valid:
             add_issue(
                 CropIssueCode.CROP_FACE_NOT_CENTERED, IssueSeverity.WARNING, False
             )
@@ -373,10 +390,13 @@ class DeterministicCropPlanner(CropPlanner):
             issue_codes=issue_codes,
             issues=issues,
             crop_inside_source=crop_inside_source,
+            ideal_crop_inside_source=ideal_crop_inside_source,
             aspect_ratio_valid=aspect_ratio_valid,
-            face_centering_valid=face_centering_valid,
+            face_contained=face_contained,
             head_preservation_valid=head_preservation_valid,
             mask_preservation_valid=mask_preservation_valid,
+            padding_required=padding_required,
+            valid_without_padding=can_crop_without_padding,
             subject_clipping_detected=subject_clipping_detected,
             top_margin_px=top_margin_px,
             bottom_margin_px=bottom_margin_px,
@@ -386,6 +406,7 @@ class DeterministicCropPlanner(CropPlanner):
             segmentation_refinement_failed_or_skipped=(refined_mask is None),
             mask_aware_validation_unavailable=(refined_mask is None),
             fallback_source="face-only geometry" if head_estimate is None else None,
+            face_centering_valid=face_centering_valid,
         )
 
         duration = (time.perf_counter() - start_time) * 1000.0
@@ -395,22 +416,25 @@ class DeterministicCropPlanner(CropPlanner):
             provider_version=self.provider_version,
             crop_mode=CropMode.EXACT_ASPECT,
             crop_box=crop_box,
-            ideal_crop_box=ideal_crop_box,
-            crop_width=crop_box_width,
-            crop_height=crop_box_height,
             crop_box_width=crop_box_width,
             crop_box_height=crop_box_height,
+            crop_box_aspect_ratio=crop_box_aspect_ratio,
+            ideal_crop_box=ideal_crop_box,
             ideal_crop_width=ideal_crop_width,
             ideal_crop_height=ideal_crop_height,
-            crop_aspect_ratio=crop_aspect_ratio,
+            ideal_crop_aspect_ratio=ideal_crop_aspect_ratio,
             target_aspect_ratio=target_aspect,
             aspect_ratio_error=aspect_ratio_error,
+            padding_required=padding_required,
+            can_crop_without_padding=can_crop_without_padding,
+            # Deprecated / compatibility fields
+            crop_width=crop_box_width,
+            crop_height=crop_box_height,
+            crop_aspect_ratio=crop_box_aspect_ratio,
             face_center_x_ratio=face_center_x_ratio,
             face_center_y_ratio=face_center_y_ratio,
             head_coverage_ratio=head_coverage_ratio,
             mask_preservation_ratio=mask_preservation_ratio,
-            can_crop_without_padding=can_crop_without_padding,
-            padding_required=padding_required,
             validation=validation_report,
             processing_duration_ms=duration,
             preview_image=None,
@@ -424,32 +448,40 @@ class DeterministicCropPlanner(CropPlanner):
         issue_codes: List[CropIssueCode],
     ) -> CropPlanResult:
         duration = (time.perf_counter() - start_time) * 1000.0
+        val = CropValidationReport(
+            is_valid=False,
+            issue_codes=issue_codes,
+            issues=issues,
+            crop_inside_source=False,
+            ideal_crop_inside_source=False,
+            aspect_ratio_valid=False,
+            face_contained=False,
+            padding_required=False,
+            valid_without_padding=False,
+            subject_clipping_detected=True,
+            face_centering_valid=False,
+        )
         return CropPlanResult(
             provider_name=self.provider_name,
             provider_version=self.provider_version,
             crop_mode=CropMode.EXACT_ASPECT,
             crop_box=BoundingBox(left=0.0, top=0.0, right=1.0, bottom=1.0),
-            ideal_crop_box=BoundingBox(left=0.0, top=0.0, right=1.0, bottom=1.0),
-            crop_width=1,
-            crop_height=1,
             crop_box_width=1,
             crop_box_height=1,
+            crop_box_aspect_ratio=1.0,
+            ideal_crop_box=BoundingBox(left=0.0, top=0.0, right=1.0, bottom=1.0),
             ideal_crop_width=1,
             ideal_crop_height=1,
-            crop_aspect_ratio=1.0,
+            ideal_crop_aspect_ratio=1.0,
             target_aspect_ratio=1.0,
             aspect_ratio_error=0.0,
+            padding_required=False,
+            can_crop_without_padding=False,
+            crop_width=1,
+            crop_height=1,
+            crop_aspect_ratio=1.0,
             face_center_x_ratio=0.5,
             face_center_y_ratio=0.5,
-            can_crop_without_padding=False,
-            padding_required=False,
-            validation=CropValidationReport(
-                is_valid=False,
-                issue_codes=issue_codes,
-                issues=issues,
-                crop_inside_source=False,
-                aspect_ratio_valid=False,
-                face_centering_valid=False,
-            ),
+            validation=val,
             processing_duration_ms=duration,
         )

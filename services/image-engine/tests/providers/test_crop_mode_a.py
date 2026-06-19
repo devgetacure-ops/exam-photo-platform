@@ -351,3 +351,95 @@ def test_crop_mode_a_invalid_cases_cli(
     assert "CROP_INPUT_INVALID" in captured_y.err
     # Verify no preview image was saved
     assert not preview_path_yosemite.exists()
+
+
+def test_crop_config_validation_extra_and_conflicts() -> None:
+    # Conflicting target dimensions and aspect ratio
+    with pytest.raises(ValidationError):
+        CropConfig(target_width=300, target_height=400, target_aspect_ratio=1.0)
+
+    # Extra/unknown config fields
+    with pytest.raises(ValidationError):
+        CropConfig(
+            target_width=300, target_height=400, unknown_config_field_xyz="error"
+        )  # type: ignore
+
+    # Partial target dimensions
+    with pytest.raises(ValidationError):
+        CropConfig(target_width=300)
+    with pytest.raises(ValidationError):
+        CropConfig(target_height=400)
+
+
+def test_crop_cli_save_preview_overwrite_protection(
+    capsys: pytest.CaptureFixture[str], tmp_path: Path
+) -> None:
+    from exam_photo.cli import main
+
+    # Find repository root
+    curr = Path(__file__).resolve().parent
+    repo_root = None
+    for _ in range(5):
+        if (curr / "AGENTS.md").exists():
+            repo_root = curr
+            break
+        curr = curr.parent
+
+    assert repo_root is not None, "Could not find repository root"
+
+    img_path = repo_root / "tests" / "fixtures" / "marie_curie_curly_hair.jpg"
+    assert img_path.exists()
+
+    preview_path = tmp_path / "marie_preview.png"
+
+    # First run: should succeed and create the preview
+    exit_code = main(
+        [
+            "plan-crop-mode-a",
+            "--input",
+            str(img_path),
+            "--target-width",
+            "300",
+            "--target-height",
+            "400",
+            "--save-preview",
+            str(preview_path),
+        ]
+    )
+    assert exit_code == 0
+    assert preview_path.exists()
+
+    # Second run without --overwrite: should fail
+    exit_code_dup = main(
+        [
+            "plan-crop-mode-a",
+            "--input",
+            str(img_path),
+            "--target-width",
+            "300",
+            "--target-height",
+            "400",
+            "--save-preview",
+            str(preview_path),
+        ]
+    )
+    assert exit_code_dup == 1
+    captured = capsys.readouterr()
+    assert "Output file already exists" in captured.err
+
+    # Third run with --overwrite: should succeed
+    exit_code_overwrite = main(
+        [
+            "plan-crop-mode-a",
+            "--input",
+            str(img_path),
+            "--target-width",
+            "300",
+            "--target-height",
+            "400",
+            "--save-preview",
+            str(preview_path),
+            "--overwrite",
+        ]
+    )
+    assert exit_code_overwrite == 0

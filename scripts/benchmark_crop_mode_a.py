@@ -148,7 +148,16 @@ def main() -> int:
             {
                 "fixture": src_name,
                 "expected_faces": expected_faces,
-                "expected_padding_required": entry.get("expected_padding_required", False),
+                "expected_padding_required": entry.get("crop_mode_a_expectation", {}).get(
+                    "expected_padding_required",
+                    entry.get("expected_padding_required", False),
+                ),
+                "expected_valid_without_padding": entry.get(
+                    "crop_mode_a_expectation", {}
+                ).get(
+                    "expected_valid_without_padding",
+                    not entry.get("expected_padding_required", False),
+                ),
                 "actual_faces": face_count,
                 "crop_width": crop_res.crop_width,
                 "crop_height": crop_res.crop_height,
@@ -208,6 +217,7 @@ def main() -> int:
             # 1. Fail if a valid one-person fixture is invalid or has wrong padding
             if r["expected_faces"] == 1 and r["actual_faces"] == 1:
                 expected_padding = r["expected_padding_required"]
+                expected_valid_without_padding = r["expected_valid_without_padding"]
                 
                 # Check padding required flag
                 if r["padding_required"] != expected_padding:
@@ -219,9 +229,7 @@ def main() -> int:
                     failed = True
                 
                 # Check overall validity
-                # If expected padding is True, allow_padding=False by default, so is_valid must be False.
-                # If expected padding is False, the crop is contained, so is_valid must be True.
-                expected_validity = not expected_padding
+                expected_validity = expected_valid_without_padding
                 if r["is_valid"] != expected_validity:
                     print(
                         f"ERROR: Validity mismatch on {r['fixture']}. "
@@ -231,7 +239,7 @@ def main() -> int:
                     failed = True
 
                 # Aspect ratio error tolerance
-                if r["aspect_ratio_error"] > 1e-4:
+                if expected_valid_without_padding and r["aspect_ratio_error"] > 1e-4:
                     print(
                         f"ERROR: Aspect ratio error {r['aspect_ratio_error']:.6f} for {r['fixture']} exceeds tolerance",
                         file=sys.stderr,

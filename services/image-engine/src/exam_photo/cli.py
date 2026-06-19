@@ -195,7 +195,7 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
     # plan-crop-mode-a subcommand
     crop_parser = subparsers.add_parser(
         "plan-crop-mode-a",
-        help="Plan exact-aspect crop (Crop Mode A) for an image.",
+        help="Plan an exact-aspect Crop Mode A crop window for an input image.",
     )
     crop_parser.add_argument(
         "--input", required=True, help="Path to the image file to process."
@@ -1415,13 +1415,43 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
                 print(
                     "  WARNING: segmentation/refinement skipped or failed (mask-aware validation unavailable)"
                 )
+            head_avail = "true" if head_box is not None else "false"
+            mask_avail = "true" if refined_mask is not None else "false"
+            if refined_mask is not None:
+                planning_mode = "mask-validated"
+            elif head_box is not None:
+                planning_mode = "head-led"
+            else:
+                planning_mode = "face-expanded-fallback"
+
             print(
                 f"  Provider: {crop_result.provider_name} v{crop_result.provider_version}"
             )
-            print(f"  Crop Box: {crop_result.crop_box}")
-            print(f"  Crop Size: {crop_result.crop_width}x{crop_result.crop_height}")
+            print(f"  Executable Crop Box: {crop_result.crop_box}")
+            print(
+                f"  Executable Crop Size: {crop_result.crop_box_width}x{crop_result.crop_box_height}"
+            )
+            if crop_result.ideal_crop_box is not None:
+                print(f"  Ideal Crop Box: {crop_result.ideal_crop_box}")
+                print(
+                    f"  Ideal Crop Size: {crop_result.ideal_crop_width}x{crop_result.ideal_crop_height}"
+                )
+            else:
+                print("  Ideal Crop Box: None")
+                print("  Ideal Crop Size: None")
+            print(
+                f"  Padding Required: {'true' if crop_result.padding_required else 'false'}"
+            )
+            print(
+                f"  Valid Without Padding: {'true' if crop_result.can_crop_without_padding else 'false'}"
+            )
+            print(f"  Head Estimate Available: {head_avail}")
+            print(f"  Mask Validation Available: {mask_avail}")
+            print(f"  Crop Planning Mode: {planning_mode}")
             print(f"  Target Aspect Ratio: {crop_result.target_aspect_ratio:.4f}")
-            print(f"  Actual Crop Aspect Ratio: {crop_result.crop_aspect_ratio:.4f}")
+            print(
+                f"  Actual Crop Aspect Ratio: {crop_result.crop_box_aspect_ratio:.4f}"
+            )
             print(f"  Aspect Error: {crop_result.aspect_ratio_error:.6f}")
             print(f"  Face Center X Ratio: {crop_result.face_center_x_ratio:.4f}")
             print(f"  Face Center Y Ratio: {crop_result.face_center_y_ratio:.4f}")
@@ -1430,7 +1460,6 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
                     f"  Mask Preservation Ratio: {crop_result.mask_preservation_ratio:.4f}"
                 )
             print(f"  Is Valid: {crop_val.is_valid}")
-            print(f"  Padding Required: {crop_result.padding_required}")
             if crop_val.issue_codes:
                 print("\n  Issue Codes Detected:")
                 for code in crop_val.issue_codes:
