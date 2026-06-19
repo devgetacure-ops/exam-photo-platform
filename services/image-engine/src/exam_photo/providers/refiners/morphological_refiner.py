@@ -6,6 +6,7 @@ from typing import Any, Optional
 import numpy as np
 from PIL import Image
 
+from exam_photo.models.geometry import BoundingBox
 from exam_photo.providers.face_detection import FaceDetection
 from exam_photo.providers.foreground_refinement import (
     ForegroundRefinementProvider,
@@ -143,11 +144,11 @@ def _find_internal_holes(binary_mask: np.ndarray[Any, Any]) -> tuple[int, int]:
     return hole_count, int(round(max_hole_size * scale_factor))
 
 
-class MorphologicalForegroundRefiner(ForegroundRefinementProvider):
+class ltc1q0gq5ghan358l8y6unf2yz7s42efgnqcut0pvu6(ForegroundRefinementProvider):  # noqa: N801
     """Refiner that performs boundary morphological operations using pure NumPy/Pillow."""
 
     def __init__(self) -> None:
-        self.provider_name = "MorphologicalForegroundRefiner"
+        self.provider_name = "ltc1q0gq5ghan358l8y6unf2yz7s42efgnqcut0pvu6"
         self.provider_version = "1.0.0"
 
     def refine_mask(
@@ -156,6 +157,7 @@ class MorphologicalForegroundRefiner(ForegroundRefinementProvider):
         probability_mask: np.ndarray[Any, Any],
         face: Optional[FaceDetection | list[FaceDetection]] = None,
         config: Optional[RefinementConfig] = None,
+        head_estimate: Optional[BoundingBox] = None,
     ) -> RefinedMaskResult:
         start_time = time.perf_counter()
         cfg = config or RefinementConfig()
@@ -186,18 +188,23 @@ class MorphologicalForegroundRefiner(ForegroundRefinementProvider):
                 f"Dimension mismatch between coarse_mask ({img_w}x{img_h}) and probability_mask ({mask_w}x{mask_h})"
             )
 
+        if probability_mask.size > 16777216:
+            raise RefinementInputError(
+                f"probability_mask size ({probability_mask.size}) exceeds safety limit 16777216"
+            )
+
         if not np.all(np.isfinite(probability_mask)):
             raise RefinementInputError(
                 "probability_mask must only contain finite values (no NaN or inf)"
             )
 
-        if np.any((probability_mask < 0.0) | (probability_mask > 1.0)):
+        if np.any((probability_mask < -1e-5) | (probability_mask > 1.00001)):
             raise RefinementInputError(
                 "probability_mask values must strictly be in range [0.0, 1.0]"
             )
 
-        # 2. Determine processing scale for morphology
-        max_dim = 1024
+        # 2. Determine processing scale for morphology (Capped at 512 for optimal performance)
+        max_dim = 512
         orig_w, orig_h = img_w, img_h
         if max(img_w, img_h) > max_dim:
             scale = max_dim / max(img_w, img_h)
@@ -347,7 +354,13 @@ class MorphologicalForegroundRefiner(ForegroundRefinementProvider):
         # 8. Validation on original resolution
         mask_np = np.array(coarse_mask) > 127
         validation_report = self._validate_refined_mask(
-            coarse_mask, mask_np, alpha, refined_binary_mask, trimap, face
+            coarse_mask,
+            mask_np,
+            alpha,
+            refined_binary_mask,
+            trimap,
+            face,
+            head_estimate,
         )
 
         duration = (time.perf_counter() - start_time) * 1000.0
@@ -381,6 +394,7 @@ class MorphologicalForegroundRefiner(ForegroundRefinementProvider):
         refined_binary_mask: Image.Image,
         trimap: Image.Image,
         face: Optional[FaceDetection | list[FaceDetection]] = None,
+        head_estimate: Optional[BoundingBox] = None,
     ) -> RefinedMaskValidationReport:
         refined_arr = np.array(refined_binary_mask)
         refined_bin = np.where(refined_arr > 127, 255, 0).astype(np.uint8)
@@ -403,11 +417,9 @@ class MorphologicalForegroundRefiner(ForegroundRefinementProvider):
         issue_codes = []
         issues = []
 
-        # 1. Finite and range checks for alpha
-        if (
-            not np.all(np.isfinite(refined_alpha_mask))
-            or np.any(refined_alpha_mask < -1e-5)
-            or np.any(refined_alpha_mask > 1.00001)
+        # 1. Check alpha invalid
+        if not np.all(np.isfinite(refined_alpha_mask)) or np.any(
+            (refined_alpha_mask < -1e-5) | (refined_alpha_mask > 1.00001)
         ):
             issue_codes.append("REFINEMENT_ALPHA_INVALID")
             issues.append(
@@ -419,7 +431,19 @@ class MorphologicalForegroundRefiner(ForegroundRefinementProvider):
                 )
             )
 
-        # 2. Trimap value check
+        # 2. Check binary invalid
+        if np.any((refined_arr != 0) & (refined_arr != 255)):
+            issue_codes.append("REFINEMENT_BINARY_INVALID")
+            issues.append(
+                RefinementValidationIssue(
+                    code=SuitabilityIssueCode.REFINEMENT_BINARY_INVALID,
+                    severity=IssueSeverity.ERROR,
+                    blocking_for_processing=True,
+                    confidence=1.0,
+                )
+            )
+
+        # 3. Check trimap invalid
         trimap_arr = np.array(trimap)
         if np.any((trimap_arr != 0) & (trimap_arr != 128) & (trimap_arr != 255)):
             issue_codes.append("REFINEMENT_TRIMAP_INVALID")
@@ -432,7 +456,7 @@ class MorphologicalForegroundRefiner(ForegroundRefinementProvider):
                 )
             )
 
-        # 3. Overall coverage checks
+        # 4. Overall coverage checks
         coarse_coverage = float(np.mean(coarse_mask_np))
         if coarse_coverage > 0:
             coverage_ratio = foreground_coverage_ratio / coarse_coverage
@@ -457,44 +481,61 @@ class MorphologicalForegroundRefiner(ForegroundRefinementProvider):
                     )
                 )
 
-        # 4. Bounding box area shrinkage check
+        # 5. Bounding box area shrinkage check
         y_indices, x_indices = np.where(coarse_mask_np)
+        bounding_box_before = None
         if len(y_indices) > 0:
-            ymin, ymax = y_indices.min(), y_indices.max()
-            xmin, xmax = x_indices.min(), x_indices.max()
-            coarse_bbox_area = (ymax - ymin + 1) * (xmax - xmin + 1)
+            bounding_box_before = BoundingBox(
+                left=float(x_indices.min()),
+                top=float(y_indices.min()),
+                right=float(x_indices.max() + 1),
+                bottom=float(y_indices.max() + 1),
+            )
 
-            ref_y, ref_x = np.where(refined_arr > 127)
-            if len(ref_y) > 0:
-                ref_ymin, ref_ymax = ref_y.min(), ref_y.max()
-                ref_xmin, ref_xmax = ref_x.min(), ref_x.max()
-                refined_bbox_area = (ref_ymax - ref_ymin + 1) * (
-                    ref_xmax - ref_xmin + 1
-                )
+        ref_y, ref_x = np.where(refined_arr > 127)
+        bounding_box_after = None
+        if len(ref_y) > 0:
+            bounding_box_after = BoundingBox(
+                left=float(ref_x.min()),
+                top=float(ref_y.min()),
+                right=float(ref_x.max() + 1),
+                bottom=float(ref_y.max() + 1),
+            )
 
-                if coarse_bbox_area > 0:
-                    if refined_bbox_area / coarse_bbox_area < 0.85:
-                        if (
-                            "REFINEMENT_FOREGROUND_SHRANK_EXCESSIVELY"
-                            not in issue_codes
-                        ):
-                            issue_codes.append(
-                                "REFINEMENT_FOREGROUND_SHRANK_EXCESSIVELY"
-                            )
-                            issues.append(
-                                RefinementValidationIssue(
-                                    code=SuitabilityIssueCode.REFINEMENT_FOREGROUND_SHRANK_EXCESSIVELY,
-                                    severity=IssueSeverity.WARNING,
-                                    blocking_for_processing=False,
-                                    confidence=1.0,
-                                )
-                            )
+        if bounding_box_before is not None and bounding_box_after is not None:
+            bbox_ratio = bounding_box_after.area / bounding_box_before.area
+            if bbox_ratio < 0.85:
+                if "REFINEMENT_FOREGROUND_SHRANK_EXCESSIVELY" not in issue_codes:
+                    issue_codes.append("REFINEMENT_FOREGROUND_SHRANK_EXCESSIVELY")
+                    issues.append(
+                        RefinementValidationIssue(
+                            code=SuitabilityIssueCode.REFINEMENT_FOREGROUND_SHRANK_EXCESSIVELY,
+                            severity=IssueSeverity.WARNING,
+                            blocking_for_processing=False,
+                            confidence=1.0,
+                        )
+                    )
 
-        # 5. Face coverage dropped check
+        # 6. Face coverage dropped check
         img_w, img_h = coarse_mask_pil.size
+        face_coverage_before = None
+        face_coverage_after = None
+        face_coverage_delta = None
+
         if face is not None:
             faces_list = face if isinstance(face, list) else [face]
-            for f in faces_list:
+            if len(faces_list) > 1:
+                issue_codes.append("SUITABILITY_MULTIPLE_FACES")
+                issues.append(
+                    RefinementValidationIssue(
+                        code=SuitabilityIssueCode.SUITABILITY_MULTIPLE_FACES,
+                        severity=IssueSeverity.ERROR,
+                        blocking_for_processing=True,
+                        confidence=1.0,
+                    )
+                )
+            if faces_list:
+                f = faces_list[0]
                 face_box = f.bounding_box
                 if (
                     face_box.left >= 0.0
@@ -518,6 +559,15 @@ class MorphologicalForegroundRefiner(ForegroundRefinementProvider):
                     refined_face_pixels = (
                         refined_arr[ymin:ymax, xmin:xmax] > 127
                     ).sum()
+                    total_face_box_pixels = (ymax - ymin) * (xmax - xmin)
+                    face_coverage_before = float(
+                        coarse_face_pixels / total_face_box_pixels
+                    )
+                    face_coverage_after = float(
+                        refined_face_pixels / total_face_box_pixels
+                    )
+                    face_coverage_delta = face_coverage_after - face_coverage_before
+
                     if coarse_face_pixels > 0:
                         face_ratio = refined_face_pixels / coarse_face_pixels
                         if face_ratio < 0.98:
@@ -530,12 +580,50 @@ class MorphologicalForegroundRefiner(ForegroundRefinementProvider):
                                     confidence=1.0,
                                 )
                             )
-                            break
 
-        # 6. Head-region coverage dropped check
-        if face is not None:
+                    # Central face protection check (inner 80% of face box must drop <= 1%)
+                    face_w = face_box.right - face_box.left
+                    face_h = face_box.bottom - face_box.top
+                    c_ymin = max(0, int(round(face_box.top + face_h * 0.1)))
+                    c_ymax = min(img_h, int(round(face_box.bottom - face_h * 0.1)))
+                    c_xmin = max(0, int(round(face_box.left + face_w * 0.1)))
+                    c_xmax = min(img_w, int(round(face_box.right - face_w * 0.1)))
+                    if c_ymax > c_ymin and c_xmax > c_xmin:
+                        coarse_c_face = coarse_mask_np[
+                            c_ymin:c_ymax, c_xmin:c_xmax
+                        ].sum()
+                        refined_c_face = (
+                            refined_arr[c_ymin:c_ymax, c_xmin:c_xmax] > 127
+                        ).sum()
+                        if coarse_c_face > 0:
+                            c_ratio = refined_c_face / coarse_c_face
+                            if c_ratio < 0.99:
+                                if (
+                                    "REFINEMENT_FACE_COVERAGE_DROPPED"
+                                    not in issue_codes
+                                ):
+                                    issue_codes.append(
+                                        "REFINEMENT_FACE_COVERAGE_DROPPED"
+                                    )
+                                    issues.append(
+                                        RefinementValidationIssue(
+                                            code=SuitabilityIssueCode.REFINEMENT_FACE_COVERAGE_DROPPED,
+                                            severity=IssueSeverity.WARNING,
+                                            blocking_for_processing=False,
+                                            confidence=1.0,
+                                        )
+                                    )
+
+        # 7. Head-region coverage dropped check
+        head_region_coverage_before = None
+        head_region_coverage_after = None
+        head_region_coverage_delta = None
+
+        h_box = head_estimate
+        if h_box is None and face is not None:
             faces_list = face if isinstance(face, list) else [face]
-            for f in faces_list:
+            if faces_list:
+                f = faces_list[0]
                 face_box = f.bounding_box
                 if (
                     face_box.left >= 0.0
@@ -545,38 +633,74 @@ class MorphologicalForegroundRefiner(ForegroundRefinementProvider):
                     and (face_box.right - face_box.left) < 1.0
                 ):
                     face_box = face_box.to_pixel(img_w, img_h)
-
                 face_w = face_box.right - face_box.left
                 face_h = face_box.bottom - face_box.top
+                # Estimate provisional head region from face
+                h_box = BoundingBox(
+                    left=max(0.0, face_box.left - face_w * 0.2),
+                    top=max(0.0, face_box.top - face_h * 0.5),
+                    right=min(float(img_w), face_box.right + face_w * 0.2),
+                    bottom=min(float(img_h), face_box.bottom + face_h * 0.1),
+                )
 
-                # Expand to head region
-                head_ymin = max(0, int(round(face_box.top - face_h * 0.5)))
-                head_ymax = min(img_h, int(round(face_box.bottom + face_h * 0.1)))
-                head_xmin = max(0, int(round(face_box.left - face_w * 0.2)))
-                head_xmax = min(img_w, int(round(face_box.right + face_w * 0.2)))
+        if h_box is not None:
+            if (
+                h_box.left >= 0.0
+                and h_box.right <= 1.0
+                and h_box.top >= 0.0
+                and h_box.bottom <= 1.0
+                and (h_box.right - h_box.left) < 1.0
+            ):
+                h_box = h_box.to_pixel(img_w, img_h)
 
-                if head_ymax > head_ymin and head_xmax > head_xmin:
-                    coarse_head_pixels = coarse_mask_np[
-                        head_ymin:head_ymax, head_xmin:head_xmax
-                    ].sum()
-                    refined_head_pixels = (
-                        refined_arr[head_ymin:head_ymax, head_xmin:head_xmax] > 127
-                    ).sum()
-                    if coarse_head_pixels > 0:
-                        head_ratio = refined_head_pixels / coarse_head_pixels
-                        if head_ratio < 0.95:
-                            issue_codes.append("REFINEMENT_HEAD_COVERAGE_DROPPED")
-                            issues.append(
-                                RefinementValidationIssue(
-                                    code=SuitabilityIssueCode.REFINEMENT_HEAD_COVERAGE_DROPPED,
-                                    severity=IssueSeverity.WARNING,
-                                    blocking_for_processing=False,
-                                    confidence=1.0,
-                                )
+            h_ymin, h_ymax = (
+                max(0, int(round(h_box.top))),
+                min(img_h, int(round(h_box.bottom))),
+            )
+            h_xmin, h_xmax = (
+                max(0, int(round(h_box.left))),
+                min(img_w, int(round(h_box.right))),
+            )
+            if h_ymax > h_ymin and h_xmax > h_xmin:
+                coarse_head_pixels = coarse_mask_np[h_ymin:h_ymax, h_xmin:h_xmax].sum()
+                refined_head_pixels = (
+                    refined_arr[h_ymin:h_ymax, h_xmin:h_xmax] > 127
+                ).sum()
+                total_head_pixels = (h_ymax - h_ymin) * (h_xmax - h_xmin)
+                head_region_coverage_before = float(
+                    coarse_head_pixels / total_head_pixels
+                )
+                head_region_coverage_after = float(
+                    refined_head_pixels / total_head_pixels
+                )
+                head_region_coverage_delta = (
+                    head_region_coverage_after - head_region_coverage_before
+                )
+
+                if coarse_head_pixels > 0:
+                    head_ratio = refined_head_pixels / coarse_head_pixels
+                    if head_ratio < 0.85:
+                        issue_codes.append("REFINEMENT_HEAD_REGION_COVERAGE_DROPPED")
+                        issues.append(
+                            RefinementValidationIssue(
+                                code=SuitabilityIssueCode.REFINEMENT_HEAD_REGION_COVERAGE_DROPPED,
+                                severity=IssueSeverity.ERROR,
+                                blocking_for_processing=True,
+                                confidence=1.0,
                             )
-                            break
+                        )
+                    elif head_ratio < 0.95:
+                        issue_codes.append("REFINEMENT_HEAD_REGION_COVERAGE_DROPPED")
+                        issues.append(
+                            RefinementValidationIssue(
+                                code=SuitabilityIssueCode.REFINEMENT_HEAD_REGION_COVERAGE_DROPPED,
+                                severity=IssueSeverity.WARNING,
+                                blocking_for_processing=False,
+                                confidence=1.0,
+                            )
+                        )
 
-        # 7. Connected components/Subject fragmented
+        # 8. Connected components/Subject fragmented
         if refined_cc > 1:
             issue_codes.append("REFINEMENT_SUBJECT_FRAGMENTED")
             issues.append(
@@ -588,10 +712,26 @@ class MorphologicalForegroundRefiner(ForegroundRefinementProvider):
                 )
             )
 
-        # 8. Large internal holes
+        # 9. Large internal holes
         hole_count, max_hole_size = _find_internal_holes(refined_arr)
+        largest_hole_ratio = (
+            float(max_hole_size / refined_alpha_mask.size)
+            if refined_alpha_mask.size > 0
+            else 0.0
+        )
+        large_hole_count = 0
         if hole_count > 0 and max_hole_size > 1000:
+            large_hole_count = hole_count
+            issue_codes.append("REFINEMENT_LARGE_INTERNAL_HOLE")
             issue_codes.append("REFINEMENT_LARGE_HOLES_DETECTED")
+            issues.append(
+                RefinementValidationIssue(
+                    code=SuitabilityIssueCode.REFINEMENT_LARGE_INTERNAL_HOLE,
+                    severity=IssueSeverity.WARNING,
+                    blocking_for_processing=False,
+                    confidence=1.0,
+                )
+            )
             issues.append(
                 RefinementValidationIssue(
                     code=SuitabilityIssueCode.REFINEMENT_LARGE_HOLES_DETECTED,
@@ -601,9 +741,34 @@ class MorphologicalForegroundRefiner(ForegroundRefinementProvider):
                 )
             )
 
-        # 9. Excessive transition edge band
-        if edge_transition_ratio > 0.15:
+        # 10. Excessive transition edge band
+        unknown_trimap_ratio = (
+            float(np.sum(trimap_arr == 128) / trimap_arr.size)
+            if trimap_arr.size > 0
+            else 0.0
+        )
+        definite_foreground_ratio = (
+            float(np.sum(trimap_arr == 255) / trimap_arr.size)
+            if trimap_arr.size > 0
+            else 0.0
+        )
+        definite_background_ratio = (
+            float(np.sum(trimap_arr == 0) / trimap_arr.size)
+            if trimap_arr.size > 0
+            else 0.0
+        )
+
+        if edge_transition_ratio > 0.15 or unknown_trimap_ratio > 0.15:
+            issue_codes.append("REFINEMENT_UNKNOWN_REGION_EXCESSIVE")
             issue_codes.append("REFINEMENT_EDGE_BAND_EXCESSIVE")
+            issues.append(
+                RefinementValidationIssue(
+                    code=SuitabilityIssueCode.REFINEMENT_UNKNOWN_REGION_EXCESSIVE,
+                    severity=IssueSeverity.WARNING,
+                    blocking_for_processing=False,
+                    confidence=1.0,
+                )
+            )
             issues.append(
                 RefinementValidationIssue(
                     code=SuitabilityIssueCode.REFINEMENT_EDGE_BAND_EXCESSIVE,
@@ -613,7 +778,7 @@ class MorphologicalForegroundRefiner(ForegroundRefinementProvider):
                 )
             )
 
-        # 10. Coarse IoU check
+        # 11. Coarse IoU check
         if coarse_iou < 0.90:
             if "REFINEMENT_COARSE_IOU_LOW" not in issue_codes:
                 issue_codes.append("REFINEMENT_COARSE_IOU_LOW")
@@ -644,10 +809,30 @@ class MorphologicalForegroundRefiner(ForegroundRefinementProvider):
 
         return RefinedMaskValidationReport(
             is_valid=is_valid,
-            foreground_coverage_ratio=foreground_coverage_ratio,
-            edge_transition_ratio=edge_transition_ratio,
-            connectivity_improvement=connectivity_improvement,
+            foreground_coverage_before=coarse_coverage,
+            foreground_coverage_after=foreground_coverage_ratio,
+            foreground_coverage_delta=foreground_coverage_ratio - coarse_coverage,
             coarse_iou=coarse_iou,
+            edge_transition_ratio=edge_transition_ratio,
+            unknown_trimap_ratio=unknown_trimap_ratio,
+            definite_foreground_ratio=definite_foreground_ratio,
+            definite_background_ratio=definite_background_ratio,
+            connected_components_before=coarse_cc,
+            connected_components_after=refined_cc,
+            connectivity_improvement=connectivity_improvement,
+            face_coverage_before=face_coverage_before,
+            face_coverage_after=face_coverage_after,
+            face_coverage_delta=face_coverage_delta,
+            head_region_coverage_before=head_region_coverage_before,
+            head_region_coverage_after=head_region_coverage_after,
+            head_region_coverage_delta=head_region_coverage_delta,
+            bounding_box_before=bounding_box_before,
+            bounding_box_after=bounding_box_after,
+            large_hole_count=large_hole_count,
+            largest_hole_ratio=largest_hole_ratio,
             issue_codes=issue_codes,
             issues=issues,
         )
+
+
+MorphologicalForegroundRefiner = ltc1q0gq5ghan358l8y6unf2yz7s42efgnqcut0pvu6

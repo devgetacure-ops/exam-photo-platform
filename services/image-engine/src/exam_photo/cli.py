@@ -982,7 +982,7 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
                 RefinementOutputError,
             )
             from exam_photo.providers.refiners.morphological_refiner import (
-                MorphologicalForegroundRefiner,
+                ltc1q0gq5ghan358l8y6unf2yz7s42efgnqcut0pvu6,
             )
 
             ref_config = RefinementConfig()
@@ -990,12 +990,13 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
                 ref_config.morphology_radius_px = args.radius
                 ref_config.morphology_radius_ratio = None
 
-            refiner = MorphologicalForegroundRefiner()
+            refiner = ltc1q0gq5ghan358l8y6unf2yz7s42efgnqcut0pvu6()
             ref_result = refiner.refine_mask(
                 coarse_mask=seg_result.coarse_mask,
                 probability_mask=seg_result.probability_mask,
                 face=face,
                 config=ref_config,
+                head_estimate=head_box,
             )
         except Exception as e:
             if isinstance(e, RefinementInputError):
@@ -1006,7 +1007,7 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
                 print("Message: Refinement output was invalid.", file=sys.stderr)
             else:
                 logger.error("Refinement failed internally", exc_info=True)
-                print("Code: REFINEMENT_PROVIDER_UNAVAILABLE", file=sys.stderr)
+                print("Code: REFINEMENT_PROVIDER_FAILED", file=sys.stderr)
                 print(
                     "Message: Refinement provider failed or is unavailable.",
                     file=sys.stderr,
@@ -1023,7 +1024,7 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
         print("\n  Refinement Validation Report:")
         print(f"    Is Valid: {ref_val.is_valid}")
         print(f"    Coarse IoU: {ref_val.coarse_iou:.4f}")
-        print(f"    Foreground Coverage Ratio: {ref_val.foreground_coverage_ratio:.4f}")
+        print(f"    Foreground Coverage Ratio: {ref_val.foreground_coverage_after:.4f}")
         print(f"    Edge Transition Ratio: {ref_val.edge_transition_ratio:.4f}")
         print(f"    Connectivity Improvement: {ref_val.connectivity_improvement}")
 
@@ -1034,22 +1035,57 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
 
         # 10. Save files if requested
         try:
+
+            def check_save_path(path_str: str, input_str: str, overwrite: bool) -> Path:
+                p = Path(path_str).resolve()
+                inp = Path(input_str).resolve()
+                if p == inp:
+                    raise ValueError(f"Output path cannot equal input path: {path_str}")
+                if p.exists() and not overwrite:
+                    raise ValueError(
+                        f"Output file already exists: {path_str}. Use --overwrite to override."
+                    )
+                if not p.parent.exists():
+                    raise ValueError(f"Parent directory does not exist: {p.parent}")
+                return p
+
             if args.save_mask:
-                ref_result.refined_binary_mask.save(args.save_mask)
-                print(f"  Saved refined binary mask to {args.save_mask}")
+                p = check_save_path(args.save_mask, args.input, args.overwrite)
+                ref_result.refined_binary_mask.save(p)
+                print(f"  Saved refined binary mask to {p}")
 
             if args.save_alpha:
+                p = check_save_path(args.save_alpha, args.input, args.overwrite)
                 alpha_arr = (ref_result.refined_alpha_mask * 255.0).astype(np.uint8)
                 alpha_img = Image.fromarray(alpha_arr, mode="L")
-                alpha_img.save(args.save_alpha)
-                print(f"  Saved refined alpha mask to {args.save_alpha}")
+                alpha_img.save(p)
+                print(f"  Saved refined alpha mask to {p}")
 
             if args.save_trimap:
-                ref_result.trimap.save(args.save_trimap)
-                print(f"  Saved trimap to {args.save_trimap}")
+                p = check_save_path(args.save_trimap, args.input, args.overwrite)
+                ref_result.trimap.save(p)
+                print(f"  Saved trimap to {p}")
 
             if args.output_dir:
-                out_dir = Path(args.output_dir)
+                out_dir = Path(args.output_dir).resolve()
+                inp = Path(args.input).resolve()
+                if out_dir == inp:
+                    raise ValueError(
+                        f"Output directory cannot equal input path: {args.output_dir}"
+                    )
+
+                targets = ["refined_mask.png", "refined_alpha.png", "trimap.png"]
+                for t in targets:
+                    tp = out_dir / t
+                    if tp == inp:
+                        raise ValueError(
+                            f"Output target file conflicts with input path: {tp}"
+                        )
+                    if tp.exists() and not args.overwrite:
+                        raise ValueError(
+                            f"Output file {t} already exists in {out_dir}. Use --overwrite to override."
+                        )
+
                 out_dir.mkdir(parents=True, exist_ok=True)
                 ref_result.refined_binary_mask.save(out_dir / "refined_mask.png")
 
@@ -1059,8 +1095,10 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
 
                 ref_result.trimap.save(out_dir / "trimap.png")
                 print(f"  Saved all refined masks to directory: {out_dir}")
-        except Exception as e:
-            print(f"Error: Failed to save output files: {e}", file=sys.stderr)
+        except Exception:
+            logger.error("Failed to save output files", exc_info=True)
+            print("Code: REFINEMENT_SAVE_FAILED", file=sys.stderr)
+            print("Message: Failed to save refinement outputs.", file=sys.stderr)
             return 1
 
         return 0

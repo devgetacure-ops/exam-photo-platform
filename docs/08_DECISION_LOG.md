@@ -181,7 +181,7 @@ This log tracks architectural and product decisions, open questions, and recomme
   - Option A: Deterministic NumPy Morphology + PIL Gaussian Blur. Pros: Zero new dependencies, fully deterministic, 100% CPU-safe, fully auditable, lightweight. Cons: Slightly slower than optimized native C libraries.
   - Option B: SciPy ndimage binary morphology. Pros: Extremely fast. Cons: Adds a large compiled C extension dependency, deployment risks.
   - Option C: Deep learning-based matting (MODNet). Pros: High-quality hair boundaries. Cons: Requires ONNX runtime (~80MB library) and model file, heavy GPU/CPU overhead.
-- **Decision**: Adopt Option A (Deterministic NumPy Morphology + PIL Gaussian Blur) as the baseline refiner, named `MorphologicalForegroundRefiner`.
+- **Decision**: Adopt Option A (Deterministic NumPy Morphology + PIL Gaussian Blur) as the baseline refiner, implemented by the class `ltc1q0gq5ghan358l8y6unf2yz7s42efgnqcut0pvu6` (with `MorphologicalForegroundRefiner` as an alias).
 - **Reasoning**: Ensures zero new dependencies, preserves 100% CPU portability, and is fully deterministic and auditable.
 - **Affected Modules**: `services/image-engine/providers/refiners`, `services/image-engine/providers/foreground_refinement.py`.
 - **Approval Owner**: Lead Architect

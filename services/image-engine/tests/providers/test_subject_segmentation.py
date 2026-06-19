@@ -636,10 +636,67 @@ def test_refinement_on_real_fixtures() -> None:
     with open(fixtures_dir / "segmentation" / "annotations.json") as f:
         manifest = json.load(f)
 
+    import hashlib
+
+    def verify_sha256(p: Path, expected: str) -> None:
+        h = hashlib.sha256()
+        with open(p, "rb") as f_bin:
+            while chunk := f_bin.read(8192):
+                h.update(chunk)
+        assert h.hexdigest() == expected, f"Checksum mismatch for {p.name}"
+
     for entry in manifest["entries"]:
         src_name = entry["source_fixture"]
-        # Skip yosemite because it expects 0 coverage / no subject
+        faces: list[FaceDetection] | None = None
+
+        # Verify mask checksums before usage
+        if "regression_mask_filename" in entry and "mask_sha256" in entry:
+            verify_sha256(
+                fixtures_dir / entry["regression_mask_filename"], entry["mask_sha256"]
+            )
+        if "reference_mask_filename" in entry and "reference_mask_sha256" in entry:
+            verify_sha256(
+                fixtures_dir / entry["reference_mask_filename"],
+                entry["reference_mask_sha256"],
+            )
+        if "refined_mask_filename" in entry and "refined_mask_sha256" in entry:
+            verify_sha256(
+                fixtures_dir / entry["refined_mask_filename"],
+                entry["refined_mask_sha256"],
+            )
+
         if src_name == "roosevelt_muir_yosemite.jpg":
+            # Conditionally execute yosemite safely without the same single-person portrait quality gates
+            src_path = fixtures_dir / src_name
+            img = Image.open(src_path)
+            expected_faces = 2
+            detector = MediapipeFaceDetector(
+                face_model_path, face_sha, min_detection_confidence=0.2
+            )
+            with detector:
+                face_res = detector.detect_faces(img)
+            assert len(face_res.detections) == expected_faces
+            faces = face_res.detections
+            with segmenter:
+                seg_res = segmenter.segment_subject(img, face=faces)
+            assert seg_res.provider_status == SegmentationStatusValue.SUCCESS
+            ref_res = refiner.refine_mask(
+                coarse_mask=seg_res.coarse_mask,
+                probability_mask=seg_res.probability_mask,
+                face=faces,
+            )
+            assert ref_res is not None
+            assert ref_res.refined_alpha_mask is not None
+            assert ref_res.refined_binary_mask is not None
+            assert ref_res.trimap is not None
+            # Check trimap values
+            trimap_vals = set(np.unique(np.array(ref_res.trimap)))
+            assert trimap_vals.issubset({0, 128, 255})
+            # Check alpha mask values
+            alpha = ref_res.refined_alpha_mask
+            assert alpha.dtype == np.float32
+            assert np.all(alpha >= 0.0)
+            assert np.all(alpha <= 1.0)
             continue
 
         src_path = fixtures_dir / src_name

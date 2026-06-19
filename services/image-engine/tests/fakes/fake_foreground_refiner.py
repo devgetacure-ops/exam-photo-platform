@@ -6,6 +6,7 @@ from typing import Any, Optional
 import numpy as np
 from PIL import Image
 
+from exam_photo.models.geometry import BoundingBox
 from exam_photo.providers.face_detection import FaceDetection
 from exam_photo.providers.foreground_refinement import (
     ForegroundRefinementProvider,
@@ -28,6 +29,7 @@ class FakeForegroundRefiner(ForegroundRefinementProvider):
         probability_mask: np.ndarray[Any, Any],
         face: Optional[FaceDetection | list[FaceDetection]] = None,
         config: Optional[RefinementConfig] = None,
+        head_estimate: Optional[BoundingBox] = None,
     ) -> RefinedMaskResult:
         start_time = time.perf_counter()
         cfg = config or RefinementConfig()
@@ -43,13 +45,32 @@ class FakeForegroundRefiner(ForegroundRefinementProvider):
 
         refined_binary = coarse_mask.copy()
 
-        # Dummy validation report
+        # Dummy validation report with all fields populated
+        coarse_cov = float(np.mean(coarse_arr > 127))
+        bbox = BoundingBox(left=0.0, top=0.0, right=float(img_w), bottom=float(img_h))
         val_report = RefinedMaskValidationReport(
             is_valid=True,
-            foreground_coverage_ratio=float(np.mean(trimap_arr == 255)),
-            edge_transition_ratio=0.0,
-            connectivity_improvement=True,
+            foreground_coverage_before=coarse_cov,
+            foreground_coverage_after=coarse_cov,
+            foreground_coverage_delta=0.0,
             coarse_iou=1.0,
+            edge_transition_ratio=0.0,
+            unknown_trimap_ratio=0.0,
+            definite_foreground_ratio=coarse_cov,
+            definite_background_ratio=1.0 - coarse_cov,
+            connected_components_before=1,
+            connected_components_after=1,
+            connectivity_improvement=True,
+            face_coverage_before=None,
+            face_coverage_after=None,
+            face_coverage_delta=None,
+            head_region_coverage_before=None,
+            head_region_coverage_after=None,
+            head_region_coverage_delta=None,
+            bounding_box_before=bbox,
+            bounding_box_after=bbox,
+            large_hole_count=0,
+            largest_hole_ratio=0.0,
             issue_codes=[],
             issues=[],
         )

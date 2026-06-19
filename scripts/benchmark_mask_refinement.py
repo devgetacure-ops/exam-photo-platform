@@ -1,4 +1,5 @@
 import argparse
+import hashlib
 import json
 import os
 import sys
@@ -13,8 +14,24 @@ sys.path.insert(0, str(repo_root / "services" / "image-engine" / "src"))
 
 from exam_photo.providers.mediapipe_face_detector import MediapipeFaceDetector
 from exam_photo.providers.segmenters.mediapipe_segmenter import MediapipeSubjectSegmenter
-from exam_photo.providers.refiners.morphological_refiner import MorphologicalForegroundRefiner
+from exam_photo.providers.refiners.morphological_refiner import ltc1q0gq5ghan358l8y6unf2yz7s42efgnqcut0pvu6
 from exam_photo.providers.foreground_refinement import RefinementConfig
+
+
+def verify_file_sha256(filepath: Path, expected_sha: str) -> None:
+    if not filepath.exists():
+        raise FileNotFoundError(f"Required file is missing: {filepath}")
+    h = hashlib.sha256()
+    with open(filepath, "rb") as f:
+        while chunk := f.read(8192):
+            h.update(chunk)
+    actual_sha = h.hexdigest()
+    if actual_sha != expected_sha:
+        raise ValueError(
+            f"Checksum mismatch for file: {filepath.name}\n"
+            f"  Expected: {expected_sha}\n"
+            f"  Actual:   {actual_sha}"
+        )
 
 
 def main() -> int:
@@ -22,7 +39,7 @@ def main() -> int:
     parser.add_argument(
         "--require-real",
         action="store_true",
-        help="Fail if stability IoU < 0.90 or quality regresses.",
+        help="Fail if stability/quality/performance gates are violated.",
     )
     args = parser.parse_args()
 
@@ -42,32 +59,42 @@ def main() -> int:
             variant = m.get("variants", {}).get("selfie_bin_general", {})
             seg_sha = variant.get("sha256", "")
 
-    # Instantiate detectors
+    # Instantiate detectors and refiner
     face_detector_05 = MediapipeFaceDetector(face_model_path, face_sha, min_detection_confidence=0.5)
     face_detector_02 = MediapipeFaceDetector(face_model_path, face_sha, min_detection_confidence=0.2)
     segmenter = MediapipeSubjectSegmenter(seg_model_path, seg_sha)
-    refiner = MorphologicalForegroundRefiner()
+    refiner = ltc1q0gq5ghan358l8y6unf2yz7s42efgnqcut0pvu6()
+
+    assert refiner.provider_name == "ltc1q0gq5ghan358l8y6unf2yz7s42efgnqcut0pvu6", (
+        f"Stale provider name: {refiner.provider_name}"
+    )
 
     fixtures_dir = repo_root / "tests" / "fixtures"
     with open(fixtures_dir / "segmentation" / "annotations.json", "r", encoding="utf-8") as f:
         annotations = json.load(f)
 
+    # Preflight Checksum Verifications
+    try:
+        for entry in annotations["entries"]:
+            src_name = entry["source_fixture"]
+            # Verify coarse mask checksum
+            if "regression_mask_filename" in entry and "mask_sha256" in entry:
+                verify_file_sha256(fixtures_dir / entry["regression_mask_filename"], entry["mask_sha256"])
+            # Verify reference mask checksum
+            if "reference_mask_filename" in entry and "reference_mask_sha256" in entry:
+                verify_file_sha256(fixtures_dir / entry["reference_mask_filename"], entry["reference_mask_sha256"])
+            # Verify refined mask checksum
+            if "refined_mask_filename" in entry and "refined_mask_sha256" in entry:
+                verify_file_sha256(fixtures_dir / entry["refined_mask_filename"], entry["refined_mask_sha256"])
+    except Exception as e:
+        print(f"ERROR: Checksum preflight verification failed: {e}", file=sys.stderr)
+        return 1
+
     results = []
     failed = False
 
-    if args.require_real:
-        required_refs = [
-            "segmentation/reference_masks/reference-einstein-mask.png",
-            "segmentation/reference_masks/reference-freud-mask.png",
-        ]
-        for ref_file in required_refs:
-            if not (fixtures_dir / ref_file).exists():
-                print(f"ERROR: Required reference mask is missing from disk: {ref_file}", file=sys.stderr)
-                failed = True
-
     for entry in annotations["entries"]:
         src_name = entry["source_fixture"]
-
         src_path = fixtures_dir / src_name
         img = Image.open(src_path)
 
@@ -109,12 +136,7 @@ def main() -> int:
         quality_iou = None
         coarse_ref_iou = None
 
-        ref_mask_filename = None
-        if src_name == "single_face_frontal.jpg":
-            ref_mask_filename = "segmentation/reference_masks/reference-einstein-mask.png"
-        elif src_name == "freud_spectacles_beard.jpg":
-            ref_mask_filename = "segmentation/reference_masks/reference-freud-mask.png"
-
+        ref_mask_filename = entry.get("reference_mask_filename")
         if ref_mask_filename:
             ref_path = fixtures_dir / ref_mask_filename
             if ref_path.exists():
@@ -138,21 +160,9 @@ def main() -> int:
             "coarse_ref_iou": coarse_ref_iou,
             "quality_iou": quality_iou,
             "radius": ref_res.effective_radius_px,
-            "latency_ms": ref_res.refinement_duration_ms
+            "latency_ms": ref_res.refinement_duration_ms,
+            "is_valid": ref_res.validation.is_valid,
         })
-
-        # Failure checks
-        if args.require_real:
-            if stability_iou < 0.90:
-                print(f"ERROR: Stability IoU for {src_name} ({stability_iou:.4f}) is below 0.90", file=sys.stderr)
-                failed = True
-            if quality_iou is not None:
-                if quality_iou < 0.98:
-                    print(
-                        f"ERROR: Quality IoU for {src_name} is below 0.98: {quality_iou:.4f}",
-                        file=sys.stderr,
-                    )
-                    failed = True
 
     print("\n" + "=" * 80)
     print("MASK REFINEMENT BENCHMARK REPORT")
@@ -163,8 +173,14 @@ def main() -> int:
         print(f"  Refined Coverage:  {r['refined_cov']:.4f} (Delta: {r['delta_cov']:.4f})")
         print(f"  Stability IoU:     {r['stability_iou']:.4f}")
         if r['quality_iou'] is not None:
-            print(f"  Coarse vs Ref IoU: {r['coarse_ref_iou']:.4f}")
-            print(f"  Quality IoU:       {r['quality_iou']:.4f} (Delta: {r['quality_iou'] - r['coarse_ref_iou']:.4f})")
+            print(f"  Coarse vs Reference IoU: {r['coarse_ref_iou']:.4f}")
+            print(f"  Refined vs Reference IoU: {r['quality_iou']:.4f}")
+            delta_val = r['quality_iou'] - r['coarse_ref_iou']
+            print(f"  Reference IoU Delta: {delta_val:.4f}")
+            if delta_val > 0:
+                print("  Quality Status: quality improved")
+            else:
+                print("  Quality Status: Refinement is stability-focused and not quality-improving.")
         print(f"  Effective Radius:  {r['radius']}px")
         print(f"  Refinement Time:   {r['latency_ms']:.2f}ms")
         print("-" * 80)
@@ -172,17 +188,65 @@ def main() -> int:
     # Aggregate
     mean_stability = float(np.mean([r['stability_iou'] for r in results]))
     mean_latency = float(np.mean([r['latency_ms'] for r in results]))
+    max_latency = float(np.max([r['latency_ms'] for r in results]))
     print(f"Aggregate Stats:")
     print(f"  Mean Stability IoU: {mean_stability:.4f}")
     print(f"  Mean Latency:       {mean_latency:.2f}ms")
+    print(f"  Max Latency:        {max_latency:.2f}ms")
 
     qualities = [r['quality_iou'] for r in results if r['quality_iou'] is not None]
     if qualities:
         mean_quality = float(np.mean(qualities))
         print(f"  Mean Quality IoU:   {mean_quality:.4f}")
 
-    if failed:
-        return 1
+    # Gates Check
+    if args.require_real:
+        minimum_reference_iou = 0.98
+        allowed_quality_drop = 0.015
+        
+        # Latency thresholds
+        mean_latency_limit = 3000.0
+        max_latency_limit = 5000.0
+
+        if mean_latency > mean_latency_limit:
+            print(f"ERROR: Mean latency ({mean_latency:.2f}ms) exceeds the gate limit ({mean_latency_limit}ms)", file=sys.stderr)
+            failed = True
+        if max_latency > max_latency_limit:
+            print(f"ERROR: Max latency ({max_latency:.2f}ms) exceeds the gate limit ({max_latency_limit}ms)", file=sys.stderr)
+            failed = True
+
+        for r in results:
+            # Yosemite checks: multiple-person safety check
+            if r["fixture"] == "roosevelt_muir_yosemite.jpg":
+                if r["is_valid"]:
+                    print("ERROR: Roosevelt/Yosemite multiple-person fixture was approved but should be blocked.", file=sys.stderr)
+                    failed = True
+            else:
+                if r["stability_iou"] < 0.90:
+                    print(f"ERROR: Stability IoU for {r['fixture']} ({r['stability_iou']:.4f}) is below 0.90", file=sys.stderr)
+                    failed = True
+
+            if r["quality_iou"] is not None:
+                if r["quality_iou"] < minimum_reference_iou:
+                    print(
+                        f"ERROR: Quality IoU for {r['fixture']} is below {minimum_reference_iou}: {r['quality_iou']:.4f}",
+                        file=sys.stderr,
+                    )
+                    failed = True
+                
+                q_delta = r["quality_iou"] - r["coarse_ref_iou"]
+                if q_delta < -allowed_quality_drop:
+                    print(
+                        f"ERROR: Quality regression for {r['fixture']} ({q_delta:.4f}) exceeds allowed drop of {allowed_quality_drop}",
+                        file=sys.stderr,
+                    )
+                    failed = True
+
+        if failed:
+            print("Quality Gate: FAIL", file=sys.stderr)
+            return 1
+        else:
+            print("Quality Gate: PASS")
 
     return 0
 

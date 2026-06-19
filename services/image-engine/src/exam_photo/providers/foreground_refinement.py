@@ -6,6 +6,7 @@ import numpy as np
 from PIL import Image
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from exam_photo.models.geometry import BoundingBox
 from exam_photo.providers.face_detection import FaceDetection
 from exam_photo.suitability.issue_codes import IssueSeverity, SuitabilityIssueCode
 
@@ -41,12 +42,29 @@ class RefinementValidationIssue(BaseModel):
 
 
 class RefinedMaskValidationReport(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="forbid", arbitrary_types_allowed=True)
     is_valid: bool
-    foreground_coverage_ratio: float  # refined binary mask foreground %
-    edge_transition_ratio: float  # fraction of pixels with 0 < alpha < 1
-    connectivity_improvement: bool  # fewer or equal components than coarse
-    coarse_iou: float  # IoU of refined binary vs coarse binary
+    foreground_coverage_before: float
+    foreground_coverage_after: float
+    foreground_coverage_delta: float
+    coarse_iou: float
+    edge_transition_ratio: float
+    unknown_trimap_ratio: float
+    definite_foreground_ratio: float
+    definite_background_ratio: float
+    connected_components_before: int
+    connected_components_after: int
+    connectivity_improvement: bool
+    face_coverage_before: Optional[float] = None
+    face_coverage_after: Optional[float] = None
+    face_coverage_delta: Optional[float] = None
+    head_region_coverage_before: Optional[float] = None
+    head_region_coverage_after: Optional[float] = None
+    head_region_coverage_delta: Optional[float] = None
+    bounding_box_before: Optional[BoundingBox] = None
+    bounding_box_after: Optional[BoundingBox] = None
+    large_hole_count: int
+    largest_hole_ratio: float
     issue_codes: list[str]
     issues: list[RefinementValidationIssue]
 
@@ -117,6 +135,7 @@ class ForegroundRefinementProvider(Protocol):
         probability_mask: np.ndarray[Any, Any],
         face: Optional[FaceDetection | list[FaceDetection]] = None,
         config: Optional[RefinementConfig] = None,
+        head_estimate: Optional[BoundingBox] = None,
     ) -> RefinedMaskResult:
         """Refines a coarse foreground subject mask using boundary morphological cleanup.
 

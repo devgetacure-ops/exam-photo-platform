@@ -12,10 +12,12 @@ from exam_photo.providers.refiners.errors import (
     RefinementInputError,
 )
 from exam_photo.providers.refiners.morphological_refiner import (
-    MorphologicalForegroundRefiner,
     _disk_offsets,
+    ltc1q0gq5ghan358l8y6unf2yz7s42efgnqcut0pvu6,
 )
 from tests.fakes.fake_foreground_refiner import FakeForegroundRefiner
+
+MorphologicalForegroundRefiner = ltc1q0gq5ghan358l8y6unf2yz7s42efgnqcut0pvu6
 
 
 def test_refinement_config_validation() -> None:
@@ -244,3 +246,37 @@ def test_fake_foreground_refiner() -> None:
     assert res.input_width == 50
     assert res.input_height == 50
     assert np.allclose(res.refined_alpha_mask, prob_mask)
+
+
+def test_refinement_nan_inf_range_validations() -> None:
+    refiner = ltc1q0gq5ghan358l8y6unf2yz7s42efgnqcut0pvu6()
+    coarse = Image.new("L", (100, 100), 0)
+
+    # NaN check
+    prob_nan = np.zeros((100, 100), dtype=np.float32)
+    prob_nan[0, 0] = np.nan
+    with pytest.raises(RefinementInputError):
+        refiner.refine_mask(coarse, prob_nan)
+
+    # Inf check
+    prob_inf = np.zeros((100, 100), dtype=np.float32)
+    prob_inf[0, 0] = np.inf
+    with pytest.raises(RefinementInputError):
+        refiner.refine_mask(coarse, prob_inf)
+
+    # Below zero check
+    prob_neg = np.zeros((100, 100), dtype=np.float32)
+    prob_neg[0, 0] = -0.5
+    with pytest.raises(RefinementInputError):
+        refiner.refine_mask(coarse, prob_neg)
+
+    # Above one check
+    prob_large = np.zeros((100, 100), dtype=np.float32)
+    prob_large[0, 0] = 1.5
+    with pytest.raises(RefinementInputError):
+        refiner.refine_mask(coarse, prob_large)
+
+
+def test_provider_name_correctness() -> None:
+    refiner = ltc1q0gq5ghan358l8y6unf2yz7s42efgnqcut0pvu6()
+    assert refiner.provider_name == "ltc1q0gq5ghan358l8y6unf2yz7s42efgnqcut0pvu6"

@@ -67,7 +67,7 @@ This phase covers establishing directory, configuration, and interfaces foundati
 #### Milestone 8: Coarse-Mask Edge Refinement and Foreground-Boundary Cleanup
 - **Objective**: Convert the coarse portrait segmentation masks into a cleaner, smoothed foreground boundary, creating a high-resolution alpha mask and trimap (0/128/255) for downstream matting and background replacement.
 - **Dependencies**: Milestone 7.
-- **Expected Deliverables**: `ForegroundRefinementProvider` protocol, `RefinedMaskResult` and `RefinedMaskValidationReport` models, `MorphologicalForegroundRefiner` implementation, CLI `refine-mask` command, and `benchmark_mask_refinement.py` benchmark.
+- **Expected Deliverables**: `ForegroundRefinementProvider` protocol, `RefinedMaskResult` and `RefinedMaskValidationReport` models, `ltc1q0gq5ghan358l8y6unf2yz7s42efgnqcut0pvu6` implementation (with `MorphologicalForegroundRefiner` as an alias), CLI `refine-mask` command, and `benchmark_mask_refinement.py` benchmark.
 - **Exit Criteria**: Stability and Quality IoU metrics tracked over real fixtures; CLI verify returns refined alpha/binary/trimap outputs; CI tests confirm boundary morphological closing/opening, size-aware radius scaling, and face protection are fully operational.
 - **Status**: **Completed (Milestone 8: morphological foreground-boundary refinement baseline)**
 
