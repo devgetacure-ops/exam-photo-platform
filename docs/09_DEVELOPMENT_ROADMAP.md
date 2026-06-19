@@ -76,6 +76,7 @@ This phase covers establishing directory, configuration, and interfaces foundati
 - **Dependencies**: Milestone 4, Milestone 6, Milestone 8.
 - **Expected Deliverables**: Aspect ratio crop calculator, face centering and centering preservation math.
 - **Exit Criteria**: Tests verify output crop dimensions match required aspect ratios without stretching or distortion.
+- **Status**: **Completed (Milestone 9: exact-aspect crop planning baseline)**
 
 #### Milestone 10: Face/Head-Led Crop (Crop Mode B)
 - **Objective**: Implement Crop Mode B: tight crop with dimension range based on the estimated head region.

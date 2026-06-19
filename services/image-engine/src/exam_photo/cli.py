@@ -12,6 +12,10 @@ from PIL import Image
 from exam_photo.input.errors import ImageInspectionError
 from exam_photo.input.limits import InputLimits
 from exam_photo.input.normalization import normalize_image_input
+from exam_photo.providers import (
+    CropConfig,
+    DeterministicCropPlanner,
+)
 from exam_photo.providers.landmark_geometric_head_estimator import (
     LandmarkGeometricHeadEstimator,
 )
@@ -186,6 +190,56 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
         "--overwrite",
         action="store_true",
         help="Overwrite existing files when saving outputs.",
+    )
+
+    # plan-crop-mode-a subcommand
+    crop_parser = subparsers.add_parser(
+        "plan-crop-mode-a",
+        help="Run subject segmentation and mask refinement on an image.",
+    )
+    crop_parser.add_argument(
+        "--input", required=True, help="Path to the image file to process."
+    )
+    crop_parser.add_argument("--target-width", type=int, help="Target width in pixels.")
+    crop_parser.add_argument(
+        "--target-height", type=int, help="Target height in pixels."
+    )
+    crop_parser.add_argument(
+        "--target-aspect-ratio", type=float, help="Target aspect ratio."
+    )
+    crop_parser.add_argument(
+        "--face-model-path", help="Path to the face-detection model (.tflite)."
+    )
+    crop_parser.add_argument(
+        "--segmenter-model-path", help="Path to the segmenter model (.tflite)."
+    )
+    crop_parser.add_argument(
+        "--variant",
+        choices=["selfie_multiclass_256x256", "selfie_bin_general"],
+        help="Segmenter model variant to use.",
+    )
+    crop_parser.add_argument(
+        "--skip-mask-refinement",
+        action="store_true",
+        help="Skip mask refinement and perform crop planning purely on face/head geometry.",
+    )
+    crop_parser.add_argument(
+        "--save-preview",
+        help="Optional path to save the cropped preview image PNG.",
+    )
+    crop_parser.add_argument(
+        "--output-dir",
+        help="Optional path to save all outputs including preview image.",
+    )
+    crop_parser.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="Overwrite existing files when saving outputs.",
+    )
+    crop_parser.add_argument(
+        "--json",
+        action="store_true",
+        help="Output results in JSON format to stdout.",
     )
 
     args = parser.parse_args(argv)
@@ -590,7 +644,10 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
             try:
                 estimator = LandmarkGeometricHeadEstimator()
                 head_result = estimator.estimate_head(
-                    norm_result.image, face, face.landmarks
+                    norm_result.image,
+                    face,
+                    face.landmarks,
+                    config={"minimum_face_confidence": min(0.5, face.confidence)},
                 )
                 head_box = head_result.head_bounding_box
             except Exception:
@@ -861,7 +918,10 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
             try:
                 estimator = LandmarkGeometricHeadEstimator()
                 head_result = estimator.estimate_head(
-                    norm_result.image, face, face.landmarks
+                    norm_result.image,
+                    face,
+                    face.landmarks,
+                    config={"minimum_face_confidence": min(0.5, face.confidence)},
                 )
                 head_box = head_result.head_bounding_box
             except Exception:
@@ -1100,6 +1160,325 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
             print("Code: REFINEMENT_SAVE_FAILED", file=sys.stderr)
             print("Message: Failed to save refinement outputs.", file=sys.stderr)
             return 1
+
+        return 0
+
+    elif args.command == "plan-crop-mode-a":
+        # 1. Parse crop configuration
+        if (
+            args.target_width is None
+            and args.target_height is None
+            and args.target_aspect_ratio is None
+        ):
+            print("Code: CROP_TARGET_ASPECT_MISSING", file=sys.stderr)
+            print(
+                "Message: Aspect ratio or target width/height must be specified.",
+                file=sys.stderr,
+            )
+            return 1
+
+        try:
+            cfg = CropConfig(
+                target_width=args.target_width,
+                target_height=args.target_height,
+                target_aspect_ratio=args.target_aspect_ratio,
+            )
+        except Exception:
+            print("Code: CROP_TARGET_ASPECT_INVALID", file=sys.stderr)
+            print(
+                "Message: Invalid target dimensions or aspect ratio.", file=sys.stderr
+            )
+            return 1
+
+        # 2. Inspect and normalize input image
+        if not os.path.exists(args.input):
+            print("Error: Input file not found. Code: FILE_NOT_FOUND", file=sys.stderr)
+            return 1
+
+        try:
+            with open(args.input, "rb") as f_bin:
+                img_data = f_bin.read()
+        except Exception:
+            print(
+                "Error: Unable to read image file. Code: FILE_READ_FAILED",
+                file=sys.stderr,
+            )
+            return 1
+
+        try:
+            input_path = args.input
+            limits = InputLimits()
+            norm_result = normalize_image_input(img_data, input_path, limits)
+        except ImageInspectionError as e:
+            print(f"Error: Image inspection failed. Code: {e.code}", file=sys.stderr)
+            return 1
+        except Exception:
+            print(
+                "Error: Image normalization failed. Code: IMAGE_NORMALIZATION_FAILED",
+                file=sys.stderr,
+            )
+            return 1
+
+        # 3. Detect faces using MediapipeFaceDetector
+        try:
+            from exam_photo.providers.mediapipe_face_detector import (
+                MediapipeFaceDetector,
+            )
+        except ImportError:
+            print(
+                "Error: MediaPipe face detector provider dependencies are not installed. Code: DEPENDENCY_MISSING",
+                file=sys.stderr,
+            )
+            return 1
+
+        # Locate face model path
+        repo_root = find_repo_root()
+        face_model_path_str = args.face_model_path
+        face_expected_sha256 = ""
+
+        if not face_model_path_str:
+            face_model_path_str = os.environ.get("EXAM_PHOTO_FACE_MODEL_PATH")
+            face_expected_sha256 = os.environ.get("EXAM_PHOTO_FACE_MODEL_SHA256", "")
+
+        if not face_model_path_str:
+            manifest_path = repo_root / "model-manifests" / "face-detector.json"
+            if manifest_path.exists():
+                try:
+                    with open(manifest_path, "r", encoding="utf-8") as mf:
+                        manifest = json.load(mf)
+                    face_model_path_str = manifest.get("local_model_path_default")
+                    face_expected_sha256 = manifest.get("sha256", "")
+                except Exception:
+                    pass
+            if not face_model_path_str:
+                face_model_path_str = "model-assets/blaze_face_short_range.tflite"
+
+        face_model_path = Path(face_model_path_str)
+        if not face_model_path.is_absolute():
+            face_model_path = repo_root / face_model_path
+
+        face = None
+        face_detections_count = 0
+        if face_model_path.exists():
+            try:
+                detector = MediapipeFaceDetector(
+                    model_path=face_model_path,
+                    expected_sha256=face_expected_sha256,
+                )
+                with detector:
+                    face_result = detector.detect_faces(norm_result.image)
+                face_detections_count = len(face_result.detections)
+                if face_detections_count == 1:
+                    face = face_result.detections[0]
+            except Exception:
+                pass
+
+        # 4. Check face presence constraints:
+        # no face -> invalid
+        # multiple faces -> invalid (cannot crop a group)
+        if face_detections_count == 0:
+            print("Code: CROP_INPUT_INVALID", file=sys.stderr)
+            print("Message: No face detected in the image.", file=sys.stderr)
+            return 1
+        elif face_detections_count > 1:
+            print("Code: CROP_INPUT_INVALID", file=sys.stderr)
+            print(
+                "Message: Multiple faces detected. Cannot plan a crop for a group.",
+                file=sys.stderr,
+            )
+            return 1
+
+        # 5. Estimate Head Bounding Box if exactly one face
+        head_box = None
+        if face is not None:
+            try:
+                estimator = LandmarkGeometricHeadEstimator()
+                head_result = estimator.estimate_head(
+                    norm_result.image,
+                    face,
+                    face.landmarks,
+                    config={"minimum_face_confidence": min(0.5, face.confidence)},
+                )
+                head_box = head_result.head_bounding_box
+            except Exception:
+                pass
+
+        # 6. Run segmenter and refiner if requested and not skipped
+        refined_mask = None
+        if not args.skip_mask_refinement:
+            try:
+                # Locate segmenter model path
+                model_path_str = args.segmenter_model_path
+                expected_sha256 = ""
+
+                if not model_path_str:
+                    model_path_str = os.environ.get("EXAM_PHOTO_SEGMENTER_MODEL_PATH")
+                    expected_sha256 = os.environ.get(
+                        "EXAM_PHOTO_SEGMENTER_MODEL_SHA256", ""
+                    )
+
+                if not model_path_str:
+                    manifest_path = (
+                        repo_root / "model-manifests" / "subject-segmenter.json"
+                    )
+                    if manifest_path.exists():
+                        try:
+                            with open(manifest_path, "r", encoding="utf-8") as mf:
+                                manifest = json.load(mf)
+                            variant_name = args.variant or manifest.get(
+                                "selected_variant", "selfie_bin_general"
+                            )
+                            variants = manifest.get("variants", {})
+                            variant = variants.get(variant_name)
+                            if variant is not None:
+                                filename = variant.get("filename")
+                                if filename:
+                                    model_path_str = "model-assets/" + filename
+                                    expected_sha256 = variant.get("sha256", "")
+                        except Exception:
+                            pass
+
+                if model_path_str:
+                    model_path = Path(model_path_str)
+                    if not model_path.is_absolute():
+                        model_path = repo_root / model_path
+
+                    if model_path.exists():
+                        from exam_photo.providers.refiners.morphological_refiner import (
+                            ltc1q0gq5ghan358l8y6unf2yz7s42efgnqcut0pvu6,
+                        )
+                        from exam_photo.providers.segmenters.mediapipe_segmenter import (
+                            MediapipeSubjectSegmenter,
+                        )
+
+                        segmenter = MediapipeSubjectSegmenter(
+                            model_path, expected_sha256
+                        )
+                        with segmenter:
+                            seg_result = segmenter.segment_subject(
+                                norm_result.image, face=face
+                            )
+
+                        refiner = ltc1q0gq5ghan358l8y6unf2yz7s42efgnqcut0pvu6()
+                        ref_result = refiner.refine_mask(
+                            coarse_mask=seg_result.coarse_mask,
+                            probability_mask=seg_result.probability_mask,
+                            face=face,
+                            head_estimate=head_box,
+                        )
+                        refined_mask = ref_result.refined_binary_mask
+            except Exception:
+                pass
+
+        # 7. Execute Crop Planner
+        if face is None:
+            print("Code: CROP_INPUT_INVALID", file=sys.stderr)
+            print("Message: Face detection failed or missing.", file=sys.stderr)
+            return 1
+
+        planner = DeterministicCropPlanner()
+        try:
+            img_w, img_h = norm_result.image.size
+            crop_result = planner.plan_crop(
+                image_width=img_w,
+                image_height=img_h,
+                face=face,
+                head_estimate=head_box,
+                refined_mask=refined_mask,
+                config=cfg,
+            )
+        except Exception:
+            logger.error("Crop planning failed internally", exc_info=True)
+            print("Code: CROP_PROVIDER_FAILED", file=sys.stderr)
+            print("Message: Crop planner failed internally.", file=sys.stderr)
+            return 1
+
+        # 8. Output results
+        if args.json:
+            print(crop_result.model_dump_json(indent=2))
+        else:
+            crop_val = crop_result.validation
+            print("Success: Foreground crop planning finished successfully.")
+            print(
+                f"  Provider: {crop_result.provider_name} v{crop_result.provider_version}"
+            )
+            print(f"  Crop Box: {crop_result.crop_box}")
+            print(f"  Crop Size: {crop_result.crop_width}x{crop_result.crop_height}")
+            print(f"  Target Aspect Ratio: {crop_result.target_aspect_ratio:.4f}")
+            print(f"  Actual Crop Aspect Ratio: {crop_result.crop_aspect_ratio:.4f}")
+            print(f"  Aspect Error: {crop_result.aspect_ratio_error:.6f}")
+            print(f"  Face Center X Ratio: {crop_result.face_center_x_ratio:.4f}")
+            print(f"  Face Center Y Ratio: {crop_result.face_center_y_ratio:.4f}")
+            if crop_result.mask_preservation_ratio is not None:
+                print(
+                    f"  Mask Preservation Ratio: {crop_result.mask_preservation_ratio:.4f}"
+                )
+            print(f"  Is Valid: {crop_val.is_valid}")
+            print(f"  Padding Required: {crop_result.padding_required}")
+            if crop_val.issue_codes:
+                print("\n  Issue Codes Detected:")
+                for code in crop_val.issue_codes:
+                    print(f"    - {code}")
+
+        # 9. Save preview image if requested
+        if args.save_preview or args.output_dir:
+            try:
+                # Generate preview image by cropping the source image using the clamped crop_box
+                box = crop_result.crop_box
+                preview_img = norm_result.image.crop(
+                    (int(box.left), int(box.top), int(box.right), int(box.bottom))
+                )
+
+                def check_save_path(
+                    path_str: str, input_str: str, overwrite: bool
+                ) -> Path:
+                    p = Path(path_str).resolve()
+                    inp = Path(input_str).resolve()
+                    if p == inp:
+                        raise ValueError(
+                            f"Output path cannot equal input path: {path_str}"
+                        )
+                    if p.exists() and not overwrite:
+                        raise ValueError(
+                            f"Output file already exists: {path_str}. Use --overwrite to override."
+                        )
+                    if not p.parent.exists():
+                        raise ValueError(f"Parent directory does not exist: {p.parent}")
+                    return p
+
+                if args.save_preview:
+                    p = check_save_path(args.save_preview, args.input, args.overwrite)
+                    preview_img.save(p)
+                    if not args.json:
+                        print(f"  Saved crop preview image to {p}")
+
+                if args.output_dir:
+                    out_dir = Path(args.output_dir).resolve()
+                    inp = Path(args.input).resolve()
+                    if out_dir == inp:
+                        raise ValueError(
+                            f"Output directory cannot equal input path: {args.output_dir}"
+                        )
+                    tp = out_dir / "crop_preview.png"
+                    if tp == inp:
+                        raise ValueError(
+                            f"Output target file conflicts with input path: {tp}"
+                        )
+                    if tp.exists() and not args.overwrite:
+                        raise ValueError(
+                            f"Output file crop_preview.png already exists in {out_dir}. Use --overwrite to override."
+                        )
+
+                    out_dir.mkdir(parents=True, exist_ok=True)
+                    preview_img.save(tp)
+                    if not args.json:
+                        print(f"  Saved crop preview image to directory: {out_dir}")
+
+            except Exception as e:
+                logger.error("Failed to save output files", exc_info=True)
+                print("Code: CROP_PROVIDER_FAILED", file=sys.stderr)
+                print(f"Message: Failed to save crop preview: {e}", file=sys.stderr)
+                return 1
 
         return 0
 

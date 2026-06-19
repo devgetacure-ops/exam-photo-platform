@@ -1,4 +1,16 @@
 from exam_photo.providers.capabilities import ProviderCapabilities
+from exam_photo.providers.crop_planners.deterministic_crop_planner import (
+    DeterministicCropPlanner,
+)
+from exam_photo.providers.crop_planning import (
+    CropConfig,
+    CropIssueCode,
+    CropMode,
+    CropPlanner,
+    CropPlanResult,
+    CropValidationIssue,
+    CropValidationReport,
+)
 from exam_photo.providers.face_detection import (
     FaceDetection,
     FaceDetectionProvider,
@@ -65,6 +77,14 @@ __all__ = [
     "RefinementValidationIssue",
     "MorphologicalForegroundRefiner",
     "ltc1q0gq5ghan358l8y6unf2yz7s42efgnqcut0pvu6",
+    "CropMode",
+    "CropIssueCode",
+    "CropValidationIssue",
+    "CropConfig",
+    "CropValidationReport",
+    "CropPlanResult",
+    "CropPlanner",
+    "DeterministicCropPlanner",
 ]
 
 # MediapipeFaceDetector and MediapipeSubjectSegmenter are exported lazily

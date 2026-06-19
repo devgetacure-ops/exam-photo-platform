@@ -187,3 +187,16 @@ This log tracks architectural and product decisions, open questions, and recomme
 - **Approval Owner**: Lead Architect
 
 
+### DEC-016: Exact-Aspect Crop Planning Pipeline (Crop Mode A) Baseline
+- **Date**: 2026-06-19
+- **Status**: Approved
+- **Problem**: Selection and integration of local deterministic crop planning for Indian Exam requirements needing fixed aspect ratio/dimensions.
+- **Options Considered**:
+  - Option A: Bounding Box scaling based on the full refined foreground mask. Pros: Simple. Cons: Torso/shoulder features would enlarge the crop and shrink the face.
+  - Option B: Head-led positioning with containment interval projection. Pros: Face-centered, head size is preserved correctly, and refined mask containment is verified as a post-check. Cons: Relies on accurate head estimation.
+- **Decision**: Adopt Option B (Head-led positioning with containment interval projection).
+- **Reasoning**: Ensures that face and head dimensions are prioritized, matching Indian exam standards, while using the refined foreground mask for validation checks.
+- **Affected Modules**: `services/image-engine/providers/crop_planners`, `services/image-engine/providers/crop_planning.py`.
+- **Approval Owner**: Lead Architect
+
+
