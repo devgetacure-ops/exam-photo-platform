@@ -34,6 +34,11 @@
         "target_colour_hex": "#FFFFFF",
         "minimum_foreground_coverage": 0.02,
         "allow_transparent_output": false
+      },
+      "output_preparation_expectation": {
+        "expected_valid": true,
+        "expected_output_width": 300,
+        "expected_output_height": 400
       }
     },
     {
@@ -70,6 +75,11 @@
         "target_colour_hex": "#FFFFFF",
         "minimum_foreground_coverage": 0.02,
         "allow_transparent_output": false
+      },
+      "output_preparation_expectation": {
+        "expected_valid": true,
+        "expected_output_width": 300,
+        "expected_output_height": 400
       }
     },
     {
@@ -106,6 +116,11 @@
         "target_colour_hex": "#FFFFFF",
         "minimum_foreground_coverage": 0.02,
         "allow_transparent_output": false
+      },
+      "output_preparation_expectation": {
+        "expected_valid": true,
+        "expected_output_width": 300,
+        "expected_output_height": 400
       }
     },
     {
@@ -142,6 +157,11 @@
         "target_colour_hex": "#FFFFFF",
         "minimum_foreground_coverage": 0.02,
         "allow_transparent_output": false
+      },
+      "output_preparation_expectation": {
+        "expected_valid": true,
+        "expected_output_width": 300,
+        "expected_output_height": 400
       }
     },
     {
@@ -180,6 +200,11 @@
         "target_colour_hex": "#FFFFFF",
         "minimum_foreground_coverage": 0.02,
         "allow_transparent_output": false
+      },
+      "output_preparation_expectation": {
+        "expected_valid": true,
+        "expected_output_width": 300,
+        "expected_output_height": 400
       }
     },
     {
@@ -214,6 +239,11 @@
         "target_colour_hex": "#FFFFFF",
         "minimum_foreground_coverage": 0.02,
         "allow_transparent_output": false
+      },
+      "output_preparation_expectation": {
+        "expected_valid": true,
+        "expected_output_width": 300,
+        "expected_output_height": 400
       }
     },
     {
@@ -252,6 +282,11 @@
         "target_colour_hex": "#FFFFFF",
         "minimum_foreground_coverage": 0.02,
         "allow_transparent_output": false
+      },
+      "output_preparation_expectation": {
+        "expected_valid": true,
+        "expected_output_width": 300,
+        "expected_output_height": 400
       }
     }
   ]

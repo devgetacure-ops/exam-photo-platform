@@ -14,7 +14,7 @@ This matrix maps stable requirement identifiers to design documents, status indi
 | **BG-001** | Background cleaning | PDF Sec 5.2 | CONFIRMED | **Implemented (Milestone 11)** | `services/image-engine/providers` | `test_background_composition.py` | Milestone 11 | Solid background composition |
 | **SEG-001** | Portrait coarse segmentation | PDF Sec 5.2 | CONFIRMED | **Implemented (Milestone 7)** | `services/image-engine` | `test_subject_segmentation.py` | Milestone 7 | MediaPipe multiclass & binary segmenters |
 | **SEG-002** | Coarse-mask edge refinement and trimap | PDF Sec 5.2 | CONFIRMED | **Implemented (Milestone 8)** | `services/image-engine` | `test_foreground_refinement.py` | Milestone 8 | NumPy & PIL morphological operations |
-| **ID-001** | Identity preservation | PDF Sec 5.5 | CONFIRMED | Not Implemented | `services/image-engine` | Geometric similarity checks | Milestone 11 | Enhancements limited |
+| **ID-001** | Identity preservation | PDF Sec 5.5 | CONFIRMED | **Implemented (Milestone 12)** | `services/image-engine` | `test_deterministic_output_preparer.py` | Milestone 12 | Enhancements strictly limited |
 | **RULE-001** | Versioned structured rules | PDF Sec 6 | CONFIRMED | **Implemented (Milestone 2)** | `packages/exam-rules`, `services/image-engine` | `test_rule_validation.py` | Milestone 2 | JSON schema & Python models |
 | **FILE-001** | Target output naming | PDF Sec 5.7 | CONFIRMED | Not Implemented | `services/image-engine` | Pattern check tests | Milestone 13 | Sanitize string output |
 | **COMP-001** | Quality-aware compression | PDF Sec 5.6 | CONFIRMED | Not Implemented | `services/image-engine` | Compression limits check | Milestone 12 | Below maximum ceiling |

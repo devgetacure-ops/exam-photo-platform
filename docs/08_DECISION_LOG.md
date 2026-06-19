@@ -224,3 +224,13 @@ This log tracks architectural and product decisions, open questions, and recomme
 - **Reasoning**: It ensures safe background composition without altering identity, leverages the refined alpha mask from Milestone 8, and is deterministic.
 - **Affected Modules**: services/image-engine/providers/background_composers/solid_background_composer.py
 - **Approval Owner**: Lead Architect
+
+
+### DEC-019: Output Dimensioning and Restrained Enhancement Baseline
+- **Date**: 2026-06-20
+- **Status**: Approved
+- **Problem**: Selection and integration of local deterministic image resizing, output selection priority, and restrained brightness/contrast/sharpness enhancement baseline.
+- **Decision**: Adopt DeterministicOutputPreparer. Implement scaling warning limits (1.5x warning, 2.0x strong warning, 3.0x ceiling; 0.05 min downscale error, 0.10/0.20 downscale warnings). Adopt conservative enhancement thresholds (brightness: 0.88-1.12, contrast: 0.88-1.12, sharpness: 0.80-1.20). Fail early on exact aspect mismatch without stretching. Save invalid previews only with diagnostic flags.
+- **Reasoning**: Ensures that candidate images are sized accurately to meet exam constraints without introducing identity distortion, artifacts, or silent stretching. Keeps enhancement limited to basic quality correction to avoid biometric alteration.
+- **Affected Modules**: services/image-engine/providers/output_preparers, services/image-engine/providers/output_preparation.py.
+- **Approval Owner**: Lead Architect

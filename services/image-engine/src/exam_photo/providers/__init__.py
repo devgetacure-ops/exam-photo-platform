@@ -51,6 +51,19 @@ from exam_photo.providers.landmark_geometric_head_estimator import (
     LandmarkGeometricHeadEstimator,
 )
 from exam_photo.providers.model_errors import ModelChecksumError, ModelNotFoundError
+from exam_photo.providers.output_preparation import (
+    EnhancementMode,
+    OutputPreparationConfig,
+    OutputPreparationIssueCode,
+    OutputPreparationResult,
+    OutputPreparationValidationReport,
+    OutputPreparer,
+    ResampleMethod,
+    ResizeMode,
+)
+from exam_photo.providers.output_preparers.deterministic_output_preparer import (
+    DeterministicOutputPreparer,
+)
 from exam_photo.providers.refiners.morphological_refiner import (
     MorphologicalForegroundRefiner,
 )
@@ -111,6 +124,15 @@ __all__ = [
     "BackgroundCompositionResult",
     "BackgroundComposer",
     "SolidBackgroundComposer",
+    "ResizeMode",
+    "ResampleMethod",
+    "EnhancementMode",
+    "OutputPreparationIssueCode",
+    "OutputPreparationConfig",
+    "OutputPreparationValidationReport",
+    "OutputPreparationResult",
+    "OutputPreparer",
+    "DeterministicOutputPreparer",
 ]
 
 # MediapipeFaceDetector and MediapipeSubjectSegmenter are exported lazily

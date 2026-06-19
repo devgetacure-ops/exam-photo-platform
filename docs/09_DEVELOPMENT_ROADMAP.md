@@ -97,6 +97,7 @@ This phase covers establishing directory, configuration, and interfaces foundati
 - **Dependencies**: Milestone 3, Milestone 9, Milestone 10, Milestone 11.
 - **Expected Deliverables**: Resize utility, format conversion, luminance correction filter, and unsharp mask filter.
 - **Exit Criteria**: Output resolution matches rule criteria exactly, and processed image sharpness metrics pass suitability tests.
+- **Status**: **Completed (Milestone 12: Resizing, output dimensioning, format preparation, and restrained enhancement baseline)**
 
 #### Milestone 13: Quality-Aware Compression Loop
 - **Objective**: Implement an iterative file compression loop to compress the normalized, cropped, and resized image to be close to but strictly under the maximum byte size limit.

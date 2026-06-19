@@ -160,8 +160,19 @@ class SolidBackgroundComposer:
                 or crop_box.height <= 0
             ):
                 add_issue(BackgroundCompositionIssueCode.BACKGROUND_INPUT_INVALID)
-                return self._build_failed_result(config, start_time, is_valid, issue_codes, issues, report_flags={"input_dimensions_valid": True, "alpha_dimensions_valid": True, "alpha_values_valid": True})
-            
+                return self._build_failed_result(
+                    config,
+                    start_time,
+                    is_valid,
+                    issue_codes,
+                    issues,
+                    report_flags={
+                        "input_dimensions_valid": True,
+                        "alpha_dimensions_valid": True,
+                        "alpha_values_valid": True,
+                    },
+                )
+
             working_img = working_img.crop((c_left, c_top, c_right, c_bottom))
             working_alpha = working_alpha[c_top:c_bottom, c_left:c_right]
 
@@ -172,7 +183,19 @@ class SolidBackgroundComposer:
             rgb_color = ImageColor.getrgb(config.target_colour_hex)
         except ValueError:
             add_issue(BackgroundCompositionIssueCode.BACKGROUND_COLOUR_INVALID)
-            return self._build_failed_result(config, start_time, is_valid, issue_codes, issues, report_flags={"input_dimensions_valid": True, "alpha_dimensions_valid": True, "alpha_values_valid": True, "target_colour_valid": False})
+            return self._build_failed_result(
+                config,
+                start_time,
+                is_valid,
+                issue_codes,
+                issues,
+                report_flags={
+                    "input_dimensions_valid": True,
+                    "alpha_dimensions_valid": True,
+                    "alpha_values_valid": True,
+                    "target_colour_valid": False,
+                },
+            )
 
         bg_color_tuple = (rgb_color[0], rgb_color[1], rgb_color[2], 255)
         bg_img = Image.new("RGBA", (final_w, final_h), color=bg_color_tuple)

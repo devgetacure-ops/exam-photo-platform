@@ -169,32 +169,40 @@
 
 ### 11. Restrained Image Correction
 - **Purpose**: Improve image legibility without altering candidate identity.
-- **Inputs**: Cropped image segment.
+- **Inputs**: Cropped image segment, enhancement configuration.
 - **Outputs**: Corrected image segment.
-- **Failure Conditions**: None.
-- **Warning Conditions**: High noise level detected.
+- **Failure Conditions**: Adjustments outside conservative limits (brightness/contrast: 0.88–1.12; sharpness: 0.80–1.20) trigger `OUTPUT_ENHANCEMENT_UNSAFE` blocking failure. Any adjustment in `NONE` mode other than `1.0` triggers failure.
+- **Warning Conditions**: None.
 - **Privacy Considerations**: Retains face structures exactly.
-- **Planned Tests**: Test contrast/brightness improvements under dark lighting conditions.
+- **Planned Tests**: Test contrast/brightness/sharpness limits and check for `OUTPUT_ENHANCEMENT_UNSAFE`.
 - **Dependencies**: Pillow ImageEnhance.
 
 ### 12. Resizing
-- **Purpose**: Resize cropped segment to exact target dimensions or maximum size within range.
-- **Inputs**: Image segment, dimensions.
-- **Outputs**: Resized image.
-- **Failure Conditions**: Scaling down results in severe pixelation.
-- **Warning Conditions**: None.
+- **Purpose**: Resize cropped segment to exact target dimensions or selected range dimensions.
+- **Inputs**: Image segment, dimensions config.
+- **Outputs**: Resized image in-memory.
+- **Failure Conditions**:
+  - **Exact Mode**: Aspect ratio mismatch (over 1% tolerance) triggers `OUTPUT_ASPECT_MISMATCH` blocking failure (fail early, do not stretch).
+  - **Range Mode**: No aspect-preserving or closest valid size inside range, or aspect ratio cannot be preserved (triggers `OUTPUT_ASPECT_MISMATCH` blocking failure).
+  - Upscale factor `scale > 3.0` triggers `OUTPUT_UPSCALE_LIMIT_EXCEEDED` blocking failure.
+  - Downscale factor `scale < 0.05` triggers `OUTPUT_DOWNSCALE_TOO_SEVERE` blocking failure.
+- **Warning Conditions**:
+  - `1.5 < scale <= 2.0` -> `OUTPUT_UPSCALE_WARNING`
+  - `2.0 < scale <= 3.0` -> `OUTPUT_UPSCALE_STRONG_WARNING`
+  - `0.10 <= scale < 0.20` -> `OUTPUT_DOWNSCALE_WARNING`
+  - `0.05 <= scale < 0.10` -> `OUTPUT_DOWNSCALE_SEVERE_WARNING`
 - **Privacy Considerations**: In-memory only.
-- **Planned Tests**: Verify output size matches configured rules.
+- **Planned Tests**: Verify output size matches exact or range select priority; verify upscale/downscale warning boundaries and errors.
 - **Dependencies**: Pillow image resize.
 
 ### 13. Format Selection
-- **Purpose**: Export image to target preferred format (e.g., JPEG).
-- **Inputs**: Resized image, allowed formats.
-- **Outputs**: Formatted file data.
-- **Failure Conditions**: Target format unsupported.
+- **Purpose**: Convert to candidate colour mode and strip EXIF metadata.
+- **Inputs**: Resized image, target colour mode, strip metadata flag.
+- **Outputs**: Candidate image in-memory with stripped metadata.
+- **Failure Conditions**: Target colour mode conversion fails or is unsupported.
 - **Warning Conditions**: None.
-- **Privacy Considerations**: None.
-- **Planned Tests**: Assert exported format is JPEG.
+- **Privacy Considerations**: EXIF and other image metadata are stripped.
+- **Planned Tests**: Verify metadata stripped from output image info; verify colour mode conversions (RGBA -> RGB, etc.).
 - **Dependencies**: Pillow.
 
 ### 14. Quality-aware Compression
