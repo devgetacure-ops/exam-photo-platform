@@ -46,7 +46,7 @@ jobs:
         EXAM_PHOTO_FACE_MODEL_PATH: model-assets/blaze_face_short_range.tflite
         EXAM_PHOTO_FACE_MODEL_SHA256: b4578f35940bf5a1a655214a1cce5cab13eba73c1297cd78e1a04c2380b0152f
       run: |
-        pytest services/image-engine -m "not mandatory_segmentation and not mandatory_refinement and not mandatory_crop and not mandatory_crop_b"
+        pytest services/image-engine -m "not mandatory_segmentation and not mandatory_refinement and not mandatory_crop and not mandatory_crop_b and not mandatory_background"
 
     - name: Download Binary Segmenter Model Asset
       run: |
@@ -111,6 +111,19 @@ jobs:
       run: |
         python scripts/benchmark_crop_mode_b.py --require-real
 
+    - name: Run Background Composition Integration Tests
+      env:
+        EXAM_PHOTO_FACE_MODEL_PATH: model-assets/blaze_face_short_range.tflite
+        EXAM_PHOTO_FACE_MODEL_SHA256: b4578f35940bf5a1a655214a1cce5cab13eba73c1297cd78e1a04c2380b0152f
+        EXAM_PHOTO_SEGMENTER_MODEL_PATH: model-assets/selfie_segmentation.tflite
+        EXAM_PHOTO_SEGMENTER_MODEL_SHA256: 9ee168ec7c8f2a16c56fe8e1cfbc514974cbbb7e434051b455635f1bd1462f5c
+      run: |
+        pytest services/image-engine -m "mandatory_background"
+
+    - name: Run Background Composition Benchmark
+      run: |
+        python scripts/benchmark_background_composition.py --require-real
+
     - name: Verify plan-crop-mode-a CLI
       env:
         EXAM_PHOTO_FACE_MODEL_PATH: model-assets/blaze_face_short_range.tflite
@@ -128,6 +141,15 @@ jobs:
         EXAM_PHOTO_SEGMENTER_MODEL_SHA256: 9ee168ec7c8f2a16c56fe8e1cfbc514974cbbb7e434051b455635f1bd1462f5c
       run: |
         python -m exam_photo plan-crop-mode-b --input tests/fixtures/single_face_frontal.jpg --min-width 300 --max-width 450 --min-height 400 --max-height 600
+
+    - name: Verify compose-background CLI
+      env:
+        EXAM_PHOTO_FACE_MODEL_PATH: model-assets/blaze_face_short_range.tflite
+        EXAM_PHOTO_FACE_MODEL_SHA256: b4578f35940bf5a1a655214a1cce5cab13eba73c1297cd78e1a04c2380b0152f
+        EXAM_PHOTO_SEGMENTER_MODEL_PATH: model-assets/selfie_segmentation.tflite
+        EXAM_PHOTO_SEGMENTER_MODEL_SHA256: 9ee168ec7c8f2a16c56fe8e1cfbc514974cbbb7e434051b455635f1bd1462f5c
+      run: |
+        python -m exam_photo compose-background --input tests/fixtures/single_face_frontal.jpg
 
     - name: Build package
       run: |

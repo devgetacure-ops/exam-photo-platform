@@ -1,10 +1,10 @@
 # Image Pipeline Specification (04_IMAGE_PIPELINE_SPEC.md)
 
 > [!IMPORTANT]
-> Pipeline stage 1 (file signature validation), stage 2 (secure image decoding), stage 3 (EXIF orientation normalization), and stage 4 (source metadata extraction) are implemented in Milestone 3. Stage 5 (face detection), stage 6 (complete-head estimation), and stage 7 (source suitability analysis) are implemented in Milestones 5 and 6. Stage 8a (coarse foreground mask generation) is implemented in Milestone 7. Stage 8b (coarse-mask edge refinement and foreground-boundary cleanup) is implemented in Milestone 8. Stage 9 (crop-mode selection) and stage 10 (crop calculation) planning logic is implemented in Milestones 9 and 10. All other stages detailed in this document are planned future implementations.
+> Pipeline stage 1 (file signature validation), stage 2 (secure image decoding), stage 3 (EXIF orientation normalization), and stage 4 (source metadata extraction) are implemented in Milestone 3. Stage 5 (face detection), stage 6 (complete-head estimation), and stage 7 (source suitability analysis) are implemented in Milestones 5 and 6. Stage 8a (coarse foreground mask generation) is implemented in Milestone 7. Stage 8b (coarse-mask edge refinement and foreground-boundary cleanup) is implemented in Milestone 8. Stage 8c (background composition) is implemented in Milestone 11. Stage 9 (crop-mode selection) and stage 10 (crop calculation) planning logic is implemented in Milestones 9 and 10. All other stages detailed in this document are planned future implementations.
 
 > [!NOTE]
-> **Implementation sequencing note**: Crop planning (stages 9–10) was implemented before background composition (stage 8's full background-replacement pipeline) because crop window calculation depends only on face, head, and mask geometry — not on the final composited image. The full pipeline orchestration will reconcile execution order when background replacement, resizing, and compression stages are integrated in later milestones.
+> **Implementation sequencing note**: Crop planning (stages 9–10) was implemented before background composition (stage 8c) because crop window calculation depends only on face, head, and mask geometry — not on the final composited image. The full pipeline orchestration will reconcile execution order when background replacement, resizing, and compression stages are integrated in later milestones.
 
 ---
 
@@ -134,6 +134,16 @@
 - **Privacy Considerations**: Alpha masks, binary masks, and trimaps are kept strictly in-memory during the session.
 - **Status**: **Refined mask and trimap generation implemented (Milestone 8)**
 - **Dependencies**: None (pure NumPy/PIL deterministic morphological operations).
+
+### 8c. Solid Background Composition
+- **Purpose**: Place the candidate foreground accurately and cleanly over a compliant solid-colour background without altering their original identity.
+- **Inputs**: Original normalized image, refined alpha mask, configured target background colour.
+- **Outputs**: Composed RGB/RGBA image, validation metrics.
+- **Failure Conditions**: Invalid dimensions, mask mismatch, insufficient foreground coverage, target colour rejected.
+- **Warning/Info Conditions**: Minimal clipping risk at boundaries.
+- **Privacy Considerations**: Does not hallucinate or alter candidate pixels; uses mathematical alpha composite of the original image source.
+- **Status**: **Implemented (Milestone 11)**
+- **Dependencies**: `SolidBackgroundComposer` (pure NumPy/PIL).
 
 ### 9. Crop-mode Selection
 - **Purpose**: Choose Crop Mode A (exact aspect/size) or B (natural head framing with margins) based on the rule configuration.

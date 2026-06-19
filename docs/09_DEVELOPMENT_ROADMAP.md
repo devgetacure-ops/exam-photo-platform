@@ -85,11 +85,12 @@ This phase covers establishing directory, configuration, and interfaces foundati
 - **Exit Criteria**: Tests verify crop windows satisfy head-height ratio constraints and natural margins; benchmark confirms deterministic execution on all licensed fixtures.
 - **Status**: **Completed (Milestone 10: head-led range crop planning baseline)**
 
-#### Milestone 11: Image Resizing & Enhancement
-- **Objective**: Implement high-quality image resizing (LANCZOS/Bicubic) and exposure, contrast, and sharpness adjustments.
-- **Dependencies**: Milestone 3, Milestone 9, Milestone 10.
-- **Expected Deliverables**: Resize utility, luminance correction filter, and unsharp mask filter.
-- **Exit Criteria**: Output resolution matches rule criteria exactly, and processed image sharpness metrics pass suitability tests.
+#### Milestone 11: Background Composition
+- **Objective**: Implement the first safe, deterministic background replacement / background composition baseline for exam-photo processing.
+- **Dependencies**: Milestone 8, Milestone 9, Milestone 10.
+- **Expected Deliverables**: `BackgroundComposer` protocol, `SolidBackgroundComposer`, CLI `compose-background`, and benchmarks.
+- **Exit Criteria**: Output correctly composites the foreground onto the target colour, validation rules block invalid dimensions/coverage, and benchmark passes on fixtures.
+- **Status**: **Completed (Milestone 11)**
 
 #### Milestone 12: Quality-Aware Compression Loop
 - **Objective**: Implement an iterative file compression loop to compress the normalized, cropped image to be close to but strictly under the maximum byte size limit.

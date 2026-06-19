@@ -215,3 +215,12 @@ This log tracks architectural and product decisions, open questions, and recomme
 
 
 
+
+### DEC-018: Background Composition Baseline
+- **Date**: 2026-06-19
+- **Status**: Approved
+- **Problem**: Selection and integration of local deterministic background replacement for rules requiring solid backgrounds.
+- **Decision**: Adopt SolidBackgroundComposer as the baseline composer.
+- **Reasoning**: It ensures safe background composition without altering identity, leverages the refined alpha mask from Milestone 8, and is deterministic.
+- **Affected Modules**: services/image-engine/providers/background_composers/solid_background_composer.py
+- **Approval Owner**: Lead Architect

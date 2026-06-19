@@ -334,6 +334,55 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
         help="Safety margin in pixels for boundary checks.",
     )
 
+    # compose-background subcommand
+    bg_parser = subparsers.add_parser(
+        "compose-background",
+        help="Compose candidate foreground onto a solid background.",
+    )
+    bg_parser.add_argument(
+        "--input", required=True, help="Path to the image file to process."
+    )
+    bg_parser.add_argument(
+        "--target-colour", default="#FFFFFF", help="Hex color code for background."
+    )
+    bg_parser.add_argument(
+        "--alpha-threshold", type=float, help="Alpha threshold for foreground coverage."
+    )
+    bg_parser.add_argument(
+        "--allow-transparent-output",
+        action="store_true",
+        help="Generate RGBA instead of RGB output.",
+    )
+    bg_parser.add_argument(
+        "--face-model-path", help="Path to the face-detection model (.tflite)."
+    )
+    bg_parser.add_argument(
+        "--segmenter-model-path", help="Path to the segmenter model (.tflite)."
+    )
+    bg_parser.add_argument(
+        "--variant",
+        choices=["selfie_multiclass_256x256", "selfie_bin_general"],
+        help="Segmenter model variant to use.",
+    )
+    bg_parser.add_argument(
+        "--save-preview",
+        help="Optional path to save the composed image PNG.",
+    )
+    bg_parser.add_argument(
+        "--output-dir",
+        help="Optional path to save all outputs including composed image.",
+    )
+    bg_parser.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="Overwrite existing files when saving outputs.",
+    )
+    bg_parser.add_argument(
+        "--json",
+        action="store_true",
+        help="Output results in JSON format to stdout.",
+    )
+
     args = parser.parse_args(argv)
 
     if args.command == "validate-rule":
@@ -2005,6 +2054,332 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
                 logger.error("Failed to save output files", exc_info=True)
                 print("Code: CROP_B_PROVIDER_FAILED", file=sys.stderr)
                 print(f"Message: Failed to save crop preview: {e}", file=sys.stderr)
+                return 1
+
+        return 0
+
+    elif args.command == "compose-background":
+        # 1. Parse configuration
+        try:
+            from exam_photo.providers.background_composition import (
+                BackgroundCompositionConfig,
+            )
+
+            kwargs = {}
+            if args.target_colour:
+                kwargs["target_colour_hex"] = args.target_colour
+            if args.alpha_threshold is not None:
+                kwargs["alpha_threshold"] = args.alpha_threshold
+            if args.allow_transparent_output:
+                # validation says transparent is not allowed for solid colour modes, but let's pass it
+                kwargs["allow_transparent_output"] = args.allow_transparent_output
+            cfg_bg = BackgroundCompositionConfig(**kwargs)
+        except Exception as e:
+            print("Code: BACKGROUND_CONFIG_INVALID", file=sys.stderr)
+            print(f"Message: Invalid configuration options: {e}", file=sys.stderr)
+            return 1
+
+        # 2. Inspect and normalize input image
+        if not os.path.exists(args.input):
+            print("Error: Input file not found. Code: FILE_NOT_FOUND", file=sys.stderr)
+            return 1
+
+        try:
+            with open(args.input, "rb") as f_bin:
+                img_data = f_bin.read()
+        except Exception:
+            print(
+                "Error: Unable to read image file. Code: FILE_READ_FAILED",
+                file=sys.stderr,
+            )
+            return 1
+
+        try:
+            input_path = args.input
+            limits = InputLimits()
+            norm_result = normalize_image_input(img_data, input_path, limits)
+        except ImageInspectionError as e:
+            print(f"Error: Image inspection failed. Code: {e.code}", file=sys.stderr)
+            return 1
+        except Exception:
+            print(
+                "Error: Image normalization failed. Code: IMAGE_NORMALIZATION_FAILED",
+                file=sys.stderr,
+            )
+            return 1
+
+        # 3. Detect faces using MediapipeFaceDetector
+        try:
+            from exam_photo.providers.mediapipe_face_detector import (
+                MediapipeFaceDetector,
+            )
+        except ImportError:
+            print(
+                "Error: MediaPipe face detector provider dependencies are not installed. Code: DEPENDENCY_MISSING",
+                file=sys.stderr,
+            )
+            return 1
+
+        repo_root = find_repo_root()
+        face_model_path_str = args.face_model_path
+        face_expected_sha256 = ""
+
+        if not face_model_path_str:
+            face_model_path_str = os.environ.get("EXAM_PHOTO_FACE_MODEL_PATH")
+            face_expected_sha256 = os.environ.get("EXAM_PHOTO_FACE_MODEL_SHA256", "")
+
+        if not face_model_path_str:
+            manifest_path = repo_root / "model-manifests" / "face-detector.json"
+            if manifest_path.exists():
+                try:
+                    with open(manifest_path, "r", encoding="utf-8") as mf:
+                        manifest = json.load(mf)
+                    face_model_path_str = manifest.get("local_model_path_default")
+                    face_expected_sha256 = manifest.get("sha256", "")
+                except Exception:
+                    pass
+            if not face_model_path_str:
+                face_model_path_str = "model-assets/blaze_face_short_range.tflite"
+
+        face_model_path = Path(face_model_path_str)
+        if not face_model_path.is_absolute():
+            face_model_path = repo_root / face_model_path
+
+        face = None
+        face_detections_count = 0
+        if face_model_path.exists():
+            try:
+                detector_bg = MediapipeFaceDetector(
+                    model_path=face_model_path,
+                    expected_sha256=face_expected_sha256,
+                )
+                with detector_bg:
+                    face_result_bg = detector_bg.detect_faces(norm_result.image)
+                face_detections_count = len(face_result_bg.detections)
+                if face_detections_count == 1:
+                    face = face_result_bg.detections[0]
+            except Exception:
+                pass
+
+        if face_detections_count == 0:
+            print("Code: BACKGROUND_INPUT_INVALID", file=sys.stderr)
+            print("Message: No face detected in the image.", file=sys.stderr)
+            return 1
+        elif face_detections_count > 1:
+            print("Code: BACKGROUND_INPUT_INVALID", file=sys.stderr)
+            print(
+                "Message: Multiple faces detected. Cannot compose a group.",
+                file=sys.stderr,
+            )
+            return 1
+
+        # 4. Estimate Head Bounding Box if exactly one face
+        head_box = None
+        if face is not None:
+            try:
+                estimator_bg = LandmarkGeometricHeadEstimator()
+                head_result_bg = estimator_bg.estimate_head(
+                    norm_result.image,
+                    face,
+                    face.landmarks,
+                    config={"minimum_face_confidence": min(0.5, face.confidence)},
+                )
+                head_box = head_result_bg.head_bounding_box
+            except Exception as e:
+                logger.warning("Head estimation failed", exc_info=True)
+                print(
+                    f"Warning: Head estimation failed ({e}). Falling back to face-only geometry.",
+                    file=sys.stderr,
+                )
+
+        # 5. Run segmenter and refiner
+        refined_mask_bg = None
+        try:
+            model_path_str = args.segmenter_model_path
+            expected_sha256 = ""
+
+            if not model_path_str:
+                model_path_str = os.environ.get("EXAM_PHOTO_SEGMENTER_MODEL_PATH")
+                expected_sha256 = os.environ.get(
+                    "EXAM_PHOTO_SEGMENTER_MODEL_SHA256", ""
+                )
+
+            if not model_path_str:
+                manifest_path = repo_root / "model-manifests" / "subject-segmenter.json"
+                if manifest_path.exists():
+                    try:
+                        with open(manifest_path, "r", encoding="utf-8") as mf:
+                            manifest = json.load(mf)
+                        variant_name = args.variant or manifest.get(
+                            "selected_variant", "selfie_bin_general"
+                        )
+                        variants = manifest.get("variants", {})
+                        variant = variants.get(variant_name)
+                        if variant is not None:
+                            filename = variant.get("filename")
+                            if filename:
+                                model_path_str = "model-assets/" + filename
+                                expected_sha256 = variant.get("sha256", "")
+                    except Exception:
+                        pass
+
+            if not model_path_str:
+                raise FileNotFoundError("Segmenter model path not configured.")
+
+            model_path = Path(model_path_str)
+            if not model_path.is_absolute():
+                model_path = repo_root / model_path
+
+            if not model_path.exists():
+                raise FileNotFoundError(
+                    f"Segmenter model file not found at {model_path}."
+                )
+
+            from exam_photo.providers.refiners.morphological_refiner import (
+                MorphologicalForegroundRefiner,
+            )
+            from exam_photo.providers.segmenters.mediapipe_segmenter import (
+                MediapipeSubjectSegmenter,
+            )
+
+            segmenter_bg = MediapipeSubjectSegmenter(model_path, expected_sha256)
+            with segmenter_bg:
+                seg_result_bg = segmenter_bg.segment_subject(
+                    norm_result.image, face=face
+                )
+
+            refiner_bg = MorphologicalForegroundRefiner()
+            ref_result_bg = refiner_bg.refine_mask(
+                coarse_mask=seg_result_bg.coarse_mask,
+                probability_mask=seg_result_bg.probability_mask,
+                face=face,
+                head_estimate=head_box,
+            )
+            refined_mask_bg = ref_result_bg.refined_alpha_mask
+        except Exception as e:
+            logger.warning("Mask refinement failed", exc_info=True)
+            print(
+                f"Error: Mask refinement failed ({e}). Background composition requires a valid alpha mask.",
+                file=sys.stderr,
+            )
+            return 1
+
+        # 6. Execute Background Composer
+        try:
+            from exam_photo.providers.background_composers.solid_background_composer import (
+                SolidBackgroundComposer,
+            )
+        except ImportError:
+            print("Code: BACKGROUND_PROVIDER_FAILED", file=sys.stderr)
+            print(
+                "Message: SolidBackgroundComposer cannot be imported.",
+                file=sys.stderr,
+            )
+            return 1
+
+        composer = SolidBackgroundComposer()
+        try:
+            bg_result = composer.compose_background(
+                image=norm_result.image,
+                refined_alpha_mask=refined_mask_bg,
+                config=cfg_bg,
+                crop_box=None,
+            )
+        except Exception as e:
+            logger.error("Background composition failed internally", exc_info=True)
+            print("Code: BACKGROUND_PROVIDER_FAILED", file=sys.stderr)
+            print(
+                f"Message: Background composer failed internally: {e}", file=sys.stderr
+            )
+            return 1
+
+        # 7. Output results
+        if args.json:
+            print(bg_result.model_dump_json(indent=2))
+        else:
+            bg_val = bg_result.validation
+            print("Success: Background composition finished successfully.")
+
+            print(
+                f"  Provider: {bg_result.provider_name} v{bg_result.provider_version}"
+            )
+            print(f"  Target Colour: {bg_result.target_colour_hex}")
+            print(
+                f"  Composed Size: {bg_result.composed_width}x{bg_result.composed_height}"
+            )
+            if bg_result.foreground_coverage_ratio is not None:
+                print(
+                    f"  Foreground Coverage: {bg_result.foreground_coverage_ratio:.4f}"
+                )
+
+            print(f"  Is Valid: {bg_val.is_valid}")
+            if bg_val.issue_codes:
+                print("\n  Issue Codes Detected:")
+                for code in bg_val.issue_codes:
+                    print(f"    - {code}")
+
+        if not bg_val.is_valid:
+            if not args.json:
+                print("Error: Background composition is invalid.", file=sys.stderr)
+            return 1
+
+        # 8. Save preview image if requested
+        if args.save_preview or args.output_dir:
+            try:
+
+                def check_save_path(
+                    path_str: str, input_str: str, overwrite: bool
+                ) -> Path:
+                    p = Path(path_str).resolve()
+                    inp = Path(input_str).resolve()
+                    if p == inp:
+                        raise ValueError(
+                            f"Output path cannot equal input path: {path_str}"
+                        )
+                    if p.exists() and not overwrite:
+                        raise ValueError(
+                            f"Output file already exists: {path_str}. Use --overwrite to override."
+                        )
+                    if not p.parent.exists():
+                        raise ValueError(f"Parent directory does not exist: {p.parent}")
+                    return p
+
+                if args.save_preview:
+                    p = check_save_path(args.save_preview, args.input, args.overwrite)
+                    img = bg_result.composed_image
+                    if img is not None:
+                        img.save(p)
+                        if not args.json:
+                            print(f"  Saved composed image to {p}")
+
+                if args.output_dir:
+                    out_dir = Path(args.output_dir).resolve()
+                    inp = Path(args.input).resolve()
+                    if out_dir == inp:
+                        raise ValueError(
+                            f"Output directory cannot equal input path: {args.output_dir}"
+                        )
+                    tp = out_dir / "composed_background.png"
+                    if tp == inp:
+                        raise ValueError(
+                            f"Output target file conflicts with input path: {tp}"
+                        )
+                    if tp.exists() and not args.overwrite:
+                        raise ValueError(
+                            f"Output file composed_background.png already exists in {out_dir}. Use --overwrite to override."
+                        )
+
+                    out_dir.mkdir(parents=True, exist_ok=True)
+                    img2 = bg_result.composed_image
+                    if img2 is not None:
+                        img2.save(tp)
+                        if not args.json:
+                            print(f"  Saved composed image to directory: {out_dir}")
+
+            except Exception as e:
+                logger.error("Failed to save output files", exc_info=True)
+                print("Code: BACKGROUND_PROVIDER_FAILED", file=sys.stderr)
+                print(f"Message: Failed to save composed image: {e}", file=sys.stderr)
                 return 1
 
         return 0

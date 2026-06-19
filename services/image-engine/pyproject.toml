@@ -70,9 +70,5 @@ markers = [
     "mandatory_refinement: real refinement tests required for Milestone 8 completion",
     "mandatory_crop: real exact-aspect crop tests required for Milestone 9 completion",
     "mandatory_crop_b: real natural range crop tests required for Milestone 10 completion",
+    "mandatory_background: real background removal tests",
 ]
-
-
-
-
-

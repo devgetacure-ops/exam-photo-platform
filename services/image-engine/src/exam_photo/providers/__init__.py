@@ -1,3 +1,15 @@
+from exam_photo.providers.background_composers.solid_background_composer import (
+    SolidBackgroundComposer,
+)
+from exam_photo.providers.background_composition import (
+    BackgroundComposer,
+    BackgroundCompositionConfig,
+    BackgroundCompositionIssueCode,
+    BackgroundCompositionResult,
+    BackgroundCompositionValidationIssue,
+    BackgroundCompositionValidationReport,
+    BackgroundMode,
+)
 from exam_photo.providers.capabilities import ProviderCapabilities
 from exam_photo.providers.crop_planners.deterministic_crop_mode_b_planner import (
     DeterministicCropModeBPlanner,
@@ -91,6 +103,14 @@ __all__ = [
     "CropModeBConfig",
     "CropModeBResult",
     "DeterministicCropModeBPlanner",
+    "BackgroundMode",
+    "BackgroundCompositionIssueCode",
+    "BackgroundCompositionValidationIssue",
+    "BackgroundCompositionConfig",
+    "BackgroundCompositionValidationReport",
+    "BackgroundCompositionResult",
+    "BackgroundComposer",
+    "SolidBackgroundComposer",
 ]
 
 # MediapipeFaceDetector and MediapipeSubjectSegmenter are exported lazily
