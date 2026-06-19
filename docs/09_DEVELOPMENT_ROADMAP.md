@@ -92,23 +92,23 @@ This phase covers establishing directory, configuration, and interfaces foundati
 - **Exit Criteria**: Output correctly composites the foreground onto the target colour, validation rules block invalid dimensions/coverage, and benchmark passes on fixtures.
 - **Status**: **Completed (Milestone 11)**
 
-#### Milestone 12: Quality-Aware Compression Loop
-- **Objective**: Implement an iterative file compression loop to compress the normalized, cropped image to be close to but strictly under the maximum byte size limit.
-- **Dependencies**: Milestone 3, Milestone 11.
+#### Milestone 12: Resizing, output dimensioning, format preparation, restrained enhancement
+- **Objective**: Implement high-quality image resizing (LANCZOS/Bicubic), prepare formatting, and handle exposure, contrast, and sharpness adjustments.
+- **Dependencies**: Milestone 3, Milestone 9, Milestone 10, Milestone 11.
+- **Expected Deliverables**: Resize utility, format conversion, luminance correction filter, and unsharp mask filter.
+- **Exit Criteria**: Output resolution matches rule criteria exactly, and processed image sharpness metrics pass suitability tests.
+
+#### Milestone 13: Quality-Aware Compression Loop
+- **Objective**: Implement an iterative file compression loop to compress the normalized, cropped, and resized image to be close to but strictly under the maximum byte size limit.
+- **Dependencies**: Milestone 12.
 - **Expected Deliverables**: Iterative encoder optimizer, target file size compliance validator.
 - **Exit Criteria**: Test cases assert output files comply with rules' file size limits while maintaining visual quality.
 
-#### Milestone 13: CLI Execution & Rule Matching
+#### Milestone 14: Full CLI orchestration and final validation
 - **Objective**: Connect the CLI to run the full pipeline (normalization, suitability, crop, remove background, enhance, compress) against configured rules.
-- **Dependencies**: Milestones 2, 7, 8, 9, 10, 11, 12.
+- **Dependencies**: Milestones 2, 7, 8, 9, 10, 11, 12, 13.
 - **Expected Deliverables**: Integrated end-to-end CLI command handlers.
 - **Exit Criteria**: Running CLI with a rule file and input image outputs a processed compliant photo or structured compliance failures.
-
-#### Milestone 14: Application API & Deletion Lifecycle
-- **Objective**: Create a secure FastAPI backend to serve processing requests, retrieve cycle rules, and clean up uploaded files.
-- **Dependencies**: Milestone 13, docs/05_PRIVACY_SECURITY.md.
-- **Expected Deliverables**: REST endpoints, temporary upload handler, and background deletion worker tasks.
-- **Exit Criteria**: Audit logs verify complete removal of files after session expiry or download.
 
 #### Milestone 15: Web Frontend & Admin Dashboard
 - **Objective**: Build the public Next.js single-page application and the rule configuration admin dashboard.

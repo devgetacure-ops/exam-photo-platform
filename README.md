@@ -12,11 +12,12 @@ This platform processes candidate photographs by checking and conforming them to
 ## 2. Current Repository Status & Milestone Scope
 
 > [!NOTE]
-> This repository has implemented **Milestone 10: provisional head-led Crop Mode B planning baseline locally, pending CI validation.**
+> This repository has implemented **Milestone 11: Background Composition baseline locally; repository verification pending visible CI run.**
 > - **Input image normalization and suitability evaluation are fully implemented.**
 > - **Local face-detection (MediaPipe), geometric head-box estimation, and CPU-capable portrait segmentation are fully integrated and verified.**
-> - **Crop Mode A (Exact aspect crop planning) and Crop Mode B (Face/Head-led natural range crop planning) are implemented locally; repository-verification pending CI workflow update and benchmark-gate hardening.**
-> - **Automated background replacement and resizing are scheduled for next milestones.**
+> - **Crop Mode A (Exact aspect crop planning) and Crop Mode B (Face/Head-led natural range crop planning) are fully integrated and verified.**
+> - **Background composition is implemented locally; repository verification pending visible CI run.**
+> - **Resizing and compression are scheduled for next milestones.**
 
 ### What is Implemented:
 * Repository directory structure, configuration templates, and Git policies.
@@ -29,10 +30,10 @@ This platform processes candidate photographs by checking and conforming them to
 * Geometry models (BoundingBox, Point) with safety clamping math.
 * Crop Mode A exact-aspect crop planning CLI and provider interfaces.
 * Crop Mode B face/head-led natural range crop planning CLI and provider interfaces.
+* Solid Background Composition with foreground coverage validation and clipping risk detection.
 
 ### What is NOT Implemented:
-* Background replacement/removal algorithms (scheduled for future milestones).
-* final resizing, compression, and output compressed photo generation (scheduled for future milestones).
+* Final resizing, compression, and output compressed photo generation (scheduled for future milestones).
 * Public and admin console web applications.
 * Production databases, authentication, payments, storage lifecycle handlers.
 

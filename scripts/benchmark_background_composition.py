@@ -120,7 +120,10 @@ def main() -> int:
                 face_count = len(face_res.detections)
                 if face_count == 1:
                     face = face_res.detections[0]
-            except Exception:
+            except Exception as e:
+                if expect_bg.get("expected_valid", True):
+                    print(f"ERROR: Face detection crashed on valid fixture {src_name}: {e}", file=sys.stderr)
+                    failed = True
                 pass
 
         # 2. Head estimation
@@ -134,7 +137,10 @@ def main() -> int:
                     config={"minimum_face_confidence": min(0.5, face.confidence)},
                 )
                 head_box = head_res.head_bounding_box
-            except Exception:
+            except Exception as e:
+                if expect_bg.get("expected_valid", True):
+                    print(f"ERROR: Head estimation crashed on valid fixture {src_name}: {e}", file=sys.stderr)
+                    failed = True
                 pass
 
         # 3. Refined mask
@@ -150,7 +156,10 @@ def main() -> int:
                     head_estimate=head_box,
                 )
                 refined_alpha_mask = ref_res.refined_alpha_mask
-            except Exception:
+            except Exception as e:
+                if expect_bg.get("expected_valid", True):
+                    print(f"ERROR: Segmentation/Refinement crashed on valid fixture {src_name}: {e}", file=sys.stderr)
+                    failed = True
                 pass
 
         # 4. Compose Background
