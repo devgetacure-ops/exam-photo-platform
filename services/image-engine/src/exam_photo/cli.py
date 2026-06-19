@@ -2559,7 +2559,7 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
                 ref_res = refiner.refine_mask(
                     coarse_mask=seg_res.coarse_mask,
                     probability_mask=seg_res.probability_mask,
-                    face=face_res.detections,
+                    face=face_res.detections[0],
                     head_estimate=head_res.head_bounding_box,
                 )
 
