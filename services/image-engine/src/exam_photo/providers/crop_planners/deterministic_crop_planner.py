@@ -321,9 +321,12 @@ class DeterministicCropPlanner(CropPlanner):
             add_issue(CropIssueCode.CROP_SIDE_HEAD_RISK, IssueSeverity.WARNING, False)
 
         # 8. Aspect and Centering errors
-        actual_crop_width = ideal_r_rounded - ideal_l_rounded
-        actual_crop_height = ideal_b_rounded - ideal_t_rounded
-        crop_aspect_ratio = actual_crop_width / actual_crop_height
+        ideal_crop_width = ideal_r_rounded - ideal_l_rounded
+        ideal_crop_height = ideal_b_rounded - ideal_t_rounded
+        crop_box_width = clamped_r - clamped_l
+        crop_box_height = clamped_b - clamped_t
+
+        crop_aspect_ratio = ideal_crop_width / ideal_crop_height
         aspect_ratio_error = abs(crop_aspect_ratio - target_aspect)
         aspect_ratio_valid = aspect_ratio_error <= 1e-4
 
@@ -333,8 +336,8 @@ class DeterministicCropPlanner(CropPlanner):
             )
 
         # Centering check
-        face_center_x_ratio = (face_cx - ideal_l_rounded) / actual_crop_width
-        face_center_y_ratio = (face_cy - ideal_t_rounded) / actual_crop_height
+        face_center_x_ratio = (face_cx - ideal_l_rounded) / ideal_crop_width
+        face_center_y_ratio = (face_cy - ideal_t_rounded) / ideal_crop_height
 
         face_centering_valid = (
             abs(face_center_x_ratio - 0.5) <= 0.05
@@ -379,6 +382,10 @@ class DeterministicCropPlanner(CropPlanner):
             bottom_margin_px=bottom_margin_px,
             left_margin_px=left_margin_px,
             right_margin_px=right_margin_px,
+            head_estimate_unavailable=(head_estimate is None),
+            segmentation_refinement_failed_or_skipped=(refined_mask is None),
+            mask_aware_validation_unavailable=(refined_mask is None),
+            fallback_source="face-only geometry" if head_estimate is None else None,
         )
 
         duration = (time.perf_counter() - start_time) * 1000.0
@@ -389,8 +396,12 @@ class DeterministicCropPlanner(CropPlanner):
             crop_mode=CropMode.EXACT_ASPECT,
             crop_box=crop_box,
             ideal_crop_box=ideal_crop_box,
-            crop_width=actual_crop_width,
-            crop_height=actual_crop_height,
+            crop_width=crop_box_width,
+            crop_height=crop_box_height,
+            crop_box_width=crop_box_width,
+            crop_box_height=crop_box_height,
+            ideal_crop_width=ideal_crop_width,
+            ideal_crop_height=ideal_crop_height,
             crop_aspect_ratio=crop_aspect_ratio,
             target_aspect_ratio=target_aspect,
             aspect_ratio_error=aspect_ratio_error,
@@ -421,6 +432,10 @@ class DeterministicCropPlanner(CropPlanner):
             ideal_crop_box=BoundingBox(left=0.0, top=0.0, right=1.0, bottom=1.0),
             crop_width=1,
             crop_height=1,
+            crop_box_width=1,
+            crop_box_height=1,
+            ideal_crop_width=1,
+            ideal_crop_height=1,
             crop_aspect_ratio=1.0,
             target_aspect_ratio=1.0,
             aspect_ratio_error=0.0,

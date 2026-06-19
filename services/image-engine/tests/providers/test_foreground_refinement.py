@@ -12,12 +12,10 @@ from exam_photo.providers.refiners.errors import (
     RefinementInputError,
 )
 from exam_photo.providers.refiners.morphological_refiner import (
+    MorphologicalForegroundRefiner,
     _disk_offsets,
-    ltc1q0gq5ghan358l8y6unf2yz7s42efgnqcut0pvu6,
 )
 from tests.fakes.fake_foreground_refiner import FakeForegroundRefiner
-
-MorphologicalForegroundRefiner = ltc1q0gq5ghan358l8y6unf2yz7s42efgnqcut0pvu6
 
 
 def test_refinement_config_validation() -> None:
@@ -249,7 +247,7 @@ def test_fake_foreground_refiner() -> None:
 
 
 def test_refinement_nan_inf_range_validations() -> None:
-    refiner = ltc1q0gq5ghan358l8y6unf2yz7s42efgnqcut0pvu6()
+    refiner = MorphologicalForegroundRefiner()
     coarse = Image.new("L", (100, 100), 0)
 
     # NaN check
@@ -278,5 +276,5 @@ def test_refinement_nan_inf_range_validations() -> None:
 
 
 def test_provider_name_correctness() -> None:
-    refiner = ltc1q0gq5ghan358l8y6unf2yz7s42efgnqcut0pvu6()
-    assert refiner.provider_name == "ltc1q0gq5ghan358l8y6unf2yz7s42efgnqcut0pvu6"
+    refiner = MorphologicalForegroundRefiner()
+    assert refiner.provider_name == "MorphologicalForegroundRefiner"

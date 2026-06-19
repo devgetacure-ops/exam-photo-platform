@@ -264,3 +264,90 @@ def test_crop_mode_a_integration_fixtures() -> None:
         assert crop_res.crop_box.right <= img.width
         assert crop_res.crop_box.top >= 0
         assert crop_res.crop_box.bottom <= img.height
+
+
+def test_crop_mode_a_invalid_cases_unit() -> None:
+    planner = DeterministicCropPlanner()
+    cfg = CropConfig(target_width=300, target_height=400)
+
+    # Unit test: face is None
+    res = planner.plan_crop(
+        image_width=100,
+        image_height=100,
+        face=None,  # type: ignore
+        head_estimate=None,
+        config=cfg,
+    )
+    assert res.validation.is_valid is False
+    assert CropIssueCode.CROP_INPUT_INVALID in res.validation.issue_codes
+    assert res.crop_width == 1
+    assert res.crop_height == 1
+
+
+def test_crop_mode_a_invalid_cases_cli(
+    capsys: pytest.CaptureFixture[str], tmp_path: Path
+) -> None:
+    from exam_photo.cli import main
+
+    # Find repository root
+    curr = Path(__file__).resolve().parent
+    repo_root = None
+    for _ in range(5):
+        if (curr / "AGENTS.md").exists():
+            repo_root = curr
+            break
+        curr = curr.parent
+
+    assert repo_root is not None, "Could not find repository root"
+
+    # 1. No face case: violin_test.jpg
+    violin_path = repo_root / "services" / "image-engine" / "violin_test.jpg"
+    assert violin_path.exists(), f"violin_test.jpg not found at {violin_path}"
+
+    preview_path = tmp_path / "violin_preview.png"
+    exit_code = main(
+        [
+            "plan-crop-mode-a",
+            "--input",
+            str(violin_path),
+            "--target-width",
+            "300",
+            "--target-height",
+            "400",
+            "--save-preview",
+            str(preview_path),
+        ]
+    )
+
+    assert exit_code == 1
+    captured = capsys.readouterr()
+    assert "CROP_INPUT_INVALID" in captured.err
+    # Verify no preview image was saved
+    assert not preview_path.exists()
+
+    # 2. Multi-face case: roosevelt_muir_yosemite.jpg
+    yosemite_path = repo_root / "tests" / "fixtures" / "roosevelt_muir_yosemite.jpg"
+    assert yosemite_path.exists(), (
+        f"roosevelt_muir_yosemite.jpg not found at {yosemite_path}"
+    )
+
+    preview_path_yosemite = tmp_path / "yosemite_preview.png"
+    exit_code_y = main(
+        [
+            "plan-crop-mode-a",
+            "--input",
+            str(yosemite_path),
+            "--target-width",
+            "300",
+            "--target-height",
+            "400",
+            "--save-preview",
+            str(preview_path_yosemite),
+        ]
+    )
+
+    assert exit_code_y == 1
+    captured_y = capsys.readouterr()
+    assert "CROP_INPUT_INVALID" in captured_y.err
+    # Verify no preview image was saved
+    assert not preview_path_yosemite.exists()

@@ -43,6 +43,8 @@ class CropValidationIssue(BaseModel):
 
 
 class CropConfig(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     target_width: Optional[int] = None
     target_height: Optional[int] = None
     target_aspect_ratio: Optional[float] = None
@@ -88,6 +90,18 @@ class CropConfig(BaseModel):
         ):
             raise ValueError("target_aspect_ratio must be positive and finite.")
 
+        # Enforce target aspect ratio consistency if both are provided
+        if has_dims and has_aspect:
+            assert self.target_width is not None
+            assert self.target_height is not None
+            assert self.target_aspect_ratio is not None
+            resolved = self.target_width / self.target_height
+            if abs(resolved - self.target_aspect_ratio) > 1e-4:
+                raise ValueError(
+                    f"Conflicting target aspect ratio. Resolved from dimensions: "
+                    f"{resolved:.4f}, but target_aspect_ratio was: {self.target_aspect_ratio:.4f}"
+                )
+
         return self
 
 
@@ -105,6 +119,10 @@ class CropValidationReport(BaseModel):
     bottom_margin_px: Optional[int] = None
     left_margin_px: Optional[int] = None
     right_margin_px: Optional[int] = None
+    head_estimate_unavailable: bool = False
+    segmentation_refinement_failed_or_skipped: bool = False
+    mask_aware_validation_unavailable: bool = False
+    fallback_source: Optional[str] = None
 
 
 class CropPlanResult(BaseModel):
@@ -117,6 +135,10 @@ class CropPlanResult(BaseModel):
     ideal_crop_box: Optional[BoundingBox] = None
     crop_width: int
     crop_height: int
+    crop_box_width: int
+    crop_box_height: int
+    ideal_crop_width: int
+    ideal_crop_height: int
     crop_aspect_ratio: float
     target_aspect_ratio: float
     aspect_ratio_error: float

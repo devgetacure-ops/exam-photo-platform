@@ -14,7 +14,7 @@ sys.path.insert(0, str(repo_root / "services" / "image-engine" / "src"))
 
 from exam_photo.providers.mediapipe_face_detector import MediapipeFaceDetector
 from exam_photo.providers.segmenters.mediapipe_segmenter import MediapipeSubjectSegmenter
-from exam_photo.providers.refiners.morphological_refiner import ltc1q0gq5ghan358l8y6unf2yz7s42efgnqcut0pvu6
+from exam_photo.providers.refiners.morphological_refiner import MorphologicalForegroundRefiner
 from exam_photo.providers.foreground_refinement import RefinementConfig
 
 
@@ -63,9 +63,9 @@ def main() -> int:
     face_detector_05 = MediapipeFaceDetector(face_model_path, face_sha, min_detection_confidence=0.5)
     face_detector_02 = MediapipeFaceDetector(face_model_path, face_sha, min_detection_confidence=0.2)
     segmenter = MediapipeSubjectSegmenter(seg_model_path, seg_sha)
-    refiner = ltc1q0gq5ghan358l8y6unf2yz7s42efgnqcut0pvu6()
+    refiner = MorphologicalForegroundRefiner()
 
-    assert refiner.provider_name == "ltc1q0gq5ghan358l8y6unf2yz7s42efgnqcut0pvu6", (
+    assert refiner.provider_name == "MorphologicalForegroundRefiner", (
         f"Stale provider name: {refiner.provider_name}"
     )
 

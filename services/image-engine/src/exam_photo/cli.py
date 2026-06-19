@@ -195,7 +195,7 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
     # plan-crop-mode-a subcommand
     crop_parser = subparsers.add_parser(
         "plan-crop-mode-a",
-        help="Run subject segmentation and mask refinement on an image.",
+        help="Plan exact-aspect crop (Crop Mode A) for an image.",
     )
     crop_parser.add_argument(
         "--input", required=True, help="Path to the image file to process."
@@ -1042,7 +1042,7 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
                 RefinementOutputError,
             )
             from exam_photo.providers.refiners.morphological_refiner import (
-                ltc1q0gq5ghan358l8y6unf2yz7s42efgnqcut0pvu6,
+                MorphologicalForegroundRefiner,
             )
 
             ref_config = RefinementConfig()
@@ -1050,7 +1050,7 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
                 ref_config.morphology_radius_px = args.radius
                 ref_config.morphology_radius_ratio = None
 
-            refiner = ltc1q0gq5ghan358l8y6unf2yz7s42efgnqcut0pvu6()
+            refiner = MorphologicalForegroundRefiner()
             ref_result = refiner.refine_mask(
                 coarse_mask=seg_result.coarse_mask,
                 probability_mask=seg_result.probability_mask,
@@ -1300,8 +1300,12 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
                     config={"minimum_face_confidence": min(0.5, face.confidence)},
                 )
                 head_box = head_result.head_bounding_box
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("Head estimation failed", exc_info=True)
+                print(
+                    f"Warning: Head estimation failed ({e}). Falling back to face-only geometry.",
+                    file=sys.stderr,
+                )
 
         # 6. Run segmenter and refiner if requested and not skipped
         refined_mask = None
@@ -1338,37 +1342,43 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
                         except Exception:
                             pass
 
-                if model_path_str:
-                    model_path = Path(model_path_str)
-                    if not model_path.is_absolute():
-                        model_path = repo_root / model_path
+                if not model_path_str:
+                    raise FileNotFoundError("Segmenter model path not configured.")
 
-                    if model_path.exists():
-                        from exam_photo.providers.refiners.morphological_refiner import (
-                            ltc1q0gq5ghan358l8y6unf2yz7s42efgnqcut0pvu6,
-                        )
-                        from exam_photo.providers.segmenters.mediapipe_segmenter import (
-                            MediapipeSubjectSegmenter,
-                        )
+                model_path = Path(model_path_str)
+                if not model_path.is_absolute():
+                    model_path = repo_root / model_path
 
-                        segmenter = MediapipeSubjectSegmenter(
-                            model_path, expected_sha256
-                        )
-                        with segmenter:
-                            seg_result = segmenter.segment_subject(
-                                norm_result.image, face=face
-                            )
+                if not model_path.exists():
+                    raise FileNotFoundError(
+                        f"Segmenter model file not found at {model_path}."
+                    )
 
-                        refiner = ltc1q0gq5ghan358l8y6unf2yz7s42efgnqcut0pvu6()
-                        ref_result = refiner.refine_mask(
-                            coarse_mask=seg_result.coarse_mask,
-                            probability_mask=seg_result.probability_mask,
-                            face=face,
-                            head_estimate=head_box,
-                        )
-                        refined_mask = ref_result.refined_binary_mask
-            except Exception:
-                pass
+                from exam_photo.providers.refiners.morphological_refiner import (
+                    MorphologicalForegroundRefiner,
+                )
+                from exam_photo.providers.segmenters.mediapipe_segmenter import (
+                    MediapipeSubjectSegmenter,
+                )
+
+                segmenter = MediapipeSubjectSegmenter(model_path, expected_sha256)
+                with segmenter:
+                    seg_result = segmenter.segment_subject(norm_result.image, face=face)
+
+                refiner = MorphologicalForegroundRefiner()
+                ref_result = refiner.refine_mask(
+                    coarse_mask=seg_result.coarse_mask,
+                    probability_mask=seg_result.probability_mask,
+                    face=face,
+                    head_estimate=head_box,
+                )
+                refined_mask = ref_result.refined_binary_mask
+            except Exception as e:
+                logger.warning("Optional mask refinement failed", exc_info=True)
+                print(
+                    f"Warning: Optional mask refinement failed ({e}). Proceeding without mask-aware validation.",
+                    file=sys.stderr,
+                )
 
         # 7. Execute Crop Planner
         if face is None:
@@ -1399,6 +1409,12 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
         else:
             crop_val = crop_result.validation
             print("Success: Foreground crop planning finished successfully.")
+            if crop_val.head_estimate_unavailable:
+                print("  WARNING: head estimate unavailable (using face-only geometry)")
+            if crop_val.segmentation_refinement_failed_or_skipped:
+                print(
+                    "  WARNING: segmentation/refinement skipped or failed (mask-aware validation unavailable)"
+                )
             print(
                 f"  Provider: {crop_result.provider_name} v{crop_result.provider_version}"
             )
@@ -1419,6 +1435,11 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
                 print("\n  Issue Codes Detected:")
                 for code in crop_val.issue_codes:
                     print(f"    - {code}")
+
+        if not crop_val.is_valid:
+            if not args.json:
+                print("Error: Crop plan is invalid.", file=sys.stderr)
+            return 1
 
         # 9. Save preview image if requested
         if args.save_preview or args.output_dir:

@@ -14,7 +14,7 @@ from exam_photo.providers.segmenters.mediapipe_segmenter import (  # noqa: E402
     MediapipeSubjectSegmenter,
 )
 from exam_photo.providers.refiners.morphological_refiner import (  # noqa: E402
-    ltc1q0gq5ghan358l8y6unf2yz7s42efgnqcut0pvu6,
+    MorphologicalForegroundRefiner,
 )
 from exam_photo.providers.landmark_geometric_head_estimator import (  # noqa: E402
     LandmarkGeometricHeadEstimator,
@@ -66,7 +66,7 @@ def main() -> int:
         face_model_path, face_sha, min_detection_confidence=0.2
     )
     segmenter = MediapipeSubjectSegmenter(seg_model_path, seg_sha)
-    refiner = ltc1q0gq5ghan358l8y6unf2yz7s42efgnqcut0pvu6()
+    refiner = MorphologicalForegroundRefiner()
     head_estimator = LandmarkGeometricHeadEstimator()
     planner = DeterministicCropPlanner()
 
@@ -148,6 +148,7 @@ def main() -> int:
             {
                 "fixture": src_name,
                 "expected_faces": expected_faces,
+                "expected_padding_required": entry.get("expected_padding_required", False),
                 "actual_faces": face_count,
                 "crop_width": crop_res.crop_width,
                 "crop_height": crop_res.crop_height,
@@ -204,25 +205,30 @@ def main() -> int:
     # Enforce quality gates
     if args.require_real:
         for r in results:
-            # 1. Fail if a valid one-person fixture is invalid
+            # 1. Fail if a valid one-person fixture is invalid or has wrong padding
             if r["expected_faces"] == 1 and r["actual_faces"] == 1:
-                if not r["is_valid"]:
-                    # Wait, vivekananda might require padding or have warning/error due to tight head?
-                    # Let's check: if padding is required and allow_padding=False, is_valid will be False.
-                    # Let's check if the fixture naturally requires padding or passes.
-                    # Vivekananda has wide head coverings, and Freud has beard, single face frontal is good.
-                    # Let's print error if invalid but not fail unless we are sure it should be valid.
-                    # Wait, let's look at padding required.
-                    if r["padding_required"]:
-                        print(
-                            f"WARNING: Fixture {r['fixture']} requires padding (cannot crop without padding)."
-                        )
-                    else:
-                        print(
-                            f"ERROR: Crop planning failed unexpectedly on valid fixture: {r['fixture']}",
-                            file=sys.stderr,
-                        )
-                        failed = True
+                expected_padding = r["expected_padding_required"]
+                
+                # Check padding required flag
+                if r["padding_required"] != expected_padding:
+                    print(
+                        f"ERROR: Padding mismatch on {r['fixture']}. "
+                        f"Expected padding required: {expected_padding}, got: {r['padding_required']}",
+                        file=sys.stderr,
+                    )
+                    failed = True
+                
+                # Check overall validity
+                # If expected padding is True, allow_padding=False by default, so is_valid must be False.
+                # If expected padding is False, the crop is contained, so is_valid must be True.
+                expected_validity = not expected_padding
+                if r["is_valid"] != expected_validity:
+                    print(
+                        f"ERROR: Validity mismatch on {r['fixture']}. "
+                        f"Expected validity: {expected_validity}, got: {r['is_valid']}",
+                        file=sys.stderr,
+                    )
+                    failed = True
 
                 # Aspect ratio error tolerance
                 if r["aspect_ratio_error"] > 1e-4:

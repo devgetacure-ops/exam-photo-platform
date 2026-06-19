@@ -144,11 +144,11 @@ def _find_internal_holes(binary_mask: np.ndarray[Any, Any]) -> tuple[int, int]:
     return hole_count, int(round(max_hole_size * scale_factor))
 
 
-class ltc1q0gq5ghan358l8y6unf2yz7s42efgnqcut0pvu6(ForegroundRefinementProvider):  # noqa: N801
+class MorphologicalForegroundRefiner(ForegroundRefinementProvider):
     """Refiner that performs boundary morphological operations using pure NumPy/Pillow."""
 
     def __init__(self) -> None:
-        self.provider_name = "ltc1q0gq5ghan358l8y6unf2yz7s42efgnqcut0pvu6"
+        self.provider_name = "MorphologicalForegroundRefiner"
         self.provider_version = "1.0.0"
 
     def refine_mask(
@@ -833,6 +833,3 @@ class ltc1q0gq5ghan358l8y6unf2yz7s42efgnqcut0pvu6(ForegroundRefinementProvider):
             issue_codes=issue_codes,
             issues=issues,
         )
-
-
-MorphologicalForegroundRefiner = ltc1q0gq5ghan358l8y6unf2yz7s42efgnqcut0pvu6

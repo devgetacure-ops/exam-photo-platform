@@ -36,7 +36,6 @@ from exam_photo.providers.landmark_geometric_head_estimator import (
 from exam_photo.providers.model_errors import ModelChecksumError, ModelNotFoundError
 from exam_photo.providers.refiners.morphological_refiner import (
     MorphologicalForegroundRefiner,
-    ltc1q0gq5ghan358l8y6unf2yz7s42efgnqcut0pvu6,
 )
 from exam_photo.providers.subject_segmentation import (
     MaskValidationReport,
@@ -76,7 +75,6 @@ __all__ = [
     "RefinementConfig",
     "RefinementValidationIssue",
     "MorphologicalForegroundRefiner",
-    "ltc1q0gq5ghan358l8y6unf2yz7s42efgnqcut0pvu6",
     "CropMode",
     "CropIssueCode",
     "CropValidationIssue",
