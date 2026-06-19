@@ -85,6 +85,50 @@ jobs:
       run: |
         python -m exam_photo refine-mask --input tests/fixtures/single_face_frontal.jpg
 
+    - name: Run Crop Mode A Integration Tests
+      env:
+        EXAM_PHOTO_FACE_MODEL_PATH: model-assets/blaze_face_short_range.tflite
+        EXAM_PHOTO_FACE_MODEL_SHA256: b4578f35940bf5a1a655214a1cce5cab13eba73c1297cd78e1a04c2380b0152f
+        EXAM_PHOTO_SEGMENTER_MODEL_PATH: model-assets/selfie_segmentation.tflite
+        EXAM_PHOTO_SEGMENTER_MODEL_SHA256: 9ee168ec7c8f2a16c56fe8e1cfbc514974cbbb7e434051b455635f1bd1462f5c
+      run: |
+        pytest services/image-engine -m "mandatory_crop"
+
+    - name: Run Crop Mode B Integration Tests
+      env:
+        EXAM_PHOTO_FACE_MODEL_PATH: model-assets/blaze_face_short_range.tflite
+        EXAM_PHOTO_FACE_MODEL_SHA256: b4578f35940bf5a1a655214a1cce5cab13eba73c1297cd78e1a04c2380b0152f
+        EXAM_PHOTO_SEGMENTER_MODEL_PATH: model-assets/selfie_segmentation.tflite
+        EXAM_PHOTO_SEGMENTER_MODEL_SHA256: 9ee168ec7c8f2a16c56fe8e1cfbc514974cbbb7e434051b455635f1bd1462f5c
+      run: |
+        pytest services/image-engine -m "mandatory_crop_b"
+
+    - name: Run Crop Mode A Benchmark
+      run: |
+        python scripts/benchmark_crop_mode_a.py --require-real
+
+    - name: Run Crop Mode B Benchmark
+      run: |
+        python scripts/benchmark_crop_mode_b.py --require-real
+
+    - name: Verify plan-crop-mode-a CLI
+      env:
+        EXAM_PHOTO_FACE_MODEL_PATH: model-assets/blaze_face_short_range.tflite
+        EXAM_PHOTO_FACE_MODEL_SHA256: b4578f35940bf5a1a655214a1cce5cab13eba73c1297cd78e1a04c2380b0152f
+        EXAM_PHOTO_SEGMENTER_MODEL_PATH: model-assets/selfie_segmentation.tflite
+        EXAM_PHOTO_SEGMENTER_MODEL_SHA256: 9ee168ec7c8f2a16c56fe8e1cfbc514974cbbb7e434051b455635f1bd1462f5c
+      run: |
+        python -m exam_photo plan-crop-mode-a --input tests/fixtures/single_face_frontal.jpg --target-width 300 --target-height 400
+
+    - name: Verify plan-crop-mode-b CLI
+      env:
+        EXAM_PHOTO_FACE_MODEL_PATH: model-assets/blaze_face_short_range.tflite
+        EXAM_PHOTO_FACE_MODEL_SHA256: b4578f35940bf5a1a655214a1cce5cab13eba73c1297cd78e1a04c2380b0152f
+        EXAM_PHOTO_SEGMENTER_MODEL_PATH: model-assets/selfie_segmentation.tflite
+        EXAM_PHOTO_SEGMENTER_MODEL_SHA256: 9ee168ec7c8f2a16c56fe8e1cfbc514974cbbb7e434051b455635f1bd1462f5c
+      run: |
+        python -m exam_photo plan-crop-mode-b --input tests/fixtures/single_face_frontal.jpg --min-width 300 --max-width 450 --min-height 400 --max-height 600
+
     - name: Build package
       run: |
         pip install build

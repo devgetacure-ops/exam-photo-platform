@@ -207,6 +207,9 @@ class CropPlanner(Protocol):
 class CropModeBConfig(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
+    # Source-pixel crop constraints (enforced directly on the source-pixel crop window itself for compatibility guidance).
+    # Note: For final exam compliance, width/height ranges usually apply to final resized outputs.
+    # Since resizing is not yet implemented, these limits constrain the planned source crop window directly.
     min_width: Optional[int] = None
     max_width: Optional[int] = None
     min_height: Optional[int] = None

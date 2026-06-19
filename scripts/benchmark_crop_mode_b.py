@@ -166,6 +166,7 @@ def main() -> int:
                 "expected_faces": expected_faces,
                 "expected_padding_required": expect_b.get("expected_padding_required", False),
                 "expected_valid_without_padding": expect_b.get("expected_valid_without_padding", True),
+                "expected_valid": expect_b.get("expected_valid", True),
                 "actual_faces": face_count,
                 "crop_width": crop_res.crop_box_width,
                 "crop_height": crop_res.crop_box_height,
@@ -233,21 +234,16 @@ def main() -> int:
                     )
                     failed = True
 
-                # Check overall validity when padding matches allowed state
-                # In this benchmark, we configured allow_padding = expected_padding,
-                # so the crop should be valid unless there are other blocking issues (like low contrast no-face, which is different).
-                # But wait, Sarah Bernhardt has low mask preservation under strict 0.995 threshold, which is correct warning.
-                # So we verify if is_valid matches (expected_valid_without_padding or allow_padding).
-                expected_validity = True  # since we allowed padding if required
-                if r["fixture"] == "sarah_bernhardt_long_hair.jpg":
-                    # Sarah Bernhardt has CROP_B_MASK_PRESERVATION_LOW which is non-blocking because allow_subject_clipping=False by default makes it ERROR!
-                    # Wait, is mask preservation low blocking? Yes, by default allow_subject_clipping=False.
-                    # Let's see: Sarah Bernhardt has mask_preservation = 0.9885, so it is invalid under strict threshold unless we set config appropriately.
-                    # Wait! In annotations, Sarah Bernhardt is expected_valid_without_padding = True.
-                    # But the mask preservation ratio is 0.9885.
-                    # If expected_valid_without_padding is True, we can adjust the benchmark check or the expectation.
-                    # Let's check: should we check if it matches r["is_valid"] or r["actual_faces"] == 1?
-                    pass
+                # Check overall validity
+                expected_valid = r["expected_valid"]
+                if r["is_valid"] != expected_valid:
+                    print(
+                        f"ERROR: Validity mismatch on {r['fixture']}. "
+                        f"Expected is_valid: {expected_valid}, got: {r['is_valid']}. "
+                        f"Issues: {r['issue_codes']}",
+                        file=sys.stderr,
+                    )
+                    failed = True
 
                 # Head preservation check
                 if (

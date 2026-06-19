@@ -3,7 +3,7 @@
 This is the Python package foundation for the Indian Exam-Photo Compliance platform's image-processing engine.
 
 ## Status
-- **Status**: Milestone 10 completed: repository-verified provisional head-led Crop Mode B planning baseline.
+- **Status**: Milestone 10 implemented locally; repository-verification pending CI workflow update and benchmark-gate hardening.
 - **Milestone Reference**: Milestone 10 (Crop Mode B: Face/Head-Led Natural Range Crop Planning).
 
 ## Setup Instructions

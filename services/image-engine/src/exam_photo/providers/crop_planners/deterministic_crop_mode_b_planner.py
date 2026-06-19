@@ -20,7 +20,16 @@ from exam_photo.suitability.issue_codes import IssueSeverity
 
 
 class DeterministicCropModeBPlanner:
-    """Local deterministic crop planner implementation for Crop Mode B."""
+    """Local deterministic crop planner implementation for Crop Mode B.
+
+    IMPORTANT SIZING SEMANTICS NOTE:
+    For Indian exam photo specifications, target width and height ranges (e.g. min_width, max_width,
+    min_height, max_height) are typically requirements for the FINAL resized output image.
+    Because image resizing, scaling, and compression are out of scope for this planning milestone,
+    these ranges are currently evaluated as constraints directly on the SOURCE-PIXEL crop window
+    itself (i.e. compatibility planning). Resizing and final output generation will be implemented
+    in a future milestone, at which point these constraints will map to the resized output size.
+    """
 
     def __init__(self) -> None:
         self.provider_name = "DeterministicCropModeBPlanner"
