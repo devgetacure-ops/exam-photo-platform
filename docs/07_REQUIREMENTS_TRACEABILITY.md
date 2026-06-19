@@ -10,7 +10,7 @@ This matrix maps stable requirement identifiers to design documents, status indi
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | **PROD-001** | Selection of exam triggers rules | PDF Sec 1.1 | CONFIRMED | Documentation Complete | `apps/web`, `packages/exam-rules` | Search route assertions | Milestone 2 | First step in workflow |
 | **CROP-001** | Crop Mode A (Exact Size) | PDF Sec 5.3 | CONFIRMED | **Implemented (Milestone 9)** | `services/image-engine` | `test_crop_mode_a.py` | Milestone 9 | Aspect ratio preserved |
-| **CROP-002** | Crop Mode B (Ranges) | PDF Sec 5.3 | CONFIRMED | Not Implemented | `services/image-engine` | Tight cropping margins | Milestone 10 | Fallbacks applied |
+| **CROP-002** | Crop Mode B (Ranges) | PDF Sec 5.3 | CONFIRMED | **Implemented (Milestone 10)** | `services/image-engine` | `test_crop_mode_b.py` | Milestone 10 | Fallbacks applied |
 | **BG-001** | Background cleaning | PDF Sec 5.2 | CONFIRMED | Not Implemented | `services/image-engine` | Edge visual checks | Future | White background standard |
 | **SEG-001** | Portrait coarse segmentation | PDF Sec 5.2 | CONFIRMED | **Implemented (Milestone 7)** | `services/image-engine` | `test_subject_segmentation.py` | Milestone 7 | MediaPipe multiclass & binary segmenters |
 | **SEG-002** | Coarse-mask edge refinement and trimap | PDF Sec 5.2 | CONFIRMED | **Implemented (Milestone 8)** | `services/image-engine` | `test_foreground_refinement.py` | Milestone 8 | NumPy & PIL morphological operations |

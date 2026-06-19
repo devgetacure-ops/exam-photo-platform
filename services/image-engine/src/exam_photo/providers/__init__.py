@@ -1,4 +1,7 @@
 from exam_photo.providers.capabilities import ProviderCapabilities
+from exam_photo.providers.crop_planners.deterministic_crop_mode_b_planner import (
+    DeterministicCropModeBPlanner,
+)
 from exam_photo.providers.crop_planners.deterministic_crop_planner import (
     DeterministicCropPlanner,
 )
@@ -6,6 +9,8 @@ from exam_photo.providers.crop_planning import (
     CropConfig,
     CropIssueCode,
     CropMode,
+    CropModeBConfig,
+    CropModeBResult,
     CropPlanner,
     CropPlanResult,
     CropValidationIssue,
@@ -83,6 +88,9 @@ __all__ = [
     "CropPlanResult",
     "CropPlanner",
     "DeterministicCropPlanner",
+    "CropModeBConfig",
+    "CropModeBResult",
+    "DeterministicCropModeBPlanner",
 ]
 
 # MediapipeFaceDetector and MediapipeSubjectSegmenter are exported lazily

@@ -200,3 +200,17 @@ This log tracks architectural and product decisions, open questions, and recomme
 - **Approval Owner**: Lead Architect
 
 
+### DEC-017: Crop Mode B Head-Led Range Crop Planning
+- **Date**: 2026-06-19
+- **Status**: Approved
+- **Problem**: Selection and integration of local deterministic crop planning for rules specifying dimension and aspect ranges, rather than exact dimensions.
+- **Options Considered**:
+  - Option A: Force exact aspect crop using Crop Mode A planner. Pros: Reuses existing codebase. Cons: Does not allow utilizing flexible aspect and size ranges.
+  - Option B: Dedicated head-led range planner with aspect ratio clamping and boundary shifting. Pros: Uses head height ratio target for natural framing, supports range constraints, shifts crop box to prevent padding where possible, allows geometry-only fallback. Cons: More complex mathematically.
+- **Decision**: Adopt Option B (DeterministicCropModeBPlanner) with configuration and result schemas separated from Crop Mode A.
+- **Reasoning**: It cleanly separates exact aspect planning from range aspect planning, calculates natural head-led crops, validates constraints, and detects padding without synthesizing pixels.
+- **Affected Modules**: `services/image-engine/providers/crop_planners/deterministic_crop_mode_b_planner.py`, `services/image-engine/providers/crop_planning.py`.
+- **Approval Owner**: Lead Architect
+
+
+

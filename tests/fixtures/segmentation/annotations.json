@@ -21,6 +21,12 @@
         "expected_valid_without_padding": true,
         "expected_padding_required": false,
         "reason": "normal one-person portrait"
+      },
+      "crop_mode_b_expectation": {
+        "expected_valid_without_padding": true,
+        "expected_padding_required": false,
+        "min_head_height_ratio": 0.3,
+        "max_head_height_ratio": 0.84
       }
     },
     {
@@ -44,6 +50,12 @@
         "expected_valid_without_padding": true,
         "expected_padding_required": false,
         "reason": "normal one-person portrait"
+      },
+      "crop_mode_b_expectation": {
+        "expected_valid_without_padding": true,
+        "expected_padding_required": false,
+        "min_head_height_ratio": 0.3,
+        "max_head_height_ratio": 0.84
       }
     },
     {
@@ -67,6 +79,12 @@
         "expected_valid_without_padding": false,
         "expected_padding_required": true,
         "reason": "turban head covering extending outside typical 3:4 crop bounds"
+      },
+      "crop_mode_b_expectation": {
+        "expected_valid_without_padding": true,
+        "expected_padding_required": false,
+        "min_head_height_ratio": 0.3,
+        "max_head_height_ratio": 0.84
       }
     },
     {
@@ -90,6 +108,12 @@
         "expected_valid_without_padding": true,
         "expected_padding_required": false,
         "reason": "normal one-person portrait"
+      },
+      "crop_mode_b_expectation": {
+        "expected_valid_without_padding": true,
+        "expected_padding_required": false,
+        "min_head_height_ratio": 0.3,
+        "max_head_height_ratio": 0.84
       }
     },
     {
@@ -115,6 +139,12 @@
         "expected_valid_without_padding": false,
         "expected_padding_required": true,
         "reason": "tight border limits require padding to prevent clipping voluminous hair"
+      },
+      "crop_mode_b_expectation": {
+        "expected_valid_without_padding": false,
+        "expected_padding_required": true,
+        "min_head_height_ratio": 0.3,
+        "max_head_height_ratio": 0.84
       }
     },
     {
@@ -136,6 +166,12 @@
         "expected_valid_without_padding": false,
         "expected_padding_required": false,
         "reason": "multi-face invalid input"
+      },
+      "crop_mode_b_expectation": {
+        "expected_valid_without_padding": false,
+        "expected_padding_required": false,
+        "min_head_height_ratio": 0.3,
+        "max_head_height_ratio": 0.84
       }
     },
     {
@@ -161,6 +197,12 @@
         "expected_valid_without_padding": false,
         "expected_padding_required": true,
         "reason": "large face proportions and margins require padding"
+      },
+      "crop_mode_b_expectation": {
+        "expected_valid_without_padding": false,
+        "expected_padding_required": true,
+        "min_head_height_ratio": 0.3,
+        "max_head_height_ratio": 0.84
       }
     }
   ]

@@ -3,8 +3,8 @@
 This is the Python package foundation for the Indian Exam-Photo Compliance platform's image-processing engine.
 
 ## Status
-- **Status**: Milestone 7 completed: repository-verified provisional coarse subject-segmentation baseline.
-- **Milestone Reference**: Milestone 7 (Portrait-Segmentation and Coarse Foreground-Mask Generation).
+- **Status**: Milestone 10 completed: repository-verified provisional head-led Crop Mode B planning baseline.
+- **Milestone Reference**: Milestone 10 (Crop Mode B: Face/Head-Led Natural Range Crop Planning).
 
 ## Setup Instructions
 
@@ -29,8 +29,11 @@ pip install -e .[dev,face]
 * **Lint**: `ruff check .`
 * **Type-check**: `mypy src tests`
 * **Test**: `pytest`
-* **Validate Rule Command**: `python -m exam_photo.cli validate-rule <file_path>`
-* **Estimate Head Command**: `python -m exam_photo.cli estimate-head --input <file_path>`
-* **Segment Subject Command**: `python -m exam_photo.cli segment-subject --input <file_path>`
+* **Validate Rule Command**: `python -m exam_photo validate-rule <file_path>`
+* **Estimate Head Command**: `python -m exam_photo estimate-head --input <file_path>`
+* **Segment Subject Command**: `python -m exam_photo segment-subject --input <file_path>`
+* **Plan Crop Mode A Command**: `python -m exam_photo plan-crop-mode-a --input <file_path> --target-width 300 --target-height 400`
+* **Plan Crop Mode B Command**: `python -m exam_photo plan-crop-mode-b --input <file_path>`
+
 
 
