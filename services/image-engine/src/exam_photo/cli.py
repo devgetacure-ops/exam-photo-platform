@@ -361,7 +361,10 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
         "--input", required=True, help="Path to the image file to process."
     )
     bg_parser.add_argument(
-        "--target-colour", default="#FFFFFF", help="Hex color code for background."
+        "--target-colour",
+        "--background-colour",
+        default="#FFFFFF",
+        help="Hex color code for background.",
     )
     bg_parser.add_argument(
         "--alpha-threshold", type=float, help="Alpha threshold for foreground coverage."
@@ -487,7 +490,47 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
     comp_parser.add_argument(
         "--segmenter-model-path", help="Path to the segmenter model (.tflite)."
     )
-    comp_parser.add_argument(
+    # process-rule subcommand
+    proc_parser = subparsers.add_parser(
+        "process-rule",
+        help="Process candidate image according to exam rule config.",
+    )
+    proc_parser.add_argument("--input", required=True, help="Path to input image.")
+    proc_parser.add_argument("--rule", required=True, help="Path to JSON rule file.")
+    proc_parser.add_argument(
+        "--output-dir", help="Directory to save candidate image and reports."
+    )
+    proc_parser.add_argument(
+        "--save-output",
+        action="store_true",
+        help="Save the candidate image to output directory.",
+    )
+    proc_parser.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="Overwrite existing files in output directory.",
+    )
+    proc_parser.add_argument(
+        "--json", action="store_true", help="Output result strictly in JSON to stdout."
+    )
+    proc_parser.add_argument(
+        "--save-report",
+        action="store_true",
+        help="Save the execution report in output directory.",
+    )
+    proc_parser.add_argument(
+        "--allow-invalid-output",
+        action="store_true",
+        help="Save the candidate image even if invalid.",
+    )
+    proc_parser.add_argument(
+        "--allow-diagnostic-artifacts",
+        action="store_true",
+        help="Save intermediate pipeline masks and crop windows.",
+    )
+    proc_parser.add_argument("--face-model-path", help="Path to face model.")
+    proc_parser.add_argument("--segmenter-model-path", help="Path to segmenter model.")
+    proc_parser.add_argument(
         "--variant", choices=["selfie_multiclass_256x256", "selfie_bin_general"]
     )
 
@@ -3155,6 +3198,224 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
                     return 1
 
         return 0 if comp_result.validation.is_valid else 1
+
+    elif args.command == "process-rule":
+        input_path = args.input
+        rule_path = args.rule
+
+        if not os.path.exists(input_path):
+            print("Error: Input file not found. Code: FILE_NOT_FOUND", file=sys.stderr)
+            return 1
+
+        if not os.path.exists(rule_path):
+            print("Error: Rule file not found. Code: FILE_NOT_FOUND", file=sys.stderr)
+            return 1
+
+        # Read input image bytes
+        try:
+            with open(input_path, "rb") as f_in:
+                image_bytes = f_in.read()
+        except Exception:
+            print(
+                "Error: Unable to read input image file. Code: FILE_READ_FAILED",
+                file=sys.stderr,
+            )
+            return 1
+
+        # Read rule JSON
+        try:
+            with open(rule_path, "r", encoding="utf-8") as f_r:
+                rule_dict = json.load(f_r)
+        except Exception:
+            print(
+                "Error: Invalid JSON syntax in rule file. Code: INVALID_JSON",
+                file=sys.stderr,
+            )
+            return 1
+
+        # Resolve face detector model path
+        face_model_path_str = args.face_model_path
+        expected_face_sha = os.environ.get("EXAM_PHOTO_FACE_MODEL_SHA256", "")
+        repo_root = find_repo_root()
+        if not face_model_path_str:
+            face_model_path_str = os.environ.get("EXAM_PHOTO_FACE_MODEL_PATH")
+
+        if not face_model_path_str:
+            manifest_path = repo_root / "model-manifests" / "face-detector.json"
+            if manifest_path.exists():
+                try:
+                    with open(manifest_path, "r", encoding="utf-8") as mf:
+                        manifest = json.load(mf)
+                    face_model_path_str = manifest.get("local_model_path_default")
+                    expected_face_sha = manifest.get("sha256", "")
+                except Exception:
+                    pass
+            if not face_model_path_str:
+                face_model_path_str = "model-assets/blaze_face_short_range.tflite"
+
+        face_model_path = Path(face_model_path_str)
+        if not face_model_path.is_absolute():
+            face_model_path = repo_root / face_model_path
+
+        # Resolve segmenter model path
+        segmenter_model_path_str = args.segmenter_model_path
+        expected_seg_sha = ""
+        if not segmenter_model_path_str:
+            segmenter_model_path_str = os.environ.get("EXAM_PHOTO_SEGMENTER_MODEL_PATH")
+            expected_seg_sha = os.environ.get("EXAM_PHOTO_SEGMENTER_MODEL_SHA256", "")
+
+        if not segmenter_model_path_str:
+            manifest_path = repo_root / "model-manifests" / "subject-segmenter.json"
+            if manifest_path.exists():
+                try:
+                    with open(manifest_path, "r", encoding="utf-8") as mf:
+                        manifest = json.load(mf)
+                    variant_name = args.variant or manifest.get(
+                        "selected_variant", "selfie_bin_general"
+                    )
+                    variants = manifest.get("variants", {})
+                    variant = variants.get(variant_name)
+                    if variant is not None:
+                        filename = variant.get("filename")
+                        if filename:
+                            segmenter_model_path_str = "model-assets/" + filename
+                        expected_seg_sha = variant.get("sha256", "")
+                except Exception:
+                    pass
+            if not segmenter_model_path_str:
+                segmenter_model_path_str = (
+                    "model-assets/selfie_multiclass_256x256.tflite"
+                )
+
+        segmenter_model_path = Path(segmenter_model_path_str)
+        if not segmenter_model_path.is_absolute():
+            segmenter_model_path = repo_root / segmenter_model_path
+
+        # Instantiate RuleOrchestratedPipeline
+        from exam_photo.orchestration.rule_pipeline import (
+            RuleOrchestratedPipeline,
+            RulePipelineConfig,
+        )
+
+        pipeline = RuleOrchestratedPipeline(
+            face_model_path=face_model_path,
+            segmenter_model_path=segmenter_model_path,
+            face_expected_sha256=expected_face_sha,
+            segmenter_expected_sha256=expected_seg_sha,
+        )
+
+        rule_config = RulePipelineConfig(
+            save_diagnostic_artifacts=args.allow_diagnostic_artifacts,
+            allow_invalid_output=args.allow_invalid_output,
+            allow_padding=False,
+            allow_quality_below_minimum=args.allow_invalid_output,
+            allow_oversize_output=args.allow_invalid_output,
+        )
+
+        try:
+            pipeline_result = pipeline.process_rule(image_bytes, rule_dict, rule_config)
+        except Exception as e:
+            print(f"Error: Pipeline processing failed. {e}", file=sys.stderr)
+            return 1
+
+        # Output Results
+        if args.json:
+            print(pipeline_result.model_dump_json(indent=2))
+        else:
+            print("Pipeline Results:")
+            print(f"  Provider: {pipeline_result.provider_name} v{pipeline_result.provider_version}")
+            print(f"  Selected Crop Mode: {pipeline_result.selected_crop_mode}")
+            print(f"  Final Dimensions: {pipeline_result.final_width}x{pipeline_result.final_height}")
+            print(f"  Final Format: {pipeline_result.final_format}")
+            print(f"  Final Bytes: {pipeline_result.final_bytes}")
+            print(f"  Final Quality: {pipeline_result.final_quality}")
+            print(f"  Output Filename: {pipeline_result.output_filename}")
+            print(f"  Is Valid: {pipeline_result.is_valid}")
+
+            print("\n  Stage Reports:")
+            for report in pipeline_result.stage_reports:
+                print(
+                    f"    - {report.stage.value}: status={report.status.value} duration={report.duration_ms:.2f}ms"
+                    if report.duration_ms is not None
+                    else f"    - {report.stage.value}: status={report.status.value}"
+                )
+                if report.issue_codes:
+                    print(f"      Issues: {report.issue_codes}")
+
+            if pipeline_result.issue_codes:
+                print("\n  Pipeline Issue Codes:")
+                for code in pipeline_result.issue_codes:
+                    print(f"    - {code.value}")
+            print(f"\n  Processing Duration: {pipeline_result.processing_duration_ms:.2f}ms")
+
+        # Save outputs
+        if args.save_output and pipeline_result.output_filename:
+            save_path = Path(pipeline_result.output_filename)
+            if not pipeline_result.is_valid:
+                if args.allow_invalid_output:
+                    if not save_path.name.startswith("diagnostic_invalid_"):
+                        save_path = save_path.with_name(
+                            "diagnostic_invalid_" + save_path.name
+                        )
+                else:
+                    print(
+                        "Error: Output candidate is invalid and --allow-invalid-output not specified. Image not saved.",
+                        file=sys.stderr,
+                    )
+                    return 1
+
+            if args.output_dir:
+                out_dir = Path(args.output_dir)
+                out_dir.mkdir(parents=True, exist_ok=True)
+                save_path = out_dir / save_path.name
+
+            # Check overwrite safety
+            if save_path.exists() and not args.overwrite:
+                print(
+                    f"Error: Output file {save_path} already exists. Use --overwrite.",
+                    file=sys.stderr,
+                )
+                return 1
+
+            if pipeline_result.encoded_bytes:
+                try:
+                    with open(save_path, "wb") as f_out:
+                        f_out.write(pipeline_result.encoded_bytes)
+                    if not args.json:
+                        print(f"  Saved candidate image to: {save_path}")
+                except Exception as e:
+                    print(
+                        f"Error: Failed to save candidate image: {e}", file=sys.stderr
+                    )
+                    return 1
+
+        # Save execution report if requested
+        if args.save_report and args.output_dir:
+            report_name = "processing_report.json"
+            if not pipeline_result.is_valid:
+                report_name = "diagnostic_invalid_processing_report.json"
+
+            out_dir = Path(args.output_dir)
+            out_dir.mkdir(parents=True, exist_ok=True)
+            report_path = out_dir / report_name
+
+            if report_path.exists() and not args.overwrite:
+                print(
+                    f"Error: Report file {report_path} already exists. Use --overwrite.",
+                    file=sys.stderr,
+                )
+                return 1
+
+            try:
+                with open(report_path, "w", encoding="utf-8") as f_rep:
+                    f_rep.write(pipeline_result.model_dump_json(indent=2))
+                if not args.json:
+                    print(f"  Saved execution report to: {report_path}")
+            except Exception as e:
+                print(f"Error: Failed to save execution report: {e}", file=sys.stderr)
+                return 1
+
+        return 0 if pipeline_result.is_valid else 1
 
     return 0
 

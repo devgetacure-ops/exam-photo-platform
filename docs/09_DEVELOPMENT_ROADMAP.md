@@ -111,6 +111,7 @@ This phase covers establishing directory, configuration, and interfaces foundati
 - **Dependencies**: Milestones 2, 7, 8, 9, 10, 11, 12, 13.
 - **Expected Deliverables**: Integrated end-to-end CLI command handlers.
 - **Exit Criteria**: Running CLI with a rule file and input image outputs a processed compliant photo or structured compliance failures.
+- **Status**: **Completed (Milestone 14: Full CLI orchestration and final validation)**
 
 #### Milestone 15: Web Frontend & Admin Dashboard
 - **Objective**: Build the public Next.js single-page application and the rule configuration admin dashboard.

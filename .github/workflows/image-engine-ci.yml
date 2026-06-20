@@ -46,7 +46,7 @@ jobs:
         EXAM_PHOTO_FACE_MODEL_PATH: model-assets/blaze_face_short_range.tflite
         EXAM_PHOTO_FACE_MODEL_SHA256: b4578f35940bf5a1a655214a1cce5cab13eba73c1297cd78e1a04c2380b0152f
       run: |
-        pytest services/image-engine -m "not mandatory_segmentation and not mandatory_refinement and not mandatory_crop and not mandatory_crop_b and not mandatory_background and not mandatory_output_preparation and not mandatory_output_compression"
+        pytest services/image-engine -m "not mandatory_segmentation and not mandatory_refinement and not mandatory_crop and not mandatory_crop_b and not mandatory_background and not mandatory_output_preparation and not mandatory_output_compression and not mandatory_rule_pipeline"
 
     - name: Download Binary Segmenter Model Asset
       run: |
@@ -194,6 +194,33 @@ jobs:
         EXAM_PHOTO_SEGMENTER_MODEL_SHA256: 9ee168ec7c8f2a16c56fe8e1cfbc514974cbbb7e434051b455635f1bd1462f5c
       run: |
         python -m exam_photo compress-output --input tests/fixtures/single_face_frontal.jpg --target-width 300 --target-height 400 --maximum-bytes 50000
+
+    - name: Run Rule-Orchestrated Pipeline Integration Tests
+      env:
+        EXAM_PHOTO_FACE_MODEL_PATH: model-assets/blaze_face_short_range.tflite
+        EXAM_PHOTO_FACE_MODEL_SHA256: b4578f35940bf5a1a655214a1cce5cab13eba73c1297cd78e1a04c2380b0152f
+        EXAM_PHOTO_SEGMENTER_MODEL_PATH: model-assets/selfie_segmentation.tflite
+        EXAM_PHOTO_SEGMENTER_MODEL_SHA256: 9ee168ec7c8f2a16c56fe8e1cfbc514974cbbb7e434051b455635f1bd1462f5c
+      run: |
+        pytest services/image-engine -m "mandatory_rule_pipeline"
+
+    - name: Run Rule-Orchestrated Pipeline Benchmark
+      run: |
+        python scripts/benchmark_rule_pipeline.py --require-real
+
+    - name: Verify process-rule CLI
+      env:
+        EXAM_PHOTO_FACE_MODEL_PATH: model-assets/blaze_face_short_range.tflite
+        EXAM_PHOTO_FACE_MODEL_SHA256: b4578f35940bf5a1a655214a1cce5cab13eba73c1297cd78e1a04c2380b0152f
+        EXAM_PHOTO_SEGMENTER_MODEL_PATH: model-assets/selfie_segmentation.tflite
+        EXAM_PHOTO_SEGMENTER_MODEL_SHA256: 9ee168ec7c8f2a16c56fe8e1cfbc514974cbbb7e434051b455635f1bd1462f5c
+      run: |
+        python -m exam_photo process-rule \
+          --input tests/fixtures/single_face_frontal.jpg \
+          --rule examples/rules/sample_exact_300x400_50kb_white_bg.json \
+          --output-dir .tmp_m14 \
+          --save-output \
+          --overwrite
 
     - name: Build package
       run: |

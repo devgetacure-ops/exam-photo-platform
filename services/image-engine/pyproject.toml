@@ -73,5 +73,6 @@ markers = [
     "mandatory_background: marks tests that depend on background composition",
     "mandatory_output_preparation: marks tests that depend on output preparation implementations",
     "mandatory_output_compression: marks tests that depend on output compression implementations",
+    "mandatory_rule_pipeline: marks tests that depend on the complete rule-orchestrated pipeline",
 ]
 
