@@ -285,3 +285,19 @@ This log tracks architectural and product decisions, open questions, and recomme
 - **Reasoning**: Delivers the first candidate-facing interface that connects directly to the local backend service, respecting privacy-first choices (no browser storage footprint) and verification requirements.
 - **Affected Modules**: `apps/web/`, `services/image-engine/src/exam_photo/api/app.py`, `services/image-engine/tests/api/test_api.py`, `.github/workflows/`.
 - **Approval Owner**: Lead Architect
+
+
+### DEC-024: Local Rule Configuration Console and Validation API
+- **Date**: 2026-06-20
+- **Status**: Approved
+- **Problem**: Designing a local rule configuration manager console for developers and operators to create, edit, validate, and export structured rules without manually editing raw files.
+- **Decision**: Implement a local-only administration workspace and backend validation route. Key configurations and components:
+  - Gated route `/admin/rules` locked behind environment variable `NEXT_PUBLIC_ENABLE_RULE_ADMIN=true` with prominent warnings indicating this is only a local accidental-exposure guard and not a security/authentication mechanism.
+  - Form sections and raw JSON editing panels with state management that preserves unknown/advanced nested fields during field-specific edits.
+  - Reset/revert behaviors to reset the workspace back to the pristine loaded sample state.
+  - Stateless backend validation endpoint `POST /v1/rules/validate` returning standard `422 Unprocessable Entity` for malformed body shapes and 200 `is_valid` validation errors for rules. Enforce that validation does not write any files to disk.
+  - Sample-rule sync test comparing backend examples with frontend public rule JSON files to avoid drift.
+- **Reasoning**: Provides a robust, local-only developer utility to construct, validate, and check rule schemas without introducing production database dependencies, user auth, or persistent storage mechanisms.
+- **Affected Modules**: `apps/web/`, `services/image-engine/src/exam_photo/api/app.py`, `services/image-engine/tests/api/test_rule_validation_api.py`.
+- **Approval Owner**: Lead Architect
+

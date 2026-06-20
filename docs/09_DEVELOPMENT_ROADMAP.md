@@ -127,11 +127,14 @@ This phase covers establishing directory, configuration, and interfaces foundati
 - **Exit Criteria**: Typescript typechecks, Vitest tests, and Next.js production builds pass successfully. Deletion and download flows are verified.
 - **Status**: **Completed (Milestone 16)**
 
-#### Milestone 17: Admin Dashboard and Rule Editor (Future)
-- **Objective**: Build the configuration manager console for rules research and verified data entry.
+#### Milestone 17: Local Rule Configuration Console and Validation API
+- **Objective**: Build a local developer/operator console (`/admin/rules`) to select, edit, reset, and export structured rules, coupled with a stateless backend validation endpoint (`POST /v1/rules/validate`) that returns standard 422 errors and does not write files.
 - **Dependencies**: Milestone 16.
+- **Expected Deliverables**: Gated admin console layout, rule editor state helpers, warning banner, reset/revert actions, backend stateless validation endpoint, and frontend-sync tests.
+- **Exit Criteria**: Unit tests, typechecks, and builds pass; backend API tests verify 422 validation response and no file writes; frontend/backend sync tests pass.
+- **Status**: **Completed (Milestone 17: Local Rule Configuration Console and Validation API)**
 
-*(Milestones 17 to 35: Advanced features, security reviews, and pre-launch hardening)*
+*(Milestones 18 to 35: Advanced features, security reviews, and pre-launch hardening)*
 
 ### Phase 1: Post-MVP & Future Operations
 - **Milestone 36**: Post-MVP crop adjustments editor tool.

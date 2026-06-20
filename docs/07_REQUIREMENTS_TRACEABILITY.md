@@ -29,4 +29,6 @@ This matrix maps stable requirement identifiers to design documents, status indi
 | **STORAGE-001** | Local temporary artifact storage | PDF Sec 8.2 | CONFIRMED | **Implemented (Milestone 15)** | `services/image-engine/src/exam_photo/api` | Traversal check tests | Milestone 15 | Strict boundary guards |
 | **WEB-001** | Public Web App MVP | PDF Sec 11.1 | CONFIRMED | **Implemented (Milestone 16)** | `apps/web` | `api-client.test.ts`, `file-validation.test.ts` | Milestone 16 | React Next.js single-page application MVP |
 | **PRIV-UX-001** | Privacy-First User Flow | PDF Sec 10.2 | CONFIRMED | **Implemented (Milestone 16)** | `apps/web` | `delete-flow.test.tsx`, `validation-report.test.tsx` | Milestone 16 | No localStorage caching, URL revocation, manual deletion |
-
+| **ADMIN-001** | Local admin configuration console | PDF Sec 11.2 | CONFIRMED | **Implemented (Milestone 17)** | `apps/web` | `rule-admin.test.tsx` | Milestone 17 | Local-only accidental-exposure warning gated admin page |
+| **RULE-UI-001** | Rule editor with form/json and reset views | PDF Sec 11.2 | CONFIRMED | **Implemented (Milestone 17)** | `apps/web` | `rule-admin.test.tsx` | Milestone 17 | Advanced field preservation and reset behavior |
+| **RULE-VALIDATION-API-001** | Stateless backend rule validation API | PDF Sec 8.3 | CONFIRMED | **Implemented (Milestone 17)** | `services/image-engine` | `test_rule_validation_api.py` | Milestone 17 | Returns 422 for bad bodies, does not write files |

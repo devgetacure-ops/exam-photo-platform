@@ -10,9 +10,13 @@ from exam_photo.api.contracts import (
     ApiJobStatus,
     JobStatusResponse,
     ProcessImageResponse,
+    RuleValidationErrorResponse,
+    RuleValidationRequest,
+    RuleValidationResponse,
 )
 from exam_photo.api.service import ApiProcessingService, UploadLimitExceededError
 from exam_photo.api.settings import get_settings
+from exam_photo.rule_validation import validate_exam_rule
 
 JOB_ID_REGEX = re.compile(r"^job_[A-Za-z0-9_-]+$")
 
@@ -220,3 +224,25 @@ def cleanup_expired() -> dict[str, int]:
     """Trigger TTL cleanup of expired job folders on disk."""
     count = service.cleanup_expired_jobs()
     return {"cleaned_count": count}
+
+
+@app.post("/v1/rules/validate", response_model=RuleValidationResponse)
+def validate_rule(req: RuleValidationRequest) -> RuleValidationResponse:
+    """Validate an exam rule against canonical schema and pydantic constraints."""
+    errors = validate_exam_rule(req.rule)
+    mapped_errors = [
+        RuleValidationErrorResponse(
+            severity=err.severity.value,
+            error_code=err.error_code,
+            field_path=err.field_path,
+            message=err.message,
+            suggested_resolution=err.suggested_resolution,
+        )
+        for err in errors
+    ]
+    is_valid = len(mapped_errors) == 0
+    return RuleValidationResponse(
+        is_valid=is_valid,
+        error_count=len(mapped_errors),
+        errors=mapped_errors,
+    )

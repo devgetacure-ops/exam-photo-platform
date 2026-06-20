@@ -79,5 +79,6 @@ markers = [
     "mandatory_output_compression: marks tests that depend on output compression implementations",
     "mandatory_rule_pipeline: marks tests that depend on the complete rule-orchestrated pipeline",
     "mandatory_api: marks tests that depend on local API and job orchestration",
+    "mandatory_rule_admin: marks tests that depend on the rule validation and admin endpoints",
 ]
 

@@ -12,11 +12,12 @@ This platform processes candidate photographs by checking and conforming them to
 ## 2. Current Repository Status & Milestone Scope
 
 > [!NOTE]
-> This repository has implemented **Milestone 16: Public Web App MVP and Local API Integration.**
+> This repository has implemented **Milestone 17: Local Rule Configuration Console, Schema Validation, and Admin Data Entry Dashboard.**
 > - **Input image normalization, suitability evaluation, and face/segmentation detection are fully integrated.**
 > - **Crop Mode A and B plans, solid background composition, resizing, and quality-aware compression search are fully implemented.**
 > - **Local FastAPI service and persistent manifest manager are integrated on localhost.**
 > - **Public user Next.js App Router application is implemented, featuring rule selection, photo upload, validation diagnostics, download, and URL-revoking secure deletion.**
+> - **Local developer rule configuration console (/admin/rules) is implemented under gated local flags, and backend stateless validation API (POST /v1/rules/validate) is operational without local disk writes.**
 
 ### What is Implemented:
 * Repository directory structure, configuration templates, and Git policies.
@@ -35,9 +36,9 @@ This platform processes candidate photographs by checking and conforming them to
 * End-to-end rule pipeline resolver, safe PII-free filename generation, and final validation against exam constraints (`process-rule` CLI command).
 * Local Processing API exposing pipeline execution, opaque job IDs, relative route URLs, persistent manifests, manual deletion, and expired folder TTL cleanup (`serve-api` CLI command).
 * Public user Next.js App Router application MVP (`apps/web`) supporting rule selection, photo upload, validation diagnostics, download, and URL-revoking secure deletion.
+* Local developer rule configuration console (`/admin/rules`) and stateless validation API route (`POST /v1/rules/validate`) gated behind `NEXT_PUBLIC_ENABLE_RULE_ADMIN=true`.
 
 ### What is NOT Implemented:
-* Admin dashboard console and rule configuration editor.
 * Production databases, authentication, payments, cloud storage adapters.
 
 

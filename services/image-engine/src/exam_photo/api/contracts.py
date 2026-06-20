@@ -1,7 +1,7 @@
 """API response and request contract models."""
 
 from enum import Enum
-from typing import List, Optional
+from typing import Any, List, Optional
 
 from pydantic import BaseModel, Field
 
@@ -42,3 +42,27 @@ class JobStatusResponse(BaseModel):
     output_filename: Optional[str] = None
     report_url: Optional[str] = None
     output_url: Optional[str] = None
+
+
+class RuleValidationErrorResponse(BaseModel):
+    """Structured error details returned during rule validation."""
+
+    severity: str
+    error_code: str
+    field_path: str
+    message: str
+    suggested_resolution: Optional[str] = None
+
+
+class RuleValidationRequest(BaseModel):
+    """Payload containing an ExamRule JSON object to validate."""
+
+    rule: dict[str, Any]
+
+
+class RuleValidationResponse(BaseModel):
+    """API response body for rule validation request."""
+
+    is_valid: bool
+    error_count: int
+    errors: List[RuleValidationErrorResponse]

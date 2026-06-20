@@ -18,6 +18,14 @@ This is the first user-facing web application MVP for the Indian Exam-Photo Comp
    - Immediate Object URL Revocation: Memory-only blob URLs used for image previews and download triggers are immediately revoked on deletion, file reset, or component unmount to protect biometrics.
    - Manual Wipeout: Clicking "Delete Job & Files" makes an API request to wipe all files from disk, and resets all local frontend states.
 
+3. **Local Rule Configuration Console**:
+   - Access at `/admin/rules` gated behind the `NEXT_PUBLIC_ENABLE_RULE_ADMIN=true` environment variable.
+   - Accidental-exposure warning banner indicating that this console is a local accidental-exposure guard and not a production authentication mechanism.
+   - Interactive forms to edit core rule identifiers, exam information, sizing requirements, background rules, composition targets, filenames, and exceptional instructions.
+   - Preservation of unrecognized/advanced fields in rule JSON during edits.
+   - Revert actions to reset workspace draft state back to original imported/loaded rule.
+   - Integration with stateless validation API `POST /v1/rules/validate`.
+
 ## Development Setup
 
 ### 1. Start the local API Server with CORS enabled
