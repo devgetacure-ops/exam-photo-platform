@@ -255,3 +255,19 @@ This log tracks architectural and product decisions, open questions, and recomme
 - **Approval Owner**: Lead Architect
 
 
+### DEC-022: Local Processing API and Privacy Lifecycle
+- **Date**: 2026-06-20
+- **Status**: Approved
+- **Problem**: Exposing the rule-orchestrated processing pipeline through a safe, local-only API boundary with file management under a privacy-first temporary lifecycle.
+- **Decision**: Implement a local-only, synchronous FastAPI service (`serve-api`). Features:
+  - Persistent job manifests (`job.json`) written to job-specific folders under `artifact_root` containing job status, metadata, issue codes, and artifact lists.
+  - Strict path traversal validation of `job_id` using regex check `^job_[A-Za-z0-9_-]+$`.
+  - Enforced upload size limits (`max_upload_bytes + 1`) check on the incoming stream before any processing.
+  - Opaque URL routes for reports (`/v1/jobs/{job_id}/report`) and binary outputs (`/v1/jobs/{job_id}/output`) rather than physical path disclosures.
+  - Clean manual deletion removing all disk artifacts, with DELETED state remaining in-memory only.
+  - Scannable manifest-based TTL cleanup of expired folders.
+- **Reasoning**: Creates a clean, isolated backend boundary and storage manager that complies with strict privacy, boundary sandboxing, and validation regulations before introducing a public-facing web interface.
+- **Affected Modules**: `services/image-engine/src/exam_photo/api`, `services/image-engine/src/exam_photo/cli.py`, `services/image-engine/tests/api`, `scripts`.
+- **Approval Owner**: Lead Architect
+
+

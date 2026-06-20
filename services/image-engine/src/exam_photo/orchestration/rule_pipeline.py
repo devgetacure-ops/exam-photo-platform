@@ -152,7 +152,7 @@ class RuleOrchestratedPipeline:
     def process_rule(
         self,
         image_bytes: bytes,
-        rule_dict: dict,
+        rule_dict: dict[str, Any],
         config: RulePipelineConfig,
     ) -> RulePipelineResult:
         start_time = time.perf_counter()

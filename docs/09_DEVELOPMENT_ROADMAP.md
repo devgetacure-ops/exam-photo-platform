@@ -113,13 +113,20 @@ This phase covers establishing directory, configuration, and interfaces foundati
 - **Exit Criteria**: Running CLI with a rule file and input image outputs a processed compliant photo or structured compliance failures.
 - **Status**: **Completed (Milestone 14: Full CLI orchestration and final validation)**
 
-#### Milestone 15: Web Frontend & Admin Dashboard
+#### Milestone 15: Local Processing API, Privacy Lifecycle, and Safe Job Orchestration
+- **Objective**: Expose the rule-orchestrated processing pipeline through a safe, local-only API boundary with file management under a privacy-first temporary lifecycle.
+- **Dependencies**: Milestone 14.
+- **Expected Deliverables**: FastAPI application (`serve-api`), persistent job manifests (`job.json`), path traversal guards, size upload limits, relative API routes, manual deletion, and TTL cleanup.
+- **Exit Criteria**: API integration tests and smoke tests execute successfully; CLI subcommand `serve-api` is verified.
+- **Status**: **Completed (Milestone 15)**
+
+#### Milestone 16: Web Frontend & Admin Dashboard
 - **Objective**: Build the public Next.js single-page application and the rule configuration admin dashboard.
-- **Dependencies**: Milestone 14, packages/exam-rules.
+- **Dependencies**: Milestone 15, packages/exam-rules.
 - **Expected Deliverables**: Interactive user interfaces, rule editor panels, and visual compliance check indicators.
 - **Exit Criteria**: E2E tests verify successful photo uploading, crop adjustment, and download compliance loops.
 
-*(Milestones 16 to 35: Advanced features, security reviews, and pre-launch hardening)*
+*(Milestones 17 to 35: Advanced features, security reviews, and pre-launch hardening)*
 
 ### Phase 1: Post-MVP & Future Operations
 - **Milestone 36**: Post-MVP crop adjustments editor tool.

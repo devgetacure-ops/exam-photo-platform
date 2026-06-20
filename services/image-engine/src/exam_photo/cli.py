@@ -534,6 +534,26 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
         "--variant", choices=["selfie_multiclass_256x256", "selfie_bin_general"]
     )
 
+    # serve-api subcommand
+    serve_parser = subparsers.add_parser(
+        "serve-api", help="Start the local image-engine API server."
+    )
+    serve_parser.add_argument(
+        "--host", default="127.0.0.1", help="Host address to bind the server to."
+    )
+    serve_parser.add_argument(
+        "--port", type=int, default=8000, help="Port to run the server on."
+    )
+    serve_parser.add_argument(
+        "--artifact-root", help="Directory path to save job artifacts."
+    )
+    serve_parser.add_argument(
+        "--max-upload-bytes", type=int, help="Maximum upload size in bytes."
+    )
+    serve_parser.add_argument(
+        "--job-ttl-seconds", type=int, help="TTL in seconds for job artifacts."
+    )
+
     args = parser.parse_args(argv)
 
     if args.command == "validate-rule":
@@ -3423,6 +3443,35 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
                 return 1
 
         return 0 if pipeline_result.is_valid else 1
+
+    elif args.command == "serve-api":
+        if args.host == "0.0.0.0":
+            print(
+                "WARNING: Binding to 0.0.0.0 allows external network access to this dev server.",
+                file=sys.stderr,
+            )
+            print(
+                "Ensure you have proper firewall configuration or run in a trusted network environment.",
+                file=sys.stderr,
+            )
+
+        if args.artifact_root:
+            os.environ["EXAM_PHOTO_ARTIFACT_ROOT"] = args.artifact_root
+        if args.max_upload_bytes is not None:
+            os.environ["EXAM_PHOTO_MAX_UPLOAD_BYTES"] = str(args.max_upload_bytes)
+        if args.job_ttl_seconds is not None:
+            os.environ["EXAM_PHOTO_JOB_TTL_SECONDS"] = str(args.job_ttl_seconds)
+
+        import uvicorn
+
+        from exam_photo.api.app import app
+
+        try:
+            uvicorn.run(app, host=args.host, port=args.port)
+            return 0
+        except Exception as e:
+            print(f"Error starting API server: {e}", file=sys.stderr)
+            return 1
 
     return 0
 

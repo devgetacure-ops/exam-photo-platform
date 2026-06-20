@@ -12,12 +12,13 @@ This platform processes candidate photographs by checking and conforming them to
 ## 2. Current Repository Status & Milestone Scope
 
 > [!NOTE]
-> This repository has implemented **Milestone 14: Full CLI orchestration and final validation locally; repository verification pending visible CI run.**
+> This repository has implemented **Milestone 15: Local Processing API, Privacy Lifecycle, and Safe Job Orchestration.**
 > - **Input image normalization and suitability evaluation are fully implemented.**
 > - **Local face-detection (MediaPipe), geometric head-box estimation, and CPU-capable portrait segmentation are fully integrated and verified.**
 > - **Crop Mode A (Exact aspect crop planning) and Crop Mode B (Face/Head-led natural range crop planning) are fully integrated and verified.**
 > - **Background composition, output dimension preparation, and quality-aware compression loop are fully integrated.**
-> - **Integrated end-to-end rule resolver, filename generation, final validation, and orchestrator pipeline are implemented locally; repository verification pending visible CI run.**
+> - **Integrated end-to-end rule resolver, filename generation, final validation, and orchestrator pipeline are implemented.**
+> - **FastAPI local API service, persistent job manifests, strict path traversal validation, upload size check, and TTL cleanup script are fully implemented and verified.**
 
 ### What is Implemented:
 * Repository directory structure, configuration templates, and Git policies.
@@ -34,10 +35,11 @@ This platform processes candidate photographs by checking and conforming them to
 * Output dimensioning, format conversion (e.g. RGBA to RGB), and restrained brightness/contrast/sharpness enhancement (`prepare-output` CLI command).
 * Quality-aware compression loop with binary quality search, EXIF metadata stripping, and decode-after-encode verification (`compress-output` CLI command).
 * End-to-end rule pipeline resolver, safe PII-free filename generation, and final validation against exam constraints (`process-rule` CLI command).
+* Local Processing API exposing pipeline execution, opaque job IDs, relative route URLs, persistent manifests, manual deletion, and expired folder TTL cleanup (`serve-api` CLI command).
 
 ### What is NOT Implemented:
-* Public and admin console web applications (scheduled for Milestones 15+).
-* Production databases, authentication, payments, storage lifecycle handlers.
+* Public and admin console web applications (scheduled for Milestones 16+).
+* Production databases, authentication, payments, cloud storage adapters.
 
 
 ---
@@ -135,6 +137,12 @@ Use these commands inside `services/image-engine` to run repository verification
   # Example:
   python -m exam_photo validate-rule ../../examples/rules/sample_exact_dimensions.json
   ```
+* **Start local API server**:
+  ```bash
+  python -m exam_photo serve-api --host 127.0.0.1 --port 8000
+  ```
+  > [!WARNING]
+  > The API server is designed for local development and testing only (`127.0.0.1` by default). Do not expose this service to the public network (`0.0.0.0`) without adding appropriate transport layer security (SSL), authentication/authorization, and rate limiting controls.
 
 ---
 

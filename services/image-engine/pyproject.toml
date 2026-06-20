@@ -21,6 +21,9 @@ dependencies = [
     "Pillow>=10.0.0",
     "pydantic>=2.0.0",
     "jsonschema>=4.0.0",
+    "fastapi>=0.100.0",
+    "uvicorn>=0.20.0",
+    "python-multipart>=0.0.6",
 ]
 
 [project.optional-dependencies]
@@ -29,6 +32,7 @@ dev = [
     "mypy>=1.8.0",
     "ruff>=0.3.0",
     "types-Pillow>=10.0.0",
+    "httpx>=0.22.0",
 ]
 # Face-detection extra: install with  pip install -e ".[dev,face]"
 # Tests that require a real model are skipped unless EXAM_PHOTO_FACE_MODEL_PATH is set.
@@ -74,5 +78,6 @@ markers = [
     "mandatory_output_preparation: marks tests that depend on output preparation implementations",
     "mandatory_output_compression: marks tests that depend on output compression implementations",
     "mandatory_rule_pipeline: marks tests that depend on the complete rule-orchestrated pipeline",
+    "mandatory_api: marks tests that depend on local API and job orchestration",
 ]
 
