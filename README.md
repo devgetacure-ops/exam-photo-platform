@@ -12,13 +12,11 @@ This platform processes candidate photographs by checking and conforming them to
 ## 2. Current Repository Status & Milestone Scope
 
 > [!NOTE]
-> This repository has implemented **Milestone 15: Local Processing API, Privacy Lifecycle, and Safe Job Orchestration.**
-> - **Input image normalization and suitability evaluation are fully implemented.**
-> - **Local face-detection (MediaPipe), geometric head-box estimation, and CPU-capable portrait segmentation are fully integrated and verified.**
-> - **Crop Mode A (Exact aspect crop planning) and Crop Mode B (Face/Head-led natural range crop planning) are fully integrated and verified.**
-> - **Background composition, output dimension preparation, and quality-aware compression loop are fully integrated.**
-> - **Integrated end-to-end rule resolver, filename generation, final validation, and orchestrator pipeline are implemented.**
-> - **FastAPI local API service, persistent job manifests, strict path traversal validation, upload size check, and TTL cleanup script are fully implemented and verified.**
+> This repository has implemented **Milestone 16: Public Web App MVP and Local API Integration.**
+> - **Input image normalization, suitability evaluation, and face/segmentation detection are fully integrated.**
+> - **Crop Mode A and B plans, solid background composition, resizing, and quality-aware compression search are fully implemented.**
+> - **Local FastAPI service and persistent manifest manager are integrated on localhost.**
+> - **Public user Next.js App Router application is implemented, featuring rule selection, photo upload, validation diagnostics, download, and URL-revoking secure deletion.**
 
 ### What is Implemented:
 * Repository directory structure, configuration templates, and Git policies.
@@ -36,9 +34,10 @@ This platform processes candidate photographs by checking and conforming them to
 * Quality-aware compression loop with binary quality search, EXIF metadata stripping, and decode-after-encode verification (`compress-output` CLI command).
 * End-to-end rule pipeline resolver, safe PII-free filename generation, and final validation against exam constraints (`process-rule` CLI command).
 * Local Processing API exposing pipeline execution, opaque job IDs, relative route URLs, persistent manifests, manual deletion, and expired folder TTL cleanup (`serve-api` CLI command).
+* Public user Next.js App Router application MVP (`apps/web`) supporting rule selection, photo upload, validation diagnostics, download, and URL-revoking secure deletion.
 
 ### What is NOT Implemented:
-* Public and admin console web applications (scheduled for Milestones 16+).
+* Admin dashboard console and rule configuration editor.
 * Production databases, authentication, payments, cloud storage adapters.
 
 

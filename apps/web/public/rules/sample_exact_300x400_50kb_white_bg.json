@@ -1,0 +1,108 @@
+{
+  "schema_version": "1.0",
+  "rule_id": "rule-exact-300-400",
+  "rule_version": "1.0.0",
+  "status": "provisional",
+  "exam": {
+    "exam_id": "fictional-exact-300-400",
+    "exam_name": "Fictional Exact 300x400 White BG Exam",
+    "aliases": ["F300x400 Exam"],
+    "conducting_body": "Fictional Board of Testing (FBT)",
+    "examination_year": 2026,
+    "application_cycle": "FBT-2026-A"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_information_bulletin",
+      "official_source": true,
+      "source_url": "https://example.gov.in/f300x400/instructions.pdf",
+      "document_title": "FINEE Instructions",
+      "page_number": 1,
+      "section_name": "Instructions",
+      "captured_wording": "Instructions for fictional exam rules."
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "exact",
+      "width_px": 300,
+      "height_px": 400,
+      "aspect_ratio": "3:4"
+    },
+    "file_size": {
+      "minimum_bytes": 10240,
+      "maximum_bytes": 51200,
+      "target_ceiling_ratio": 0.95,
+      "safety_margin_bytes": 2048,
+      "size_unit_as_published": "KB",
+      "published_minimum": 10.0,
+      "published_maximum": 50.0
+    },
+    "formats": {
+      "allowed_formats": ["jpg", "jpeg"],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB",
+      "extension_policy": "strip_and_append"
+    },
+    "background": {
+      "mode": "exact_colour",
+      "required_colour": "#FFFFFF",
+      "tolerance": 5.0,
+      "plain_background_required": true,
+      "shadows_allowed": false,
+      "gradient_allowed": false,
+      "instructions": "Plain white background only."
+    },
+    "composition": {
+      "face_coverage_target": 75.0,
+      "face_coverage_minimum": 70.0,
+      "face_coverage_maximum": 80.0,
+      "coverage_is_strict": false,
+      "complete_hair_visible": true,
+      "ears_visible": true,
+      "chin_visible": true,
+      "beard_boundary_visible": true,
+      "face_centred": true,
+      "frontal_pose": true,
+      "eye_visibility": true,
+      "spectacles_policy": "prohibited_if_tinted"
+    },
+    "filename": {
+      "mode": "exact",
+      "exact_filename": "exam_photo.jpg",
+      "case_sensitive": true,
+      "extension_required": true,
+      "fallback_basename": "candidate_photo"
+    },
+    "exceptional_instructions": {
+      "printed_name": false,
+      "printed_date": false,
+      "signature_inclusion": false,
+      "black_and_white_restriction": false,
+      "recent_photo_requirement": true,
+      "spectacles_restriction": true,
+      "headwear_restriction": true,
+      "processing_support_status": "supported"
+    }
+  },
+  "provenance": {
+    "image_requirements.dimensions.width_px": {
+      "type": "official",
+      "evidence_reference": "https://example.gov.in/f300x400/instructions.pdf",
+      "confidence": 5,
+      "approved": true
+    },
+    "image_requirements.dimensions.height_px": {
+      "type": "official",
+      "evidence_reference": "https://example.gov.in/f300x400/instructions.pdf",
+      "confidence": 5,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "provisional"
+  },
+  "fictional_example": true
+}

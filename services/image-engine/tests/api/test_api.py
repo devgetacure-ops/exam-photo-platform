@@ -221,3 +221,59 @@ def test_upload_too_large(temp_artifact_root):
         assert "exceeds maximum limit" in response.json()["detail"]
     finally:
         service.settings = original_settings
+
+
+@pytest.mark.mandatory_api
+def test_cors_headers_enabled():
+    """Test CORS headers are returned for allowed origins when enabled."""
+    import sys
+    import importlib
+    from exam_photo.api.settings import ApiSettings
+
+    # Create fake settings with local_cors_enabled=True
+    fake_settings = ApiSettings(
+        artifact_root=Path("./test_artifacts_cors"),
+        local_cors_enabled=True,
+    )
+
+    with patch("exam_photo.api.settings.get_settings", return_value=fake_settings):
+        app_module = sys.modules["exam_photo.api.app"]
+        importlib.reload(app_module)
+        test_client = TestClient(app_module.app)
+
+        # 1. Allowed origin http://localhost:3000
+        response = test_client.options(
+            "/health",
+            headers={
+                "Origin": "http://localhost:3000",
+                "Access-Control-Request-Method": "GET",
+                "Access-Control-Request-Headers": "content-type",
+            },
+        )
+        assert response.headers.get("access-control-allow-origin") == "http://localhost:3000"
+
+        # 2. Allowed origin http://127.0.0.1:3000
+        response = test_client.options(
+            "/health",
+            headers={
+                "Origin": "http://127.0.0.1:3000",
+                "Access-Control-Request-Method": "GET",
+                "Access-Control-Request-Headers": "content-type",
+            },
+        )
+        assert response.headers.get("access-control-allow-origin") == "http://127.0.0.1:3000"
+
+        # 3. Disallowed origin
+        response = test_client.options(
+            "/health",
+            headers={
+                "Origin": "http://example.com",
+                "Access-Control-Request-Method": "GET",
+                "Access-Control-Request-Headers": "content-type",
+            },
+        )
+        assert "access-control-allow-origin" not in response.headers
+
+    # Reload again to restore default (CORS disabled)
+    importlib.reload(sys.modules["exam_photo.api.app"])
+

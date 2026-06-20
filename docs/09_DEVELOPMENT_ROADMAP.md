@@ -120,11 +120,16 @@ This phase covers establishing directory, configuration, and interfaces foundati
 - **Exit Criteria**: API integration tests and smoke tests execute successfully; CLI subcommand `serve-api` is verified.
 - **Status**: **Completed (Milestone 15)**
 
-#### Milestone 16: Web Frontend & Admin Dashboard
-- **Objective**: Build the public Next.js single-page application and the rule configuration admin dashboard.
+#### Milestone 16: Public Web App MVP and Local API Integration
+- **Objective**: Build the public Next.js single-page application MVP allowing users to select/upload exam rules, upload candidate photos, process via local API, view diagnostic reports, download compliant output, and delete job assets.
 - **Dependencies**: Milestone 15, packages/exam-rules.
-- **Expected Deliverables**: Interactive user interfaces, rule editor panels, and visual compliance check indicators.
-- **Exit Criteria**: E2E tests verify successful photo uploading, crop adjustment, and download compliance loops.
+- **Expected Deliverables**: Interactive user page, file validation wrappers, api-client, step-based stepper components, result previewers, delete flows with URL revocation.
+- **Exit Criteria**: Typescript typechecks, Vitest tests, and Next.js production builds pass successfully. Deletion and download flows are verified.
+- **Status**: **Completed (Milestone 16)**
+
+#### Milestone 17: Admin Dashboard and Rule Editor (Future)
+- **Objective**: Build the configuration manager console for rules research and verified data entry.
+- **Dependencies**: Milestone 16.
 
 *(Milestones 17 to 35: Advanced features, security reviews, and pre-launch hardening)*
 

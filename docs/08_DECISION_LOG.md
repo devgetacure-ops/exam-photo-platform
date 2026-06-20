@@ -271,3 +271,17 @@ This log tracks architectural and product decisions, open questions, and recomme
 - **Approval Owner**: Lead Architect
 
 
+### DEC-023: Public Web App MVP and Local API Integration
+- **Date**: 2026-06-20
+- **Status**: Approved
+- **Problem**: Building a public-facing user frontend MVP that enables selection/upload of exam rules, photo uploads, synchronous processing via the local API, status checks, validation report presentation, output download, and manual job deletion under strict privacy-first constraints.
+- **Decision**: Build a React/Next.js App Router application in `apps/web/` using TypeScript and Tailwind CSS. Expose a calm, trustworthy user interface. Key requirements implemented:
+  - Strict localhost CORS config allowed on backend (`127.0.0.1:3000` and `localhost:3000` origins when enabled).
+  - Bundled sample rules duplicated exactly from backend configs (`public/rules/` directory).
+  - Client-side validation for image format, size (< 5MB), and JSON rules.
+  - Omit binary `encoded_bytes` from report view and raw JSON panels.
+  - Complete memory-only local states: no `localStorage` caching of photos/blobs, immediate URL revocation of previews and downloads on deletion or unmounting.
+  - Separate JS quality, build, and test steps in the CI runner.
+- **Reasoning**: Delivers the first candidate-facing interface that connects directly to the local backend service, respecting privacy-first choices (no browser storage footprint) and verification requirements.
+- **Affected Modules**: `apps/web/`, `services/image-engine/src/exam_photo/api/app.py`, `services/image-engine/tests/api/test_api.py`, `.github/workflows/`.
+- **Approval Owner**: Lead Architect
