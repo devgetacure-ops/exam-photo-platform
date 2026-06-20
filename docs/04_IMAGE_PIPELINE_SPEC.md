@@ -206,10 +206,10 @@
 - **Dependencies**: Pillow.
 
 ### 14. Quality-aware Compression
-- **Purpose**: Iteratively optimize quality compression factor (JPEG/WebP) using a binary search to approach but remain strictly below the maximum file size limit, preserving biometric details at a minimum quality floor of 20.
+- **Purpose**: Iteratively optimize quality compression factor (JPEG only in Milestone 13) using a binary search to approach but remain strictly below the maximum file size limit, preserving biometric details at a minimum quality floor of 20.
 - **Inputs**: Resized image, maximum file size (`maximum_bytes`), minimum file size (`minimum_bytes`), target ceiling ratio, safety margin.
 - **Outputs**: Compressed byte array.
-- **Failure Conditions**: Cannot compress below maximum file size without going below the quality floor of 20 (fails with `COMPRESSION_QUALITY_FLOOR_VIOLATION`), final size exceeds maximum bytes (`COMPRESSION_MAX_SIZE_EXCEEDED`), or final size is below minimum bytes (`COMPRESSION_MIN_SIZE_NOT_REACHED`).
+- **Failure Conditions**: Cannot compress below maximum file size without going below the quality floor of 20 (fails with `COMPRESSION_QUALITY_TOO_LOW`), final size exceeds maximum bytes (`COMPRESSION_MAX_SIZE_EXCEEDED`), or final size is below minimum bytes (`COMPRESSION_MIN_SIZE_NOT_REACHED`).
 - **Warning Conditions**: Low quality warning (final quality < min_quality).
 - **Privacy Considerations**: Metadata is stripped from the byte stream, and raw compressed bytes are excluded from model serialization.
 - **Status**: **Implemented (Milestone 13)**

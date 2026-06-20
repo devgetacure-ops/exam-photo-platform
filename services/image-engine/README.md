@@ -3,8 +3,8 @@
 This is the Python package foundation for the Indian Exam-Photo Compliance platform's image-processing engine.
 
 ## Status
-- **Status**: Milestone 11 implemented locally; repository verification pending visible CI run.
-- **Milestone Reference**: Milestone 11 (Background Composition).
+- **Status**: Milestone 13 implemented locally; repository verification pending visible CI run.
+- **Milestone Reference**: Milestone 13 (Quality-Aware Compression).
 
 ## Setup Instructions
 
@@ -34,6 +34,8 @@ pip install -e .[dev,face]
 * **Segment Subject Command**: `python -m exam_photo segment-subject --input <file_path>`
 * **Plan Crop Mode A Command**: `python -m exam_photo plan-crop-mode-a --input <file_path> --target-width 300 --target-height 400`
 * **Plan Crop Mode B Command**: `python -m exam_photo plan-crop-mode-b --input <file_path>`
+* **Prepare Output Command**: `python -m exam_photo prepare-output --input <file_path> --target-width 300 --target-height 400`
+* **Compress Output Command**: `python -m exam_photo compress-output --input <file_path> --target-width 300 --target-height 400 --maximum-bytes 50000`
 
 
 

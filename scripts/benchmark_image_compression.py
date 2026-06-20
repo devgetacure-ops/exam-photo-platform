@@ -63,8 +63,8 @@ def find_repo_root() -> Path:
 
 def run_benchmark():
     repo_root = find_repo_root()
-    fixtures_dir = repo_root / "tests" / "fixtures" / "segmentation"
-    annotations_file = fixtures_dir / "annotations.json"
+    fixtures_dir = repo_root / "tests" / "fixtures"
+    annotations_file = fixtures_dir / "segmentation" / "annotations.json"
 
     if not annotations_file.exists():
         logger.error(f"Annotations file not found at {annotations_file}")
@@ -140,7 +140,7 @@ def run_benchmark():
 
     for entry in entries:
         fixture_name = entry["source_fixture"]
-        img_path = fixtures_dir / "images" / fixture_name
+        img_path = fixtures_dir / fixture_name
 
         comp_exp = entry.get("output_compression_expectation", {})
         if not comp_exp:

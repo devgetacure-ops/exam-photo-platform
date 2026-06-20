@@ -216,18 +216,23 @@ class DeterministicJpegCompressor(OutputCompressor):
                 )
             else:
                 # Exceeds both target and maximum
-                add_issue(
-                    OutputCompressionIssueCode.COMPRESSION_SEARCH_FAILED,
-                    IssueSeverity.ERROR,
-                    True,
-                )
                 if config.allow_oversize_output:
+                    add_issue(
+                        OutputCompressionIssueCode.COMPRESSION_SEARCH_FAILED,
+                        IssueSeverity.WARNING,
+                        False,
+                    )
                     add_issue(
                         OutputCompressionIssueCode.COMPRESSION_MAX_SIZE_EXCEEDED,
                         IssueSeverity.WARNING,
                         False,
                     )
                 else:
+                    add_issue(
+                        OutputCompressionIssueCode.COMPRESSION_SEARCH_FAILED,
+                        IssueSeverity.ERROR,
+                        True,
+                    )
                     add_issue(
                         OutputCompressionIssueCode.COMPRESSION_MAX_SIZE_EXCEEDED,
                         IssueSeverity.ERROR,

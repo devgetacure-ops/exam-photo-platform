@@ -12,12 +12,11 @@ This platform processes candidate photographs by checking and conforming them to
 ## 2. Current Repository Status & Milestone Scope
 
 > [!NOTE]
-> This repository has implemented **Milestone 11: Background Composition baseline locally; repository verification pending visible CI run.**
+> This repository has implemented **Milestone 13: Quality-Aware Compression Loop baseline locally; repository verification pending visible CI run.**
 > - **Input image normalization and suitability evaluation are fully implemented.**
 > - **Local face-detection (MediaPipe), geometric head-box estimation, and CPU-capable portrait segmentation are fully integrated and verified.**
 > - **Crop Mode A (Exact aspect crop planning) and Crop Mode B (Face/Head-led natural range crop planning) are fully integrated and verified.**
-> - **Background composition is implemented locally; repository verification pending visible CI run.**
-> - **Resizing and compression are scheduled for next milestones.**
+> - **Background composition, output dimension preparation, and quality-aware compression loop are implemented locally; repository verification pending visible CI run.**
 
 ### What is Implemented:
 * Repository directory structure, configuration templates, and Git policies.
@@ -31,9 +30,11 @@ This platform processes candidate photographs by checking and conforming them to
 * Crop Mode A exact-aspect crop planning CLI and provider interfaces.
 * Crop Mode B face/head-led natural range crop planning CLI and provider interfaces.
 * Solid Background Composition with foreground coverage validation and clipping risk detection.
+* Output dimensioning, format conversion (e.g. RGBA to RGB), and restrained brightness/contrast/sharpness enhancement (`prepare-output` CLI command).
+* Quality-aware compression loop with binary quality search, EXIF metadata stripping, and decode-after-encode verification (`compress-output` CLI command).
 
 ### What is NOT Implemented:
-* Final resizing, compression, and output compressed photo generation (scheduled for future milestones).
+* Target output naming and final end-to-end file persistence (scheduled for Milestone 14).
 * Public and admin console web applications.
 * Production databases, authentication, payments, storage lifecycle handlers.
 
