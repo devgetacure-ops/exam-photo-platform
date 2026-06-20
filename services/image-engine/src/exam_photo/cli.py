@@ -3310,6 +3310,7 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
             allow_padding=False,
             allow_quality_below_minimum=args.allow_invalid_output,
             allow_oversize_output=args.allow_invalid_output,
+            output_dir=Path(args.output_dir) if args.output_dir else None,
         )
 
         try:
@@ -3323,9 +3324,13 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
             print(pipeline_result.model_dump_json(indent=2))
         else:
             print("Pipeline Results:")
-            print(f"  Provider: {pipeline_result.provider_name} v{pipeline_result.provider_version}")
+            print(
+                f"  Provider: {pipeline_result.provider_name} v{pipeline_result.provider_version}"
+            )
             print(f"  Selected Crop Mode: {pipeline_result.selected_crop_mode}")
-            print(f"  Final Dimensions: {pipeline_result.final_width}x{pipeline_result.final_height}")
+            print(
+                f"  Final Dimensions: {pipeline_result.final_width}x{pipeline_result.final_height}"
+            )
             print(f"  Final Format: {pipeline_result.final_format}")
             print(f"  Final Bytes: {pipeline_result.final_bytes}")
             print(f"  Final Quality: {pipeline_result.final_quality}")
@@ -3346,7 +3351,9 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
                 print("\n  Pipeline Issue Codes:")
                 for code in pipeline_result.issue_codes:
                     print(f"    - {code.value}")
-            print(f"\n  Processing Duration: {pipeline_result.processing_duration_ms:.2f}ms")
+            print(
+                f"\n  Processing Duration: {pipeline_result.processing_duration_ms:.2f}ms"
+            )
 
         # Save outputs
         if args.save_output and pipeline_result.output_filename:

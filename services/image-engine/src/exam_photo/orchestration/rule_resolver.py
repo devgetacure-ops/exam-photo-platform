@@ -121,7 +121,7 @@ def resolve_rule(
     background_config = BackgroundCompositionConfig(
         target_colour_hex=target_color,
         allow_transparent_output=False,
-        allow_subject_clipping=True,
+        allow_subject_clipping=False,
     )
 
     # 4. Resolve Output Preparation Config

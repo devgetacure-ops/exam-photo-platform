@@ -359,6 +359,7 @@ def test_pipeline_integration_success():
     config = RulePipelineConfig(
         save_diagnostic_artifacts=False,
         allow_invalid_output=False,
+        allow_subject_clipping=True,
     )
 
     result = pipeline.process_rule(image_bytes, rule_dict, config)
@@ -435,7 +436,9 @@ def test_pipeline_integration_invalid_no_face():
 
 def test_cli_process_rule_valid(tmp_path):
     img_path = FIXTURES_DIR / "marie_curie_curly_hair.jpg"
-    rule_path = EXAMPLES_DIR / "sample_exact_300x400_50kb_white_bg.json"
+    rule_path = (
+        EXAMPLES_DIR / "sample_range_200_300_width_230_400_height_50kb_white_bg.json"
+    )
 
     out_dir = tmp_path / "out_dir"
     out_dir.mkdir()
@@ -469,7 +472,9 @@ def test_cli_process_rule_valid(tmp_path):
 
 def test_cli_process_rule_invalid_save(tmp_path):
     img_path = FIXTURES_DIR / "marie_curie_curly_hair.jpg"
-    rule_path = EXAMPLES_DIR / "sample_exact_300x400_50kb_white_bg.json"
+    rule_path = (
+        EXAMPLES_DIR / "sample_range_200_300_width_230_400_height_50kb_white_bg.json"
+    )
 
     # Read the base rule and modify size floor/ceiling dynamically
     with open(rule_path, "r", encoding="utf-8") as f:

@@ -49,12 +49,12 @@ def run_benchmark():
     # Freud has spectacles/beard and fails crop margin constraints without padding.
     # Vivekananda has a head covering and fails crop margin constraints.
     # Sarah Bernhardt is valid in exact mode (Crop Mode A), but invalid in range mode (Crop Mode B) due to voluminous curls.
-    # Marie Curie is valid in both Crop Mode A and B.
+    # Marie Curie is valid in Crop Mode B, but invalid in Crop Mode A (Exact) due to hair clipping when subject clipping is strictly prohibited.
     expectations = {
         # sample_exact_300x400_50kb_white_bg.json (Exact / Crop Mode A)
         ("sample_exact_300x400_50kb_white_bg.json", "single_face_frontal.jpg"): False,
         ("sample_exact_300x400_50kb_white_bg.json", "sarah_bernhardt_long_hair.jpg"): True,
-        ("sample_exact_300x400_50kb_white_bg.json", "marie_curie_curly_hair.jpg"): True,
+        ("sample_exact_300x400_50kb_white_bg.json", "marie_curie_curly_hair.jpg"): False,
         ("sample_exact_300x400_50kb_white_bg.json", "lincoln_low_contrast.jpg"): False,
         ("sample_exact_300x400_50kb_white_bg.json", "roosevelt_muir_yosemite.jpg"): False,
         ("sample_exact_300x400_50kb_white_bg.json", "freud_spectacles_beard.jpg"): False,

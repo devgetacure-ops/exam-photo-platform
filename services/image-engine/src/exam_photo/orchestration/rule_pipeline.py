@@ -100,11 +100,13 @@ class RulePipelineConfig(BaseModel):
     allow_padding: bool = False
     allow_quality_below_minimum: bool = False
     allow_oversize_output: bool = False
+    allow_subject_clipping: bool = False
 
     default_background_colour_hex: str = "#FFFFFF"
     default_maximum_bytes: int | None = None
 
     generate_processing_report: bool = True
+    output_dir: Optional[Path] = None
 
 
 class RulePipelineResult(BaseModel):
@@ -601,10 +603,18 @@ class RuleOrchestratedPipeline:
             t_stage = time.perf_counter()
             try:
                 composer = SolidBackgroundComposer()
+                bg_config = plan.background_config
+                if bg_config is not None:
+                    bg_config = bg_config.model_copy(
+                        update={
+                            "allow_subject_clipping": config.allow_subject_clipping
+                            or bg_config.allow_subject_clipping
+                        }
+                    )
                 bg_res = composer.compose_background(
                     image=cropped_image,
                     refined_alpha_mask=refined_alpha_crop,
-                    config=plan.background_config,
+                    config=bg_config,
                 )
                 dur_stage = (time.perf_counter() - t_stage) * 1000.0
 
@@ -863,6 +873,7 @@ class RuleOrchestratedPipeline:
                 output_filename = generate_safe_filename(
                     name_suggestion=plan.target_filename,
                     config=None,  # defaults
+                    output_dir=config.output_dir,
                 )
                 dur_stage = (time.perf_counter() - t_stage) * 1000.0
                 record_stage(

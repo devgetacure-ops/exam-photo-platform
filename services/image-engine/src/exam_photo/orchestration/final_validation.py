@@ -50,7 +50,7 @@ def validate_final_candidate(
         issue_codes.append("PIPELINE_FINAL_DIMENSIONS_INVALID")
 
     # Verify format (must be JPEG)
-    if actual_format not in ("JPEG", "MPO"):
+    if actual_format != "JPEG":
         issue_codes.append("PIPELINE_FINAL_FORMAT_INVALID")
 
     # Verify file size limits

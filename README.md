@@ -12,11 +12,12 @@ This platform processes candidate photographs by checking and conforming them to
 ## 2. Current Repository Status & Milestone Scope
 
 > [!NOTE]
-> This repository has implemented **Milestone 13: Quality-Aware Compression Loop baseline locally; repository verification pending visible CI run.**
+> This repository has implemented **Milestone 14: Full CLI orchestration and final validation locally; repository verification pending visible CI run.**
 > - **Input image normalization and suitability evaluation are fully implemented.**
 > - **Local face-detection (MediaPipe), geometric head-box estimation, and CPU-capable portrait segmentation are fully integrated and verified.**
 > - **Crop Mode A (Exact aspect crop planning) and Crop Mode B (Face/Head-led natural range crop planning) are fully integrated and verified.**
-> - **Background composition, output dimension preparation, and quality-aware compression loop are implemented locally; repository verification pending visible CI run.**
+> - **Background composition, output dimension preparation, and quality-aware compression loop are fully integrated.**
+> - **Integrated end-to-end rule resolver, filename generation, final validation, and orchestrator pipeline are implemented locally; repository verification pending visible CI run.**
 
 ### What is Implemented:
 * Repository directory structure, configuration templates, and Git policies.
@@ -32,10 +33,10 @@ This platform processes candidate photographs by checking and conforming them to
 * Solid Background Composition with foreground coverage validation and clipping risk detection.
 * Output dimensioning, format conversion (e.g. RGBA to RGB), and restrained brightness/contrast/sharpness enhancement (`prepare-output` CLI command).
 * Quality-aware compression loop with binary quality search, EXIF metadata stripping, and decode-after-encode verification (`compress-output` CLI command).
+* End-to-end rule pipeline resolver, safe PII-free filename generation, and final validation against exam constraints (`process-rule` CLI command).
 
 ### What is NOT Implemented:
-* Target output naming and final end-to-end file persistence (scheduled for Milestone 14).
-* Public and admin console web applications.
+* Public and admin console web applications (scheduled for Milestones 15+).
 * Production databases, authentication, payments, storage lifecycle handlers.
 
 
