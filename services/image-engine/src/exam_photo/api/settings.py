@@ -2,6 +2,7 @@
 
 import os
 from pathlib import Path
+from typing import Optional
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -12,6 +13,16 @@ class ApiSettings(BaseModel):
     artifact_root: Path = Field(default_factory=lambda: Path(".tmp/artifacts"))
     max_upload_bytes: int = Field(default=5 * 1024 * 1024)  # 5 MB
     job_ttl_seconds: int = Field(default=3600)  # 1 hour
+
+    # Model configuration overrides
+    face_model_path: Optional[Path] = None
+    segmenter_model_path: Optional[Path] = None
+    face_expected_sha256: Optional[str] = None
+    segmenter_expected_sha256: Optional[str] = None
+
+    # Pipeline output and local CORS toggles
+    allow_invalid_output_save: bool = False
+    local_cors_enabled: bool = False
 
     @field_validator("artifact_root")
     @classmethod
@@ -46,6 +57,7 @@ class ApiSettings(BaseModel):
 def get_settings() -> ApiSettings:
     """Load settings from environment variables with defaults."""
     from typing import Any
+
     kwargs: dict[str, Any] = {}
     if "EXAM_PHOTO_ARTIFACT_ROOT" in os.environ:
         kwargs["artifact_root"] = Path(os.environ["EXAM_PHOTO_ARTIFACT_ROOT"])
@@ -53,5 +65,27 @@ def get_settings() -> ApiSettings:
         kwargs["max_upload_bytes"] = int(os.environ["EXAM_PHOTO_MAX_UPLOAD_BYTES"])
     if "EXAM_PHOTO_JOB_TTL_SECONDS" in os.environ:
         kwargs["job_ttl_seconds"] = int(os.environ["EXAM_PHOTO_JOB_TTL_SECONDS"])
+
+    # Load model configuration paths and hashes from environment
+    if "EXAM_PHOTO_FACE_MODEL_PATH" in os.environ:
+        kwargs["face_model_path"] = Path(os.environ["EXAM_PHOTO_FACE_MODEL_PATH"])
+    if "EXAM_PHOTO_SEGMENTER_MODEL_PATH" in os.environ:
+        kwargs["segmenter_model_path"] = Path(
+            os.environ["EXAM_PHOTO_SEGMENTER_MODEL_PATH"]
+        )
+    if "EXAM_PHOTO_FACE_MODEL_SHA256" in os.environ:
+        kwargs["face_expected_sha256"] = os.environ["EXAM_PHOTO_FACE_MODEL_SHA256"]
+    if "EXAM_PHOTO_SEGMENTER_MODEL_SHA256" in os.environ:
+        kwargs["segmenter_expected_sha256"] = os.environ[
+            "EXAM_PHOTO_SEGMENTER_MODEL_SHA256"
+        ]
+
+    # Load boolean flags
+    if "EXAM_PHOTO_ALLOW_INVALID_OUTPUT_SAVE" in os.environ:
+        val = os.environ["EXAM_PHOTO_ALLOW_INVALID_OUTPUT_SAVE"].lower()
+        kwargs["allow_invalid_output_save"] = val in ("1", "true", "yes")
+    if "EXAM_PHOTO_LOCAL_CORS_ENABLED" in os.environ:
+        val = os.environ["EXAM_PHOTO_LOCAL_CORS_ENABLED"].lower()
+        kwargs["local_cors_enabled"] = val in ("1", "true", "yes")
 
     return ApiSettings(**kwargs)

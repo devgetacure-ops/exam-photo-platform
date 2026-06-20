@@ -26,6 +26,17 @@ app = FastAPI(
 settings = get_settings()
 service = ApiProcessingService(settings)
 
+if settings.local_cors_enabled:
+    from fastapi.middleware.cors import CORSMiddleware
+
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+
 
 @app.exception_handler(Exception)
 async def catch_all_exception_handler(request: Request, exc: Exception) -> JSONResponse:
@@ -103,6 +114,9 @@ async def process_image(
         report_url=report_url,
         output_url=output_url,
         expires_at=record.expires_at,
+        is_valid=record.is_valid,
+        output_filename=record.output_filename,
+        issue_codes=record.issue_codes,
     )
 
 

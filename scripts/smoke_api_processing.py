@@ -3,6 +3,7 @@
 
 import json
 import os
+import shutil
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -43,7 +44,6 @@ def main() -> int:
     # 2. Setup temp artifact root for smoke testing
     smoke_root = repo_root / ".tmp" / "smoke_api_artifacts"
     if smoke_root.exists():
-        import shutil
         shutil.rmtree(smoke_root)
     smoke_root.mkdir(parents=True, exist_ok=True)
 
@@ -105,6 +105,9 @@ def main() -> int:
     assert status == "SUCCEEDED"
     assert report_url == f"/v1/jobs/{job_id}/report"
     assert output_url == f"/v1/jobs/{job_id}/output"
+    assert data["is_valid"] is True
+    assert data["output_filename"] is not None
+    assert data["issue_codes"] == []
 
     # 5. Retrieve Job Status
     response = client.get(f"/v1/jobs/{job_id}")
@@ -128,6 +131,15 @@ def main() -> int:
     out_img = response.content
     assert len(out_img) > 0
     print(f"Output candidate retrieved successfully: {len(out_img)} bytes.")
+
+    # 7b. Verify PIL decode
+    from PIL import Image
+    import io
+
+    img = Image.open(io.BytesIO(out_img))
+    img.load()
+    assert img.format == "JPEG"
+    print("Output candidate verified as valid JPEG image via PIL decode.")
 
     # 8. Verify TTL Cleanup
     # Manually edit the job manifest file to make it expired

@@ -146,6 +146,9 @@ def test_api_jobs_lifecycle(mock_pipeline_class, temp_artifact_root):
         assert data["status"] == "SUCCEEDED"
         assert "/v1/jobs/" in data["report_url"]
         assert "/v1/jobs/" in data["output_url"]
+        assert data["is_valid"] is True
+        assert data["output_filename"] == "MarieCurie_2026.jpg"
+        assert data["issue_codes"] == []
 
         # Check job.json manifest was created on disk
         manifest_path = temp_artifact_root / job_id / "job.json"

@@ -3,7 +3,7 @@
 from enum import Enum
 from typing import List, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class ApiJobStatus(str, Enum):
@@ -24,6 +24,9 @@ class ProcessImageResponse(BaseModel):
     report_url: Optional[str] = None
     output_url: Optional[str] = None
     expires_at: Optional[str] = None
+    is_valid: Optional[bool] = None
+    output_filename: Optional[str] = None
+    issue_codes: List[str] = Field(default_factory=list)
 
 
 class JobStatusResponse(BaseModel):

@@ -57,6 +57,12 @@ class ApiProcessingService:
 
     def _resolve_face_model(self) -> Tuple[Path, str]:
         """Resolve face model path and expected sha256."""
+        if self.settings.face_model_path:
+            return (
+                self.settings.face_model_path,
+                self.settings.face_expected_sha256 or "",
+            )
+
         face_model_path_str = os.environ.get("EXAM_PHOTO_FACE_MODEL_PATH")
         expected_face_sha = os.environ.get("EXAM_PHOTO_FACE_MODEL_SHA256", "")
         if not face_model_path_str:
@@ -79,6 +85,12 @@ class ApiProcessingService:
 
     def _resolve_segmenter_model(self) -> Tuple[Path, str]:
         """Resolve segmenter model path and expected sha256."""
+        if self.settings.segmenter_model_path:
+            return (
+                self.settings.segmenter_model_path,
+                self.settings.segmenter_expected_sha256 or "",
+            )
+
         segmenter_model_path_str = os.environ.get("EXAM_PHOTO_SEGMENTER_MODEL_PATH")
         expected_seg_sha = os.environ.get("EXAM_PHOTO_SEGMENTER_MODEL_SHA256", "")
         if not segmenter_model_path_str:
@@ -196,7 +208,7 @@ class ApiProcessingService:
             record.issue_codes = [c.value for c in result.issue_codes]
             record.artifact_names = artifact_names
 
-        except Exception as e:
+        except Exception:
             # Pipeline failure fallback
             record.status = ApiJobStatus.FAILED
             record.is_valid = False
@@ -207,7 +219,8 @@ class ApiProcessingService:
             error_report = {
                 "is_valid": False,
                 "issue_codes": ["PIPELINE_ERROR"],
-                "error_details": str(e),
+                "message": "Processing failed internally.",
+                "error_code": "PIPELINE_ERROR",
             }
             self.store.write_file(
                 job_id,
