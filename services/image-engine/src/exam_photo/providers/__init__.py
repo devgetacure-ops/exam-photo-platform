@@ -133,7 +133,30 @@ __all__ = [
     "OutputPreparationResult",
     "OutputPreparer",
     "DeterministicOutputPreparer",
+    "CompressionFormat",
+    "CompressionSearchMode",
+    "OutputCompressionConfig",
+    "OutputCompressionIssueCode",
+    "OutputCompressionValidationIssue",
+    "OutputCompressionValidationReport",
+    "OutputCompressionResult",
+    "OutputCompressor",
+    "DeterministicJpegCompressor",
 ]
+
+from exam_photo.providers.compression.deterministic_image_compressor import (
+    DeterministicJpegCompressor,
+)
+from exam_photo.providers.output_compression import (
+    CompressionFormat,
+    CompressionSearchMode,
+    OutputCompressionConfig,
+    OutputCompressionIssueCode,
+    OutputCompressionResult,
+    OutputCompressionValidationIssue,
+    OutputCompressionValidationReport,
+    OutputCompressor,
+)
 
 # MediapipeFaceDetector and MediapipeSubjectSegmenter are exported lazily
 # to avoid ImportError when the optional 'face' extra is not installed.

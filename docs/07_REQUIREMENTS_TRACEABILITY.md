@@ -17,7 +17,7 @@ This matrix maps stable requirement identifiers to design documents, status indi
 | **ID-001** | Identity preservation | PDF Sec 5.5 | CONFIRMED | **Partially Implemented (Milestone 12)** | `services/image-engine` | `test_deterministic_output_preparer.py` | Milestone 12 | Restrained global enhancement baseline implemented; full identity-preservation validation remains ongoing through final validation and QA. |
 | **RULE-001** | Versioned structured rules | PDF Sec 6 | CONFIRMED | **Implemented (Milestone 2)** | `packages/exam-rules`, `services/image-engine` | `test_rule_validation.py` | Milestone 2 | JSON schema & Python models |
 | **FILE-001** | Target output naming | PDF Sec 5.7 | CONFIRMED | Not Implemented | `services/image-engine` | Pattern check tests | Milestone 13 | Sanitize string output |
-| **COMP-001** | Quality-aware compression | PDF Sec 5.6 | CONFIRMED | Not Implemented | `services/image-engine` | Compression limits check | Milestone 12 | Below maximum ceiling |
+| **COMP-001** | Quality-aware compression | PDF Sec 5.6 | CONFIRMED | **Implemented (Milestone 13)** | `services/image-engine` | `test_image_compression.py` | Milestone 13 | Below maximum ceiling |
 | **PRIV-001** | Deletion lifecycle | PDF Sec 10.2 | CONFIRMED | Not Implemented | `Application API` | Retention timer tests | Milestone 14 | automatic cleanup |
 | **SEC-001** | Magic byte validation | PDF Sec 10.4 | CONFIRMED | **Implemented (Milestone 3)** | `services/image-engine` | `test_signatures.py` | Milestone 3 | Input signature sanitization |
 | **QA-001** | Visual regression testing | PDF Sec 12.3 | CONFIRMED | Not Implemented | `QA Strategy` | Visual checks runs | Milestone 5 | Golden images setup |

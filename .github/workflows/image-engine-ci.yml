@@ -46,7 +46,7 @@ jobs:
         EXAM_PHOTO_FACE_MODEL_PATH: model-assets/blaze_face_short_range.tflite
         EXAM_PHOTO_FACE_MODEL_SHA256: b4578f35940bf5a1a655214a1cce5cab13eba73c1297cd78e1a04c2380b0152f
       run: |
-        pytest services/image-engine -m "not mandatory_segmentation and not mandatory_refinement and not mandatory_crop and not mandatory_crop_b and not mandatory_background and not mandatory_output_preparation"
+        pytest services/image-engine -m "not mandatory_segmentation and not mandatory_refinement and not mandatory_crop and not mandatory_crop_b and not mandatory_background and not mandatory_output_preparation and not mandatory_output_compression"
 
     - name: Download Binary Segmenter Model Asset
       run: |
@@ -172,6 +172,28 @@ jobs:
         EXAM_PHOTO_SEGMENTER_MODEL_SHA256: 9ee168ec7c8f2a16c56fe8e1cfbc514974cbbb7e434051b455635f1bd1462f5c
       run: |
         python -m exam_photo prepare-output --input tests/fixtures/single_face_frontal.jpg --target-width 300 --target-height 400
+
+    - name: Run Output Compression Integration Tests
+      env:
+        EXAM_PHOTO_FACE_MODEL_PATH: model-assets/blaze_face_short_range.tflite
+        EXAM_PHOTO_FACE_MODEL_SHA256: b4578f35940bf5a1a655214a1cce5cab13eba73c1297cd78e1a04c2380b0152f
+        EXAM_PHOTO_SEGMENTER_MODEL_PATH: model-assets/selfie_segmentation.tflite
+        EXAM_PHOTO_SEGMENTER_MODEL_SHA256: 9ee168ec7c8f2a16c56fe8e1cfbc514974cbbb7e434051b455635f1bd1462f5c
+      run: |
+        pytest services/image-engine -m "mandatory_output_compression"
+
+    - name: Run Output Compression Benchmark
+      run: |
+        python scripts/benchmark_image_compression.py --require-real
+
+    - name: Verify compress-output CLI
+      env:
+        EXAM_PHOTO_FACE_MODEL_PATH: model-assets/blaze_face_short_range.tflite
+        EXAM_PHOTO_FACE_MODEL_SHA256: b4578f35940bf5a1a655214a1cce5cab13eba73c1297cd78e1a04c2380b0152f
+        EXAM_PHOTO_SEGMENTER_MODEL_PATH: model-assets/selfie_segmentation.tflite
+        EXAM_PHOTO_SEGMENTER_MODEL_SHA256: 9ee168ec7c8f2a16c56fe8e1cfbc514974cbbb7e434051b455635f1bd1462f5c
+      run: |
+        python -m exam_photo compress-output --input tests/fixtures/single_face_frontal.jpg --target-width 300 --target-height 400 --maximum-bytes 50000
 
     - name: Build package
       run: |

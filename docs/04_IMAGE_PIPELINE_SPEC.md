@@ -1,7 +1,7 @@
 # Image Pipeline Specification (04_IMAGE_PIPELINE_SPEC.md)
 
 > [!IMPORTANT]
-> Pipeline stage 1 (file signature validation), stage 2 (secure image decoding), stage 3 (EXIF orientation normalization), and stage 4 (source metadata extraction) are implemented in Milestone 3. Stage 5 (face detection), stage 6 (complete-head estimation), and stage 7 (source suitability analysis) are implemented in Milestones 5 and 6. Stage 8a (coarse foreground mask generation) is implemented in Milestone 7. Stage 8b (coarse-mask edge refinement and foreground-boundary cleanup) is implemented in Milestone 8. Stage 8c (background composition) is implemented in Milestone 11. Stage 9 (crop-mode selection) and stage 10 (crop calculation) planning logic is implemented in Milestones 9 and 10. All other stages detailed in this document are planned future implementations.
+> Pipeline stage 1 (file signature validation), stage 2 (secure image decoding), stage 3 (EXIF orientation normalization), and stage 4 (source metadata extraction) are implemented in Milestone 3. Stage 5 (face detection), stage 6 (complete-head estimation), and stage 7 (source suitability analysis) are implemented in Milestones 5 and 6. Stage 8a (coarse foreground mask generation) is implemented in Milestone 7. Stage 8b (coarse-mask edge refinement and foreground-boundary cleanup) is implemented in Milestone 8. Stage 8c (background composition) is implemented in Milestone 11. Stage 9 (crop-mode selection) and stage 10 (crop calculation) planning logic is implemented in Milestones 9 and 10. Stage 11 (restrained image correction), Stage 12 (resizing), and Stage 13 (format selection) are implemented in Milestone 12. Stage 14 (quality-aware compression) and Stage 16 (final decode test) are implemented in Milestone 13. All other stages detailed in this document are planned future implementations.
 
 > [!NOTE]
 > **Implementation sequencing note**: Crop planning (stages 9–10) was implemented before background composition (stage 8c) because crop window calculation depends only on face, head, and mask geometry — not on the final composited image. The full pipeline orchestration will reconcile execution order when background replacement, resizing, and compression stages are integrated in later milestones.
@@ -206,13 +206,14 @@
 - **Dependencies**: Pillow.
 
 ### 14. Quality-aware Compression
-- **Purpose**: Iteratively optimize quality compression factor to approach but remain below the maximum file size.
-- **Inputs**: Resized image, maximum file size, safety margin.
+- **Purpose**: Iteratively optimize quality compression factor (JPEG/WebP) using a binary search to approach but remain strictly below the maximum file size limit, preserving biometric details at a minimum quality floor of 20.
+- **Inputs**: Resized image, maximum file size (`maximum_bytes`), minimum file size (`minimum_bytes`), target ceiling ratio, safety margin.
 - **Outputs**: Compressed byte array.
-- **Failure Conditions**: Cannot compress below maximum file size without sacrificing minimum permitted resolution.
-- **Warning Conditions**: Image quality falls below acceptable visual metrics.
-- **Privacy Considerations**: Strip metadata.
-- **Planned Tests**: Verify output byte sizes remain close to but under the maximum limit.
+- **Failure Conditions**: Cannot compress below maximum file size without going below the quality floor of 20 (fails with `COMPRESSION_QUALITY_FLOOR_VIOLATION`), final size exceeds maximum bytes (`COMPRESSION_MAX_SIZE_EXCEEDED`), or final size is below minimum bytes (`COMPRESSION_MIN_SIZE_NOT_REACHED`).
+- **Warning Conditions**: Low quality warning (final quality < min_quality).
+- **Privacy Considerations**: Metadata is stripped from the byte stream, and raw compressed bytes are excluded from model serialization.
+- **Status**: **Implemented (Milestone 13)**
+- **Planned Tests**: Verify binary search convergence, quality floor enforcement, minimum size validation, metadata stripping, and serialization safety.
 - **Dependencies**: Pillow JPEG encoder.
 
 ### 15. Filename Generation
@@ -229,10 +230,11 @@
 - **Purpose**: Decode the newly compressed output file to verify it is readable and not corrupted.
 - **Inputs**: Compressed bytes.
 - **Outputs**: Successful decode flag.
-- **Failure Conditions**: Decompression failure.
+- **Failure Conditions**: Decompression failure or decoded dimensions do not match the input dimensions.
 - **Warning Conditions**: None.
 - **Privacy Considerations**: Temporary validation.
-- **Planned Tests**: Assert failure on corrupted byte streams.
+- **Status**: **Implemented (Milestone 13)**
+- **Planned Tests**: Assert failure on corrupted byte streams or mismatched dimensions.
 - **Dependencies**: Pillow.
 
 ### 17. Final Validation

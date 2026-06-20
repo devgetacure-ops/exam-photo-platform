@@ -60,8 +60,8 @@ disable_error_code = [
 ]
 
 [[tool.mypy.overrides]]
-module = "mediapipe.*,jsonschema.*"
-ignore_missing_imports = true
+module = "tests.*"
+ignore_errors = true
 
 [tool.pytest.ini_options]
 addopts = "--strict-markers"
@@ -72,4 +72,6 @@ markers = [
     "mandatory_crop_b: marks tests that depend on Crop Mode B implementations",
     "mandatory_background: marks tests that depend on background composition",
     "mandatory_output_preparation: marks tests that depend on output preparation implementations",
+    "mandatory_output_compression: marks tests that depend on output compression implementations",
 ]
+

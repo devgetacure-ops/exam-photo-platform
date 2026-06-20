@@ -104,6 +104,7 @@ This phase covers establishing directory, configuration, and interfaces foundati
 - **Dependencies**: Milestone 12.
 - **Expected Deliverables**: Iterative encoder optimizer, target file size compliance validator.
 - **Exit Criteria**: Test cases assert output files comply with rules' file size limits while maintaining visual quality.
+- **Status**: **Completed (Milestone 13: Quality-Aware Compression Loop Baseline)**
 
 #### Milestone 14: Full CLI orchestration and final validation
 - **Objective**: Connect the CLI to run the full pipeline (normalization, suitability, crop, remove background, enhance, compress) against configured rules.

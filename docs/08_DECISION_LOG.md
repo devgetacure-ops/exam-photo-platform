@@ -234,3 +234,13 @@ This log tracks architectural and product decisions, open questions, and recomme
 - **Reasoning**: Ensures that candidate images are sized accurately to meet exam constraints without introducing identity distortion, artifacts, or silent stretching. Keeps enhancement limited to basic quality correction to avoid biometric alteration.
 - **Affected Modules**: services/image-engine/providers/output_preparers, services/image-engine/providers/output_preparation.py.
 - **Approval Owner**: Lead Architect
+
+### DEC-020: Quality-Aware Compression Loop Baseline
+- **Date**: 2026-06-20
+- **Status**: Approved
+- **Problem**: Selection and integration of local deterministic image compression and quality factor search to satisfy maximum and minimum file size limits.
+- **Decision**: Adopt DeterministicJpegCompressor. Implement integer-based binary search on quality factors `[20, 100]` with an absolute safety quality floor of 20 to preserve biometric details. Enforce safety margins (`safety_margin_bytes`) and ceiling ratios (`target_ceiling_ratio`) strictly during search. Enable metadata stripping (e.g., EXIF) and a mandatory decode-after-encode dimension test. Exclude binary arrays from JSON serialization to prevent leakage. Save invalid output candidates only under diagnostic `--allow-invalid-output` flags.
+- **Reasoning**: Ensures that candidate images are optimized for storage and delivery without crossing regulatory size limits or degrading visual quality below biometric legibility thresholds.
+- **Affected Modules**: services/image-engine/providers/compression, services/image-engine/providers/output_compression.py, services/image-engine/cli.py.
+- **Approval Owner**: Lead Architect
+

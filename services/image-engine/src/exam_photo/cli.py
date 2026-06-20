@@ -447,6 +447,50 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
         "--variant", choices=["selfie_multiclass_256x256", "selfie_bin_general"]
     )
 
+    # compress-output subcommand
+    comp_parser = subparsers.add_parser(
+        "compress-output",
+        help="Compress prepared output and perform quality-aware optimization.",
+    )
+    comp_parser.add_argument("--input", required=True, help="Path to the image file.")
+    comp_parser.add_argument("--target-width", type=int)
+    comp_parser.add_argument("--target-height", type=int)
+    comp_parser.add_argument("--maximum-bytes", type=int, required=True)
+    comp_parser.add_argument("--minimum-bytes", type=int)
+    comp_parser.add_argument("--target-ceiling-ratio", type=float, default=0.96)
+    comp_parser.add_argument("--safety-margin-bytes", type=int, default=512)
+    comp_parser.add_argument("--min-quality", type=int, default=35)
+    comp_parser.add_argument("--max-quality", type=int, default=95)
+    comp_parser.add_argument("--initial-quality", type=int, default=92)
+    comp_parser.add_argument("--optimize", action="store_true", default=True)
+    comp_parser.add_argument("--no-optimize", dest="optimize", action="store_false")
+    comp_parser.add_argument("--progressive", action="store_true")
+    comp_parser.add_argument("--crop-mode", choices=["none", "a", "b"], default="none")
+    comp_parser.add_argument("--background-colour")
+    comp_parser.add_argument(
+        "--enhancement-mode", choices=["none", "conservative"], default="none"
+    )
+    comp_parser.add_argument("--brightness", type=float, default=1.0)
+    comp_parser.add_argument("--contrast", type=float, default=1.0)
+    comp_parser.add_argument("--sharpness", type=float, default=1.0)
+    comp_parser.add_argument(
+        "--save-output",
+        help="Optional path to save valid compressed candidate bytes.",
+    )
+    comp_parser.add_argument("--allow-invalid-output", action="store_true")
+    comp_parser.add_argument("--output-dir", help="Path to save outputs.")
+    comp_parser.add_argument("--overwrite", action="store_true")
+    comp_parser.add_argument("--json", action="store_true")
+    comp_parser.add_argument(
+        "--face-model-path", help="Path to the face-detection model (.tflite)."
+    )
+    comp_parser.add_argument(
+        "--segmenter-model-path", help="Path to the segmenter model (.tflite)."
+    )
+    comp_parser.add_argument(
+        "--variant", choices=["selfie_multiclass_256x256", "selfie_bin_general"]
+    )
+
     args = parser.parse_args(argv)
 
     if args.command == "validate-rule":
@@ -2744,6 +2788,373 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
                     return 1
 
         return 0 if prep_result.validation.is_valid else 1
+
+    elif args.command == "compress-output":
+        input_path = args.input
+        if not os.path.exists(input_path):
+            print("Error: Input file not found. Code: FILE_NOT_FOUND", file=sys.stderr)
+            return 1
+
+        # 1. Normalize
+        limits = InputLimits()
+        try:
+            with open(input_path, "rb") as fb:
+                data = fb.read(limits.maximum_encoded_byte_size + 1)
+        except Exception:
+            print(
+                "Error: Unable to read input file. Code: FILE_READ_FAILED",
+                file=sys.stderr,
+            )
+            return 1
+
+        try:
+            norm_result = normalize_image_input(data, input_path, limits)
+            current_image = norm_result.image
+        except Exception:
+            print(
+                "Error: Image normalization failed. Code: IMAGE_NORMALIZATION_FAILED",
+                file=sys.stderr,
+            )
+            return 1
+
+        # Resolve face model and checksum
+        face_model_path_str = args.face_model_path
+        expected_face_sha = os.environ.get("EXAM_PHOTO_FACE_MODEL_SHA256", "")
+        repo_root = find_repo_root()
+        if not face_model_path_str:
+            face_model_path_str = os.environ.get("EXAM_PHOTO_FACE_MODEL_PATH")
+
+        if not face_model_path_str:
+            manifest_path = repo_root / "model-manifests" / "face-detector.json"
+            if manifest_path.exists():
+                try:
+                    with open(manifest_path, "r", encoding="utf-8") as mf:
+                        manifest = json.load(mf)
+                    face_model_path_str = manifest.get("local_model_path_default")
+                    expected_face_sha = manifest.get("sha256", "")
+                except Exception:
+                    pass
+            if not face_model_path_str:
+                face_model_path_str = "model-assets/blaze_face_short_range.tflite"
+
+        face_model_path = Path(face_model_path_str)
+        if not face_model_path.is_absolute():
+            face_model_path = repo_root / face_model_path
+
+        from exam_photo.providers.mediapipe_face_detector import MediapipeFaceDetector
+
+        try:
+            detector = MediapipeFaceDetector(
+                model_path=face_model_path, expected_sha256=expected_face_sha
+            )
+            with detector:
+                face_res = detector.detect_faces(current_image)
+            face_count = len(face_res.detections)
+        except Exception as e:
+            print(f"Error running face detection: {e}", file=sys.stderr)
+            return 1
+
+        if face_count != 1:
+            print(
+                f"Error: Output compression requires exactly 1 face, found {face_count}. Code: INVALID_FACE_COUNT",
+                file=sys.stderr,
+            )
+            return 1
+
+        # 2. Optionally crop and/or compose background
+        if args.crop_mode != "none" or args.background_colour:
+            segmenter_model_path_str = args.segmenter_model_path
+            expected_seg_sha = ""
+            if not segmenter_model_path_str:
+                segmenter_model_path_str = os.environ.get(
+                    "EXAM_PHOTO_SEGMENTER_MODEL_PATH"
+                )
+                expected_seg_sha = os.environ.get(
+                    "EXAM_PHOTO_SEGMENTER_MODEL_SHA256", ""
+                )
+
+            if not segmenter_model_path_str:
+                manifest_path = repo_root / "model-manifests" / "subject-segmenter.json"
+                if manifest_path.exists():
+                    try:
+                        with open(manifest_path, "r", encoding="utf-8") as mf:
+                            manifest = json.load(mf)
+                        variant_name = args.variant or manifest.get(
+                            "selected_variant", "selfie_bin_general"
+                        )
+                        variants = manifest.get("variants", {})
+                        variant = variants.get(variant_name)
+                        if variant is not None:
+                            filename = variant.get("filename")
+                            if filename:
+                                segmenter_model_path_str = "model-assets/" + filename
+                            expected_seg_sha = variant.get("sha256", "")
+                    except Exception:
+                        pass
+                if not segmenter_model_path_str:
+                    segmenter_model_path_str = (
+                        "model-assets/selfie_multiclass_256x256.tflite"
+                    )
+
+            segmenter_model_path = Path(segmenter_model_path_str)
+            if not segmenter_model_path.is_absolute():
+                segmenter_model_path = repo_root / segmenter_model_path
+
+            try:
+                from exam_photo.providers.refiners.morphological_refiner import (
+                    MorphologicalForegroundRefiner,
+                )
+                from exam_photo.providers.segmenters.mediapipe_segmenter import (
+                    MediapipeSubjectSegmenter,
+                )
+
+                estimator = LandmarkGeometricHeadEstimator()
+                head_res = estimator.estimate_head(
+                    current_image,
+                    face_res.detections[0],
+                    face_res.detections[0].landmarks,
+                )
+
+                segmenter = MediapipeSubjectSegmenter(
+                    model_path=segmenter_model_path, expected_sha256=expected_seg_sha
+                )
+                with segmenter:
+                    seg_res = segmenter.segment_subject(
+                        current_image,
+                        face=face_res.detections[0],
+                        head_estimate=head_res.head_bounding_box,
+                        config=SegmentationConfig(),
+                    )
+
+                refiner = MorphologicalForegroundRefiner()
+                ref_res = refiner.refine_mask(
+                    coarse_mask=seg_res.coarse_mask,
+                    probability_mask=seg_res.probability_mask,
+                    face=face_res.detections[0],
+                    head_estimate=head_res.head_bounding_box,
+                )
+
+                crop_plan = None
+                if args.crop_mode == "a":
+                    if not args.target_width or not args.target_height:
+                        print(
+                            "Error: Crop Mode A requires target-width and target-height.",
+                            file=sys.stderr,
+                        )
+                        return 1
+                    crop_plan = DeterministicCropPlanner().plan_crop(
+                        image_width=current_image.width,
+                        image_height=current_image.height,
+                        face=face_res.detections[0],
+                        head_estimate=head_res.head_bounding_box,
+                        refined_mask=ref_res.refined_binary_mask,
+                        alpha_mask=ref_res.refined_alpha_mask,
+                        config=CropConfig(
+                            target_aspect_ratio=args.target_width / args.target_height
+                        ),
+                    )
+                    if not crop_plan.validation.is_valid:
+                        print("Error: Crop Mode A failed validation.", file=sys.stderr)
+                        return 1
+                    assert crop_plan is not None
+                    b = crop_plan.crop_box
+                    current_image = current_image.crop(
+                        (int(b.left), int(b.top), int(b.right), int(b.bottom))
+                    )
+                    ref_res.refined_alpha_mask = ref_res.refined_alpha_mask[
+                        int(b.top) : int(b.bottom), int(b.left) : int(b.right)
+                    ]
+
+                elif args.crop_mode == "b":
+                    crop_plan = DeterministicCropModeBPlanner().plan_crop(
+                        image_width=current_image.width,
+                        image_height=current_image.height,
+                        face=face_res.detections[0],
+                        head_estimate=head_res.head_bounding_box,
+                        refined_mask=ref_res.refined_binary_mask,
+                        config=CropModeBConfig(
+                            target_head_height_ratio=0.76,
+                        ),
+                    )
+                    if not crop_plan.validation.is_valid:
+                        print("Error: Crop Mode B failed validation.", file=sys.stderr)
+                        return 1
+                    assert crop_plan is not None
+                    b = crop_plan.crop_box
+                    current_image = current_image.crop(
+                        (int(b.left), int(b.top), int(b.right), int(b.bottom))
+                    )
+                    ref_res.refined_alpha_mask = ref_res.refined_alpha_mask[
+                        int(b.top) : int(b.bottom), int(b.left) : int(b.right)
+                    ]
+
+                # 3. Optionally compose background
+                if args.background_colour:
+                    bg_composer = SolidBackgroundComposer()
+                    bg_res = bg_composer.compose_background(
+                        current_image,
+                        ref_res.refined_alpha_mask,
+                        BackgroundCompositionConfig(
+                            target_colour_hex=args.background_colour
+                        ),
+                    )
+                    if bg_res.validation.is_valid and bg_res.composed_image is not None:
+                        current_image = bg_res.composed_image
+
+            except Exception as e:
+                print(f"Error orchestrating crop/background: {e}", file=sys.stderr)
+                return 1
+
+        # 4. Prepare Output Dimensions
+        t_width = args.target_width or current_image.width
+        t_height = args.target_height or current_image.height
+        prep_config = OutputPreparationConfig(
+            resize_mode=ResizeMode.EXACT,
+            target_width=t_width,
+            target_height=t_height,
+            min_width=t_width,
+            max_width=t_width,
+            min_height=t_height,
+            max_height=t_height,
+            enhancement_mode=args.enhancement_mode,
+            brightness_adjustment=args.brightness,
+            contrast_adjustment=args.contrast,
+            sharpness_adjustment=args.sharpness,
+        )
+        try:
+            preparer = DeterministicOutputPreparer()
+            prep_res = preparer.prepare_output(current_image, prep_config)
+        except Exception as e:
+            print(f"Error: Output preparation failed. {e}", file=sys.stderr)
+            return 1
+
+        if not prep_res.validation.is_valid or prep_res.output_image is None:
+            print("Error: Output preparation validation failed.", file=sys.stderr)
+            return 1
+
+        prepared_image = prep_res.output_image
+
+        # 5. Compress Output
+        from exam_photo.providers.compression.deterministic_image_compressor import (
+            DeterministicJpegCompressor,
+        )
+        from exam_photo.providers.output_compression import (
+            CompressionFormat,
+            OutputCompressionConfig,
+        )
+
+        try:
+            comp_config = OutputCompressionConfig(
+                target_format=CompressionFormat.JPEG,
+                maximum_bytes=args.maximum_bytes,
+                minimum_bytes=args.minimum_bytes,
+                target_ceiling_ratio=args.target_ceiling_ratio,
+                safety_margin_bytes=args.safety_margin_bytes,
+                min_quality=args.min_quality,
+                max_quality=args.max_quality,
+                initial_quality=args.initial_quality,
+                optimize=args.optimize,
+                progressive=args.progressive,
+                strip_metadata=True,
+                allow_quality_below_minimum=args.allow_invalid_output,
+                allow_oversize_output=args.allow_invalid_output,
+            )
+            compressor = DeterministicJpegCompressor()
+            comp_result = compressor.compress_output(prepared_image, comp_config)
+        except Exception as e:
+            print(f"Error: Output compression failed. {e}", file=sys.stderr)
+            return 1
+
+        # 6. Print Output
+        if args.json:
+            print(comp_result.model_dump_json(indent=2))
+        else:
+            print("Output Compression Results:")
+            print(
+                f"  Provider: {comp_result.provider_name} v{comp_result.provider_version}"
+            )
+            print(f"  Target Format: {comp_result.target_format}")
+            print(
+                f"  Source Size: {comp_result.source_width}x{comp_result.source_height}"
+            )
+            print(f"  Maximum Bytes: {comp_result.maximum_bytes}")
+            print(f"  Target Bytes: {comp_result.target_bytes}")
+            print(f"  Actual Bytes: {comp_result.actual_bytes}")
+            ratio_str = (
+                f"{comp_result.validation.byte_size_ratio_to_max:.3f}"
+                if comp_result.validation.byte_size_ratio_to_max is not None
+                else "N/A"
+            )
+            print(f"  Byte Ratio: {ratio_str}")
+            print(f"  Final Quality: {comp_result.final_quality}")
+            print(f"  Iterations Used: {comp_result.iterations_used}")
+            print(f"  Decode Valid: {comp_result.validation.decode_after_encode_valid}")
+            print(f"  Metadata Stripped: {comp_result.validation.metadata_stripped}")
+            print(f"  Is Valid: {comp_result.validation.is_valid}")
+            if comp_result.validation.issue_codes:
+                print("  Issue Codes:")
+                for ic in comp_result.validation.issue_codes:
+                    print(f"    - {ic}")
+            print(f"  Processing Duration: {comp_result.processing_duration_ms:.2f}ms")
+
+        # 7. Save output
+        save_path = None
+        if args.save_output:
+            out_path = Path(args.save_output)
+            # reject output path equal to input path
+            if out_path.resolve() == Path(args.input).resolve():
+                print(
+                    "Error: Save path cannot be the same as input path.",
+                    file=sys.stderr,
+                )
+                return 1
+
+            if comp_result.validation.is_valid:
+                save_path = out_path
+            else:
+                if args.allow_invalid_output:
+                    save_path = out_path
+                    if not save_path.name.startswith("diagnostic_invalid_"):
+                        save_path = save_path.with_name(
+                            "diagnostic_invalid_" + save_path.name
+                        )
+                else:
+                    print(
+                        "Error: Output candidate is invalid and --allow-invalid-output was not specified. Image not saved.",
+                        file=sys.stderr,
+                    )
+                    return 1
+
+        if args.output_dir:
+            out_dir = Path(args.output_dir)
+            out_dir.mkdir(parents=True, exist_ok=True)
+            if save_path:
+                save_path = out_dir / save_path.name
+            elif comp_result.validation.is_valid:
+                save_path = out_dir / "compressed_output.jpg"
+            elif args.allow_invalid_output:
+                save_path = out_dir / "diagnostic_invalid_compressed_output.jpg"
+
+        if save_path and comp_result.encoded_bytes:
+            if save_path.exists() and not args.overwrite:
+                print(
+                    f"Error: Output file {save_path} already exists. Use --overwrite.",
+                    file=sys.stderr,
+                )
+                return 1
+            else:
+                try:
+                    with open(save_path, "wb") as f_out:
+                        f_out.write(comp_result.encoded_bytes)
+                    if not args.json:
+                        print(f"  Saved compressed output to: {save_path}")
+                except Exception as e:
+                    print(
+                        f"Error: Failed to save compressed output: {e}", file=sys.stderr
+                    )
+                    return 1
+
+        return 0 if comp_result.validation.is_valid else 1
 
     return 0
 
