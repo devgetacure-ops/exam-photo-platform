@@ -29,9 +29,11 @@ export interface JobStatusResponse {
   output_url?: string | null;
 }
 
+export type StageStatus = "not_started" | "passed" | "warning" | "failed" | "skipped";
+
 export interface StageReport {
   stage: string;
-  status: "success" | "failure" | "skipped";
+  status: StageStatus;
   details?: Record<string, unknown>;
   error?: string;
 }

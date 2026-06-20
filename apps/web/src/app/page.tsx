@@ -79,6 +79,7 @@ export default function Home() {
 
   const handleDeleteCleanup = () => {
     // Clear local memory states on deletion
+    setSelectedFile(null);
     setJobResponse(null);
     setPipelineReport(null);
     setProcessingStatus("idle");
@@ -134,21 +135,27 @@ export default function Home() {
                   </p>
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <input
-                    id="allow-invalid-checkbox"
-                    type="checkbox"
-                    checked={allowInvalidOutput}
-                    onChange={(e) => setAllowInvalidOutput(e.target.checked)}
-                    className="w-4 h-4 rounded text-indigo-650 focus:ring-indigo-500/20 border-slate-300 bg-slate-50 dark:bg-zinc-900 dark:border-zinc-750"
-                  />
-                  <label
-                    htmlFor="allow-invalid-checkbox"
-                    className="text-xs font-medium text-slate-700 dark:text-zinc-300 cursor-pointer"
-                  >
-                    Allow saving output when check fails (Allow Invalid Output)
-                  </label>
-                </div>
+                <details className="group border border-slate-200 dark:border-zinc-800 rounded p-3 text-xs bg-slate-50 dark:bg-zinc-900/50">
+                  <summary className="font-semibold text-slate-700 dark:text-zinc-300 cursor-pointer select-none list-none flex items-center justify-between">
+                    <span>Developer Options</span>
+                    <span className="text-[10px] text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                  </summary>
+                  <div className="mt-3 flex items-center gap-3">
+                    <input
+                      id="allow-invalid-checkbox"
+                      type="checkbox"
+                      checked={allowInvalidOutput}
+                      onChange={(e) => setAllowInvalidOutput(e.target.checked)}
+                      className="w-4 h-4 rounded text-indigo-650 focus:ring-indigo-500/20 border-slate-300 bg-slate-50 dark:bg-zinc-900 dark:border-zinc-750"
+                    />
+                    <label
+                      htmlFor="allow-invalid-checkbox"
+                      className="font-medium text-slate-700 dark:text-zinc-300 cursor-pointer"
+                    >
+                      Allow saving output when check fails (Allow Invalid Output)
+                    </label>
+                  </div>
+                </details>
 
                 <button
                   type="button"

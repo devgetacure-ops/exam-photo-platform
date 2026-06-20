@@ -35,7 +35,6 @@ describe("Deletion Lifecycle Flow", () => {
       <ResultPreview
         jobId="job_xyz123"
         outputFilename="photo.jpg"
-        isValid={true}
         onDelete={onDeleteMock}
         outputUrl="/v1/jobs/job_xyz123/output"
       />

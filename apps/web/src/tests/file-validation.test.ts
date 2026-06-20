@@ -43,7 +43,8 @@ describe("File Validation Utilities", () => {
 
       const result = validateRuleJson(JSON.stringify(validRule));
       expect(result.valid).toBe(true);
-      expect(result.data.schema_version).toBe("1.0");
+      const data = result.data as Record<string, unknown>;
+      expect(data.schema_version).toBe("1.0");
     });
 
     test("rejects invalid JSON string", () => {

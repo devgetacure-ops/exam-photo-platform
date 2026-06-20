@@ -27,4 +27,36 @@ describe("ValidationReport Component", () => {
     expect(container.innerHTML).not.toContain("sensitive_base64_data_here");
     expect(container.innerHTML).not.toContain("encoded_bytes");
   });
+
+  test("correctly renders various stage report statuses", () => {
+    const report: PipelineReport = {
+      is_valid: false,
+      issue_codes: ["ERR_1"],
+      stage_reports: [
+        { stage: "Stage A", status: "passed" },
+        { stage: "Stage B", status: "warning" },
+        { stage: "Stage C", status: "failed", error: "Stage C failed" },
+        { stage: "Stage D", status: "skipped" },
+        { stage: "Stage E", status: "not_started" },
+      ],
+    };
+
+    render(<ValidationReport report={report} />);
+
+    expect(screen.getByText("Stage A")).toBeDefined();
+    expect(screen.getByText("passed")).toBeDefined();
+
+    expect(screen.getByText("Stage B")).toBeDefined();
+    expect(screen.getByText("warning")).toBeDefined();
+
+    expect(screen.getByText("Stage C")).toBeDefined();
+    expect(screen.getByText("failed")).toBeDefined();
+    expect(screen.getByText("Stage C failed")).toBeDefined();
+
+    expect(screen.getByText("Stage D")).toBeDefined();
+    expect(screen.getByText("skipped")).toBeDefined();
+
+    expect(screen.getByText("Stage E")).toBeDefined();
+    expect(screen.getByText("not_started")).toBeDefined();
+  });
 });

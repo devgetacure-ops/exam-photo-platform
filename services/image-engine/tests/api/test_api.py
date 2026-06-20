@@ -226,8 +226,9 @@ def test_upload_too_large(temp_artifact_root):
 @pytest.mark.mandatory_api
 def test_cors_headers_enabled():
     """Test CORS headers are returned for allowed origins when enabled."""
-    import sys
     import importlib
+    import sys
+
     from exam_photo.api.settings import ApiSettings
 
     # Create fake settings with local_cors_enabled=True
@@ -250,7 +251,10 @@ def test_cors_headers_enabled():
                 "Access-Control-Request-Headers": "content-type",
             },
         )
-        assert response.headers.get("access-control-allow-origin") == "http://localhost:3000"
+        assert (
+            response.headers.get("access-control-allow-origin")
+            == "http://localhost:3000"
+        )
 
         # 2. Allowed origin http://127.0.0.1:3000
         response = test_client.options(
@@ -261,7 +265,10 @@ def test_cors_headers_enabled():
                 "Access-Control-Request-Headers": "content-type",
             },
         )
-        assert response.headers.get("access-control-allow-origin") == "http://127.0.0.1:3000"
+        assert (
+            response.headers.get("access-control-allow-origin")
+            == "http://127.0.0.1:3000"
+        )
 
         # 3. Disallowed origin
         response = test_client.options(
@@ -276,4 +283,3 @@ def test_cors_headers_enabled():
 
     # Reload again to restore default (CORS disabled)
     importlib.reload(sys.modules["exam_photo.api.app"])
-

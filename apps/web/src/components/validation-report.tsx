@@ -122,8 +122,20 @@ export function ValidationReport({ report }: ValidationReportProps) {
           </h3>
           <div className="border border-slate-150 dark:border-zinc-850 rounded-lg overflow-hidden divide-y divide-slate-150 dark:divide-zinc-850 text-xs">
             {stage_reports.map((stage) => {
-              const isSuccess = stage.status === "success";
-              const isSkipped = stage.status === "skipped";
+              let dotColor = "bg-slate-400 dark:bg-zinc-650";
+              let textColor = "text-slate-450 dark:text-zinc-500";
+
+              if (stage.status === "passed") {
+                dotColor = "bg-emerald-500";
+                textColor = "text-emerald-600 dark:text-emerald-450";
+              } else if (stage.status === "warning") {
+                dotColor = "bg-amber-500";
+                textColor = "text-amber-600 dark:text-amber-450";
+              } else if (stage.status === "failed") {
+                dotColor = "bg-rose-500";
+                textColor = "text-rose-600 dark:text-rose-455";
+              }
+
               return (
                 <div
                   key={stage.stage}
@@ -131,9 +143,7 @@ export function ValidationReport({ report }: ValidationReportProps) {
                 >
                   <div className="flex items-center gap-2">
                     <span
-                      className={`w-2 h-2 rounded-full ${
-                        isSuccess ? "bg-emerald-500" : isSkipped ? "bg-slate-400" : "bg-rose-500"
-                      }`}
+                      className={`w-2 h-2 rounded-full ${dotColor}`}
                       aria-hidden="true"
                     />
                     <span className="font-semibold text-slate-700 dark:text-zinc-300">
@@ -147,13 +157,7 @@ export function ValidationReport({ report }: ValidationReportProps) {
                       </span>
                     )}
                     <span
-                      className={`font-semibold uppercase text-[10px] ${
-                        isSuccess
-                          ? "text-emerald-600 dark:text-emerald-450"
-                          : isSkipped
-                          ? "text-slate-400"
-                          : "text-rose-600 dark:text-rose-455"
-                      }`}
+                      className={`font-semibold uppercase text-[10px] ${textColor}`}
                     >
                       {stage.status}
                     </span>
