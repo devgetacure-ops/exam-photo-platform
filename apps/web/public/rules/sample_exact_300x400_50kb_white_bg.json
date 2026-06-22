@@ -1,12 +1,14 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "rule_id": "rule-exact-300-400",
   "rule_version": "1.0.0",
   "status": "provisional",
   "exam": {
     "exam_id": "fictional-exact-300-400",
     "exam_name": "Fictional Exact 300x400 White BG Exam",
-    "aliases": ["F300x400 Exam"],
+    "aliases": [
+      "F300x400 Exam"
+    ],
     "conducting_body": "Fictional Board of Testing (FBT)",
     "examination_year": 2026,
     "application_cycle": "FBT-2026-A"
@@ -39,7 +41,10 @@
       "published_maximum": 50.0
     },
     "formats": {
-      "allowed_formats": ["jpg", "jpeg"],
+      "allowed_formats": [
+        "jpg",
+        "jpeg"
+      ],
       "preferred_format": "jpeg",
       "preserve_transparency": false,
       "strip_metadata": true,

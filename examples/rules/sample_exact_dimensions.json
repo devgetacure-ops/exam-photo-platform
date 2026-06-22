@@ -1,12 +1,14 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "rule_id": "rule-exact-001",
   "rule_version": "1.0.0",
   "status": "provisional",
   "exam": {
     "exam_id": "fictional-exact-exam-2026",
     "exam_name": "Fictional Indian National Engineering Entrance (FINEE)",
-    "aliases": ["FINEE Exam"],
+    "aliases": [
+      "FINEE Exam"
+    ],
     "conducting_body": "Fictional Board of Testing (FBT)",
     "examination_year": 2026,
     "application_cycle": "FBT-2026-A"
@@ -39,7 +41,10 @@
       "published_maximum": 50.0
     },
     "formats": {
-      "allowed_formats": ["jpg", "jpeg"],
+      "allowed_formats": [
+        "jpg",
+        "jpeg"
+      ],
       "preferred_format": "jpeg",
       "preserve_transparency": false,
       "strip_metadata": true,

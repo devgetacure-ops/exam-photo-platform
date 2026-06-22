@@ -301,3 +301,19 @@ This log tracks architectural and product decisions, open questions, and recomme
 - **Affected Modules**: `apps/web/`, `services/image-engine/src/exam_photo/api/app.py`, `services/image-engine/tests/api/test_rule_validation_api.py`.
 - **Approval Owner**: Lead Architect
 
+### DEC-025: Generalized Adaptive Portrait Composition and Edge-Matting Hardening
+- **Date**: 2026-06-22
+- **Status**: Approved
+- **Problem**: Hardening the image compliance engine to produce high-quality, compliant portrait crops and composites across diverse human subjects without overfitting, clipping hair/ears, or introducing grey/white edge halos and color spill.
+- **Decision**: Adopt the following comprehensive visual quality and adaptive composition enhancements:
+  - **Composition 1.1 Model**: Introduce CropProfile and EarsPolicy schemas with validators mapping default ratio constraints (head size, margins, eye-line, torso limits) dynamically.
+  - **Fused Head Refinement**: Implement a post-segmentation fused head refinement using an adaptive head ROI to accurately locate the hair/chin boundary, ignoring the torso.
+  - **Grid-Search Cost Minimization**: Generate candidate crops and select the lowest cost crop using multi-objective scoring.
+  - **Guided Filter Matting**: Compute a trimap and uncertainty band at reduced resolution, project to native resolution, and refine the alpha mask using Guided Filter on the RGB guidance image.
+  - **Edge Color Decontamination**: Restrict background color spill recovery strictly to the boundary region ($0.05 < \alpha < 0.95$) to prevent global biometric color shifts.
+  - **Premultiplied Compositing**: Crop, premultiply, resize RGB/alpha together, and composite on white target background to prevent dark/bright edge fringes.
+  - **Comprehensive 30-Subject Benchmark**: Freeze baseline metrics (IoU, halo, spill, continuity, uniformity) and enforce visual quality gates on 192 deterministic variants.
+- **Reasoning**: Ensures robust, generalized compliance outputs for diverse skin tones, hairstyles, facial hair, clothing, and headwear, while satisfying strict privacy-first constraints and preserving subject identity.
+- **Affected Modules**: `services/image-engine/providers/refiners`, `services/image-engine/providers/crop_planners`, `services/image-engine/providers/background_composers`, `services/image-engine/providers/premultiplied_compositing.py`, `services/image-engine/providers/foreground_decontamination.py`, `services/image-engine/providers/fused_head_refinement.py`, `scripts/benchmark_engine_quality.py`.
+- **Approval Owner**: Lead Architect
+

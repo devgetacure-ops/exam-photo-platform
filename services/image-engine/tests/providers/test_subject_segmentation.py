@@ -681,6 +681,7 @@ def test_refinement_on_real_fixtures() -> None:
                 seg_res = segmenter.segment_subject(img, face=faces)
             assert seg_res.provider_status == SegmentationStatusValue.SUCCESS
             ref_res = refiner.refine_mask(
+                image=img,
                 coarse_mask=seg_res.coarse_mask,
                 probability_mask=seg_res.probability_mask,
                 face=faces,
@@ -727,6 +728,7 @@ def test_refinement_on_real_fixtures() -> None:
 
         # Run refiner
         ref_res = refiner.refine_mask(
+            image=img,
             coarse_mask=seg_res.coarse_mask,
             probability_mask=seg_res.probability_mask,
             face=faces,
@@ -821,6 +823,7 @@ def test_refinement_quality_vs_reference() -> None:
         seg_res = segmenter.segment_subject(img, face=faces)
 
     ref_res = refiner.refine_mask(
+        image=img,
         coarse_mask=seg_res.coarse_mask,
         probability_mask=seg_res.probability_mask,
         face=faces,
@@ -898,6 +901,7 @@ def test_refinement_multiple_person_safety() -> None:
 
     # Run refiner: must not crash
     ref_res = refiner.refine_mask(
+        image=img,
         coarse_mask=seg_res.coarse_mask,
         probability_mask=seg_res.probability_mask,
         face=faces,

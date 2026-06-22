@@ -261,6 +261,7 @@ def test_crop_mode_b_integration_fixtures() -> None:
 
             refiner = MorphologicalForegroundRefiner()
             ref_res = refiner.refine_mask(
+                image=img,
                 coarse_mask=seg_res.coarse_mask,
                 probability_mask=seg_res.probability_mask,
                 face=face,

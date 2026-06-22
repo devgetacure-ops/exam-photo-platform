@@ -4,12 +4,71 @@ from pydantic import BaseModel
 
 from exam_photo.models.exam_rule import BackgroundMode, DimensionMode, ExamRule
 from exam_photo.providers.background_composition import BackgroundCompositionConfig
-from exam_photo.providers.crop_planning import CropConfig, CropModeBConfig
+from exam_photo.providers.crop_planning import (
+    CropConfig,
+    CropModeBConfig,
+    CropProfile,
+)
 from exam_photo.providers.output_compression import (
     CompressionFormat,
     OutputCompressionConfig,
 )
 from exam_photo.providers.output_preparation import OutputPreparationConfig, ResizeMode
+
+PROFILE_DEFAULTS = {
+    CropProfile.STANDARD_PASSPORT_PORTRAIT: {
+        "target_head_height_ratio": 0.60,
+        "minimum_head_height_ratio": 0.50,
+        "maximum_head_height_ratio": 0.70,
+        "target_top_margin_ratio": 0.10,
+        "minimum_top_margin_ratio": 0.06,
+        "maximum_top_margin_ratio": 0.15,
+        "target_eye_line_ratio": 0.44,
+        "minimum_eye_line_ratio": 0.40,
+        "maximum_eye_line_ratio": 0.48,
+        "maximum_horizontal_center_offset_ratio": 0.05,
+        "maximum_torso_inclusion_ratio": 0.35,
+    },
+    CropProfile.TIGHT_EXAM_PORTRAIT: {
+        "target_head_height_ratio": 0.78,
+        "minimum_head_height_ratio": 0.70,
+        "maximum_head_height_ratio": 0.85,
+        "target_top_margin_ratio": 0.08,
+        "minimum_top_margin_ratio": 0.04,
+        "maximum_top_margin_ratio": 0.12,
+        "target_eye_line_ratio": 0.44,
+        "minimum_eye_line_ratio": 0.40,
+        "maximum_eye_line_ratio": 0.48,
+        "maximum_horizontal_center_offset_ratio": 0.05,
+        "maximum_torso_inclusion_ratio": 0.20,
+    },
+    CropProfile.RELAXED_IDENTITY_PORTRAIT: {
+        "target_head_height_ratio": 0.40,
+        "minimum_head_height_ratio": 0.30,
+        "maximum_head_height_ratio": 0.55,
+        "target_top_margin_ratio": 0.15,
+        "minimum_top_margin_ratio": 0.10,
+        "maximum_top_margin_ratio": 0.20,
+        "target_eye_line_ratio": 0.44,
+        "minimum_eye_line_ratio": 0.40,
+        "maximum_eye_line_ratio": 0.48,
+        "maximum_horizontal_center_offset_ratio": 0.05,
+        "maximum_torso_inclusion_ratio": 0.50,
+    },
+    CropProfile.CUSTOM: {
+        "target_head_height_ratio": 0.60,
+        "minimum_head_height_ratio": 0.50,
+        "maximum_head_height_ratio": 0.70,
+        "target_top_margin_ratio": 0.10,
+        "minimum_top_margin_ratio": 0.06,
+        "maximum_top_margin_ratio": 0.15,
+        "target_eye_line_ratio": 0.44,
+        "minimum_eye_line_ratio": 0.40,
+        "maximum_eye_line_ratio": 0.48,
+        "maximum_horizontal_center_offset_ratio": 0.05,
+        "maximum_torso_inclusion_ratio": 0.35,
+    },
+}
 
 
 class RuleResolutionError(Exception):
@@ -67,10 +126,79 @@ def resolve_rule(
                 "PIPELINE_CROP_MODE_UNSUPPORTED",
                 "Exact dimension mode is missing width_px or height_px.",
             )
+        # Resolve Composition Ratio defaults from presets
+        comp = rule.image_requirements.composition
+        profile = comp.crop_profile or CropProfile.STANDARD_PASSPORT_PORTRAIT
+        defaults = PROFILE_DEFAULTS.get(
+            profile, PROFILE_DEFAULTS[CropProfile.STANDARD_PASSPORT_PORTRAIT]
+        )
+
+        def resolve_field(field_name: str) -> Any:
+            val = getattr(comp, field_name, None)
+            if val is None:
+                return defaults.get(field_name)
+            return val
+
+        target_head_height = resolve_field("target_head_height_ratio")
+        min_head_height = resolve_field("minimum_head_height_ratio")
+        max_head_height = resolve_field("maximum_head_height_ratio")
+
+        target_head_width = resolve_field("target_head_width_ratio")
+        min_head_width = resolve_field("minimum_head_width_ratio")
+        max_head_width = resolve_field("maximum_head_width_ratio")
+
+        target_top_margin = resolve_field("target_top_margin_ratio")
+        val = (
+            comp.minimum_top_margin_ratio
+            if comp.minimum_top_margin_ratio is not None
+            else defaults.get("minimum_top_margin_ratio")
+        )
+        min_top_margin = val if val is not None else 0.06
+        max_top_margin = resolve_field("maximum_top_margin_ratio")
+
+        target_eye_line = resolve_field("target_eye_line_ratio")
+        min_eye_line = resolve_field("minimum_eye_line_ratio")
+        max_eye_line = resolve_field("maximum_eye_line_ratio")
+
+        max_center_offset = resolve_field("maximum_horizontal_center_offset_ratio")
+        max_torso_inclusion = resolve_field("maximum_torso_inclusion_ratio")
+
+        complete_hair = getattr(comp, "complete_hair_required", None)
+        if complete_hair is None:
+            complete_hair = comp.complete_hair_visible
+
+        complete_chin = getattr(comp, "complete_chin_required", None)
+        if complete_chin is None:
+            complete_chin = comp.chin_visible
+
+        complete_beard = getattr(comp, "complete_beard_boundary_required", None)
+        if complete_beard is None:
+            complete_beard = comp.beard_boundary_visible
+
         crop_config = CropConfig(
             target_width=dim.width_px,
             target_height=dim.height_px,
             target_aspect_ratio=dim.width_px / dim.height_px,
+            allow_padding=allow_padding,
+            crop_profile=profile,
+            ears_policy=comp.ears_policy,
+            target_head_height_ratio=target_head_height,
+            minimum_head_height_ratio=min_head_height,
+            maximum_head_height_ratio=max_head_height,
+            target_head_width_ratio=target_head_width,
+            minimum_head_width_ratio=min_head_width,
+            maximum_head_width_ratio=max_head_width,
+            target_top_margin_ratio=target_top_margin,
+            minimum_top_margin_ratio=min_top_margin,
+            maximum_top_margin_ratio=max_top_margin,
+            target_eye_line_ratio=target_eye_line,
+            minimum_eye_line_ratio=min_eye_line,
+            maximum_eye_line_ratio=max_eye_line,
+            maximum_horizontal_center_offset_ratio=max_center_offset,
+            maximum_torso_inclusion_ratio=max_torso_inclusion,
+            complete_hair_required=complete_hair,
+            complete_chin_required=complete_chin,
+            complete_beard_boundary_required=complete_beard,
         )
     elif dim.mode == DimensionMode.RANGE:
         crop_mode = "b"

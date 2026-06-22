@@ -25,6 +25,16 @@ class RefinementConfig(BaseModel):
     trimap_band_width_px: int = Field(default=10, ge=1, le=50)
     preserve_face_core: bool = True
 
+    definite_foreground_threshold: float = Field(default=0.95, ge=0.0, le=1.0)
+    definite_background_threshold: float = Field(default=0.05, ge=0.0, le=1.0)
+    uncertainty_band_scale: float = Field(default=1.0, ge=0.1, le=5.0)
+    edge_refinement_radius_ratio: float = Field(default=0.02, ge=0.0, le=0.2)
+    quality_mode: str = Field(default="balanced", pattern="^(fast|balanced|high)$")
+    maximum_matting_pixels: int = Field(default=2000000, ge=100000)
+    maximum_boundary_roi_pixels: int = Field(default=500000, ge=10000)
+    maximum_native_dimension: int = Field(default=4000, ge=500)
+    allow_tiled_boundary_processing: bool = Field(default=False)
+
     def effective_radius(self, image_width: int, image_height: int) -> int:
         if self.morphology_radius_ratio is not None:
             short_edge = min(image_width, image_height)
@@ -131,6 +141,7 @@ class RefinedMaskResult(BaseModel):
 class ForegroundRefinementProvider(Protocol):
     def refine_mask(
         self,
+        image: Image.Image,
         coarse_mask: Image.Image,
         probability_mask: np.ndarray[Any, Any],
         face: Optional[FaceDetection | list[FaceDetection]] = None,

@@ -1,12 +1,14 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "rule_id": "rule-range-200-300-230-400",
   "rule_version": "1.0.0",
   "status": "provisional",
   "exam": {
     "exam_id": "fictional-range-200-300",
     "exam_name": "Fictional Range Dimensions White BG Exam",
-    "aliases": ["FRange Exam"],
+    "aliases": [
+      "FRange Exam"
+    ],
     "conducting_body": "Fictional Board of Testing (FBT)",
     "examination_year": 2026,
     "application_cycle": "FBT-2026-A"
@@ -43,7 +45,10 @@
       "published_maximum": 50.0
     },
     "formats": {
-      "allowed_formats": ["jpg", "jpeg"],
+      "allowed_formats": [
+        "jpg",
+        "jpeg"
+      ],
       "preferred_format": "jpeg",
       "preserve_transparency": false,
       "strip_metadata": true,

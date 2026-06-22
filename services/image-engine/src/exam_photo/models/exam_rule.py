@@ -7,6 +7,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 
 from exam_photo.models.provenance import ValueProvenance
 from exam_photo.models.source_evidence import SourceEvidence
+from exam_photo.providers.crop_planning import CropProfile, EarsPolicy
 
 
 class RuleStatus(str, Enum):
@@ -262,6 +263,34 @@ class CompositionConfig(BaseModel):
     expression_policy: Optional[str] = None
     additional_instructions: Optional[str] = None
 
+    crop_profile: Optional[CropProfile] = CropProfile.STANDARD_PASSPORT_PORTRAIT
+    ears_policy: Optional[EarsPolicy] = EarsPolicy.UNSPECIFIED
+
+    target_head_height_ratio: Optional[float] = Field(default=None, gt=0.0, le=1.0)
+    minimum_head_height_ratio: Optional[float] = Field(default=None, gt=0.0, le=1.0)
+    maximum_head_height_ratio: Optional[float] = Field(default=None, gt=0.0, le=1.0)
+
+    target_head_width_ratio: Optional[float] = Field(default=None, gt=0.0, le=1.0)
+    minimum_head_width_ratio: Optional[float] = Field(default=None, gt=0.0, le=1.0)
+    maximum_head_width_ratio: Optional[float] = Field(default=None, gt=0.0, le=1.0)
+
+    target_top_margin_ratio: Optional[float] = Field(default=None, ge=0.0, lt=1.0)
+    minimum_top_margin_ratio: Optional[float] = Field(default=None, ge=0.0, lt=1.0)
+    maximum_top_margin_ratio: Optional[float] = Field(default=None, ge=0.0, lt=1.0)
+
+    target_eye_line_ratio: Optional[float] = Field(default=None, ge=0.0, lt=1.0)
+    minimum_eye_line_ratio: Optional[float] = Field(default=None, ge=0.0, lt=1.0)
+    maximum_eye_line_ratio: Optional[float] = Field(default=None, ge=0.0, lt=1.0)
+
+    maximum_horizontal_center_offset_ratio: Optional[float] = Field(
+        default=None, ge=0.0, lt=1.0
+    )
+    maximum_torso_inclusion_ratio: Optional[float] = Field(default=None, ge=0.0, le=1.0)
+
+    complete_hair_required: Optional[bool] = None
+    complete_chin_required: Optional[bool] = None
+    complete_beard_boundary_required: Optional[bool] = None
+
     @model_validator(mode="after")
     def validate_composition(self) -> "CompositionConfig":
         if (
@@ -270,6 +299,50 @@ class CompositionConfig(BaseModel):
         ):
             if self.face_coverage_minimum > self.face_coverage_maximum:
                 raise ValueError("Minimum coverage cannot exceed maximum coverage.")
+
+        # Validate range parameters: minimum <= target <= maximum
+        def check_range(
+            val_min: float | None,
+            val_tgt: float | None,
+            val_max: float | None,
+            name: str,
+        ) -> None:
+            if val_min is not None and val_max is not None:
+                if val_min > val_max:
+                    raise ValueError(f"Minimum {name} cannot exceed maximum {name}.")
+            if val_tgt is not None:
+                if val_min is not None and val_tgt < val_min:
+                    raise ValueError(
+                        f"Target {name} cannot be less than minimum {name}."
+                    )
+                if val_max is not None and val_tgt > val_max:
+                    raise ValueError(f"Target {name} cannot exceed maximum {name}.")
+
+        check_range(
+            self.minimum_head_height_ratio,
+            self.target_head_height_ratio,
+            self.maximum_head_height_ratio,
+            "head height ratio",
+        )
+        check_range(
+            self.minimum_head_width_ratio,
+            self.target_head_width_ratio,
+            self.maximum_head_width_ratio,
+            "head width ratio",
+        )
+        check_range(
+            self.minimum_top_margin_ratio,
+            self.target_top_margin_ratio,
+            self.maximum_top_margin_ratio,
+            "top margin ratio",
+        )
+        check_range(
+            self.minimum_eye_line_ratio,
+            self.target_eye_line_ratio,
+            self.maximum_eye_line_ratio,
+            "eye line ratio",
+        )
+
         return self
 
 

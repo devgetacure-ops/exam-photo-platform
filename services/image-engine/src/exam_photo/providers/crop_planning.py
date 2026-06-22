@@ -17,6 +17,20 @@ class CropMode(str, Enum):
     HEAD_LED_RANGE = "head_led_range"
 
 
+class CropProfile(str, Enum):
+    TIGHT_EXAM_PORTRAIT = "tight_exam_portrait"
+    STANDARD_PASSPORT_PORTRAIT = "standard_passport_portrait"
+    RELAXED_IDENTITY_PORTRAIT = "relaxed_identity_portrait"
+    CUSTOM = "custom"
+
+
+class EarsPolicy(str, Enum):
+    REQUIRED_VISIBLE = "required_visible"
+    PREFERRED_VISIBLE = "preferred_visible"
+    NOT_REQUIRED = "not_required"
+    UNSPECIFIED = "unspecified"
+
+
 class CropIssueCode(str, Enum):
     CROP_TARGET_ASPECT_MISSING = "CROP_TARGET_ASPECT_MISSING"
     CROP_TARGET_ASPECT_INVALID = "CROP_TARGET_ASPECT_INVALID"
@@ -79,6 +93,31 @@ class CropConfig(BaseModel):
     allow_subject_clipping: bool = False
     edge_safety_margin_px: int = 2
     mask_preservation_threshold: float = 0.995
+
+    crop_profile: Optional[CropProfile] = None
+    ears_policy: Optional[EarsPolicy] = None
+
+    target_head_height_ratio: Optional[float] = None
+    minimum_head_height_ratio: Optional[float] = None
+    maximum_head_height_ratio: Optional[float] = None
+
+    target_head_width_ratio: Optional[float] = None
+    minimum_head_width_ratio: Optional[float] = None
+    maximum_head_width_ratio: Optional[float] = None
+
+    target_top_margin_ratio: Optional[float] = None
+    maximum_top_margin_ratio: Optional[float] = None
+
+    target_eye_line_ratio: Optional[float] = None
+    minimum_eye_line_ratio: Optional[float] = None
+    maximum_eye_line_ratio: Optional[float] = None
+
+    maximum_horizontal_center_offset_ratio: Optional[float] = None
+    maximum_torso_inclusion_ratio: Optional[float] = None
+
+    complete_hair_required: Optional[bool] = None
+    complete_chin_required: Optional[bool] = None
+    complete_beard_boundary_required: Optional[bool] = None
 
     @model_validator(mode="after")
     def validate_config(self) -> CropConfig:

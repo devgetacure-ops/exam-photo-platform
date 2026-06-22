@@ -325,8 +325,8 @@
         "reason": "large face proportions and margins require padding"
       },
       "crop_mode_b_expectation": {
-        "expected_valid_without_padding": false,
-        "expected_padding_required": true,
+        "expected_valid_without_padding": true,
+        "expected_padding_required": false,
         "expected_valid": true,
         "min_head_height_ratio": 0.3,
         "max_head_height_ratio": 0.84

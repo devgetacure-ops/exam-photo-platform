@@ -1,12 +1,14 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "rule_id": "rule-invalid-format",
   "rule_version": "1.0.0",
   "status": "provisional",
   "exam": {
     "exam_id": "fictional-invalid-format",
     "exam_name": "Fictional Invalid Format Exam",
-    "aliases": ["FFormat Exam"],
+    "aliases": [
+      "FFormat Exam"
+    ],
     "conducting_body": "Fictional Board of Testing (FBT)",
     "examination_year": 2026,
     "application_cycle": "FBT-2026-A"
@@ -39,7 +41,9 @@
       "published_maximum": 50.0
     },
     "formats": {
-      "allowed_formats": ["png"],
+      "allowed_formats": [
+        "png"
+      ],
       "preferred_format": "png",
       "preserve_transparency": true,
       "strip_metadata": true,

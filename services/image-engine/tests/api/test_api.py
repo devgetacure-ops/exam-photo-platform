@@ -116,6 +116,8 @@ def test_api_jobs_lifecycle(mock_pipeline_class, temp_artifact_root):
 
     fake_result = RulePipelineResult(
         is_valid=True,
+        rule_compliant=True,
+        visual_quality_acceptable=True,
         stage_reports=[],
         issue_codes=[],
         selected_crop_mode="CropModeA",

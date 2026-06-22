@@ -95,10 +95,20 @@ class DeterministicCropModeBPlanner:
         # Limit refined mask y-limit to protect hair, beard, scarf, neck
         if refined_mask is not None:
             mask_arr = np.array(refined_mask)
-            y_limit = int(round(preserve_box.bottom + 0.35 * h_head))
+            y_limit = int(round(face.bounding_box.bottom))
             if y_limit > 0:
-                ys, xs = np.where(mask_arr[0 : min(image_height, y_limit), :] > 127)
-                if len(ys) > 0:
+                x_start = max(
+                    0, int(round(preserve_box.left - preserve_box.width * 0.35))
+                )
+                x_end = min(
+                    image_width,
+                    int(round(preserve_box.right + preserve_box.width * 0.35)),
+                )
+                sub_mask = mask_arr[0 : min(image_height, y_limit), x_start:x_end]
+                ys_sub, xs_sub = np.where(sub_mask > 127)
+                if len(ys_sub) > 0:
+                    ys = ys_sub
+                    xs = xs_sub + x_start
                     upper_mask_bbox = BoundingBox(
                         left=float(np.min(xs)),
                         top=float(np.min(ys)),
@@ -186,22 +196,43 @@ class DeterministicCropModeBPlanner:
         t_min = preserve_box.bottom - h_crop
         t_max = preserve_box.top
 
-        # Inward shifting
-        l_allowed_min = max(l_min, 0.0)
-        l_allowed_max = min(l_max, float(image_width) - w_crop)
+        # Inward shifting with margin preservation
+        min_side_margin_px = cfg.minimum_side_margin_ratio * w_crop
+        l_margin_min = preserve_box.right + min_side_margin_px - w_crop
+        l_margin_max = preserve_box.left - min_side_margin_px
+
+        l_allowed_min = max(l_min, l_margin_min, 0.0)
+        l_allowed_max = min(l_max, l_margin_max, float(image_width) - w_crop)
 
         if l_allowed_min <= l_allowed_max:
             ideal_l = max(l_allowed_min, min(l_ideal, l_allowed_max))
         else:
-            ideal_l = max(l_min, min(l_ideal, l_max))
+            # Fallback if margins cannot be satisfied
+            l_fallback_min = max(l_min, 0.0)
+            l_fallback_max = min(l_max, float(image_width) - w_crop)
+            if l_fallback_min <= l_fallback_max:
+                ideal_l = max(l_fallback_min, min(l_ideal, l_fallback_max))
+            else:
+                ideal_l = max(l_min, min(l_ideal, l_max))
 
-        t_allowed_min = max(t_min, 0.0)
-        t_allowed_max = min(t_max, float(image_height) - h_crop)
+        min_top_margin_px = cfg.minimum_top_margin_ratio * h_crop
+        min_bottom_margin_px = cfg.minimum_bottom_margin_ratio * h_crop
+        t_margin_min = preserve_box.bottom + min_bottom_margin_px - h_crop
+        t_margin_max = preserve_box.top - min_top_margin_px
+
+        t_allowed_min = max(t_min, t_margin_min, 0.0)
+        t_allowed_max = min(t_max, t_margin_max, float(image_height) - h_crop)
 
         if t_allowed_min <= t_allowed_max:
             ideal_t = max(t_allowed_min, min(t_ideal, t_allowed_max))
         else:
-            ideal_t = max(t_min, min(t_ideal, t_max))
+            # Fallback if margins cannot be satisfied
+            t_fallback_min = max(t_min, 0.0)
+            t_fallback_max = min(t_max, float(image_height) - h_crop)
+            if t_fallback_min <= t_fallback_max:
+                ideal_t = max(t_fallback_min, min(t_ideal, t_fallback_max))
+            else:
+                ideal_t = max(t_min, min(t_ideal, t_max))
 
         ideal_l_rounded = int(round(ideal_l))
         ideal_t_rounded = int(round(ideal_t))
@@ -220,12 +251,15 @@ class DeterministicCropModeBPlanner:
         clamped_r = max(clamped_l + 1, min(ideal_r_rounded, image_width))
         clamped_b = max(clamped_t + 1, min(ideal_b_rounded, image_height))
 
-        crop_box = BoundingBox(
-            left=float(clamped_l),
-            top=float(clamped_t),
-            right=float(clamped_r),
-            bottom=float(clamped_b),
-        )
+        if cfg.allow_padding:
+            crop_box = ideal_crop_box
+        else:
+            crop_box = BoundingBox(
+                left=float(clamped_l),
+                top=float(clamped_t),
+                right=float(clamped_r),
+                bottom=float(clamped_b),
+            )
 
         crop_box_width = clamped_r - clamped_l
         crop_box_height = clamped_b - clamped_t
@@ -276,14 +310,21 @@ class DeterministicCropModeBPlanner:
         mask_preservation_valid: Optional[bool] = None
         if refined_mask is not None:
             mask_arr = np.array(refined_mask)
-            y_limit = int(round(preserve_box.bottom + 0.35 * h_head))
+            y_limit = int(round(face.bounding_box.bottom))
             if y_limit > 0:
-                total_fg = np.sum(mask_arr[0 : min(image_height, y_limit), :] > 127)
+                # Restrict columns to subject area of interest to avoid noise/shoulder pollution
+                sub_l = int(round(preserve_box.left))
+                sub_r = int(round(preserve_box.right))
+                total_fg = np.sum(
+                    mask_arr[0 : min(image_height, y_limit), sub_l:sub_r] > 127
+                )
                 if total_fg > 0:
                     y_start = max(0, min(clamped_t, y_limit))
                     y_end = max(0, min(clamped_b, y_limit))
+                    x_start_crop = max(clamped_l, sub_l)
+                    x_end_crop = min(clamped_r, sub_r)
                     fg_in_crop = np.sum(
-                        mask_arr[y_start:y_end, clamped_l:clamped_r] > 127
+                        mask_arr[y_start:y_end, x_start_crop:x_end_crop] > 127
                     )
                     mask_preservation_ratio = float(fg_in_crop / total_fg)
                     mask_preservation_valid = (
@@ -418,6 +459,22 @@ class DeterministicCropModeBPlanner:
             or (head_preservation_valid is False)
             or (mask_preservation_valid is False)
         )
+
+        print(f"DEBUG_CROP_B: preserve_box={preserve_box.model_dump()}")
+        print(f"DEBUG_CROP_B: h_crop={h_crop}, w_crop={w_crop}")
+        print(
+            f"DEBUG_CROP_B: clamped_l={clamped_l}, clamped_t={clamped_t}, clamped_r={clamped_r}, clamped_b={clamped_b}"
+        )
+        print(
+            f"DEBUG_CROP_B: top_margin={top_margin_px}, side_margin_l={left_margin_px}, side_margin_r={right_margin_px}"
+        )
+        print(
+            f"DEBUG_CROP_B: min_top_margin={cfg.minimum_top_margin_ratio * crop_box_height}, min_side_margin={cfg.minimum_side_margin_ratio * crop_box_width}"
+        )
+        print(
+            f"DEBUG_CROP_B: face_cx={face_cx}, face_cy={face_cy}, face_center_x_ratio={face_center_x_ratio}, face_center_y_ratio={face_center_y_ratio}"
+        )
+        print(f"DEBUG_CROP_B: mask_preservation_ratio={mask_preservation_ratio}")
 
         is_valid = (
             len(

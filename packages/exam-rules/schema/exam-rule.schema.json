@@ -378,6 +378,103 @@
             },
             "additional_instructions": {
               "type": "string"
+            },
+            "crop_profile": {
+              "type": "string",
+              "enum": [
+                "tight_exam_portrait",
+                "standard_passport_portrait",
+                "relaxed_identity_portrait",
+                "custom"
+              ]
+            },
+            "ears_policy": {
+              "type": "string",
+              "enum": [
+                "required_visible",
+                "preferred_visible",
+                "not_required",
+                "unspecified"
+              ]
+            },
+            "target_head_height_ratio": {
+              "type": "number",
+              "exclusiveMinimum": 0.0,
+              "maximum": 1.0
+            },
+            "minimum_head_height_ratio": {
+              "type": "number",
+              "exclusiveMinimum": 0.0,
+              "maximum": 1.0
+            },
+            "maximum_head_height_ratio": {
+              "type": "number",
+              "exclusiveMinimum": 0.0,
+              "maximum": 1.0
+            },
+            "target_head_width_ratio": {
+              "type": "number",
+              "exclusiveMinimum": 0.0,
+              "maximum": 1.0
+            },
+            "minimum_head_width_ratio": {
+              "type": "number",
+              "exclusiveMinimum": 0.0,
+              "maximum": 1.0
+            },
+            "maximum_head_width_ratio": {
+              "type": "number",
+              "exclusiveMinimum": 0.0,
+              "maximum": 1.0
+            },
+            "target_top_margin_ratio": {
+              "type": "number",
+              "minimum": 0.0,
+              "exclusiveMaximum": 1.0
+            },
+            "minimum_top_margin_ratio": {
+              "type": "number",
+              "minimum": 0.0,
+              "exclusiveMaximum": 1.0
+            },
+            "maximum_top_margin_ratio": {
+              "type": "number",
+              "minimum": 0.0,
+              "exclusiveMaximum": 1.0
+            },
+            "target_eye_line_ratio": {
+              "type": "number",
+              "minimum": 0.0,
+              "exclusiveMaximum": 1.0
+            },
+            "minimum_eye_line_ratio": {
+              "type": "number",
+              "minimum": 0.0,
+              "exclusiveMaximum": 1.0
+            },
+            "maximum_eye_line_ratio": {
+              "type": "number",
+              "minimum": 0.0,
+              "exclusiveMaximum": 1.0
+            },
+            "maximum_horizontal_center_offset_ratio": {
+              "type": "number",
+              "minimum": 0.0,
+              "exclusiveMaximum": 1.0
+            },
+            "maximum_torso_inclusion_ratio": {
+              "type": "number",
+              "minimum": 0.0,
+              "maximum": 1.0
+            },
+            "complete_hair_required": {
+              "type": "boolean"
+            },
+            "complete_chin_required": {
+              "type": "boolean"
+            },
+            "complete_beard_boundary_required": {
+              "type": "boolean"
             }
           },
           "additionalProperties": false

@@ -1,12 +1,14 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "rule_id": "rule-unspecified-003",
   "rule_version": "1.0.0",
   "status": "provisional",
   "exam": {
     "exam_id": "fictional-unspecified-exam-2026",
     "exam_name": "Fictional General Entrance Exam (FGEE)",
-    "aliases": ["FGEE Main"],
+    "aliases": [
+      "FGEE Main"
+    ],
     "conducting_body": "Fictional Testing Agency (FTA)",
     "examination_year": 2026,
     "application_cycle": "FTA-2026-C"
@@ -30,13 +32,16 @@
     },
     "file_size": {
       "maximum_bytes": 20480,
-      "target_ceiling_ratio": 0.90,
+      "target_ceiling_ratio": 0.9,
       "safety_margin_bytes": 1024,
       "size_unit_as_published": "KB",
       "published_maximum": 20.0
     },
     "formats": {
-      "allowed_formats": ["jpg", "jpeg"],
+      "allowed_formats": [
+        "jpg",
+        "jpeg"
+      ],
       "preferred_format": "jpeg",
       "preserve_transparency": false,
       "strip_metadata": true,

@@ -80,5 +80,5 @@ markers = [
     "mandatory_rule_pipeline: marks tests that depend on the complete rule-orchestrated pipeline",
     "mandatory_api: marks tests that depend on local API and job orchestration",
     "mandatory_rule_admin: marks tests that depend on the rule validation and admin endpoints",
+    "mandatory_engine_quality: marks engine quality tests for visual and composition hardening",
 ]
-

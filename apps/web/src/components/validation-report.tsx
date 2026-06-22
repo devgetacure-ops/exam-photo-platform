@@ -32,6 +32,66 @@ export function ValidationReport({ report }: ValidationReportProps) {
     return (bytes / 1024).toFixed(2) + " KB";
   };
 
+  const isCompliant = is_valid && report.visual_quality_acceptable !== false;
+
+  const technicalStages = ["rule_validation", "input_normalization", "crop_selection", "output_preparation", "output_compression", "final_decode_validation", "final_rule_validation", "filename_generation"];
+  const compositionStages = ["face_detection", "head_estimation", "crop_planning"];
+  const backgroundStages = ["subject_segmentation", "mask_refinement", "background_composition"];
+
+  const techReports = stage_reports.filter(s => technicalStages.includes(s.stage));
+  const compReports = stage_reports.filter(s => compositionStages.includes(s.stage));
+  const bgReports = stage_reports.filter(s => backgroundStages.includes(s.stage));
+
+  const renderStageRow = (stage: any) => {
+    let dotColor = "bg-slate-400 dark:bg-zinc-650";
+    let textColor = "text-slate-450 dark:text-zinc-500";
+
+    if (stage.status === "passed") {
+      dotColor = "bg-emerald-500";
+      textColor = "text-emerald-600 dark:text-emerald-450";
+    } else if (stage.status === "warning") {
+      dotColor = "bg-amber-500";
+      textColor = "text-amber-600 dark:text-amber-450";
+    } else if (stage.status === "failed") {
+      dotColor = "bg-rose-500";
+      textColor = "text-rose-600 dark:text-rose-455";
+    }
+
+    const displayName = stage.stage
+      .split("_")
+      .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(" ");
+
+    return (
+      <div
+        key={stage.stage}
+        className="flex items-center justify-between p-3 bg-white dark:bg-zinc-950 hover:bg-slate-50/50 dark:hover:bg-zinc-900/10 transition-colors"
+      >
+        <div className="flex items-center gap-2">
+          <span
+            className={`w-2 h-2 rounded-full ${dotColor}`}
+            aria-hidden="true"
+          />
+          <span className="font-semibold text-slate-700 dark:text-zinc-300">
+            {displayName}
+          </span>
+        </div>
+        <div className="flex items-center gap-3">
+          {stage.error && (
+            <span className="text-[10px] text-rose-600 dark:text-rose-455 font-mono max-w-[150px] sm:max-w-[250px] truncate">
+              {stage.error}
+            </span>
+          )}
+          <span
+            className={`font-semibold uppercase text-[10px] ${textColor}`}
+          >
+            {stage.status}
+          </span>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="bg-white dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-lg p-5 shadow-sm space-y-5">
       {/* 1. Header / Overall Status */}
@@ -46,21 +106,21 @@ export function ValidationReport({ report }: ValidationReportProps) {
         </div>
         <div
           className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold uppercase ${
-            is_valid
+            isCompliant
               ? "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-450 border border-emerald-200 dark:border-emerald-900/30"
               : "bg-rose-50 dark:bg-rose-950/20 text-rose-700 dark:text-rose-455 border border-rose-200 dark:border-rose-900/30"
           }`}
         >
           <span
-            className={`w-2 h-2 rounded-full ${is_valid ? "bg-emerald-500" : "bg-rose-500"}`}
+            className={`w-2 h-2 rounded-full ${isCompliant ? "bg-emerald-500" : "bg-rose-500"}`}
             aria-hidden="true"
           />
-          {is_valid ? "Compliant" : "Non-Compliant"}
+          {isCompliant ? "Compliant" : "Non-Compliant"}
         </div>
       </div>
 
       {/* 2. Issue Codes (if invalid) */}
-      {!is_valid && issue_codes.length > 0 && (
+      {!isCompliant && issue_codes.length > 0 && (
         <div className="space-y-2">
           <p className="text-xs font-semibold text-rose-700 dark:text-rose-400">
             Detected Issues:
@@ -114,60 +174,42 @@ export function ValidationReport({ report }: ValidationReportProps) {
         </div>
       </div>
 
-      {/* 4. Stage Reports */}
-      {stage_reports.length > 0 && (
-        <div className="space-y-2.5">
-          <h3 className="text-xs font-semibold text-slate-700 dark:text-zinc-300">
-            Pipeline Processing Stages
-          </h3>
-          <div className="border border-slate-150 dark:border-zinc-850 rounded-lg overflow-hidden divide-y divide-slate-150 dark:divide-zinc-850 text-xs">
-            {stage_reports.map((stage) => {
-              let dotColor = "bg-slate-400 dark:bg-zinc-650";
-              let textColor = "text-slate-450 dark:text-zinc-500";
-
-              if (stage.status === "passed") {
-                dotColor = "bg-emerald-500";
-                textColor = "text-emerald-600 dark:text-emerald-450";
-              } else if (stage.status === "warning") {
-                dotColor = "bg-amber-500";
-                textColor = "text-amber-600 dark:text-amber-450";
-              } else if (stage.status === "failed") {
-                dotColor = "bg-rose-500";
-                textColor = "text-rose-600 dark:text-rose-455";
-              }
-
-              return (
-                <div
-                  key={stage.stage}
-                  className="flex items-center justify-between p-3 bg-white dark:bg-zinc-950 hover:bg-slate-50/50 dark:hover:bg-zinc-900/10 transition-colors"
-                >
-                  <div className="flex items-center gap-2">
-                    <span
-                      className={`w-2 h-2 rounded-full ${dotColor}`}
-                      aria-hidden="true"
-                    />
-                    <span className="font-semibold text-slate-700 dark:text-zinc-300">
-                      {stage.stage}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    {stage.error && (
-                      <span className="text-[10px] text-rose-600 dark:text-rose-455 font-mono max-w-[150px] sm:max-w-[250px] truncate">
-                        {stage.error}
-                      </span>
-                    )}
-                    <span
-                      className={`font-semibold uppercase text-[10px] ${textColor}`}
-                    >
-                      {stage.status}
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
+      {/* 4. Stage Reports Grouped */}
+      <div className="space-y-4">
+        {techReports.length > 0 && (
+          <div className="space-y-2">
+            <h3 className="text-xs font-semibold text-slate-700 dark:text-zinc-300">
+              Technical Rule Checks
+            </h3>
+            <div className="border border-slate-150 dark:border-zinc-850 rounded-lg overflow-hidden divide-y divide-slate-150 dark:divide-zinc-850 text-xs">
+              {techReports.map(renderStageRow)}
+            </div>
           </div>
-        </div>
-      )}
+        )}
+
+        {compReports.length > 0 && (
+          <div className="space-y-2">
+            <h3 className="text-xs font-semibold text-slate-700 dark:text-zinc-305">
+              Portrait Composition Quality
+            </h3>
+            <div className="border border-slate-150 dark:border-zinc-850 rounded-lg overflow-hidden divide-y divide-slate-150 dark:divide-zinc-850 text-xs">
+              {compReports.map(renderStageRow)}
+            </div>
+          </div>
+        )}
+
+        {bgReports.length > 0 && (
+          <div className="space-y-2">
+            <h3 className="text-xs font-semibold text-slate-700 dark:text-zinc-305">
+              Background & Edge Quality
+            </h3>
+            <div className="border border-slate-150 dark:border-zinc-850 rounded-lg overflow-hidden divide-y divide-slate-150 dark:divide-zinc-850 text-xs">
+              {bgReports.map(renderStageRow)}
+            </div>
+          </div>
+        )}
+      </div>
+
 
       {/* 5. Collapsible Raw JSON Explorer */}
       <div className="pt-2 border-t border-slate-150 dark:border-zinc-850 space-y-2">

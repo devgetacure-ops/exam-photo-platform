@@ -1364,6 +1364,7 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
 
             refiner = MorphologicalForegroundRefiner()
             ref_result = refiner.refine_mask(
+                image=norm_result.image,
                 coarse_mask=seg_result.coarse_mask,
                 probability_mask=seg_result.probability_mask,
                 face=face,
@@ -1679,6 +1680,7 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
 
                 refiner = MorphologicalForegroundRefiner()
                 ref_result = refiner.refine_mask(
+                    image=norm_result.image,
                     coarse_mask=seg_result.coarse_mask,
                     probability_mask=seg_result.probability_mask,
                     face=face,
@@ -2051,6 +2053,7 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
 
                 refiner_b = MorphologicalForegroundRefiner()
                 ref_result_b = refiner_b.refine_mask(
+                    image=norm_result.image,
                     coarse_mask=seg_result_b.coarse_mask,
                     probability_mask=seg_result_b.probability_mask,
                     face=face,
@@ -2403,6 +2406,7 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
 
             refiner_bg = MorphologicalForegroundRefiner()
             ref_result_bg = refiner_bg.refine_mask(
+                image=norm_result.image,
                 coarse_mask=seg_result_bg.coarse_mask,
                 probability_mask=seg_result_bg.probability_mask,
                 face=face,
@@ -2664,6 +2668,7 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
 
                 refiner = MorphologicalForegroundRefiner()
                 ref_res = refiner.refine_mask(
+                    image=current_image,
                     coarse_mask=seg_res.coarse_mask,
                     probability_mask=seg_res.probability_mask,
                     face=face_res.detections[0],
@@ -2991,6 +2996,7 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
 
                 refiner = MorphologicalForegroundRefiner()
                 ref_res = refiner.refine_mask(
+                    image=current_image,
                     coarse_mask=seg_res.coarse_mask,
                     probability_mask=seg_res.probability_mask,
                     face=face_res.detections[0],

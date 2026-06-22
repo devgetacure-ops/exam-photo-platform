@@ -40,6 +40,8 @@ export interface StageReport {
 
 export interface PipelineReport {
   is_valid: boolean;
+  rule_compliant: boolean;
+  visual_quality_acceptable: boolean;
   issue_codes: string[];
   selected_crop_mode?: string | null;
   final_width?: number | null;
@@ -47,9 +49,14 @@ export interface PipelineReport {
   final_format?: string | null;
   final_bytes?: number | null;
   final_quality?: number | null;
+  quality_mode?: string | null;
+  diagnostic_artifacts_available?: boolean | null;
+  portrait_quality_report?: Record<string, unknown> | null;
+  matte_quality_report?: Record<string, unknown> | null;
   stage_reports?: StageReport[];
   [key: string]: unknown; // Allow collapsible raw JSON properties
 }
+
 
 export interface RuleValidationError {
   severity: "error" | "warning";

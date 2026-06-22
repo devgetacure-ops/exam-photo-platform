@@ -183,6 +183,11 @@ class HeadEstimationResult(BaseModel):
     processing_duration: float
     safe_internal_metadata: Optional[Dict[str, Any]] = None
 
+    geometric_head_bounding_box: Optional[BoundingBox] = None
+    refined_head_bounding_box: Optional[BoundingBox] = None
+    uncertainty_reasons: list[str] = Field(default_factory=list)
+    signal_summary: Dict[str, Any] = Field(default_factory=dict)
+
     @property
     def normalized_head_bounding_box(self) -> BoundingBox:
         metadata = self.safe_internal_metadata or {}

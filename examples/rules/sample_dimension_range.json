@@ -1,12 +1,14 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "rule_id": "rule-range-002",
   "rule_version": "1.0.0",
   "status": "provisional",
   "exam": {
     "exam_id": "fictional-range-exam-2026",
     "exam_name": "Fictional Civil Service Selection (FCSS)",
-    "aliases": ["FCSS Prelims"],
+    "aliases": [
+      "FCSS Prelims"
+    ],
     "conducting_body": "Fictional Recruitment Commission (FRC)",
     "examination_year": 2026,
     "application_cycle": "FRC-2026-B"
@@ -36,13 +38,17 @@
     },
     "file_size": {
       "maximum_bytes": 102400,
-      "target_ceiling_ratio": 0.90,
+      "target_ceiling_ratio": 0.9,
       "safety_margin_bytes": 4096,
       "size_unit_as_published": "KB",
       "published_maximum": 100.0
     },
     "formats": {
-      "allowed_formats": ["jpg", "jpeg", "png"],
+      "allowed_formats": [
+        "jpg",
+        "jpeg",
+        "png"
+      ],
       "preferred_format": "jpeg",
       "preserve_transparency": false,
       "strip_metadata": true,

@@ -53,6 +53,7 @@ temp/
 output/
 downloads/
 *.metadata.json
+quality_contact_sheet.html
 # Ignore model weight files and caches
 /model-assets/
 /model-cache/

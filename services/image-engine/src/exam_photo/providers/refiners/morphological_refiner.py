@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import time
-from typing import Any, Optional
+from typing import Any, Optional, cast
 
 import numpy as np
 from PIL import Image
@@ -144,6 +144,64 @@ def _find_internal_holes(binary_mask: np.ndarray[Any, Any]) -> tuple[int, int]:
     return hole_count, int(round(max_hole_size * scale_factor))
 
 
+def box_filter(img: np.ndarray[Any, Any], r: int) -> np.ndarray[Any, Any]:
+    """Fast box filter using 2D cumsum without Python loops."""
+    h, w = img.shape
+    out = np.zeros_like(img)
+
+    # 1. Cumsum along y axis
+    cy = np.cumsum(img, axis=0)
+    y_max = np.minimum(np.arange(h) + r, h - 1)
+    y_min = np.arange(h) - r
+
+    temp = cy[y_max, :]
+    valid_min = y_min > 0
+    if np.any(valid_min):
+        temp[valid_min, :] -= cy[y_min[valid_min] - 1, :]
+
+    # 2. Cumsum along x axis
+    cx = np.cumsum(temp, axis=1)
+    x_max = np.minimum(np.arange(w) + r, w - 1)
+    x_min = np.arange(w) - r
+
+    out = cx[:, x_max]
+    valid_xmin = x_min > 0
+    if np.any(valid_xmin):
+        out[:, valid_xmin] -= cx[:, x_min[valid_xmin] - 1]
+
+    return out
+
+
+def guided_filter(
+    guidance: np.ndarray[Any, Any], p: np.ndarray[Any, Any], r: int, eps: float
+) -> np.ndarray[Any, Any]:
+    """Monochrome Guided Filter.
+    guidance: guidance image (grayscale, 2D array [0.0, 1.0])
+    p: filtering input (2D array [0.0, 1.0])
+    r: radius
+    eps: regularization parameter
+    """
+    ones = np.ones_like(guidance)
+    box_n = box_filter(ones, r)
+
+    mean_i = box_filter(guidance, r) / box_n
+    mean_p = box_filter(p, r) / box_n
+    mean_ip = box_filter(guidance * p, r) / box_n
+    cov_ip = mean_ip - mean_i * mean_p
+
+    mean_ii = box_filter(guidance * guidance, r) / box_n
+    var_i = mean_ii - mean_i * mean_i
+
+    a = cov_ip / (var_i + eps)
+    b = mean_p - a * mean_i
+
+    mean_a = box_filter(a, r) / box_n
+    mean_b = box_filter(b, r) / box_n
+
+    q = mean_a * guidance + mean_b
+    return cast(np.ndarray[Any, Any], np.clip(q, 0.0, 1.0))
+
+
 class MorphologicalForegroundRefiner(ForegroundRefinementProvider):
     """Refiner that performs boundary morphological operations using pure NumPy/Pillow."""
 
@@ -153,6 +211,7 @@ class MorphologicalForegroundRefiner(ForegroundRefinementProvider):
 
     def refine_mask(
         self,
+        image: Image.Image,
         coarse_mask: Image.Image,
         probability_mask: np.ndarray[Any, Any],
         face: Optional[FaceDetection | list[FaceDetection]] = None,
@@ -203,39 +262,58 @@ class MorphologicalForegroundRefiner(ForegroundRefinementProvider):
                 "probability_mask values must strictly be in range [0.0, 1.0]"
             )
 
-        # 2. Determine processing scale for morphology (Capped at 512 for optimal performance)
-        max_dim = 512
+        # 2. Memory & Resolution Safety Limits and Downgrade
+        quality_mode = cfg.quality_mode
+        matte_quality_downgraded = False
+
+        if (
+            max(img_w, img_h) > cfg.maximum_native_dimension
+            or (img_w * img_h) > cfg.maximum_matting_pixels
+        ):
+            matte_quality_downgraded = True
+            if quality_mode == "high":
+                quality_mode = "balanced"
+            elif quality_mode == "balanced":
+                quality_mode = "fast"
+
+        # Determine target refinement dimensions
+        if quality_mode == "fast":
+            max_dim = 512
+        elif quality_mode == "balanced":
+            max_dim = 1024
+        else:  # high
+            max_dim = max(img_w, img_h)
+
         orig_w, orig_h = img_w, img_h
         if max(img_w, img_h) > max_dim:
-            scale = max_dim / max(img_w, img_h)
-            low_w = int(round(img_w * scale))
-            low_h = int(round(img_h * scale))
-
-            # Downscale coarse_mask and probability_mask
-            coarse_mask_low = coarse_mask.resize(
-                (low_w, low_h), Image.Resampling.NEAREST
-            )
-            prob_img = Image.fromarray(
-                (probability_mask * 255.0).astype(np.uint8), mode="L"
-            )
-            prob_img_low = prob_img.resize((low_w, low_h), Image.Resampling.BILINEAR)
-            prob_mask_low = np.array(prob_img_low, dtype=np.float32) / 255.0
-
-            # Compute effective radius on the scaled dimensions
-            radius = cfg.effective_radius(low_w, low_h)
+            scale_refine = max_dim / max(img_w, img_h)
+            refine_w = int(round(img_w * scale_refine))
+            refine_h = int(round(img_h * scale_refine))
         else:
-            scale = 1.0
-            low_w, low_h = img_w, img_h
-            coarse_mask_low = coarse_mask
-            prob_mask_low = probability_mask
-            radius = cfg.effective_radius(img_w, img_h)
+            scale_refine = 1.0
+            refine_w, refine_h = img_w, img_h
 
-        offsets = _disk_offsets(radius)
+        # Low resolution morphology scale (Always 512px max for coarse cleanups)
+        max_dim_low = 512
+        if max(img_w, img_h) > max_dim_low:
+            scale_low = max_dim_low / max(img_w, img_h)
+            low_w = int(round(img_w * scale_low))
+            low_h = int(round(img_h * scale_low))
+        else:
+            scale_low = 1.0
+            low_w, low_h = img_w, img_h
 
         # 3. Morphological Sequence (Closing -> Opening) on low resolution
+        coarse_mask_low = coarse_mask.resize((low_w, low_h), Image.Resampling.NEAREST)
+        radius_low = cfg.effective_radius(low_w, low_h)
+        offsets_low = _disk_offsets(radius_low)
         mask_np_low = np.array(coarse_mask_low) > 127
-        closed_low = _erode(_dilate(mask_np_low, radius, offsets), radius, offsets)
-        opened_low = _dilate(_erode(closed_low, radius, offsets), radius, offsets)
+        closed_low = _erode(
+            _dilate(mask_np_low, radius_low, offsets_low), radius_low, offsets_low
+        )
+        opened_low = _dilate(
+            _erode(closed_low, radius_low, offsets_low), radius_low, offsets_low
+        )
 
         # 4. Face/Head Core Protection on low resolution
         cleaned_binary_low = opened_low.copy()
@@ -243,7 +321,6 @@ class MorphologicalForegroundRefiner(ForegroundRefinementProvider):
             faces_list = face if isinstance(face, list) else [face]
             for f in faces_list:
                 face_box = f.bounding_box
-                # If coordinates are normalized, scale them to low_w, low_h
                 if (
                     face_box.left >= 0.0
                     and face_box.right <= 1.0
@@ -253,12 +330,11 @@ class MorphologicalForegroundRefiner(ForegroundRefinementProvider):
                 ):
                     face_box = face_box.to_pixel(low_w, low_h)
                 else:
-                    # absolute: multiply by scale
                     face_box = face_box.__class__(
-                        left=face_box.left * scale,
-                        right=face_box.right * scale,
-                        top=face_box.top * scale,
-                        bottom=face_box.bottom * scale,
+                        left=face_box.left * scale_low,
+                        right=face_box.right * scale_low,
+                        top=face_box.top * scale_low,
+                        bottom=face_box.bottom * scale_low,
                     )
 
                 face_w = face_box.right - face_box.left
@@ -282,37 +358,71 @@ class MorphologicalForegroundRefiner(ForegroundRefinementProvider):
                         inner_top:inner_bottom, inner_left:inner_right
                     ] = True
 
-        # 5. Alpha Smoothing in the boundary band on low resolution
-        boundary_offsets = _disk_offsets(radius)
-        eroded_boundary_low = _erode(cleaned_binary_low, radius, boundary_offsets)
-        dilated_boundary_low = _dilate(cleaned_binary_low, radius, boundary_offsets)
-        boundary_band_low = dilated_boundary_low ^ eroded_boundary_low
+        # 5. Compute uncertainty band at low resolution
+        eroded_boundary_low = _erode(cleaned_binary_low, radius_low, offsets_low)
+        dilated_boundary_low = _dilate(cleaned_binary_low, radius_low, offsets_low)
 
-        cleaned_binary_float_low = cleaned_binary_low.astype(np.float32)
-        alpha_low = np.where(
-            boundary_band_low,
-            (1.0 - cfg.probability_weight) * cleaned_binary_float_low
-            + cfg.probability_weight * prob_mask_low,
-            cleaned_binary_float_low,
+        # 6. Project/Resize masks to target refinement resolution
+        definite_fg_img = Image.fromarray(eroded_boundary_low)
+        dilated_img = Image.fromarray(dilated_boundary_low)
+
+        definite_fg_refine = np.array(
+            definite_fg_img.resize((refine_w, refine_h), Image.Resampling.NEAREST)
+        )
+        dilated_refine = np.array(
+            dilated_img.resize((refine_w, refine_h), Image.Resampling.NEAREST)
         )
 
-        sigma_low = cfg.gaussian_sigma * scale
-        if sigma_low > 0:
-            alpha_uint8_low = (alpha_low * 255.0).astype(np.uint8)
-            alpha_img_low = Image.fromarray(alpha_uint8_low, mode="L")
-            from PIL import ImageFilter
+        boundary_band_refine = dilated_refine ^ definite_fg_refine
 
-            blurred_img_low = alpha_img_low.filter(
-                ImageFilter.GaussianBlur(radius=sigma_low)
+        # Guidance image at refinement scale
+        image_refine = image.resize((refine_w, refine_h), Image.Resampling.BILINEAR)
+        guidance_gray = np.array(image_refine.convert("L"), dtype=np.float32) / 255.0
+
+        # Filtering input probability mask p at refinement scale
+        prob_img = Image.fromarray(
+            (probability_mask * 255.0).astype(np.uint8), mode="L"
+        )
+        prob_img_refine = prob_img.resize(
+            (refine_w, refine_h), Image.Resampling.BILINEAR
+        )
+        p = np.array(prob_img_refine, dtype=np.float32) / 255.0
+
+        # 7. Guided Filter Refinement
+        r_guided = max(
+            1, int(round(min(refine_w, refine_h) * cfg.edge_refinement_radius_ratio))
+        )
+        eps = 1e-4
+
+        refined_alpha_raw = guided_filter(guidance_gray, p, r_guided, eps)
+
+        alpha_refine: np.ndarray[Any, Any] = np.zeros(
+            (refine_h, refine_w), dtype=np.float32
+        )
+        alpha_refine[definite_fg_refine] = 1.0
+        alpha_refine[boundary_band_refine] = refined_alpha_raw[boundary_band_refine]
+        alpha_refine = cast(np.ndarray[Any, Any], np.clip(alpha_refine, 0.0, 1.0))
+
+        # 8. Upscale alpha back to original resolution if needed
+        if scale_refine != 1.0:
+            alpha_img = Image.fromarray(
+                (alpha_refine * 255.0).astype(np.uint8), mode="L"
             )
-            blurred_alpha_low = np.array(blurred_img_low, dtype=np.float32) / 255.0
-            alpha_low = np.where(boundary_band_low, blurred_alpha_low, alpha_low)
+            alpha_high_img = alpha_img.resize(
+                (orig_w, orig_h), Image.Resampling.BILINEAR
+            )
+            alpha = np.array(alpha_high_img, dtype=np.float32) / 255.0
+            alpha = np.clip(alpha, 0.0, 1.0)
+        else:
+            alpha = alpha_refine
 
-        alpha_low = np.clip(alpha_low, 0.0, 1.0)
+        # Refined binary mask (thresholded at 0.5)
+        binary_arr = np.where(alpha >= 0.5, 255, 0).astype(np.uint8)
+        refined_binary_mask = Image.fromarray(binary_arr, mode="L")
 
-        # 6. Trimap generation on low resolution
+        # Trimap generation (from low resolution, resized using NEAREST)
         trimap_radius_low = max(
-            1, int(round(max(1, cfg.trimap_band_width_px // 2) * scale))
+            1, int(round(max(1, cfg.trimap_band_width_px // 2) * scale_low))
         )
         trimap_offsets_low = _disk_offsets(trimap_radius_low)
         eroded_trimap_low = _erode(
@@ -326,32 +436,10 @@ class MorphologicalForegroundRefiner(ForegroundRefinementProvider):
         trimap_arr_low[dilated_trimap_low] = 128
         trimap_arr_low[eroded_trimap_low] = 255
 
-        # 7. Upscale results back to original resolution if downscaled
-        if scale != 1.0:
-            # Upscale alpha
-            alpha_low_img = Image.fromarray(
-                (alpha_low * 255.0).astype(np.uint8), mode="L"
-            )
-            alpha_high_img = alpha_low_img.resize(
-                (orig_w, orig_h), Image.Resampling.BILINEAR
-            )
-            alpha = np.array(alpha_high_img, dtype=np.float32) / 255.0
-            alpha = np.clip(alpha, 0.0, 1.0)
+        trimap_low_img = Image.fromarray(trimap_arr_low, mode="L")
+        trimap = trimap_low_img.resize((orig_w, orig_h), Image.Resampling.NEAREST)
 
-            # Deriving refined binary mask from upscaled alpha
-            binary_arr = np.where(alpha >= 0.5, 255, 0).astype(np.uint8)
-            refined_binary_mask = Image.fromarray(binary_arr, mode="L")
-
-            # Upscale trimap using NEAREST to maintain exact values 0, 128, 255
-            trimap_low_img = Image.fromarray(trimap_arr_low, mode="L")
-            trimap = trimap_low_img.resize((orig_w, orig_h), Image.Resampling.NEAREST)
-        else:
-            alpha = alpha_low
-            binary_arr = np.where(alpha >= 0.5, 255, 0).astype(np.uint8)
-            refined_binary_mask = Image.fromarray(binary_arr, mode="L")
-            trimap = Image.fromarray(trimap_arr_low, mode="L")
-
-        # 8. Validation on original resolution
+        # 9. Validation on original resolution
         mask_np = np.array(coarse_mask) > 127
         validation_report = self._validate_refined_mask(
             coarse_mask,
@@ -362,6 +450,17 @@ class MorphologicalForegroundRefiner(ForegroundRefinementProvider):
             face,
             head_estimate,
         )
+
+        if matte_quality_downgraded:
+            validation_report.issue_codes.append("MATTE_QUALITY_DOWNGRADED")
+            validation_report.issues.append(
+                RefinementValidationIssue(
+                    code=SuitabilityIssueCode.MATTE_QUALITY_DOWNGRADED,
+                    severity=IssueSeverity.WARNING,
+                    blocking_for_processing=False,
+                    confidence=1.0,
+                )
+            )
 
         duration = (time.perf_counter() - start_time) * 1000.0
 
@@ -374,9 +473,9 @@ class MorphologicalForegroundRefiner(ForegroundRefinementProvider):
                 trimap=trimap,
                 input_width=orig_w,
                 input_height=orig_h,
-                effective_radius_px=radius
-                if scale == 1.0
-                else int(round(radius / scale)),
+                effective_radius_px=radius_low
+                if scale_low == 1.0
+                else int(round(radius_low / scale_low)),
                 refinement_duration_ms=duration,
                 config_used=cfg,
                 validation=validation_report,

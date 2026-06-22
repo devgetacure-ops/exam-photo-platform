@@ -1,0 +1,482 @@
+[
+  {
+    "fixture_id": "portrait_obama",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/e/e9/Official_portrait_of_Barack_Obama.jpg",
+    "source_page_url": "https://commons.wikimedia.org/wiki/File:Official_portrait_of_Barack_Obama.jpg",
+    "license": "Public Domain",
+    "attribution": "Pete Souza, Official White House Photographer",
+    "source_sha256": "19ec613e6831dd0c285b907f4cf1be13a654f8ac237435146320ec3dcc42cd45",
+    "normalized_sha256": "0073465d1cc286af18431ce46ebff90440e4fc3c2e961ad25b32e6f969aa206e",
+    "normalization": {
+      "maximum_dimension": 800,
+      "format": "jpeg",
+      "quality": 95
+    },
+    "split": "calibration"
+  },
+  {
+    "fixture_id": "portrait_trump",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/5/56/Donald_Trump_official_portrait.jpg",
+    "source_page_url": "https://commons.wikimedia.org/wiki/File:Donald_Trump_official_portrait.jpg",
+    "license": "Public Domain",
+    "attribution": "Shealah Craighead, Official White House Photographer",
+    "source_sha256": "dac8cb8479f133d91d768777f2a64adec68d19ea29c4994108f2aea5811ff5f2",
+    "normalized_sha256": "59e87077f97ffa6c6d5e35241ba1714f43b518f603fe4660e4f8b2a0680bb43a",
+    "normalization": {
+      "maximum_dimension": 800,
+      "format": "jpeg",
+      "quality": 95
+    },
+    "split": "calibration"
+  },
+  {
+    "fixture_id": "portrait_biden",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/7/7f/Joe_Biden_portrait_2021.jpg",
+    "source_page_url": "https://commons.wikimedia.org/wiki/File:Joe_Biden_official_portrait_2021.jpg",
+    "license": "Public Domain",
+    "attribution": "Adam Schultz, Official White House Photographer",
+    "source_sha256": "1d094d96bb207e3c5f11f57e1860abc9738e63df66f3778839e0d72ff93f1773",
+    "normalized_sha256": "c362b9f43b708485d9ee5476610d7f2ff90c676b888ce2b67728e21af1650946",
+    "normalization": {
+      "maximum_dimension": 800,
+      "format": "jpeg",
+      "quality": 95
+    },
+    "split": "calibration"
+  },
+  {
+    "fixture_id": "portrait_harris",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/4/41/Kamala_Harris_Vice_Presidential_Portrait.jpg",
+    "source_page_url": "https://commons.wikimedia.org/wiki/File:Kamala_Harris_Vice_Presidential_Portrait.jpg",
+    "license": "Public Domain",
+    "attribution": "Lawrence Jackson, Official White House Photographer",
+    "source_sha256": "69218c08f5834e8befba25bec00d83d70d68309cf0c96acaa436c034708882e0",
+    "normalized_sha256": "71badd0dec017166166344322ebd9decf6b6a82e841afa945a8a9a2f9f994b15",
+    "normalization": {
+      "maximum_dimension": 800,
+      "format": "jpeg",
+      "quality": 95
+    },
+    "split": "calibration"
+  },
+  {
+    "fixture_id": "portrait_murmu",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/5/5d/Droupadi_Murmu_official_portrait_%284x5%29.jpg",
+    "source_page_url": "https://commons.wikimedia.org/wiki/File:Droupadi_Murmu_official_portrait_(4x5).jpg",
+    "license": "Public Domain",
+    "attribution": "President of India Portal",
+    "source_sha256": "1e7c98c224e61baa8d0a6964f6a7f00c687e774c29d1be42d4d82bddb8b83f92",
+    "normalized_sha256": "7cf684a584f838f07fededeaae5eab10e653f2f8adc644b0d787e940b7a48bf8",
+    "normalization": {
+      "maximum_dimension": 800,
+      "format": "jpeg",
+      "quality": 95
+    },
+    "split": "calibration"
+  },
+  {
+    "fixture_id": "portrait_modi",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/c/c6/Official_portrait_of_Narendra_Modi%2C_2022.jpg",
+    "source_page_url": "https://commons.wikimedia.org/wiki/File:Official_portrait_of_Narendra_Modi,_2022.jpg",
+    "license": "Public Domain",
+    "attribution": "Prime Minister's Office, India",
+    "source_sha256": "8fc103a1253caab77c26c34856606c630828639d5256b58c3cc253733d26cd25",
+    "normalized_sha256": "487ed2202a3013e7476967c72aead63a743f79962222dd0adeab8e200c5e59fc",
+    "normalization": {
+      "maximum_dimension": 800,
+      "format": "jpeg",
+      "quality": 95
+    },
+    "split": "calibration"
+  },
+  {
+    "fixture_id": "portrait_kalam",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/6/6e/A._P._J._Abdul_Kalam.jpg",
+    "source_page_url": "https://commons.wikimedia.org/wiki/File:A._P._J._Abdul_Kalam.jpg",
+    "license": "Public Domain",
+    "attribution": "Government of India Portal",
+    "source_sha256": "a865d35db061f3e4d5269bb9a372c8c94c35ce96b64592cbd82acbcc6cc3f878",
+    "normalized_sha256": "364a944f2f042edf21608412ed6c7bb1507f1f42bb48cad114253cc9ffd372ab",
+    "normalization": {
+      "maximum_dimension": 800,
+      "format": "jpeg",
+      "quality": 95
+    },
+    "split": "calibration"
+  },
+  {
+    "fixture_id": "portrait_mukherjee",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/5/5d/Pranab_Mukherjee_Portrait.jpg",
+    "source_page_url": "https://commons.wikimedia.org/wiki/File:Pranab_Mukherjee_Portrait.jpg",
+    "license": "Public Domain",
+    "attribution": "President of India Portal",
+    "source_sha256": "5080e4cf9375fad7fbc23cfd6a179bc348ff1257b79aba18bbc2f352b4d41914",
+    "normalized_sha256": "4acb8c5239c317d5a50ebf64c37a532d0a934d3ff4bad5e894c82baed2aa6d49",
+    "normalization": {
+      "maximum_dimension": 800,
+      "format": "jpeg",
+      "quality": 95
+    },
+    "split": "calibration"
+  },
+  {
+    "fixture_id": "portrait_patil",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/2/22/Pratibha_Patil.jpg",
+    "source_page_url": "https://commons.wikimedia.org/wiki/File:Pratibha_Patil.jpg",
+    "license": "Public Domain",
+    "attribution": "Government of India Portal",
+    "source_sha256": "43a2f6b4baa84297418cc6e7ecd6f32db6d4b9e0bdd93017f5e4c0ea8f7629e6",
+    "normalized_sha256": "eddf878085f309d3d59c050d32d292080bc8c7d04202e0d8c2c472bd78d05764",
+    "normalization": {
+      "maximum_dimension": 800,
+      "format": "jpeg",
+      "quality": 95
+    },
+    "split": "calibration"
+  },
+  {
+    "fixture_id": "portrait_kovind",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/0/09/The_official_portrait_of_Shri_Ram_Nath_Kovind%2C_14th_President_of_the_Republic_of_India.jpg",
+    "source_page_url": "https://commons.wikimedia.org/wiki/File:The_official_portrait_of_Shri_Ram_Nath_Kovind,_14th_President_of_the_Republic_of_India.jpg",
+    "license": "Public Domain",
+    "attribution": "President of India Portal",
+    "source_sha256": "1f249c808136edfb6ba37e039ceda8b350081397d771a3947745b687f25e227f",
+    "normalized_sha256": "9bd54fe0e1372f11334907ab2a684568c7f80753c1690b41b81f5658eff1538e",
+    "normalization": {
+      "maximum_dimension": 800,
+      "format": "jpeg",
+      "quality": 95
+    },
+    "split": "calibration"
+  },
+  {
+    "fixture_id": "portrait_bush_g",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/d/d4/George-W-Bush.jpeg",
+    "source_page_url": "https://commons.wikimedia.org/wiki/File:George-W-Bush.jpeg",
+    "license": "Public Domain",
+    "attribution": "Eric Draper, Official White House Photographer",
+    "source_sha256": "59207a3f480eb56547b4e38c6e82ecb6871a3a37c5dcce6c682207fa8c8a75b4",
+    "normalized_sha256": "0b68c0d03b09f5251ccbd303df3fbb1e294ecf6684b9c72acda575154d4a321d",
+    "normalization": {
+      "maximum_dimension": 800,
+      "format": "jpeg",
+      "quality": 95
+    },
+    "split": "calibration"
+  },
+  {
+    "fixture_id": "portrait_clinton_b",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/d/d3/Bill_Clinton.jpg",
+    "source_page_url": "https://commons.wikimedia.org/wiki/File:Bill_Clinton.jpg",
+    "license": "Public Domain",
+    "attribution": "Official White House Portrait",
+    "source_sha256": "5375130aa8b6e5b180acf4a36abc100b6d89df5641eb5591641687f36544b5a1",
+    "normalized_sha256": "9c4167454dd09474113a4809f9948f6f881491fb4daa78f0dc5802cff9f5bb58",
+    "normalization": {
+      "maximum_dimension": 800,
+      "format": "jpeg",
+      "quality": 95
+    },
+    "split": "holdout"
+  },
+  {
+    "fixture_id": "portrait_clinton_h",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/2/27/Hillary_Clinton_official_Secretary_of_State_portrait_crop.jpg",
+    "source_page_url": "https://commons.wikimedia.org/wiki/File:Hillary_Clinton_official_Secretary_of_State_portrait_crop.jpg",
+    "license": "Public Domain",
+    "attribution": "US Department of State",
+    "source_sha256": "abb2df77b2ce5697fe52666e9cad83ddf0474f81528c985f60233bbcbc1b2d03",
+    "normalized_sha256": "9589f149298531a57c97f811e0142d524a7926904e2880bc755908296899287d",
+    "normalization": {
+      "maximum_dimension": 800,
+      "format": "jpeg",
+      "quality": 95
+    },
+    "split": "holdout"
+  },
+  {
+    "fixture_id": "portrait_obama_m",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/0/05/Michelle_Obama_official_portrait.jpg",
+    "source_page_url": "https://commons.wikimedia.org/wiki/File:Michelle_Obama_official_portrait.jpg",
+    "license": "Public Domain",
+    "attribution": "Chuck Kennedy, Official White House Photographer",
+    "source_sha256": "3a3d498af7266c2c5d8d3885b0ee0a142e93ca4dbc20e2454f0a324573abfbec",
+    "normalized_sha256": "a3e7ccc923b88ddb33e54b5e2eaffc8d4b388afea894a72694de21a3a1557354",
+    "normalization": {
+      "maximum_dimension": 800,
+      "format": "jpeg",
+      "quality": 95
+    },
+    "split": "holdout"
+  },
+  {
+    "fixture_id": "portrait_trump_m",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/8/82/Melania_Trump_official_portrait.jpg",
+    "source_page_url": "https://commons.wikimedia.org/wiki/File:Melania_Trump_Official_Portrait.jpg",
+    "license": "Public Domain",
+    "attribution": "Regine Mahaux, Official White House Photographer",
+    "source_sha256": "11fd02d5a7d52a1d283e6df5a2169849c90c2afdd8708f40e9e521ac159f8288",
+    "normalized_sha256": "df44dbeeb101da8cfdce845985b06598388b049f7c96b6476ac8010b44aae566",
+    "normalization": {
+      "maximum_dimension": 800,
+      "format": "jpeg",
+      "quality": 95
+    },
+    "split": "holdout"
+  },
+  {
+    "fixture_id": "portrait_bush_l",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/7/70/Laura_Bush_portrait.jpg",
+    "source_page_url": "https://commons.wikimedia.org/wiki/File:Laura_Bush_portrait.jpg",
+    "license": "Public Domain",
+    "attribution": "Kris Connor, Official White House Photographer",
+    "source_sha256": "2357330c471d4eda3b78467cbb9e1701e945aa8a17d5461d11de196e7b2555ab",
+    "normalized_sha256": "603ac06e950c25949e64926f24adf395ba7673c16db2f48b5e11a8d5eed3e7cb",
+    "normalization": {
+      "maximum_dimension": 800,
+      "format": "jpeg",
+      "quality": 95
+    },
+    "split": "holdout"
+  },
+  {
+    "fixture_id": "portrait_rice",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/6/65/Condoleezza_Rice.jpg",
+    "source_page_url": "https://commons.wikimedia.org/wiki/File:Condoleezza_Rice.jpg",
+    "license": "Public Domain",
+    "attribution": "US Department of State",
+    "source_sha256": "3184f1ce800053f50cb8f1e357d85708b4d9031ddcbe820592fb33cdb898fed5",
+    "normalized_sha256": "6e6fc3c8992becd48cdbfca260c6d021c25de5f44ff958183a0617e58f93a468",
+    "normalization": {
+      "maximum_dimension": 800,
+      "format": "jpeg",
+      "quality": 95
+    },
+    "split": "holdout"
+  },
+  {
+    "fixture_id": "portrait_powell",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/2/22/Colin_Powell_official_Secretary_of_State_photo.jpg",
+    "source_page_url": "https://commons.wikimedia.org/wiki/File:Colin_Powell_official_Secretary_of_State_photo.jpg",
+    "license": "Public Domain",
+    "attribution": "US Department of State",
+    "source_sha256": "478c0c710b86285d80912b700420242746d17fab0805f0d49a3f10ecf753f359",
+    "normalized_sha256": "f80de1099648327222c7d52ce227a7b75f02ce5d51d105a080107509290efea1",
+    "normalization": {
+      "maximum_dimension": 800,
+      "format": "jpeg",
+      "quality": 95
+    },
+    "split": "holdout"
+  },
+  {
+    "fixture_id": "portrait_austin",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/2/2a/Lloyd_Austin_%282021%29_A.jpg",
+    "source_page_url": "https://commons.wikimedia.org/wiki/File:Lloyd_Austin_(2021)_A.jpg",
+    "license": "Public Domain",
+    "attribution": "US Department of Defense",
+    "source_sha256": "f7e3dd3e15ab7dc03be4ced09ca13ee290bd62115f49683cb87890e24fa75eb4",
+    "normalized_sha256": "9643baf18fa89583ccf3c0bb39ce268e3a646e222a2469f40a6463c5b4e54e39",
+    "normalization": {
+      "maximum_dimension": 800,
+      "format": "jpeg",
+      "quality": 95
+    },
+    "split": "holdout"
+  },
+  {
+    "fixture_id": "portrait_blinken",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/d/dd/Secretary_Blinken%27s_Official_Department_Photo.jpg",
+    "source_page_url": "https://commons.wikimedia.org/wiki/File:Secretary_Blinken%27s_Official_Department_Photo.jpg",
+    "license": "Public Domain",
+    "attribution": "US Department of State",
+    "source_sha256": "c170c599bbd5eb3157ac5b92309915ba6ad73c1fa2dade3bdd15b26af625452f",
+    "normalized_sha256": "78949ed47049834becd795e73d586957230de9d3348138fe6e45a49a94bd31b4",
+    "normalization": {
+      "maximum_dimension": 800,
+      "format": "jpeg",
+      "quality": 95
+    },
+    "split": "holdout"
+  },
+  {
+    "fixture_id": "portrait_gates",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/1/10/Robert_Gates%2C_official_DoD_photo_portrait%2C_2006.jpg",
+    "source_page_url": "https://commons.wikimedia.org/wiki/File:Robert_Gates,_official_DoD_photo_portrait,_2006.jpg",
+    "license": "Public Domain",
+    "attribution": "US Department of Defense",
+    "source_sha256": "323fac4659f2728c60d2d3508803cbf23373cabeefbd6192441642ea2f430fb1",
+    "normalized_sha256": "c683cc21c6cc39ad28a94ee37de33ce9eac916d10dd98ad65bacc7db90fb2b7a",
+    "normalization": {
+      "maximum_dimension": 800,
+      "format": "jpeg",
+      "quality": 95
+    },
+    "split": "holdout"
+  },
+  {
+    "fixture_id": "portrait_hagel",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/a/a9/Secretary_of_Defense_Chuck_Hagel._130227-A-SS368-001.jpg",
+    "source_page_url": "https://commons.wikimedia.org/wiki/File:Secretary_of_Defense_Chuck_Hagel._130227-A-SS368-001.jpg",
+    "license": "Public Domain",
+    "attribution": "US Department of Defense",
+    "source_sha256": "7c3509f6d66bc0ef5ab1cac159ff712f42d8092f9db54844eee0df4c3d2c0f07",
+    "normalized_sha256": "8d78e59d8813e18d6bc61c10076af7b20da146ce0a52c7d6f19e2f146b6cf2b1",
+    "normalization": {
+      "maximum_dimension": 800,
+      "format": "jpeg",
+      "quality": 95
+    },
+    "split": "holdout"
+  },
+  {
+    "fixture_id": "portrait_carter_a",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/5/54/Ashton_Carter_DOD_photo.jpg",
+    "source_page_url": "https://commons.wikimedia.org/wiki/File:Ashton_Carter_DOD_photo.jpg",
+    "license": "Public Domain",
+    "attribution": "US Department of Defense",
+    "source_sha256": "53f80500c105473984a52162c464c7d31cdeda4a2ba4f3c612e66c3bace638eb",
+    "normalized_sha256": "f05eaf6131bff3d487408493274f83f19ab6662d7d879fc5d7b895c0fb59e1fc",
+    "normalization": {
+      "maximum_dimension": 800,
+      "format": "jpeg",
+      "quality": 95
+    },
+    "split": "holdout"
+  },
+  {
+    "fixture_id": "portrait_s_gandhi",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/c/ce/Sonia_Gandhi_%28cropped%29.jpg",
+    "source_page_url": "https://commons.wikimedia.org/wiki/File:Sonia_Gandhi_(cropped).jpg",
+    "license": "Public Domain",
+    "attribution": "Wikimedia Commons / Flickr Al Jazeera",
+    "source_sha256": "d823a021e1bbb916f9fc6bb97c6aa97898cbc7abff6c67a697ab488ecbbd5e13",
+    "normalized_sha256": "02e720cbf5a54f6b438411de07da317981d3209d4800f395e639d8f88e9d1ad1",
+    "normalization": {
+      "maximum_dimension": 800,
+      "format": "jpeg",
+      "quality": 95
+    },
+    "split": "holdout"
+  },
+  {
+    "fixture_id": "portrait_singh",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/5/54/Manmohan_Singh_official_Portrait.jpg",
+    "source_page_url": "https://commons.wikimedia.org/wiki/File:Manmohan_Singh_official_Portrait.jpg",
+    "license": "Public Domain",
+    "attribution": "Prime Minister's Office, India",
+    "source_sha256": "feed9e063bb655a3a2e744b8af901baa2cc8574136625f80351e0669ec5733a9",
+    "normalized_sha256": "9f2e1079a25eaeb41b1a691a6cf9fd3ba5fc42a9326d63dd1c2e91a9f959c83c",
+    "normalization": {
+      "maximum_dimension": 800,
+      "format": "jpeg",
+      "quality": 95
+    },
+    "split": "calibration"
+  },
+  {
+    "fixture_id": "negative_cat",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/9/9b/Domestic_cat_cropped.jpg",
+    "source_page_url": "https://commons.wikimedia.org/wiki/File:Domestic_cat_cropped.jpg",
+    "license": "CC-BY-SA",
+    "attribution": "Wikimedia Commons / Cat",
+    "source_sha256": "a1e53e9ac29c46d9c476a166f5a03a446a780af300f125921508bb69d30a8da7",
+    "normalized_sha256": "2e1645d3fef40a1dc6d04834bfd521d8aeab36f689144cd74997f9a543c5975e",
+    "normalization": {
+      "maximum_dimension": 800,
+      "format": "jpeg",
+      "quality": 95
+    },
+    "split": "calibration"
+  },
+  {
+    "fixture_id": "negative_dog",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/2/26/YellowLabradorLooking_new.jpg",
+    "source_page_url": "https://commons.wikimedia.org/wiki/File:YellowLabradorLooking_new.jpg",
+    "license": "CC-BY-SA",
+    "attribution": "Wikimedia Commons / Dog",
+    "source_sha256": "d4cb12ea8a768582562e1f1c0c930ea6fc4757f5b66551b986b41498efd75ca1",
+    "normalized_sha256": "ea3d001552c6ccf381b92c5a9e285097989fbe652bcf030d8095b6e3a85540b9",
+    "normalization": {
+      "maximum_dimension": 800,
+      "format": "jpeg",
+      "quality": 95
+    },
+    "split": "holdout"
+  },
+  {
+    "fixture_id": "negative_profile",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/9/99/Abraham_Lincoln%2C_head-and-shoulders_portrait%2C_in_profile_facing_left%3B_cropped_from_larger_view_LCCN98511006.jpg",
+    "source_page_url": "https://commons.wikimedia.org/wiki/File:Abraham_Lincoln,_head-and-shoulders_portrait,_in_profile_facing_left;_cropped_from_larger_view_LCCN98511006.jpg",
+    "license": "Public Domain",
+    "attribution": "Alexander Gardner",
+    "source_sha256": "1554d0fe14aaa0efd024227118050866aef324e2041c64500c73ed475801133f",
+    "normalized_sha256": "110c444d742823e97e5bded677ef838c69549c2974163defb72af28bba1b4bfb",
+    "normalization": {
+      "maximum_dimension": 800,
+      "format": "jpeg",
+      "quality": 95
+    },
+    "split": "calibration"
+  },
+  {
+    "fixture_id": "negative_occluded",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/c/cf/Venetian_Mask_%281%29.jpg",
+    "source_page_url": "https://commons.wikimedia.org/wiki/File:Venetian_Mask_(1).jpg",
+    "license": "CC-BY-SA",
+    "attribution": "Wikimedia Commons / Venetian Mask",
+    "source_sha256": "41db30aea1e85f482f8c49151f86b962fc3e0bac012ec2a6e805fa46c5425729",
+    "normalized_sha256": "a0e0e6b389dd168bacd7c94c7ebabafbe695fb86a23d2ac4ff676221f3af05d0",
+    "normalization": {
+      "maximum_dimension": 800,
+      "format": "jpeg",
+      "quality": 95
+    },
+    "split": "holdout"
+  },
+  {
+    "fixture_id": "negative_blank",
+    "source_url": "local://tests/fixtures/blank_white_600x800.jpg",
+    "source_page_url": "local",
+    "license": "Public Domain",
+    "attribution": "Generated programmatically",
+    "source_sha256": "49e501be9386ac666f722e794007720bd87b40803cd31d496d69489f556b38ee",
+    "normalized_sha256": "49e501be9386ac666f722e794007720bd87b40803cd31d496d69489f556b38ee",
+    "normalization": {
+      "maximum_dimension": 800,
+      "format": "jpeg",
+      "quality": 95
+    },
+    "split": "calibration"
+  },
+  {
+    "fixture_id": "negative_geometric",
+    "source_url": "local://tests/fixtures/geometric_shapes_600x800.jpg",
+    "source_page_url": "local",
+    "license": "Public Domain",
+    "attribution": "Generated programmatically",
+    "source_sha256": "2fad1f4a8804071f5ac06b3aae956d75d8df4ed6a436fc18b2f43dd6095a7078",
+    "normalized_sha256": "2fad1f4a8804071f5ac06b3aae956d75d8df4ed6a436fc18b2f43dd6095a7078",
+    "normalization": {
+      "maximum_dimension": 800,
+      "format": "jpeg",
+      "quality": 95
+    },
+    "split": "calibration"
+  },
+  {
+    "fixture_id": "negative_multiple",
+    "source_url": "local://tests/fixtures/multiple_faces.jpg",
+    "source_page_url": "local",
+    "license": "Public Domain",
+    "attribution": "Derived from Albert Einstein portrait, tiled side-by-side",
+    "source_sha256": "6830fdb1c8f14b54f9ea97e00e469cb8145abfaa35ceda916cf22bebbc36c93e",
+    "normalized_sha256": "6830fdb1c8f14b54f9ea97e00e469cb8145abfaa35ceda916cf22bebbc36c93e",
+    "normalization": {
+      "maximum_dimension": 800,
+      "format": "jpeg",
+      "quality": 95
+    },
+    "split": "holdout"
+  }
+]

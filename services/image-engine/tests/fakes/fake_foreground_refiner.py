@@ -25,6 +25,7 @@ class FakeForegroundRefiner(ForegroundRefinementProvider):
 
     def refine_mask(
         self,
+        image: Image.Image,
         coarse_mask: Image.Image,
         probability_mask: np.ndarray[Any, Any],
         face: Optional[FaceDetection | list[FaceDetection]] = None,

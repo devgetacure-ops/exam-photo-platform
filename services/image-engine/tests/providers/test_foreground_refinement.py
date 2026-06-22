@@ -92,36 +92,37 @@ def test_disk_offsets() -> None:
 
 def test_refinement_input_validation() -> None:
     refiner = MorphologicalForegroundRefiner()
+    image = Image.new("RGB", (100, 100), (128, 128, 128))
     coarse = Image.new("L", (100, 100), 0)
     prob = np.zeros((100, 100), dtype=np.float32)
 
     # 1. Invalid coarse mask class
     with pytest.raises(RefinementInputError):
-        refiner.refine_mask("not a PIL Image", prob)  # type: ignore[arg-type]
+        refiner.refine_mask(image, "not a PIL Image", prob)  # type: ignore[arg-type]
 
     # 2. Invalid coarse mask mode
     invalid_mode = Image.new("RGB", (100, 100), (0, 0, 0))
     with pytest.raises(RefinementInputError):
-        refiner.refine_mask(invalid_mode, prob)
+        refiner.refine_mask(image, invalid_mode, prob)
 
     # 3. Invalid probability mask class
     with pytest.raises(RefinementInputError):
-        refiner.refine_mask(coarse, "not a numpy array")  # type: ignore[arg-type]
+        refiner.refine_mask(image, coarse, "not a numpy array")  # type: ignore[arg-type]
 
     # 4. Invalid probability mask dtype
     wrong_dtype = np.zeros((100, 100), dtype=np.int32)
     with pytest.raises(RefinementInputError):
-        refiner.refine_mask(coarse, wrong_dtype)
+        refiner.refine_mask(image, coarse, wrong_dtype)
 
     # 5. Invalid probability mask shape (not 2D)
     wrong_shape_3d = np.zeros((100, 100, 1), dtype=np.float32)
     with pytest.raises(RefinementInputError):
-        refiner.refine_mask(coarse, wrong_shape_3d)
+        refiner.refine_mask(image, coarse, wrong_shape_3d)
 
     # 6. Mismatch in dimensions
     mismatch_prob = np.zeros((120, 100), dtype=np.float32)
     with pytest.raises(RefinementInputError):
-        refiner.refine_mask(coarse, mismatch_prob)
+        refiner.refine_mask(image, coarse, mismatch_prob)
 
 
 def test_morphological_closing_fills_holes() -> None:
@@ -134,10 +135,11 @@ def test_morphological_closing_fills_holes() -> None:
 
     coarse_mask = Image.fromarray(coarse_arr, mode="L")
     prob_mask = (coarse_arr / 255.0).astype(np.float32)
+    image = Image.new("RGB", coarse_mask.size, (128, 128, 128))
 
     # With radius=2, morphology closing should fill the hole
     cfg = RefinementConfig(morphology_radius_px=2, morphology_radius_ratio=None)
-    res = refiner.refine_mask(coarse_mask, prob_mask, config=cfg)
+    res = refiner.refine_mask(image, coarse_mask, prob_mask, config=cfg)
 
     refined_bin_arr = np.array(res.refined_binary_mask)
     # The pixel at (10, 10) should now be foreground (255)
@@ -156,9 +158,10 @@ def test_morphological_opening_removes_noise() -> None:
 
     coarse_mask = Image.fromarray(coarse_arr, mode="L")
     prob_mask = (coarse_arr / 255.0).astype(np.float32)
+    image = Image.new("RGB", coarse_mask.size, (128, 128, 128))
 
     cfg = RefinementConfig(morphology_radius_px=2, morphology_radius_ratio=None)
-    res = refiner.refine_mask(coarse_mask, prob_mask, config=cfg)
+    res = refiner.refine_mask(image, coarse_mask, prob_mask, config=cfg)
 
     refined_bin_arr = np.array(res.refined_binary_mask)
     # The noise speckle at (2, 2) should be removed (0)
@@ -178,6 +181,7 @@ def test_face_core_preservation() -> None:
 
     coarse_mask = Image.fromarray(coarse_arr, mode="L")
     prob_mask = (coarse_arr / 255.0).astype(np.float32)
+    image = Image.new("RGB", coarse_mask.size, (128, 128, 128))
 
     # Face box: Left=30, Top=30, Right=70, Bottom=70 (pixel space)
     face_box = BoundingBox(left=30.0, top=30.0, right=70.0, bottom=70.0)
@@ -190,7 +194,7 @@ def test_face_core_preservation() -> None:
     cfg = RefinementConfig(
         morphology_radius_px=25, morphology_radius_ratio=None, preserve_face_core=True
     )
-    res = refiner.refine_mask(coarse_mask, prob_mask, face=face, config=cfg)
+    res = refiner.refine_mask(image, coarse_mask, prob_mask, face=face, config=cfg)
 
     refined_bin_arr = np.array(res.refined_binary_mask)
     # The face core (10% inward from [30,30]-[70,70] is [34,34]-[66,66])
@@ -205,8 +209,9 @@ def test_trimap_values() -> None:
     coarse_arr[10:40, 10:40] = 255
     coarse_mask = Image.fromarray(coarse_arr, mode="L")
     prob_mask = (coarse_arr / 255.0).astype(np.float32)
+    image = Image.new("RGB", coarse_mask.size, (128, 128, 128))
 
-    res = refiner.refine_mask(coarse_mask, prob_mask)
+    res = refiner.refine_mask(image, coarse_mask, prob_mask)
     trimap_arr = np.array(res.trimap)
 
     # Trimap values must contain only {0, 128, 255}
@@ -223,8 +228,9 @@ def test_refined_alpha_range() -> None:
     # Add random probability values in [0, 1] to test alpha blending
     np.random.seed(42)
     prob_mask = np.random.rand(50, 50).astype(np.float32)
+    image = Image.new("RGB", coarse_mask.size, (128, 128, 128))
 
-    res = refiner.refine_mask(coarse_mask, prob_mask)
+    res = refiner.refine_mask(image, coarse_mask, prob_mask)
     alpha = res.refined_alpha_mask
 
     assert alpha.dtype == np.float32
@@ -238,8 +244,9 @@ def test_fake_foreground_refiner() -> None:
     coarse_arr[10:40, 10:40] = 255
     coarse_mask = Image.fromarray(coarse_arr, mode="L")
     prob_mask = (coarse_arr / 255.0).astype(np.float32)
+    image = Image.new("RGB", coarse_mask.size, (128, 128, 128))
 
-    res = refiner.refine_mask(coarse_mask, prob_mask)
+    res = refiner.refine_mask(image, coarse_mask, prob_mask)
     assert res.provider_name == "FakeForegroundRefiner"
     assert res.input_width == 50
     assert res.input_height == 50
@@ -249,30 +256,31 @@ def test_fake_foreground_refiner() -> None:
 def test_refinement_nan_inf_range_validations() -> None:
     refiner = MorphologicalForegroundRefiner()
     coarse = Image.new("L", (100, 100), 0)
+    image = Image.new("RGB", coarse.size, (128, 128, 128))
 
     # NaN check
     prob_nan = np.zeros((100, 100), dtype=np.float32)
     prob_nan[0, 0] = np.nan
     with pytest.raises(RefinementInputError):
-        refiner.refine_mask(coarse, prob_nan)
+        refiner.refine_mask(image, coarse, prob_nan)
 
     # Inf check
     prob_inf = np.zeros((100, 100), dtype=np.float32)
     prob_inf[0, 0] = np.inf
     with pytest.raises(RefinementInputError):
-        refiner.refine_mask(coarse, prob_inf)
+        refiner.refine_mask(image, coarse, prob_inf)
 
     # Below zero check
     prob_neg = np.zeros((100, 100), dtype=np.float32)
     prob_neg[0, 0] = -0.5
     with pytest.raises(RefinementInputError):
-        refiner.refine_mask(coarse, prob_neg)
+        refiner.refine_mask(image, coarse, prob_neg)
 
     # Above one check
     prob_large = np.zeros((100, 100), dtype=np.float32)
     prob_large[0, 0] = 1.5
     with pytest.raises(RefinementInputError):
-        refiner.refine_mask(coarse, prob_large)
+        refiner.refine_mask(image, coarse, prob_large)
 
 
 def test_provider_name_correctness() -> None:

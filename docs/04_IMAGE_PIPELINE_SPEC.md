@@ -125,25 +125,35 @@
 - **Status**: **Coarse mask generation and validation implemented (Milestone 7)**
 - **Dependencies**: MediaPipe Selfie Multiclass (`selfie_multiclass_256x256.tflite`) or Selfie Binary (`selfie_segmentation.tflite`) model.
 
-### 8b. Refined Foreground Mask & Trimap Generation
-- **Purpose**: Convert the validated coarse mask into a cleaner, smoothed foreground boundary, creating a high-resolution alpha mask and trimap (0/128/255) for downstream matting and background replacement.
-- **Inputs**: Coarse mask (PIL L-mode), probability mask (np.ndarray), face detection coordinates.
+### 8b. Refined Foreground Mask, Trimap & Guided Filter Matting
+- **Purpose**: Convert the validated coarse mask into a cleaner, smoothed foreground boundary, creating a high-resolution alpha mask and trimap (0/128/255) for downstream matting, and applying Guided Filter refinement to capture fine details (e.g. hair strands).
+- **Inputs**: Original image (PIL Image), coarse mask (PIL L-mode), probability mask (np.ndarray), face detection coordinates.
 - **Outputs**: Refined alpha mask (float32 array in [0.0, 1.0]), refined binary mask (PIL L-mode 0/255), trimap (PIL L-mode 0/128/255), validation metrics.
-- **Failure Conditions**: Refinement input/output format validation errors.
-- **Warning/Info Conditions**: Coverage diverged too much (warning), low coarseleftrightarrowrefined IoU overlap (warning).
+- **Guided Filter Strategy**:
+  - Uses a two-resolution approach: downscales mask to compute trimap/uncertainty band at a reduced resolution (512px max), then projects the uncertain band ($0.05 < \alpha < 0.95$) back to high/native resolution for edge refinement using the RGB guidance image.
+  - Supports three quality modes: `fast` (reduced-resolution refinement at 512px max), `balanced` (high-res boundary ROI refinement at 1024px max), and `high` (native-resolution boundary ROI refinement).
+  - Memory-safe tiling and resolution safeguards ensure fallback mechanisms append `MATTE_QUALITY_DOWNGRADED` to issue codes without throwing OOM errors.
+- **Failure Conditions**: Refinement input/output format validation errors, or execution failures.
+- **Warning/Info Conditions**: Coverage diverged too much (warning), low coarse-to-refined IoU overlap (warning), or matting resolution downgraded (`MATTE_QUALITY_DOWNGRADED`).
 - **Privacy Considerations**: Alpha masks, binary masks, and trimaps are kept strictly in-memory during the session.
-- **Status**: **Refined mask and trimap generation implemented (Milestone 8)**
-- **Dependencies**: None (pure NumPy/PIL deterministic morphological operations).
+- **Status**: **Morphological refinement and Guided Filter matting implemented (Milestone 18)**
+- **Dependencies**: Morphological and Guided Filter pipeline (pure NumPy/PIL vectorized operations).
 
-### 8c. Solid Background Composition
-- **Purpose**: Place the candidate foreground accurately and cleanly over a compliant solid-colour background without altering their original identity.
+### 8c. Solid Background Composition & Edge Decontamination
+- **Purpose**: Decontaminate background color spill from candidate foreground edges and composite the subject accurately and cleanly over a compliant solid-colour background.
 - **Inputs**: Original normalized image, refined alpha mask, configured target background colour.
 - **Outputs**: Composed RGB/RGBA image, validation metrics.
+- **Edge Color Decontamination**:
+  - Restricts edge color adjustment strictly to the uncertain boundary region ($0.05 < \alpha < 0.95$), leaving opaque foreground ($\alpha \ge 0.95$) unchanged to preserve identity.
+  - Uses nearby background and opaque foreground colors to recover uncontaminated boundary pixels while bounding the recovery distance.
+- **Premultiplied Resizing & Compositing**:
+  - Decouples decontamination, cropping, premultiplied resizing, and final compositing to avoid dark or bright edge fringes.
+  - Resizes the premultiplied RGB foreground and the alpha mask together, then composites them onto the solid background.
 - **Failure Conditions**: Invalid dimensions, mask mismatch, insufficient foreground coverage, target colour rejected.
 - **Warning/Info Conditions**: Minimal clipping risk at boundaries.
-- **Privacy Considerations**: Does not hallucinate or alter candidate pixels; uses mathematical alpha composite of the original image source.
-- **Status**: **Implemented (Milestone 11)**
-- **Dependencies**: `SolidBackgroundComposer` (pure NumPy/PIL).
+- **Privacy Considerations**: Does not adjust skin tone or facial details; color correction is strictly limited to the boundary band to prevent identity modification.
+- **Status**: **Edge decontamination and premultiplied compositing implemented (Milestone 18)**
+- **Dependencies**: `SolidBackgroundComposer`, edge decontamination and premultiplied composite pipeline (pure NumPy/PIL).
 
 ### 9. Crop-mode Selection
 - **Purpose**: Choose Crop Mode A (exact aspect/size) or B (natural head framing with margins) based on the rule configuration.

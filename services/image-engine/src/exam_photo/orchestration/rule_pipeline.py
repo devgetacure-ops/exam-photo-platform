@@ -3,6 +3,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, List, Optional
 
+import numpy as np
 from pydantic import BaseModel, ConfigDict, Field
 
 from exam_photo.input.limits import InputLimits
@@ -11,9 +12,6 @@ from exam_photo.models.exam_rule import ExamRule
 from exam_photo.orchestration.filename_generation import generate_safe_filename
 from exam_photo.orchestration.final_validation import validate_final_candidate
 from exam_photo.orchestration.rule_resolver import RuleResolutionError, resolve_rule
-from exam_photo.providers.background_composers.solid_background_composer import (
-    SolidBackgroundComposer,
-)
 from exam_photo.providers.compression.deterministic_image_compressor import (
     DeterministicJpegCompressor,
 )
@@ -23,12 +21,22 @@ from exam_photo.providers.crop_planners.deterministic_crop_mode_b_planner import
 from exam_photo.providers.crop_planners.deterministic_crop_planner import (
     DeterministicCropPlanner,
 )
+from exam_photo.providers.crop_planning import CropModeBResult, CropPlanResult
+from exam_photo.providers.foreground_decontamination import (
+    decontaminate_foreground_edges,
+)
+from exam_photo.providers.foreground_refinement import RefinementConfig
+from exam_photo.providers.fused_head_refinement import FusedHeadRefiner
 from exam_photo.providers.landmark_geometric_head_estimator import (
     LandmarkGeometricHeadEstimator,
 )
 from exam_photo.providers.mediapipe_face_detector import MediapipeFaceDetector
 from exam_photo.providers.output_preparers.deterministic_output_preparer import (
     DeterministicOutputPreparer,
+)
+from exam_photo.providers.premultiplied_compositing import (
+    premultiply_crop_resize_composite,
+    safe_crop_numpy,
 )
 from exam_photo.providers.refiners.morphological_refiner import (
     MorphologicalForegroundRefiner,
@@ -102,6 +110,8 @@ class RulePipelineConfig(BaseModel):
     allow_oversize_output: bool = False
     allow_subject_clipping: bool = False
 
+    quality_mode: str = Field(default="balanced", pattern="^(fast|balanced|high)$")
+
     default_background_colour_hex: str = "#FFFFFF"
     default_maximum_bytes: int | None = None
 
@@ -116,6 +126,8 @@ class RulePipelineResult(BaseModel):
     provider_version: str = "1.0.0"
 
     is_valid: bool
+    rule_compliant: bool
+    visual_quality_acceptable: bool
     stage_reports: list[PipelineStageReport]
     issue_codes: list[PipelineIssueCode]
 
@@ -129,6 +141,10 @@ class RulePipelineResult(BaseModel):
     final_quality: int | None = None
 
     processing_duration_ms: float
+    quality_mode: str = "balanced"
+    diagnostic_artifacts_available: bool = False
+    portrait_quality_report: Optional[dict[str, Any]] = None
+    matte_quality_report: Optional[dict[str, Any]] = None
 
     encoded_bytes: bytes | None = Field(default=None, exclude=True)
 
@@ -472,11 +488,14 @@ class RuleOrchestratedPipeline:
             t_stage = time.perf_counter()
             try:
                 refiner = MorphologicalForegroundRefiner()
+                ref_config = RefinementConfig(quality_mode=config.quality_mode)
                 ref_result = refiner.refine_mask(
+                    image=norm_result.image,
                     coarse_mask=seg_result.coarse_mask,
                     probability_mask=seg_result.probability_mask,
                     face=face,
                     head_estimate=head_result.head_bounding_box,
+                    config=ref_config,
                 )
                 dur_stage = (time.perf_counter() - t_stage) * 1000.0
 
@@ -514,12 +533,10 @@ class RuleOrchestratedPipeline:
                 PipelineStageStatus.SKIPPED,
             )
 
-        # Stage 7: Crop Planning
-        cropped_image = None
-        refined_alpha_crop = None
+        # Stage 6B: Fused Head Refinement
+        fused_head_result = head_result
         if (
             not failed
-            and plan is not None
             and norm_result is not None
             and face is not None
             and head_result is not None
@@ -527,14 +544,49 @@ class RuleOrchestratedPipeline:
         ):
             t_stage = time.perf_counter()
             try:
-                crop_res: Any
+                head_refiner = FusedHeadRefiner()
+                fused_head_result = head_refiner.refine_head_estimation(
+                    image=norm_result.image,
+                    face=face,
+                    head_result=head_result,
+                    alpha_mask=ref_result.refined_alpha_mask,
+                )
+                dur_stage = (time.perf_counter() - t_stage) * 1000.0
+                record_stage(
+                    PipelineStage.HEAD_ESTIMATION,
+                    PipelineStageStatus.PASSED,
+                    dur=dur_stage,
+                    summary="Fused head bounding box refined successfully.",
+                )
+            except Exception as e:
+                record_stage(
+                    PipelineStage.HEAD_ESTIMATION,
+                    PipelineStageStatus.WARNING,
+                    issues=["HEAD_REFINEMENT_FAILED"],
+                    dur=0.0,
+                    summary=f"Fused head refinement failed: {e}",
+                )
+
+        # Stage 7: Crop Planning
+        crop_res: CropPlanResult | CropModeBResult | None = None
+        if (
+            not failed
+            and plan is not None
+            and norm_result is not None
+            and face is not None
+            and fused_head_result is not None
+            and ref_result is not None
+        ):
+            t_stage = time.perf_counter()
+            try:
                 if plan.crop_mode == "a":
                     crop_planner_a = DeterministicCropPlanner()
                     crop_res = crop_planner_a.plan_crop(
                         image_width=norm_result.image.width,
                         image_height=norm_result.image.height,
                         face=face,
-                        head_estimate=head_result.head_bounding_box,
+                        head_estimate=fused_head_result.geometric_head_bounding_box
+                        or fused_head_result.head_bounding_box,
                         refined_mask=ref_result.refined_binary_mask,
                         config=plan.crop_config,
                     )
@@ -544,12 +596,14 @@ class RuleOrchestratedPipeline:
                         image_width=norm_result.image.width,
                         image_height=norm_result.image.height,
                         face=face,
-                        head_estimate=head_result.head_bounding_box,
+                        head_estimate=fused_head_result.geometric_head_bounding_box
+                        or fused_head_result.head_bounding_box,
                         refined_mask=ref_result.refined_binary_mask,
                         config=plan.crop_config,
                     )
 
                 dur_stage = (time.perf_counter() - t_stage) * 1000.0
+                assert crop_res is not None
 
                 if not crop_res.validation.is_valid:
                     failed = True
@@ -568,14 +622,6 @@ class RuleOrchestratedPipeline:
                         dur=dur_stage,
                         summary=f"Crop planned successfully. Crop box: {crop_res.crop_box}",
                     )
-                    # Apply crop to image and to alpha mask
-                    b = crop_res.crop_box
-                    cropped_image = norm_result.image.crop(
-                        (int(b.left), int(b.top), int(b.right), int(b.bottom))
-                    )
-                    refined_alpha_crop = ref_result.refined_alpha_mask[
-                        int(b.top) : int(b.bottom), int(b.left) : int(b.right)
-                    ]
             except Exception as e:
                 failed = True
                 pipeline_issues.append(PipelineIssueCode.PIPELINE_CROP_FAILED)
@@ -592,50 +638,177 @@ class RuleOrchestratedPipeline:
                 PipelineStageStatus.SKIPPED,
             )
 
-        # Stage 8: Background Composition
-        composed_image = None
+        # Stage 7B: Foreground Decontamination
+        decon_image = None
+        if not failed and norm_result is not None and ref_result is not None:
+            t_stage = time.perf_counter()
+            try:
+                decon_image, decon_issues = decontaminate_foreground_edges(
+                    image=norm_result.image,
+                    alpha=ref_result.refined_alpha_mask,
+                )
+                dur_stage = (time.perf_counter() - t_stage) * 1000.0
+                if decon_issues:
+                    record_stage(
+                        PipelineStage.MASK_REFINEMENT,
+                        PipelineStageStatus.WARNING,
+                        issues=decon_issues,
+                        dur=dur_stage,
+                        summary="Foreground decontamination raised warnings.",
+                    )
+                else:
+                    record_stage(
+                        PipelineStage.MASK_REFINEMENT,
+                        PipelineStageStatus.PASSED,
+                        dur=dur_stage,
+                        summary="Foreground boundary decontaminated.",
+                    )
+            except Exception as e:
+                decon_image = norm_result.image
+                record_stage(
+                    PipelineStage.MASK_REFINEMENT,
+                    PipelineStageStatus.WARNING,
+                    issues=["EDGE_DECONTAMINATION_FAILED"],
+                    dur=0.0,
+                    summary=f"Foreground decontamination failed: {e}",
+                )
+        else:
+            decon_image = norm_result.image if norm_result is not None else None
+
+        # Stage 8: Background Composition (combining composite & output preparation via premultiplied)
+        prepared_image = None
         if (
             not failed
             and plan is not None
-            and cropped_image is not None
-            and refined_alpha_crop is not None
+            and crop_res is not None
+            and ref_result is not None
+            and decon_image is not None
         ):
             t_stage = time.perf_counter()
             try:
-                composer = SolidBackgroundComposer()
-                bg_config = plan.background_config
-                if bg_config is not None:
-                    bg_config = bg_config.model_copy(
-                        update={
-                            "allow_subject_clipping": config.allow_subject_clipping
-                            or bg_config.allow_subject_clipping
-                        }
+                from PIL import ImageColor
+
+                hex_color = (
+                    plan.background_config.target_colour_hex
+                    if plan.background_config
+                    else "#FFFFFF"
+                )
+                rgb_color = ImageColor.getrgb(hex_color)
+                if len(rgb_color) == 4:
+                    rgb_color = rgb_color[:3]
+                rgb_color_tuple = (rgb_color[0], rgb_color[1], rgb_color[2])
+
+                target_w = (
+                    plan.output_preparation_config.target_width
+                    if plan.output_preparation_config
+                    else 300
+                )
+                target_h = (
+                    plan.output_preparation_config.target_height
+                    if plan.output_preparation_config
+                    else 400
+                )
+                allow_trans = (
+                    plan.background_config.allow_transparent_output
+                    if plan.background_config
+                    else False
+                )
+
+                if target_w is None or target_h is None:
+                    preparer = DeterministicOutputPreparer()
+                    min_w = plan.output_preparation_config.min_width
+                    max_w = plan.output_preparation_config.max_width
+                    min_h = plan.output_preparation_config.min_height
+                    max_h = plan.output_preparation_config.max_height
+                    assert min_w is not None and max_w is not None
+                    assert min_h is not None and max_h is not None
+                    target_w, target_h, aspect_preserved = (
+                        preparer._resolve_range_dimensions(
+                            source_width=crop_res.crop_box_width,
+                            source_height=crop_res.crop_box_height,
+                            min_w=min_w,
+                            max_w=max_w,
+                            min_h=min_h,
+                            max_h=max_h,
+                            pref_w=plan.output_preparation_config.preferred_width,
+                            pref_h=plan.output_preparation_config.preferred_height,
+                        )
                     )
-                bg_res = composer.compose_background(
-                    image=cropped_image,
-                    refined_alpha_mask=refined_alpha_crop,
-                    config=bg_config,
+
+                assert target_w is not None and target_h is not None
+                prepared_image = premultiply_crop_resize_composite(
+                    image=decon_image,
+                    alpha=ref_result.refined_alpha_mask,
+                    crop_box=crop_res.crop_box,
+                    target_size=(target_w, target_h),
+                    background_color=rgb_color_tuple,
+                    allow_transparent_output=allow_trans,
                 )
                 dur_stage = (time.perf_counter() - t_stage) * 1000.0
 
-                if not bg_res.validation.is_valid:
+                # Validate coverage and clipping using safe_crop_numpy
+                cropped_alpha = safe_crop_numpy(
+                    np.array(decon_image),
+                    ref_result.refined_alpha_mask,
+                    crop_res.crop_box,
+                )[1]
+                total_pixels = cropped_alpha.size
+                alpha_thresh = (
+                    plan.background_config.alpha_threshold
+                    if plan.background_config
+                    else 0.5
+                )
+                fg_pixels = np.count_nonzero(cropped_alpha >= alpha_thresh)
+                coverage_ratio = (
+                    float(fg_pixels / total_pixels) if total_pixels > 0 else 0.0
+                )
+
+                bg_issues = []
+                if plan.background_config:
+                    if (
+                        coverage_ratio
+                        < plan.background_config.minimum_foreground_coverage
+                    ):
+                        bg_issues.append("BACKGROUND_FOREGROUND_TOO_SMALL")
+                    elif (
+                        coverage_ratio
+                        > plan.background_config.maximum_foreground_coverage
+                    ):
+                        bg_issues.append("BACKGROUND_FOREGROUND_TOO_LARGE")
+
+                    if cropped_alpha.shape[0] > 0:
+                        top_edge_alpha = cropped_alpha[0, :]
+                        if np.any(top_edge_alpha > alpha_thresh):
+                            if (
+                                not plan.background_config.allow_subject_clipping
+                                and not config.allow_subject_clipping
+                            ):
+                                bg_issues.append("BACKGROUND_SUBJECT_CLIPPING_RISK")
+
+                if bg_issues:
                     failed = True
                     pipeline_issues.append(PipelineIssueCode.PIPELINE_BACKGROUND_FAILED)
                     record_stage(
                         PipelineStage.BACKGROUND_COMPOSITION,
                         PipelineStageStatus.FAILED,
-                        issues=bg_res.validation.issue_codes,
-                        dur=dur_stage,
-                        summary="Background composition failed coverage checks.",
+                        issues=bg_issues,
+                        dur=dur_stage / 2,
+                        summary="Background composition constraints failed.",
                     )
                 else:
-                    composed_image = bg_res.composed_image
                     record_stage(
                         PipelineStage.BACKGROUND_COMPOSITION,
                         PipelineStageStatus.PASSED,
-                        dur=dur_stage,
-                        summary=f"Composed onto solid colour {bg_res.target_colour_hex}.",
+                        dur=dur_stage / 2,
+                        summary=f"Composed onto solid colour {hex_color}.",
                     )
+                    record_stage(
+                        PipelineStage.OUTPUT_PREPARATION,
+                        PipelineStageStatus.PASSED,
+                        dur=dur_stage / 2,
+                        summary=f"Prepared output successfully with dimensions {target_w}x{target_h}.",
+                    )
+
             except Exception as e:
                 failed = True
                 pipeline_issues.append(PipelineIssueCode.PIPELINE_BACKGROUND_FAILED)
@@ -646,63 +819,15 @@ class RuleOrchestratedPipeline:
                     dur=0.0,
                     summary=f"Background composition failed: {e}",
                 )
+                record_stage(
+                    PipelineStage.OUTPUT_PREPARATION,
+                    PipelineStageStatus.SKIPPED,
+                )
         else:
             record_stage(
                 PipelineStage.BACKGROUND_COMPOSITION,
                 PipelineStageStatus.SKIPPED,
             )
-
-        # Stage 9: Output Preparation (Resizing & Enhancements)
-        prepared_image = None
-        if not failed and plan is not None and composed_image is not None:
-            t_stage = time.perf_counter()
-            try:
-                preparer = DeterministicOutputPreparer()
-                # Apply CLI overrides if needed, here we use resolved config
-                prep_res = preparer.prepare_output(
-                    composed_image, plan.output_preparation_config
-                )
-                dur_stage = (time.perf_counter() - t_stage) * 1000.0
-
-                if not prep_res.validation.is_valid:
-                    failed = True
-                    pipeline_issues.append(
-                        PipelineIssueCode.PIPELINE_OUTPUT_PREPARATION_FAILED
-                    )
-                    record_stage(
-                        PipelineStage.OUTPUT_PREPARATION,
-                        PipelineStageStatus.FAILED,
-                        issues=prep_res.validation.issue_codes,
-                        dur=dur_stage,
-                        summary="Output preparation failed (aspect ratio / scaling mismatch).",
-                    )
-                else:
-                    prepared_image = prep_res.output_image
-                    status = (
-                        PipelineStageStatus.WARNING
-                        if prep_res.validation.issue_codes
-                        else PipelineStageStatus.PASSED
-                    )
-                    record_stage(
-                        PipelineStage.OUTPUT_PREPARATION,
-                        status,
-                        issues=prep_res.validation.issue_codes,
-                        dur=dur_stage,
-                        summary=f"Resized image to final dimensions {prep_res.output_width}x{prep_res.output_height}.",
-                    )
-            except Exception as e:
-                failed = True
-                pipeline_issues.append(
-                    PipelineIssueCode.PIPELINE_OUTPUT_PREPARATION_FAILED
-                )
-                record_stage(
-                    PipelineStage.OUTPUT_PREPARATION,
-                    PipelineStageStatus.FAILED,
-                    issues=["OUTPUT_PREPARATION_FAILED"],
-                    dur=0.0,
-                    summary=f"Output preparation failed: {e}",
-                )
-        else:
             record_stage(
                 PipelineStage.OUTPUT_PREPARATION,
                 PipelineStageStatus.SKIPPED,
@@ -900,10 +1025,32 @@ class RuleOrchestratedPipeline:
 
         # Return results
         duration_ms = (time.perf_counter() - start_time) * 1000.0
-        is_valid = not failed
+        rule_compliant = not failed
+        visual_quality_acceptable = (
+            ref_result.validation.is_valid if ref_result is not None else True
+        )
+        is_valid = rule_compliant and visual_quality_acceptable
+
+        portrait_quality_report = {
+            "face_detected": face is not None,
+            "face_confidence": face.confidence if face else 0.0,
+            "head_bounding_box": fused_head_result.head_bounding_box.model_dump()
+            if fused_head_result
+            else None,
+            "geometric_head_bounding_box": fused_head_result.geometric_head_bounding_box.model_dump()
+            if fused_head_result
+            and fused_head_result.geometric_head_bounding_box is not None
+            else None,
+        }
+
+        matte_quality_report = (
+            ref_result.validation.model_dump() if ref_result is not None else None
+        )
 
         return RulePipelineResult(
             is_valid=is_valid,
+            rule_compliant=rule_compliant,
+            visual_quality_acceptable=visual_quality_acceptable,
             stage_reports=stage_reports,
             issue_codes=pipeline_issues,
             selected_crop_mode=plan.crop_mode if plan is not None else None,
@@ -922,6 +1069,10 @@ class RuleOrchestratedPipeline:
             if (comp_result is not None and is_valid)
             else None,
             processing_duration_ms=duration_ms,
+            quality_mode=config.quality_mode,
+            diagnostic_artifacts_available=config.save_diagnostic_artifacts,
+            portrait_quality_report=portrait_quality_report,
+            matte_quality_report=matte_quality_report,
             encoded_bytes=comp_result.encoded_bytes
             if comp_result is not None
             else None,

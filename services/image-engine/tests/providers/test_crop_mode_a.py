@@ -14,6 +14,7 @@ from exam_photo.providers import (
 from exam_photo.providers.crop_planning import (
     CropConfig,
     CropIssueCode,
+    CropProfile,
 )
 from exam_photo.providers.face_detection import FaceDetection
 
@@ -443,3 +444,157 @@ def test_crop_cli_save_preview_overwrite_protection(
         ]
     )
     assert exit_code_overwrite == 0
+
+
+def test_crop_aspect_ratio_preservation_new() -> None:
+    planner = DeterministicCropPlanner()
+    face_box = BoundingBox(left=200, top=200, right=300, bottom=300)
+    face = FaceDetection(bounding_box=face_box, confidence=0.99)
+    head_est = BoundingBox(left=180, top=150, right=320, bottom=350)
+
+    for aspect in [0.75, 1.0, 1.33, 1.5]:
+        cfg = CropConfig(
+            target_aspect_ratio=aspect,
+            crop_profile=CropProfile.STANDARD_PASSPORT_PORTRAIT,
+            target_head_height_ratio=0.60,
+        )
+        res = planner.plan_crop(
+            image_width=1000,
+            image_height=1000,
+            face=face,
+            head_estimate=head_est,
+            config=cfg,
+        )
+        assert abs(res.ideal_crop_aspect_ratio - aspect) <= 5e-3
+        assert abs(res.crop_box_aspect_ratio - aspect) <= 5e-3
+
+
+def test_crop_tight_vs_relaxed_profiles() -> None:
+    planner = DeterministicCropPlanner()
+    face_box = BoundingBox(left=200, top=200, right=300, bottom=300)
+    face = FaceDetection(bounding_box=face_box, confidence=0.99)
+    head_est = BoundingBox(left=180, top=150, right=320, bottom=350)
+
+    cfg_tight = CropConfig(
+        target_aspect_ratio=1.0,
+        crop_profile=CropProfile.TIGHT_EXAM_PORTRAIT,
+        target_head_height_ratio=0.78,
+        minimum_head_height_ratio=0.70,
+        maximum_head_height_ratio=0.85,
+    )
+    res_tight = planner.plan_crop(
+        image_width=1000,
+        image_height=1000,
+        face=face,
+        head_estimate=head_est,
+        config=cfg_tight,
+    )
+
+    cfg_relaxed = CropConfig(
+        target_aspect_ratio=1.0,
+        crop_profile=CropProfile.RELAXED_IDENTITY_PORTRAIT,
+        target_head_height_ratio=0.40,
+        minimum_head_height_ratio=0.30,
+        maximum_head_height_ratio=0.55,
+    )
+    res_relaxed = planner.plan_crop(
+        image_width=1000,
+        image_height=1000,
+        face=face,
+        head_estimate=head_est,
+        config=cfg_relaxed,
+    )
+
+    ratio_tight = head_est.height / res_tight.crop_height
+    ratio_relaxed = head_est.height / res_relaxed.crop_height
+    assert ratio_tight > ratio_relaxed
+    assert res_tight.crop_height < res_relaxed.crop_height
+
+
+def test_crop_complete_head_containment() -> None:
+    planner = DeterministicCropPlanner()
+    face_box = BoundingBox(left=200, top=200, right=300, bottom=300)
+    face = FaceDetection(bounding_box=face_box, confidence=0.99)
+    head_est = BoundingBox(left=180, top=150, right=320, bottom=350)
+
+    cfg = CropConfig(
+        target_aspect_ratio=1.0,
+        crop_profile=CropProfile.STANDARD_PASSPORT_PORTRAIT,
+        target_head_height_ratio=0.60,
+        complete_hair_required=True,
+        allow_subject_clipping=False,
+    )
+    res = planner.plan_crop(
+        image_width=1000,
+        image_height=1000,
+        face=face,
+        head_estimate=head_est,
+        config=cfg,
+    )
+
+    assert res.crop_box.left <= head_est.left
+    assert res.crop_box.top <= head_est.top
+    assert res.crop_box.right >= head_est.right
+    assert res.crop_box.bottom >= head_est.bottom
+    assert res.validation.subject_clipping_detected is False
+
+
+def test_crop_source_resolution_invariance() -> None:
+    planner = DeterministicCropPlanner()
+
+    face_box_1x = BoundingBox(left=200, top=200, right=300, bottom=300)
+    face_1x = FaceDetection(bounding_box=face_box_1x, confidence=0.99)
+    head_est_1x = BoundingBox(left=180, top=150, right=320, bottom=350)
+
+    cfg = CropConfig(
+        target_aspect_ratio=1.0,
+        crop_profile=CropProfile.STANDARD_PASSPORT_PORTRAIT,
+        target_head_height_ratio=0.60,
+    )
+
+    res_1x = planner.plan_crop(
+        image_width=1000,
+        image_height=1000,
+        face=face_1x,
+        head_estimate=head_est_1x,
+        config=cfg,
+    )
+
+    face_box_05x = BoundingBox(left=100, top=100, right=150, bottom=150)
+    face_05x = FaceDetection(bounding_box=face_box_05x, confidence=0.99)
+    head_est_05x = BoundingBox(left=90, top=75, right=160, bottom=175)
+
+    res_05x = planner.plan_crop(
+        image_width=500,
+        image_height=500,
+        face=face_05x,
+        head_estimate=head_est_05x,
+        config=cfg,
+    )
+
+    face_box_2x = BoundingBox(left=400, top=400, right=600, bottom=600)
+    face_2x = FaceDetection(bounding_box=face_box_2x, confidence=0.99)
+    head_est_2x = BoundingBox(left=360, top=300, right=640, bottom=700)
+
+    res_2x = planner.plan_crop(
+        image_width=2000,
+        image_height=2000,
+        face=face_2x,
+        head_estimate=head_est_2x,
+        config=cfg,
+    )
+
+    box_1x_norm = res_1x.crop_box.to_normalized(1000, 1000)
+    box_05x_norm = res_05x.crop_box.to_normalized(500, 500)
+    box_2x_norm = res_2x.crop_box.to_normalized(2000, 2000)
+
+    for field in ["left", "top", "right", "bottom"]:
+        v_1x = getattr(box_1x_norm, field)
+        v_05x = getattr(box_05x_norm, field)
+        v_2x = getattr(box_2x_norm, field)
+        assert abs(v_1x - v_05x) <= 0.015, (
+            f"{field} difference between 1.0x and 0.5x exceeds tolerance"
+        )
+        assert abs(v_1x - v_2x) <= 0.015, (
+            f"{field} difference between 1.0x and 2.0x exceeds tolerance"
+        )
