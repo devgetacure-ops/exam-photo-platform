@@ -8,6 +8,8 @@ describe("ValidationReport Component", () => {
   test("does not render encoded_bytes in HTML output", () => {
     const report: PipelineReport = {
       is_valid: true,
+      rule_compliant: true,
+      visual_quality_acceptable: true,
       issue_codes: [],
       final_width: 300,
       final_height: 400,
@@ -31,32 +33,34 @@ describe("ValidationReport Component", () => {
   test("correctly renders various stage report statuses", () => {
     const report: PipelineReport = {
       is_valid: false,
+      rule_compliant: false,
+      visual_quality_acceptable: false,
       issue_codes: ["ERR_1"],
       stage_reports: [
-        { stage: "Stage A", status: "passed" },
-        { stage: "Stage B", status: "warning" },
-        { stage: "Stage C", status: "failed", error: "Stage C failed" },
-        { stage: "Stage D", status: "skipped" },
-        { stage: "Stage E", status: "not_started" },
+        { stage: "rule_validation", status: "passed" },
+        { stage: "face_detection", status: "warning" },
+        { stage: "subject_segmentation", status: "failed", error: "Stage C failed" },
+        { stage: "output_preparation", status: "skipped" },
+        { stage: "crop_planning", status: "not_started" },
       ],
     };
 
     render(<ValidationReport report={report} />);
 
-    expect(screen.getByText("Stage A")).toBeDefined();
+    expect(screen.getByText("Rule Validation")).toBeDefined();
     expect(screen.getByText("passed")).toBeDefined();
 
-    expect(screen.getByText("Stage B")).toBeDefined();
+    expect(screen.getByText("Face Detection")).toBeDefined();
     expect(screen.getByText("warning")).toBeDefined();
 
-    expect(screen.getByText("Stage C")).toBeDefined();
+    expect(screen.getByText("Subject Segmentation")).toBeDefined();
     expect(screen.getByText("failed")).toBeDefined();
     expect(screen.getByText("Stage C failed")).toBeDefined();
 
-    expect(screen.getByText("Stage D")).toBeDefined();
+    expect(screen.getByText("Output Preparation")).toBeDefined();
     expect(screen.getByText("skipped")).toBeDefined();
 
-    expect(screen.getByText("Stage E")).toBeDefined();
+    expect(screen.getByText("Crop Planning")).toBeDefined();
     expect(screen.getByText("not_started")).toBeDefined();
   });
 });

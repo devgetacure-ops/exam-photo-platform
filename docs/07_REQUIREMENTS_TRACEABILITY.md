@@ -20,7 +20,7 @@ This matrix maps stable requirement identifiers to design documents, status indi
 | **COMP-001** | Quality-aware compression | PDF Sec 5.6 | CONFIRMED | **Implemented (Milestone 13)** | `services/image-engine` | `test_image_compression.py` | Milestone 13 | Below maximum ceiling |
 | **PRIV-001** | Deletion lifecycle | PDF Sec 10.2 | CONFIRMED | **Partially Implemented (Milestone 15)** | `services/image-engine/src/exam_photo/api` | `test_api.py` | Milestone 15 | Local deletion lifecycle and TTL cleanup |
 | **SEC-001** | Magic byte validation | PDF Sec 10.4 | CONFIRMED | **Implemented (Milestone 3)** | `services/image-engine` | `test_signatures.py` | Milestone 3 | Input signature sanitization |
-| **QA-001** | Visual regression testing | PDF Sec 12.3 | CONFIRMED | Not Implemented | `QA Strategy` | Visual checks runs | Milestone 5 | Golden images setup |
+| **QA-001** | Visual regression testing | PDF Sec 12.3 | CONFIRMED | **Implemented (Milestone 5)** | `QA Strategy` | Visual checks runs | Milestone 5 | Golden images setup |
 | **UX-001** | Mobile responsiveness | PDF Sec 11.5 | CONFIRMED | **Partially Implemented (Milestone 16)** | `apps/web` | CSS media queries / responsive grid assertions | Milestone 16 | Mobile-first grid layouts |
 | **SUIT-001** | Suitability framework & provider interfaces | PDF Sec 5.2 | CONFIRMED | **Implemented (Milestone 4)** | `services/image-engine/suitability` | Evaluator, Quality metrics, and Provider contracts tests | Milestone 4 | Framework structure & contracts |
 | **FACE-001** | Face detection integration | PDF Sec 5.2 | CONFIRMED | **Implemented (Milestone 5)** | `services/image-engine/providers` | `test_mediapipe_face_detector.py` | Milestone 5 | MediaPipe face detection integration |
