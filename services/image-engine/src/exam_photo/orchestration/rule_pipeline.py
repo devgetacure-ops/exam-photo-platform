@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Any, List, Optional
 
 import numpy as np
+from PIL import Image
 from pydantic import BaseModel, ConfigDict, Field
 
 from exam_photo.input.limits import InputLimits
@@ -52,11 +53,16 @@ class PipelineStage(str, Enum):
     INPUT_NORMALIZATION = "input_normalization"
     FACE_DETECTION = "face_detection"
     HEAD_ESTIMATION = "head_estimation"
+    FUSED_HEAD_REFINEMENT = "fused_head_refinement"
     SUBJECT_SEGMENTATION = "subject_segmentation"
     MASK_REFINEMENT = "mask_refinement"
     CROP_SELECTION = "crop_selection"
+    CROP_CANDIDATE_SCORING = "crop_candidate_scoring"
     CROP_PLANNING = "crop_planning"
+    FOREGROUND_DECONTAMINATION = "foreground_decontamination"
     BACKGROUND_COMPOSITION = "background_composition"
+    COMPOSITION_QUALITY_VALIDATION = "composition_quality_validation"
+    MATTE_QUALITY_VALIDATION = "matte_quality_validation"
     OUTPUT_PREPARATION = "output_preparation"
     OUTPUT_COMPRESSION = "output_compression"
     FINAL_DECODE_VALIDATION = "final_decode_validation"
@@ -119,6 +125,91 @@ class RulePipelineConfig(BaseModel):
     output_dir: Optional[Path] = None
 
 
+def compute_halo_score_float(
+    composite_arr: np.ndarray, alpha_mask: np.ndarray  # type: ignore[type-arg]
+) -> float:
+    gray = (
+        0.299 * composite_arr[..., 0]
+        + 0.587 * composite_arr[..., 1]
+        + 0.114 * composite_arr[..., 2]
+    )
+    gray = gray * 255.0
+    mask = (alpha_mask > 0.05) & (alpha_mask < 0.95)
+    if not np.any(mask):
+        return 0.0
+    dy, dx = np.gradient(gray)
+    grad_mag = np.sqrt(dx**2 + dy**2)
+    return float(np.mean(grad_mag[mask]))
+
+
+def compute_spill_score_float(
+    original_arr: np.ndarray, alpha_mask: np.ndarray  # type: ignore[type-arg]
+) -> float:
+    mask = (alpha_mask > 0.05) & (alpha_mask < 0.95)
+    if not np.any(mask):
+        return 0.0
+    fg_mask = alpha_mask >= 0.95
+    bg_mask = alpha_mask <= 0.05
+    if not np.any(fg_mask) or not np.any(bg_mask):
+        return 0.0
+    c_fg = np.mean(original_arr[fg_mask], axis=0)
+    c_bg = np.mean(original_arr[bg_mask], axis=0)
+    v = c_bg - c_fg
+    v_norm_sq = np.dot(v, v)
+    if v_norm_sq < (100.0 / 255.0 / 255.0):
+        return 0.0
+    pixels = original_arr[mask]
+    diff = pixels - c_fg
+    projections = np.dot(diff, v) / v_norm_sq
+    projections = np.clip(projections, 0.0, 1.0)
+    return float(np.mean(projections))
+
+
+def compute_alpha_continuity_float(
+    alpha_mask: np.ndarray,  # type: ignore[type-arg]
+) -> float:
+    mask = (alpha_mask > 0.05) & (alpha_mask < 0.95)
+    if not np.any(mask):
+        return 0.0
+    dy, dx = np.gradient(alpha_mask * 255.0)
+    grad_mag = np.sqrt(dx**2 + dy**2)
+    return float(np.std(grad_mag[mask]))
+
+
+def compute_background_uniformity_float(
+    composite_arr: np.ndarray, alpha_mask: np.ndarray  # type: ignore[type-arg]
+) -> float:
+    mask = alpha_mask <= 0.05
+    if not np.any(mask):
+        return 0.0
+    target_bg = np.array([1.0, 1.0, 1.0], dtype=np.float32)
+    diff = (composite_arr[mask] - target_bg) * 255.0
+    return float(np.mean(np.abs(diff)))
+
+
+class PortraitQualityReport(BaseModel):
+    passed: bool
+    face_detected: bool
+    face_confidence: float
+    head_bounding_box: Optional[dict[str, Any]] = None
+    geometric_head_bounding_box: Optional[dict[str, Any]] = None
+    head_height_ratio: Optional[float] = None
+    head_width_ratio: Optional[float] = None
+    top_margin_ratio: Optional[float] = None
+    eye_line_ratio: Optional[float] = None
+    center_offset_ratio: Optional[float] = None
+    torso_inclusion_ratio: Optional[float] = None
+
+
+class MatteQualityReport(BaseModel):
+    passed: bool
+    halo_score: float
+    color_spill_score: float
+    alpha_continuity: float
+    background_uniformity: float
+    validation_issues: list[str] = []
+
+
 class RulePipelineResult(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
@@ -147,6 +238,7 @@ class RulePipelineResult(BaseModel):
     matte_quality_report: Optional[dict[str, Any]] = None
 
     encoded_bytes: bytes | None = Field(default=None, exclude=True)
+    refined_alpha_mask: Any = Field(default=None, exclude=True)
 
 
 class RuleOrchestratedPipeline:
@@ -553,14 +645,20 @@ class RuleOrchestratedPipeline:
                 )
                 dur_stage = (time.perf_counter() - t_stage) * 1000.0
                 record_stage(
-                    PipelineStage.HEAD_ESTIMATION,
+                    PipelineStage.FUSED_HEAD_REFINEMENT,
                     PipelineStageStatus.PASSED,
                     dur=dur_stage,
                     summary="Fused head bounding box refined successfully.",
                 )
+                if config.save_diagnostic_artifacts and config.output_dir:
+                    alpha_pil = Image.fromarray(
+                        (ref_result.refined_alpha_mask * 255.0).astype(np.uint8),
+                        mode="L",
+                    )
+                    alpha_pil.save(config.output_dir / "refined_alpha.png")
             except Exception as e:
                 record_stage(
-                    PipelineStage.HEAD_ESTIMATION,
+                    PipelineStage.FUSED_HEAD_REFINEMENT,
                     PipelineStageStatus.WARNING,
                     issues=["HEAD_REFINEMENT_FAILED"],
                     dur=0.0,
@@ -579,16 +677,25 @@ class RuleOrchestratedPipeline:
         ):
             t_stage = time.perf_counter()
             try:
+                crop_cfg = plan.crop_config.model_copy(
+                    update={
+                        "allow_subject_clipping": plan.crop_config.allow_subject_clipping
+                        or config.allow_subject_clipping
+                    }
+                )
                 if plan.crop_mode == "a":
                     crop_planner_a = DeterministicCropPlanner()
                     crop_res = crop_planner_a.plan_crop(
                         image_width=norm_result.image.width,
                         image_height=norm_result.image.height,
                         face=face,
-                        head_estimate=fused_head_result.geometric_head_bounding_box
-                        or fused_head_result.head_bounding_box,
+                        head_estimate=(
+                            fused_head_result.refined_head_bounding_box
+                            or fused_head_result.head_bounding_box
+                            or fused_head_result.geometric_head_bounding_box
+                        ),
                         refined_mask=ref_result.refined_binary_mask,
-                        config=plan.crop_config,
+                        config=crop_cfg,
                     )
                 else:
                     crop_planner_b = DeterministicCropModeBPlanner()
@@ -596,10 +703,13 @@ class RuleOrchestratedPipeline:
                         image_width=norm_result.image.width,
                         image_height=norm_result.image.height,
                         face=face,
-                        head_estimate=fused_head_result.geometric_head_bounding_box
-                        or fused_head_result.head_bounding_box,
+                        head_estimate=(
+                            fused_head_result.refined_head_bounding_box
+                            or fused_head_result.head_bounding_box
+                            or fused_head_result.geometric_head_bounding_box
+                        ),
                         refined_mask=ref_result.refined_binary_mask,
-                        config=plan.crop_config,
+                        config=crop_cfg,
                     )
 
                 dur_stage = (time.perf_counter() - t_stage) * 1000.0
@@ -609,17 +719,30 @@ class RuleOrchestratedPipeline:
                     failed = True
                     pipeline_issues.append(PipelineIssueCode.PIPELINE_CROP_FAILED)
                     record_stage(
+                        PipelineStage.CROP_CANDIDATE_SCORING,
+                        PipelineStageStatus.FAILED,
+                        issues=crop_res.validation.issue_codes,
+                        dur=dur_stage / 2,
+                        summary="Crop candidate selection failed.",
+                    )
+                    record_stage(
                         PipelineStage.CROP_PLANNING,
                         PipelineStageStatus.FAILED,
                         issues=crop_res.validation.issue_codes,
-                        dur=dur_stage,
+                        dur=dur_stage / 2,
                         summary="Crop plan failed compliance constraints.",
                     )
                 else:
                     record_stage(
+                        PipelineStage.CROP_CANDIDATE_SCORING,
+                        PipelineStageStatus.PASSED,
+                        dur=dur_stage / 2,
+                        summary="Crop candidates scored and selected successfully.",
+                    )
+                    record_stage(
                         PipelineStage.CROP_PLANNING,
                         PipelineStageStatus.PASSED,
-                        dur=dur_stage,
+                        dur=dur_stage / 2,
                         summary=f"Crop planned successfully. Crop box: {crop_res.crop_box}",
                     )
             except Exception as e:
@@ -650,7 +773,7 @@ class RuleOrchestratedPipeline:
                 dur_stage = (time.perf_counter() - t_stage) * 1000.0
                 if decon_issues:
                     record_stage(
-                        PipelineStage.MASK_REFINEMENT,
+                        PipelineStage.FOREGROUND_DECONTAMINATION,
                         PipelineStageStatus.WARNING,
                         issues=decon_issues,
                         dur=dur_stage,
@@ -658,15 +781,21 @@ class RuleOrchestratedPipeline:
                     )
                 else:
                     record_stage(
-                        PipelineStage.MASK_REFINEMENT,
+                        PipelineStage.FOREGROUND_DECONTAMINATION,
                         PipelineStageStatus.PASSED,
                         dur=dur_stage,
                         summary="Foreground boundary decontaminated.",
                     )
+                if (
+                    config.save_diagnostic_artifacts
+                    and config.output_dir
+                    and decon_image
+                ):
+                    decon_image.save(config.output_dir / "decontaminate_foreground.png")
             except Exception as e:
                 decon_image = norm_result.image
                 record_stage(
-                    PipelineStage.MASK_REFINEMENT,
+                    PipelineStage.FOREGROUND_DECONTAMINATION,
                     PipelineStageStatus.WARNING,
                     issues=["EDGE_DECONTAMINATION_FAILED"],
                     dur=0.0,
@@ -830,6 +959,112 @@ class RuleOrchestratedPipeline:
             )
             record_stage(
                 PipelineStage.OUTPUT_PREPARATION,
+                PipelineStageStatus.SKIPPED,
+            )
+
+        # Stage 9B: Composition & Matte Quality Validation
+        portrait_quality_passed = not failed and (
+            crop_res is not None and crop_res.validation.is_valid
+        )
+        matte_quality_passed = not failed and (
+            ref_result is not None and ref_result.validation.is_valid
+        )
+        portrait_report_dict = {}
+        matte_report_dict = {}
+
+        if not failed and crop_res is not None and ref_result is not None:
+            t_stage = time.perf_counter()
+            try:
+                assert norm_result is not None
+                assert plan is not None
+                cropped_rgb_arr, cropped_alpha_arr = safe_crop_numpy(
+                    np.array(norm_result.image.convert("RGB"), dtype=np.float32)
+                    / 255.0,
+                    ref_result.refined_alpha_mask,
+                    crop_res.crop_box,
+                )
+                hex_color = (
+                    plan.background_config.target_colour_hex
+                    if plan.background_config
+                    else "#FFFFFF"
+                )
+                from PIL import ImageColor
+
+                rgb_color = ImageColor.getrgb(hex_color)
+                bg_rgb_arr = np.array(rgb_color[:3], dtype=np.float32) / 255.0
+                composed_rgb_arr = (
+                    cropped_rgb_arr * cropped_alpha_arr[..., None]
+                    + bg_rgb_arr * (1.0 - cropped_alpha_arr)[..., None]
+                )
+                composed_rgb_arr = np.clip(composed_rgb_arr, 0.0, 1.0)
+
+                halo = compute_halo_score_float(composed_rgb_arr, cropped_alpha_arr)
+                spill = compute_spill_score_float(cropped_rgb_arr, cropped_alpha_arr)
+                continuity = compute_alpha_continuity_float(cropped_alpha_arr)
+                bg_uni = compute_background_uniformity_float(
+                    composed_rgb_arr, cropped_alpha_arr
+                )
+            except Exception:
+                halo = 0.0
+                spill = 0.0
+                continuity = 0.0
+                bg_uni = 999.0
+
+            portrait_report_dict = {
+                "passed": portrait_quality_passed,
+                "face_detected": face is not None,
+                "face_confidence": face.confidence if face else 0.0,
+                "crop_box": crop_res.crop_box.model_dump() if crop_res else None,
+                "head_bounding_box": fused_head_result.head_bounding_box.model_dump()
+                if fused_head_result
+                else None,
+                "geometric_head_bounding_box": fused_head_result.geometric_head_bounding_box.model_dump()
+                if fused_head_result
+                and fused_head_result.geometric_head_bounding_box is not None
+                else None,
+                "head_height_ratio": getattr(crop_res, "head_height_ratio", None),
+                "head_width_ratio": getattr(crop_res, "head_width_ratio", None),
+                "top_margin_ratio": getattr(crop_res, "top_margin_ratio", None),
+                "eye_line_ratio": getattr(crop_res, "eye_line_ratio", None),
+                "center_offset_ratio": getattr(crop_res, "center_offset_ratio", None),
+                "torso_inclusion_ratio": getattr(
+                    crop_res, "torso_inclusion_ratio", None
+                ),
+            }
+
+            matte_report_dict = {
+                "passed": matte_quality_passed,
+                "halo_score": halo,
+                "color_spill_score": spill,
+                "alpha_continuity": continuity,
+                "background_uniformity": bg_uni,
+                "validation_issues": ref_result.validation.issue_codes,
+            }
+
+            dur_stage = (time.perf_counter() - t_stage) * 1000.0
+            record_stage(
+                PipelineStage.COMPOSITION_QUALITY_VALIDATION,
+                PipelineStageStatus.PASSED
+                if portrait_quality_passed
+                else PipelineStageStatus.FAILED,
+                dur=dur_stage / 2,
+                summary=f"Composition quality validation: {'PASSED' if portrait_quality_passed else 'FAILED'}",
+            )
+            record_stage(
+                PipelineStage.MATTE_QUALITY_VALIDATION,
+                PipelineStageStatus.PASSED
+                if matte_quality_passed
+                else PipelineStageStatus.FAILED,
+                dur=dur_stage / 2,
+                summary=f"Matte quality validation: {'PASSED' if matte_quality_passed else 'FAILED'}",
+            )
+        else:
+            record_stage(
+                PipelineStage.COMPOSITION_QUALITY_VALIDATION,
+                PipelineStageStatus.SKIPPED,
+            )
+            record_stage(
+                PipelineStage.MATTE_QUALITY_VALIDATION,
                 PipelineStageStatus.SKIPPED,
             )
 
@@ -1026,25 +1261,32 @@ class RuleOrchestratedPipeline:
         # Return results
         duration_ms = (time.perf_counter() - start_time) * 1000.0
         rule_compliant = not failed
-        visual_quality_acceptable = (
-            ref_result.validation.is_valid if ref_result is not None else True
-        )
+        visual_quality_acceptable = portrait_quality_passed and matte_quality_passed
         is_valid = rule_compliant and visual_quality_acceptable
 
-        portrait_quality_report = {
-            "face_detected": face is not None,
-            "face_confidence": face.confidence if face else 0.0,
-            "head_bounding_box": fused_head_result.head_bounding_box.model_dump()
-            if fused_head_result
-            else None,
-            "geometric_head_bounding_box": fused_head_result.geometric_head_bounding_box.model_dump()
-            if fused_head_result
-            and fused_head_result.geometric_head_bounding_box is not None
-            else None,
-        }
+        portrait_quality_report = (
+            portrait_report_dict
+            if portrait_report_dict
+            else {
+                "passed": False,
+                "face_detected": face is not None,
+                "face_confidence": face.confidence if face else 0.0,
+                "crop_box": None,
+                "head_bounding_box": None,
+                "geometric_head_bounding_box": None,
+            }
+        )
 
         matte_quality_report = (
-            ref_result.validation.model_dump() if ref_result is not None else None
+            matte_report_dict
+            if matte_report_dict
+            else {
+                "passed": False,
+                "halo_score": 0.0,
+                "color_spill_score": 0.0,
+                "alpha_continuity": 0.0,
+                "background_uniformity": 999.0,
+            }
         )
 
         return RulePipelineResult(
@@ -1075,5 +1317,8 @@ class RuleOrchestratedPipeline:
             matte_quality_report=matte_quality_report,
             encoded_bytes=comp_result.encoded_bytes
             if comp_result is not None
+            else None,
+            refined_alpha_mask=ref_result.refined_alpha_mask
+            if ref_result is not None
             else None,
         )

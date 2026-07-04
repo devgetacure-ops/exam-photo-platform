@@ -61,6 +61,10 @@
       "instructions": "Plain white background only."
     },
     "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "complete_beard_boundary_required": true,
       "face_coverage_target": 75.0,
       "face_coverage_minimum": 70.0,
       "face_coverage_maximum": 80.0,

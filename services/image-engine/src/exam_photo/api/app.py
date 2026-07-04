@@ -76,6 +76,8 @@ async def process_image(
     file: UploadFile = File(...),  # noqa: B008
     rule: str = Form(...),  # noqa: B008
     allow_invalid_output: bool = Query(default=False),  # noqa: B008
+    quality_mode: str = Query(default="balanced"),  # noqa: B008
+    save_diagnostic_artifacts: bool = Query(default=False),  # noqa: B008
 ) -> ProcessImageResponse:
     """Synchronously run compliance processing pipeline and return status."""
     # 1. Enforce size limits before reading the whole file into memory
@@ -109,6 +111,8 @@ async def process_image(
         image_bytes=image_bytes,
         rule_dict=rule_dict,
         allow_invalid_output=allow_invalid_output,
+        quality_mode=quality_mode,
+        save_diagnostic_artifacts=save_diagnostic_artifacts,
     )
 
     # 4. Expose API relative URL routes
@@ -124,6 +128,12 @@ async def process_image(
         is_valid=record.is_valid,
         output_filename=record.output_filename,
         issue_codes=record.issue_codes,
+        rule_compliant=record.rule_compliant,
+        visual_quality_acceptable=record.visual_quality_acceptable,
+        portrait_quality_report=record.portrait_quality_report,
+        matte_quality_report=record.matte_quality_report,
+        quality_mode=record.quality_mode,
+        diagnostic_available=record.diagnostic_available,
     )
 
 
@@ -156,6 +166,12 @@ def get_job_status(job_id: str) -> JobStatusResponse:
         output_filename=record.output_filename,
         report_url=report_url,
         output_url=output_url,
+        rule_compliant=record.rule_compliant,
+        visual_quality_acceptable=record.visual_quality_acceptable,
+        portrait_quality_report=record.portrait_quality_report,
+        matte_quality_report=record.matte_quality_report,
+        quality_mode=record.quality_mode,
+        diagnostic_available=record.diagnostic_available,
     )
 
 

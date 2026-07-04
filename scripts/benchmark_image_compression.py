@@ -79,9 +79,7 @@ def run_benchmark():
         sys.exit(1)
 
     face_model_path = repo_root / "model-assets" / "blaze_face_short_range.tflite"
-    segmenter_model_path = (
-        repo_root / "model-assets" / "selfie_segmentation.tflite"
-    )
+    segmenter_model_path = repo_root / "model-assets" / "selfie_segmentation.tflite"
 
     face_manifest = repo_root / "model-manifests" / "face-detector.json"
     segmenter_manifest = repo_root / "model-manifests" / "subject-segmenter.json"
@@ -121,10 +119,14 @@ def run_benchmark():
         and segmenter_model_path.exists()
     ):
         face_detector_05 = MediapipeFaceDetector(
-            model_path=face_model_path, expected_sha256=face_sha, min_detection_confidence=0.5
+            model_path=face_model_path,
+            expected_sha256=face_sha,
+            min_detection_confidence=0.5,
         )
         face_detector_02 = MediapipeFaceDetector(
-            model_path=face_model_path, expected_sha256=face_sha, min_detection_confidence=0.2
+            model_path=face_model_path,
+            expected_sha256=face_sha,
+            min_detection_confidence=0.2,
         )
         segmenter = MediapipeSubjectSegmenter(
             model_path=segmenter_model_path, expected_sha256=seg_sha
@@ -165,7 +167,8 @@ def run_benchmark():
                 # Use correct confidence face detector
                 det = (
                     face_detector_02
-                    if fixture_name in ("lincoln_low_contrast.jpg", "roosevelt_muir_yosemite.jpg")
+                    if fixture_name
+                    in ("lincoln_low_contrast.jpg", "roosevelt_muir_yosemite.jpg")
                     else face_detector_05
                 )
                 with det:
@@ -180,9 +183,7 @@ def run_benchmark():
                         config={"minimum_face_confidence": min(0.5, face.confidence)},
                     )
                     with segmenter:
-                        seg_res = segmenter.segment_subject(
-                            current_image, face=face
-                        )
+                        seg_res = segmenter.segment_subject(current_image, face=face)
                     refiner = MorphologicalForegroundRefiner()
                     ref_res = refiner.refine_mask(
                         coarse_mask=seg_res.coarse_mask,
@@ -203,9 +204,15 @@ def run_benchmark():
                             head_estimate=head_res.head_bounding_box,
                             refined_mask=ref_res.refined_binary_mask,
                             config=CropModeBConfig(
-                                min_head_height_ratio=crop_b_exp.get("min_head_height_ratio", 0.30),
-                                max_head_height_ratio=crop_b_exp.get("max_head_height_ratio", 0.84),
-                                allow_padding=crop_b_exp.get("expected_padding_required", False),
+                                min_head_height_ratio=crop_b_exp.get(
+                                    "min_head_height_ratio", 0.30
+                                ),
+                                max_head_height_ratio=crop_b_exp.get(
+                                    "max_head_height_ratio", 0.84
+                                ),
+                                allow_padding=crop_b_exp.get(
+                                    "expected_padding_required", False
+                                ),
                             ),
                         )
                     elif crop_a_exp.get("expected_valid_without_padding"):
@@ -270,7 +277,9 @@ def run_benchmark():
 
             prep_result = preparer.prepare_output(current_image, prep_config)
             if not prep_result.validation.is_valid or prep_result.output_image is None:
-                raise AssertionError("Output preparation failed during pipeline benchmark run!")
+                raise AssertionError(
+                    "Output preparation failed during pipeline benchmark run!"
+                )
 
             prepared_image = prep_result.output_image
 

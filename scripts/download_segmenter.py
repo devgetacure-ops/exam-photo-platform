@@ -21,15 +21,15 @@ _VARIANTS: dict[str, dict[str, str]] = {
         "description": "MediaPipe Selfie Multiclass model predicting background, hair, body, face, clothes, and accessories.",
         "url": "https://storage.googleapis.com/mediapipe-models/image_segmenter/selfie_multiclass_256x256/float32/latest/selfie_multiclass_256x256.tflite",
         "model_card_url": "https://storage.googleapis.com/mediapipe-assets/Model%20Card%20Multiclass%20Segmentation.pdf",
-        "licence_url": "https://www.apache.org/licenses/LICENSE-2.0"
+        "licence_url": "https://www.apache.org/licenses/LICENSE-2.0",
     },
     "selfie_bin_general": {
         "filename": "selfie_segmentation.tflite",
         "description": "MediaPipe Selfie Segmentation general binary model separating background and person.",
         "url": "https://storage.googleapis.com/mediapipe-assets/selfie_segmentation.tflite",
         "model_card_url": "https://ai.google.dev/edge/mediapipe/solutions/vision/selfie_segmentation#models",
-        "licence_url": "https://www.apache.org/licenses/LICENSE-2.0"
-    }
+        "licence_url": "https://www.apache.org/licenses/LICENSE-2.0",
+    },
 }
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -104,7 +104,7 @@ def main() -> None:
     args = parser.parse_args()
 
     manifest = _load_manifest()
-    
+
     # Load variant configuration from manifest
     try:
         variants = manifest["variants"]
@@ -114,7 +114,10 @@ def main() -> None:
         source_url = variant["source_url"]
         filename = variant["filename"]
     except Exception as ex:
-        print(f"ERROR: Variant '{args.variant}' not properly configured in manifest: {ex}", file=sys.stderr)
+        print(
+            f"ERROR: Variant '{args.variant}' not properly configured in manifest: {ex}",
+            file=sys.stderr,
+        )
         sys.exit(1)
 
     dest_dir: Path = args.dest or _DEFAULT_ASSET_DIR
@@ -182,8 +185,13 @@ def main() -> None:
     manifest["sha256"] = actual_sha256
     manifest["size_bytes"] = size_bytes
     manifest["licence"] = "Apache-2.0"
-    manifest["licence_url"] = variant.get("licence_url", "https://www.apache.org/licenses/LICENSE-2.0")
-    manifest["model_card_url"] = variant.get("model_card_url", "https://storage.googleapis.com/mediapipe-assets/Model%20Card%20Multiclass%20Segmentation.pdf")
+    manifest["licence_url"] = variant.get(
+        "licence_url", "https://www.apache.org/licenses/LICENSE-2.0"
+    )
+    manifest["model_card_url"] = variant.get(
+        "model_card_url",
+        "https://storage.googleapis.com/mediapipe-assets/Model%20Card%20Multiclass%20Segmentation.pdf",
+    )
     manifest["local_model_path_default"] = f"model-assets/{filename}"
     _save_manifest(manifest)
 

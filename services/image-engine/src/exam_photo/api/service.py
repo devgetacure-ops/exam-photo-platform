@@ -141,6 +141,8 @@ class ApiProcessingService:
         image_bytes: bytes,
         rule_dict: Dict[str, Any],
         allow_invalid_output: bool = False,
+        quality_mode: str = "balanced",
+        save_diagnostic_artifacts: bool = False,
     ) -> ProcessingJobRecord:
         """Run the compliance processing pipeline synchronously and persist artifacts."""
         self.check_upload_limit(len(image_bytes))
@@ -174,9 +176,10 @@ class ApiProcessingService:
             job_dir = self.store.get_file_path(job_id, ".")
 
             config = RulePipelineConfig(
-                save_diagnostic_artifacts=True,
+                save_diagnostic_artifacts=save_diagnostic_artifacts,
                 allow_invalid_output=allow_invalid_output,
                 output_dir=job_dir,
+                quality_mode=quality_mode,
             )
 
             # 3. Execute pipeline
@@ -197,6 +200,11 @@ class ApiProcessingService:
                 )
                 artifact_names.append(result.output_filename)
 
+            if save_diagnostic_artifacts:
+                artifact_names.extend(
+                    ["refined_alpha.png", "decontaminate_foreground.png"]
+                )
+
             # Update job record with pipeline outcomes
             record.status = (
                 ApiJobStatus.SUCCEEDED if result.is_valid else ApiJobStatus.FAILED
@@ -207,6 +215,12 @@ class ApiProcessingService:
             )
             record.issue_codes = [c.value for c in result.issue_codes]
             record.artifact_names = artifact_names
+            record.rule_compliant = result.rule_compliant
+            record.visual_quality_acceptable = result.visual_quality_acceptable
+            record.portrait_quality_report = result.portrait_quality_report
+            record.matte_quality_report = result.matte_quality_report
+            record.quality_mode = quality_mode
+            record.diagnostic_available = save_diagnostic_artifacts
 
         except Exception:
             # Pipeline failure fallback

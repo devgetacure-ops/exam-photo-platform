@@ -528,6 +528,12 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
         action="store_true",
         help="Save intermediate pipeline masks and crop windows.",
     )
+    proc_parser.add_argument(
+        "--quality-mode",
+        choices=["fast", "balanced", "high"],
+        default="balanced",
+        help="Pipeline processing quality mode.",
+    )
     proc_parser.add_argument("--face-model-path", help="Path to face model.")
     proc_parser.add_argument("--segmenter-model-path", help="Path to segmenter model.")
     proc_parser.add_argument(
@@ -3337,6 +3343,7 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
             allow_quality_below_minimum=args.allow_invalid_output,
             allow_oversize_output=args.allow_invalid_output,
             output_dir=Path(args.output_dir) if args.output_dir else None,
+            quality_mode=args.quality_mode,
         )
 
         try:

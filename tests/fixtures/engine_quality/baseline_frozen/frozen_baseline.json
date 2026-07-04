@@ -1,5 +1,5 @@
 {
-  "commit_sha": "9eb3edce707575a29cf6342d191c30fcd6647d2c",
+  "commit_sha": "388e6f251ec096a1339c65b7c435afe7410601cb",
   "model_hashes": {
     "face": "b4578f35940bf5a1a655214a1cce5cab13eba73c1297cd78e1a04c2380b0152f",
     "segmenter": "9ee168ec7c8f2a16c56fe8e1cfbc514974cbbb7e434051b455635f1bd1462f5c"
@@ -8,346 +8,364 @@
     "portrait_obama": {
       "success": true,
       "crop_box": {
-        "left": 68.0,
-        "top": -4.0,
-        "right": 600.0,
-        "bottom": 680.0
+        "left": 131.0,
+        "top": 30.0,
+        "right": 579.0,
+        "bottom": 606.0
       },
-      "halo_score": 0.0,
-      "spill_score": 0.0,
-      "alpha_continuity": 0.0,
-      "background_uniformity": 92.34558618769145
+      "halo_score": 34.41276550292969,
+      "spill_score": 0.5650591850280762,
+      "alpha_continuity": 34.70915222167969,
+      "background_uniformity": 0.008907751422183058
     },
     "portrait_trump": {
       "success": true,
       "crop_box": {
-        "left": -1.0,
-        "top": -5.0,
-        "right": 573.0,
-        "bottom": 733.0
+        "left": 99.0,
+        "top": 42.0,
+        "right": 519.0,
+        "bottom": 582.0
       },
-      "halo_score": 0.0,
-      "spill_score": 0.0,
-      "alpha_continuity": 0.0,
-      "background_uniformity": 96.10331388157087
+      "halo_score": 25.110031127929688,
+      "spill_score": 0.5911693572998047,
+      "alpha_continuity": 29.668033599853516,
+      "background_uniformity": 0.005497565194725181
     },
     "portrait_biden": {
       "success": true,
       "crop_box": {
-        "left": 276.0,
-        "top": -38.0,
-        "right": 675.0,
-        "bottom": 475.0
+        "left": 324.0,
+        "top": 9.0,
+        "right": 597.0,
+        "bottom": 360.0
       },
-      "halo_score": 0.0,
-      "spill_score": 0.0,
-      "alpha_continuity": 0.0,
-      "background_uniformity": 75.600371950018
+      "halo_score": 20.221920013427734,
+      "spill_score": 0.5839444994926453,
+      "alpha_continuity": 29.15224838256836,
+      "background_uniformity": 0.013102781656105681
     },
     "portrait_harris": {
       "success": true,
       "crop_box": {
-        "left": 119.0,
-        "top": 15.0,
-        "right": 539.0,
-        "bottom": 555.0
+        "left": 150.0,
+        "top": 52.0,
+        "right": 507.0,
+        "bottom": 511.0
       },
-      "halo_score": 0.0,
-      "spill_score": 0.0,
-      "alpha_continuity": 0.0,
-      "background_uniformity": 105.73226925338037
+      "halo_score": 32.336753845214844,
+      "spill_score": 0.25079578161239624,
+      "alpha_continuity": 23.711936950683594,
+      "background_uniformity": 0.006366005386061569
     },
     "portrait_murmu": {
       "success": true,
       "crop_box": {
-        "left": 21.0,
-        "top": -75.0,
-        "right": 637.0,
-        "bottom": 717.0
+        "left": 62.0,
+        "top": -47.0,
+        "right": 622.0,
+        "bottom": 673.0
       },
-      "halo_score": 0.0,
-      "spill_score": 0.0,
-      "alpha_continuity": 0.0,
-      "background_uniformity": 83.54604008155144
+      "halo_score": 27.390056610107422,
+      "spill_score": 0.6163265705108643,
+      "alpha_continuity": 27.01593589782715,
+      "background_uniformity": 0.0024076920045710683
     },
     "portrait_modi": {
       "success": true,
       "crop_box": {
-        "left": 264.0,
-        "top": -24.0,
-        "right": 565.0,
-        "bottom": 363.0
+        "left": 298.0,
+        "top": 12.0,
+        "right": 508.0,
+        "bottom": 282.0
       },
-      "halo_score": 0.0,
-      "spill_score": 0.0,
-      "alpha_continuity": 0.0,
-      "background_uniformity": 47.52101665135738
+      "halo_score": 11.869298934936523,
+      "spill_score": 0.7273690700531006,
+      "alpha_continuity": 31.48828887939453,
+      "background_uniformity": 0.0012035344302254722
     },
     "portrait_kalam": {
       "success": true,
       "crop_box": {
-        "left": -6.0,
-        "top": -65.0,
-        "right": 645.0,
-        "bottom": 772.0
+        "left": 68.0,
+        "top": 0.0,
+        "right": 544.0,
+        "bottom": 612.0
       },
-      "halo_score": 0.0,
-      "spill_score": 0.0,
-      "alpha_continuity": 0.0,
-      "background_uniformity": 121.31322947081995
+      "halo_score": 25.84795379638672,
+      "spill_score": 0.6669384837150574,
+      "alpha_continuity": 24.215967178344727,
+      "background_uniformity": 0.0033688382462224425
     },
     "portrait_mukherjee": {
       "success": true,
       "crop_box": {
-        "left": 40.0,
-        "top": -43.0,
-        "right": 537.0,
-        "bottom": 596.0
+        "left": 73.0,
+        "top": 1.0,
+        "right": 465.0,
+        "bottom": 505.0
       },
-      "halo_score": 0.0,
-      "spill_score": 0.0,
-      "alpha_continuity": 0.0,
-      "background_uniformity": 98.83866474800813
+      "halo_score": 28.850242614746094,
+      "spill_score": 0.5599933862686157,
+      "alpha_continuity": 37.29967498779297,
+      "background_uniformity": 0.007661785052340303
     },
     "portrait_patil": {
-      "success": false,
-      "reason": "Crop invalid: [<CropIssueCode.CROP_HEAD_CLIPPED: 'CROP_HEAD_CLIPPED'>, <CropIssueCode.CROP_MASK_PRESERVATION_LOW: 'CROP_MASK_PRESERVATION_LOW'>, <CropIssueCode.CROP_TOP_HAIR_RISK: 'CROP_TOP_HAIR_RISK'>, <CropIssueCode.CROP_SIDE_HEAD_RISK: 'CROP_SIDE_HEAD_RISK'>]"
+      "success": true,
+      "crop_box": {
+        "left": 358.0,
+        "top": -32.0,
+        "right": 631.0,
+        "bottom": 319.0
+      },
+      "halo_score": 27.3585262298584,
+      "spill_score": 0.6205288171768188,
+      "alpha_continuity": 27.152620315551758,
+      "background_uniformity": 0.0014686163080263074
     },
     "portrait_kovind": {
       "success": true,
       "crop_box": {
-        "left": 36.0,
-        "top": -93.0,
-        "right": 652.0,
-        "bottom": 699.0
+        "left": 120.0,
+        "top": -7.0,
+        "right": 568.0,
+        "bottom": 569.0
       },
-      "halo_score": 0.0,
-      "spill_score": 0.0,
-      "alpha_continuity": 0.0,
-      "background_uniformity": 90.68234905876952
+      "halo_score": 24.921707153320312,
+      "spill_score": 0.6843705773353577,
+      "alpha_continuity": 32.647727966308594,
+      "background_uniformity": 0.00608531131750946
     },
     "portrait_bush_g": {
       "success": true,
       "crop_box": {
-        "left": 35.0,
-        "top": -26.0,
-        "right": 609.0,
-        "bottom": 712.0
+        "left": 85.0,
+        "top": 1.0,
+        "right": 582.0,
+        "bottom": 640.0
       },
-      "halo_score": 0.0,
-      "spill_score": 0.0,
-      "alpha_continuity": 0.0,
-      "background_uniformity": 87.68664564113702
+      "halo_score": 28.035099029541016,
+      "spill_score": 0.7370410561561584,
+      "alpha_continuity": 25.6141300201416,
+      "background_uniformity": 0.00545921901873146
     },
     "portrait_clinton_b": {
       "success": true,
       "crop_box": {
-        "left": -12.0,
-        "top": -14.0,
-        "right": 625.0,
-        "bottom": 805.0
+        "left": 30.0,
+        "top": 3.0,
+        "right": 583.0,
+        "bottom": 714.0
       },
-      "halo_score": 0.0,
-      "spill_score": 0.0,
-      "alpha_continuity": 0.0,
-      "background_uniformity": 102.52980399448218
+      "halo_score": 22.969585418701172,
+      "spill_score": 0.5452913045883179,
+      "alpha_continuity": 25.157649993896484,
+      "background_uniformity": 0.0014169959685466811
     },
     "portrait_clinton_h": {
       "success": true,
       "crop_box": {
-        "left": 68.0,
-        "top": 5.0,
-        "right": 572.0,
-        "bottom": 653.0
+        "left": 92.0,
+        "top": 8.0,
+        "right": 547.0,
+        "bottom": 593.0
       },
-      "halo_score": 0.0,
-      "spill_score": 0.0,
-      "alpha_continuity": 0.0,
-      "background_uniformity": 98.94116002024953
+      "halo_score": 28.12606430053711,
+      "spill_score": 0.6314331889152527,
+      "alpha_continuity": 27.41771697998047,
+      "background_uniformity": 0.005046126270055429
     },
     "portrait_obama_m": {
       "success": true,
       "crop_box": {
-        "left": 120.0,
-        "top": 123.0,
-        "right": 351.0,
-        "bottom": 420.0
+        "left": 138.0,
+        "top": 150.0,
+        "right": 334.0,
+        "bottom": 402.0
       },
-      "halo_score": 0.0,
-      "spill_score": 0.0,
-      "alpha_continuity": 0.0,
-      "background_uniformity": 97.13704140976868
+      "halo_score": 34.40902328491211,
+      "spill_score": 0.4115898013114929,
+      "alpha_continuity": 28.506473541259766,
+      "background_uniformity": 0.01887712977557607
     },
     "portrait_trump_m": {
       "success": true,
       "crop_box": {
-        "left": 104.0,
+        "left": 124.0,
         "top": 4.0,
-        "right": 433.0,
-        "bottom": 427.0
+        "right": 425.0,
+        "bottom": 391.0
       },
-      "halo_score": 0.0,
-      "spill_score": 0.0,
-      "alpha_continuity": 0.0,
-      "background_uniformity": 130.9796910666082
+      "halo_score": 22.140615463256836,
+      "spill_score": 0.6207082271575928,
+      "alpha_continuity": 25.029504776000977,
+      "background_uniformity": 0.003401809894973248
     },
     "portrait_bush_l": {
       "success": true,
       "crop_box": {
-        "left": 102.0,
-        "top": 3.0,
-        "right": 494.0,
-        "bottom": 507.0
+        "left": 122.0,
+        "top": 9.0,
+        "right": 472.0,
+        "bottom": 459.0
       },
-      "halo_score": 0.0,
-      "spill_score": 0.0,
-      "alpha_continuity": 0.0,
-      "background_uniformity": 74.83841850232156
+      "halo_score": 19.04955291748047,
+      "spill_score": 0.5393985509872437,
+      "alpha_continuity": 25.744281768798828,
+      "background_uniformity": 0.003929273084479371
     },
     "portrait_rice": {
       "success": true,
       "crop_box": {
-        "left": 92.0,
-        "top": 46.0,
-        "right": 533.0,
-        "bottom": 613.0
+        "left": 114.0,
+        "top": 83.0,
+        "right": 513.0,
+        "bottom": 596.0
       },
-      "halo_score": 0.0,
-      "spill_score": 0.0,
-      "alpha_continuity": 0.0,
-      "background_uniformity": 76.16852298434561
+      "halo_score": 31.49444007873535,
+      "spill_score": 0.36207589507102966,
+      "alpha_continuity": 34.41646957397461,
+      "background_uniformity": 0.005647168698776776
     },
     "portrait_powell": {
       "success": true,
       "crop_box": {
-        "left": 45.0,
-        "top": -19.0,
-        "right": 647.0,
-        "bottom": 755.0
+        "left": 89.0,
+        "top": 14.0,
+        "right": 579.0,
+        "bottom": 644.0
       },
-      "halo_score": 0.0,
-      "spill_score": 0.0,
-      "alpha_continuity": 0.0,
-      "background_uniformity": 87.68949181739879
+      "halo_score": 27.689077377319336,
+      "spill_score": 0.7923091650009155,
+      "alpha_continuity": 31.8978328704834,
+      "background_uniformity": 0.004742241110809698
     },
     "portrait_austin": {
       "success": false,
-      "reason": "Expected exactly 1 face, found 0"
+      "reason": "Pipeline reports invalid: [<PipelineIssueCode.PIPELINE_FACE_COUNT_INVALID: 'PIPELINE_FACE_COUNT_INVALID'>]"
     },
     "portrait_blinken": {
       "success": true,
       "crop_box": {
-        "left": 96.0,
-        "top": -28.0,
-        "right": 621.0,
-        "bottom": 647.0
+        "left": 127.0,
+        "top": 4.0,
+        "right": 547.0,
+        "bottom": 544.0
       },
-      "halo_score": 0.0,
-      "spill_score": 0.0,
-      "alpha_continuity": 0.0,
-      "background_uniformity": 84.73676754850088
+      "halo_score": 24.56785774230957,
+      "spill_score": 0.6970162391662598,
+      "alpha_continuity": 30.109548568725586,
+      "background_uniformity": 0.002322383387095594
     },
     "portrait_gates": {
       "success": true,
       "crop_box": {
-        "left": 42.0,
-        "top": -40.0,
-        "right": 581.0,
-        "bottom": 653.0
+        "left": 102.0,
+        "top": 0.0,
+        "right": 522.0,
+        "bottom": 540.0
       },
-      "halo_score": 0.0,
-      "spill_score": 0.0,
-      "alpha_continuity": 0.0,
-      "background_uniformity": 93.61935192547438
+      "halo_score": 22.552156448364258,
+      "spill_score": 0.5765306949615479,
+      "alpha_continuity": 31.014144897460938,
+      "background_uniformity": 0.008799511920405482
     },
     "portrait_hagel": {
       "success": true,
       "crop_box": {
-        "left": 82.0,
-        "top": 9.0,
-        "right": 565.0,
-        "bottom": 630.0
+        "left": 91.0,
+        "top": 4.0,
+        "right": 518.0,
+        "bottom": 553.0
       },
-      "halo_score": 0.0,
-      "spill_score": 0.0,
-      "alpha_continuity": 0.0,
-      "background_uniformity": 89.33588048395862
+      "halo_score": 16.745101928710938,
+      "spill_score": 0.38561132550239563,
+      "alpha_continuity": 25.731542587280273,
+      "background_uniformity": 0.00524904880150693
     },
     "portrait_carter_a": {
       "success": true,
       "crop_box": {
-        "left": 52.0,
-        "top": -28.0,
-        "right": 570.0,
-        "bottom": 638.0
+        "left": 101.0,
+        "top": 0.0,
+        "right": 521.0,
+        "bottom": 540.0
       },
-      "halo_score": 0.0,
-      "spill_score": 0.0,
-      "alpha_continuity": 0.0,
-      "background_uniformity": 98.17608921662976
+      "halo_score": 30.1607723236084,
+      "spill_score": 0.3192853033542633,
+      "alpha_continuity": 26.724830627441406,
+      "background_uniformity": 0.00741518089761949
     },
     "portrait_s_gandhi": {
       "success": true,
       "crop_box": {
-        "left": -26.0,
-        "top": -51.0,
-        "right": 569.0,
-        "bottom": 714.0
+        "left": -5.0,
+        "top": 0.0,
+        "right": 527.0,
+        "bottom": 684.0
       },
-      "halo_score": 0.0,
-      "spill_score": 0.0,
-      "alpha_continuity": 0.0,
-      "background_uniformity": 45.136573112905296
+      "halo_score": 24.317522048950195,
+      "spill_score": 0.7780867218971252,
+      "alpha_continuity": 28.0101318359375,
+      "background_uniformity": 0.0012410555841776863
     },
     "portrait_singh": {
       "success": true,
       "crop_box": {
-        "left": 1.0,
-        "top": -20.0,
-        "right": 169.0,
-        "bottom": 196.0
+        "left": 18.0,
+        "top": -11.0,
+        "right": 165.0,
+        "bottom": 178.0
       },
-      "halo_score": 0.0,
-      "spill_score": 0.0,
-      "alpha_continuity": 0.0,
-      "background_uniformity": 56.54177689594356
+      "halo_score": 38.80611038208008,
+      "spill_score": 0.5920026898384094,
+      "alpha_continuity": 39.20765686035156,
+      "background_uniformity": 0.03173621844410098
     },
     "negative_cat": {
       "success": false,
-      "reason": "Expected exactly 1 face, found 0"
+      "reason": "Pipeline reports invalid: [<PipelineIssueCode.PIPELINE_FACE_COUNT_INVALID: 'PIPELINE_FACE_COUNT_INVALID'>]"
     },
     "negative_dog": {
-      "success": false,
-      "reason": "Crop invalid: [<CropIssueCode.CROP_MASK_PRESERVATION_LOW: 'CROP_MASK_PRESERVATION_LOW'>, <CropIssueCode.CROP_TOP_HAIR_RISK: 'CROP_TOP_HAIR_RISK'>, <CropIssueCode.CROP_SIDE_HEAD_RISK: 'CROP_SIDE_HEAD_RISK'>]"
+      "success": true,
+      "crop_box": {
+        "left": 92.0,
+        "top": 12.0,
+        "right": 267.0,
+        "bottom": 237.0
+      },
+      "halo_score": 7.922614574432373,
+      "spill_score": 0.4966520667076111,
+      "alpha_continuity": 33.4675407409668,
+      "background_uniformity": 0.0323961867830021
     },
     "negative_profile": {
       "success": true,
       "crop_box": {
-        "left": 88.0,
-        "top": 75.0,
-        "right": 480.0,
-        "bottom": 579.0
+        "left": 110.0,
+        "top": 101.0,
+        "right": 460.0,
+        "bottom": 551.0
       },
-      "halo_score": 0.0,
-      "spill_score": 0.0,
-      "alpha_continuity": 0.0,
-      "background_uniformity": 82.14000749109168
+      "halo_score": 25.117523193359375,
+      "spill_score": 0.5475755333900452,
+      "alpha_continuity": 29.762691497802734,
+      "background_uniformity": 8.045268041513584e-05
     },
     "negative_occluded": {
       "success": false,
-      "reason": "Expected exactly 1 face, found 0"
+      "reason": "Pipeline reports invalid: [<PipelineIssueCode.PIPELINE_FACE_COUNT_INVALID: 'PIPELINE_FACE_COUNT_INVALID'>]"
     },
     "negative_blank": {
       "success": false,
-      "reason": "Expected exactly 1 face, found 0"
+      "reason": "Pipeline reports invalid: [<PipelineIssueCode.PIPELINE_FACE_COUNT_INVALID: 'PIPELINE_FACE_COUNT_INVALID'>]"
     },
     "negative_geometric": {
       "success": false,
-      "reason": "Expected exactly 1 face, found 0"
+      "reason": "Pipeline reports invalid: [<PipelineIssueCode.PIPELINE_FACE_COUNT_INVALID: 'PIPELINE_FACE_COUNT_INVALID'>]"
     },
     "negative_multiple": {
       "success": false,
-      "reason": "Expected exactly 1 face, found 2"
+      "reason": "Pipeline reports invalid: [<PipelineIssueCode.PIPELINE_FACE_COUNT_INVALID: 'PIPELINE_FACE_COUNT_INVALID'>]"
     }
   }
 }

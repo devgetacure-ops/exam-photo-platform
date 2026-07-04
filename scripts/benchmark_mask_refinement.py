@@ -1,9 +1,7 @@
 import argparse
 import hashlib
 import json
-import os
 import sys
-import time
 from pathlib import Path
 import numpy as np
 from PIL import Image
@@ -13,9 +11,12 @@ repo_root = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(repo_root / "services" / "image-engine" / "src"))
 
 from exam_photo.providers.mediapipe_face_detector import MediapipeFaceDetector
-from exam_photo.providers.segmenters.mediapipe_segmenter import MediapipeSubjectSegmenter
-from exam_photo.providers.refiners.morphological_refiner import MorphologicalForegroundRefiner
-from exam_photo.providers.foreground_refinement import RefinementConfig
+from exam_photo.providers.segmenters.mediapipe_segmenter import (
+    MediapipeSubjectSegmenter,
+)
+from exam_photo.providers.refiners.morphological_refiner import (
+    MorphologicalForegroundRefiner,
+)
 
 
 def verify_file_sha256(filepath: Path, expected_sha: str) -> None:
@@ -35,7 +36,9 @@ def verify_file_sha256(filepath: Path, expected_sha: str) -> None:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Benchmark foreground mask refinement.")
+    parser = argparse.ArgumentParser(
+        description="Benchmark foreground mask refinement."
+    )
     parser.add_argument(
         "--require-real",
         action="store_true",
@@ -60,8 +63,12 @@ def main() -> int:
             seg_sha = variant.get("sha256", "")
 
     # Instantiate detectors and refiner
-    face_detector_05 = MediapipeFaceDetector(face_model_path, face_sha, min_detection_confidence=0.5)
-    face_detector_02 = MediapipeFaceDetector(face_model_path, face_sha, min_detection_confidence=0.2)
+    face_detector_05 = MediapipeFaceDetector(
+        face_model_path, face_sha, min_detection_confidence=0.5
+    )
+    face_detector_02 = MediapipeFaceDetector(
+        face_model_path, face_sha, min_detection_confidence=0.2
+    )
     segmenter = MediapipeSubjectSegmenter(seg_model_path, seg_sha)
     refiner = MorphologicalForegroundRefiner()
 
@@ -70,7 +77,9 @@ def main() -> int:
     )
 
     fixtures_dir = repo_root / "tests" / "fixtures"
-    with open(fixtures_dir / "segmentation" / "annotations.json", "r", encoding="utf-8") as f:
+    with open(
+        fixtures_dir / "segmentation" / "annotations.json", "r", encoding="utf-8"
+    ) as f:
         annotations = json.load(f)
 
     # Preflight Checksum Verifications
@@ -79,13 +88,22 @@ def main() -> int:
             src_name = entry["source_fixture"]
             # Verify coarse mask checksum
             if "regression_mask_filename" in entry and "mask_sha256" in entry:
-                verify_file_sha256(fixtures_dir / entry["regression_mask_filename"], entry["mask_sha256"])
+                verify_file_sha256(
+                    fixtures_dir / entry["regression_mask_filename"],
+                    entry["mask_sha256"],
+                )
             # Verify reference mask checksum
             if "reference_mask_filename" in entry and "reference_mask_sha256" in entry:
-                verify_file_sha256(fixtures_dir / entry["reference_mask_filename"], entry["reference_mask_sha256"])
+                verify_file_sha256(
+                    fixtures_dir / entry["reference_mask_filename"],
+                    entry["reference_mask_sha256"],
+                )
             # Verify refined mask checksum
             if "refined_mask_filename" in entry and "refined_mask_sha256" in entry:
-                verify_file_sha256(fixtures_dir / entry["refined_mask_filename"], entry["refined_mask_sha256"])
+                verify_file_sha256(
+                    fixtures_dir / entry["refined_mask_filename"],
+                    entry["refined_mask_sha256"],
+                )
     except Exception as e:
         print(f"ERROR: Checksum preflight verification failed: {e}", file=sys.stderr)
         return 1
@@ -102,10 +120,17 @@ def main() -> int:
         expected_faces = entry.get("expected_face_count", 1)
         faces = None
         if expected_faces > 0:
-            detector = face_detector_02 if src_name in ("lincoln_low_contrast.jpg", "roosevelt_muir_yosemite.jpg") else face_detector_05
+            detector = (
+                face_detector_02
+                if src_name
+                in ("lincoln_low_contrast.jpg", "roosevelt_muir_yosemite.jpg")
+                else face_detector_05
+            )
             with detector:
                 face_res = detector.detect_faces(img)
-            assert len(face_res.detections) == expected_faces, f"Expected {expected_faces} faces, got {len(face_res.detections)}"
+            assert len(face_res.detections) == expected_faces, (
+                f"Expected {expected_faces} faces, got {len(face_res.detections)}"
+            )
             faces = face_res.detections
 
         # 2. Run segmenter
@@ -116,7 +141,7 @@ def main() -> int:
         ref_res = refiner.refine_mask(
             coarse_mask=seg_res.coarse_mask,
             probability_mask=seg_res.probability_mask,
-            face=faces
+            face=faces,
         )
 
         # 4. Coverage and IoU calculations
@@ -130,7 +155,9 @@ def main() -> int:
         # Stability IoU (coarse vs refined)
         intersect_stable = np.logical_and(coarse_arr, refined_arr).sum()
         union_stable = np.logical_or(coarse_arr, refined_arr).sum()
-        stability_iou = float(intersect_stable / union_stable) if union_stable > 0 else 1.0
+        stability_iou = (
+            float(intersect_stable / union_stable) if union_stable > 0 else 1.0
+        )
 
         # Quality IoU (refined vs reference, if reference exists)
         quality_iou = None
@@ -144,25 +171,35 @@ def main() -> int:
                 # Coarse vs Reference
                 intersect_coarse_ref = np.logical_and(coarse_arr, ref_arr).sum()
                 union_coarse_ref = np.logical_or(coarse_arr, ref_arr).sum()
-                coarse_ref_iou = float(intersect_coarse_ref / union_coarse_ref) if union_coarse_ref > 0 else 1.0
+                coarse_ref_iou = (
+                    float(intersect_coarse_ref / union_coarse_ref)
+                    if union_coarse_ref > 0
+                    else 1.0
+                )
 
                 # Refined vs Reference
                 intersect_ref_ref = np.logical_and(refined_arr, ref_arr).sum()
                 union_ref_ref = np.logical_or(refined_arr, ref_arr).sum()
-                quality_iou = float(intersect_ref_ref / union_ref_ref) if union_ref_ref > 0 else 1.0
+                quality_iou = (
+                    float(intersect_ref_ref / union_ref_ref)
+                    if union_ref_ref > 0
+                    else 1.0
+                )
 
-        results.append({
-            "fixture": src_name,
-            "coarse_cov": coarse_cov,
-            "refined_cov": refined_cov,
-            "delta_cov": delta_cov,
-            "stability_iou": stability_iou,
-            "coarse_ref_iou": coarse_ref_iou,
-            "quality_iou": quality_iou,
-            "radius": ref_res.effective_radius_px,
-            "latency_ms": ref_res.refinement_duration_ms,
-            "is_valid": ref_res.validation.is_valid,
-        })
+        results.append(
+            {
+                "fixture": src_name,
+                "coarse_cov": coarse_cov,
+                "refined_cov": refined_cov,
+                "delta_cov": delta_cov,
+                "stability_iou": stability_iou,
+                "coarse_ref_iou": coarse_ref_iou,
+                "quality_iou": quality_iou,
+                "radius": ref_res.effective_radius_px,
+                "latency_ms": ref_res.refinement_duration_ms,
+                "is_valid": ref_res.validation.is_valid,
+            }
+        )
 
     print("\n" + "=" * 80)
     print("MASK REFINEMENT BENCHMARK REPORT")
@@ -170,31 +207,35 @@ def main() -> int:
     for r in results:
         print(f"Fixture: {r['fixture']}")
         print(f"  Coarse Coverage:   {r['coarse_cov']:.4f}")
-        print(f"  Refined Coverage:  {r['refined_cov']:.4f} (Delta: {r['delta_cov']:.4f})")
+        print(
+            f"  Refined Coverage:  {r['refined_cov']:.4f} (Delta: {r['delta_cov']:.4f})"
+        )
         print(f"  Stability IoU:     {r['stability_iou']:.4f}")
-        if r['quality_iou'] is not None:
+        if r["quality_iou"] is not None:
             print(f"  Coarse vs Reference IoU: {r['coarse_ref_iou']:.4f}")
             print(f"  Refined vs Reference IoU: {r['quality_iou']:.4f}")
-            delta_val = r['quality_iou'] - r['coarse_ref_iou']
+            delta_val = r["quality_iou"] - r["coarse_ref_iou"]
             print(f"  Reference IoU Delta: {delta_val:.4f}")
             if delta_val > 0:
                 print("  Quality Status: quality improved")
             else:
-                print("  Quality Status: Refinement is stability-focused and not quality-improving.")
+                print(
+                    "  Quality Status: Refinement is stability-focused and not quality-improving."
+                )
         print(f"  Effective Radius:  {r['radius']}px")
         print(f"  Refinement Time:   {r['latency_ms']:.2f}ms")
         print("-" * 80)
 
     # Aggregate
-    mean_stability = float(np.mean([r['stability_iou'] for r in results]))
-    mean_latency = float(np.mean([r['latency_ms'] for r in results]))
-    max_latency = float(np.max([r['latency_ms'] for r in results]))
-    print(f"Aggregate Stats:")
+    mean_stability = float(np.mean([r["stability_iou"] for r in results]))
+    mean_latency = float(np.mean([r["latency_ms"] for r in results]))
+    max_latency = float(np.max([r["latency_ms"] for r in results]))
+    print("Aggregate Stats:")
     print(f"  Mean Stability IoU: {mean_stability:.4f}")
     print(f"  Mean Latency:       {mean_latency:.2f}ms")
     print(f"  Max Latency:        {max_latency:.2f}ms")
 
-    qualities = [r['quality_iou'] for r in results if r['quality_iou'] is not None]
+    qualities = [r["quality_iou"] for r in results if r["quality_iou"] is not None]
     if qualities:
         mean_quality = float(np.mean(qualities))
         print(f"  Mean Quality IoU:   {mean_quality:.4f}")
@@ -203,27 +244,39 @@ def main() -> int:
     if args.require_real:
         minimum_reference_iou = 0.98
         allowed_quality_drop = 0.015
-        
+
         # Latency thresholds
         mean_latency_limit = 3000.0
         max_latency_limit = 5000.0
 
         if mean_latency > mean_latency_limit:
-            print(f"ERROR: Mean latency ({mean_latency:.2f}ms) exceeds the gate limit ({mean_latency_limit}ms)", file=sys.stderr)
+            print(
+                f"ERROR: Mean latency ({mean_latency:.2f}ms) exceeds the gate limit ({mean_latency_limit}ms)",
+                file=sys.stderr,
+            )
             failed = True
         if max_latency > max_latency_limit:
-            print(f"ERROR: Max latency ({max_latency:.2f}ms) exceeds the gate limit ({max_latency_limit}ms)", file=sys.stderr)
+            print(
+                f"ERROR: Max latency ({max_latency:.2f}ms) exceeds the gate limit ({max_latency_limit}ms)",
+                file=sys.stderr,
+            )
             failed = True
 
         for r in results:
             # Yosemite checks: multiple-person safety check
             if r["fixture"] == "roosevelt_muir_yosemite.jpg":
                 if r["is_valid"]:
-                    print("ERROR: Roosevelt/Yosemite multiple-person fixture was approved but should be blocked.", file=sys.stderr)
+                    print(
+                        "ERROR: Roosevelt/Yosemite multiple-person fixture was approved but should be blocked.",
+                        file=sys.stderr,
+                    )
                     failed = True
             else:
                 if r["stability_iou"] < 0.90:
-                    print(f"ERROR: Stability IoU for {r['fixture']} ({r['stability_iou']:.4f}) is below 0.90", file=sys.stderr)
+                    print(
+                        f"ERROR: Stability IoU for {r['fixture']} ({r['stability_iou']:.4f}) is below 0.90",
+                        file=sys.stderr,
+                    )
                     failed = True
 
             if r["quality_iou"] is not None:
@@ -233,7 +286,7 @@ def main() -> int:
                         file=sys.stderr,
                     )
                     failed = True
-                
+
                 q_delta = r["quality_iou"] - r["coarse_ref_iou"]
                 if q_delta < -allowed_quality_drop:
                     print(

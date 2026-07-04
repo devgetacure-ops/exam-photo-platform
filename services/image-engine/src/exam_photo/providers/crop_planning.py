@@ -48,6 +48,7 @@ class CropIssueCode(str, Enum):
     CROP_SOURCE_TOO_TIGHT = "CROP_SOURCE_TOO_TIGHT"
     CROP_INPUT_INVALID = "CROP_INPUT_INVALID"
     CROP_PROVIDER_FAILED = "CROP_PROVIDER_FAILED"
+    CROP_NO_VALID_COMPOSITION = "CROP_NO_VALID_COMPOSITION"
 
     # Crop Mode B specific issue codes
     CROP_B_RANGE_MISSING = "CROP_B_RANGE_MISSING"
@@ -76,6 +77,7 @@ class CropValidationIssue(BaseModel):
     severity: IssueSeverity
     blocking_for_processing: bool
     confidence: float = 1.0
+    message: Optional[str] = None
 
 
 class CropConfig(BaseModel):
@@ -224,6 +226,12 @@ class CropPlanResult(BaseModel):
     face_center_y_ratio: float
     head_coverage_ratio: Optional[float] = None
     mask_preservation_ratio: Optional[float] = None
+    head_height_ratio: Optional[float] = None
+    head_width_ratio: Optional[float] = None
+    top_margin_ratio: Optional[float] = None
+    eye_line_ratio: Optional[float] = None
+    center_offset_ratio: Optional[float] = None
+    torso_inclusion_ratio: Optional[float] = None
     validation: CropValidationReport
     processing_duration_ms: float
     preview_image: Optional[Image.Image] = Field(default=None, exclude=True)
@@ -387,6 +395,11 @@ class CropModeBResult(BaseModel):
     ideal_crop_aspect_ratio: Optional[float] = None
 
     head_height_ratio: Optional[float] = None
+    head_width_ratio: Optional[float] = None
+    top_margin_ratio: Optional[float] = None
+    eye_line_ratio: Optional[float] = None
+    center_offset_ratio: Optional[float] = None
+    torso_inclusion_ratio: Optional[float] = None
     face_center_x_ratio: float
     face_center_y_ratio: float
 

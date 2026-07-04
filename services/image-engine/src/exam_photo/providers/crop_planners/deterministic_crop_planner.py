@@ -43,6 +43,7 @@ class DeterministicCropPlanner(CropPlanner):
 
         issues: List[CropValidationIssue] = []
         issue_codes: List[CropIssueCode] = []
+        best_ratios: dict[str, Any] = {}
 
         def add_issue(
             code: CropIssueCode, severity: IssueSeverity, blocking: bool
@@ -313,14 +314,16 @@ class DeterministicCropPlanner(CropPlanner):
                         if torso_inclusion_ratio > max_torso_inclusion:
                             is_hard_invalid = True
 
-                        if complete_hair_required:
+                        if complete_hair_required and not cfg.allow_subject_clipping:
                             if (
                                 t_cand > preserve_box.top
                                 or l_cand > preserve_box.left
                                 or r_cand < preserve_box.right
                             ):
                                 is_hard_invalid = True
-                        if complete_chin_required or complete_beard_boundary_required:
+                        if (
+                            complete_chin_required or complete_beard_boundary_required
+                        ) and not cfg.allow_subject_clipping:
                             if b_cand < preserve_box.bottom:
                                 is_hard_invalid = True
 
@@ -362,27 +365,53 @@ class DeterministicCropPlanner(CropPlanner):
                         if cfg.allow_padding:
                             cost += 100.0 * (out_l + out_t + out_r + out_b) / (wc + hc)
 
+                        cand_ratios = {
+                            "head_height_ratio": head_height_ratio,
+                            "head_width_ratio": head_width_ratio,
+                            "top_margin_ratio": top_margin_ratio,
+                            "eye_line_ratio": eye_line_ratio,
+                            "center_offset_ratio": center_offset_ratio,
+                            "torso_inclusion_ratio": torso_inclusion_ratio,
+                        }
+
                         if best_cand is None:
                             best_cand = (l_cand, t_cand, r_cand, b_cand, hc, wc)
                             best_cost = cost
                             best_is_hard_valid = not is_hard_invalid
+                            best_ratios = cand_ratios
                         else:
                             if not is_hard_invalid and best_is_hard_valid:
                                 if cost < best_cost:
                                     best_cand = (l_cand, t_cand, r_cand, b_cand, hc, wc)
                                     best_cost = cost
+                                    best_ratios = cand_ratios
                             elif not is_hard_invalid and not best_is_hard_valid:
                                 best_cand = (l_cand, t_cand, r_cand, b_cand, hc, wc)
                                 best_cost = cost
                                 best_is_hard_valid = True
+                                best_ratios = cand_ratios
                             elif is_hard_invalid and not best_is_hard_valid:
                                 if cost < best_cost:
                                     best_cand = (l_cand, t_cand, r_cand, b_cand, hc, wc)
                                     best_cost = cost
+                                    best_ratios = cand_ratios
 
-            assert best_cand is not None, (
-                "At least one crop candidate must be generated"
-            )
+            if best_cand is None or not best_is_hard_valid:
+                issues_list = [
+                    CropValidationIssue(
+                        code=CropIssueCode.CROP_NO_VALID_COMPOSITION,
+                        severity=IssueSeverity.ERROR,
+                        blocking_for_processing=True,
+                        message="No valid crop composition candidate satisfies hard rules.",
+                    )
+                ]
+                return self._empty_failed_result(
+                    cfg=cfg,
+                    start_time=start_time,
+                    issues=issues_list,
+                    issue_codes=[CropIssueCode.CROP_NO_VALID_COMPOSITION],
+                )
+
             l_cand, t_cand, r_cand, b_cand, hc, wc = best_cand
 
             ideal_l_rounded = int(round(l_cand))
@@ -635,6 +664,12 @@ class DeterministicCropPlanner(CropPlanner):
             face_center_y_ratio=face_center_y_ratio,
             head_coverage_ratio=head_coverage_ratio,
             mask_preservation_ratio=mask_preservation_ratio,
+            head_height_ratio=best_ratios.get("head_height_ratio"),
+            head_width_ratio=best_ratios.get("head_width_ratio"),
+            top_margin_ratio=best_ratios.get("top_margin_ratio"),
+            eye_line_ratio=best_ratios.get("eye_line_ratio"),
+            center_offset_ratio=best_ratios.get("center_offset_ratio"),
+            torso_inclusion_ratio=best_ratios.get("torso_inclusion_ratio"),
             validation=validation_report,
             processing_duration_ms=duration,
             preview_image=None,

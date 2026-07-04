@@ -1,7 +1,6 @@
 import argparse
 import json
 import sys
-import time
 from pathlib import Path
 from PIL import Image
 import numpy as np
@@ -96,11 +95,11 @@ def main() -> int:
     for entry in annotations["entries"]:
         src_name = entry["source_fixture"]
         src_path = fixtures_dir / src_name
-        
+
         expect_bg = entry.get("background_composition_expectation")
         if expect_bg is None:
             continue
-            
+
         img = Image.open(src_path)
         expected_faces = entry.get("expected_face_count", 1)
 
@@ -122,7 +121,10 @@ def main() -> int:
                     face = face_res.detections[0]
             except Exception as e:
                 if expect_bg.get("expected_valid", True):
-                    print(f"ERROR: Face detection crashed on valid fixture {src_name}: {e}", file=sys.stderr)
+                    print(
+                        f"ERROR: Face detection crashed on valid fixture {src_name}: {e}",
+                        file=sys.stderr,
+                    )
                     failed = True
                 pass
 
@@ -139,7 +141,10 @@ def main() -> int:
                 head_box = head_res.head_bounding_box
             except Exception as e:
                 if expect_bg.get("expected_valid", True):
-                    print(f"ERROR: Head estimation crashed on valid fixture {src_name}: {e}", file=sys.stderr)
+                    print(
+                        f"ERROR: Head estimation crashed on valid fixture {src_name}: {e}",
+                        file=sys.stderr,
+                    )
                     failed = True
                 pass
 
@@ -158,28 +163,41 @@ def main() -> int:
                 refined_alpha_mask = ref_res.refined_alpha_mask
             except Exception as e:
                 if expect_bg.get("expected_valid", True):
-                    print(f"ERROR: Segmentation/Refinement crashed on valid fixture {src_name}: {e}", file=sys.stderr)
+                    print(
+                        f"ERROR: Segmentation/Refinement crashed on valid fixture {src_name}: {e}",
+                        file=sys.stderr,
+                    )
                     failed = True
                 pass
 
         # 4. Compose Background
         target_colour = expect_bg.get("target_colour_hex", "#FFFFFF")
         allow_transparent = expect_bg.get("allow_transparent_output", False)
-        mode = BackgroundMode.PLAIN_WHITE if target_colour == "#FFFFFF" else BackgroundMode.SOLID_COLOUR
-        
+        mode = (
+            BackgroundMode.PLAIN_WHITE
+            if target_colour == "#FFFFFF"
+            else BackgroundMode.SOLID_COLOUR
+        )
+
         # If we expect valid execution, but previous steps failed, composer will fail nicely.
         cfg = BackgroundCompositionConfig(
             mode=mode,
             target_colour_hex=target_colour,
-            minimum_foreground_coverage=expect_bg.get("minimum_foreground_coverage", 0.02),
-            maximum_foreground_coverage=expect_bg.get("maximum_foreground_coverage", 0.95),
+            minimum_foreground_coverage=expect_bg.get(
+                "minimum_foreground_coverage", 0.02
+            ),
+            maximum_foreground_coverage=expect_bg.get(
+                "maximum_foreground_coverage", 0.95
+            ),
             allow_transparent_output=allow_transparent,
-            allow_subject_clipping=True, # We enable this for tests unless strictly asked
+            allow_subject_clipping=True,  # We enable this for tests unless strictly asked
         )
 
         bg_res = composer.compose_background(
             image=img,
-            refined_alpha_mask=refined_alpha_mask if refined_alpha_mask is not None else np.zeros((img.height, img.width), dtype=np.float32),
+            refined_alpha_mask=refined_alpha_mask
+            if refined_alpha_mask is not None
+            else np.zeros((img.height, img.width), dtype=np.float32),
             config=cfg,
             crop_box=None,
         )
@@ -188,7 +206,9 @@ def main() -> int:
             {
                 "fixture": src_name,
                 "expected_valid": expect_bg.get("expected_valid", True),
-                "expected_min_coverage": expect_bg.get("minimum_foreground_coverage", 0.02),
+                "expected_min_coverage": expect_bg.get(
+                    "minimum_foreground_coverage", 0.02
+                ),
                 "is_valid": bg_res.validation.is_valid,
                 "coverage": bg_res.foreground_coverage_ratio,
                 "issue_codes": bg_res.validation.issue_codes,
@@ -202,9 +222,7 @@ def main() -> int:
             print(f"  Foreground Coverage:  {bg_res.foreground_coverage_ratio:.4f}")
         print(f"  Is Valid:             {bg_res.validation.is_valid}")
         if bg_res.validation.issue_codes:
-            print(
-                f"  Issue Codes:          {', '.join(bg_res.validation.issue_codes)}"
-            )
+            print(f"  Issue Codes:          {', '.join(bg_res.validation.issue_codes)}")
         print(f"  Composer Latency:     {bg_res.processing_duration_ms:.2f}ms")
         print("-" * 80)
 
@@ -227,7 +245,7 @@ def main() -> int:
                     file=sys.stderr,
                 )
                 failed = True
-                
+
             if expected_valid and r["coverage"] is not None:
                 min_cov = r["expected_min_coverage"]
                 if r["coverage"] < min_cov:

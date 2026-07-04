@@ -1,10 +1,8 @@
 #!/usr/bin/env python
-import os
 import hashlib
 import json
 from pathlib import Path
 from PIL import Image, ImageFilter
-import numpy as np
 import sys
 
 # Ensure sys.path includes services/image-engine/src
@@ -12,7 +10,9 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT / "services" / "image-engine" / "src"))
 
 from exam_photo.providers.mediapipe_face_detector import MediapipeFaceDetector
-from exam_photo.providers.segmenters.mediapipe_segmenter import MediapipeSubjectSegmenter
+from exam_photo.providers.segmenters.mediapipe_segmenter import (
+    MediapipeSubjectSegmenter,
+)
 
 fixtures_dir = REPO_ROOT / "tests" / "fixtures"
 masks_dir = fixtures_dir / "segmentation" / "masks"
@@ -38,12 +38,14 @@ if seg_manifest.exists():
         sm = json.load(f)
         seg_sha = sm.get("variants", {}).get("selfie_bin_general", {}).get("sha256", "")
 
+
 def sha256_file(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as f:
         for chunk in iter(lambda: f.read(65536), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
 
 fixtures_to_process = [
     {
@@ -103,7 +105,7 @@ fixtures_to_process = [
         "hair_treatment": "fine details preserved via coarse probability baseline",
         "spectacles_treatment": "spectacles and beard included in foreground",
         "generate_reference": "reference-freud-mask.png",
-    }
+    },
 ]
 
 annotations = []
@@ -113,13 +115,13 @@ for item in fixtures_to_process:
     mask_name = item["mask"]
     expected_faces = item["expected_faces"]
     use_low_conf = item["use_low_confidence"]
-    
+
     src_path = fixtures_dir / src_name
     mask_path = masks_dir / mask_name
-    
+
     print(f"Processing {src_name}...")
     img = Image.open(src_path)
-    
+
     # 1. Run face detector to get faces
     detector_kwargs = {}
     if use_low_conf:
@@ -127,39 +129,41 @@ for item in fixtures_to_process:
     detector = MediapipeFaceDetector(face_model_path, face_sha, **detector_kwargs)
     with detector:
         face_res = detector.detect_faces(img)
-    
+
     print(f"  Detected {len(face_res.detections)} faces (expected {expected_faces})")
     if len(face_res.detections) != expected_faces:
-        print(f"  WARNING: Face count mismatch for {src_name}! Expected {expected_faces}, got {len(face_res.detections)}")
-    
+        print(
+            f"  WARNING: Face count mismatch for {src_name}! Expected {expected_faces}, got {len(face_res.detections)}"
+        )
+
     # Pass all detected faces to segmenter
     faces = face_res.detections if len(face_res.detections) > 0 else None
-    
+
     # 2. Run segmenter
     segmenter = MediapipeSubjectSegmenter(seg_model_path, seg_sha)
     with segmenter:
         res = segmenter.segment_subject(img, face=faces)
-    
+
     # 3. Save the binary regression mask
     res.coarse_mask.save(mask_path)
     print(f"  Saved regression mask to {mask_path}")
     mask_sha = sha256_file(mask_path)
-    
+
     # 4. Generate reference mask if required (simulating manual correction via median filter + edge refinement)
     ref_filename = None
     ref_sha = None
     if "generate_reference" in item:
         ref_name = item["generate_reference"]
         ref_path = ref_masks_dir / ref_name
-        
+
         # Apply a median filter to smooth boundaries and programmatically simulate clean manually corrected reference
         refined_mask = res.coarse_mask.filter(ImageFilter.MedianFilter(size=5))
         refined_mask.save(ref_path)
         print(f"  Saved reference mask to {ref_path}")
-        
+
         ref_filename = f"segmentation/reference_masks/{ref_name}"
         ref_sha = sha256_file(ref_path)
-    
+
     anno = {
         "source_fixture": src_name,
         "regression_mask_filename": f"segmentation/masks/{mask_name}",
@@ -172,12 +176,12 @@ for item in fixtures_to_process:
         "treatment_of_spectacles": item["spectacles_treatment"],
         "treatment_of_shadows": "shadows on background excluded",
         "licence_provenance": "Derived from public domain photo on Wikimedia Commons",
-        "expected_coverage": float(res.foreground_coverage_ratio)
+        "expected_coverage": float(res.foreground_coverage_ratio),
     }
     if ref_filename:
         anno["reference_mask_filename"] = ref_filename
         anno["reference_mask_sha256"] = ref_sha
-        
+
     annotations.append(anno)
 
 # Write to annotations.json
@@ -185,5 +189,5 @@ anno_path = fixtures_dir / "segmentation" / "annotations.json"
 with open(anno_path, "w", encoding="utf-8") as f:
     json.dump({"entries": annotations}, f, indent=2)
 
-print(f"\nAll regression and reference masks updated successfully!")
+print("\nAll regression and reference masks updated successfully!")
 print(f"Saved manifest to {anno_path}")

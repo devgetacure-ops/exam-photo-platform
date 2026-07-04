@@ -5,7 +5,6 @@ import json
 import os
 import shutil
 import sys
-from datetime import datetime, timezone
 from pathlib import Path
 from fastapi.testclient import TestClient
 
@@ -37,9 +36,13 @@ def main() -> int:
 
         # Configure environment variables to use real models
         os.environ["EXAM_PHOTO_FACE_MODEL_PATH"] = str(face_model)
-        os.environ["EXAM_PHOTO_FACE_MODEL_SHA256"] = "b4578f35940bf5a1a655214a1cce5cab13eba73c1297cd78e1a04c2380b0152f"
+        os.environ["EXAM_PHOTO_FACE_MODEL_SHA256"] = (
+            "b4578f35940bf5a1a655214a1cce5cab13eba73c1297cd78e1a04c2380b0152f"
+        )
         os.environ["EXAM_PHOTO_SEGMENTER_MODEL_PATH"] = str(seg_model)
-        os.environ["EXAM_PHOTO_SEGMENTER_MODEL_SHA256"] = "9ee168ec7c8f2a16c56fe8e1cfbc514974cbbb7e434051b455635f1bd1462f5c"
+        os.environ["EXAM_PHOTO_SEGMENTER_MODEL_SHA256"] = (
+            "9ee168ec7c8f2a16c56fe8e1cfbc514974cbbb7e434051b455635f1bd1462f5c"
+        )
 
     # 2. Setup temp artifact root for smoke testing
     smoke_root = repo_root / ".tmp" / "smoke_api_artifacts"
@@ -59,9 +62,7 @@ def main() -> int:
     client = TestClient(app)
 
     # 3. Resolve inputs
-    fixture_path = (
-        repo_root / "tests" / "fixtures" / "marie_curie_curly_hair.jpg"
-    )
+    fixture_path = repo_root / "tests" / "fixtures" / "marie_curie_curly_hair.jpg"
     rule_path = (
         repo_root
         / "examples"

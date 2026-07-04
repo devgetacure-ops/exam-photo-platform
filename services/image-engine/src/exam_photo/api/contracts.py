@@ -27,6 +27,12 @@ class ProcessImageResponse(BaseModel):
     is_valid: Optional[bool] = None
     output_filename: Optional[str] = None
     issue_codes: List[str] = Field(default_factory=list)
+    rule_compliant: Optional[bool] = None
+    visual_quality_acceptable: Optional[bool] = None
+    portrait_quality_report: Optional[dict[str, Any]] = None
+    matte_quality_report: Optional[dict[str, Any]] = None
+    quality_mode: Optional[str] = None
+    diagnostic_available: Optional[bool] = None
 
 
 class JobStatusResponse(BaseModel):
@@ -42,6 +48,12 @@ class JobStatusResponse(BaseModel):
     output_filename: Optional[str] = None
     report_url: Optional[str] = None
     output_url: Optional[str] = None
+    rule_compliant: Optional[bool] = None
+    visual_quality_acceptable: Optional[bool] = None
+    portrait_quality_report: Optional[dict[str, Any]] = None
+    matte_quality_report: Optional[dict[str, Any]] = None
+    quality_mode: Optional[str] = None
+    diagnostic_available: Optional[bool] = None
 
 
 class RuleValidationErrorResponse(BaseModel):

@@ -5,7 +5,10 @@ import sys
 import time
 from pathlib import Path
 
-from exam_photo.orchestration.rule_pipeline import RuleOrchestratedPipeline, RulePipelineConfig
+from exam_photo.orchestration.rule_pipeline import (
+    RuleOrchestratedPipeline,
+    RulePipelineConfig,
+)
 
 logger = logging.getLogger("benchmark_rule_pipeline")
 logging.basicConfig(level=logging.INFO)
@@ -33,13 +36,13 @@ def run_benchmark():
         "lincoln_low_contrast.jpg",
         "roosevelt_muir_yosemite.jpg",
         "freud_spectacles_beard.jpg",
-        "vivekananda_head_covering.jpg"
+        "vivekananda_head_covering.jpg",
     ]
 
     # Define 2 valid rules
     rules = [
         "sample_exact_300x400_50kb_white_bg.json",
-        "sample_range_200_300_width_230_400_height_50kb_white_bg.json"
+        "sample_range_200_300_width_230_400_height_50kb_white_bg.json",
     ]
 
     # Map combination -> expected is_valid
@@ -53,21 +56,56 @@ def run_benchmark():
     expectations = {
         # sample_exact_300x400_50kb_white_bg.json (Exact / Crop Mode A)
         ("sample_exact_300x400_50kb_white_bg.json", "single_face_frontal.jpg"): False,
-        ("sample_exact_300x400_50kb_white_bg.json", "sarah_bernhardt_long_hair.jpg"): True,
-        ("sample_exact_300x400_50kb_white_bg.json", "marie_curie_curly_hair.jpg"): False,
+        (
+            "sample_exact_300x400_50kb_white_bg.json",
+            "sarah_bernhardt_long_hair.jpg",
+        ): True,
+        (
+            "sample_exact_300x400_50kb_white_bg.json",
+            "marie_curie_curly_hair.jpg",
+        ): False,
         ("sample_exact_300x400_50kb_white_bg.json", "lincoln_low_contrast.jpg"): False,
-        ("sample_exact_300x400_50kb_white_bg.json", "roosevelt_muir_yosemite.jpg"): False,
-        ("sample_exact_300x400_50kb_white_bg.json", "freud_spectacles_beard.jpg"): False,
-        ("sample_exact_300x400_50kb_white_bg.json", "vivekananda_head_covering.jpg"): False,
-
+        (
+            "sample_exact_300x400_50kb_white_bg.json",
+            "roosevelt_muir_yosemite.jpg",
+        ): False,
+        (
+            "sample_exact_300x400_50kb_white_bg.json",
+            "freud_spectacles_beard.jpg",
+        ): False,
+        (
+            "sample_exact_300x400_50kb_white_bg.json",
+            "vivekananda_head_covering.jpg",
+        ): False,
         # sample_range_200_300_width_230_400_height_50kb_white_bg.json (Range / Crop Mode B)
-        ("sample_range_200_300_width_230_400_height_50kb_white_bg.json", "single_face_frontal.jpg"): False,
-        ("sample_range_200_300_width_230_400_height_50kb_white_bg.json", "sarah_bernhardt_long_hair.jpg"): False,
-        ("sample_range_200_300_width_230_400_height_50kb_white_bg.json", "marie_curie_curly_hair.jpg"): True,
-        ("sample_range_200_300_width_230_400_height_50kb_white_bg.json", "lincoln_low_contrast.jpg"): False,
-        ("sample_range_200_300_width_230_400_height_50kb_white_bg.json", "roosevelt_muir_yosemite.jpg"): False,
-        ("sample_range_200_300_width_230_400_height_50kb_white_bg.json", "freud_spectacles_beard.jpg"): False,
-        ("sample_range_200_300_width_230_400_height_50kb_white_bg.json", "vivekananda_head_covering.jpg"): False,
+        (
+            "sample_range_200_300_width_230_400_height_50kb_white_bg.json",
+            "single_face_frontal.jpg",
+        ): False,
+        (
+            "sample_range_200_300_width_230_400_height_50kb_white_bg.json",
+            "sarah_bernhardt_long_hair.jpg",
+        ): False,
+        (
+            "sample_range_200_300_width_230_400_height_50kb_white_bg.json",
+            "marie_curie_curly_hair.jpg",
+        ): True,
+        (
+            "sample_range_200_300_width_230_400_height_50kb_white_bg.json",
+            "lincoln_low_contrast.jpg",
+        ): False,
+        (
+            "sample_range_200_300_width_230_400_height_50kb_white_bg.json",
+            "roosevelt_muir_yosemite.jpg",
+        ): False,
+        (
+            "sample_range_200_300_width_230_400_height_50kb_white_bg.json",
+            "freud_spectacles_beard.jpg",
+        ): False,
+        (
+            "sample_range_200_300_width_230_400_height_50kb_white_bg.json",
+            "vivekananda_head_covering.jpg",
+        ): False,
     }
 
     face_model_path = repo_root / "model-assets" / "blaze_face_short_range.tflite"
@@ -77,7 +115,7 @@ def run_benchmark():
     seg_sha = ""
     face_manifest = repo_root / "model-manifests" / "face-detector.json"
     segmenter_manifest = repo_root / "model-manifests" / "subject-segmenter.json"
-    
+
     if face_manifest.exists():
         try:
             with open(face_manifest) as mf:
@@ -110,12 +148,11 @@ def run_benchmark():
         face_model_path=face_model_path,
         segmenter_model_path=segmenter_model_path,
         face_expected_sha256=face_sha,
-        segmenter_expected_sha256=seg_sha
+        segmenter_expected_sha256=seg_sha,
     )
 
     config = RulePipelineConfig(
-        save_diagnostic_artifacts=False,
-        allow_invalid_output=False
+        save_diagnostic_artifacts=False, allow_invalid_output=False
     )
 
     passed = 0
@@ -157,7 +194,7 @@ def run_benchmark():
                 duration_ms = (time.perf_counter() - start_time) * 1000.0
 
                 expected_valid = expectations.get((rule_name, fixture_name))
-                
+
                 if result.is_valid == expected_valid:
                     logger.info(
                         f"  [PASS] {fixture_name} + {rule_name} matched expected validity ({expected_valid}) in {duration_ms:.2f}ms. "
@@ -171,8 +208,11 @@ def run_benchmark():
                     )
                     failed += 1
             except Exception as e:
-                logger.error(f"  [FAIL] {fixture_name} + {rule_name} raised exception: {e}")
+                logger.error(
+                    f"  [FAIL] {fixture_name} + {rule_name} raised exception: {e}"
+                )
                 import traceback
+
                 logger.error(traceback.format_exc())
                 failed += 1
 

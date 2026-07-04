@@ -29,7 +29,9 @@ from exam_photo.input.limits import InputLimits
 from exam_photo.input.normalization import normalize_image_input
 from exam_photo.models.geometry import BoundingBox, Landmarks, Point, PoseEstimate
 from exam_photo.providers.face_detection import FaceDetection
-from exam_photo.providers.landmark_geometric_head_estimator import LandmarkGeometricHeadEstimator
+from exam_photo.providers.landmark_geometric_head_estimator import (
+    LandmarkGeometricHeadEstimator,
+)
 
 
 def _get_model_details() -> tuple[Path, str]:
@@ -94,7 +96,14 @@ def main() -> None:
     # Load annotations
     annotations_path = _REPO_ROOT / "tests" / "fixtures" / "head_annotations.json"
     if not annotations_path.exists():
-        annotations_path = _REPO_ROOT / "services" / "image-engine" / "tests" / "fixtures" / "head_annotations.json"
+        annotations_path = (
+            _REPO_ROOT
+            / "services"
+            / "image-engine"
+            / "tests"
+            / "fixtures"
+            / "head_annotations.json"
+        )
 
     if not annotations_path.exists():
         print(f"Error: Annotations file not found: {annotations_path}", file=sys.stderr)
@@ -110,9 +119,14 @@ def main() -> None:
     model_path, sha256 = _get_model_details()
     if model_path.exists() or (_REPO_ROOT / model_path).exists():
         try:
-            from exam_photo.providers.mediapipe_face_detector import MediapipeFaceDetector
+            from exam_photo.providers.mediapipe_face_detector import (
+                MediapipeFaceDetector,
+            )
+
             detector = MediapipeFaceDetector(
-                model_path=model_path if model_path.exists() else (_REPO_ROOT / model_path),
+                model_path=model_path
+                if model_path.exists()
+                else (_REPO_ROOT / model_path),
                 expected_sha256=sha256,
             )
         except ImportError:
@@ -144,13 +158,19 @@ def main() -> None:
         if is_real:
             # Load real image from canonical path
             img_path = _REPO_ROOT / "tests" / "fixtures" / name
-            
+
             if args.require_real:
                 if not img_path.exists():
-                    print(f"Error: Required real fixture image '{name}' missing at '{img_path}'", file=sys.stderr)
+                    print(
+                        f"Error: Required real fixture image '{name}' missing at '{img_path}'",
+                        file=sys.stderr,
+                    )
                     sys.exit(1)
                 if detector is None:
-                    print("Error: Face detector is required for --require-real but not available.", file=sys.stderr)
+                    print(
+                        "Error: Face detector is required for --require-real but not available.",
+                        file=sys.stderr,
+                    )
                     sys.exit(1)
                 try:
                     limits = InputLimits()
@@ -160,7 +180,10 @@ def main() -> None:
                     image = norm_res.image
                     face_res = detector.detect_faces(image)
                     if not face_res.detections:
-                        print(f"Error: Face detection failed on required real fixture '{name}' (no faces detected).", file=sys.stderr)
+                        print(
+                            f"Error: Face detection failed on required real fixture '{name}' (no faces detected).",
+                            file=sys.stderr,
+                        )
                         sys.exit(1)
                     face = face_res.detections[0]
                     landmarks = face.landmarks
@@ -169,7 +192,9 @@ def main() -> None:
                         real_bench_face = face
                         real_bench_landmarks = landmarks
                 except Exception as ex:
-                    print(f"Error processing real fixture '{name}': {ex}", file=sys.stderr)
+                    print(
+                        f"Error processing real fixture '{name}': {ex}", file=sys.stderr
+                    )
                     sys.exit(1)
             else:
                 if img_path.exists() and detector is not None:
@@ -177,7 +202,9 @@ def main() -> None:
                         limits = InputLimits()
                         with open(img_path, "rb") as fh:
                             bytes_data = fh.read()
-                        norm_res = normalize_image_input(bytes_data, str(img_path), limits)
+                        norm_res = normalize_image_input(
+                            bytes_data, str(img_path), limits
+                        )
                         image = norm_res.image
                         face_res = detector.detect_faces(image)
                         if face_res.detections:
@@ -197,11 +224,15 @@ def main() -> None:
             image = Image.new("RGB", (img_w, img_h), (240, 240, 240))
             # Parse simulated face box and landmarks
             fb = data["face_box"]
-            face_box = BoundingBox(left=fb["left"], top=fb["top"], right=fb["right"], bottom=fb["bottom"])
+            face_box = BoundingBox(
+                left=fb["left"], top=fb["top"], right=fb["right"], bottom=fb["bottom"]
+            )
             face = FaceDetection(
                 bounding_box=face_box,
                 confidence=0.9,
-                pose=PoseEstimate(yaw=0.0, pitch=0.0, roll=0.0, confidence=1.0, method="fake"),
+                pose=PoseEstimate(
+                    yaw=0.0, pitch=0.0, roll=0.0, confidence=1.0, method="fake"
+                ),
                 occlusion_indicators={"face_occluded": False, "eyes_occluded": False},
             )
             if "landmarks" in data:
@@ -211,8 +242,12 @@ def main() -> None:
                     for k, point in lm["custom_landmarks"].items():
                         clm[k] = Point(x=point["x"], y=point["y"])
                 landmarks = Landmarks(
-                    left_eye=Point(x=lm["left_eye"]["x"], y=lm["left_eye"]["y"]) if "left_eye" in lm else None,
-                    right_eye=Point(x=lm["right_eye"]["x"], y=lm["right_eye"]["y"]) if "right_eye" in lm else None,
+                    left_eye=Point(x=lm["left_eye"]["x"], y=lm["left_eye"]["y"])
+                    if "left_eye" in lm
+                    else None,
+                    right_eye=Point(x=lm["right_eye"]["x"], y=lm["right_eye"]["y"])
+                    if "right_eye" in lm
+                    else None,
                     custom_landmarks=clm,
                 )
 
@@ -226,16 +261,26 @@ def main() -> None:
         # Quality assertions/computations
         face_contained = result.head_bounding_box.contains(face.bounding_box)
         clamped = result.safe_internal_metadata.get("clamped", False)
-        
+
         gt = data.get("ground_truth_head_box")
-        gt_box = BoundingBox(left=gt["left"], top=gt["top"], right=gt["right"], bottom=gt["bottom"]) if gt else None
-        
+        gt_box = (
+            BoundingBox(
+                left=gt["left"], top=gt["top"], right=gt["right"], bottom=gt["bottom"]
+            )
+            if gt
+            else None
+        )
+
         gt_iou = calculate_iou(result.head_bounding_box, gt_box) if gt_box else 0.0
 
         top_err = abs(result.head_bounding_box.top - gt_box.top) if gt_box else 0.0
         left_err = abs(result.head_bounding_box.left - gt_box.left) if gt_box else 0.0
-        right_err = abs(result.head_bounding_box.right - gt_box.right) if gt_box else 0.0
-        bottom_err = abs(result.head_bounding_box.bottom - gt_box.bottom) if gt_box else 0.0
+        right_err = (
+            abs(result.head_bounding_box.right - gt_box.right) if gt_box else 0.0
+        )
+        bottom_err = (
+            abs(result.head_bounding_box.bottom - gt_box.bottom) if gt_box else 0.0
+        )
         lr_err = (left_err + right_err) / 2.0
 
         # Clipping state agreement
@@ -252,16 +297,18 @@ def main() -> None:
             f"{gt_iou:>.4f} | {top_err:>.1f}px | {lr_err:>.1f}px | {bottom_err:>.1f}px | {str(clip_agree):<10}"
         )
 
-        quality_results.append({
-            "name": name,
-            "face_contained": face_contained,
-            "clamped": clamped,
-            "gt_iou": gt_iou,
-            "top_err": top_err,
-            "lr_err": lr_err,
-            "bottom_err": bottom_err,
-            "clip_agree": clip_agree,
-        })
+        quality_results.append(
+            {
+                "name": name,
+                "face_contained": face_contained,
+                "clamped": clamped,
+                "gt_iou": gt_iou,
+                "top_err": top_err,
+                "lr_err": lr_err,
+                "bottom_err": bottom_err,
+                "clip_agree": clip_agree,
+            }
+        )
 
     # 2. Latency Benchmarking (on single_face_frontal.jpg if available)
     if detector is not None and real_bench_image is not None:
@@ -277,7 +324,9 @@ def main() -> None:
         cold_detector_ms = (t1 - t0) * 1000.0
 
         t0 = time.perf_counter()
-        _ = estimator.estimate_head(real_bench_image, real_bench_face, real_bench_landmarks)
+        _ = estimator.estimate_head(
+            real_bench_image, real_bench_face, real_bench_landmarks
+        )
         t1 = time.perf_counter()
         cold_estimator_ms = (t1 - t0) * 1000.0
 
@@ -287,7 +336,11 @@ def main() -> None:
         # Warm-up runs
         for _ in range(args.warmup):
             face_res = detector.detect_faces(real_bench_image)
-            _ = estimator.estimate_head(real_bench_image, face_res.detections[0], face_res.detections[0].landmarks)
+            _ = estimator.estimate_head(
+                real_bench_image,
+                face_res.detections[0],
+                face_res.detections[0].landmarks,
+            )
 
         detector_latencies = []
         estimator_latencies = []
@@ -297,7 +350,11 @@ def main() -> None:
             t0 = time.perf_counter()
             face_res = detector.detect_faces(real_bench_image)
             t_mid = time.perf_counter()
-            _ = estimator.estimate_head(real_bench_image, face_res.detections[0], face_res.detections[0].landmarks)
+            _ = estimator.estimate_head(
+                real_bench_image,
+                face_res.detections[0],
+                face_res.detections[0].landmarks,
+            )
             t_end = time.perf_counter()
 
             detector_latencies.append((t_mid - t0) * 1000.0)

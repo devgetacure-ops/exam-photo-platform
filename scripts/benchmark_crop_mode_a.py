@@ -148,7 +148,9 @@ def main() -> int:
             {
                 "fixture": src_name,
                 "expected_faces": expected_faces,
-                "expected_padding_required": entry.get("crop_mode_a_expectation", {}).get(
+                "expected_padding_required": entry.get(
+                    "crop_mode_a_expectation", {}
+                ).get(
                     "expected_padding_required",
                     entry.get("expected_padding_required", False),
                 ),
@@ -218,7 +220,7 @@ def main() -> int:
             if r["expected_faces"] == 1 and r["actual_faces"] == 1:
                 expected_padding = r["expected_padding_required"]
                 expected_valid_without_padding = r["expected_valid_without_padding"]
-                
+
                 # Check padding required flag
                 if r["padding_required"] != expected_padding:
                     print(
@@ -227,7 +229,7 @@ def main() -> int:
                         file=sys.stderr,
                     )
                     failed = True
-                
+
                 # Check overall validity
                 expected_validity = expected_valid_without_padding
                 if r["is_valid"] != expected_validity:

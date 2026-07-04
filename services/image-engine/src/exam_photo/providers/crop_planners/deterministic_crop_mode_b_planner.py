@@ -385,6 +385,32 @@ class DeterministicCropModeBPlanner:
         face_center_x_ratio = (face_cx - clamped_l) / crop_box_width
         face_center_y_ratio = (face_cy - clamped_t) / crop_box_height
 
+        w_head = (
+            head_estimate.width if head_estimate is not None else preserve_box.width
+        )
+        eye_y = face.bounding_box.top + 0.3 * face.bounding_box.height
+        if (
+            face.landmarks is not None
+            and face.landmarks.left_eye is not None
+            and face.landmarks.right_eye is not None
+        ):
+            eye_y = (face.landmarks.left_eye.y + face.landmarks.right_eye.y) / 2.0
+
+        head_width_ratio = w_head / crop_box_width if head_estimate else None
+        top_margin_ratio = (
+            (preserve_box.top - clamped_t) / crop_box_height if head_estimate else None
+        )
+        eye_line_ratio = (
+            (eye_y - clamped_t) / crop_box_height if head_estimate else None
+        )
+        crop_cx = (clamped_l + clamped_r) / 2.0
+        center_offset_ratio = abs(face_cx - crop_cx) / crop_box_width
+        torso_inclusion_ratio = (
+            max(0.0, clamped_b - preserve_box.bottom) / crop_box_height
+            if head_estimate
+            else None
+        )
+
         face_centering_valid = (
             abs(face_center_x_ratio - cfg.preferred_face_center_x_ratio)
             <= cfg.maximum_face_center_x_deviation
@@ -527,6 +553,11 @@ class DeterministicCropModeBPlanner:
             ideal_crop_height=ideal_crop_height,
             ideal_crop_aspect_ratio=ideal_crop_aspect_ratio,
             head_height_ratio=head_height_ratio,
+            head_width_ratio=head_width_ratio,
+            top_margin_ratio=top_margin_ratio,
+            eye_line_ratio=eye_line_ratio,
+            center_offset_ratio=center_offset_ratio,
+            torso_inclusion_ratio=torso_inclusion_ratio,
             face_center_x_ratio=face_center_x_ratio,
             face_center_y_ratio=face_center_y_ratio,
             head_coverage_ratio=head_coverage_ratio,

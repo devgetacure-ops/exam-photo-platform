@@ -146,7 +146,7 @@ def main() -> None:
     args = parser.parse_args()
 
     manifest = _load_manifest()
-    
+
     # Load variant configuration from manifest
     try:
         variants = manifest["variants"]
@@ -156,7 +156,10 @@ def main() -> None:
         source_url = variant["source_url"]
         filename = variant["filename"]
     except Exception as ex:
-        print(f"ERROR: Variant '{args.variant}' not properly configured in manifest: {ex}", file=sys.stderr)
+        print(
+            f"ERROR: Variant '{args.variant}' not properly configured in manifest: {ex}",
+            file=sys.stderr,
+        )
         sys.exit(1)
 
     dest_dir: Path = args.dest or _DEFAULT_ASSET_DIR
@@ -224,8 +227,13 @@ def main() -> None:
     manifest["sha256"] = actual_sha256
     manifest["size_bytes"] = size_bytes
     manifest["licence"] = "Apache-2.0"
-    manifest["licence_url"] = variant.get("licence_url", "https://www.apache.org/licenses/LICENSE-2.0")
-    manifest["model_card_url"] = variant.get("model_card_url", "https://ai.google.dev/edge/mediapipe/solutions/vision/face_detector#models")
+    manifest["licence_url"] = variant.get(
+        "licence_url", "https://www.apache.org/licenses/LICENSE-2.0"
+    )
+    manifest["model_card_url"] = variant.get(
+        "model_card_url",
+        "https://ai.google.dev/edge/mediapipe/solutions/vision/face_detector#models",
+    )
     manifest["local_model_path_default"] = f"model-assets/{filename}"
     _save_manifest(manifest)
 

@@ -1,6 +1,7 @@
 import io
 import json
 from pathlib import Path
+
 import numpy as np
 import pytest
 from PIL import Image
@@ -32,7 +33,9 @@ def test_golden_images_regression() -> None:
 
     # Find all test cases by looking for *.rule.json
     rule_files = list(golden_dir.glob("*.rule.json"))
-    assert len(rule_files) > 0, "No visual regression test cases found under tests/golden-images/"
+    assert len(rule_files) > 0, (
+        "No visual regression test cases found under tests/golden-images/"
+    )
 
     pipeline = RuleOrchestratedPipeline(
         face_model_path=repo_root / "model-assets/blaze_face_short_range.tflite",
@@ -58,7 +61,9 @@ def test_golden_images_regression() -> None:
                 input_image_path = candidate
                 break
 
-        assert input_image_path is not None, f"Input image missing for test case {case_id}"
+        assert input_image_path is not None, (
+            f"Input image missing for test case {case_id}"
+        )
 
         # Determine the golden image file
         golden_image_path = None
@@ -68,7 +73,9 @@ def test_golden_images_regression() -> None:
                 golden_image_path = candidate
                 break
 
-        assert golden_image_path is not None, f"Golden image missing for test case {case_id}"
+        assert golden_image_path is not None, (
+            f"Golden image missing for test case {case_id}"
+        )
 
         # Load input image
         with open(input_image_path, "rb") as f:
@@ -80,15 +87,21 @@ def test_golden_images_regression() -> None:
 
         # Run pipeline
         result = pipeline.process_rule(image_bytes, rule_dict, config)
-        assert result.is_valid is True, f"Pipeline execution failed for test case {case_id}"
-        assert result.encoded_bytes is not None, f"Pipeline output encoded_bytes is missing for test case {case_id}"
+        assert result.is_valid is True, (
+            f"Pipeline execution failed for test case {case_id}"
+        )
+        assert result.encoded_bytes is not None, (
+            f"Pipeline output encoded_bytes is missing for test case {case_id}"
+        )
 
         # Compare outputs
         golden_img = Image.open(golden_image_path)
         output_img = Image.open(io.BytesIO(result.encoded_bytes))
 
         # Check size match
-        assert golden_img.size == output_img.size, f"Size mismatch for {case_id}: expected {golden_img.size}, got {output_img.size}"
+        assert golden_img.size == output_img.size, (
+            f"Size mismatch for {case_id}: expected {golden_img.size}, got {output_img.size}"
+        )
 
         # Convert to numpy and check visual similarity using Mean Absolute Error (MAE)
         golden_arr = np.array(golden_img.convert("RGB"), dtype=np.float32)
@@ -96,4 +109,6 @@ def test_golden_images_regression() -> None:
 
         mae = np.mean(np.abs(golden_arr - output_arr))
         # Enforce MAE threshold of 1.0 (very low, allowing for tiny platform/compiler JPEG encoding differences if any)
-        assert mae <= 1.0, f"Visual regression detected for {case_id}: Mean Absolute Error (MAE) of {mae:.4f} exceeds 1.0"
+        assert mae <= 1.0, (
+            f"Visual regression detected for {case_id}: Mean Absolute Error (MAE) of {mae:.4f} exceeds 1.0"
+        )
