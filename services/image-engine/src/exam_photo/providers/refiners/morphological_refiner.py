@@ -300,6 +300,53 @@ class MorphologicalForegroundRefiner(ForegroundRefinementProvider):
                 "probability_mask values must strictly be in range [0.0, 1.0]"
             )
 
+        # A portrait-matting backend has already done the edge work this class
+        # normally performs.  The old path still ran the complete morphology
+        # and guided-filter pipeline and only restored ``probability_mask`` at
+        # the end.  On a large phone image that meant minutes of native-scale
+        # processing whose result was immediately discarded.  Preserve the
+        # trusted alpha up front and build only the contract artifacts and
+        # validation report that downstream stages consume.
+        if cfg.trust_input_alpha:
+            alpha = np.clip(probability_mask.astype(np.float32, copy=True), 0.0, 1.0)
+            binary_arr = np.where(alpha >= 0.5, 255, 0).astype(np.uint8)
+            refined_binary_mask = Image.fromarray(binary_arr, mode="L")
+
+            trimap_arr = np.full(alpha.shape, 128, dtype=np.uint8)
+            trimap_arr[alpha <= cfg.definite_background_threshold] = 0
+            trimap_arr[alpha >= cfg.definite_foreground_threshold] = 255
+            trimap = Image.fromarray(trimap_arr, mode="L")
+
+            mask_np = np.array(coarse_mask) > 127
+            validation_report = self._validate_refined_mask(
+                coarse_mask,
+                mask_np,
+                alpha,
+                refined_binary_mask,
+                trimap,
+                face,
+                head_estimate,
+            )
+            duration = (time.perf_counter() - start_time) * 1000.0
+            try:
+                return RefinedMaskResult(
+                    provider_name=self.provider_name,
+                    provider_version=self.provider_version,
+                    refined_alpha_mask=alpha,
+                    refined_binary_mask=refined_binary_mask,
+                    trimap=trimap,
+                    input_width=img_w,
+                    input_height=img_h,
+                    effective_radius_px=0,
+                    refinement_duration_ms=duration,
+                    config_used=cfg,
+                    validation=validation_report,
+                )
+            except Exception as e:
+                raise RefinementOutputError(
+                    f"Generated trusted-alpha result failed contract validation: {e}"
+                ) from e
+
         # 2. Memory & Resolution Safety Limits and Downgrade
         quality_mode = cfg.quality_mode
         matte_quality_downgraded = False
@@ -512,25 +559,15 @@ class MorphologicalForegroundRefiner(ForegroundRefinementProvider):
         else:
             alpha = alpha_refine
 
-        if cfg.trust_input_alpha:
-            # Keep the model's own boundary.  Everything above reconstructs the
-            # silhouette from a low-resolution binary decision, which is the
-            # right move for a coarse mask and the wrong one for an accurate
-            # matte: the reconstruction is what introduces the staircase edges
-            # and discards the soft band.  The alpha snap is skipped for the
-            # same reason -- it exists to harden a mushy boundary, and this one
-            # is already crisp.
-            alpha = np.clip(probability_mask.astype(np.float32, copy=True), 0.0, 1.0)
-        else:
-            # Exam photo outputs need a distinct white-background boundary. Guided
-            # filtering preserves fine edges, then this contrast step removes the
-            # broad semi-transparent halo that creates grey outlines after compositing.
-            alpha = (alpha - cfg.alpha_snap_low_threshold) / (
-                cfg.alpha_snap_high_threshold - cfg.alpha_snap_low_threshold
-            )
-            alpha = np.clip(alpha, 0.0, 1.0)
-            alpha = alpha * alpha * (3.0 - 2.0 * alpha)
-            alpha = alpha.astype(np.float32)
+        # Exam photo outputs need a distinct white-background boundary. Guided
+        # filtering preserves fine edges, then this contrast step removes the
+        # broad semi-transparent halo that creates grey outlines after compositing.
+        alpha = (alpha - cfg.alpha_snap_low_threshold) / (
+            cfg.alpha_snap_high_threshold - cfg.alpha_snap_low_threshold
+        )
+        alpha = np.clip(alpha, 0.0, 1.0)
+        alpha = alpha * alpha * (3.0 - 2.0 * alpha)
+        alpha = alpha.astype(np.float32)
 
         # Refined binary mask (thresholded at 0.5)
         binary_arr = np.where(alpha >= 0.5, 255, 0).astype(np.uint8)
@@ -621,8 +658,35 @@ class MorphologicalForegroundRefiner(ForegroundRefinementProvider):
         )
 
         coarse_bin = np.where(coarse_mask_np, 255, 0).astype(np.uint8)
-        coarse_cc, _ = count_connected_components_dsu(coarse_bin)
-        refined_cc, _ = count_connected_components_dsu(refined_bin)
+
+        # Connected-component validation is topological rather than
+        # pixel-exact.  Running the Python DSU over a 10-16 MP candidate mask
+        # dominates the complete pipeline even though the same check at a
+        # bounded resolution detects the fragmentation it is designed for.
+        # Match the existing internal-hole validator's bounded-resolution
+        # policy and keep all coverage/bounding-box measurements at native
+        # resolution below.
+        component_max_dim = 512
+        if max(refined_bin.shape) > component_max_dim:
+            component_scale = component_max_dim / max(refined_bin.shape)
+            component_h = max(1, int(round(refined_bin.shape[0] * component_scale)))
+            component_w = max(1, int(round(refined_bin.shape[1] * component_scale)))
+            coarse_for_components = np.array(
+                Image.fromarray(coarse_bin, mode="L").resize(
+                    (component_w, component_h), Image.Resampling.NEAREST
+                )
+            )
+            refined_for_components = np.array(
+                Image.fromarray(refined_bin, mode="L").resize(
+                    (component_w, component_h), Image.Resampling.NEAREST
+                )
+            )
+        else:
+            coarse_for_components = coarse_bin
+            refined_for_components = refined_bin
+
+        coarse_cc, _ = count_connected_components_dsu(coarse_for_components)
+        refined_cc, _ = count_connected_components_dsu(refined_for_components)
         connectivity_improvement = refined_cc <= coarse_cc
 
         intersection = np.logical_and(coarse_mask_np, refined_arr > 127).sum()

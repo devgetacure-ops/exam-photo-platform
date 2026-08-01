@@ -49,6 +49,20 @@ def get_examples_dir() -> Path:
 EXAMPLES_DIR = get_examples_dir()
 
 
+def test_rule_pipeline_defaults_to_birefnet_matting() -> None:
+    repo_root = find_repo_root()
+    pipeline = RuleOrchestratedPipeline(
+        face_model_path=repo_root / "model-assets/blaze_face_short_range.tflite",
+        segmenter_model_path=repo_root / "model-assets/selfie_segmentation.tflite",
+        face_expected_sha256=FACE_SHA,
+        segmenter_expected_sha256=SEG_SHA,
+    )
+
+    assert pipeline.matting_backend == "birefnet"
+    assert pipeline.birefnet_model_dir is not None
+    assert pipeline.birefnet_expected_sha256
+
+
 # =====================================================================
 # 1. Rule Resolver Tests
 # =====================================================================

@@ -240,6 +240,39 @@ def test_refined_alpha_range() -> None:
     assert np.all(alpha <= 1.0)
 
 
+def test_trusted_alpha_skips_destructive_refinement(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A matting-model alpha must bypass morphology and guided filtering."""
+    refiner = MorphologicalForegroundRefiner()
+    alpha = np.zeros((96, 80), dtype=np.float32)
+    alpha[20:76, 18:62] = 1.0
+    alpha[19, 18:62] = 0.35
+    alpha[76, 18:62] = 0.65
+    coarse = Image.fromarray(np.where(alpha >= 0.5, 255, 0).astype(np.uint8), mode="L")
+    image = Image.new("RGB", coarse.size, (128, 128, 128))
+
+    def fail_if_called(*args: object, **kwargs: object) -> np.ndarray:
+        raise AssertionError("trusted alpha entered the guided-filter path")
+
+    monkeypatch.setattr(
+        "exam_photo.providers.refiners.morphological_refiner.guided_filter",
+        fail_if_called,
+    )
+
+    result = refiner.refine_mask(
+        image,
+        coarse,
+        alpha,
+        config=RefinementConfig(trust_input_alpha=True, quality_mode="high"),
+    )
+
+    np.testing.assert_array_equal(result.refined_alpha_mask, alpha)
+    assert result.effective_radius_px == 0
+    assert set(np.unique(np.array(result.trimap))).issubset({0, 128, 255})
+    assert result.validation.is_valid
+
+
 def test_fake_foreground_refiner() -> None:
     refiner = FakeForegroundRefiner()
     coarse_arr = np.zeros((50, 50), dtype=np.uint8)

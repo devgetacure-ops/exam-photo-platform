@@ -131,7 +131,10 @@ class BiRefNetSubjectSegmenter(SubjectSegmentationProvider):
         # Checkpoints ship in half precision; CPU conv kernels require float32.
         model.float()
         model.eval()
-        torch.set_num_threads(max(1, (torch.get_num_threads())))
+        # Keep CPU inference bounded.  On high-core Windows workstations the
+        # PyTorch default can oversubscribe enough to make a batch benchmark
+        # appear hung.
+        torch.set_num_threads(min(8, max(1, torch.get_num_threads())))
         self._model = model
         self._mean = torch.tensor(_IMAGENET_MEAN).view(1, 3, 1, 1)
         self._std = torch.tensor(_IMAGENET_STD).view(1, 3, 1, 1)

@@ -396,3 +396,53 @@ This log tracks architectural and product decisions, open questions, and recomme
 - **Residual**: BlazeFace short-range returns no detection on 9/60 reference photos and a poor box on those recovered by the confidence ladder, and its eye keypoints are corrupted by sunglasses, which blocks the eye-line constraint. Since all crop geometry depends on that box, the outstanding work is to derive head geometry (crown, head width, shoulder line) from the now-accurate matte and use face landmarks only for eye line and chin. That is expected to address the ~8 still-loose photos as a class rather than individually.
 - **Affected Modules**: `services/image-engine/src/exam_photo/providers/segmenters/birefnet_segmenter.py`, `orchestration/rule_pipeline.py`, `cli.py`, `providers/refiners/morphological_refiner.py`, `providers/crop_planners/deterministic_crop_planner.py`, `scripts/download_birefnet.py`, `model-manifests/birefnet.json`, `pyproject.toml`.
 - **Approval Owner**: Lead Architect
+
+### DEC-032: Dense Face Landmark Refinement
+- **Date**: 2026-08-01
+- **Status**: Approved
+- **Problem**: BlazeFace gives coarse eye points and no true chin landmark, so crop height and eye-line placement can be driven by detector-box bottom rather than anatomy.
+- **Decision**: Add an optional MediaPipe dense face-landmarker refinement step after BlazeFace face counting. The landmarker runs on a crop around the detected face, updates only chin and eye-line landmarks, and leaves the detector bounding box unchanged.
+- **Reasoning**: Face counting remains with BlazeFace because it has better raw-photo coverage, while dense landmarks improve the two crop quantities most sensitive to detector-box error.
+- **Consequences**: If the landmarker asset is missing or disagrees strongly with the detector, the pipeline keeps the original detection and proceeds. This is an enhancement, not a hard dependency.
+- **Affected Modules**: `services/image-engine/src/exam_photo/providers/mediapipe_face_landmarker.py`, `services/image-engine/src/exam_photo/orchestration/rule_pipeline.py`.
+- **Approval Owner**: Lead Architect
+
+### DEC-033: Preserve Trusted BiRefNet Alpha
+- **Date**: 2026-08-01
+- **Status**: Approved
+- **Problem**: Morphological reconstruction was designed for coarse MediaPipe masks. Applied to BiRefNet probability masks, it discards useful soft-edge detail and can reintroduce the hard-cutout behavior the model was selected to avoid.
+- **Decision**: Add a trusted-alpha path for BiRefNet output. When the segmenter supplies a high-quality probability mask, skip destructive morphology and pass the alpha through to later composition/decontamination stages.
+- **Reasoning**: The product defect is edge realism. BiRefNet already predicts soft foreground probabilities; preserving that signal is safer than forcing it through coarse-mask cleanup.
+- **Consequences**: MediaPipe masks still use the existing refinement path. BiRefNet output keeps finer hair and jaw transitions, with tests covering exact alpha preservation.
+- **Affected Modules**: `services/image-engine/src/exam_photo/providers/refiners/morphological_refiner.py`, `services/image-engine/tests/providers/test_foreground_refinement.py`.
+- **Approval Owner**: Lead Architect
+
+### DEC-034: Landmark-Derived Chin Fallback
+- **Date**: 2026-08-01
+- **Status**: Approved
+- **Problem**: When dense landmarks are unavailable, the detector-box bottom often falls into neck or shirt area, which makes the crop reserve phantom space below the real chin.
+- **Decision**: Use an eye/mouth-derived mouth-to-chin fallback before the detector-box bottom when landmarks contain enough stable points.
+- **Reasoning**: The fallback is calibrated from reference photos with known chin landmarks and is closer to anatomy than treating the bottom of a coarse detector box as the jaw line.
+- **Consequences**: The fallback is intentionally coarse and remains below dense-landmark priority. It reduces systematic loose crops without changing face counting.
+- **Affected Modules**: `services/image-engine/src/exam_photo/providers/crop_planners/deterministic_crop_planner.py`.
+- **Approval Owner**: Lead Architect
+
+### DEC-035: Preserve Chin, Beard, Hair and Ears Before Chasing Coverage
+- **Date**: 2026-08-01
+- **Status**: Approved
+- **Problem**: Some tight source photos cannot simultaneously satisfy a 75% head-height floor and preserve all hair, ears, chin, and beard boundary.
+- **Decision**: Treat the 75% floor as an aggregate diagnostic and exam target, but do not solve impossible photos by clipping identity-bearing regions. Log geometrically impossible cases and keep the crop-fix UI as the later recovery path.
+- **Reasoning**: The repository contract says face coverage is an expected result of correct natural cropping, not a rigid mathematical rejection threshold. Hair, ears, chin, beard, and jawline preservation are identity and acceptance requirements.
+- **Consequences**: The engine reports no-output or invalid crop reasons for genuinely impossible photos instead of silently producing clipped outputs.
+- **Affected Modules**: `services/image-engine/src/exam_photo/providers/crop_planners/deterministic_crop_planner.py`, `scripts/benchmark_reference_pairs.py`.
+- **Approval Owner**: Lead Architect
+
+### DEC-036: BiRefNet Default and Reference-Pair Benchmark Loop
+- **Date**: 2026-08-01
+- **Status**: Approved
+- **Problem**: The API selected BiRefNet automatically, but direct callers through `RuleOrchestratedPipeline` and the CLI still defaulted to MediaPipe, producing the old matte. The branch also lacked a repeatable all-60 engine-vs-ideal benchmark, causing tuning to drift toward derived constants instead of the approved reference outputs.
+- **Decision**: Make BiRefNet the default backend for `RuleOrchestratedPipeline` and CLI processing, resolving vendored model defaults from `model-manifests/birefnet.json` when callers do not pass explicit BiRefNet arguments. Add `scripts/benchmark_reference_pairs.py` to compare all 60 matched source/ideal pairs and report crop size, margins, 75% floor count, no-output keys, and regional edge behavior.
+- **Reasoning**: Product quality depends on realistic portrait edges. MediaPipe remains selectable for legacy diagnostics, but it is no longer the default for product processing. The benchmark treats the ideal outputs as the spec and avoids optimizing against invented thresholds.
+- **Consequences**: BiRefNet CPU inference is the dominant runtime cost, measured at roughly 10-26 seconds per produced photo on this Windows CPU environment after thread capping. All-60 baseline after the runtime/refinement fixes: 56/60 produced output, no-output keys `3-3`, `3-9`, `5-1`, `6-7`; 46/56 measurable outputs met the 75% floor; mean margin absolute error was 0.0480. A trial that moved mandatory preservation margins toward ideal-output medians improved margin MAE to 0.0440 but regressed no-output to 10/60, so it was rejected and not retained.
+- **Affected Modules**: `services/image-engine/src/exam_photo/orchestration/rule_pipeline.py`, `services/image-engine/src/exam_photo/cli.py`, `services/image-engine/src/exam_photo/providers/segmenters/birefnet_segmenter.py`, `scripts/benchmark_reference_pairs.py`.
+- **Approval Owner**: Lead Architect

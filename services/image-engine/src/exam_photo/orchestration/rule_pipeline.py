@@ -288,20 +288,18 @@ class RuleOrchestratedPipeline:
         segmenter_model_path: Path,
         face_expected_sha256: str = "",
         segmenter_expected_sha256: str = "",
-        matting_backend: str = "mediapipe",
+        matting_backend: str = "birefnet",
         birefnet_model_dir: Optional[Path] = None,
         birefnet_expected_sha256: str = "",
     ):
         """``matting_backend`` selects the subject segmentation model.
 
-        ``"mediapipe"`` (default) preserves exact existing behaviour so current
-        callers and tests are unaffected.  ``"birefnet"`` (DEC-031) swaps in
-        BiRefNetSubjectSegmenter, which measurably keeps background structures
-        out of the subject mask and places the boundary on the true edge
-        rather than a coarse selfie-segmentation guess; it requires the
-        optional 'matting' extra and vendored weights (see
-        scripts/download_birefnet.py). ``birefnet_model_dir`` /
-        ``birefnet_expected_sha256`` are required when that backend is chosen.
+        ``"birefnet"`` is the default subject matting backend (DEC-036) because
+        the product requirement is realistic portrait edges, not the old
+        coarse selfie-segmentation matte.  ``"mediapipe"`` remains selectable
+        for lightweight diagnostics and legacy tests.  When BiRefNet is chosen
+        without explicit model arguments, the vendored model manifest is
+        resolved from the repository root.
         """
         if matting_backend not in ("mediapipe", "birefnet"):
             raise ValueError(
@@ -309,9 +307,16 @@ class RuleOrchestratedPipeline:
                 "'mediapipe' or 'birefnet'."
             )
         if matting_backend == "birefnet" and birefnet_model_dir is None:
-            raise ValueError(
-                "birefnet_model_dir is required when matting_backend='birefnet'."
+            from exam_photo.providers.segmenters.birefnet_segmenter import (
+                load_manifest_defaults,
             )
+
+            repo_root = _find_repo_root()
+            birefnet_model_dir, _weights_name, default_sha, _size = (
+                load_manifest_defaults(repo_root)
+            )
+            if not birefnet_expected_sha256:
+                birefnet_expected_sha256 = default_sha
         self.face_model_path = face_model_path
         self.segmenter_model_path = segmenter_model_path
         self.face_expected_sha256 = face_expected_sha256

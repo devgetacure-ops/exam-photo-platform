@@ -542,9 +542,10 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
     proc_parser.add_argument(
         "--matting-backend",
         choices=["mediapipe", "birefnet"],
-        default="mediapipe",
+        default="birefnet",
         help=(
-            "Subject segmentation model (see DEC-031). 'birefnet' requires the "
+            "Subject segmentation model (see DEC-036). 'birefnet' is the "
+            "default and requires the "
             'optional matting extra (pip install -e ".[dev,matting]") and '
             "vendored weights (scripts/download_birefnet.py)."
         ),
