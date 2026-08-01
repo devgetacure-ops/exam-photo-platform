@@ -120,13 +120,23 @@ class DeterministicJpegCompressor(OutputCompressor):
 
         def encode_jpeg(q: int) -> bytes:
             buf = io.BytesIO()
-            img_to_encode.save(
-                buf,
-                format="JPEG",
-                quality=q,
-                optimize=config.optimize,
-                progressive=config.progressive,
-            )
+            if config.target_dpi is not None:
+                img_to_encode.save(
+                    buf,
+                    format="JPEG",
+                    quality=q,
+                    optimize=config.optimize,
+                    progressive=config.progressive,
+                    dpi=(config.target_dpi, config.target_dpi),
+                )
+            else:
+                img_to_encode.save(
+                    buf,
+                    format="JPEG",
+                    quality=q,
+                    optimize=config.optimize,
+                    progressive=config.progressive,
+                )
             return buf.getvalue()
 
         # Binary Search Mode
@@ -289,6 +299,8 @@ class DeterministicJpegCompressor(OutputCompressor):
 
         # Step 8: Metadata check
         metadata_stripped = True
+        actual_dpi: Optional[int] = None
+        dpi_satisfied: bool | None = None
         if decode_valid and decoded_image is not None:
             if "exif" in decoded_image.info:
                 metadata_stripped = False
@@ -297,6 +309,9 @@ class DeterministicJpegCompressor(OutputCompressor):
                     IssueSeverity.ERROR,
                     True,
                 )
+            actual_dpi = self._extract_square_dpi(decoded_image)
+            if config.target_dpi is not None:
+                dpi_satisfied = actual_dpi == config.target_dpi
 
         # Determine if final result is valid (no blocking issues)
         is_valid = not any(issue.blocking_for_processing for issue in issues)
@@ -317,8 +332,10 @@ class DeterministicJpegCompressor(OutputCompressor):
             ),
             decode_after_encode_valid=decode_valid,
             metadata_stripped=metadata_stripped,
+            dpi_satisfied=dpi_satisfied,
             target_bytes=target_bytes,
             actual_bytes=actual_size,
+            actual_dpi=actual_dpi,
             byte_size_ratio_to_max=ratio,
             final_quality=final_q,
             iterations_used=iterations,
@@ -341,10 +358,26 @@ class DeterministicJpegCompressor(OutputCompressor):
             optimize=config.optimize,
             progressive=config.progressive,
             metadata_stripped=metadata_stripped,
+            target_dpi=config.target_dpi,
+            actual_dpi=actual_dpi,
             validation=report,
             processing_duration_ms=duration_ms,
             encoded_bytes=final_bytes,
         )
+
+    def _extract_square_dpi(self, image: Image.Image) -> Optional[int]:
+        dpi_value = image.info.get("dpi")
+        if not isinstance(dpi_value, tuple) or len(dpi_value) < 2:
+            return None
+        x_dpi, y_dpi = dpi_value[:2]
+        try:
+            x_int = int(round(float(x_dpi)))
+            y_int = int(round(float(y_dpi)))
+        except (TypeError, ValueError):
+            return None
+        if x_int != y_int:
+            return None
+        return x_int
 
     def _build_fail_result(
         self,
@@ -372,8 +405,10 @@ class DeterministicJpegCompressor(OutputCompressor):
             quality_within_bounds=False,
             decode_after_encode_valid=False,
             metadata_stripped=False,
+            dpi_satisfied=False if config.target_dpi is not None else None,
             target_bytes=target_bytes,
             actual_bytes=None,
+            actual_dpi=None,
             byte_size_ratio_to_max=None,
             final_quality=None,
             iterations_used=0,
@@ -396,6 +431,8 @@ class DeterministicJpegCompressor(OutputCompressor):
             optimize=config.optimize,
             progressive=config.progressive,
             metadata_stripped=False,
+            target_dpi=config.target_dpi,
+            actual_dpi=None,
             validation=report,
             processing_duration_ms=duration_ms,
             encoded_bytes=None,
