@@ -539,6 +539,21 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
     proc_parser.add_argument(
         "--variant", choices=["selfie_multiclass_256x256", "selfie_bin_general"]
     )
+    proc_parser.add_argument(
+        "--matting-backend",
+        choices=["mediapipe", "birefnet"],
+        default="mediapipe",
+        help=(
+            "Subject segmentation model (see DEC-031). 'birefnet' requires the "
+            'optional matting extra (pip install -e ".[dev,matting]") and '
+            "vendored weights (scripts/download_birefnet.py)."
+        ),
+    )
+    proc_parser.add_argument(
+        "--birefnet-model-dir",
+        help="Path to the vendored BiRefNet model directory. Defaults to the "
+        "path recorded in model-manifests/birefnet.json.",
+    )
 
     # serve-api subcommand
     serve_parser = subparsers.add_parser(
@@ -1724,10 +1739,10 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
             return 1
 
         # 8. Output results
+        crop_val = crop_result.validation
         if args.json:
             print(crop_result.model_dump_json(indent=2))
         else:
-            crop_val = crop_result.validation
             print("Success: Foreground crop planning finished successfully.")
             if crop_val.head_estimate_unavailable:
                 print("  WARNING: head estimate unavailable (using face-only geometry)")
@@ -2097,10 +2112,10 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
             return 1
 
         # 8. Output results
+        crop_val_b = crop_result_b.validation
         if args.json:
             print(crop_result_b.model_dump_json(indent=2))
         else:
-            crop_val_b = crop_result_b.validation
             print("Success: Foreground crop planning finished successfully.")
             if crop_val_b.head_estimate_unavailable:
                 print("  WARNING: head estimate unavailable (using face-only geometry)")
@@ -3289,12 +3304,18 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
         if not face_model_path.is_absolute():
             face_model_path = repo_root / face_model_path
 
-        # Resolve segmenter model path
+        # Resolve segmenter model path.
+        #
+        # The checksum is read regardless of where the path came from: the
+        # segmenter refuses to load without a valid 64-character SHA-256, so
+        # leaving it empty whenever --segmenter-model-path was supplied made
+        # that flag impossible to use.  When neither the flag nor the
+        # environment provides one, it is recovered from the manifest by
+        # filename further below.
         segmenter_model_path_str = args.segmenter_model_path
-        expected_seg_sha = ""
+        expected_seg_sha = os.environ.get("EXAM_PHOTO_SEGMENTER_MODEL_SHA256", "")
         if not segmenter_model_path_str:
             segmenter_model_path_str = os.environ.get("EXAM_PHOTO_SEGMENTER_MODEL_PATH")
-            expected_seg_sha = os.environ.get("EXAM_PHOTO_SEGMENTER_MODEL_SHA256", "")
 
         if not segmenter_model_path_str:
             manifest_path = repo_root / "model-manifests" / "subject-segmenter.json"
@@ -3323,6 +3344,37 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
         if not segmenter_model_path.is_absolute():
             segmenter_model_path = repo_root / segmenter_model_path
 
+        # Recover the checksum from the manifest when an explicit path was given
+        # without one, matching on the file name that was actually resolved.
+        if not expected_seg_sha:
+            manifest_path = repo_root / "model-manifests" / "subject-segmenter.json"
+            if manifest_path.exists():
+                try:
+                    with open(manifest_path, "r", encoding="utf-8") as mf:
+                        manifest = json.load(mf)
+                    for variant in (manifest.get("variants", {}) or {}).values():
+                        if variant.get("filename") == segmenter_model_path.name:
+                            expected_seg_sha = variant.get("sha256", "")
+                            break
+                except Exception:
+                    pass
+
+        # Resolve BiRefNet matting settings when selected (DEC-031).
+        birefnet_model_dir: Optional[Path] = None
+        expected_birefnet_sha = ""
+        if args.matting_backend == "birefnet":
+            from exam_photo.providers.segmenters.birefnet_segmenter import (
+                load_manifest_defaults,
+            )
+
+            default_dir, _wfname, default_sha, _size = load_manifest_defaults(repo_root)
+            birefnet_model_dir = (
+                Path(args.birefnet_model_dir)
+                if args.birefnet_model_dir
+                else default_dir
+            )
+            expected_birefnet_sha = default_sha
+
         # Instantiate RuleOrchestratedPipeline
         from exam_photo.orchestration.rule_pipeline import (
             RuleOrchestratedPipeline,
@@ -3334,12 +3386,15 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
             segmenter_model_path=segmenter_model_path,
             face_expected_sha256=expected_face_sha,
             segmenter_expected_sha256=expected_seg_sha,
+            matting_backend=args.matting_backend,
+            birefnet_model_dir=birefnet_model_dir,
+            birefnet_expected_sha256=expected_birefnet_sha,
         )
 
         rule_config = RulePipelineConfig(
             save_diagnostic_artifacts=args.allow_diagnostic_artifacts,
             allow_invalid_output=args.allow_invalid_output,
-            allow_padding=False,
+            allow_padding=True,
             allow_quality_below_minimum=args.allow_invalid_output,
             allow_oversize_output=args.allow_invalid_output,
             output_dir=Path(args.output_dir) if args.output_dir else None,

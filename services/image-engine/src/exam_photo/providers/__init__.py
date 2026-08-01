@@ -64,6 +64,11 @@ from exam_photo.providers.output_preparation import (
 from exam_photo.providers.output_preparers.deterministic_output_preparer import (
     DeterministicOutputPreparer,
 )
+from exam_photo.providers.portrait_composition import (
+    DeterministicPortraitCompositionEstimator,
+    PortraitCompositionProvider,
+    PortraitCompositionResult,
+)
 from exam_photo.providers.refiners.morphological_refiner import (
     MorphologicalForegroundRefiner,
 )
@@ -133,6 +138,9 @@ __all__ = [
     "OutputPreparationResult",
     "OutputPreparer",
     "DeterministicOutputPreparer",
+    "PortraitCompositionResult",
+    "PortraitCompositionProvider",
+    "DeterministicPortraitCompositionEstimator",
     "CompressionFormat",
     "CompressionSearchMode",
     "OutputCompressionConfig",

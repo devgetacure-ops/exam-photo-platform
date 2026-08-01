@@ -1,3 +1,4 @@
+import os
 import time
 from enum import Enum
 from pathlib import Path
@@ -35,6 +36,9 @@ from exam_photo.providers.mediapipe_face_detector import MediapipeFaceDetector
 from exam_photo.providers.output_preparers.deterministic_output_preparer import (
     DeterministicOutputPreparer,
 )
+from exam_photo.providers.portrait_composition import (
+    DeterministicPortraitCompositionEstimator,
+)
 from exam_photo.providers.premultiplied_compositing import (
     premultiply_crop_resize_composite,
     safe_crop_numpy,
@@ -47,6 +51,34 @@ from exam_photo.providers.segmenters.mediapipe_segmenter import (
 )
 from exam_photo.rule_validation import validate_exam_rule
 
+# Face-detection confidence ladder.  The primary threshold is the provider
+# default; the recovery levels are only consulted when the primary pass returns
+# no detections at all (see Stage 3).
+_FACE_PRIMARY_CONFIDENCE = 0.5
+_FACE_RECOVERY_CONFIDENCES = (0.35, 0.25, 0.15)
+
+
+def _find_repo_root() -> Path:
+    """Locate the repository root holding model-manifests/ and model-assets/.
+
+    Defined here rather than imported from the API layer so the engine does not
+    depend on the service that wraps it.
+    """
+    env_val = os.environ.get("EXAM_PHOTO_REPO_ROOT")
+    if env_val:
+        candidate = Path(env_val).resolve()
+        if candidate.exists():
+            return candidate
+
+    current = Path(__file__).resolve().parent
+    for _ in range(7):
+        if (current / "AGENTS.md").exists() or (current / "model-manifests").exists():
+            return current
+        if current.parent == current:
+            break
+        current = current.parent
+    return Path(".").resolve()
+
 
 class PipelineStage(str, Enum):
     RULE_VALIDATION = "rule_validation"
@@ -54,6 +86,7 @@ class PipelineStage(str, Enum):
     FACE_DETECTION = "face_detection"
     HEAD_ESTIMATION = "head_estimation"
     FUSED_HEAD_REFINEMENT = "fused_head_refinement"
+    PORTRAIT_COMPOSITION = "portrait_composition"
     SUBJECT_SEGMENTATION = "subject_segmentation"
     MASK_REFINEMENT = "mask_refinement"
     CROP_SELECTION = "crop_selection"
@@ -85,6 +118,7 @@ class PipelineIssueCode(str, Enum):
     PIPELINE_FINAL_DECODE_FAILED = "PIPELINE_FINAL_DECODE_FAILED"
     PIPELINE_FINAL_DIMENSIONS_INVALID = "PIPELINE_FINAL_DIMENSIONS_INVALID"
     PIPELINE_FINAL_FORMAT_INVALID = "PIPELINE_FINAL_FORMAT_INVALID"
+    PIPELINE_FINAL_DPI_INVALID = "PIPELINE_FINAL_DPI_INVALID"
     PIPELINE_FINAL_BYTE_SIZE_INVALID = "PIPELINE_FINAL_BYTE_SIZE_INVALID"
     PIPELINE_FILENAME_INVALID = "PIPELINE_FILENAME_INVALID"
     PIPELINE_PROVIDER_FAILED = "PIPELINE_PROVIDER_FAILED"
@@ -111,7 +145,7 @@ class RulePipelineConfig(BaseModel):
 
     save_diagnostic_artifacts: bool = False
     allow_invalid_output: bool = False
-    allow_padding: bool = False
+    allow_padding: bool = True
     allow_quality_below_minimum: bool = False
     allow_oversize_output: bool = False
     allow_subject_clipping: bool = False
@@ -126,7 +160,8 @@ class RulePipelineConfig(BaseModel):
 
 
 def compute_halo_score_float(
-    composite_arr: np.ndarray, alpha_mask: np.ndarray  # type: ignore[type-arg]
+    composite_arr: np.ndarray[Any, Any],
+    alpha_mask: np.ndarray[Any, Any],
 ) -> float:
     gray = (
         0.299 * composite_arr[..., 0]
@@ -143,7 +178,8 @@ def compute_halo_score_float(
 
 
 def compute_spill_score_float(
-    original_arr: np.ndarray, alpha_mask: np.ndarray  # type: ignore[type-arg]
+    original_arr: np.ndarray[Any, Any],
+    alpha_mask: np.ndarray[Any, Any],
 ) -> float:
     mask = (alpha_mask > 0.05) & (alpha_mask < 0.95)
     if not np.any(mask):
@@ -166,7 +202,7 @@ def compute_spill_score_float(
 
 
 def compute_alpha_continuity_float(
-    alpha_mask: np.ndarray,  # type: ignore[type-arg]
+    alpha_mask: np.ndarray[Any, Any],
 ) -> float:
     mask = (alpha_mask > 0.05) & (alpha_mask < 0.95)
     if not np.any(mask):
@@ -177,7 +213,8 @@ def compute_alpha_continuity_float(
 
 
 def compute_background_uniformity_float(
-    composite_arr: np.ndarray, alpha_mask: np.ndarray  # type: ignore[type-arg]
+    composite_arr: np.ndarray[Any, Any],
+    alpha_mask: np.ndarray[Any, Any],
 ) -> float:
     mask = alpha_mask <= 0.05
     if not np.any(mask):
@@ -251,11 +288,66 @@ class RuleOrchestratedPipeline:
         segmenter_model_path: Path,
         face_expected_sha256: str = "",
         segmenter_expected_sha256: str = "",
+        matting_backend: str = "mediapipe",
+        birefnet_model_dir: Optional[Path] = None,
+        birefnet_expected_sha256: str = "",
     ):
+        """``matting_backend`` selects the subject segmentation model.
+
+        ``"mediapipe"`` (default) preserves exact existing behaviour so current
+        callers and tests are unaffected.  ``"birefnet"`` (DEC-031) swaps in
+        BiRefNetSubjectSegmenter, which measurably keeps background structures
+        out of the subject mask and places the boundary on the true edge
+        rather than a coarse selfie-segmentation guess; it requires the
+        optional 'matting' extra and vendored weights (see
+        scripts/download_birefnet.py). ``birefnet_model_dir`` /
+        ``birefnet_expected_sha256`` are required when that backend is chosen.
+        """
+        if matting_backend not in ("mediapipe", "birefnet"):
+            raise ValueError(
+                f"Unknown matting_backend '{matting_backend}'; expected "
+                "'mediapipe' or 'birefnet'."
+            )
+        if matting_backend == "birefnet" and birefnet_model_dir is None:
+            raise ValueError(
+                "birefnet_model_dir is required when matting_backend='birefnet'."
+            )
         self.face_model_path = face_model_path
         self.segmenter_model_path = segmenter_model_path
         self.face_expected_sha256 = face_expected_sha256
         self.segmenter_expected_sha256 = segmenter_expected_sha256
+        self.matting_backend = matting_backend
+        self.birefnet_model_dir = birefnet_model_dir
+        self.birefnet_expected_sha256 = birefnet_expected_sha256
+        self._birefnet_segmenter: Optional[Any] = None
+        self._face_landmarker: Optional[Any] = None
+        self._face_landmarker_unavailable = False
+
+    def _refine_face_landmarks(self, image: Image.Image, face: Any) -> Any:
+        """Sharpen the chin and eye line of a detected face (DEC-032).
+
+        Returns ``face`` unchanged when the optional landmarker asset is not
+        vendored, so this stays an enhancement rather than a new hard
+        dependency.  The first failure latches, avoiding a repeated model-load
+        attempt on every image of a batch.
+        """
+        if self._face_landmarker_unavailable:
+            return face
+        if self._face_landmarker is None:
+            from exam_photo.providers.mediapipe_face_landmarker import (
+                MediapipeFaceLandmarker,
+                load_manifest_defaults,
+            )
+
+            repo_root = _find_repo_root()
+            model_path, expected_sha = load_manifest_defaults(repo_root)
+            if not model_path.exists():
+                self._face_landmarker_unavailable = True
+                return face
+            self._face_landmarker = MediapipeFaceLandmarker(
+                model_path=model_path, expected_sha256=expected_sha
+            )
+        return self._face_landmarker.refine(image, face)
 
     def process_rule(
         self,
@@ -337,6 +429,7 @@ class RuleOrchestratedPipeline:
                 plan = resolve_rule(
                     rule,
                     allow_padding=config.allow_padding,
+                    allow_subject_clipping=config.allow_subject_clipping,
                     allow_quality_below_minimum=config.allow_quality_below_minimum,
                     allow_oversize_output=config.allow_oversize_output,
                 )
@@ -407,24 +500,65 @@ class RuleOrchestratedPipeline:
                 detector = MediapipeFaceDetector(
                     model_path=self.face_model_path,
                     expected_sha256=self.face_expected_sha256,
-                    # We can use a lower detection threshold for lincoln/roosevelt if the calling script does,
-                    # but here we use a general default of 0.5.
-                    min_detection_confidence=0.2
-                    if "lincoln" in rule_dict.get("rule_id", "")
-                    or "roosevelt" in rule_dict.get("rule_id", "")
-                    else 0.5,
+                    min_detection_confidence=_FACE_PRIMARY_CONFIDENCE,
                 )
+                recovery_used: float | None = None
                 with detector:
                     face_result = detector.detect_faces(norm_result.image)
+                    # The short-range BlazeFace model is tuned for close selfie
+                    # framing and scores confidently-detectable faces below 0.5
+                    # on ordinary half-body exam submissions (no detections at
+                    # all on 9 of 60 reference photos, all of which resolve to a
+                    # single face at a lower threshold).  When the primary pass
+                    # finds nothing, step the threshold down and accept only an
+                    # unambiguous single face; anything else stays a failure so
+                    # genuine multi-person photos are never silently accepted.
+                    if not face_result.detections:
+                        for level in _FACE_RECOVERY_CONFIDENCES:
+                            retry = detector.detect_faces(
+                                norm_result.image,
+                                config={"min_detection_confidence": level},
+                            )
+                            if len(retry.detections) == 1:
+                                face_result = retry
+                                recovery_used = level
+                                break
+                            if len(retry.detections) > 1:
+                                # Ambiguous: report the ambiguity, do not guess.
+                                face_result = retry
+                                break
                 dur_stage = (time.perf_counter() - t_stage) * 1000.0
 
                 if len(face_result.detections) == 1:
                     face = face_result.detections[0]
+                    # Refine the chin and eye line with dense landmarks where
+                    # the asset is available (DEC-032).  Detection and face
+                    # counting stay with BlazeFace, which has the better
+                    # coverage on raw photos; this only sharpens the two points
+                    # the crop planner is most sensitive to.  Any failure here
+                    # leaves the detector's own points in place.
+                    landmark_note = ""
+                    try:
+                        refined_face = self._refine_face_landmarks(
+                            norm_result.image, face
+                        )
+                        if refined_face is not face:
+                            face = refined_face
+                            landmark_note = (
+                                " Chin and eye line refined by dense landmarks."
+                            )
+                    except Exception as exc:  # noqa: BLE001
+                        landmark_note = f" Landmark refinement unavailable: {exc}."
                     record_stage(
                         PipelineStage.FACE_DETECTION,
                         PipelineStageStatus.PASSED,
                         dur=dur_stage,
-                        summary="Exactly 1 face detected.",
+                        summary=(
+                            "Exactly 1 face detected."
+                            if recovery_used is None
+                            else f"Exactly 1 face detected at recovery confidence {recovery_used:.2f}."
+                        )
+                        + landmark_note,
                     )
                 else:
                     failed = True
@@ -502,10 +636,27 @@ class RuleOrchestratedPipeline:
         ):
             t_stage = time.perf_counter()
             try:
-                segmenter = MediapipeSubjectSegmenter(
-                    model_path=self.segmenter_model_path,
-                    expected_sha256=self.segmenter_expected_sha256,
-                )
+                segmenter: Any
+                if self.matting_backend == "birefnet":
+                    # Kept warm across calls: BiRefNet load/verification costs
+                    # real time (torch + weights), unlike MediaPipe's cheap
+                    # per-call reinitialisation.
+                    if self._birefnet_segmenter is None:
+                        from exam_photo.providers.segmenters.birefnet_segmenter import (
+                            BiRefNetSubjectSegmenter,
+                        )
+
+                        assert self.birefnet_model_dir is not None
+                        self._birefnet_segmenter = BiRefNetSubjectSegmenter(
+                            model_dir=self.birefnet_model_dir,
+                            expected_sha256=self.birefnet_expected_sha256,
+                        )
+                    segmenter = self._birefnet_segmenter
+                else:
+                    segmenter = MediapipeSubjectSegmenter(
+                        model_path=self.segmenter_model_path,
+                        expected_sha256=self.segmenter_expected_sha256,
+                    )
                 with segmenter:
                     seg_result = segmenter.segment_subject(
                         norm_result.image,
@@ -580,7 +731,13 @@ class RuleOrchestratedPipeline:
             t_stage = time.perf_counter()
             try:
                 refiner = MorphologicalForegroundRefiner()
-                ref_config = RefinementConfig(quality_mode=config.quality_mode)
+                # A matting backend already resolves the boundary accurately, so
+                # the morphological reconstruction is skipped for it (DEC-033);
+                # the coarse selfie segmenter still needs the full treatment.
+                ref_config = RefinementConfig(
+                    quality_mode=config.quality_mode,
+                    trust_input_alpha=(self.matting_backend == "birefnet"),
+                )
                 ref_result = refiner.refine_mask(
                     image=norm_result.image,
                     coarse_mask=seg_result.coarse_mask,
@@ -666,6 +823,45 @@ class RuleOrchestratedPipeline:
                 )
 
         # Stage 7: Crop Planning
+        portrait_composition = None
+        if (
+            not failed
+            and norm_result is not None
+            and face is not None
+            and fused_head_result is not None
+            and ref_result is not None
+        ):
+            t_stage = time.perf_counter()
+            try:
+                composition_estimator = DeterministicPortraitCompositionEstimator()
+                portrait_composition = composition_estimator.estimate_composition(
+                    image=norm_result.image,
+                    face=face,
+                    head_result=fused_head_result,
+                    alpha_mask=ref_result.refined_alpha_mask,
+                )
+                dur_stage = (time.perf_counter() - t_stage) * 1000.0
+                record_stage(
+                    PipelineStage.PORTRAIT_COMPOSITION,
+                    PipelineStageStatus.PASSED,
+                    issues=portrait_composition.warnings,
+                    dur=dur_stage,
+                    summary="Semantic exam-portrait composition estimated successfully.",
+                )
+            except Exception as e:
+                record_stage(
+                    PipelineStage.PORTRAIT_COMPOSITION,
+                    PipelineStageStatus.WARNING,
+                    issues=["PORTRAIT_COMPOSITION_FAILED"],
+                    dur=0.0,
+                    summary=f"Portrait composition fell back to head geometry: {e}",
+                )
+        else:
+            record_stage(
+                PipelineStage.PORTRAIT_COMPOSITION,
+                PipelineStageStatus.SKIPPED,
+            )
+
         crop_res: CropPlanResult | CropModeBResult | None = None
         if (
             not failed
@@ -695,6 +891,7 @@ class RuleOrchestratedPipeline:
                             or fused_head_result.geometric_head_bounding_box
                         ),
                         refined_mask=ref_result.refined_binary_mask,
+                        portrait_composition=portrait_composition,
                         config=crop_cfg,
                     )
                 else:
@@ -709,6 +906,7 @@ class RuleOrchestratedPipeline:
                             or fused_head_result.geometric_head_bounding_box
                         ),
                         refined_mask=ref_result.refined_binary_mask,
+                        portrait_composition=portrait_composition,
                         config=crop_cfg,
                     )
 
@@ -1022,6 +1220,12 @@ class RuleOrchestratedPipeline:
                 if fused_head_result
                 and fused_head_result.geometric_head_bounding_box is not None
                 else None,
+                "portrait_composition_box": portrait_composition.preservation_box.model_dump()
+                if portrait_composition is not None
+                else None,
+                "portrait_lower_body_exclusion_y": portrait_composition.lower_body_exclusion_y
+                if portrait_composition is not None
+                else None,
                 "head_height_ratio": getattr(crop_res, "head_height_ratio", None),
                 "head_width_ratio": getattr(crop_res, "head_width_ratio", None),
                 "top_margin_ratio": getattr(crop_res, "top_margin_ratio", None),
@@ -1176,6 +1380,10 @@ class RuleOrchestratedPipeline:
                                 pipeline_issues.append(
                                     PipelineIssueCode.PIPELINE_FINAL_FORMAT_INVALID
                                 )
+                            elif "DPI" in err:
+                                pipeline_issues.append(
+                                    PipelineIssueCode.PIPELINE_FINAL_DPI_INVALID
+                                )
                             elif "BYTE_SIZE" in err:
                                 pipeline_issues.append(
                                     PipelineIssueCode.PIPELINE_FINAL_BYTE_SIZE_INVALID
@@ -1274,6 +1482,7 @@ class RuleOrchestratedPipeline:
                 "crop_box": None,
                 "head_bounding_box": None,
                 "geometric_head_bounding_box": None,
+                "portrait_composition_box": None,
             }
         )
 
