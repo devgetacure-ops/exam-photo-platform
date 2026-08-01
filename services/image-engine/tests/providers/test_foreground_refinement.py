@@ -43,6 +43,8 @@ def test_refinement_config_validation() -> None:
         RefinementConfig(morphology_radius_ratio=-0.01)  # ge=0.0
     with pytest.raises(ValidationError):
         RefinementConfig(probability_weight=1.5)  # le=1.0
+    with pytest.raises(ValidationError):
+        RefinementConfig(alpha_snap_low_threshold=0.8, alpha_snap_high_threshold=0.2)
 
 
 def test_refinement_config_size_aware_radius() -> None:

@@ -4,7 +4,7 @@ import time
 from typing import Any, Optional, cast
 
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageFilter
 
 from exam_photo.models.geometry import BoundingBox
 from exam_photo.providers.face_detection import FaceDetection
@@ -172,6 +172,44 @@ def box_filter(img: np.ndarray[Any, Any], r: int) -> np.ndarray[Any, Any]:
     return out
 
 
+# Minimum raw segmenter probability for a pixel inside the inner face box to
+# be eligible for face-core hole-filling.  Low enough to bridge a small, low-
+# confidence gap (glasses glare, a stray shadow) but well below the 0.5
+# foreground threshold, so a region the segmenter confidently called
+# background (near 0) is never forced to foreground.
+_FACE_CORE_PLAUSIBILITY_THRESHOLD = 0.15
+
+# Matting band half-width as a fraction of estimated head height.
+#
+# Wider is not better.  Partial alpha produced far from the true boundary reads
+# as a grey smear rather than hair, and colour decontamination can only
+# propagate a bounded distance into the band, so its interior keeps background
+# colour.  Measured over the reference set, 0.025 raised the retained soft-alpha
+# band but more than doubled the halo score; this value keeps the band inside
+# the decontamination reach while still resolving strands.
+_HAIR_BAND_HEAD_HEIGHT_RATIO = 0.010
+
+
+def _morph_3x3(
+    mask: np.ndarray[Any, Any], radius: int, maximum: bool
+) -> np.ndarray[Any, Any]:
+    """Dilate (maximum) or erode (minimum) a boolean mask by ``radius`` pixels.
+
+    Uses Pillow's C-implemented rank filters applied ``radius`` times with a 3x3
+    kernel.  The pure-numpy offset morphology used for the coarse 512px pass
+    costs O(disk_area) array shifts per call, which is too slow to run at the
+    refinement resolution; this stays linear in ``radius`` and keeps the module
+    free of any dependency beyond Pillow and numpy.
+    """
+    if radius <= 0:
+        return mask
+    img = Image.fromarray((mask.astype(np.uint8)) * 255, mode="L")
+    kernel = ImageFilter.MaxFilter(3) if maximum else ImageFilter.MinFilter(3)
+    for _ in range(int(radius)):
+        img = img.filter(kernel)
+    return np.array(img) > 127
+
+
 def guided_filter(
     guidance: np.ndarray[Any, Any], p: np.ndarray[Any, Any], r: int, eps: float
 ) -> np.ndarray[Any, Any]:
@@ -266,16 +304,6 @@ class MorphologicalForegroundRefiner(ForegroundRefinementProvider):
         quality_mode = cfg.quality_mode
         matte_quality_downgraded = False
 
-        if (
-            max(img_w, img_h) > cfg.maximum_native_dimension
-            or (img_w * img_h) > cfg.maximum_matting_pixels
-        ):
-            matte_quality_downgraded = True
-            if quality_mode == "high":
-                quality_mode = "balanced"
-            elif quality_mode == "balanced":
-                quality_mode = "fast"
-
         # Determine target refinement dimensions
         if quality_mode == "fast":
             max_dim = 512
@@ -283,6 +311,27 @@ class MorphologicalForegroundRefiner(ForegroundRefinementProvider):
             max_dim = 1024
         else:  # high
             max_dim = max(img_w, img_h)
+
+        # Spend the memory budget on resolution rather than dropping a whole
+        # quality tier.  Demoting "high" to "balanced" pinned an ordinary 10 MP
+        # phone photo to a 1024px matte, discarding hair detail the segmenter
+        # had actually produced; scaling to the same pixel budget instead keeps
+        # roughly 1.7x the linear resolution at identical peak memory.
+        longest_edge = max(img_w, img_h)
+        total_pixels = img_w * img_h
+        if total_pixels > cfg.maximum_matting_pixels:
+            budget_scale = float(
+                np.sqrt(cfg.maximum_matting_pixels / float(total_pixels))
+            )
+            budget_dim = max(512, int(round(longest_edge * budget_scale)))
+            if budget_dim < max_dim:
+                max_dim = budget_dim
+                matte_quality_downgraded = True
+        if longest_edge > cfg.maximum_native_dimension and (
+            max_dim > cfg.maximum_native_dimension
+        ):
+            max_dim = cfg.maximum_native_dimension
+            matte_quality_downgraded = True
 
         orig_w, orig_h = img_w, img_h
         if max(img_w, img_h) > max_dim:
@@ -316,8 +365,26 @@ class MorphologicalForegroundRefiner(ForegroundRefinementProvider):
         )
 
         # 4. Face/Head Core Protection on low resolution
+        #
+        # Patches small genuine gaps a segmenter can leave inside a real face
+        # (glasses reflections, harsh lighting), not a licence to overwrite
+        # whatever the segmenter said.  Forcing the whole axis-aligned
+        # rectangle to foreground is wrong whenever the face box isn't a tight
+        # fit -- an angled head, background visible in a box corner, an object
+        # near the head -- and paints that background opaque regardless of how
+        # confidently the model excluded it.  Measured case: a signboard
+        # directly behind a subject's head was correctly excluded by BiRefNet
+        # (raw mask clean) and then reintroduced here because the axis-aligned
+        # face-box rectangle happened to overlap it.  Only pixels the
+        # segmenter itself considered plausibly foreground are protected.
         cleaned_binary_low = opened_low.copy()
         if cfg.preserve_face_core and face is not None:
+            prob_low_arr = np.array(
+                Image.fromarray(probability_mask, mode="F").resize(
+                    (low_w, low_h), Image.Resampling.BILINEAR
+                )
+            )
+            plausible_low = prob_low_arr >= _FACE_CORE_PLAUSIBILITY_THRESHOLD
             faces_list = face if isinstance(face, list) else [face]
             for f in faces_list:
                 face_box = f.bounding_box
@@ -354,24 +421,53 @@ class MorphologicalForegroundRefiner(ForegroundRefinementProvider):
                 )
 
                 if inner_right > inner_left and inner_bottom > inner_top:
-                    cleaned_binary_low[
+                    region = cleaned_binary_low[
                         inner_top:inner_bottom, inner_left:inner_right
-                    ] = True
+                    ]
+                    region_plausible = plausible_low[
+                        inner_top:inner_bottom, inner_left:inner_right
+                    ]
+                    region |= region_plausible
 
-        # 5. Compute uncertainty band at low resolution
-        eroded_boundary_low = _erode(cleaned_binary_low, radius_low, offsets_low)
-        dilated_boundary_low = _dilate(cleaned_binary_low, radius_low, offsets_low)
-
-        # 6. Project/Resize masks to target refinement resolution
-        definite_fg_img = Image.fromarray(eroded_boundary_low)
-        dilated_img = Image.fromarray(dilated_boundary_low)
-
-        definite_fg_refine = np.array(
-            definite_fg_img.resize((refine_w, refine_h), Image.Resampling.NEAREST)
+        # 6. Build the matting band at refinement resolution.
+        #
+        # Previously the eroded/dilated boundary was computed at 512px and
+        # upsampled with NEAREST, so the "unknown" region the guided filter is
+        # allowed to touch arrived quantised into ~8px blocks on a 4000px photo.
+        # The filter could then only ever produce a blocky edge, no matter how
+        # much resolution the matting pass itself had.  Resampling the cleaned
+        # decision smoothly and re-deriving the band here lets the band follow
+        # the actual subject boundary.
+        cleaned_img_low = Image.fromarray(
+            (cleaned_binary_low.astype(np.uint8)) * 255, mode="L"
         )
-        dilated_refine = np.array(
-            dilated_img.resize((refine_w, refine_h), Image.Resampling.NEAREST)
+        cleaned_refine = (
+            np.array(
+                cleaned_img_low.resize((refine_w, refine_h), Image.Resampling.BILINEAR)
+            )
+            > 127
         )
+
+        # Band width scales with the subject, not with the frame.  A fixed band
+        # is simultaneously too wide for a collar and too narrow for hair, and
+        # it is the band that caps how much partial coverage can survive at all:
+        # alpha outside it is forced to 0 or 1 regardless of what the matting
+        # pass computed.  Sizing it from the head lets flyaway hair resolve on a
+        # large subject without smearing the edge on a small one.
+        band_radius_refine = int(
+            round(radius_low / max(scale_low, 1e-6) * scale_refine)
+        )
+        if head_estimate is not None and head_estimate.height > 0:
+            head_band = int(
+                round(
+                    _HAIR_BAND_HEAD_HEIGHT_RATIO * head_estimate.height * scale_refine
+                )
+            )
+            band_radius_refine = max(band_radius_refine, head_band)
+        band_radius_refine = max(2, min(28, band_radius_refine))
+
+        definite_fg_refine = _morph_3x3(cleaned_refine, band_radius_refine, False)
+        dilated_refine = _morph_3x3(cleaned_refine, band_radius_refine, True)
 
         boundary_band_refine = dilated_refine ^ definite_fg_refine
 
@@ -415,6 +511,26 @@ class MorphologicalForegroundRefiner(ForegroundRefinementProvider):
             alpha = np.clip(alpha, 0.0, 1.0)
         else:
             alpha = alpha_refine
+
+        if cfg.trust_input_alpha:
+            # Keep the model's own boundary.  Everything above reconstructs the
+            # silhouette from a low-resolution binary decision, which is the
+            # right move for a coarse mask and the wrong one for an accurate
+            # matte: the reconstruction is what introduces the staircase edges
+            # and discards the soft band.  The alpha snap is skipped for the
+            # same reason -- it exists to harden a mushy boundary, and this one
+            # is already crisp.
+            alpha = np.clip(probability_mask.astype(np.float32, copy=True), 0.0, 1.0)
+        else:
+            # Exam photo outputs need a distinct white-background boundary. Guided
+            # filtering preserves fine edges, then this contrast step removes the
+            # broad semi-transparent halo that creates grey outlines after compositing.
+            alpha = (alpha - cfg.alpha_snap_low_threshold) / (
+                cfg.alpha_snap_high_threshold - cfg.alpha_snap_low_threshold
+            )
+            alpha = np.clip(alpha, 0.0, 1.0)
+            alpha = alpha * alpha * (3.0 - 2.0 * alpha)
+            alpha = alpha.astype(np.float32)
 
         # Refined binary mask (thresholded at 0.5)
         binary_arr = np.where(alpha >= 0.5, 255, 0).astype(np.uint8)

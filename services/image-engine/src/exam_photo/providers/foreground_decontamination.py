@@ -9,7 +9,12 @@ from PIL import Image
 def decontaminate_foreground_edges(
     image: Image.Image,
     alpha: np.ndarray[Any, Any],
-    max_search_distance: int = 15,
+    # Propagation advances one pixel per iteration, so this is the furthest a
+    # semi-transparent pixel can be from opaque foreground and still have its
+    # colour corrected.  Anything beyond it keeps background colour and shows up
+    # as a grey outline after compositing, so this must cover the matting band
+    # width the refiner produces.
+    max_search_distance: int = 24,
     outlier_threshold: float = 0.5,
 ) -> tuple[Image.Image, list[str]]:
     """Applies color decontamination strictly within the uncertain boundary region (0.05 < alpha < 0.95).
