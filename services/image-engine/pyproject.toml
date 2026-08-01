@@ -39,6 +39,17 @@ dev = [
 face = [
     "mediapipe~=0.10.35",
 ]
+# Matting extra: BiRefNet-based subject segmentation (see DEC-031). Install with
+# pip install -e ".[dev,face,matting]". Optional because it pulls torch, which is
+# a large dependency the core engine and MediaPipe-only deployments do not need.
+matting = [
+    "torch>=2.2.0",
+    "torchvision>=0.17.0",
+    "transformers>=4.40.0",
+    "timm>=1.0.0",
+    "einops>=0.7.0",
+    "huggingface_hub>=0.23.0",
+]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/exam_photo"]

@@ -1,0 +1,18 @@
+{
+  "_comment": "Model manifest for BiRefNet subject matting (DEC-031). Weights are vendored from the Hugging Face Hub via scripts/download_birefnet.py rather than a single-file URL; the pinned revision and weights checksum below are what that script verifies before use.",
+  "name": "BiRefNet",
+  "repo_id": "ZhengPeng7/BiRefNet",
+  "revision": "e2bf8e4460fc8fa32bba5ea4d94b3233d367b0e4",
+  "weights_filename": "model.safetensors",
+  "weights_sha256": "9ab37426bf4de0567af6b5d21b16151357149139362e6e8992021b8ce356a154",
+  "weights_size_bytes": 444473596,
+  "licence": "MIT",
+  "licence_url": "https://huggingface.co/ZhengPeng7/BiRefNet/blob/main/LICENSE",
+  "model_card_url": "https://huggingface.co/ZhengPeng7/BiRefNet",
+  "description": "General-purpose dichotomous image segmentation / matting transformer. Selected over the current MediaPipe selfie segmenter after a measured comparison (DEC-031) showed it correctly excludes background structures the selfie model absorbs into the subject mask, and over RMBG-2.0 (a retrain of this same architecture, CC BY-NC 4.0) and BEN2 (Apache-2.0, ONNX export) on both edge-alignment quality and speed.",
+  "inference_input_size": 512,
+  "_inference_input_size_note": "BiRefNet accepts any square input; 512 was chosen after a resolution sweep showed it matches 1024's edge-alignment score and is visually indistinguishable while running ~7x faster on CPU (see DEC-031).",
+  "local_model_dir_env_var": "EXAM_PHOTO_BIREFNET_MODEL_DIR",
+  "local_model_dir_default": "model-assets/birefnet",
+  "redistribution_notes": "MIT licensed. Suitable for redistribution and commercial use. Weights are large (~424 MiB) and gitignored like the other model-assets entries; acquire with scripts/download_birefnet.py."
+}

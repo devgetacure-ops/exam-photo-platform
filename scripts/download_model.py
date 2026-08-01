@@ -185,10 +185,12 @@ def main() -> None:
     print("MediaPipe BlazeFace Model — Licence Notice")
     print("=" * 70)
     print(f"  Variant:      {args.variant}")
-    print(f"  Description:  {variant_info['description']}")
-    print(f"  Source URL:   {variant_info['url']}")
-    print(f"  Model card:   {variant_info['model_card_url']}")
-    print(f"  Licence:      Apache 2.0 ({variant_info['licence_url']})")
+    print(f"  Description:  {variant.get('description', '(not recorded)')}")
+    print(f"  Source URL:   {source_url}")
+    print(f"  Model card:   {variant.get('model_card_url', '(not recorded)')}")
+    print(
+        f"  Licence:      Apache 2.0 ({variant.get('licence_url', '(not recorded)')})"
+    )
     print(
         "\n  NOTE: Verify the model card independently before redistribution.\n"
         "  The model file licence must be confirmed separately from the\n"
