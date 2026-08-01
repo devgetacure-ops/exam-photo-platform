@@ -18,7 +18,142 @@ from exam_photo.providers.crop_planning import (
     CropValidationReport,
 )
 from exam_photo.providers.face_detection import FaceDetection
+from exam_photo.providers.portrait_composition import PortraitCompositionResult
 from exam_photo.suitability.issue_codes import IssueSeverity
+
+# Guaranteed margin below the landmark chin point, as a fraction of the
+# measured crown-to-chin span rather than the unreliable detector face box.
+#
+# Three independent per-photo beard-length signals were tried and rejected on
+# measured evidence, not assumption: (1) silhouette width below the chin --
+# rejected because clean-shaven necks widen into shoulders *faster* than
+# bearded jaws do (measured: two clean-shaven reference photos grew wider,
+# sooner, than three bearded ones); (2) a colour/luminance profile tracked
+# down from the mouth -- rejected because dark shirts and collars register
+# indistinguishably from dark facial hair, producing nonsense readings on
+# every subject wearing a dark top; (3) a binary presence probe in a small
+# patch right at the chin -- rejected because ordinary under-chin shadow
+# produces the same luminance drop as facial hair, misclassifying most
+# clean-shaven reference subjects as bearded. No further heuristic was
+# attempted after three independent failures on real photos.
+#
+# The value is therefore a calibrated fixed floor, not detection, sized by an
+# explicit trade-off: the largest margin that remains structurally reachable
+# together with the 75% face-coverage floor. With an 0.08 top margin, total
+# mandatory vertical extent is span*(1 + 0.08 + M); requiring this to fit
+# within span/0.75 = 1.333*span bounds M at ~0.253, so 0.24 leaves a safety
+# margin under that ceiling. This covers 56 of 60 reference photos exactly
+# (measured against each photo's own below-chin/head-height ratio); the 4
+# that need more -- three with heavy beards reaching well onto the neck --
+# cannot hit both zero clipping and 75% coverage simultaneously by
+# construction, so the search correctly protects the beard and falls short of
+# 75% instead of clipping (see DEC-035); the crop-fix UI is the intended path
+# for those, not silent over-cropping.
+_CHIN_BEARD_MARGIN_RATIO = 0.24
+
+# Guaranteed margin above the observed hairline, as a fraction of the
+# crown-to-chin span.  Reference mean is 0.059, p90 0.093; this sits near the
+# upper end of ordinary variation so the top edge reads as deliberate framing
+# rather than a bone-tight crop.
+_TOP_MARGIN_RATIO = 0.08
+
+# Guaranteed margin beside each ear, as a fraction of the measured head-core
+# width.
+#
+# Sized the same way as ``_CHIN_BEARD_MARGIN_RATIO``: the largest value
+# structurally reachable together with the 75% coverage floor, not the raw
+# reference mean (0.090 left / 0.081 right), which ignores the aspect-ratio
+# interaction below.
+#
+# The mandatory box's own aspect ratio is width*(1+2*margin) / (span*1.32)
+# (1.32 = 1 + top margin + chin/beard margin). Once that exceeds the
+# target aspect (0.667 for 1200x1800), the crop becomes width-bound instead
+# of height-bound, and max achievable head_height_ratio drops below the
+# height-bound ceiling of 1/1.32 = 0.758 -- capping out at
+# target_aspect*span / (width*(1+2*margin)) instead, which falls under the
+# 0.75 floor for most ordinary head proportions once margin exceeds roughly
+# 0.03-0.05. Measured on the 60-photo reference set (post shoulder-width-
+# contamination fixes -- see DEC-036): 10 of 58 measurable photos have a
+# span/width ratio below 1.125 and cannot reach 0.75 at ANY margin value
+# (a different, unrelated problem -- see DEC-036); of the remaining 48,
+# margin=0.07 (the prior value) left only 29/48 (60%) able to reach the
+# floor, while margin=0.03 leaves 44/48 (92%) able to reach it, matching the
+# ~93% coverage the chin-margin derivation targets.
+_SIDE_MARGIN_RATIO = 0.03
+
+# Half-width of the mandatory horizontal head band, in detector face-box widths.
+# The full head silhouette (hair and ears included) measures 1.30 +/- 0.15 face
+# widths across the reference set, i.e. ~0.15 face widths beyond each side of
+# the detector box.
+_HEAD_SIDE_MARGIN_RATIO = 0.15
+
+# Smallest head span a mask-derived crown may imply, as a fraction of the
+# detector face-box height.  Guards against a crown reading so low it would
+# leave no head above the chin, without assuming the face box is well sized.
+_MIN_HEAD_SPAN_FACE_RATIO = 0.25
+
+# Widest a mask-derived head may be, in detector face-box widths, before the
+# reading is treated as mask contamination rather than hair.  The reference set
+# measures 1.30 +/- 0.15, so this leaves generous room for voluminous hair
+# while rejecting a mask that has swallowed background either side of the head.
+_MAX_HEAD_WIDTH_FACE_RATIO = 2.6
+
+# Narrowest a mask-derived head may be, in detector face-box widths, before
+# the reading is treated as a segmentation failure (mask clipped into the
+# face) rather than a genuinely narrow visible head.  Photo 6-3 measures
+# 0.66 (ears fully covered by hair); set below that with margin rather than
+# at the boundary of one measured case.
+_MIN_HEAD_WIDTH_FACE_RATIO = 0.5
+
+# Mouth-to-chin distance as a multiple of eye-to-mouth distance, for the chin
+# fallback used when the dense landmarker cannot find a face the detector did
+# (see DEC-034). Calibrated as the mean over 29 reference photos with a known
+# landmark chin (sd 0.142, so this is a coarse anatomical estimate, not
+# precision -- it exists to beat the box-bottom proxy, not replace real
+# landmarks).
+_MOUTH_TO_CHIN_RATIO = 0.598
+
+# Face-coverage cost weights.  Undershooting the target moves toward the
+# minimum the exam rejects outright; overshooting produces a tighter crop, which
+# is the preferred direction, so the two are not penalised equally.
+_HEAD_HEIGHT_UNDERSHOOT_WEIGHT = 60.0
+_HEAD_HEIGHT_OVERSHOOT_WEIGHT = 12.0
+
+# Order in which composition constraints give way when no crop can satisfy them
+# all.  Each tier lists the constraints waivable at that level, so tier 0 is a
+# fully compliant crop and later tiers trade away progressively more.
+#
+# ``head_height_min`` -- falling below the exam's minimum face coverage -- is
+# absent from every tier and so can never be traded away: it is the published
+# requirement the output is judged against.  ``head_height_max`` is waived early
+# because exceeding it simply means a tighter crop, which is preferred, and
+# subject protection independently prevents that from cutting into the head.
+#
+# Torso inclusion goes first because a little more or less shoulder is the least
+# visible compromise; eye line and top margin follow; horizontal centring and
+# head width come after those.
+#
+# Subject protection (complete hair, chin/beard boundary, ear visibility,
+# padding limits) is likewise never waived here -- those guard the candidate's
+# likeness rather than the framing, and are enforced independently.
+_RELAXATION_TIERS: tuple[frozenset[str], ...] = (
+    frozenset(),
+    frozenset({"head_height_max"}),
+    frozenset({"head_height_max", "torso"}),
+    frozenset({"head_height_max", "torso", "eye_line"}),
+    frozenset({"head_height_max", "torso", "eye_line", "top_margin"}),
+    frozenset({"head_height_max", "torso", "eye_line", "top_margin", "center_offset"}),
+    frozenset(
+        {
+            "head_height_max",
+            "torso",
+            "eye_line",
+            "top_margin",
+            "center_offset",
+            "head_width",
+        }
+    ),
+)
 
 
 class DeterministicCropPlanner(CropPlanner):
@@ -36,6 +171,7 @@ class DeterministicCropPlanner(CropPlanner):
         head_estimate: Optional[BoundingBox],
         refined_mask: Optional[Image.Image] = None,
         alpha_mask: Optional[np.ndarray[Any, Any]] = None,
+        portrait_composition: Optional[PortraitCompositionResult] = None,
         config: Optional[CropConfig] = None,
     ) -> CropPlanResult:
         start_time = time.perf_counter()
@@ -93,7 +229,11 @@ class DeterministicCropPlanner(CropPlanner):
         face_box = face.bounding_box
 
         # 3. Establish subject preservation box
-        if head_estimate is not None:
+        composition_box: Optional[BoundingBox] = None
+        if portrait_composition is not None:
+            preserve_box = portrait_composition.preservation_box
+            composition_box = portrait_composition.preservation_box
+        elif head_estimate is not None:
             preserve_box = head_estimate
         else:
             # Fallback face-derived expanded box
@@ -107,11 +247,28 @@ class DeterministicCropPlanner(CropPlanner):
             )
 
         # Refined mask refinement bounds expansion (Secondary validation / constraint)
-        if refined_mask is not None:
+        if refined_mask is not None and head_estimate is None:
             mask_arr = np.array(refined_mask)
-            y_limit = int(round(preserve_box.bottom))
+            y_limit = int(
+                round(
+                    min(
+                        preserve_box.bottom,
+                        face_box.bottom + face_box.height * 0.20,
+                    )
+                )
+            )
             if y_limit > 0:
-                ys, xs = np.where(mask_arr[0:y_limit, :] > 127)
+                x_start = max(
+                    0, int(round(preserve_box.left - preserve_box.width * 0.35))
+                )
+                x_end = min(
+                    image_width,
+                    int(round(preserve_box.right + preserve_box.width * 0.35)),
+                )
+                sub_mask = mask_arr[0:y_limit, x_start:x_end]
+                ys_sub, xs_sub = np.where(sub_mask > 127)
+                ys = ys_sub
+                xs = xs_sub + x_start
                 if len(ys) > 0:
                     upper_mask_bbox = BoundingBox(
                         left=float(np.min(xs)),
@@ -123,8 +280,108 @@ class DeterministicCropPlanner(CropPlanner):
                         left=min(preserve_box.left, upper_mask_bbox.left),
                         top=min(preserve_box.top, upper_mask_bbox.top),
                         right=max(preserve_box.right, upper_mask_bbox.right),
-                        bottom=max(preserve_box.bottom, upper_mask_bbox.bottom),
+                        bottom=preserve_box.bottom,
                     )
+
+        # 3b. Mandatory subject region.
+        #
+        # ``preserve_box`` is the *generous* region (it absorbs hair spread,
+        # shoulder alpha and a lower-body exclusion band, measuring ~1.14x the
+        # real head height and ~1.31x its width).  It is the right region to
+        # avoid cutting into casually, but it is not a guarantee: reference exam
+        # photos routinely let outer hair reach or leave the side edges.
+        #
+        # ``mandatory_box`` is what the crop must genuinely retain: crown to
+        # chin-plus-beard-margin, spanning the head core.  Planning constraints
+        # and preservation validation are both stated against it so the planner
+        # cannot produce a crop its own validator then rejects.
+        #
+        # This applies to profile-driven (adaptive) planning only.  The legacy
+        # branch below has no composition targets and its published contract is
+        # "the crop contains the preservation box", so it keeps the original
+        # reference geometry unchanged.
+        adaptive_mode = not (
+            cfg.target_head_height_ratio is None and cfg.crop_profile is None
+        )
+        # Set by the candidate search when this particular photo could not be
+        # composed while keeping the whole preservation box.  Validation below
+        # then judges the crop against what was actually promised for it.
+        outer_hair_relaxation_used = False
+        crown_y = (
+            self._estimate_crown_y(face, preserve_box, alpha_mask, refined_mask)
+            if adaptive_mode
+            else preserve_box.top
+        )
+        chin_y = self._estimate_chin_y(face, preserve_box)
+
+        # Trim phantom space above the subject out of the preservation box too.
+        # ``preserve_box`` drives crop sizing and containment, and its top comes
+        # from a geometric expansion of the detector face box, so an oversized
+        # box makes the crop reserve room for a subject that is not there --
+        # the head then lands far below target no matter what the composition
+        # ratios ask for.  The observed mask crown is the measured start of the
+        # subject, so nothing above it needs preserving.
+        if adaptive_mode and crown_y > preserve_box.top:
+            preserve_box = BoundingBox(
+                left=preserve_box.left,
+                top=crown_y,
+                right=preserve_box.right,
+                bottom=preserve_box.bottom,
+            )
+            # Preservation validation must judge the crop against the same
+            # region the planner was asked to keep.  Leaving the composition
+            # box untrimmed here reports a crop as clipping a subject that was
+            # never there, which is the planner/validator disagreement this
+            # module otherwise takes care to avoid.
+            if composition_box is not None:
+                composition_box = preserve_box
+
+        # These bounds are the *floor* the crop may never cross.  They are always
+        # computed, but the candidate search only falls back to them for photos
+        # that cannot be composed while keeping the whole preservation box, so a
+        # subject whose hair fits is never trimmed to this floor.
+        #
+        # Margins on all four sides are scaled from ``anatomical_span``
+        # (crown-to-chin), the one anatomical measurement that does not depend
+        # on the face detector's box: it comes from the observed mask crown and
+        # the landmark chin.  Scaling from face_box.height instead -- the
+        # previous approach -- silently under-margins whenever that box is
+        # oversized, which is common enough that it drove several of the crop
+        # bugs already fixed in this module.  A small margin above the hair,
+        # beside the ears and below the chin/beard line is a deliberate
+        # professional buffer, not a byproduct of the search's cost function.
+        anatomical_span = max(1.0, chin_y - crown_y)
+        head_core_left, head_core_right = self._estimate_head_core_x(
+            face, preserve_box, alpha_mask, refined_mask, crown_y, chin_y
+        )
+        anatomical_width = max(1.0, head_core_right - head_core_left)
+
+        # A beard extends past the landmark chin point, which tracks the jaw
+        # under the beard rather than its visible tip, and there is no reliable
+        # way to measure how far: the mask has no foreground/background
+        # transition at a beard's bottom edge, since it blends continuously
+        # into the collar (measured directly -- a mask-width probe attempting
+        # to detect it could not separate beard length from shoulder framing).
+        # The margin instead uses the reference set's own bearded subjects
+        # (mean 0.148 of head span, max 0.254, n=5) with headroom above that
+        # mean, applied uniformly since beard presence cannot be detected.
+        margin_top = _TOP_MARGIN_RATIO * anatomical_span
+        margin_bottom = _CHIN_BEARD_MARGIN_RATIO * anatomical_span
+        margin_side = _SIDE_MARGIN_RATIO * anatomical_width
+
+        crown_y = max(preserve_box.top, crown_y - margin_top)
+        chin_protection_y = min(
+            preserve_box.bottom,
+            chin_y + margin_bottom,
+        )
+        head_core_left = max(preserve_box.left, head_core_left - margin_side)
+        head_core_right = min(preserve_box.right, head_core_right + margin_side)
+        mandatory_box = BoundingBox(
+            left=head_core_left,
+            top=crown_y,
+            right=head_core_right,
+            bottom=max(chin_protection_y, crown_y + 1.0),
+        )
 
         # 4. Sizing and candidate generation
         w_subject = preserve_box.width
@@ -179,7 +436,23 @@ class DeterministicCropPlanner(CropPlanner):
             ideal_b_rounded = ideal_t_rounded + int(round(h_crop))
         else:
             # Adaptive candidate grid search cost-minimization
-            h_head = preserve_box.height
+            #
+            # Composition ratios are measured against the *anatomical* head span
+            # (crown -> chin), not against ``preserve_box``.  The preservation box
+            # deliberately extends below the chin to protect the beard/jaw boundary
+            # during clipping checks, which makes it ~1.14x taller than the real
+            # head; using it as the composition reference silently under-crops
+            # every photo.  ``preserve_box`` is still used for containment and
+            # clipping validation below.
+            #
+            # ``anatomical_span``, not ``chin_y - crown_y``, on purpose:
+            # ``crown_y`` was padded upward by the top margin below, and face
+            # coverage must be measured against true anatomy.  Using the padded
+            # value here would let the margin get silently absorbed into the
+            # coverage target instead of added on top of a correctly tight crop
+            # -- the crop would size itself larger to make the *padded* span
+            # hit 86%, so the delivered anatomical coverage would fall short.
+            h_head = anatomical_span
             w_head = preserve_box.width
 
             face_cx = (face.bounding_box.left + face.bounding_box.right) / 2.0
@@ -225,13 +498,45 @@ class DeterministicCropPlanner(CropPlanner):
                 k_min = max(1, int(round(h_start / ratio_h)))
                 k_max = max(k_min + 5, int(round(h_end / ratio_h)))
                 k_vals = np.unique(np.linspace(k_min, k_max, 40).astype(int))
+                exact_h_values = [
+                    h_head / target_head_height_ratio,
+                    h_head / min_head_height_ratio,
+                    h_head / max_head_height_ratio,
+                    h_min,
+                ]
+                exact_k_vals = [
+                    max(1, int(math.ceil(h_val / ratio_h)))
+                    for h_val in exact_h_values
+                    if h_val > 0.0 and np.isfinite(h_val)
+                ]
+                k_vals = np.unique(np.concatenate([k_vals, exact_k_vals]))
                 for k in k_vals:
                     hc = float(ratio_h * k)
                     wc = float(ratio_w * k)
                     k_candidates.append((hc, wc))
             else:
-                h_vals = np.linspace(h_start, h_end, 40)
-                for hc in h_vals:
+                h_candidates = np.linspace(h_start, h_end, 40)
+                exact_h_values_arr = np.array(
+                    [
+                        h_head / target_head_height_ratio,
+                        h_head / min_head_height_ratio,
+                        h_head / max_head_height_ratio,
+                        h_min,
+                    ],
+                    dtype=np.float64,
+                )
+                h_candidates = np.unique(
+                    np.concatenate(
+                        [
+                            h_candidates,
+                            exact_h_values_arr[
+                                (exact_h_values_arr > 0.0)
+                                & np.isfinite(exact_h_values_arr)
+                            ],
+                        ]
+                    )
+                )
+                for hc in h_candidates:
                     k_candidates.append((hc, hc * target_aspect))
 
             dx_factors = [-0.08, -0.04, -0.02, 0.0, 0.02, 0.04, 0.08]
@@ -239,7 +544,21 @@ class DeterministicCropPlanner(CropPlanner):
 
             best_cand = None
             best_cost = float("inf")
-            best_is_hard_valid = False
+
+            # Escalating strictness, decided per photo rather than by a profile
+            # label.  A candidate is "strict" when it keeps the whole
+            # preservation box, and "relaxed" when it keeps the head core plus
+            # the chin/beard margin but lets outer hair leave the frame.  Both
+            # are scored in one pass; a strict crop always wins if this photo
+            # admits one, so no hair is given up unnecessarily.  Only subjects
+            # that cannot be composed strictly -- voluminous hair, tall target
+            # aspects, a head near the source edge -- fall back to the relaxed
+            # result, which is what reference photos do for those same subjects.
+            strict_cand = None
+            strict_cost = float("inf")
+            strict_tier = len(_RELAXATION_TIERS)
+            strict_ratios: dict[str, Any] = {}
+            best_tier = len(_RELAXATION_TIERS)
 
             from exam_photo.providers.crop_planning import EarsPolicy
 
@@ -257,11 +576,21 @@ class DeterministicCropPlanner(CropPlanner):
                         r_cand = l_cand + wc
                         b_cand = t_cand + hc
 
-                        is_hard_invalid = False
+                        # Constraints are collected rather than collapsed into a
+                        # single boolean so the search can give way on the least
+                        # important ones first (see _RELAXATION_TIERS).  Treating
+                        # composition as all-or-nothing meant one unsatisfiable
+                        # constraint discarded the targets entirely and fell back
+                        # to a geometric projection, which measured under 60%
+                        # face coverage on 12 of 57 reference photos while every
+                        # other photo landed in 75-90%.  Face coverage is the
+                        # published exam requirement, so it is the last thing
+                        # surrendered, never the first.
+                        violations: set[str] = set()
 
                         head_height_ratio = h_head / hc
                         head_width_ratio = w_head / wc
-                        top_margin_ratio = (preserve_box.top - t_cand) / hc
+                        top_margin_ratio = (crown_y - t_cand) / hc
                         eye_line_ratio = (eye_y - t_cand) / hc
                         crop_cx = (l_cand + r_cand) / 2.0
                         center_offset_ratio = abs(face_cx - crop_cx) / wc
@@ -269,63 +598,98 @@ class DeterministicCropPlanner(CropPlanner):
                             max(0.0, b_cand - preserve_box.bottom) / hc
                         )
 
-                        if (
-                            head_height_ratio < min_head_height_ratio
-                            or head_height_ratio > max_head_height_ratio
-                        ):
-                            is_hard_invalid = True
+                        # Split deliberately: dropping below the minimum breaks
+                        # the published exam requirement and is never an
+                        # acceptable compromise, whereas exceeding the maximum
+                        # only means a tighter crop, which is desirable so long
+                        # as subject protection still holds.
+                        if head_height_ratio < min_head_height_ratio:
+                            violations.add("head_height_min")
+                        if head_height_ratio > max_head_height_ratio:
+                            violations.add("head_height_max")
 
                         if (
                             cfg.minimum_head_width_ratio is not None
                             and head_width_ratio < cfg.minimum_head_width_ratio
                         ):
-                            is_hard_invalid = True
+                            violations.add("head_width")
                         if (
                             cfg.maximum_head_width_ratio is not None
                             and head_width_ratio > cfg.maximum_head_width_ratio
                         ):
-                            is_hard_invalid = True
+                            violations.add("head_width")
 
                         if (
                             min_top_margin_ratio is not None
                             and top_margin_ratio < min_top_margin_ratio
                         ):
-                            is_hard_invalid = True
+                            violations.add("top_margin")
                         if (
                             max_top_margin_ratio is not None
                             and top_margin_ratio > max_top_margin_ratio
                         ):
-                            is_hard_invalid = True
+                            violations.add("top_margin")
 
                         if (
                             cfg.minimum_eye_line_ratio is not None
                             and eye_line_ratio < cfg.minimum_eye_line_ratio
                         ):
-                            is_hard_invalid = True
+                            violations.add("eye_line")
                         if (
                             cfg.maximum_eye_line_ratio is not None
                             and eye_line_ratio > cfg.maximum_eye_line_ratio
                         ):
-                            is_hard_invalid = True
+                            violations.add("eye_line")
 
                         if center_offset_ratio > max_center_offset:
-                            is_hard_invalid = True
+                            violations.add("center_offset")
 
                         if torso_inclusion_ratio > max_torso_inclusion:
-                            is_hard_invalid = True
+                            violations.add("torso")
 
+                        is_hard_invalid = False
+
+                        # The mandatory head region must survive whenever subject
+                        # clipping is disallowed, independently of the rule's
+                        # complete-hair flag.  Preservation validation below
+                        # blocks on exactly this condition, so leaving it out of
+                        # the search let the planner select a crop its own
+                        # validator then rejected -- previously masked because
+                        # every candidate failed and the geometric fallback
+                        # happened to contain the head.
+                        if not cfg.allow_subject_clipping:
+                            if (
+                                t_cand > mandatory_box.top
+                                or l_cand > mandatory_box.left
+                                or r_cand < mandatory_box.right
+                                or b_cand < mandatory_box.bottom
+                            ):
+                                is_hard_invalid = True
+
+                        # ``strict_violation`` marks a candidate that would give
+                        # up some outer hair; it stays selectable but only wins
+                        # when nothing keeps the full preservation box.
+                        strict_violation = False
                         if complete_hair_required and not cfg.allow_subject_clipping:
+                            if (
+                                t_cand > crown_y
+                                or l_cand > head_core_left
+                                or r_cand < head_core_right
+                            ):
+                                is_hard_invalid = True
                             if (
                                 t_cand > preserve_box.top
                                 or l_cand > preserve_box.left
                                 or r_cand < preserve_box.right
                             ):
-                                is_hard_invalid = True
+                                strict_violation = True
                         if (
                             complete_chin_required or complete_beard_boundary_required
                         ) and not cfg.allow_subject_clipping:
-                            if b_cand < preserve_box.bottom:
+                            if b_cand < chin_protection_y:
                                 is_hard_invalid = True
+                            if b_cand < preserve_box.bottom:
+                                strict_violation = True
 
                         if cfg.ears_policy == EarsPolicy.REQUIRED_VISIBLE:
                             if face.landmarks and face.landmarks.custom_landmarks:
@@ -348,10 +712,27 @@ class DeterministicCropPlanner(CropPlanner):
                             if out_l > 0.5 or out_t > 0.5 or out_r > 0.5 or out_b > 0.5:
                                 is_hard_invalid = True
 
+                        # Lowest tier whose waiver set covers this candidate's
+                        # violations.  A candidate breaking a subject-protection
+                        # rule is unusable at any tier.
+                        tier_needed = len(_RELAXATION_TIERS)
+                        if not is_hard_invalid:
+                            for tier_index, waivable in enumerate(_RELAXATION_TIERS):
+                                if violations <= waivable:
+                                    tier_needed = tier_index
+                                    break
+
                         cost = 0.0
+                        # Asymmetric on purpose: a crop looser than target walks
+                        # toward the minimum coverage the exam will reject, while
+                        # a tighter one walks toward a better result, so undershoot
+                        # is penalised far more heavily than overshoot.
+                        head_height_error = head_height_ratio - target_head_height_ratio
                         cost += (
-                            10.0 * (head_height_ratio - target_head_height_ratio) ** 2
-                        )
+                            _HEAD_HEIGHT_UNDERSHOOT_WEIGHT
+                            if head_height_error < 0
+                            else _HEAD_HEIGHT_OVERSHOOT_WEIGHT
+                        ) * head_height_error**2
                         if cfg.target_head_width_ratio is not None:
                             cost += (
                                 5.0
@@ -374,42 +755,97 @@ class DeterministicCropPlanner(CropPlanner):
                             "torso_inclusion_ratio": torso_inclusion_ratio,
                         }
 
-                        if best_cand is None:
-                            best_cand = (l_cand, t_cand, r_cand, b_cand, hc, wc)
-                            best_cost = cost
-                            best_is_hard_valid = not is_hard_invalid
-                            best_ratios = cand_ratios
-                        else:
-                            if not is_hard_invalid and best_is_hard_valid:
-                                if cost < best_cost:
-                                    best_cand = (l_cand, t_cand, r_cand, b_cand, hc, wc)
-                                    best_cost = cost
-                                    best_ratios = cand_ratios
-                            elif not is_hard_invalid and not best_is_hard_valid:
-                                best_cand = (l_cand, t_cand, r_cand, b_cand, hc, wc)
-                                best_cost = cost
-                                best_is_hard_valid = True
-                                best_ratios = cand_ratios
-                            elif is_hard_invalid and not best_is_hard_valid:
-                                if cost < best_cost:
-                                    best_cand = (l_cand, t_cand, r_cand, b_cand, hc, wc)
-                                    best_cost = cost
-                                    best_ratios = cand_ratios
+                        usable = tier_needed < len(_RELAXATION_TIERS)
 
-            if best_cand is None or not best_is_hard_valid:
-                issues_list = [
-                    CropValidationIssue(
-                        code=CropIssueCode.CROP_NO_VALID_COMPOSITION,
-                        severity=IssueSeverity.ERROR,
-                        blocking_for_processing=True,
-                        message="No valid crop composition candidate satisfies hard rules.",
-                    )
-                ]
-                return self._empty_failed_result(
-                    cfg=cfg,
-                    start_time=start_time,
-                    issues=issues_list,
-                    issue_codes=[CropIssueCode.CROP_NO_VALID_COMPOSITION],
+                        if usable and not strict_violation:
+                            if (tier_needed, cost) < (strict_tier, strict_cost):
+                                strict_cand = (l_cand, t_cand, r_cand, b_cand, hc, wc)
+                                strict_tier = tier_needed
+                                strict_cost = cost
+                                strict_ratios = cand_ratios
+
+                        # Rank by how little had to be given up first, then by
+                        # cost within that tier, so a fully compliant crop always
+                        # beats a compromised one and the compromise chosen is
+                        # the mildest available.
+                        if usable and (tier_needed, cost) < (best_tier, best_cost):
+                            best_cand = (l_cand, t_cand, r_cand, b_cand, hc, wc)
+                            best_tier = tier_needed
+                            best_cost = cost
+                            best_ratios = cand_ratios
+
+            # Prefer a crop that keeps the entire preservation box whenever this
+            # photo admits one; the relaxed result is a fallback, not the goal.
+            if strict_cand is not None:
+                best_cand = strict_cand
+                best_cost = strict_cost
+                best_tier = strict_tier
+                best_ratios = strict_ratios
+                outer_hair_relaxation_used = False
+            else:
+                # No candidate kept the whole preservation box, so whatever is
+                # selected below -- a relaxed candidate or the best-effort
+                # fallback -- has given up some outer subject area.  Judge it
+                # against what it can actually promise.
+                outer_hair_relaxation_used = True
+
+            # Only reached when no candidate could protect the subject at any
+            # tier (hair, chin/beard, ears, or padding limits).  The geometric
+            # projection below is the last resort, kept so such a photo still
+            # yields an image to inspect rather than nothing at all; the
+            # relaxation ladder handles every ordinary compromise before here.
+            if best_cand is None:
+                add_issue(
+                    CropIssueCode.CROP_NO_VALID_COMPOSITION,
+                    IssueSeverity.WARNING,
+                    False,
+                )
+                if ratio_w is not None and ratio_h is not None:
+                    k_w = math.ceil(min_w_crop_from_subject / ratio_w)
+                    k_h = math.ceil(min_h_crop_from_subject / ratio_h)
+                    k = max(k_w, k_h)
+                    wc = float(ratio_w * k)
+                    hc = float(ratio_h * k)
+                else:
+                    hc = h_min
+                    wc = w_min
+
+                l_ideal = face_cx - wc / 2.0
+                t_ideal = face_cy - cfg.preferred_face_center_y_ratio * hc
+
+                l_min = preserve_box.right - wc
+                l_max = preserve_box.left
+                t_min = preserve_box.bottom - hc
+                t_max = preserve_box.top
+
+                def project_preservation(val: float, vmin: float, vmax: float) -> float:
+                    if vmin > vmax:
+                        return (vmin + vmax) / 2.0
+                    return max(vmin, min(val, vmax))
+
+                l_cand = project_preservation(l_ideal, l_min, l_max)
+                t_cand = project_preservation(t_ideal, t_min, t_max)
+                r_cand = l_cand + wc
+                b_cand = t_cand + hc
+                best_cand = (l_cand, t_cand, r_cand, b_cand, hc, wc)
+                best_ratios = {
+                    "head_height_ratio": h_head / hc,
+                    "head_width_ratio": preserve_box.width / wc,
+                    "top_margin_ratio": (crown_y - t_cand) / hc,
+                    "eye_line_ratio": (eye_y - t_cand) / hc,
+                    "center_offset_ratio": abs(face_cx - ((l_cand + r_cand) / 2.0))
+                    / wc,
+                    "torso_inclusion_ratio": max(0.0, b_cand - preserve_box.bottom)
+                    / hc,
+                }
+
+            # A compromised crop is reported rather than passing silently, so a
+            # photo that could not be composed cleanly is visible downstream.
+            if 0 < best_tier < len(_RELAXATION_TIERS):
+                add_issue(
+                    CropIssueCode.CROP_NO_VALID_COMPOSITION,
+                    IssueSeverity.WARNING,
+                    False,
                 )
 
             l_cand, t_cand, r_cand, b_cand, hc, wc = best_cand
@@ -462,11 +898,21 @@ class DeterministicCropPlanner(CropPlanner):
             )
 
         # 6. Preservation ratio checks
+        #
+        # Measured against ``mandatory_box`` (crown -> chin+beard, head core), not
+        # the generous ``preserve_box``: the planner intentionally lets outer hair
+        # leave the frame the way reference photos do, so validating against the
+        # generous box would reject the very crops the planner is asked to make.
+        preservation_reference_box = (
+            mandatory_box
+            if (adaptive_mode and outer_hair_relaxation_used)
+            else (composition_box or head_estimate)
+        )
         head_coverage_ratio: Optional[float] = None
-        if head_estimate is not None:
-            inter = head_estimate.intersection(crop_box)
+        if preservation_reference_box is not None:
+            inter = preservation_reference_box.intersection(crop_box)
             if inter is not None:
-                head_coverage_ratio = inter.area / head_estimate.area
+                head_coverage_ratio = inter.area / preservation_reference_box.area
             else:
                 head_coverage_ratio = 0.0
 
@@ -487,26 +933,60 @@ class DeterministicCropPlanner(CropPlanner):
         mask_preservation_valid: Optional[bool] = None
         if refined_mask is not None:
             mask_arr = np.array(refined_mask)
-            y_limit = int(round(preserve_box.bottom))
+            y_limit = int(
+                round(
+                    min(
+                        preserve_box.bottom,
+                        face_box.bottom + face_box.height * 0.20,
+                    )
+                )
+            )
             if y_limit > 0:
-                total_fg = np.sum(mask_arr[0:y_limit, :] > 127)
+                # Measure retention over the region the crop actually promised
+                # to keep for this photo, not a fixed expansion beyond it.
+                # Widening the measurement by a constant fraction of the
+                # preservation box counts hair the planner never undertook to
+                # retain, so a correctly composed crop could fail a check whose
+                # bar nothing in the planner targets.  Keeping the two aligned
+                # is what stops the planner and its validator disagreeing.
+                guarantee_box = preservation_reference_box or preserve_box
+                sub_l = max(0, int(round(guarantee_box.left)))
+                sub_r = min(image_width, int(round(guarantee_box.right)))
+                if sub_r <= sub_l:
+                    sub_l = max(0, int(round(preserve_box.left)))
+                    sub_r = min(image_width, int(round(preserve_box.right)))
+                # Align the vertical extent for the same reason: starting at row
+                # 0 counts foreground above the guaranteed region (stray hair,
+                # mask noise near the frame top) that the crop never promised to
+                # keep, which drags the ratio down on tall sources.
+                sub_t = max(0, min(int(round(guarantee_box.top)), y_limit))
+                total_fg = np.sum(mask_arr[sub_t:y_limit, sub_l:sub_r] > 127)
                 if total_fg > 0:
-                    y_start = max(0, min(clamped_t, y_limit))
-                    y_end = max(0, min(clamped_b, y_limit))
+                    y_start = max(sub_t, min(clamped_t, y_limit))
+                    y_end = max(sub_t, min(clamped_b, y_limit))
+                    x_start_crop = max(clamped_l, sub_l)
+                    x_end_crop = min(clamped_r, sub_r)
                     fg_in_crop = np.sum(
-                        mask_arr[y_start:y_end, clamped_l:clamped_r] > 127
+                        mask_arr[y_start:y_end, x_start_crop:x_end_crop] > 127
                     )
                     mask_preservation_ratio = float(fg_in_crop / total_fg)
                     mask_preservation_valid = (
                         mask_preservation_ratio >= cfg.mask_preservation_threshold
                     )
                     if not mask_preservation_valid:
+                        # When this photo could only be composed by giving up
+                        # outer hair, foreground loss is the intended outcome,
+                        # so it is reported but does not block: the crown, chin
+                        # and head core are still guaranteed above.  A crop that
+                        # kept the whole preservation box has no such excuse.
+                        blocking = (
+                            not cfg.allow_subject_clipping
+                            and not outer_hair_relaxation_used
+                        )
                         add_issue(
                             CropIssueCode.CROP_MASK_PRESERVATION_LOW,
-                            IssueSeverity.ERROR
-                            if not cfg.allow_subject_clipping
-                            else IssueSeverity.WARNING,
-                            not cfg.allow_subject_clipping,
+                            IssueSeverity.ERROR if blocking else IssueSeverity.WARNING,
+                            blocking,
                         )
                 else:
                     mask_preservation_ratio = 1.0
@@ -525,10 +1005,16 @@ class DeterministicCropPlanner(CropPlanner):
             )
 
         # 7. Margins calculations for validation
-        top_margin_px = max(0, int(round(preserve_box.top - clamped_t)))
-        bottom_margin_px = max(0, int(round(clamped_b - preserve_box.bottom)))
-        left_margin_px = max(0, int(round(preserve_box.left - clamped_l)))
-        right_margin_px = max(0, int(round(clamped_r - preserve_box.right)))
+        # Margins are reported against the mandatory region for the same reason.
+        margin_box = (
+            mandatory_box
+            if (adaptive_mode and outer_hair_relaxation_used)
+            else preserve_box
+        )
+        top_margin_px = max(0, int(round(margin_box.top - clamped_t)))
+        bottom_margin_px = max(0, int(round(clamped_b - margin_box.bottom)))
+        left_margin_px = max(0, int(round(margin_box.left - clamped_l)))
+        right_margin_px = max(0, int(round(clamped_r - margin_box.right)))
 
         # Margin risk flags (relative to final crop height/width)
         crop_h_actual = clamped_b - clamped_t
@@ -670,10 +1156,211 @@ class DeterministicCropPlanner(CropPlanner):
             eye_line_ratio=best_ratios.get("eye_line_ratio"),
             center_offset_ratio=best_ratios.get("center_offset_ratio"),
             torso_inclusion_ratio=best_ratios.get("torso_inclusion_ratio"),
+            portrait_composition_box=composition_box,
             validation=validation_report,
             processing_duration_ms=duration,
             preview_image=None,
         )
+
+    def _estimate_crown_y(
+        self,
+        face: FaceDetection,
+        preserve_box: BoundingBox,
+        alpha_mask: Optional[np.ndarray[Any, Any]],
+        refined_mask: Optional[Image.Image],
+    ) -> float:
+        """Locate the top of the hair, preferring the observed subject mask.
+
+        ``preserve_box.top`` is the union of a geometric guess
+        (``face_top - 0.6 * face_height``) and the observed mask, so it takes
+        whichever reaches higher.  When the detector returns an oversized face
+        box the geometric term overshoots the real hairline badly and the crop
+        is planned around empty space above the subject.  The segmentation mask
+        is the direct observation, so it wins when it is available and sane.
+        """
+        face_box = face.bounding_box
+        highest_plausible = face_box.top - 1.10 * face_box.height
+        fallback = max(preserve_box.top, highest_plausible)
+
+        source: Optional[np.ndarray[Any, Any]] = None
+        if alpha_mask is not None:
+            source = np.asarray(alpha_mask)
+        elif refined_mask is not None:
+            source = np.asarray(refined_mask)
+        if source is None or source.ndim != 2 or source.size == 0:
+            return fallback
+
+        mask = source.astype(np.float32, copy=False)
+        threshold = 0.5 if float(mask.max(initial=0.0)) <= 1.0 else 127.5
+
+        height, width = mask.shape
+        # Search only the head column band; shoulders and raised arms elsewhere
+        # in the frame must not be mistaken for hair.
+        x0 = max(0, int(round(face_box.left - 0.35 * face_box.width)))
+        x1 = min(width, int(round(face_box.right + 0.35 * face_box.width)))
+        y1 = min(height, max(1, int(round(face_box.bottom))))
+        if x1 <= x0 or y1 <= 0:
+            return fallback
+
+        rows = np.where((mask[0:y1, x0:x1] > threshold).any(axis=1))[0]
+        if rows.size == 0:
+            return fallback
+
+        observed = float(rows[0])
+        # The mask is the direct observation, so it is only rejected when it is
+        # implausible *on its own terms*: reaching toward the frame top (mask
+        # noise), or leaving no head above the chin (degenerate).
+        #
+        # It is deliberately NOT rejected for sitting below ``face_box.top``.
+        # That condition means the detector's box extends above the subject --
+        # which is exactly when the geometric fallback is worst -- and the
+        # earlier guard discarded the correct reading precisely in that case.
+        # Measured: a low-confidence recovery detection returned a box ~1.5x
+        # too tall, the mask correctly placed the hair top 73px below the box
+        # top, the reading was thrown away, and the crop was then sized around
+        # ~100px of empty space above the subject.
+        if observed < highest_plausible:
+            return fallback
+        if observed > face_box.bottom - _MIN_HEAD_SPAN_FACE_RATIO * face_box.height:
+            return fallback
+        return observed
+
+    def _estimate_head_core_x(
+        self,
+        face: FaceDetection,
+        preserve_box: BoundingBox,
+        alpha_mask: Optional[np.ndarray[Any, Any]],
+        refined_mask: Optional[Image.Image],
+        crown_y: float,
+        chin_y: float,
+    ) -> tuple[float, float]:
+        """Measure the head's horizontal extent from the observed subject mask.
+
+        The fallback expands the detector face box sideways, which fails the
+        same way the crown estimate did: an oversized face box yields an
+        oversized head width.  Because head height is now measured accurately
+        from the mask, an inflated width makes the constraints contradictory --
+        the crop must be wide enough to hold the phantom head yet short enough
+        to keep face coverage above the exam minimum, and no crop can be both.
+        Measured on two such photos the width demanded ``hc >= 342`` and ``367``
+        while coverage capped it at ``237`` and ``213``, so every candidate was
+        rejected and the planner fell back to a projection at 0.52 and 0.39
+        coverage.  Reading the width off the mask keeps both bounds consistent.
+        """
+        face_box = face.bounding_box
+        fallback = (
+            max(
+                preserve_box.left,
+                face_box.left - _HEAD_SIDE_MARGIN_RATIO * face_box.width,
+            ),
+            min(
+                preserve_box.right,
+                face_box.right + _HEAD_SIDE_MARGIN_RATIO * face_box.width,
+            ),
+        )
+
+        source: Optional[np.ndarray[Any, Any]] = None
+        if alpha_mask is not None:
+            source = np.asarray(alpha_mask)
+        elif refined_mask is not None:
+            source = np.asarray(refined_mask)
+        if source is None or source.ndim != 2 or source.size == 0:
+            return fallback
+
+        mask = source.astype(np.float32, copy=False)
+        threshold = 0.5 if float(mask.max(initial=0.0)) <= 1.0 else 127.5
+        height, width = mask.shape
+
+        # Measure across the ear band only -- the middle of the head span --
+        # rather than the whole crown..chin extent.  What must not be clipped is
+        # the face and ears; outer hair may leave the frame, as it does in the
+        # reference set.  Spanning the full head instead measures hair volume,
+        # which on voluminous-hair subjects is far wider than the head core and
+        # forces a looser crop: doing so cost six photos that had previously met
+        # the coverage floor.  Ears sit roughly 0.35-0.65 of the way down from
+        # the crown, so this band captures them and excludes the hair above.
+        span = max(1.0, chin_y - crown_y)
+        y0 = max(0, min(int(round(chin_y - 0.70 * span)), height - 1))
+        y1 = max(y0 + 1, min(int(round(chin_y - 0.20 * span)), height))
+        band = mask[y0:y1, :] > threshold
+        cols = np.where(band.any(axis=0))[0]
+        if cols.size == 0:
+            return fallback
+
+        observed_left = float(cols[0])
+        observed_right = float(cols[-1])
+        observed_width = observed_right - observed_left
+        face_center_x = (face_box.left + face_box.right) / 2.0
+
+        # Reject a reading that misses the face entirely, spans implausibly
+        # narrow (segmentation clipped into the face), or implausibly wide
+        # (mask contamination reaching across the frame).
+        #
+        # This does NOT require the band to reach the detector box's own
+        # edges. Photo 6-3 (reference set) measures a true, visually-verified
+        # ear-band width of 124px against a face_box width of 188px -- the
+        # subject's hairstyle covers both ears, so the visible head is
+        # genuinely narrower than BlazeFace's box, which (like the crown
+        # estimate above) is not a precise head-width indicator. Requiring
+        # edge coverage rejected that correct 124px reading and fell back to
+        # a 244px expansion of the oversized box, which no crop could satisfy
+        # alongside the 75% coverage floor. Centered-on-face plus a minimum
+        # width ratio catches genuine mask failures without penalizing
+        # legitimately hair-covered ears.
+        if not (observed_left < face_center_x < observed_right):
+            return fallback
+        if observed_width < _MIN_HEAD_WIDTH_FACE_RATIO * face_box.width:
+            return fallback
+        if observed_width > _MAX_HEAD_WIDTH_FACE_RATIO * face_box.width:
+            return fallback
+
+        return (
+            max(preserve_box.left, observed_left),
+            min(preserve_box.right, observed_right),
+        )
+
+    def _estimate_chin_y(self, face: FaceDetection, preserve_box: BoundingBox) -> float:
+        """Estimate the chin line in source pixels.
+
+        Three-tier preference, each one only reached when the one before is
+        unavailable:
+
+        1. Dense-landmark chin (DEC-032) -- best available, but the landmarker
+           can fail to find a face the detector did find (measured: 6 of 60
+           reference photos, typically occlusion from glasses).
+        2. Eye/mouth-anchored estimate (DEC-034) -- BlazeFace's own coarse
+           keypoints are genuine detected points rather than a box edge, so
+           this stays accurate when the dense landmarker fails. Calibrated
+           against 29 reference photos with a known chin (mouth-to-chin
+           distance averages 0.598x the eye-to-mouth distance): mean error
+           -0.001 face heights (vs +0.046 for the box-bottom proxy) and 3
+           large-error outliers instead of 5. On the photo that motivated
+           this tier, the box-bottom proxy placed the chin visibly into the
+           subject's neck; the eye/mouth estimate lands on the jaw.
+        3. Detector box bottom -- last resort when even the coarse keypoints
+           are missing. Measured -0.045 face heights off on primary
+           detections and -0.143 off on detections recovered at reduced
+           confidence.
+
+        The result is clamped into the preservation box so a degenerate
+        reading cannot invert the head span.
+        """
+        face_box = face.bounding_box
+        chin_y = face_box.bottom
+        landmarks = face.landmarks
+        if landmarks is not None and landmarks.chin is not None:
+            chin_y = landmarks.chin.y
+        elif (
+            landmarks is not None
+            and landmarks.left_eye is not None
+            and landmarks.right_eye is not None
+        ):
+            mouth = landmarks.custom_landmarks.get("mouth_center")
+            if mouth is not None:
+                eye_y = (landmarks.left_eye.y + landmarks.right_eye.y) / 2.0
+                chin_y = mouth.y + _MOUTH_TO_CHIN_RATIO * (mouth.y - eye_y)
+        lower_bound = face_box.top + 0.5 * face_box.height
+        return max(lower_bound, min(chin_y, preserve_box.bottom))
 
     def _empty_failed_result(
         self,

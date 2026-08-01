@@ -69,6 +69,13 @@ def test_rule_resolver_exact_mode():
     assert plan.output_preparation_config.target_height == 400
     assert plan.compression_config.maximum_bytes == 51200
     assert plan.target_filename == "exam_photo.jpg"
+    # DEC-029: head geometry comes from the crop profile (crown-to-chin
+    # fractions), not from face_coverage_* percentages.
+    assert plan.crop_config.target_head_height_ratio == pytest.approx(0.86)
+    # 0.75 is the published exam floor and must not drift; tighter is preferred,
+    # so target sits above the reference mean and the ceiling only guards clipping.
+    assert plan.crop_config.minimum_head_height_ratio == pytest.approx(0.75)
+    assert plan.crop_config.maximum_head_height_ratio == pytest.approx(0.93)
 
 
 def test_rule_resolver_range_mode():
@@ -87,6 +94,60 @@ def test_rule_resolver_range_mode():
     assert plan.output_preparation_config.min_width == 200
     assert plan.output_preparation_config.max_width == 300
     assert plan.compression_config.maximum_bytes == 51200
+
+
+def test_rule_resolver_unspecified_dimensions_uses_tight_crop_and_platform_default():
+    rule_path = EXAMPLES_DIR / "sample_unspecified_dimensions.json"
+    with open(rule_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    rule = ExamRule.model_validate(data)
+
+    plan = resolve_rule(rule)
+
+    assert plan.crop_mode == "b"
+    # DEC-029: Mode B still measures head height against the preservation box,
+    # so it keeps its own calibration rather than the Mode A anatomical ratios.
+    assert plan.crop_config.target_head_height_ratio == pytest.approx(0.76)
+    assert plan.crop_config.min_head_height_ratio == pytest.approx(0.68)
+    assert plan.crop_config.max_head_height_ratio == pytest.approx(0.84)
+    assert plan.crop_config.allow_subject_clipping is False
+    assert plan.background_config.target_colour_hex == "#FFFFFF"
+    assert plan.output_preparation_config.target_width == 350
+    assert plan.output_preparation_config.target_height == 450
+    assert plan.target_filename == "candidate_photo"
+
+
+def test_rule_resolver_allows_padding_without_subject_clipping():
+    rule_path = EXAMPLES_DIR / "sample_exact_300x400_50kb_white_bg.json"
+    with open(rule_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    rule = ExamRule.model_validate(data)
+
+    plan = resolve_rule(rule, allow_padding=True)
+
+    assert plan.crop_config.allow_padding is True
+    assert plan.crop_config.allow_subject_clipping is False
+
+
+def test_rule_resolver_propagates_benchmark_dpi():
+    rule_path = EXAMPLES_DIR / "benchmark_exact_200x230_72dpi_white_bg.json"
+    with open(rule_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    rule = ExamRule.model_validate(data)
+
+    plan = resolve_rule(rule)
+
+    assert plan.output_preparation_config.target_width == 200
+    assert plan.output_preparation_config.target_height == 230
+    assert plan.compression_config.target_dpi == 72
+    assert plan.target_filename == "exam_photo_200x230.jpg"
+    # DEC-029: face_coverage_* (77/75/80 in this rule) is a diagnostic and no
+    # longer sets head-height bounds; the tight exam profile does.
+    assert plan.crop_config.target_head_height_ratio == pytest.approx(0.86)
+    # 0.75 is the published exam floor and must not drift; tighter is preferred,
+    # so target sits above the reference mean and the ceiling only guards clipping.
+    assert plan.crop_config.minimum_head_height_ratio == pytest.approx(0.75)
+    assert plan.crop_config.maximum_head_height_ratio == pytest.approx(0.93)
 
 
 def test_rule_resolver_invalid_format():
@@ -278,6 +339,63 @@ def test_final_validation_valid():
     assert report.actual_format == "JPEG"
     assert report.metadata_stripped is True
     assert len(report.issue_codes) == 0
+
+
+def test_final_validation_accepts_matching_dpi():
+    from exam_photo.providers.output_compression import (
+        CompressionFormat,
+        OutputCompressionConfig,
+    )
+
+    config = OutputCompressionConfig(
+        target_format=CompressionFormat.JPEG,
+        maximum_bytes=50000,
+        minimum_bytes=1000,
+        target_dpi=72,
+    )
+
+    img = Image.new("RGB", (300, 400), "white")
+    buf = io.BytesIO()
+    img.save(buf, format="JPEG", dpi=(72, 72))
+    jpeg_bytes = buf.getvalue()
+
+    report = validate_final_candidate(
+        encoded_bytes=jpeg_bytes,
+        expected_width=300,
+        expected_height=400,
+        config=config,
+    )
+    assert report.is_valid is True
+    assert report.actual_dpi == 72
+
+
+def test_final_validation_rejects_wrong_dpi():
+    from exam_photo.providers.output_compression import (
+        CompressionFormat,
+        OutputCompressionConfig,
+    )
+
+    config = OutputCompressionConfig(
+        target_format=CompressionFormat.JPEG,
+        maximum_bytes=50000,
+        minimum_bytes=1000,
+        target_dpi=72,
+    )
+
+    img = Image.new("RGB", (300, 400), "white")
+    buf = io.BytesIO()
+    img.save(buf, format="JPEG", dpi=(96, 96))
+    jpeg_bytes = buf.getvalue()
+
+    report = validate_final_candidate(
+        encoded_bytes=jpeg_bytes,
+        expected_width=300,
+        expected_height=400,
+        config=config,
+    )
+    assert report.is_valid is False
+    assert report.actual_dpi == 96
+    assert "PIPELINE_FINAL_DPI_INVALID" in report.issue_codes
 
 
 def test_final_validation_mismatch():

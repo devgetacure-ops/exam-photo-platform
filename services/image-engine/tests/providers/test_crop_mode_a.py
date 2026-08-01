@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import numpy as np
 import pytest
 from PIL import Image
 from pydantic import ValidationError
@@ -465,6 +466,7 @@ def test_crop_aspect_ratio_preservation_new() -> None:
             head_estimate=head_est,
             config=cfg,
         )
+        assert res.ideal_crop_aspect_ratio is not None
         assert abs(res.ideal_crop_aspect_ratio - aspect) <= 5e-3
         assert abs(res.crop_box_aspect_ratio - aspect) <= 5e-3
 
@@ -537,6 +539,82 @@ def test_crop_complete_head_containment() -> None:
     assert res.crop_box.right >= head_est.right
     assert res.crop_box.bottom >= head_est.bottom
     assert res.validation.subject_clipping_detected is False
+
+
+def test_crop_mode_a_falls_back_to_best_preservation_candidate() -> None:
+    planner = DeterministicCropPlanner()
+    face_box = BoundingBox(left=200, top=200, right=300, bottom=300)
+    face = FaceDetection(bounding_box=face_box, confidence=0.99)
+    head_est = BoundingBox(left=180, top=150, right=320, bottom=350)
+
+    cfg = CropConfig(
+        target_width=300,
+        target_height=400,
+        crop_profile=CropProfile.TIGHT_EXAM_PORTRAIT,
+        target_head_height_ratio=0.78,
+        minimum_head_height_ratio=0.70,
+        maximum_head_height_ratio=0.80,
+        target_eye_line_ratio=0.10,
+        minimum_eye_line_ratio=0.10,
+        maximum_eye_line_ratio=0.11,
+        maximum_torso_inclusion_ratio=0.0,
+        allow_subject_clipping=False,
+    )
+
+    res = planner.plan_crop(
+        image_width=1000,
+        image_height=1000,
+        face=face,
+        head_estimate=head_est,
+        config=cfg,
+    )
+
+    assert res.validation.is_valid is True
+    assert CropIssueCode.CROP_NO_VALID_COMPOSITION in res.validation.issue_codes
+    assert res.crop_box.contains(head_est)
+    assert res.crop_box_aspect_ratio == pytest.approx(0.75)
+
+
+def test_crop_mode_a_does_not_double_expand_supplied_head_estimate_with_mask_noise() -> (
+    None
+):
+    planner = DeterministicCropPlanner()
+    face_box = BoundingBox(left=140, top=120, right=220, bottom=210)
+    face = FaceDetection(bounding_box=face_box, confidence=0.99)
+    head_est = BoundingBox(left=115, top=70, right=245, bottom=250)
+    cfg = CropConfig(
+        target_width=300,
+        target_height=400,
+        crop_profile=CropProfile.TIGHT_EXAM_PORTRAIT,
+        target_head_height_ratio=0.75,
+        minimum_head_height_ratio=0.70,
+        maximum_head_height_ratio=0.80,
+    )
+
+    noisy_mask = Image.new("L", (500, 500), 0)
+    mask_arr = np.array(noisy_mask)
+    mask_arr[0:260, 115:245] = 255
+    mask_arr[0:260, 320:360] = 255
+    noisy_mask = Image.fromarray(mask_arr, mode="L")
+
+    without_mask = planner.plan_crop(
+        image_width=500,
+        image_height=500,
+        face=face,
+        head_estimate=head_est,
+        config=cfg,
+    )
+    with_mask = planner.plan_crop(
+        image_width=500,
+        image_height=500,
+        face=face,
+        head_estimate=head_est,
+        refined_mask=noisy_mask,
+        config=cfg,
+    )
+
+    assert with_mask.crop_box == without_mask.crop_box
+    assert with_mask.crop_box.right < 320
 
 
 def test_crop_source_resolution_invariance() -> None:

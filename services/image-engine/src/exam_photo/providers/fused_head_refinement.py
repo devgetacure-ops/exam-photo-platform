@@ -36,6 +36,7 @@ class FusedHeadRefiner:
 
         # 1. Coarse bounds from face
         fb = face.bounding_box
+        geometric_box = head_result.head_bounding_box
         fw = fb.width
         fh = fb.height
         fb.left + fw / 2.0
@@ -49,8 +50,10 @@ class FusedHeadRefiner:
         # Upper limit: face height * 1.5 above face top
         top_limit = max(0.0, fb.top - fh * 1.50)
 
-        # Bottom limit for head (chin/neck level): face height * 0.35 below face bottom
-        bottom_limit = min(float(h), fb.bottom + fh * 0.35)
+        # Bottom limit for head: keep beard/chin, but do not let neck, collar or
+        # shirt foreground drive the portrait frame.
+        geometric_bottom = geometric_box.bottom
+        bottom_limit = min(float(h), max(geometric_bottom, fb.bottom + fh * 0.18))
 
         # Convert alpha mask to binary (0 or 255)
         # alpha_mask is a 2D numpy array with shape (h, w) and values in [0.0, 1.0] or [0, 255]
@@ -83,23 +86,53 @@ class FusedHeadRefiner:
         # Since selfie_segmentation is generally clean in the ROI, taking active pixels is very robust.
         ys, xs = np.where(roi_mask)
 
-        if len(ys) > 0:
+        # Left/right must come from a row band that ends at the chin, not
+        # from the full ROI down to bottom_limit.  bottom_limit is meant to
+        # stop short of the shoulders (see the comment above), but it is
+        # computed as max(geometric_bottom, ...) and geometric_bottom (from
+        # the upstream expansion-ratio estimate) already reaches close to the
+        # neck-to-shoulder transition, so the "avoid shoulders" intent does
+        # not hold in practice: measured on reference photo 6-3, silhouette
+        # width holds at 85-124px through the head/neck (y=590-750) then
+        # jumps to 224-291px by y=780-810 once shoulders enter frame, and
+        # bottom_limit there was 792 -- past the jump.  A row band capped at
+        # the face box's own bottom still finds the true widest point
+        # (cheekbone/ear level) since it scans the whole head band, not just
+        # its lowest row.
+        width_y_max = min(y_max, max(y_min, int(round(fb.bottom))))
+        width_roi_mask = np.zeros_like(binary)
+        if width_y_max > y_min and x_max > x_min:
+            width_roi_mask[y_min:width_y_max, x_min:x_max] = binary[
+                y_min:width_y_max, x_min:x_max
+            ]
+        width_ys, width_xs = np.where(width_roi_mask)
+
+        if len(ys) > 0 and len(width_xs) > 0:
             # Mathematical refinement
             refined_top = float(np.min(ys))
-            refined_left = float(np.min(xs))
-            refined_right = float(np.max(xs))
+            refined_left = float(np.min(width_xs))
+            refined_right = float(np.max(width_xs))
             # Bottom of head is neck level
             refined_bottom = float(np.max(ys))
 
-            # Add safety bounds: must at least contain the face box
-            refined_top = min(refined_top, fb.top)
+            # Add safety bounds: must at least contain the face box.
+            #
+            # Left/right deliberately do NOT also floor against
+            # geometric_box: that estimate widens the detector's ear-tragion
+            # keypoints by a fixed face-width fraction, which assumes ears
+            # are visible. When hair covers them (reference photo 6-3: mask
+            # measures a true 124px head-core width against a 198px
+            # ear-tragion-derived geometric estimate), that assumption is
+            # wrong, and flooring the mask reading against it silently
+            # discards the corrected measurement this refiner exists to
+            # produce. The face box is a real per-photo detection, not a
+            # heuristic, so it remains a valid floor.
+            refined_top = min(refined_top, fb.top, geometric_box.top)
             refined_left = min(refined_left, fb.left)
             refined_right = max(refined_right, fb.right)
             refined_bottom = max(refined_bottom, fb.bottom)
 
-            # Cap the refined box height to be at most 2.5x face height (prevents bleeding to torso)
-            if (refined_bottom - refined_top) > fh * 2.5:
-                refined_bottom = refined_top + fh * 2.5
+            refined_bottom = min(refined_bottom, bottom_limit)
         else:
             # Fallback to coarse head bounding box
             refined_top = head_result.head_bounding_box.top
