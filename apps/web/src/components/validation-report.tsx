@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { PipelineReport } from "../lib/types";
+import { PipelineReport, StageReport } from "../lib/types";
 
 interface ValidationReportProps {
   report: PipelineReport;
@@ -42,7 +42,7 @@ export function ValidationReport({ report }: ValidationReportProps) {
   const compReports = stage_reports.filter(s => compositionStages.includes(s.stage));
   const bgReports = stage_reports.filter(s => backgroundStages.includes(s.stage));
 
-  const renderStageRow = (stage: any) => {
+  const renderStageRow = (stage: StageReport) => {
     let dotColor = "bg-slate-400 dark:bg-zinc-650";
     let textColor = "text-slate-450 dark:text-zinc-500";
 
@@ -59,7 +59,7 @@ export function ValidationReport({ report }: ValidationReportProps) {
 
     const displayName = stage.stage
       .split("_")
-      .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1))
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
       .join(" ");
 
     return (

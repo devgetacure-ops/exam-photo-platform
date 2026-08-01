@@ -32,6 +32,16 @@ def test_examples_comply_with_schema() -> None:
         assert not errors, f"Example {name} has validation errors: {errors}"
 
 
+def test_benchmark_dimension_rules_comply_with_schema() -> None:
+    for name in sorted(os.listdir(EXAMPLES_DIR)):
+        if not name.startswith("benchmark_exact_"):
+            continue
+        path = os.path.join(EXAMPLES_DIR, name)
+        data = load_json(path)
+        errors = validate_exam_rule(data)
+        assert not errors, f"Benchmark rule {name} has validation errors: {errors}"
+
+
 # --- Valid Records Tests ---
 
 

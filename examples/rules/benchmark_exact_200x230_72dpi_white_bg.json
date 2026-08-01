@@ -1,0 +1,127 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "benchmark-exact-200-230-72dpi",
+  "rule_version": "1.0.0",
+  "status": "provisional",
+  "exam": {
+    "exam_id": "benchmark-exact-200-230-72dpi",
+    "exam_name": "Benchmark Exact 200x230 72 DPI White Background",
+    "aliases": ["Benchmark 200x230"],
+    "conducting_body": "Internal Engine Benchmark",
+    "examination_year": 2026,
+    "application_cycle": "crop-bg-benchmark"
+  },
+  "source_evidence": [
+    {
+      "source_type": "internal_research_note",
+      "official_source": false,
+      "captured_wording": "Benchmark rule for 200 x 230 px output at 72 DPI with white background, tight crop, and 75-80 percent face coverage."
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "exact",
+      "width_px": 200,
+      "height_px": 230,
+      "dpi": 72,
+      "aspect_ratio": "20:23"
+    },
+    "file_size": {
+      "maximum_bytes": 5242880,
+      "target_ceiling_ratio": 0.96,
+      "safety_margin_bytes": 1024,
+      "size_unit_as_published": "bytes",
+      "published_maximum": 5242880
+    },
+    "formats": {
+      "allowed_formats": ["jpg", "jpeg"],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB",
+      "extension_policy": "strip_and_append"
+    },
+    "background": {
+      "mode": "exact_colour",
+      "required_colour": "#FFFFFF",
+      "tolerance": 2.0,
+      "plain_background_required": true,
+      "shadows_allowed": false,
+      "gradient_allowed": false,
+      "instructions": "Remove the background and replace it with a clean, uniform white background."
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "ears_policy": "preferred_visible",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "complete_beard_boundary_required": true,
+      "face_coverage_target": 77.0,
+      "face_coverage_minimum": 75.0,
+      "face_coverage_maximum": 80.0,
+      "coverage_is_strict": false,
+      "complete_hair_visible": true,
+      "ears_visible": true,
+      "chin_visible": true,
+      "beard_boundary_visible": true,
+      "face_centred": true,
+      "frontal_pose": true,
+      "eye_visibility": true,
+      "maximum_torso_inclusion_ratio": 0.15,
+      "additional_instructions": "Tight exam crop with minimal headspace, side-space, and bottom/neck space while preserving hair, ears, chin, and beard boundary."
+    },
+    "filename": {
+      "mode": "exact",
+      "exact_filename": "exam_photo_200x230.jpg",
+      "case_sensitive": true,
+      "extension_required": true,
+      "fallback_basename": "exam_photo_200x230"
+    },
+    "exceptional_instructions": {
+      "printed_name": false,
+      "printed_date": false,
+      "signature_inclusion": false,
+      "black_and_white_restriction": false,
+      "recent_photo_requirement": true,
+      "spectacles_restriction": false,
+      "headwear_restriction": true,
+      "processing_support_status": "supported"
+    }
+  },
+  "provenance": {
+    "image_requirements.dimensions.width_px": {
+      "type": "inferred",
+      "reasoning": "User-provided benchmark dimension.",
+      "confidence": 5,
+      "approved": true
+    },
+    "image_requirements.dimensions.height_px": {
+      "type": "inferred",
+      "reasoning": "User-provided benchmark dimension.",
+      "confidence": 5,
+      "approved": true
+    },
+    "image_requirements.dimensions.dpi": {
+      "type": "inferred",
+      "reasoning": "User-provided benchmark DPI.",
+      "confidence": 5,
+      "approved": true
+    },
+    "image_requirements.background.required_colour": {
+      "type": "inferred",
+      "reasoning": "User requested white background for the benchmark set.",
+      "confidence": 5,
+      "approved": true
+    },
+    "image_requirements.composition.face_coverage_target": {
+      "type": "inferred",
+      "reasoning": "User requested 75-80 percent tight face coverage.",
+      "confidence": 5,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "provisional"
+  },
+  "fictional_example": true
+}

@@ -64,6 +64,7 @@ class DimensionsConfig(BaseModel):
     mode: DimensionMode
     width_px: Optional[int] = Field(default=None, gt=0)
     height_px: Optional[int] = Field(default=None, gt=0)
+    dpi: Optional[int] = Field(default=None, gt=0)
     aspect_ratio: Optional[str] = Field(default=None, pattern=r"^[0-9]+:[0-9]+$")
 
     minimum_width_px: Optional[int] = Field(default=None, gt=0)
