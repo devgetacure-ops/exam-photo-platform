@@ -165,13 +165,27 @@
 - **Planned Tests**: Assert correct mode routing.
 - **Dependencies**: Rule validation logic.
 
+### 9b. Exam Portrait Composition
+- **Purpose**: Build semantic crop-framing geometry for exam portraits before crop calculation. This stage separates the full foreground mask used for background removal from the head-led composition box used for crop sizing.
+- **Inputs**: Face detection, geometric/refined head estimate, refined alpha mask.
+- **Outputs**: Portrait preservation box, portrait framing box, lower-body exclusion boundary, confidence, warnings.
+- **Rules**:
+  - Preserve top hair, ears/side-head boundaries, chin, and lower beard line.
+  - Treat neck, collar, shoulders, and torso foreground as non-framing evidence so they cannot shrink the face in a tight exam crop.
+  - Use upper alpha evidence only inside a face/head-led ROI; do not allow full-person segmentation bounds to expand crop geometry.
+- **Failure Conditions**: Composition provider failure falls back to existing head geometry with a warning; it must not fall back to full foreground-driven crop sizing.
+- **Warning Conditions**: Alpha unavailable or mismatched dimensions.
+- **Privacy Considerations**: Uses in-memory geometry only; no photo or mask artifact is persisted unless explicit diagnostic artifact saving is enabled.
+- **Planned Tests**: Synthetic torso-mask regressions for Crop Mode A and Crop Mode B.
+- **Dependencies**: Face detection, head estimation, refined alpha mask.
+
 ### 10. Crop Calculation
 - **Purpose**: Calculate the crop window coordinates.
   - **Crop Mode A**: Fit crop window to target aspect ratio, keeping face centered, preserving hair, ears, chin, and beard lines.
-  - **Crop Mode B**: Build crop box directly around head with small natural margins on top, sides, and bottom.
-- **Inputs**: Head boundaries, crop mode.
+  - **Crop Mode B**: Build crop box directly around head with small natural margins on top, sides, and bottom. Use this for dimension ranges and documented unspecified-dimension fallback profiles.
+- **Inputs**: Exam portrait composition geometry, head boundaries, crop mode.
 - **Outputs**: Crop window coordinates `(x1, y1, x2, y2)`.
-- **Failure Conditions**: Crop coordinates fall outside original image boundaries.
+- **Failure Conditions**: Crop coordinates fall outside original image boundaries and preservation-first background padding is disallowed.
 - **Warning Conditions**: Margin size is below default minimum.
 - **Privacy Considerations**: In-memory only.
 - **Planned Tests**: Verify aspect ratio matches target.
@@ -217,13 +231,13 @@
 
 ### 14. Quality-aware Compression
 - **Purpose**: Iteratively optimize quality compression factor (JPEG only in Milestone 13) using a binary search to approach but remain strictly below the maximum file size limit, preserving biometric details at a minimum quality floor of 20.
-- **Inputs**: Resized image, maximum file size (`maximum_bytes`), minimum file size (`minimum_bytes`), target ceiling ratio, safety margin.
-- **Outputs**: Compressed byte array.
+- **Inputs**: Resized image, maximum file size (`maximum_bytes`), minimum file size (`minimum_bytes`), target ceiling ratio, safety margin, optional target DPI.
+- **Outputs**: Compressed byte array with configured JPEG DPI density when supplied by the rule.
 - **Failure Conditions**: Cannot compress below maximum file size without going below the quality floor of 20 (fails with `COMPRESSION_QUALITY_TOO_LOW`), final size exceeds maximum bytes (`COMPRESSION_MAX_SIZE_EXCEEDED`), or final size is below minimum bytes (`COMPRESSION_MIN_SIZE_NOT_REACHED`).
 - **Warning Conditions**: Low quality warning (final quality < min_quality).
 - **Privacy Considerations**: Metadata is stripped from the byte stream, and raw compressed bytes are excluded from model serialization.
 - **Status**: **Implemented (Milestone 13)**
-- **Planned Tests**: Verify binary search convergence, quality floor enforcement, minimum size validation, metadata stripping, and serialization safety.
+- **Planned Tests**: Verify binary search convergence, quality floor enforcement, minimum size validation, metadata stripping, DPI writing, and serialization safety.
 - **Dependencies**: Pillow JPEG encoder.
 
 ### 15. Filename Generation
@@ -248,13 +262,13 @@
 - **Dependencies**: Pillow.
 
 ### 17. Final Validation
-- **Purpose**: Audit the final output file against dimensions, aspect ratio, size limit, and name rules.
+- **Purpose**: Audit the final output file against dimensions, aspect ratio, DPI when specified, size limit, and name rules.
 - **Inputs**: Final file bytes, metadata, exam rule.
 - **Outputs**: Compliance report.
 - **Failure Conditions**: Output fails any single check.
 - **Warning Conditions**: None.
 - **Privacy Considerations**: None.
-- **Planned Tests**: Assert failure if file size exceeds configured limits.
+- **Planned Tests**: Assert failure if file size exceeds configured limits or if encoded DPI differs from the configured rule DPI.
 - **Dependencies**: Validation modules.
 
 ### 18. Secure Output Write

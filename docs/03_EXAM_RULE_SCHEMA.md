@@ -44,6 +44,7 @@ Every rule file is a JSON object containing:
 * **dimensions**:
   - `mode`: `exact`, `range`, or `unspecified`.
   - `width_px`, `height_px` (integers, Mode `exact`).
+  - `dpi` (integer, optional): Target square output DPI/JFIF density when an exam specifies it.
   - `minimum_width_px`, `maximum_width_px`, `minimum_height_px`, `maximum_height_px` (integers, Mode `range`).
   - `platform_default_profile`, `fallback_reason` (strings, Mode `unspecified`).
 * **file_size**:
