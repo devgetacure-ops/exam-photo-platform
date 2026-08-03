@@ -1102,7 +1102,18 @@ class DeterministicCropPlanner(CropPlanner):
         # measurements rather than a heuristic rectangle, and both are already
         # folded into ``mandatory_box`` above, which is the exact region the
         # candidate search enforces -- so the two now agree by construction.
-        face_containment_box = mandatory_box if adaptive_mode else face_box
+        #
+        # That agreement is the whole point, so the condition has to match the
+        # search's exactly: the search only enforces ``mandatory_box`` when
+        # subject clipping is disallowed.  Validating against it regardless
+        # would recreate the same disagreement in the opposite direction --
+        # blocking a caller that explicitly asked to permit clipping on a
+        # region the search never promised to keep.
+        face_containment_box = (
+            mandatory_box
+            if (adaptive_mode and not cfg.allow_subject_clipping)
+            else face_box
+        )
 
         face_contained = crop_box.contains(face_containment_box)
         if not face_contained:
