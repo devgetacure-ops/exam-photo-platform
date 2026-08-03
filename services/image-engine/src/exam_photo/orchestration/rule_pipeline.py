@@ -1,3 +1,4 @@
+import math
 import os
 import time
 from enum import Enum
@@ -963,6 +964,89 @@ class RuleOrchestratedPipeline:
                 PipelineStage.CROP_PLANNING,
                 PipelineStageStatus.SKIPPED,
             )
+
+        # Stage 7A: Crop-region matte refinement (DEC-040).
+        #
+        # The matting model sees a fixed-size square (512 for BiRefNet), so the
+        # alpha detail any part of the subject receives is set by how much of
+        # the *source frame* that part occupies -- not by how large it will be
+        # in the finished photo.  Candidates routinely submit half- or
+        # full-body photos, and the finished exam photo is a tight head crop,
+        # so the head is the small part of the input that becomes the whole
+        # output.  Measured over the 60-photo reference set: the head arrives
+        # with a median of 121 px of alpha detail (worst 42 px) and is then
+        # magnified by a median 2.1x, worst 17.4x, into the output.  Every
+        # photo with visible hair-edge streaking, halo or colour bleed sits in
+        # the high-magnification group.
+        #
+        # Re-running the matte on just the planned crop region spends the
+        # model's whole resolution budget on the part that survives, at the
+        # cost of one extra inference.  The crop geometry is already decided
+        # and is not revisited here, so this cannot feed back into planning.
+        if (
+            not failed
+            and norm_result is not None
+            and ref_result is not None
+            and crop_res is not None
+            and crop_res.crop_box is not None
+            and self._birefnet_segmenter is not None
+        ):
+            t_stage = time.perf_counter()
+            try:
+                alpha_full = ref_result.refined_alpha_mask
+                src_w, src_h = norm_result.image.size
+                box = crop_res.crop_box
+                # A margin beyond the crop keeps the model from having to guess
+                # at the frame edge, where it is least reliable, and gives
+                # decontamination opaque neighbours to propagate from.
+                margin_x = 0.12 * (box.right - box.left)
+                margin_y = 0.12 * (box.bottom - box.top)
+                rx0 = max(0, int(math.floor(box.left - margin_x)))
+                ry0 = max(0, int(math.floor(box.top - margin_y)))
+                rx1 = min(src_w, int(math.ceil(box.right + margin_x)))
+                ry1 = min(src_h, int(math.ceil(box.bottom + margin_y)))
+
+                region_area = max(1, (rx1 - rx0) * (ry1 - ry0))
+                gain = math.sqrt((src_w * src_h) / region_area)
+                if rx1 - rx0 >= 32 and ry1 - ry0 >= 32 and gain >= 1.15:
+                    region = norm_result.image.crop((rx0, ry0, rx1, ry1))
+                    region_result = self._birefnet_segmenter.segment_subject(region)
+                    region_alpha = np.clip(
+                        region_result.probability_mask.astype(np.float32), 0.0, 1.0
+                    )
+                    refreshed = np.array(alpha_full, dtype=np.float32, copy=True)
+                    refreshed[ry0:ry1, rx0:rx1] = region_alpha
+                    ref_result.refined_alpha_mask = refreshed
+                    dur_stage = (time.perf_counter() - t_stage) * 1000.0
+                    record_stage(
+                        PipelineStage.MASK_REFINEMENT,
+                        PipelineStageStatus.PASSED,
+                        dur=dur_stage,
+                        summary=(
+                            "Matte recomputed on the crop region at "
+                            f"{gain:.1f}x the effective alpha resolution."
+                        ),
+                    )
+                else:
+                    record_stage(
+                        PipelineStage.MASK_REFINEMENT,
+                        PipelineStageStatus.SKIPPED,
+                        dur=(time.perf_counter() - t_stage) * 1000.0,
+                        summary=(
+                            "Crop region is close to the full frame; the "
+                            "existing matte already carries full detail."
+                        ),
+                    )
+            except Exception as e:  # noqa: BLE001
+                # The full-frame matte is still perfectly usable, so a failure
+                # here degrades edge detail rather than the whole photo.
+                record_stage(
+                    PipelineStage.MASK_REFINEMENT,
+                    PipelineStageStatus.WARNING,
+                    issues=["CROP_REGION_MATTE_FAILED"],
+                    dur=0.0,
+                    summary=f"Crop-region matte refinement failed: {e}",
+                )
 
         # Stage 7B: Foreground Decontamination
         decon_image = None

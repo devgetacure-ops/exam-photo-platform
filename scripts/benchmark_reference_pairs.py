@@ -71,6 +71,11 @@ def parse_args() -> argparse.Namespace:
         type=int,
         help="Diagnostic only. Omit for the required complete benchmark.",
     )
+    parser.add_argument(
+        "--save-output-dir",
+        type=Path,
+        help="Optional ignored local directory for engine JPEGs and contact sheet.",
+    )
     return parser.parse_args()
 
 
@@ -463,9 +468,20 @@ def aggregate(rows: list[dict[str, Any]]) -> dict[str, Any]:
         for row in measured
         if row["crop"]["ideal_equivalent_height"] is not None
     ]
+    # Ratio of delivered head height to the head height the planner reported.
+    # 1.0 means the planner's crown-to-chin span matched reality; below 1.0
+    # means it over-estimated the span and therefore over-sized the crop.
+    span_errors = [
+        float(row["span_estimate_error"])
+        for row in measured
+        if row.get("span_estimate_error")
+    ]
     return {
         "total": len(rows),
         "produced_output": len(produced),
+        "span_estimate_error_mean": mean(span_errors),
+        "span_estimate_error_worst": (min(span_errors) if span_errors else None),
+        "span_over_estimated_count": sum(1 for v in span_errors if v < 0.9),
         "no_output_count": len(no_output),
         "no_output_keys": no_output,
         "measured_pairs": len(measured),
@@ -523,6 +539,97 @@ def flatten_row(row: dict[str, Any]) -> dict[str, Any]:
             flat[f"{prefix}_{region}_alpha_gradient"] = edge.get("mean_alpha_gradient")
             flat[f"{prefix}_{region}_touches_frame"] = edge.get("touches_frame")
     return flat
+
+
+def _metric_cell(row: dict[str, Any]) -> str:
+    engine = row.get("engine")
+    ideal = row.get("ideal")
+    if not engine or not ideal:
+        return '<td class="nums">-</td>'
+    delta = row.get("delta") or {}
+
+    def line(label: str, key: str) -> str:
+        klass = "bad" if abs(float(delta.get(key, 0.0))) > 0.05 else "ok"
+        return (
+            f"<tr><td>{label}</td><td>{engine[key]:.3f}</td>"
+            f"<td>{ideal[key]:.3f}</td>"
+            f'<td class="{klass}">{delta.get(key, 0.0):+.3f}</td></tr>'
+        )
+
+    floor = "" if engine["head_height_ratio"] >= 0.75 else ' <b class="bad">&lt;75%</b>'
+    return (
+        '<td class="nums"><table class="inner">'
+        "<tr><th></th><th>engine</th><th>ideal</th><th>&Delta;</th></tr>"
+        + line("head height", "head_height_ratio")
+        + line("above hair", "headspace_above_hair")
+        + line("below chin", "space_below_chin")
+        + line("space left", "negative_space_left")
+        + line("space right", "negative_space_right")
+        + f"</table>margin MAE {delta.get('margin_mae', 0.0):.3f}{floor}</td>"
+    )
+
+
+def write_contact_sheet(rows: list[dict[str, Any]], output_dir: Path) -> None:
+    """Write a local side-by-side review page next to the saved engine JPEGs.
+
+    The engine images sit in ``output_dir`` so they are referenced by bare
+    filename; the ideal outputs stay where the reviewer keeps them and need an
+    absolute ``file:///`` URL, because a bare Windows path in ``src`` is parsed
+    as a relative URL and silently fails to load.
+    """
+    sheet_path = output_dir / "index.html"
+    html_rows = []
+    for row in rows:
+        engine_path = row.get("saved_output_path")
+        ideal_url = Path(row["ideal_path"]).absolute().as_uri()
+        engine_cell = (
+            f'<img src="{Path(engine_path).name}" alt="{row["key"]} engine">'
+            if engine_path
+            else '<span class="missing">no output</span>'
+        )
+        issues = " | ".join(row["issue_codes"]) or "&mdash;"
+        stages = " | ".join(row["failure_stages"])
+        html_rows.append(
+            "<tr>"
+            f"<td><b>{row['key']}</b><br><small>{row['target_width']}"
+            f"&times;{row['target_height']}</small></td>"
+            f"<td>{engine_cell}</td>"
+            f'<td><img src="{ideal_url}" alt="{row["key"]} ideal"></td>'
+            + _metric_cell(row)
+            + f'<td class="nums">{issues}<br><small>{stages}</small></td>'
+            "</tr>"
+        )
+    sheet_path.write_text(
+        """<!doctype html>
+<meta charset="utf-8">
+<title>Engine vs Ideal - Reference Pairs</title>
+<style>
+body{font-family:system-ui,Arial,sans-serif;margin:24px;background:#f7f7f7;color:#111}
+table{border-collapse:collapse;width:100%;background:white}
+th,td{border:1px solid #ddd;padding:8px;vertical-align:top}
+thead th{position:sticky;top:0;background:#fff;z-index:1}
+img{max-width:240px;max-height:300px;object-fit:contain;background:#eee}
+.missing{display:inline-block;padding:32px 12px;color:#900;font-weight:bold}
+.nums{font-size:12px;font-variant-numeric:tabular-nums}
+table.inner{width:auto;margin-bottom:6px}
+table.inner td,table.inner th{border:0;padding:1px 8px 1px 0;text-align:right}
+table.inner td:first-child,table.inner th:first-child{text-align:left}
+.ok{color:#060}.bad{color:#b00}
+</style>
+<h1>Engine output vs ideal output</h1>
+<p>Left image is the engine result, right image is the approved ideal for the
+same photo. All ratios are fractions of the output frame.</p>
+<table>
+<thead><tr><th>Key</th><th>Engine</th><th>Ideal</th><th>Measurements</th>
+<th>Issues</th></tr></thead>
+<tbody>
+"""
+        + "\n".join(html_rows)
+        + """
+</tbody></table>
+""",
+        encoding="utf-8",
+    )
 
 
 def main() -> int:
@@ -626,8 +733,14 @@ def main() -> int:
             result.encoded_bytes and crop and result.refined_alpha_mask is not None
         )
         engine_metrics = None
+        saved_output_path = None
         if produced:
             engine_image = Image.open(io.BytesIO(result.encoded_bytes)).convert("RGB")
+            if args.save_output_dir is not None:
+                args.save_output_dir.mkdir(parents=True, exist_ok=True)
+                output_path = args.save_output_dir / f"{key}-engine.jpg"
+                output_path.write_bytes(result.encoded_bytes)
+                saved_output_path = str(output_path.resolve())
             engine_face_raw, engine_detection = detect_one(detector, engine_image)
             engine_face = refine_face(landmarker, engine_image, engine_face_raw)
             engine_metrics = analyse_alpha(
@@ -652,6 +765,8 @@ def main() -> int:
             "key": key,
             "source_filename": input_path.name,
             "ideal_filename": ideal_path.name,
+            "ideal_path": str(ideal_path.resolve()),
+            "saved_output_path": saved_output_path,
             "target_width": width,
             "target_height": height,
             "produced_output": produced,
@@ -673,6 +788,28 @@ def main() -> int:
             "engine": engine_metrics,
             "ideal": cached["metrics"],
             "delta": deltas(engine_metrics, cached["metrics"]),
+            # What the planner *believed* it was producing, so its intent can
+            # be compared with what the output actually delivers.  A planner
+            # that reports 0.86 head height while the finished photo measures
+            # 0.53 has mis-estimated the crown-to-chin span, which is a
+            # different defect from a mis-chosen margin and needs separating.
+            "planner": {
+                key: report.get(key)
+                for key in (
+                    "head_height_ratio",
+                    "head_width_ratio",
+                    "top_margin_ratio",
+                    "eye_line_ratio",
+                    "center_offset_ratio",
+                    "torso_inclusion_ratio",
+                )
+            },
+            "span_estimate_error": (
+                float(engine_metrics["head_height_ratio"])
+                / float(report["head_height_ratio"])
+                if engine_metrics is not None and report.get("head_height_ratio")
+                else None
+            ),
         }
         rows.append(row)
         print(
@@ -697,6 +834,8 @@ def main() -> int:
     if args.ideal_cache is not None:
         args.ideal_cache.parent.mkdir(parents=True, exist_ok=True)
         args.ideal_cache.write_text(json.dumps(ideal_cache, indent=2), encoding="utf-8")
+    if args.save_output_dir is not None:
+        write_contact_sheet(rows, args.save_output_dir)
 
     print(json.dumps(payload["aggregate"], indent=2), flush=True)
     return 0
