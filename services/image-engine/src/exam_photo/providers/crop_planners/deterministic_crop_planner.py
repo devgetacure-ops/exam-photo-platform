@@ -37,48 +37,58 @@ from exam_photo.suitability.issue_codes import IssueSeverity
 # clean-shaven reference subjects as bearded. No further heuristic was
 # attempted after three independent failures on real photos.
 #
-# The value is therefore a calibrated fixed floor, not detection, sized by an
-# explicit trade-off: the largest margin that remains structurally reachable
-# together with the 75% face-coverage floor. With an 0.08 top margin, total
-# mandatory vertical extent is span*(1 + 0.08 + M); requiring this to fit
-# within span/0.75 = 1.333*span bounds M at ~0.253, so 0.24 leaves a safety
-# margin under that ceiling. This covers 56 of 60 reference photos exactly
-# (measured against each photo's own below-chin/head-height ratio); the 4
-# that need more -- three with heavy beards reaching well onto the neck --
-# cannot hit both zero clipping and 75% coverage simultaneously by
-# construction, so the search correctly protects the beard and falls short of
-# 75% instead of clipping (see DEC-035); the crop-fix UI is the intended path
-# for those, not silent over-cropping.
-_CHIN_BEARD_MARGIN_RATIO = 0.24
+# The value is read off the approved ideal outputs, which are the composition
+# specification (DEC-037).  Measured across all 60 of them, the distance from
+# the landmark chin to the bottom edge, as a fraction of that photo's own
+# crown-to-chin span, is: p10 0.075, p25 0.091, median 0.119, p75 0.172,
+# p90 0.217.
+#
+# This constant is a *floor* the crop may never cross, not the intended
+# composition, so it belongs at the low end of that distribution rather than
+# its middle: the tightest approved reference output leaves 0.075, and none of
+# them clip a beard.  Where the composition should actually land is set by the
+# profile's ``target_head_height_ratio``/``target_top_margin_ratio``, which are
+# themselves calibrated to the same reference set.
+#
+# The previous value of 0.24 was derived the other way round -- as the largest
+# margin still algebraically compatible with a 75% coverage floor -- and sat
+# above the reference p90.  Because the floor is mandatory, it did not merely
+# reserve space: together with the old 0.08 top margin it bounded head height
+# at 1/(1 + 0.08 + 0.24) = 0.758 for every photo, while the reference outputs
+# have a median head height of 0.855 and a p90 of 0.900.  The engine therefore
+# could not reach the approved composition on any photo.  Measured effect over
+# all 60: below-chin space exceeded the matching ideal on 50 of 56 produced
+# outputs, by a mean of 0.067 of frame height.
+_CHIN_BEARD_MARGIN_RATIO = 0.09
 
 # Guaranteed margin above the observed hairline, as a fraction of the
-# crown-to-chin span.  Reference mean is 0.059, p90 0.093; this sits near the
-# upper end of ordinary variation so the top edge reads as deliberate framing
-# rather than a bone-tight crop.
-_TOP_MARGIN_RATIO = 0.08
+# crown-to-chin span.  Sized from the same ideal-output distribution and for
+# the same reason as ``_CHIN_BEARD_MARGIN_RATIO`` above: measured space above
+# the hair is p10 0.028, p25 0.038, median 0.048, p75 0.075, p90 0.093 of the
+# span.  A floor at the p25 leaves the profile's top-margin target free to
+# choose the actual framing.
+_TOP_MARGIN_RATIO = 0.04
 
 # Guaranteed margin beside each ear, as a fraction of the measured head-core
 # width.
 #
-# Sized the same way as ``_CHIN_BEARD_MARGIN_RATIO``: the largest value
-# structurally reachable together with the 75% coverage floor, not the raw
-# reference mean (0.090 left / 0.081 right), which ignores the aspect-ratio
-# interaction below.
+# Sized the same way as ``_CHIN_BEARD_MARGIN_RATIO`` (DEC-037): read off the
+# approved ideal outputs and placed at the low end of their distribution,
+# because this is a floor rather than the intended framing.  Measured over all
+# 60 ideal outputs, space beside the head as a fraction of head width is
+# p10 0.000 / p25 0.033 / median 0.082 on the left and p10 0.000 / p25 0.029 /
+# median 0.077 on the right -- reference photos routinely let outer hair reach
+# or leave the side edge, so the low end of the distribution is genuinely zero.
 #
-# The mandatory box's own aspect ratio is width*(1+2*margin) / (span*1.32)
-# (1.32 = 1 + top margin + chin/beard margin). Once that exceeds the
-# target aspect (0.667 for 1200x1800), the crop becomes width-bound instead
-# of height-bound, and max achievable head_height_ratio drops below the
-# height-bound ceiling of 1/1.32 = 0.758 -- capping out at
-# target_aspect*span / (width*(1+2*margin)) instead, which falls under the
-# 0.75 floor for most ordinary head proportions once margin exceeds roughly
-# 0.03-0.05. Measured on the 60-photo reference set (post shoulder-width-
-# contamination fixes -- see DEC-036): 10 of 58 measurable photos have a
-# span/width ratio below 1.125 and cannot reach 0.75 at ANY margin value
-# (a different, unrelated problem -- see DEC-036); of the remaining 48,
-# margin=0.07 (the prior value) left only 29/48 (60%) able to reach the
-# floor, while margin=0.03 leaves 44/48 (92%) able to reach it, matching the
-# ~93% coverage the chin-margin derivation targets.
+# The aspect interaction is why this floor must stay small even though the
+# median is larger: the mandatory box's own aspect ratio is
+# width*(1+2*margin) / (span*(1 + top + chin)).  Once that exceeds the target
+# aspect (0.667 for 1200x1800) the crop becomes width-bound rather than
+# height-bound, and achievable head height drops to
+# target_aspect*span / (width*(1+2*margin)) regardless of the vertical
+# margins.  The 1200x1800 class is where this binds, and it binds on the
+# reference outputs too: their own head height there measures 0.66-0.87
+# against a 0.84 mean across the other five size classes.
 _SIDE_MARGIN_RATIO = 0.03
 
 # Half-width of the mandatory horizontal head band, in detector face-box widths.
@@ -123,19 +133,33 @@ _HEAD_HEIGHT_OVERSHOOT_WEIGHT = 12.0
 # all.  Each tier lists the constraints waivable at that level, so tier 0 is a
 # fully compliant crop and later tiers trade away progressively more.
 #
-# ``head_height_min`` -- falling below the exam's minimum face coverage -- is
-# absent from every tier and so can never be traded away: it is the published
-# requirement the output is judged against.  ``head_height_max`` is waived early
-# because exceeding it simply means a tighter crop, which is preferred, and
-# subject protection independently prevents that from cutting into the head.
+# ``head_height_max`` is waived early because exceeding it simply means a
+# tighter crop, which is preferred, and subject protection independently
+# prevents that from cutting into the head.
 #
 # Torso inclusion goes first because a little more or less shoulder is the least
 # visible compromise; eye line and top margin follow; horizontal centring and
 # head width come after those.
 #
+# ``head_height_min`` -- falling below the exam's minimum face coverage -- is
+# the very last thing surrendered, in a tier of its own, but it *is* in the
+# ladder (DEC-039).  It used to be absent entirely, on the reasoning that it is
+# the published requirement the output is judged against.  Measured over the
+# 60-photo reference set, that reasoning produced the opposite of its intent:
+# on the 9 photos where no candidate could reach the floor, the search returned
+# nothing at all and fell through to the geometric projection below, which
+# ignores every composition target.  Those photos delivered 0.41-0.66 head
+# height with 0.15-0.30 of the frame as headroom -- strictly worse, on the
+# floor itself and on every other axis, than the best candidate the search had
+# already found and discarded.  A tier here means such a photo still gets the
+# tightest crop its geometry allows, and ``CROP_NO_VALID_COMPOSITION`` still
+# reports the compromise downstream.  The approved ideal outputs support this:
+# their own head height measures 0.665-0.728 on 6-1, 6-2, 6-3 and 6-9, so a
+# sub-0.75 result is what correct framing looks like for those subjects.
+#
 # Subject protection (complete hair, chin/beard boundary, ear visibility,
-# padding limits) is likewise never waived here -- those guard the candidate's
-# likeness rather than the framing, and are enforced independently.
+# padding limits) is never waived here -- those guard the candidate's likeness
+# rather than the framing, and are enforced independently.
 _RELAXATION_TIERS: tuple[frozenset[str], ...] = (
     frozenset(),
     frozenset({"head_height_max"}),
@@ -151,6 +175,17 @@ _RELAXATION_TIERS: tuple[frozenset[str], ...] = (
             "top_margin",
             "center_offset",
             "head_width",
+        }
+    ),
+    frozenset(
+        {
+            "head_height_max",
+            "torso",
+            "eye_line",
+            "top_margin",
+            "center_offset",
+            "head_width",
+            "head_height_min",
         }
     ),
 )
@@ -382,6 +417,51 @@ class DeterministicCropPlanner(CropPlanner):
             right=head_core_right,
             bottom=max(chin_protection_y, crown_y + 1.0),
         )
+
+        # Every face point the detector actually located must survive the crop
+        # too (DEC-038).  Ear tragions in particular can sit outside the
+        # mask-derived head core when hair partially covers them, and the eye
+        # line can sit above a low crown reading, so folding the landmarks in
+        # here -- rather than checking them separately after the search -- is
+        # what keeps the planner and its validator judging one single region.
+        # The class of bug this avoids is the planner selecting a crop its own
+        # validation then rejects as a blocking error.
+        if adaptive_mode and face.landmarks is None:
+            # No landmarks at all: fall back to the detector rectangle's
+            # sides and top, but only as far down as the chin/beard line the
+            # planner promised, so a box bottom sitting in the neck cannot
+            # force the crop looser.
+            mandatory_box = BoundingBox(
+                left=min(mandatory_box.left, face_box.left),
+                top=min(mandatory_box.top, face_box.top),
+                right=max(mandatory_box.right, face_box.right),
+                bottom=mandatory_box.bottom,
+            )
+        elif adaptive_mode and face.landmarks is not None:
+            landmark_points: List[tuple[float, float]] = [
+                (point.x, point.y)
+                for point in (
+                    face.landmarks.left_eye,
+                    face.landmarks.right_eye,
+                    face.landmarks.nose_tip,
+                    face.landmarks.mouth_left,
+                    face.landmarks.mouth_right,
+                    face.landmarks.chin,
+                )
+                if point is not None
+            ]
+            landmark_points.extend(
+                (point.x, point.y) for point in face.landmarks.custom_landmarks.values()
+            )
+            if landmark_points:
+                mandatory_box = BoundingBox(
+                    left=min(mandatory_box.left, min(p[0] for p in landmark_points)),
+                    top=min(mandatory_box.top, min(p[1] for p in landmark_points)),
+                    right=max(mandatory_box.right, max(p[0] for p in landmark_points)),
+                    bottom=max(
+                        mandatory_box.bottom, max(p[1] for p in landmark_points)
+                    ),
+                )
 
         # 4. Sizing and candidate generation
         w_subject = preserve_box.width
@@ -995,8 +1075,36 @@ class DeterministicCropPlanner(CropPlanner):
                 mask_preservation_ratio = 1.0
                 mask_preservation_valid = True
 
-        # Face containment check
-        face_contained = crop_box.contains(face_box)
+        # Face containment check.
+        #
+        # In adaptive mode this is stated against detected face *points* plus
+        # the mandatory head region, not against the raw detector rectangle
+        # (DEC-038).  BlazeFace's box is a coarse proxy whose edges are
+        # documented elsewhere in this module to miss real anatomy in both
+        # directions: its bottom lands 0.045-0.143 face heights *below* the
+        # true chin (in the neck), and on low-confidence recovery detections
+        # its top sits well above the hairline.  Demanding the crop contain
+        # that rectangle therefore reserves space for anatomy that is not
+        # there -- the same phantom-region failure this module already
+        # corrects for ``preserve_box``, ``crown_y`` and ``chin_y``.
+        #
+        # It also produced a planner/validator disagreement: the candidate
+        # search enforces containment of ``mandatory_box`` but knows nothing
+        # about the detector rectangle, so it could select a correctly tight
+        # crop that this check then rejected as a blocking error.  Measured
+        # over the 60-photo reference set, that rejection alone turned 8
+        # otherwise-valid photos into no-output once the margins were
+        # corrected to the ideal-output distribution.
+        #
+        # The replacement is not weaker, it is anchored differently: every
+        # landmark the detector actually located must be inside the crop, as
+        # must the whole crown-to-chin-plus-beard head region.  Both are real
+        # measurements rather than a heuristic rectangle, and both are already
+        # folded into ``mandatory_box`` above, which is the exact region the
+        # candidate search enforces -- so the two now agree by construction.
+        face_containment_box = mandatory_box if adaptive_mode else face_box
+
+        face_contained = crop_box.contains(face_containment_box)
         if not face_contained:
             add_issue(
                 CropIssueCode.CROP_SOURCE_TOO_TIGHT,
