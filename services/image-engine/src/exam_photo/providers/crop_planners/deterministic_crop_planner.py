@@ -818,6 +818,10 @@ class DeterministicCropPlanner(CropPlanner):
                         # ``strict_violation`` marks a candidate that would give
                         # up some outer hair; it stays selectable but only wins
                         # when nothing keeps the full preservation box.
+                        #
+                        # It is a preference about *hair*, and therefore about
+                        # the crown and the two sides only.  There is
+                        # deliberately no bottom clause: see below.
                         strict_violation = False
                         if complete_hair_required and not cfg.allow_subject_clipping:
                             if (
@@ -832,13 +836,37 @@ class DeterministicCropPlanner(CropPlanner):
                                 or r_cand < preserve_box.right
                             ):
                                 strict_violation = True
+                        # The chin/beard boundary is protected by
+                        # ``chin_protection_y`` -- the landmark chin plus the
+                        # beard margin -- and by nothing else.
+                        #
+                        # There is no ``b_cand < preserve_box.bottom`` strict
+                        # clause here, and its absence is the point.  The
+                        # preservation box's bottom is not an observation of the
+                        # subject: it is a fixed geometric expansion past the
+                        # jaw, landing in the neck.  Requiring the crop to reach
+                        # it made the bottom edge a consequence of that
+                        # expansion rather than of the candidate's anatomy, and
+                        # because the preference was applied as an override
+                        # rather than a tie-break -- a strict candidate wins
+                        # outright whenever one exists -- it silently outranked
+                        # every composition target the search had just scored.
+                        #
+                        # Measured on four photographs from the product owner's
+                        # own review set, comparing the crop delivered with the
+                        # clause against the best candidate available without
+                        # it, as fractions of frame height (below chin / head
+                        # height): photo 4, 0.155/0.804 -> 0.088/0.853; photo 5,
+                        # 0.120/0.855 -> 0.100/0.855; photo 35, 0.192/0.760 ->
+                        # 0.106/0.855.  On all three the candidate the clause
+                        # rejected was a fully compliant tier-0 crop, better on
+                        # both axes at once, and photo 35 is one the owner
+                        # flagged by eye as too loose below the chin.
                         if (
                             complete_chin_required or complete_beard_boundary_required
                         ) and not cfg.allow_subject_clipping:
                             if b_cand < chin_protection_y:
                                 is_hard_invalid = True
-                            if b_cand < preserve_box.bottom:
-                                strict_violation = True
 
                         if cfg.ears_policy == EarsPolicy.REQUIRED_VISIBLE:
                             if face.landmarks and face.landmarks.custom_landmarks:

@@ -71,10 +71,11 @@ expensive way.
    the chroma-noise guard. Removing beats shipping a dead constant. The same
    applies to checks: a check that cannot fail is worse than no check, because
    it reads as evidence.
-4. **Measure against the ideal outputs, not against a self-derived threshold.**
-   The 60 approved reference outputs are the composition specification
-   (DEC-037). Deriving a target from first principles and then optimising toward
-   it is the documented failure mode of an earlier session.
+4. **Measure against the owner's labelled photographs, not against a
+   self-derived threshold.** Deriving a target from first principles and then
+   optimising toward it is the documented failure mode of an earlier session.
+   The current set is the 40 adversarial photographs; see *Reference material*
+   below, including which set is retired.
 5. **Move the planner and its validator together.** See below — this is the
    recurring defect class here.
 6. **Never commit real candidate photos, processed outputs, mattes or model
@@ -97,7 +98,7 @@ The regions, from generous to strict:
 
 | Region | What it is | Status |
 |---|---|---|
-| `preserve_box` | head estimate / portrait composition box, trimmed at the crown. Extends below the jaw and absorbs hair spread — roughly 1.14× the real head height, 1.31× its width | A *preference*. Keeping all of it is never guaranteed |
+| `preserve_box` | head estimate / portrait composition box, trimmed at the crown. Extends below the jaw and absorbs hair spread — roughly 1.14× the real head height, 1.31× its width | A *preference*, and only on the crown and the two sides. It has **no bottom clause**: its bottom is a geometric expansion into the neck, not an observation |
 | `mandatory_box` | crown − top margin → chin + beard margin, spanning the head core ± side margin, plus every landmark the detector actually located | The **guarantee**. The candidate search enforces containment as a hard constraint |
 | `face_box` | the raw BlazeFace rectangle | A coarse proxy that misses real anatomy in both directions. Not used for containment in adaptive mode (DEC-038) |
 
@@ -114,6 +115,22 @@ Rules that follow:
   covering what the box test cannot: foreground the crop drops from the outer
   region.
 - If you change one of these, change the others in the same commit and say so.
+
+### A preference expressed as an override is not a preference
+
+The strict/relaxed mechanism in the candidate search prefers a crop that keeps
+the whole preservation box. It is applied as an override — a strict candidate
+wins outright whenever one exists — so it ranks *above* tier and cost. Anything
+folded into it is thereby promoted above every constraint in the relaxation
+ladder, intended or not.
+
+This is not hypothetical. A `b_cand < preserve_box.bottom` clause once sat
+there, and on every reviewed photograph it was discarding a fully compliant
+tier-0 crop in favour of one 4–9 points looser below the chin. The sweep read
+zero the whole time, because synthetic head boxes do not extend past the jaw
+the way real ones do. Before adding anything to `strict_violation`, ask whether
+it should outrank the exam's own composition requirements — that is what you
+are deciding.
 
 ## Verifying before claiming
 
@@ -144,43 +161,58 @@ The eleven markers are `mandatory_segmentation`, `mandatory_refinement`,
 
 | What | Where | Notes |
 |---|---|---|
-| 60 source photos | `C:\Users\dmbar\Pictures\Test Images` | 6 folders, one per output dimension class |
-| 60 approved ideal outputs | `C:\Users\dmbar\Pictures\Test Images- Ideal Outputs` | 1:1 with the sources. **This set is the composition specification** |
-| 40 adversarial photos | `C:\Users\dmbar\Pictures\new-test-images` | Filenames carry human labels across 11 defect classes |
-| Label map | `services/image-engine/tests/fixtures/adversarial_label_map.json` | Committed. Records where the engine deliberately disagrees with a label |
+| 40 adversarial photos | `C:\Users\dmbar\Pictures\new-test-images` | **The current set.** Filenames carry human labels across 11 defect classes; ten are labelled `perfect` |
+| Label map | `services/image-engine/tests/fixtures/adversarial_label_map.json` | Committed, numeric/label only. Records where the engine deliberately disagrees with a label |
+| Reviewed outputs | `C:\Users\dmbar\Pictures\Engine Outputs - Clean Set` | The ten `perfect` photos as the owner last reviewed them, at 413×531. Use as the before-side of any comparison |
 
-The matched benchmark writes numbers only — no source photos, output photos,
-alpha mattes or weights:
+**Do not use `Test Images` / `Test Images- Ideal Outputs` (the 60-photo paired
+set).** The product owner has retired it. Use the 40-photo set above.
+`scripts/benchmark_reference_pairs.py` targets the retired set and should not be
+run; the distribution figures quoted in `deterministic_crop_planner.py` and in
+DEC-037 were measured from it while it was current and are kept as the record of
+how those constants were derived, not as an instruction to re-measure.
 
-```bash
-services/image-engine/.venv/Scripts/python.exe scripts/benchmark_reference_pairs.py --inputs "C:/Users/dmbar/Pictures/Test Images" --ideals "C:/Users/dmbar/Pictures/Test Images- Ideal Outputs" --output-json out.json --ideal-cache ideal_cache.json
-```
+The working loop for composition changes is: run the ten `perfect`-labelled
+photographs at 413×531 through `process_rule`, measure head height, above-hair
+and below-chin on the output, and compare against `Engine Outputs - Clean Set`.
+It takes a few minutes, and it catches what the synthetic sweep structurally
+cannot — see the note under **State** below.
 
-It takes roughly 30–45 minutes on CPU (M24: 16–24 s per photo, roughly doubled
-by the crop-region rematte). Pass `--ideal-cache` so the ideal measurements are
-computed once.
+### The owner's verdicts on the reviewed outputs
 
-### Measured on the approved ideal outputs
+Accepted 4, 5 and 13. Flagged 31 and 35 as too loose below the chin, 17 for a
+detached hair fragment, 18 and 19 for soft hair edges, and 8 for
+under-enhancement. The two below-chin flags are fixed (DEC-044); the matte
+defects on 17, 18 and 19 are M22 and the enhancement gap on 8 is DEC-043 work.
 
-Composition as delivered, as a fraction of each photograph's own frame height:
-
-| | min | p10 | p25 | median | p75 | p90 | max |
-|---|---|---|---|---|---|---|---|
-| below chin | 0.054 | 0.068 | 0.081 | 0.102 | 0.142 | 0.179 | 0.247 |
-| head height | 0.665 | 0.769 | 0.819 | 0.855 | 0.884 | 0.904 | 0.918 |
-| above hair | 0.005 | 0.026 | 0.033 | 0.042 | 0.062 | 0.078 | 0.132 |
-
-Note the tension worth knowing about before you touch the bound: 6 of the 60
-approved outputs exceed the 0.175 below-chin invariant, four of them in the
-1200×1800 class where head height is bound by the target's width rather than by
-composition. The invariant is calibrated on a reviewer's accept/reject verdicts
-over engine outputs (accepted ≤ 0.155; rejected at 0.188 and 0.190), not on the
-ideal distribution, and it is a report rather than a refusal.
+Those verdicts are also what the below-chin invariant is calibrated on: every
+accepted photograph sat at or below 0.155 and the two rejected as too loose sat
+at 0.188 and 0.190, so the bound is 0.175. It reports rather than refuses.
 
 ## State
 
 Sweep at **0 violations** of 960 (2026-08-04). Delivered below-chin space across
-the sweep measures min 0.082, median 0.110, p90 0.137, max 0.151.
+the sweep measures min 0.075, median 0.103, p90 0.137, max 0.151, against an
+approved-ideal median of 0.102.
+
+On the ten photographs labelled `clean` in the 40-photo adversarial set, run at
+413×531, below-chin space as a fraction of frame height:
+
+| photo | before | after | | photo | before | after |
+|---|---|---|---|---|---|---|
+| 4 | 0.155 | **0.081** | | 18 | 0.151 | **0.117** |
+| 5 | 0.124 | **0.104** | | 19 | 0.147 | **0.098** |
+| 8 | 0.124 | **0.105** | | 27 | 0.111 | 0.111 |
+| 13 | 0.117 | 0.117 | | 31 | 0.188 | **0.146** |
+| 17 | 0.155 | **0.111** | | 35 | 0.190 | **0.111** |
+
+Head height rose or held on all ten. All ten satisfy every invariant; two did
+not before. 31 is the loosest at 0.146 because its subject's hair pins the
+crop's sides — the strict preference doing the job it is actually for.
+
+Note what the sweep alone would have told you: nothing. It read zero while
+photograph 35 sat at 0.190, because synthetic head boxes do not extend past the
+jaw the way real ones do. **Run the labelled photographs too.**
 
 **Known gap: `check_composition_invariants` has no pipeline consumer.** Its only
 caller is the sweep. The module's own docstring describes the invariants as
