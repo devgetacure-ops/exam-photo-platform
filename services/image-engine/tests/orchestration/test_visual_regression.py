@@ -109,12 +109,22 @@ def test_golden_images_regression() -> None:
         output_arr = np.array(output_img.convert("RGB"), dtype=np.float32)
 
         mae = np.mean(np.abs(golden_arr - output_arr))
-        # The branch intentionally changed crop geometry and matte handling while
-        # keeping this legacy public-domain fixture as a smoke regression.  Do
-        # not regenerate golden processed outputs during private-photo work; keep
-        # the check broad enough to catch gross breakage while exact reference
-        # matching is covered by scripts/benchmark_reference_pairs.py.
-        assert mae <= 25.0, (
+        # Back to the original tolerance, because the golden is current again.
+        #
+        # It had been widened from 1.0 to 25.0 to absorb an intentional change in
+        # crop geometry without regenerating the golden, which left the check
+        # unable to detect anything smaller than the drift it was hiding. The
+        # golden it was tolerating had itself become wrong: measured on it,
+        # head height 0.627 with 0.300 of the frame below the chin, against a
+        # 0.175 below-chin invariant it therefore failed. The regenerated golden
+        # measures 0.877 and 0.122 and satisfies every invariant.
+        #
+        # 1.0 rather than 0.0 because this asserts an image, not a byte string:
+        # the pipeline is byte-identical run to run on this fixture (measured),
+        # so the headroom is for model and codec version drift, not for us.
+        # Exact reference matching stays the job of
+        # scripts/benchmark_reference_pairs.py.
+        assert mae <= 1.0, (
             f"Visual regression detected for {case_id}: Mean Absolute Error (MAE) "
-            f"of {mae:.4f} exceeds 25.0"
+            f"of {mae:.4f} exceeds 1.0"
         )
