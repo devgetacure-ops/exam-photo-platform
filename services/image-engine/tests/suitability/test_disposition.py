@@ -195,3 +195,22 @@ def test_appearance_never_blocks() -> None:
     )
     assert report.disposition is Disposition.WARN
     assert len(report.likely_rejections) >= 3
+
+
+def test_soft_face_is_a_possible_issue() -> None:
+    """The one photograph labelled blurred scores 48 on the normalised measure."""
+    report = evaluate_disposition(signals(face_sharpness=48.0))
+    assert report.disposition is Disposition.WARN
+    assert report.findings[0].code is SuitabilityIssueCode.SUITABILITY_BLUR_WARNING
+    assert report.findings[0].level is FindingLevel.POSSIBLE_ISSUE
+
+
+def test_sharp_face_is_not_flagged() -> None:
+    """The lowest of the ten labelled-perfect photographs scores 97."""
+    assert evaluate_disposition(signals(face_sharpness=97.0)).disposition is (
+        Disposition.ACCEPT
+    )
+
+
+def test_sharpness_absent_produces_no_finding() -> None:
+    assert evaluate_disposition(signals(face_sharpness=None)).findings == []

@@ -85,9 +85,14 @@ class AppearanceSignals(BaseModel):
     pitch_degrees: Optional[float] = None
     roll_degrees: Optional[float] = None
 
+    # Luminance and dark fraction are measured over the FACE region, not the
+    # frame; a night portrait with a well-lit face is correctly exposed.
     mean_luminance: Optional[float] = None
     dark_pixel_fraction: Optional[float] = None
     mean_saturation: Optional[float] = None
+    # Laplacian variance of the face resampled to a fixed box, so the value
+    # does not scale with how many pixels the face happens to occupy.
+    face_sharpness: Optional[float] = None
 
     target_height_px: Optional[int] = None
     target_head_height_ratio: Optional[float] = None
@@ -161,6 +166,19 @@ _WARN_ROLL = 15.0
 # when their target was the most demanding size class, and a warning that
 # fires on almost everything trains users to ignore it.
 _WARN_UPSCALE_FACTOR = 3.0
+
+# Normalised face sharpness below which the face reads soft. Measured on the
+# adversarial set: the one photograph a reviewer labelled blurred scores 48,
+# while the lowest of the ten labelled perfect scores 97. This sits between
+# them, nearer the positive.
+#
+# It stays a POSSIBLE_ISSUE rather than a LIKELY_REJECTION despite bodies such
+# as SSC listing blur as an explicit rejection ground, because the calibration
+# rests on a single labelled positive. Three further photographs fall below it
+# (a night selfie and two distant subjects) which are plausibly soft but were
+# labelled for other defects, so the true positive rate is unknown. Promote it
+# only when more labelled blurred photographs exist.
+_SOFT_FACE_SHARPNESS = 70.0
 
 # The detector's face box covers brow-to-chin, not the crown-to-chin head span
 # the composition targets are expressed against. Measured across the reference
@@ -325,6 +343,23 @@ def evaluate_disposition(
         )
 
     # --- Possible issue: worth saying, not worth alarming over ---
+
+    if (
+        signals.face_sharpness is not None
+        and signals.face_sharpness < _SOFT_FACE_SHARPNESS
+    ):
+        findings.append(
+            AppearanceFinding(
+                code=SuitabilityIssueCode.SUITABILITY_BLUR_WARNING,
+                level=FindingLevel.POSSIBLE_ISSUE,
+                message="Your face looks soft or slightly out of focus.",
+                remedy=(
+                    "Retake the photograph holding the camera steady, with your "
+                    "face in focus and reasonably close."
+                ),
+                measured_value=signals.face_sharpness,
+            )
+        )
 
     if (
         signals.target_height_px
