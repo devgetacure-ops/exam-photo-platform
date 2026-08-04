@@ -1,0 +1,114 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "tnpsc-combined-technical-services-2025",
+  "rule_version": "0.1.0",
+  "status": "provisional",
+  "exam": {
+    "exam_id": "tnpsc-combined-technical-services-2025",
+    "exam_name": "TNPSC Combined Technical Services Examination 2025",
+    "aliases": [
+      "TNPSC CTSE"
+    ],
+    "conducting_body": "Tamil Nadu Public Service Commission",
+    "examination_year": 2025,
+    "application_cycle": "CTSE-2025"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "source_url": "https://www.tnpsc.gov.in/Document/english/SCE%20English%20Final_.pdf",
+      "document_title": "Combined Technical Services Examination (Interview Posts), 2025 - Notification",
+      "section_name": "Photograph instructions",
+      "captured_wording": "colour passport size photograph; white background; both the ears; name of the applicant; date on which the photograph was taken; Mobile phone photographs and selfies"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "unspecified",
+      "platform_default_profile": "standard_passport_350_450",
+      "fallback_reason": "The 48-exam appearance-rule research excluded file specifications by design, so no official pixel dimensions were verified for this exam. Left unspecified rather than guessed; to be filled from the official bulletin before this record leaves provisional status."
+    },
+    "file_size": {
+      "maximum_bytes": 512000
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpg",
+        "jpeg"
+      ],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB",
+      "extension_policy": "strip_and_append"
+    },
+    "background": {
+      "mode": "exact_colour",
+      "required_colour": "#FFFFFF",
+      "tolerance": 3.0,
+      "plain_background_required": true,
+      "shadows_allowed": false,
+      "gradient_allowed": false
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "ears_policy": "required_visible",
+      "face_centred": true,
+      "frontal_pose": true,
+      "eye_visibility": true,
+      "chin_visible": true,
+      "complete_hair_visible": true,
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "additional_instructions": "colour passport size photograph; white background; both the ears; name of the applicant; date on which the photograph was taken; Mobile phone photographs and selfies",
+      "ears_visible": true
+    },
+    "appearance": {
+      "monochrome_accepted": false,
+      "prohibited_provenance": [
+        "selfie",
+        "mobile_photograph"
+      ],
+      "imprint": {
+        "policy": "required",
+        "fields": [
+          "candidate_name",
+          "photograph_date"
+        ],
+        "position": "bottom",
+        "source_wording": "name of the applicant; date on which the photograph was taken"
+      },
+      "source_wording": "colour passport size photograph"
+    },
+    "filename": {
+      "mode": "unspecified",
+      "case_sensitive": false,
+      "extension_required": true,
+      "fallback_basename": "tnpsc-combined-technical-services-2025"
+    },
+    "exceptional_instructions": {
+      "recent_photo_requirement": true,
+      "processing_support_status": "supported"
+    }
+  },
+  "provenance": {
+    "image_requirements.appearance": {
+      "type": "official",
+      "evidence_reference": "Combined Technical Services Examination (Interview Posts), 2025 - Notification - Photograph instructions (https://www.tnpsc.gov.in/Document/english/SCE%20English%20Final_.pdf)",
+      "reasoning": "Appearance rules transcribed from Combined Technical Services Examination (Interview Posts), 2025 - Notification (Photograph instructions). Only categories the official source states are encoded; unstated categories are omitted rather than defaulted.",
+      "confidence": 5,
+      "approved": true
+    },
+    "image_requirements.dimensions.mode": {
+      "type": "platform_default",
+      "reasoning": "The appearance-rule research deliberately excluded file specifications, so no pixel dimensions were verified for this exam. Recorded as unspecified rather than invented; the platform default profile applies until a specification is verified from the official bulletin.",
+      "confidence": 1,
+      "approved": false
+    }
+  },
+  "verification": {
+    "verification_status": "provisional"
+  },
+  "fictional_example": false
+}
