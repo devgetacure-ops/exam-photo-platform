@@ -23,6 +23,7 @@ the box here would silently invalidate them.
 from __future__ import annotations
 
 import hashlib
+import math
 import threading
 from pathlib import Path
 from typing import Any, Optional
@@ -30,7 +31,7 @@ from typing import Any, Optional
 import numpy as np
 from PIL import Image
 
-from exam_photo.models.geometry import Landmarks, Point
+from exam_photo.models.geometry import Landmarks, Point, PoseEstimate
 from exam_photo.providers.face_detection import FaceDetection
 from exam_photo.providers.model_errors import ModelChecksumError, ModelNotFoundError
 
@@ -130,6 +131,12 @@ class MediapipeFaceLandmarker:
             min_face_detection_confidence=self.min_confidence,
             min_face_presence_confidence=self.min_confidence,
             output_face_blendshapes=False,
+            # Head pose feeds the frontal-pose warning (DEC-041).  Blend shapes
+            # stay off: measured over the 40-photo adversarial set, the
+            # eye-blink score does not separate sunglasses or closed eyes from
+            # narrow or deep-set eyes, so nothing consumes it and it would only
+            # cost time.
+            output_facial_transformation_matrixes=True,
         )
         self._landmarker = mp_vision.FaceLandmarker.create_from_options(options)
 
@@ -167,12 +174,23 @@ class MediapipeFaceLandmarker:
                 mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb)
             )
 
+        # Whether a dense face was found at all is reported separately from
+        # whether its reading was accepted.  Downstream suitability treats "the
+        # landmarker could not read this face" as evidence of an extreme pose
+        # or a covered face (DEC-041), and that inference is only valid for a
+        # genuine detection failure -- not for a face that was read fine but
+        # whose chin was rejected as implausible below.
+        def tagged(found: bool) -> FaceDetection:
+            metadata = dict(face.provider_metadata or {})
+            metadata["dense_landmarks_found"] = found
+            return face.model_copy(update={"provider_metadata": metadata})
+
         if not result.face_landmarks:
-            return face
+            return tagged(False)
 
         marks = result.face_landmarks[0]
         if len(marks) <= _IDX_CHIN:
-            return face
+            return tagged(False)
 
         def to_point(index: int) -> Point:
             lm = marks[index]
@@ -185,7 +203,7 @@ class MediapipeFaceLandmarker:
         face_box = face.bounding_box
         deviation = abs(chin.y - face_box.bottom) / max(1.0, face_box.height)
         if deviation > _MAX_CHIN_DEVIATION_FACE_HEIGHTS:
-            return face
+            return tagged(True)
 
         if len(marks) > _IDX_IRIS_LEFT:
             left_eye = to_point(_IDX_IRIS_LEFT)
@@ -209,7 +227,54 @@ class MediapipeFaceLandmarker:
             chin=chin,
             custom_landmarks=custom,
         )
-        return face.model_copy(update={"landmarks": refined})
+
+        metadata = dict(face.provider_metadata or {})
+        metadata["dense_landmarks_found"] = True
+        update: dict[str, Any] = {
+            "landmarks": refined,
+            "provider_metadata": metadata,
+        }
+        pose = self._pose_from_result(result)
+        if pose is not None:
+            update["pose"] = pose
+        return face.model_copy(update=update)
+
+    @staticmethod
+    def _pose_from_result(result: Any) -> Optional[PoseEstimate]:
+        """Extract head yaw/pitch/roll from the landmarker's transform matrix.
+
+        The matrix maps the canonical face model into the camera frame, so its
+        rotation submatrix is the head pose.  Returned in degrees with the
+        usual convention: yaw positive turning to the subject's left, pitch
+        positive looking up, roll positive tilting clockwise in the image.
+        """
+        matrices = getattr(result, "facial_transformation_matrixes", None)
+        if not matrices:
+            return None
+        rotation = np.asarray(matrices[0], dtype=np.float64)[:3, :3]
+        # Guard against a degenerate matrix rather than emitting a NaN pose.
+        cos_pitch = math.sqrt(rotation[0, 0] ** 2 + rotation[1, 0] ** 2)
+        if not math.isfinite(cos_pitch):
+            return None
+        if cos_pitch > 1e-6:
+            pitch = math.degrees(math.atan2(rotation[2, 1], rotation[2, 2]))
+            yaw = math.degrees(math.atan2(-rotation[2, 0], cos_pitch))
+            roll = math.degrees(math.atan2(rotation[1, 0], rotation[0, 0]))
+        else:
+            # Gimbal lock: roll is not separable from yaw, so report it as zero
+            # rather than inventing a value.
+            pitch = math.degrees(math.atan2(-rotation[1, 2], rotation[1, 1]))
+            yaw = math.degrees(math.atan2(-rotation[2, 0], cos_pitch))
+            roll = 0.0
+        if not all(math.isfinite(v) for v in (yaw, pitch, roll)):
+            return None
+        return PoseEstimate(
+            yaw=yaw,
+            pitch=pitch,
+            roll=roll,
+            confidence=1.0,
+            method="mediapipe_face_landmarker_transform_matrix",
+        )
 
     def close(self) -> None:
         with self._lock:
