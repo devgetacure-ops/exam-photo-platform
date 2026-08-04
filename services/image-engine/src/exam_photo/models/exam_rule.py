@@ -410,6 +410,128 @@ class ExceptionalInstructions(BaseModel):
     unsupported_requirement_reasons: List[str] = Field(default_factory=list)
 
 
+class AppearancePolicyValue(str, Enum):
+    PERMITTED = "permitted"
+    PROHIBITED = "prohibited"
+    CONDITIONAL = "conditional"
+
+
+class AppearancePolicy(BaseModel):
+    """A three-state candidate-appearance rule (DEC-042).
+
+    ``CONDITIONAL`` exists because conducting bodies publish rules a boolean
+    cannot express -- "prohibited except for religious reasons", "permitted
+    only if regularly worn".  Forcing those into permitted/prohibited would
+    assert something the body did not say, and those are exactly the cases
+    with the highest cost of error: religious head coverings and prescription
+    eyewear.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+    policy: AppearancePolicyValue
+    condition: Optional[str] = None
+    source_wording: Optional[str] = None
+
+    @model_validator(mode="after")
+    def validate_conditional_has_condition(self) -> "AppearancePolicy":
+        if self.policy == AppearancePolicyValue.CONDITIONAL and not self.condition:
+            raise ValueError(
+                "A 'conditional' appearance policy must state its condition; "
+                "otherwise it carries no more information than an omitted rule."
+            )
+        return self
+
+
+class FaceCoverageBasis(str, Enum):
+    FACE_BOX_AREA = "face_box_area"
+    FACE_HEIGHT = "face_height"
+    HEAD_HEIGHT = "head_height"
+    UNSPECIFIED = "unspecified"
+
+
+class ImprintPolicyValue(str, Enum):
+    REQUIRED = "required"
+    PROHIBITED = "prohibited"
+    UNSPECIFIED = "unspecified"
+
+
+class ImprintField(str, Enum):
+    CANDIDATE_NAME = "candidate_name"
+    PHOTOGRAPH_DATE = "photograph_date"
+
+
+class ImprintPosition(str, Enum):
+    BOTTOM = "bottom"
+    BELOW_IMAGE = "below_image"
+    UNSPECIFIED = "unspecified"
+
+
+class ImprintConfig(BaseModel):
+    """Text a body requires printed on, or forbids from, the photograph.
+
+    Verified conflict: TNPSC, Kerala PSC and CBSE require a name and/or date;
+    Railways prohibits any signature, name, date or mark on the photograph.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+    policy: ImprintPolicyValue = ImprintPolicyValue.UNSPECIFIED
+    fields: List[ImprintField] = Field(default_factory=list)
+    position: ImprintPosition = ImprintPosition.UNSPECIFIED
+    source_wording: Optional[str] = None
+
+    @model_validator(mode="after")
+    def validate_required_names_fields(self) -> "ImprintConfig":
+        if self.policy == ImprintPolicyValue.REQUIRED and not self.fields:
+            raise ValueError(
+                "A required imprint must name the fields to print; the engine "
+                "cannot infer whether the body wants the name, the date or both."
+            )
+        return self
+
+
+class ProhibitedProvenance(str, Enum):
+    SELFIE = "selfie"
+    MOBILE_PHOTOGRAPH = "mobile_photograph"
+    SCANNED_PRINT = "scanned_print"
+    PHOTOGRAPH_OF_A_PHOTOGRAPH = "photograph_of_a_photograph"
+    GROUP_PHOTOGRAPH_CROP = "group_photograph_crop"
+    DIGITALLY_ALTERED = "digitally_altered"
+    WATERMARKED = "watermarked"
+    COMPUTER_GENERATED = "computer_generated"
+
+
+class AppearanceConfig(BaseModel):
+    """Per-exam candidate-appearance rules (DEC-042).
+
+    Every field is optional and absence means the conducting body did not
+    specify it.  Absence must never be read as permission or prohibition --
+    that is the no-silent-assumptions principle applied to appearance.
+
+    These cannot be platform constants: across 48 examinations the verified
+    rules contradict each other on background colour, spectacles, smiling,
+    printed name/date, colour versus monochrome, and face occupancy.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+    spectacles: Optional[AppearancePolicy] = None
+    headwear: Optional[AppearancePolicy] = None
+    smile: Optional[AppearancePolicy] = None
+    facial_hair: Optional[AppearancePolicy] = None
+    face_mask: Optional[AppearancePolicy] = None
+    monochrome_accepted: Optional[bool] = None
+    # The published percentages (50, 60-70, ~75, 80) are not comparable across
+    # bodies because the bodies do not agree on what is being measured.
+    face_coverage_basis: Optional[FaceCoverageBasis] = None
+    # Not checkable from a submitted image, so these drive guidance text only,
+    # never a warning and never a block (DEC-041).
+    live_capture_required: Optional[bool] = None
+    recency_maximum_days: Optional[int] = Field(default=None, ge=1)
+    prohibited_provenance: List[ProhibitedProvenance] = Field(default_factory=list)
+    imprint: Optional[ImprintConfig] = None
+    attestation_required: Optional[bool] = None
+    source_wording: Optional[str] = None
+
+
 class ImageRequirements(BaseModel):
     model_config = ConfigDict(extra="forbid")
     dimensions: DimensionsConfig
@@ -417,6 +539,10 @@ class ImageRequirements(BaseModel):
     formats: FormatsConfig
     background: BackgroundConfig
     composition: CompositionConfig
+    # Optional so every existing rule record stays valid; an absent block means
+    # no appearance rule was verified for that exam, not that anything is
+    # permitted.
+    appearance: Optional[AppearanceConfig] = None
     filename: FilenameConfig
     exceptional_instructions: ExceptionalInstructions
 

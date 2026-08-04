@@ -483,6 +483,119 @@
           },
           "additionalProperties": false
         },
+        "appearance": {
+          "type": "object",
+          "description": "Per-exam candidate-appearance rules (DEC-042). Every property is optional and absence means the conducting body did not specify it; absence must never be read as permission or prohibition. Boolean flags are avoided for anything a body states conditionally, because verified rules across Indian examinations include 'prohibited except for religious reasons' and 'permitted only if regularly worn', which are neither yes nor no.",
+          "properties": {
+            "spectacles": {
+              "$ref": "#/$defs/appearancePolicy",
+              "description": "Verified conflicts: prohibited during SSC live capture; permitted without reflections by banking bodies; permitted by NTA only if regularly used; permitted as normal corrective lenses by GATE."
+            },
+            "headwear": {
+              "$ref": "#/$defs/appearancePolicy",
+              "description": "Verified conflicts: caps prohibited outright by SSC; religious head covering permitted by IBPS, GATE and the Indian Navy provided the face is not covered."
+            },
+            "smile": {
+              "$ref": "#/$defs/appearancePolicy",
+              "description": "Verified conflict: UPSC and Railways reject grinning; CBSE expressly allows smiling."
+            },
+            "facial_hair": {
+              "$ref": "#/$defs/appearancePolicy",
+              "description": "Verified outlier: the Indian Army requires clean-shaven photographs except for Sikh candidates. Most bodies are silent."
+            },
+            "face_mask": {
+              "$ref": "#/$defs/appearancePolicy"
+            },
+            "monochrome_accepted": {
+              "type": "boolean",
+              "description": "True where the body accepts black-and-white as well as colour (verified for CUET-PG and UGC-NET). Most bodies require colour; omit when unspecified."
+            },
+            "face_coverage_basis": {
+              "type": "string",
+              "enum": ["face_box_area", "face_height", "head_height", "unspecified"],
+              "description": "How the body's published face-occupancy percentage is measured. Verified thresholds are 50%, 60-70%, about 75% and 80%, but the bodies do not agree on what is being measured, so the number alone is not comparable across exams."
+            },
+            "live_capture_required": {
+              "type": "boolean",
+              "description": "True where the body requires a live in-portal capture. Not checkable from a submitted image, so this drives guidance text only, never a warning or a block (DEC-041)."
+            },
+            "recency_maximum_days": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Verified windows include 60 days (Railways Level-1), 90 days (Indian Army) and 180 days (CBSE, Kerala PSC). Not checkable from pixels; guidance only."
+            },
+            "prohibited_provenance": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "selfie",
+                  "mobile_photograph",
+                  "scanned_print",
+                  "photograph_of_a_photograph",
+                  "group_photograph_crop",
+                  "digitally_altered",
+                  "watermarked",
+                  "computer_generated"
+                ]
+              },
+              "uniqueItems": true,
+              "description": "Official wording tends to be 'computer generated', 'tampered', 'fabricated' or 'Photoshopped' rather than an explicit AI ban; do not restate these as an AI prohibition unless the body does. Mostly unverifiable from pixels."
+            },
+            "imprint": {
+              "type": "object",
+              "description": "Text the body requires printed on, or prohibits from, the photograph itself. Verified conflict: TNPSC, Kerala PSC and CBSE require a name and/or date; Railways prohibits any signature, name, date or mark on the photograph.",
+              "properties": {
+                "policy": {
+                  "type": "string",
+                  "enum": ["required", "prohibited", "unspecified"]
+                },
+                "fields": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": ["candidate_name", "photograph_date"]
+                  },
+                  "uniqueItems": true
+                },
+                "position": {
+                  "type": "string",
+                  "enum": ["bottom", "below_image", "unspecified"]
+                },
+                "source_wording": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false,
+              "if": {
+                "properties": {
+                  "policy": {
+                    "const": "required"
+                  }
+                },
+                "required": ["policy"]
+              },
+              "then": {
+                "required": ["policy", "fields"],
+                "properties": {
+                  "fields": {
+                    "minItems": 1
+                  }
+                },
+                "description": "A required imprint must name the fields to print; the engine cannot infer whether the body wants the name, the date or both."
+              }
+            },
+            "attestation_required": {
+              "type": "boolean",
+              "description": "Verified conflict: NEET and UGC-NET state attestation is unnecessary; Kerala PSC and several state-commission forms require it."
+            },
+            "source_wording": {
+              "type": "string",
+              "description": "Short verbatim anchor from the official bulletin, for traceability of the block as a whole."
+            }
+          },
+          "additionalProperties": false
+        },
         "filename": {
           "type": "object",
           "properties": {
@@ -704,5 +817,39 @@
     "verification",
     "fictional_example"
   ],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "$defs": {
+    "appearancePolicy": {
+      "type": "object",
+      "description": "A three-state appearance rule (DEC-042). 'conditional' exists because bodies publish rules that a boolean cannot express, such as 'prohibited except for religious reasons' or 'permitted only if regularly worn'. Recording those as either permitted or prohibited would state something the body did not, and the conditional cases carry the highest cost of error since they cover religious head coverings and prescription eyewear.",
+      "properties": {
+        "policy": {
+          "type": "string",
+          "enum": ["permitted", "prohibited", "conditional"]
+        },
+        "condition": {
+          "type": "string",
+          "description": "Required in practice when policy is 'conditional': the circumstance under which the item is allowed, e.g. 'permitted for religious reasons provided the face is fully visible'."
+        },
+        "source_wording": {
+          "type": "string",
+          "description": "Short verbatim anchor from the official bulletin."
+        }
+      },
+      "required": ["policy"],
+      "additionalProperties": false,
+      "if": {
+        "properties": {
+          "policy": {
+            "const": "conditional"
+          }
+        },
+        "required": ["policy"]
+      },
+      "then": {
+        "required": ["policy", "condition"],
+        "description": "A conditional policy with no stated condition carries no more information than an omitted rule, so the condition is required here rather than left to each consumer to enforce."
+      }
+    }
+  }
 }
