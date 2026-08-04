@@ -123,11 +123,20 @@ _AMBIGUOUS_SECOND_FACE_RATIO = 0.50
 # landmarks on it. Blocking on that would reject a perfectly usable photograph.
 _MIN_CONFIDENCE_TO_BLOCK = 0.25
 
-# Measured: the two severely underexposed photographs sit at mean luminance 29
-# with 78% of pixels near black; the next darkest photograph in the set is at
-# luminance 80 with 24%. The gap is wide, so these thresholds sit inside it.
-_SEVERE_UNDEREXPOSURE_LUMINANCE = 60.0
-_SEVERE_UNDEREXPOSURE_DARK_FRACTION = 0.50
+# Underexposure is judged on the FACE region, never the frame (see
+# ``appearance_signals``): the two darkest-framed photographs in the
+# adversarial set carry faces at luminance 98 and 93 and were classed ideal by
+# a reviewer, so a frame-based threshold produced two false likely-rejections.
+#
+# This bound is deliberately provisional. Across all 40 photographs the darkest
+# measured face reads 78, so the set contains no genuinely underexposed face
+# and offers no positive example to calibrate against. The threshold therefore
+# sits comfortably below every observed face rather than inside a measured gap,
+# and should be revisited when a genuinely dark-faced photograph exists to test
+# it. Erring low is the correct direction: a missed warning costs a candidate a
+# retake, a false one costs the platform a user.
+_SEVERE_UNDEREXPOSURE_LUMINANCE = 55.0
+_SEVERE_UNDEREXPOSURE_DARK_FRACTION = 0.35
 
 # Measured: the one black-and-white photograph reads mean saturation 0.0; the
 # least saturated colour photograph reads 13.5.

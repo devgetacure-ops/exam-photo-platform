@@ -52,7 +52,7 @@ def measure_appearance_signals(
     """
     width, height = image.size
     rgb = np.asarray(image.convert("RGB"), dtype=np.float32)
-    mean_luma, dark_fraction, mean_saturation = _luminance_stats(rgb)
+    _, _, mean_saturation = _luminance_stats(rgb)
 
     primary_height: Optional[float] = None
     second_ratio = 0.0
@@ -63,6 +63,25 @@ def measure_appearance_signals(
         primary_height = heights[0]
         if len(heights) > 1 and primary_height > 0:
             second_ratio = heights[1] / primary_height
+
+    # Exposure is measured on the face, never on the whole frame.
+    #
+    # A correctly exposed portrait shot at night, or against a dark backdrop,
+    # has a low frame luminance and a perfectly lit face. Measured on two such
+    # photographs in the adversarial set: frame luminance 29 with 78% of pixels
+    # near black, while the face itself reads 98 and 93. A frame-based rule
+    # calls those severely underexposed, which is a false likely-rejection on
+    # two photographs a reviewer classed as ideal.
+    mean_luma: Optional[float] = None
+    dark_fraction: Optional[float] = None
+    if detections:
+        box = max(detections, key=lambda d: d.bounding_box.height).bounding_box
+        y0, y1 = max(0, int(box.top)), min(height, int(box.bottom))
+        x0, x1 = max(0, int(box.left)), min(width, int(box.right))
+        if y1 > y0 and x1 > x0:
+            face_grey = rgb[y0:y1, x0:x1].mean(axis=2)
+            mean_luma = float(face_grey.mean())
+            dark_fraction = float((face_grey < 40.0).mean())
 
     yaw = pitch = roll = None
     if detections:

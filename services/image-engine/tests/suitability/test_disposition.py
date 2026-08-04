@@ -81,9 +81,9 @@ def test_small_bystander_does_not_block() -> None:
 
 
 def test_severe_underexposure_warns_but_still_produces() -> None:
-    """Photographs 18 and 19: mean luminance 29, 78% of pixels near black."""
+    """A genuinely dark FACE, not merely a dark frame."""
     report = evaluate_disposition(
-        signals(mean_luminance=29.0, dark_pixel_fraction=0.78)
+        signals(mean_luminance=38.0, dark_pixel_fraction=0.55)
     )
     assert report.disposition is Disposition.WARN
     assert report.likely_rejections
@@ -94,9 +94,9 @@ def test_severe_underexposure_warns_but_still_produces() -> None:
 
 
 def test_ordinary_dim_photograph_is_not_flagged() -> None:
-    """The next-darkest photograph in the set sits at luminance 80 / 24%."""
+    """Photographs 18 and 19: frame luminance 29 but face luminance 93."""
     report = evaluate_disposition(
-        signals(mean_luminance=80.0, dark_pixel_fraction=0.24)
+        signals(mean_luminance=93.0, dark_pixel_fraction=0.23)
     )
     assert report.disposition is Disposition.ACCEPT
 
