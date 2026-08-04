@@ -51,12 +51,42 @@ from exam_photo.providers.segmenters.mediapipe_segmenter import (
     MediapipeSubjectSegmenter,
 )
 from exam_photo.rule_validation import validate_exam_rule
+from exam_photo.suitability.appearance_signals import (
+    measure_appearance_signals,
+    measure_face_tone,
+)
+from exam_photo.suitability.disposition import (
+    AppearanceFinding,
+    Disposition,
+    DispositionReport,
+    FindingLevel,
+    evaluate_disposition,
+)
+from exam_photo.suitability.enhancement_planner import (
+    EnhancementPlan,
+    apply_enhancement,
+    plan_enhancement,
+    severe_cast_detected,
+)
+from exam_photo.suitability.issue_codes import SuitabilityIssueCode
 
 # Face-detection confidence ladder.  The primary threshold is the provider
 # default; the recovery levels are only consulted when the primary pass returns
 # no detections at all (see Stage 3).
 _FACE_PRIMARY_CONFIDENCE = 0.5
 _FACE_RECOVERY_CONFIDENCES = (0.35, 0.25, 0.15)
+
+
+def _monochrome_accepted(rule: Optional[ExamRule]) -> Optional[bool]:
+    """Whether this exam accepts a black-and-white photograph.
+
+    ``None`` when the conducting body did not specify it, which is neither
+    permission nor prohibition and produces no finding (DEC-042).
+    """
+    if rule is None:
+        return None
+    appearance = rule.image_requirements.appearance
+    return appearance.monochrome_accepted if appearance is not None else None
 
 
 def _find_repo_root() -> Path:
@@ -274,6 +304,15 @@ class RulePipelineResult(BaseModel):
     diagnostic_artifacts_available: bool = False
     portrait_quality_report: Optional[dict[str, Any]] = None
     matte_quality_report: Optional[dict[str, Any]] = None
+
+    # Accept / warn / block, plus the findings behind it (DEC-041). A warn
+    # disposition still carries a finished photograph: appearance is never a
+    # blocking reason.
+    appearance_disposition: Optional[str] = None
+    appearance_findings: list[dict[str, Any]] = Field(default_factory=list)
+    # What natural enhancement was applied, for disclosure to the candidate
+    # (DEC-043). Empty when the photograph needed none, which is the common case.
+    enhancements_applied: list[str] = Field(default_factory=list)
 
     encoded_bytes: bytes | None = Field(default=None, exclude=True)
     refined_alpha_mask: Any = Field(default=None, exclude=True)
@@ -500,6 +539,8 @@ class RuleOrchestratedPipeline:
         # Stage 3: Face Detection
         face_result = None
         face = None
+        appearance_report: Optional[DispositionReport] = None
+        enhancement_plan: Optional[EnhancementPlan] = None
         if not failed and norm_result is not None:
             t_stage = time.perf_counter()
             try:
@@ -530,13 +571,34 @@ class RuleOrchestratedPipeline:
                                 recovery_used = level
                                 break
                             if len(retry.detections) > 1:
-                                # Ambiguous: report the ambiguity, do not guess.
+                                # Possibly ambiguous -- the disposition policy
+                                # decides.  Recording the tier matters as much
+                                # here as in the single-face branch: leaving it
+                                # unset made a multi-face recovery look like a
+                                # full-confidence detection, which blocked a
+                                # single candidate standing in front of a
+                                # printed banner whose spurious second face
+                                # exists only at the lowest tier.
                                 face_result = retry
+                                recovery_used = level
                                 break
                 dur_stage = (time.perf_counter() - t_stage) * 1000.0
 
-                if len(face_result.detections) == 1:
-                    face = face_result.detections[0]
+                # A second detection is not automatically a second person
+                # (DEC-041).  Requiring exactly one detection rejected a
+                # photograph of a single candidate standing in front of a
+                # printed banner, where a spurious face appears only at the
+                # lowest confidence tier and carries no landmarks.  The
+                # disposition policy decides instead, on how large the second
+                # face is relative to the first and how hard the detector had
+                # to work to find it; anything it does not consider ambiguous
+                # proceeds with the largest face.
+                subject_ambiguous = False
+                if face_result.detections:
+                    face = max(
+                        face_result.detections,
+                        key=lambda d: d.bounding_box.height,
+                    )
                     # Refine the chin and eye line with dense landmarks where
                     # the asset is available (DEC-032).  Detection and face
                     # counting stay with BlazeFace, which has the better
@@ -555,18 +617,62 @@ class RuleOrchestratedPipeline:
                             )
                     except Exception as exc:  # noqa: BLE001
                         landmark_note = f" Landmark refinement unavailable: {exc}."
+
+                    detections_for_policy = [
+                        face if d is not face else face for d in face_result.detections
+                    ]
+                    appearance_signals = measure_appearance_signals(
+                        norm_result.image,
+                        detections_for_policy,
+                        detection_confidence=(
+                            recovery_used
+                            if recovery_used is not None
+                            else _FACE_PRIMARY_CONFIDENCE
+                        ),
+                        landmarks_available=bool(
+                            (face.provider_metadata or {}).get(
+                                "dense_landmarks_found", False
+                            )
+                        ),
+                        target_height_px=(
+                            plan.output_preparation_config.target_height
+                            if plan is not None and plan.output_preparation_config
+                            else None
+                        ),
+                        target_head_height_ratio=(
+                            plan.crop_config.target_head_height_ratio
+                            if plan is not None and plan.crop_config
+                            else None
+                        ),
+                    )
+                    appearance_report = evaluate_disposition(
+                        appearance_signals,
+                        monochrome_accepted=_monochrome_accepted(rule),
+                    )
+                    subject_ambiguous = (
+                        appearance_report.disposition is Disposition.BLOCK
+                    )
+
+                if face_result.detections and not subject_ambiguous:
+                    count = len(face_result.detections)
+                    detected = (
+                        "Exactly 1 face detected."
+                        if count == 1
+                        else f"{count} faces detected; the largest is the subject."
+                    )
+                    if recovery_used is not None:
+                        detected = (
+                            detected[:-1]
+                            + f" at recovery confidence {recovery_used:.2f}."
+                        )
                     record_stage(
                         PipelineStage.FACE_DETECTION,
                         PipelineStageStatus.PASSED,
                         dur=dur_stage,
-                        summary=(
-                            "Exactly 1 face detected."
-                            if recovery_used is None
-                            else f"Exactly 1 face detected at recovery confidence {recovery_used:.2f}."
-                        )
-                        + landmark_note,
+                        summary=detected + landmark_note,
                     )
                 else:
+                    face = None
                     failed = True
                     pipeline_issues.append(
                         PipelineIssueCode.PIPELINE_FACE_COUNT_INVALID
@@ -576,7 +682,12 @@ class RuleOrchestratedPipeline:
                         PipelineStageStatus.FAILED,
                         issues=["FACE_COUNT_INVALID"],
                         dur=dur_stage,
-                        summary=f"Expected exactly 1 face, found {len(face_result.detections)}.",
+                        summary=(
+                            appearance_report.block_reason
+                            if appearance_report is not None
+                            and appearance_report.block_reason
+                            else "No face was detected in this photograph."
+                        ),
                     )
             except Exception as e:
                 failed = True
@@ -1152,6 +1263,38 @@ class RuleOrchestratedPipeline:
                     )
 
                 assert target_w is not None and target_h is not None
+
+                # Natural enhancement (DEC-043), applied to the source before
+                # compositing so the replacement background is laid down at the
+                # rule's exact colour afterwards and cannot be tinted by an
+                # adjustment meant for the subject.
+                tone = (
+                    measure_face_tone(norm_result.image, [face])
+                    if norm_result is not None and face is not None
+                    else None
+                )
+                if tone is not None:
+                    enhancement_plan = plan_enhancement(tone)
+                    if not enhancement_plan.is_noop:
+                        decon_image = apply_enhancement(decon_image, enhancement_plan)
+                    if severe_cast_detected(tone) and appearance_report is not None:
+                        appearance_report.findings.append(
+                            AppearanceFinding(
+                                code=SuitabilityIssueCode.SUITABILITY_LOW_CONTRAST_WARNING,
+                                level=FindingLevel.LIKELY_REJECTION,
+                                message=(
+                                    "This photograph was taken under strongly "
+                                    "coloured lighting. We have reduced it, but "
+                                    "the skin tone may still look unnatural."
+                                ),
+                                remedy=(
+                                    "Retake the photograph in daylight or under "
+                                    "ordinary white indoor lighting."
+                                ),
+                                measured_value=tone.blue_minus_red,
+                            )
+                        )
+
                 prepared_image = premultiply_crop_resize_composite(
                     image=decon_image,
                     alpha=ref_result.refined_alpha_mask,
@@ -1202,14 +1345,53 @@ class RuleOrchestratedPipeline:
                                 bg_issues.append("BACKGROUND_SUBJECT_CLIPPING_RISK")
 
                 if bg_issues:
-                    failed = True
-                    pipeline_issues.append(PipelineIssueCode.PIPELINE_BACKGROUND_FAILED)
+                    # Reported, never blocking (DEC-041).  A subject that fills
+                    # too little of the frame, or whose hair reaches the top
+                    # edge, is a composition concern -- and the approved
+                    # reference outputs let hair reach or leave the edge on most
+                    # photographs.  Failing here contradicted the disposition
+                    # contract from inside the pipeline: two photographs that
+                    # the policy had already judged acceptable still produced
+                    # nothing, which is the outcome the policy exists to
+                    # prevent.  Genuinely unusable mattes are caught earlier by
+                    # the segmentation mask validation.
                     record_stage(
                         PipelineStage.BACKGROUND_COMPOSITION,
-                        PipelineStageStatus.FAILED,
+                        PipelineStageStatus.WARNING,
                         issues=bg_issues,
                         dur=dur_stage / 2,
-                        summary="Background composition constraints failed.",
+                        summary=(
+                            "Composed with a background composition concern: "
+                            + ", ".join(bg_issues)
+                        ),
+                    )
+                    if appearance_report is not None:
+                        appearance_report.findings.append(
+                            AppearanceFinding(
+                                code=SuitabilityIssueCode.SUITABILITY_FACE_REGION_TOO_SMALL
+                                if "BACKGROUND_FOREGROUND_TOO_SMALL" in bg_issues
+                                else SuitabilityIssueCode.SUITABILITY_HEAD_TOP_CLIPPED,
+                                level=FindingLevel.POSSIBLE_ISSUE,
+                                message=(
+                                    "You appear small in the frame, so the crop "
+                                    "is loose."
+                                    if "BACKGROUND_FOREGROUND_TOO_SMALL" in bg_issues
+                                    else "Your hair reaches the edge of the photo."
+                                ),
+                                remedy=(
+                                    "Retake the photograph standing closer to "
+                                    "the camera."
+                                    if "BACKGROUND_FOREGROUND_TOO_SMALL" in bg_issues
+                                    else "Retake with a little more space above "
+                                    "your head."
+                                ),
+                            )
+                        )
+                    record_stage(
+                        PipelineStage.OUTPUT_PREPARATION,
+                        PipelineStageStatus.PASSED,
+                        dur=dur_stage / 2,
+                        summary=f"Prepared output successfully with dimensions {target_w}x{target_h}.",
                     )
                 else:
                     record_stage(
@@ -1611,6 +1793,19 @@ class RuleOrchestratedPipeline:
             processing_duration_ms=duration_ms,
             quality_mode=config.quality_mode,
             diagnostic_artifacts_available=config.save_diagnostic_artifacts,
+            appearance_disposition=(
+                appearance_report.disposition.value
+                if appearance_report is not None
+                else None
+            ),
+            appearance_findings=(
+                [f.model_dump(mode="json") for f in appearance_report.findings]
+                if appearance_report is not None
+                else []
+            ),
+            enhancements_applied=(
+                list(enhancement_plan.applied) if enhancement_plan is not None else []
+            ),
             portrait_quality_report=portrait_quality_report,
             matte_quality_report=matte_quality_report,
             encoded_bytes=comp_result.encoded_bytes

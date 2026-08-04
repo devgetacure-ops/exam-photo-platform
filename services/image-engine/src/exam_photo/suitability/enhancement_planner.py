@@ -22,6 +22,8 @@ from __future__ import annotations
 
 from typing import List, Optional
 
+import numpy as np
+from PIL import Image, ImageEnhance
 from pydantic import BaseModel, ConfigDict, Field
 
 # Caps on any single adjustment.  These mirror the output preparer's own
@@ -140,12 +142,55 @@ def plan_enhancement(face: FaceToneMeasurements) -> EnhancementPlan:
         plan.applied.append("reduced colour cast from the lighting")
 
     # --- Focus: bounded sharpen for a soft capture ---
+    #
+    # A noise guard was tried here and removed. The theory -- that sharpening a
+    # noisy capture amplifies its noise -- is sound, but the chroma-noise
+    # measure written to detect it did not separate: across the adversarial set
+    # the photograph labelled blurred read 0.53, squarely inside the 0.52-0.88
+    # range of the ten labelled clean. A threshold on that measure would never
+    # have fired, so it was a dead constant rather than a safeguard. A genuinely
+    # poor capture is warned about instead (SUITABILITY_BLUR_WARNING) and the
+    # candidate is asked for a clearer photograph, which is the honest product
+    # answer to an input no amount of processing will rescue.
     if face.sharpness is not None and face.sharpness < _SOFT_SHARPNESS:
         shortfall = (_SOFT_SHARPNESS - face.sharpness) / _SOFT_SHARPNESS
         plan.sharpness_adjustment = _clamp(1.0 + shortfall, _MAX_SHARPNESS_DELTA)
         plan.applied.append("sharpened a soft image")
 
     return plan
+
+
+def apply_enhancement(image: Image.Image, plan: EnhancementPlan) -> Image.Image:
+    """Apply a plan to the source image, returning a new image.
+
+    Applied to the source *before* background compositing, never after: the
+    replacement background is laid down at the rule's exact colour afterwards,
+    so it cannot be tinted by a contrast or colour adjustment intended for the
+    subject.
+    """
+    if plan.is_noop:
+        return image
+
+    out = image.convert("RGB")
+    if plan.cast_correction_strength > 0.0:
+        # Grey-world neutralisation, applied at the planned fraction: scale the
+        # channels toward their common mean rather than toward any target skin
+        # colour, so the correction is a property of the illuminant only.
+        arr = np.asarray(out, dtype=np.float32)
+        means = arr.reshape(-1, 3).mean(axis=0)
+        grey_point = float(means.mean())
+        gains = np.where(means > 1.0, grey_point / np.maximum(means, 1.0), 1.0)
+        gains = 1.0 + (gains - 1.0) * plan.cast_correction_strength
+        arr = np.clip(arr * gains, 0.0, 255.0)
+        out = Image.fromarray(arr.astype(np.uint8), mode="RGB")
+
+    if plan.brightness_adjustment != 1.0:
+        out = ImageEnhance.Brightness(out).enhance(plan.brightness_adjustment)
+    if plan.contrast_adjustment != 1.0:
+        out = ImageEnhance.Contrast(out).enhance(plan.contrast_adjustment)
+    if plan.sharpness_adjustment != 1.0:
+        out = ImageEnhance.Sharpness(out).enhance(plan.sharpness_adjustment)
+    return out
 
 
 def severe_cast_detected(face: FaceToneMeasurements) -> bool:

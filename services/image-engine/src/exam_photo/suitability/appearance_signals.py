@@ -8,13 +8,16 @@ statistics are single passes over the pixels.
 
 from __future__ import annotations
 
-from typing import Any, Optional, Sequence
+from typing import TYPE_CHECKING, Any, Optional, Sequence
 
 import numpy as np
 from PIL import Image
 
 from exam_photo.providers.face_detection import FaceDetection
 from exam_photo.suitability.disposition import AppearanceSignals
+
+if TYPE_CHECKING:
+    from exam_photo.suitability.enhancement_planner import FaceToneMeasurements
 
 
 def _luminance_stats(rgb: np.ndarray[Any, Any]) -> tuple[float, float, float]:
@@ -63,6 +66,41 @@ def _normalised_sharpness(face: Image.Image) -> float:
     kernel = np.array([[0, 1, 0], [1, -4, 1], [0, 1, 0]], dtype=np.float32)
     windows = np.lib.stride_tricks.sliding_window_view(grey, (3, 3))
     return float((windows * kernel).sum(axis=(2, 3)).var())
+
+
+def measure_face_tone(
+    image: Image.Image, detections: Sequence[FaceDetection]
+) -> Optional["FaceToneMeasurements"]:
+    """Photometric measurements of the face region, for enhancement planning.
+
+    Returns ``None`` when there is no usable face region, which the planner
+    treats as "do nothing" rather than guessing.
+    """
+    from exam_photo.suitability.enhancement_planner import FaceToneMeasurements
+
+    if not detections:
+        return None
+    width, height = image.size
+    box = max(detections, key=lambda d: d.bounding_box.height).bounding_box
+    y0, y1 = max(0, int(box.top)), min(height, int(box.bottom))
+    x0, x1 = max(0, int(box.left)), min(width, int(box.right))
+    if y1 - y0 < 8 or x1 - x0 < 8:
+        return None
+
+    rgb = np.asarray(image.convert("RGB").crop((x0, y0, x1, y1)), dtype=np.float32)
+    grey = rgb.mean(axis=2)
+    spread = float((rgb.max(axis=2) - rgb.min(axis=2)).mean())
+    return FaceToneMeasurements(
+        mean_luminance=float(grey.mean()),
+        tonal_range_p5_p95=float(np.percentile(grey, 95) - np.percentile(grey, 5)),
+        shadow_clipped_fraction=float((grey < 16.0).mean()),
+        highlight_clipped_fraction=float((grey > 245.0).mean()),
+        blue_minus_red=float(rgb[..., 2].mean() - rgb[..., 0].mean()),
+        sharpness=_normalised_sharpness(image.crop((x0, y0, x1, y1))),
+        # Below this the channels carry no colour information, so a channel
+        # difference says nothing about the illuminant.
+        is_monochrome=spread < 5.0,
+    )
 
 
 def measure_appearance_signals(

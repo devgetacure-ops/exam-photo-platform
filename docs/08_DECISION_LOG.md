@@ -2,6 +2,20 @@
 
 This log tracks architectural and product decisions, open questions, and recommended paths.
 
+## These entries are living records, not constraints
+
+An entry records the best decision available when it was written, together with
+the evidence behind it. When later measurement or a later product decision
+contradicts one, **amend the entry** -- add an `Amended` block stating what
+changed, when, and on what evidence, and update `Status` to `Superseded` if the
+original decision no longer holds at all. Do not bend an implementation to
+preserve a stale entry, and do not silently diverge from one either: an entry
+that no longer matches the code is worse than no entry, because it is read as
+current.
+
+The evidence in a superseded entry stays valuable -- it records what was tried
+and what it measured -- so entries are amended in place rather than deleted.
+
 ---
 
 ## Reusable Decision Template
@@ -496,6 +510,9 @@ This log tracks architectural and product decisions, open questions, and recomme
 - **Consequences**: The engine's public contract is that it never refuses for appearance reasons. Deterrence is delivered by the web app instead: `likely_rejection` presents an acknowledgement step with retaking as the primary action and downloading as a secondary one, while `possible_issue` is an inline notice. This separation is deliberate -- "the engine refuses" and "the interface asks you to confirm" are different guarantees, and only the second is safe when a detector can be wrong. Detectors will be introduced in confidence order (eye closure first, since the vendored face landmarker already emits blend shapes; sunglasses and head coverings require classifiers that do not yet exist), and no signal may be promoted to `likely_rejection` before its reliability is measured.
 - **Affected Modules**: `services/image-engine/src/exam_photo/suitability/`, `services/image-engine/src/exam_photo/orchestration/rule_pipeline.py`, `apps/web/src/components/`.
 - **Approval Owner**: Lead Architect
+- **Amended 2026-08-04 (no stage may block for composition reasons)**: Wiring the policy into `process_rule` showed the contract was being contradicted from inside the pipeline. Two photographs the policy had already judged acceptable still produced nothing, because background composition treated `BACKGROUND_FOREGROUND_TOO_SMALL` and `BACKGROUND_SUBJECT_CLIPPING_RISK` as hard failures. A subject that fills little of the frame, or whose hair reaches the top edge, is a composition concern rather than an unusable output -- and the approved reference outputs let hair reach or leave the edge on most photographs. Both are now warnings that surface as `possible_issue` findings and still produce a photograph. The rule is therefore stated more strongly than originally written: **no stage anywhere in the pipeline may block for an appearance or composition reason.** Only an undecodable file, no detectable face, or a genuinely ambiguous subject may refuse. Genuinely unusable mattes remain caught by segmentation mask validation, which is a different failure.
+- **Amended 2026-08-04 (face counting)**: The original entry left the detector's "exactly one face" requirement in place. That requirement blocked a single candidate photographed in front of a printed banner, whose spurious second face appears only at the lowest confidence tier and carries no landmarks. Face counting is now delegated to the disposition policy, which weighs the second face's size and the tier it was found at, and the pipeline proceeds with the largest face when the subject is unambiguous. A related defect was fixed in the recovery ladder, which failed to record which confidence tier a multi-face recovery had used, making a desperation-tier detection look like a full-confidence one.
+- **Amended 2026-08-04 (blend shapes)**: The original entry anticipated eye closure as the first detector to ship, "since the vendored face landmarker already emits blend shapes". Measurement contradicted this: the eye-blink score does not separate closed eyes or sunglasses from narrow or deep-set eyes. Blend shapes are switched off, no consumer exists, and eye closure remains unimplemented pending a real classifier.
 
 ### DEC-042: Per-Exam Appearance Rules With Three-State Policies
 - **Date**: 2026-08-04
