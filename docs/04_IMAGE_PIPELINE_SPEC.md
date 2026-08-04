@@ -6,6 +6,16 @@
 > [!NOTE]
 > **Implementation sequencing note**: Crop planning (stages 9–10) was implemented before background composition (stage 8c) because crop window calculation depends only on face, head, and mask geometry — not on the final composited image. The full pipeline orchestration will reconcile execution order when background replacement, resizing, and compression stages are integrated in later milestones.
 
+> [!NOTE]
+> **Updated 2026-08-04.** Every stage in this document is now implemented and
+> orchestrated by `RuleOrchestratedPipeline`; the "planned future
+> implementations" caveat above no longer applies. Three stages were added
+> after the original specification and are described below: **5b** dense
+> landmark refinement and head pose, **5c** appearance disposition, and **10b**
+> crop-region matte recomputation. Stage **8b** is now skipped on the default
+> path, because the portrait matting backend already resolves the boundary.
+> The only specified behaviour not yet built is noise reduction within stage 11.
+
 ---
 
 ## Pipeline Execution Order
@@ -17,13 +27,16 @@
       ├── 2. Magic-bytes check (JPEG/PNG only)
       ├── 3. EXIF orientation normalization
       ├── 4. Source metadata extraction
-      ├── 5. Face detection
+      ├── 5. Face detection  ─┐
+      ├── 5b. Dense landmark refinement & head pose
+      ├── 5c. Appearance disposition: accept / warn / block
       ├── 6. Complete-head estimation
       ├── 7. Source suitability analysis
       ├── 8. Background processing
       ├── 9. Crop-mode selection
       ├── 10. Crop calculation
-      ├── 11. Restrained image correction
+      ├── 10b. Crop-region matte recomputation
+      ├── 11. Restrained image correction (planned from measured deficits)
       ├── 12. Resizing
       ├── 13. Format selection
       ├── 14. Quality-aware compression
@@ -87,12 +100,32 @@
 - **Purpose**: Detect bounding boxes and primary facial landmarks (eyes, nose, mouth).
 - **Inputs**: Pre-processed image.
 - **Outputs**: Coordinates of face bounding box and landmarks.
-- **Failure Conditions**: No face detected, multiple faces detected.
-- **Warning Conditions**: Low confidence score.
+- **Failure Conditions**: No face detected. **Multiple detections are no longer an automatic failure** -- see stage 5c. When the subject is unambiguous the pipeline proceeds with the largest face.
+- **Warning Conditions**: Low confidence score. The detector steps down through a confidence ladder (0.50, 0.35, 0.25, 0.15) when the primary pass finds nothing, and the tier it settled on is recorded, because a detection recovered at the lowest tier is not trustworthy enough to block on.
 - **Privacy Considerations**: Bounding boxes are stored strictly in-memory during the session.
 - **Status**: **Implemented (Milestone 5)**
-- **Planned Tests**: Feed image with no face, feed image with multiple faces.
+- **Planned Tests**: Feed image with no face, feed image with multiple faces, feed an image whose only second "face" is a printed banner found at the lowest tier.
 - **Dependencies**: MediaPipe face detection model (`blaze_face_short_range.tflite`).
+
+### 5b. Dense Landmark Refinement & Head Pose
+- **Purpose**: Sharpen the two points the crop planner is most sensitive to -- the chin and the eye line -- and supply head pose (DEC-032).
+- **Inputs**: Normalized image, the primary face detection.
+- **Outputs**: The same detection with a refined chin, eye line, head pose (yaw/pitch/roll), and a `dense_landmarks_found` flag.
+- **Critical detail**: the landmarker runs on a **crop around the detector box**, not the full frame. Its internal detector is tuned for a face filling a reasonable fraction of the frame and finds nothing on a full-body photograph at any confidence; cropping first resolves that.
+- **Failure Conditions**: None. Refinement is an improvement, never a precondition -- failure leaves the detector's own points in place.
+- **Note**: `dense_landmarks_found` is reported separately from whether the reading was *accepted*, because "the landmarker could not read this face" is evidence of extreme pose or occlusion while "its chin reading was implausible" is not.
+- **Status**: **Implemented (DEC-032)**
+- **Dependencies**: MediaPipe face landmarker (`face_landmarker.task`).
+
+### 5c. Appearance Disposition
+- **Purpose**: Classify the upload **accept**, **warn**, or **block** (DEC-041).
+- **Inputs**: Photometric and geometric measurements of the image and face region; the exam's appearance rules.
+- **Outputs**: A disposition plus findings at two severities, `likely_rejection` and `possible_issue`.
+- **Blocks only when a truthful output is impossible**: an undecodable file, no detectable face, or a genuinely ambiguous subject -- two or more faces of comparable size, found above the lowest confidence tier. A small bystander removed by the crop is not ambiguity.
+- **Never blocks for appearance.** No stage anywhere in the pipeline may block for an appearance or composition reason; background-composition concerns are reported as findings and still produce a photograph.
+- **Exposure is measured on the face, never the frame**: a correctly exposed portrait against a dark backdrop reads a low frame luminance and a perfectly lit face.
+- **Status**: **Implemented (DEC-041)**
+- **Not implemented**: sunglasses, head coverings and eye closure, all measured as not separable with the shipped models.
 
 ### 6. Complete-head Estimation
 - **Purpose**: Calculate total head volume including hair boundaries, ears, and chin.
@@ -138,6 +171,15 @@
 - **Privacy Considerations**: Alpha masks, binary masks, and trimaps are kept strictly in-memory during the session.
 - **Status**: **Morphological refinement and Guided Filter matting implemented (Milestone 18)**
 - **Dependencies**: Morphological and Guided Filter pipeline (pure NumPy/PIL vectorized operations).
+
+> [!IMPORTANT]
+> **This entire stage is skipped when a portrait matting backend is in use
+> (DEC-033), which is the default path.** BiRefNet already resolves the
+> boundary, and re-refining it destroyed detail the model had produced while
+> costing minutes of native-resolution work on a large photograph. The alpha is
+> passed through and only the contract artifacts -- binary mask, trimap,
+> validation report -- are constructed. The refinement described above still
+> runs for the coarse MediaPipe segmenter, which is diagnostic-only.
 
 ### 8c. Solid Background Composition & Edge Decontamination
 - **Purpose**: Decontaminate background color spill from candidate foreground edges and composite the subject accurately and cleanly over a compliant solid-colour background.
@@ -191,15 +233,28 @@
 - **Planned Tests**: Verify aspect ratio matches target.
 - **Dependencies**: Pillow crop tool parameters.
 
+### 10b. Crop-Region Matte Recomputation
+- **Purpose**: Spend the matting model's resolution on the part of the photograph that survives into the output (DEC-040).
+- **Why it exists**: the model sees a fixed 512x512 square, so the alpha detail any region receives is set by how much of the *source frame* it occupies, not by how large it will be in the finished photo. Candidates submit half- and full-body photographs and the output is a tight head crop. Measured across 60 reference photographs, the head arrived with a median of 121 px of alpha detail (worst 42) and was then magnified by a median 2.1x, worst 17.4x. Every photograph with visible hair-edge streaking or halo sat in the high-magnification group.
+- **Inputs**: Normalized image, the planned crop box, the full-frame alpha.
+- **Outputs**: The full-frame alpha with the crop region replaced at native resolution.
+- **Runs after crop planning**, which is already decided and is not revisited, so this cannot feed back into planning. Skipped when the crop region is within 1.15x of the full frame. A failure here degrades edge detail rather than failing the photograph.
+- **Status**: **Implemented (DEC-040)**
+- **Known limit**: this fixes matte resolution, not source resolution. A photograph whose head occupies few source pixels still needs heavy enlargement for a large output, which no matting can recover; that is reported as a finding instead.
+
 ### 11. Restrained Image Correction
-- **Purpose**: Improve image legibility without altering candidate identity.
-- **Inputs**: Cropped image segment, enhancement configuration.
-- **Outputs**: Corrected image segment.
+- **Purpose**: Correct measured capture defects without altering candidate identity (DEC-043).
+- **Inputs**: Source image, face-region photometric measurements.
+- **Outputs**: Corrected source image, plus a disclosure list of what was applied.
+- **What triggers each correction**: a compressed tonal range triggers a contrast lift; clipped shadows or highlights trigger a brightness correction *away from the clipped end*; a non-neutral illuminant triggers partial grey-world neutralisation; a low normalised sharpness triggers a bounded sharpen. A photograph with no measured deficit receives a no-op plan, which is the common case.
+- **What must never trigger a correction**: how light or dark the subject is. Brightness is triggered by clipping and contrast by compressed range, neither of which is a property of complexion, so **a correctly exposed dark-skinned face is left completely untouched.** An absolute luminance target would be skin lightening and is prohibited.
+- **Applied before compositing, never after**, so the replacement background is laid down at the rule's exact colour afterwards and cannot be tinted by an adjustment intended for the subject.
 - **Failure Conditions**: Adjustments outside conservative limits (brightness/contrast: 0.88–1.12; sharpness: 0.80–1.20) trigger `OUTPUT_ENHANCEMENT_UNSAFE` blocking failure. Any adjustment in `NONE` mode other than `1.0` triggers failure.
-- **Warning Conditions**: None.
+- **Warning Conditions**: A colour cast too severe for correction alone is both corrected and reported, since a half-corrected stage-lit face is still not compliant.
 - **Privacy Considerations**: Retains face structures exactly.
-- **Planned Tests**: Test contrast/brightness/sharpness limits and check for `OUTPUT_ENHANCEMENT_UNSAFE`.
-- **Dependencies**: Pillow ImageEnhance.
+- **Planned Tests**: Limits and `OUTPUT_ENHANCEMENT_UNSAFE`; a correctly exposed dark face producing a no-op plan; monochrome never cast-corrected.
+- **Dependencies**: Pillow ImageEnhance, NumPy.
+- **Not yet implemented**: noise reduction. A chroma-noise guard on the sharpen was written, measured against the labelled set, found not to separate, and removed rather than shipped as a dead constant.
 
 ### 12. Resizing
 - **Purpose**: Resize cropped segment to exact target dimensions or selected range dimensions.
