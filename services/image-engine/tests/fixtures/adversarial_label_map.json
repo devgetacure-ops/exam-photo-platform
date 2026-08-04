@@ -2,6 +2,7 @@
   "_comment": "Human-labelled ground truth for the 40-photo adversarial candidate set, recorded by the product owner (DEC-041). The photographs themselves are real candidate images and are NEVER committed: they live outside the repository and this file references them by filename only. It exists so appearance-detector work has a measurable target instead of an opinion, and so a later classifier can be scored rather than eyeballed.",
   "_source_directory": "local only, not in version control",
   "_labels_are_the_specification": "Where a detector and a label disagree, the label is investigated first. One such disagreement (two photographs labelled perfect that a frame-based exposure rule called severely underexposed) exposed a real defect: exposure must be measured on the face, not the frame.",
+  "_what_clean_does_NOT_mean": "The 'clean' label records pose, image quality and rule compliance. It says nothing about whether the lighting is good. These photographs must NOT be used to derive a lighting or colour target: doing so would import whatever illumination they happened to have as a specification, and an absolute luminance target would lighten dark skin. Enhancement corrects capture defects relative to each photograph's own rendering (see DEC-043).",
   "photos": {
     "1": ["distant"],
     "2": ["distant"],
@@ -36,7 +37,7 @@
     "31": ["clean"],
     "32": ["eyes_closed"],
     "33": ["spectacles"],
-    "34": ["multiple_people"],
+    "34": ["bystander_in_background"],
     "35": ["clean"],
     "36": ["distant"],
     "37": ["eyes_closed", "not_frontal"],
@@ -46,7 +47,7 @@
   },
   "_engine_disagreements": {
     "11": "Labelled head_covering. The head carries marigold flowers and the face carries markings rather than a cap. The distinction matters because IBPS, GATE and the Indian Navy permit religious or ceremonial head coverings that SSC prohibits as caps.",
-    "34": "Labelled multiple_people. The second person is small, behind the subject, and removed by the tight crop, so the subject is not ambiguous. The engine deliberately does not block this: blocking is reserved for a genuinely ambiguous subject, not for any bystander in frame.",
+    "24": "Labelled face_not_visible. The face is not dark -- it is the most colour-cast in the set, reading blue minus red of +58.8 where skin under neutral light runs -38 to -88. The defect is the illuminant, not the exposure.",
     "10": "Labelled not_frontal. Measured yaw 1.5, pitch 2.1, roll -4.4 degrees, which is inside ordinary seated variation, so the engine accepts it.",
     "28": "Labelled not_frontal. Measured yaw 5.7, pitch -0.3, roll 4.1 degrees; same reasoning as photo 10.",
     "20": "Labelled sunglasses. The engine flags it, but for head pose rather than eyewear: sunglasses detection is not reliable with the shipped models."
