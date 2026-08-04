@@ -12,6 +12,9 @@ from exam_photo.models.geometry import BoundingBox
 from exam_photo.providers import (
     DeterministicCropPlanner,
 )
+from exam_photo.providers.crop_planners.deterministic_crop_planner import (
+    _CHIN_BEARD_MARGIN_RATIO,
+)
 from exam_photo.providers.crop_planning import (
     CropConfig,
     CropIssueCode,
@@ -514,6 +517,24 @@ def test_crop_tight_vs_relaxed_profiles() -> None:
 
 
 def test_crop_complete_head_containment() -> None:
+    """The crop keeps the whole head, and stops just below the chin.
+
+    Hair, ears and the crown are kept in full: the crop reaches past the head
+    estimate on the top and both sides.
+
+    The bottom is a different promise, and this test used to assert the wrong
+    one.  A head estimate extends below the jaw by a fixed expansion -- here
+    50px, half a face height below a chin at y=300 -- and requiring the crop to
+    reach it made the bottom edge a consequence of the head estimator's padding
+    rather than of the subject's anatomy.  That is the "too loose below the
+    chin" defect: what the crop owes the candidate is the chin plus a small
+    beard margin, and tighter than that whenever the target dimensions allow.
+
+    The precise bottom is asserted as a bound rather than a pixel so this reads
+    as the contract it is: at least the chin-plus-margin line, and not so far
+    below it that the delivered photograph would violate the below-chin
+    invariant in exam_photo.orchestration.output_invariants.
+    """
     planner = DeterministicCropPlanner()
     face_box = BoundingBox(left=200, top=200, right=300, bottom=300)
     face = FaceDetection(bounding_box=face_box, confidence=0.99)
@@ -537,7 +558,15 @@ def test_crop_complete_head_containment() -> None:
     assert res.crop_box.left <= head_est.left
     assert res.crop_box.top <= head_est.top
     assert res.crop_box.right >= head_est.right
-    assert res.crop_box.bottom >= head_est.bottom
+
+    # No landmarks, so the planner's chin estimate is the face box bottom and
+    # the crown is the head estimate's top: a 150px span.
+    chin_y = face_box.bottom
+    span = chin_y - head_est.top
+    crop_height = res.crop_box.bottom - res.crop_box.top
+    assert res.crop_box.bottom >= chin_y + _CHIN_BEARD_MARGIN_RATIO * span
+    assert (res.crop_box.bottom - chin_y) / crop_height <= 0.175
+
     assert res.validation.subject_clipping_detected is False
 
 

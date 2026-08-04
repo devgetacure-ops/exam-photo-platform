@@ -61,6 +61,34 @@ from exam_photo.suitability.issue_codes import IssueSeverity
 # outputs, by a mean of 0.067 of frame height.
 _CHIN_BEARD_MARGIN_RATIO = 0.09
 
+# Most space the crop may leave below the landmark chin, as a fraction of the
+# crop height -- the framing ceiling that matches the floor above.
+#
+# Without it nothing in the search bounded below-chin space at all.  It is not
+# an independent axis (``below_chin = 1 - top_margin - head_height``), so it
+# adds no new degree of freedom; what it adds is a *statement* of the product
+# rule, which is that the bottom edge sits just below the chin/beard line and
+# the eye line lands wherever the resulting frame puts it.  Stated only through
+# head height and top margin, the rule was silently invertible: when the eye
+# line could not be satisfied at the target head height, the search bought the
+# eye line by shrinking head height, and the freed space drained out below the
+# chin where nothing looked at it.
+#
+# Measured on the 60 approved ideal outputs, chin-to-bottom edge as a fraction
+# of their own frame height: min 0.054, p25 0.081, median 0.102, p75 0.142,
+# p90 0.179, max 0.247.  Measured on the ten engine outputs a reviewer assessed
+# individually, every accepted photograph sat at or below 0.155 and the two
+# rejected as too loose sat at 0.188 and 0.190.
+#
+# 0.15 therefore sits above the approved median and p75 (so ordinary correct
+# framing is inside it) and below both rejected outputs and the 0.175 delivered
+# invariant (so a candidate satisfying it cannot then fail the invariant on
+# grid quantisation, which moves head height ~0.02 per integer step).  It is
+# waived below ``eye_line`` and ``top_margin`` in the ladder rather than being
+# absolute: 11 of the 60 approved ideals exceed it, all of them subjects whose
+# head height is bound by the target's width rather than by composition.
+_MAX_BELOW_CHIN_RATIO = 0.15
+
 # Guaranteed margin above the observed hairline, as a fraction of the
 # crown-to-chin span.  Sized from the same ideal-output distribution and for
 # the same reason as ``_CHIN_BEARD_MARGIN_RATIO`` above: measured space above
@@ -141,6 +169,18 @@ _HEAD_HEIGHT_OVERSHOOT_WEIGHT = 12.0
 # visible compromise; eye line and top margin follow; horizontal centring and
 # head width come after those.
 #
+# ``below_chin`` is deliberately placed *after* ``eye_line``, which is the whole
+# point of it being in the ladder at all.  The two cannot both be satisfied on a
+# subject whose crown reaches far above the face box: the eye line as a fraction
+# of crop height is ``(eye_y - crown)/span * head_height + top_margin``, and on
+# voluminous hair the crown-to-eye distance measures ~0.64 of the crown-to-chin
+# span, so an 0.86 head height forces the eye line to 0.60 -- past the 0.54
+# ceiling even at the minimum top margin.  With eye line ranked first the search
+# bought it by dropping head height to 0.79, and the 0.19 of frame height that
+# freed up went below the chin.  The owner's rule is the opposite: the bottom
+# edge is anchored just under the chin/beard line, and the eye line lands where
+# the resulting frame puts it.  Ranking below_chin after eye_line is that rule.
+#
 # ``head_height_min`` -- falling below the exam's minimum face coverage -- is
 # the very last thing surrendered, in a tier of its own, but it *is* in the
 # ladder (DEC-039).  It used to be absent entirely, on the reasoning that it is
@@ -166,17 +206,42 @@ _RELAXATION_TIERS: tuple[frozenset[str], ...] = (
     frozenset({"head_height_max", "torso"}),
     frozenset({"head_height_max", "torso", "eye_line"}),
     frozenset({"head_height_max", "torso", "eye_line", "top_margin"}),
-    frozenset({"head_height_max", "torso", "eye_line", "top_margin", "center_offset"}),
+    frozenset({"head_height_max", "torso", "eye_line", "top_margin", "below_chin"}),
     frozenset(
         {
             "head_height_max",
             "torso",
             "eye_line",
             "top_margin",
+            "below_chin",
+            "center_offset",
+        }
+    ),
+    frozenset(
+        {
+            "head_height_max",
+            "torso",
+            "eye_line",
+            "top_margin",
+            "below_chin",
             "center_offset",
             "head_width",
         }
     ),
+    # ``below_chin`` is deliberately absent from this last tier, which is the
+    # one place the ladder is not cumulative.
+    #
+    # The tiers exist to answer "what do we give up when constraints conflict",
+    # and this tier adds exactly one: ``head_height_min``.  Below-chin space
+    # does not conflict with it.  Head height is set by the crop's *size* and
+    # below-chin space by its *position*; giving up the second buys nothing
+    # toward the first.  Carrying it down here anyway -- purely because the sets
+    # nest -- discarded a satisfiable constraint for no gain, and the cost
+    # function then placed the crop on the padding term alone, which on a source
+    # too small for the target pulls the frame down until the slack lands under
+    # the chin.  Measured on the sweep: 12 geometries reached this tier and every
+    # one delivered 0.20-0.21 below-chin space against a 0.175 invariant, while a
+    # candidate at 0.15 existed at the same tier and was passed over.
     frozenset(
         {
             "head_height_max",
@@ -672,6 +737,7 @@ class DeterministicCropPlanner(CropPlanner):
                         head_width_ratio = w_head / wc
                         top_margin_ratio = (crown_y - t_cand) / hc
                         eye_line_ratio = (eye_y - t_cand) / hc
+                        below_chin_ratio = (b_cand - chin_y) / hc
                         crop_cx = (l_cand + r_cand) / 2.0
                         center_offset_ratio = abs(face_cx - crop_cx) / wc
                         torso_inclusion_ratio = (
@@ -720,6 +786,9 @@ class DeterministicCropPlanner(CropPlanner):
                             and eye_line_ratio > cfg.maximum_eye_line_ratio
                         ):
                             violations.add("eye_line")
+
+                        if below_chin_ratio > _MAX_BELOW_CHIN_RATIO:
+                            violations.add("below_chin")
 
                         if center_offset_ratio > max_center_offset:
                             violations.add("center_offset")
@@ -983,9 +1052,27 @@ class DeterministicCropPlanner(CropPlanner):
         # the generous ``preserve_box``: the planner intentionally lets outer hair
         # leave the frame the way reference photos do, so validating against the
         # generous box would reject the very crops the planner is asked to make.
+        #
+        # The condition is the candidate search's own -- adaptive planning with
+        # subject clipping disallowed -- and not ``outer_hair_relaxation_used``,
+        # which is the weaker statement that no candidate happened to keep the
+        # whole preservation box.  Those two are not the same thing, and the gap
+        # between them is a planner/validator disagreement of exactly the kind
+        # DEC-029 and DEC-038 already fixed instances of: keeping the whole
+        # preservation box is only ever a *preference* in the search (see
+        # ``strict_violation``), and that preference does not even look below the
+        # chin unless the rule sets ``complete_chin_required``.  So a crop could
+        # be selected as "strict", leaving ``outer_hair_relaxation_used`` False,
+        # while its bottom edge sat correctly at the chin/beard line and well
+        # above ``head_estimate.bottom`` -- and this check then reported the
+        # planner's intended framing as a blocking CROP_HEAD_CLIPPED error.
+        # Measured: with below-chin space bounded, the head-containment case in
+        # tests/providers/test_crop_mode_a.py delivers a crop bottom at 331
+        # against a head estimate reaching 350, giving 0.905 coverage of the
+        # estimate and 1.000 of the region the search actually guaranteed.
         preservation_reference_box = (
             mandatory_box
-            if (adaptive_mode and outer_hair_relaxation_used)
+            if (adaptive_mode and not cfg.allow_subject_clipping)
             else (composition_box or head_estimate)
         )
         head_coverage_ratio: Optional[float] = None
@@ -1029,7 +1116,23 @@ class DeterministicCropPlanner(CropPlanner):
                 # retain, so a correctly composed crop could fail a check whose
                 # bar nothing in the planner targets.  Keeping the two aligned
                 # is what stops the planner and its validator disagreeing.
-                guarantee_box = preservation_reference_box or preserve_box
+                #
+                # Deliberately *not* ``preservation_reference_box``: that is now
+                # ``mandatory_box`` throughout adaptive planning, and the search
+                # enforces containment of ``mandatory_box`` as a hard constraint,
+                # so measuring pixel retention over it would return 1.0 by
+                # construction on every crop the search can select.  A check that
+                # cannot fail is worse than no check, because it reads as
+                # evidence.  This measurement earns its place by covering what
+                # the box test cannot: foreground the crop drops from the
+                # generous region -- hair spreading past the head core -- which
+                # is reported always and blocks only when the search had not
+                # already conceded that outer area.
+                guarantee_box = (
+                    mandatory_box
+                    if (adaptive_mode and outer_hair_relaxation_used)
+                    else preserve_box
+                )
                 sub_l = max(0, int(round(guarantee_box.left)))
                 sub_r = min(image_width, int(round(guarantee_box.right)))
                 if sub_r <= sub_l:
@@ -1124,10 +1227,17 @@ class DeterministicCropPlanner(CropPlanner):
             )
 
         # 7. Margins calculations for validation
-        # Margins are reported against the mandatory region for the same reason.
+        # Margins are reported against the mandatory region for the same reason,
+        # and under the same condition as the two checks above: it is the region
+        # the search guaranteed, so it is the region a reported margin is a
+        # margin *from*.  Measuring from ``preserve_box`` reports a negative
+        # bottom margin (clamped to 0) whenever the crop correctly stops at the
+        # chin/beard line rather than following the head estimate down past the
+        # jaw, which then raises CROP_CHIN_RISK on exactly the framing the
+        # planner was asked to produce.
         margin_box = (
             mandatory_box
-            if (adaptive_mode and outer_hair_relaxation_used)
+            if (adaptive_mode and not cfg.allow_subject_clipping)
             else preserve_box
         )
         top_margin_px = max(0, int(round(margin_box.top - clamped_t)))

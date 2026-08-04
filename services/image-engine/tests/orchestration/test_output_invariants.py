@@ -133,12 +133,20 @@ def _delivered_ratios(result, face_chin_y: float, head_top_y: float):
 #
 # A hard zero would either sit red in CI or force the bound to be loosened until
 # it stopped detecting anything. A ratchet keeps the gate honest: the count may
-# fall, never rise. Drive it to zero; do not raise it to make a change pass.
+# fall, never rise. It is at zero; do not raise it to make a change pass.
 #
-# 962 generated geometries, 224 failing. All are the same invariant -- below-chin
-# space -- and 212 of the 224 occur where the head box reaches far above the
-# face box, i.e. voluminous hair. Driving this to zero is the next task.
-_KNOWN_VIOLATIONS = 224
+# History, because the shape of the defect is the useful part. 960 generated
+# geometries once produced 224 failures, all of them the same invariant --
+# below-chin space -- and 212 of the 224 where the head box reached far above
+# the face box, i.e. voluminous hair. The cause was that below-chin space was
+# never a constraint anywhere, only a residual: the search satisfied the eye
+# line by shrinking head height, and the space that freed up drained out under
+# the chin where nothing looked at it. Bounding it in the crop planner's
+# candidate search, and ranking it above the eye line in the relaxation ladder,
+# took it to zero. Delivered below-chin space across the sweep now measures
+# min 0.082, median 0.110, p90 0.137, max 0.151, against 0.054/0.102/0.179/0.247
+# on the 60 approved ideal outputs.
+_KNOWN_VIOLATIONS = 0
 
 
 def test_invariant_violations_do_not_increase() -> None:
