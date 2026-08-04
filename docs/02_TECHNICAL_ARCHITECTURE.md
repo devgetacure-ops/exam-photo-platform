@@ -24,6 +24,8 @@ graph TD
 - **Application API**: Serves as the orchestration gateway, handling request flow, security controls, temporary uploads, rule lookups, and session tokens.
 - **Examination-Rule Service**: Versioned repository providing immutable rule configurations and schema validation.
 - **Image Processing Engine**: Decoupled engine executing face detection, head boundary analysis, background removal, crop processing, restrained adjustments, and format conversion.
+- **Suitability & Disposition Layer**: Measures the uploaded photograph and classifies it accept, warn or block (DEC-041), and plans any natural enhancement from measured capture defects (DEC-043). Deliberately split into measurement and policy so the policy is testable without a model.
+- **Matting Model Assets**: Vendored, checksum-verified model weights resolved from `model-manifests/`. These are gitignored and acquired by download scripts; the manifest pins the revision and checksum that the engine verifies before use.
 - **Temporary Private Object Storage**: Secure, short-lived storage for original uploads, intermediate processing layers, and final output photos.
 - **Processing Job Orchestration**: Manages task flows, retry loops, and deletion triggers.
 - **Validation Contracts**: Rigid structures verifying input suitability, pipeline execution quality, and output compliance.
@@ -37,12 +39,21 @@ graph TD
 
 For the initial prototype and MVP phases, the following stack is recommended:
 
-- **Monorepo Structure**: Separate services and applications for clean boundaries.
-- **Image Processing Engine**: Python library built around Pillow and specialized computer vision packages.
-- **API and Rules Service**: FastAPI (Python) or NestJS (Node.js) server.
-- **Queue/Orchestrator**: Celery or BullMQ with Redis for job state.
-- **Front-end Applications**: React with Vite for high performance and lightweight builds.
-- **Inter-service contracts**: JSON Schema definitions.
+> **Revised 2026-08-04 to record what was actually built**, since two entries
+> below described alternatives that were not chosen.
+
+- **Monorepo Structure**: Separate services and applications for clean boundaries. *(As built.)*
+- **Image Processing Engine**: Python library built around Pillow, NumPy, MediaPipe for face detection and dense landmarks, and PyTorch for BiRefNet portrait matting. *(As built.)*
+- **API and Rules Service**: FastAPI (Python), exposed by the `serve-api` CLI subcommand. *(As built — NestJS was not used.)*
+- **Front-end Applications**: **Next.js (App Router) with React**, not React with Vite. *(As built — this entry was stale.)*
+- **Queue/Orchestrator**: **Still to be chosen.** Jobs are currently executed synchronously behind an opaque job id with manifest persistence, which is adequate locally and not adequate publicly. Selecting a queue is part of Milestone 24, and the choice depends on whether inference moves to GPU.
+- **Inter-service contracts**: JSON Schema definitions, canonical in `packages/exam-rules`, mirrored by Pydantic models in the engine and TypeScript types in the web app. *(As built.)*
+
+### Known architectural gaps
+
+- **Throughput is unproven.** Measured 16-24 seconds per photograph on CPU, roughly doubled by the crop-region rematte. There is no queue, no backpressure and no autoscaling. This is the largest open risk and is Milestone 24.
+- **The API is not public-facing.** No TLS, authentication or rate limiting; it is documented as local-only. Milestone 25.
+- **Audit logging and observability** exist as a design element above but not as an implementation.
 
 ### Image Processing Provider Abstractions
 

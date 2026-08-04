@@ -2,6 +2,20 @@
 
 This technology spike evaluates practical local CPU-compatible approaches for estimating the candidate's complete head region to support down-stream natural cropping.
 
+> [!IMPORTANT]
+> **Partly superseded (2026-08-04). Retained as a historical record.** The
+> geometric expansion recommended here is still computed, but the crop planner
+> no longer trusts it for the measurements that matter. Expansion ratios
+> derived from the detector box proved unreliable in both directions -- the box
+> bottom lands in the neck, and on low-confidence detections the box top sits
+> above the hairline -- so crown, chin and head-core width are now measured
+> from the subject mask and dense landmarks instead (DEC-037, DEC-038).
+>
+> The specific failure worth remembering: the geometric estimate widens
+> ear-tragion keypoints on the assumption that ears are visible. On a subject
+> whose hair covers their ears it produced a head 60% wider than the true one,
+> which no crop could satisfy alongside the coverage target.
+
 ---
 
 ## 1. Candidate Approaches Evaluated
