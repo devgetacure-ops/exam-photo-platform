@@ -722,6 +722,319 @@ def _provenance(
     return block
 
 
+# --- The deliverable inventory ----------------------------------------------
+
+#: Submission methods that produce a file the platform could prepare. The rest
+#: are completed by the candidate inside the official portal or at a physical
+#: stage, and the model refuses to let them be marked supported.
+_DELIVERABLE_METHODS = frozenset(
+    {"file_upload", "handwritten_then_uploaded", "document_scan_upload"}
+)
+
+_KNOWN_SUBMISSION_METHODS = _DELIVERABLE_METHODS | frozenset(
+    {
+        "official_live_capture",
+        "external_identity_verification",
+        "typed_or_selected_declaration",
+        "physical_stage_requirement",
+    }
+)
+
+#: Interim file sizes for deliverables no body published one for (DEC-048).
+#:
+#: These are placeholders, not readings, and every value written from this table
+#: is stamped ``interim_default`` so it can be found and replaced in one query.
+#:
+#: The signature figure is the *modal* published specification, not the mean.
+#: The mean across the 25 published signature records is 10.6-45.2 KB, and a
+#: 45 KB signature exceeds the ceiling at SSC, banking, JEE Main, UGC-NET and
+#: CTET -- five of the six distinct published specifications. Overshooting a
+#: maximum is a hard portal rejection; undershooting is usually harmless. The
+#: modal 10-20 KB falls inside five of those six ranges, missing only UPSC's
+#: 20 KB floor.
+#:
+#: The thumb figure is not an average at all: all 13 records that publish one
+#: publish 20-50 KB. Handwritten declarations need no entry -- all 13 publish
+#: 50-100 KB, so there is no gap to fill, and a constant nothing reads is worse
+#: than no constant.
+_INTERIM_FILE_SIZE_KB: dict[str, tuple[int, int, str]] = {
+    "signature": (
+        10,
+        20,
+        "No published signature file size for this body. Standing in with the "
+        "modal published specification across the researched set (10-20 KB), "
+        "which falls inside five of the six distinct published ranges. The "
+        "arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five "
+        "of those six, and overshooting a maximum is a hard portal rejection.",
+    ),
+    "thumb_impression": (
+        20,
+        50,
+        "No published thumb-impression file size for this body. Standing in "
+        "with 20-50 KB, which is not an average but the only specification in "
+        "the researched set -- all 13 records that publish one agree on it.",
+    ),
+}
+
+#: Interim format for an ink-on-paper deliverable whose body published none.
+#: Every published format across the signature, thumb and declaration records in
+#: the research is JPG or JPEG, so this is the set's only value rather than a
+#: choice between competing ones.
+_INTERIM_FORMAT_REASONING = (
+    "No published file format for this deliverable. Standing in with JPG, "
+    "which is the only format any body in the researched set publishes for a "
+    "signature, thumb impression or handwritten declaration."
+)
+
+#: Deliverable types that get an interim specification when the body published
+#: none. Certificates are deliberately excluded: not one of the 45 certificate
+#: deliverables in the research carries a published file size, so there is no
+#: distribution to stand in for -- inventing one would be a guess about a guess.
+_INTERIM_TYPES = frozenset(_INTERIM_FILE_SIZE_KB)
+
+
+def _requirement_type(name: str, method: str) -> str:
+    """Classify a deliverable by what it is, from its published name.
+
+    Order matters and is not alphabetical. "Left thumb impression" contains no
+    "sign", but "Valid photo identity document" contains both "photo" and
+    "identity" and is an identity document; a declaration confirmed on screen is
+    a portal declaration while one written on paper is a handwritten one.
+    """
+    lowered = name.lower()
+    if any(word in lowered for word in ("thumb", "finger", "impression")):
+        return "thumb_impression"
+    if "declaration" in lowered:
+        if method == "typed_or_selected_declaration":
+            return "portal_declaration"
+        return "handwritten_declaration"
+    if "sign" in lowered:
+        return "signature"
+    if any(word in lowered for word in ("identity", "aadhaar")):
+        return "identity_document"
+    if any(
+        word in lowered
+        for word in (
+            "certificate",
+            "marksheet",
+            "mark sheet",
+            "proof",
+            "testimonial",
+            "noc",
+            "forms",
+            "particulars",
+        )
+    ):
+        return "certificate_scan"
+    if "photo" in lowered:
+        return "photograph"
+    return "other"
+
+
+def _requirement_status(published: Optional[str]) -> str:
+    """Map the report's status wording onto the schema's four states.
+
+    The report states status in prose and uses twelve distinct phrasings. The
+    ones that hedge -- "or portal-dependent", "upload status not fully
+    established" -- become ``portal_dependent`` rather than ``mandatory``,
+    because asserting a requirement the evidence did not establish is the same
+    class of error as asserting a specification it did not establish.
+    """
+    text = (published or "").strip().lower()
+    if not text:
+        return "portal_dependent"
+    if "portal-dependent" in text or "not fully established" in text:
+        return "portal_dependent"
+    if "later-stage" in text:
+        return "conditional"
+    if text.startswith("conditional"):
+        return "conditional"
+    if "conditional" in text or "alternative" in text or "if not already" in text:
+        return "conditional"
+    if "physical-stage" in text:
+        return "mandatory"
+    if text.startswith("mandatory"):
+        return "mandatory"
+    if text.startswith("optional"):
+        return "optional"
+    return "portal_dependent"
+
+
+def _platform_support(
+    requirement_type: str, method: str, photograph_status: str
+) -> str:
+    """What the platform does for one deliverable.
+
+    Non-photograph deliverables are ``not_yet_supported`` even where a full
+    specification exists, because the engine that would prepare them is not
+    built. Marking them supported on the strength of having a specification
+    would be a fictional success: the record would promise an output nothing
+    can produce.
+    """
+    if method == "physical_stage_requirement":
+        return "physical_stage"
+    if method not in _DELIVERABLE_METHODS:
+        return "guidance_only"
+    if requirement_type == "photograph":
+        return photograph_status
+    return "not_yet_supported"
+
+
+def _deliverable_file_spec(
+    parsed: dict[str, Any], requirement_type: str
+) -> tuple[dict[str, Any], list[str]]:
+    """Build one deliverable's file specification.
+
+    Returns the block and the list of field paths within it that carry an
+    interim placeholder rather than a published value.
+    """
+    spec: dict[str, Any] = {}
+    interim: list[str] = []
+
+    size = parsed.get("file_size_kb") or {}
+    maximum = size.get("maximum")
+    minimum = size.get("minimum")
+    if maximum is not None:
+        block: dict[str, Any] = {"maximum_bytes": int(maximum * _BYTES_PER_KB)}
+        if minimum is not None:
+            block["minimum_bytes"] = int(minimum * _BYTES_PER_KB)
+            block["published_minimum"] = minimum
+        block["published_maximum"] = maximum
+        block["size_unit_as_published"] = "KB"
+        spec["file_size"] = block
+    elif requirement_type in _INTERIM_TYPES:
+        low, high, _ = _INTERIM_FILE_SIZE_KB[requirement_type]
+        spec["file_size"] = {
+            "minimum_bytes": low * _BYTES_PER_KB,
+            "maximum_bytes": high * _BYTES_PER_KB,
+        }
+        interim += ["file_size.minimum_bytes", "file_size.maximum_bytes"]
+
+    formats = parsed.get("formats") or {}
+    values = [f for f in (formats.get("values") or []) if f in _ENGINE_FORMATS]
+    if values:
+        spec["formats"] = {
+            "allowed_formats": values,
+            "preferred_format": values[0],
+        }
+    elif requirement_type in _INTERIM_TYPES:
+        spec["formats"] = {"allowed_formats": ["jpg"], "preferred_format": "jpg"}
+        interim.append("formats.allowed_formats")
+
+    # Dimensions are deliberately never stood in for. The two published
+    # signature dimensions are 140x60 and 580x180 -- different aspect ratios --
+    # so an average would invent a shape no body publishes. A deliverable with
+    # no published dimension is sized from its own source, exactly as the
+    # size-only photograph records already are.
+    dimensions = parsed.get("dimensions_px") or {}
+    if dimensions.get("mode") == "exact":
+        spec["dimensions"] = {
+            "mode": "exact",
+            "width_px": dimensions["width"],
+            "height_px": dimensions["height"],
+        }
+    elif dimensions.get("mode") == "range":
+        spec["dimensions"] = {
+            "mode": "range",
+            "minimum_width_px": dimensions["minimum_width"],
+            "maximum_width_px": dimensions["maximum_width"],
+            "minimum_height_px": dimensions["minimum_height"],
+            "maximum_height_px": dimensions["maximum_height"],
+        }
+
+    filename = parsed.get("filename") or {}
+    if filename.get("value"):
+        stem = str(filename["value"]).rsplit(".", 1)[0]
+        spec["filename"] = {"mode": "exact", "exact_filename": stem}
+
+    return spec, interim
+
+
+def _requirements(
+    deliverables: list[dict[str, Any]], photograph_status: str
+) -> tuple[list[dict[str, Any]], dict[str, Any], list[str]]:
+    """Convert one exam's deliverables into the rule's inventory.
+
+    Returns the inventory, the provenance entries for any interim value it
+    contains, and the names of deliverables that could not be encoded.
+    """
+    inventory: list[dict[str, Any]] = []
+    provenance: dict[str, Any] = {}
+    unencodable: list[str] = []
+    used_ids: set[str] = set()
+
+    for deliverable in deliverables:
+        method = str(deliverable.get("submission_method") or "")
+        if method not in _KNOWN_SUBMISSION_METHODS:
+            # The report could not establish how the item is provided. A guess
+            # here would put a submission method into the record that no source
+            # supports, so the item is reported instead.
+            unencodable.append(str(deliverable.get("name") or "unknown"))
+            continue
+
+        name = str(deliverable.get("name") or "").strip()
+        requirement_type = _requirement_type(name, method)
+        requirement_id = _slug(name).replace("-", "_")[:48] or "requirement"
+        suffix = 2
+        while requirement_id in used_ids:
+            requirement_id = f"{_slug(name).replace('-', '_')[:44]}_{suffix}"
+            suffix += 1
+        used_ids.add(requirement_id)
+
+        entry: dict[str, Any] = {
+            "requirement_id": requirement_id,
+            "requirement_name": name,
+            "requirement_type": requirement_type,
+            "submission_method": method,
+            "requirement_status": _requirement_status(
+                deliverable.get("requirement_status")
+            ),
+            "platform_support": _platform_support(
+                requirement_type, method, photograph_status
+            ),
+        }
+        applicability = deliverable.get("applicability")
+        if applicability:
+            entry["applicability"] = str(applicability)
+        specification = deliverable.get("specification")
+        if specification:
+            entry["content_instructions"] = str(specification)
+        evidence_status = deliverable.get("evidence_status")
+        if evidence_status:
+            entry["evidence_status"] = str(evidence_status)
+        note = deliverable.get("important_note")
+        if note:
+            entry["notes"] = str(note)
+
+        # The photograph's specification is image_requirements; a second copy
+        # here is rejected by the model and would be a second truth if it were
+        # not.
+        if requirement_type != "photograph" and method in _DELIVERABLE_METHODS:
+            spec, interim_paths = _deliverable_file_spec(
+                deliverable.get("parsed") or {}, requirement_type
+            )
+            if spec:
+                entry["file_spec"] = spec
+            index = len(inventory)
+            for path in interim_paths:
+                key = f"requirements[{index}].file_spec.{path}"
+                reasoning = (
+                    _INTERIM_FILE_SIZE_KB[requirement_type][2]
+                    if path.startswith("file_size")
+                    else _INTERIM_FORMAT_REASONING
+                )
+                provenance[key] = {
+                    "type": "interim_default",
+                    "reasoning": reasoning,
+                    "confidence": 1,
+                    "approved": False,
+                }
+
+        inventory.append(entry)
+
+    return inventory, provenance, unencodable
+
+
 _STATUS_BY_TIER = {
     "full": "verified",
     "size_only": "verified_with_ambiguity",
@@ -729,11 +1042,15 @@ _STATUS_BY_TIER = {
 }
 
 
-def build_rule(record: Record, tier: str) -> Optional[dict[str, Any]]:
+def build_rule(
+    record: Record,
+    tier: str,
+    deliverables: Optional[list[dict[str, Any]]] = None,
+) -> tuple[Optional[dict[str, Any]], list[str]]:
     file_size = _file_size(record)
     formats_result = _formats(record)
     if file_size is None or formats_result is None:
-        return None
+        return None, []
     formats, dropped_formats = formats_result
     appearance = _appearance(record)
     year = record.data.get("examination_year")
@@ -768,6 +1085,10 @@ def build_rule(record: Record, tier: str) -> Optional[dict[str, Any]]:
     composition = _composition(record)
     dimensions = _dimensions(record)
     transposed = bool(dimensions.pop("_transposed", False))
+    exceptional = _exceptional(record, appearance)
+    inventory, interim_provenance, unencodable = _requirements(
+        deliverables or [], str(exceptional["processing_support_status"])
+    )
     rule = {
         "schema_version": "1.1",
         "rule_id": rule_id,
@@ -783,22 +1104,44 @@ def build_rule(record: Record, tier: str) -> Optional[dict[str, Any]]:
             "composition": composition,
             "appearance": appearance,
             "filename": _filename(record),
-            "exceptional_instructions": _exceptional(record, appearance),
+            "exceptional_instructions": exceptional,
         },
-        "provenance": _provenance(
-            record, tier, formats_derived, dropped_formats, transposed
-        ),
+        "provenance": {
+            **_provenance(record, tier, formats_derived, dropped_formats, transposed),
+            **interim_provenance,
+        },
         "verification": {"verification_status": _STATUS_BY_TIER[tier]},
         "fictional_example": False,
     }
+    if inventory:
+        # Placed directly after the photograph specification so the record reads
+        # in the order the product does: the exam, its evidence, its photograph
+        # rule, then everything else the exam asks for.
+        ordered: dict[str, Any] = {}
+        for key, value in rule.items():
+            ordered[key] = value
+            if key == "image_requirements":
+                ordered["requirements"] = inventory
+        rule = ordered
     if not rule["source_evidence"]:
-        return None
-    return rule
+        return None, unencodable
+    return rule, unencodable
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--specs", type=Path, required=True)
+    parser.add_argument(
+        "--deliverables",
+        type=Path,
+        default=None,
+        help=(
+            "Deliverable-inventory sidecar from extract_deliverables.py. "
+            "Omitted, every rule is written with a photograph specification and "
+            "no inventory -- which is the pre-inventory catalogue, not a claim "
+            "that these exams require only a photograph."
+        ),
+    )
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--report", type=Path, required=True)
     parser.add_argument(
@@ -810,6 +1153,21 @@ def main() -> int:
 
     records = [Record(r) for r in json.loads(args.specs.read_text(encoding="utf-8"))]
     args.out.mkdir(parents=True, exist_ok=True)
+
+    # The two research sidecars cover the same 50 examination-stage records and
+    # are joined on the examination name plus stage. A record present in one and
+    # absent from the other is reported rather than dropped silently, because a
+    # silent miss looks exactly like an exam that requires only a photograph.
+    deliverables_by_key: dict[tuple[str, str], list[dict[str, Any]]] = {}
+    if args.deliverables:
+        for entry in json.loads(args.deliverables.read_text(encoding="utf-8")):
+            key = (
+                str(entry.get("exam_name") or "").strip(),
+                str(entry.get("application_stage") or "application").strip(),
+            )
+            deliverables_by_key[key] = entry.get("deliverables") or []
+    unmatched_specs: list[str] = []
+    matched_keys: set[tuple[str, str]] = set()
 
     # The script owns every record carrying its prefix, so a re-run replaces the
     # catalogue rather than adding to it. Without this an examination that was
@@ -823,9 +1181,40 @@ def main() -> int:
     written: list[tuple[str, str, Path]] = []
     skipped: list[tuple[str, str, str]] = []
     rejected: list[tuple[str, list[str]]] = []
+    unencodable_items: list[tuple[str, str]] = []
+    unserved_deliverables: list[tuple[str, int]] = []
 
     for record in records:
         tier = record.tier()
+        stage_key = (
+            record.name,
+            str(record.data.get("application_stage") or "application"),
+        )
+        # Matched before the skips, so "unmatched" means the two research
+        # sidecars genuinely disagree about which examinations exist -- not that
+        # an examination was skipped for a photograph reason. Those are
+        # different findings and were briefly reported as the same one.
+        if args.deliverables:
+            if stage_key in deliverables_by_key:
+                matched_keys.add(stage_key)
+            else:
+                unmatched_specs.append(f"{stage_key[0]} ({stage_key[1]})")
+            if tier in ("live_capture_only", "incomplete"):
+                count = len(
+                    [
+                        item
+                        for item in deliverables_by_key.get(stage_key, [])
+                        if item.get("submission_method") in _DELIVERABLE_METHODS
+                        and _requirement_type(
+                            str(item.get("name") or ""),
+                            str(item.get("submission_method") or ""),
+                        )
+                        != "photograph"
+                    ]
+                )
+                if count:
+                    unserved_deliverables.append((record.name, count))
+
         if tier == "live_capture_only":
             skipped.append(
                 (
@@ -853,7 +1242,11 @@ def main() -> int:
             skipped.append((record.name, "incomplete evidence", detail))
             continue
 
-        rule = build_rule(record, tier)
+        rule, unencodable = build_rule(
+            record, tier, deliverables_by_key.get(stage_key, [])
+        )
+        for item in unencodable:
+            unencodable_items.append((record.name, item))
         if rule is None:
             skipped.append(
                 (
@@ -876,11 +1269,28 @@ def main() -> int:
         path.write_text(json.dumps(rule, indent=2) + "\n", encoding="utf-8")
         written.append((record.name, tier, path))
 
-    _write_report(args.report, written, skipped, rejected)
+    unmatched_deliverables = sorted(
+        f"{key[0]} ({key[1]})" for key in deliverables_by_key if key not in matched_keys
+    )
+    _write_report(
+        args.report,
+        written,
+        skipped,
+        rejected,
+        unencodable_items,
+        unmatched_specs,
+        unmatched_deliverables,
+        unserved_deliverables,
+    )
 
     print(f"written  : {len(written)}")
     print(f"skipped  : {len(skipped)}")
     print(f"rejected : {len(rejected)}")
+    if args.deliverables:
+        print(
+            f"inventory unmatched : {len(unmatched_specs) + len(unmatched_deliverables)}"
+        )
+        print(f"items not encodable : {len(unencodable_items)}")
     for name, messages in rejected:
         print(f"  REJECTED {name}")
         for message in messages:
@@ -893,6 +1303,10 @@ def _write_report(
     written: list[tuple[str, str, Path]],
     skipped: list[tuple[str, str, str]],
     rejected: list[tuple[str, list[str]]],
+    unencodable_items: list[tuple[str, str]],
+    unmatched_specs: list[str],
+    unmatched_deliverables: list[str],
+    unserved_deliverables: list[tuple[str, int]],
 ) -> None:
     tier_label = {
         "full": "Full specification (official dimensions, size and format)",
@@ -935,6 +1349,55 @@ def _write_report(
             lines.append(f"- **{name}**")
             for message in messages:
                 lines.append(f"  - {message}")
+
+    if unencodable_items:
+        lines += [
+            "",
+            "## Deliverables recorded in the research but not encoded",
+            "",
+            "The research could not establish how the candidate provides these,",
+            "so no submission method could be written without guessing one.",
+            "",
+            "| Examination | Deliverable |",
+            "|---|---|",
+        ]
+        for exam_name, item in sorted(unencodable_items):
+            lines.append(f"| {exam_name} | {item} |")
+
+    if unserved_deliverables:
+        lines += [
+            "",
+            "## Examinations not encoded that still have deliverables",
+            "",
+            "These were skipped for a *photograph* reason -- the portal captures",
+            "the candidate live, or the photograph evidence is incomplete -- but",
+            "the examination still requires files the platform could prepare.",
+            "Dropping the examination drops those too, which is a coverage gap",
+            "rather than a correct exclusion. A rule record currently requires a",
+            "photograph specification, which is what blocks them.",
+            "",
+            "| Examination | Non-photograph deliverables |",
+            "|---|---:|",
+        ]
+        for exam_name, count in sorted(unserved_deliverables):
+            lines.append(f"| {exam_name} | {count} |")
+
+    if unmatched_specs or unmatched_deliverables:
+        lines += [
+            "",
+            "## Research records present in one sidecar only",
+            "",
+            "The photograph and deliverable research are joined on examination",
+            "name plus stage. A record here is missing its counterpart, so its",
+            "rule carries no inventory -- which is not the same statement as the",
+            "examination requiring only a photograph.",
+            "",
+        ]
+        for entry in unmatched_specs:
+            lines.append(f"- Photograph record with no deliverable record: {entry}")
+        for entry in unmatched_deliverables:
+            lines.append(f"- Deliverable record with no photograph record: {entry}")
+
     lines.append("")
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text("\n".join(lines), encoding="utf-8")

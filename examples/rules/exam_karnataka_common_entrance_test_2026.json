@@ -67,6 +67,88 @@
       "processing_support_status": "supported"
     }
   },
+  "requirements": [
+    {
+      "requirement_id": "candidate_photograph",
+      "requirement_name": "Candidate photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants",
+      "content_instructions": "Uploaded candidate photograph; format: JPG/JPEG; file size: up to 50 KB; background: white.",
+      "evidence_status": "Secondary-only specification; recheck KEA portal"
+    },
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate signature",
+      "requirement_type": "signature",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "not_yet_supported",
+      "applicability": "All applicants",
+      "content_instructions": "Scanned candidate signature; exact current specification not found in the supplied evidence.",
+      "evidence_status": "Secondary/current portal lead",
+      "file_spec": {
+        "file_size": {
+          "minimum_bytes": 10000,
+          "maximum_bytes": 20000
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    },
+    {
+      "requirement_id": "left_thumb_impression",
+      "requirement_name": "Left thumb impression",
+      "requirement_type": "thumb_impression",
+      "submission_method": "handwritten_then_uploaded",
+      "requirement_status": "portal_dependent",
+      "platform_support": "not_yet_supported",
+      "applicability": "Candidate",
+      "content_instructions": "KEA application flows commonly request a left thumb impression. Current 2026 exact specification was not established; treat as portal-dependent.",
+      "evidence_status": "Secondary lead; must recheck active portal",
+      "file_spec": {
+        "file_size": {
+          "minimum_bytes": 20000,
+          "maximum_bytes": 50000
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    },
+    {
+      "requirement_id": "parent_guardian_signature",
+      "requirement_name": "Parent/guardian signature",
+      "requirement_type": "signature",
+      "submission_method": "handwritten_then_uploaded",
+      "requirement_status": "portal_dependent",
+      "platform_support": "not_yet_supported",
+      "applicability": "Where the KEA form asks for parent/guardian authentication",
+      "content_instructions": "Current exact requirement and file specification were not established in the supplied evidence.",
+      "evidence_status": "Secondary lead; must recheck active portal",
+      "file_spec": {
+        "file_size": {
+          "minimum_bytes": 10000,
+          "maximum_bytes": 20000
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    }
+  ],
   "provenance": {
     "image_requirements.file_size": {
       "type": "inferred",
@@ -97,6 +179,60 @@
       "type": "inferred",
       "reasoning": "Values for this examination were located only on secondary sources, not on the conducting body's own material. Recorded so the examination is servable, and held at provisional status so the dependence stays visible until an official source is found.",
       "confidence": 2,
+      "approved": false
+    },
+    "requirements[1].file_spec.file_size.minimum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[1].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[1].file_spec.formats.allowed_formats": {
+      "type": "interim_default",
+      "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[2].file_spec.file_size.minimum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published thumb-impression file size for this body. Standing in with 20-50 KB, which is not an average but the only specification in the researched set -- all 13 records that publish one agree on it.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[2].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published thumb-impression file size for this body. Standing in with 20-50 KB, which is not an average but the only specification in the researched set -- all 13 records that publish one agree on it.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[2].file_spec.formats.allowed_formats": {
+      "type": "interim_default",
+      "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[3].file_spec.file_size.minimum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[3].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[3].file_spec.formats.allowed_formats": {
+      "type": "interim_default",
+      "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
+      "confidence": 1,
       "approved": false
     }
   },

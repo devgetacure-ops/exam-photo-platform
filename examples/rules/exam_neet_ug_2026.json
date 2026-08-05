@@ -87,6 +87,89 @@
       "processing_support_status": "supported"
     }
   },
+  "requirements": [
+    {
+      "requirement_id": "candidate_photograph",
+      "requirement_name": "Candidate photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants",
+      "content_instructions": "JPG/JPEG; 10-200 KB according to the current photo evidence. Recent photograph with the candidate's face clearly visible.",
+      "evidence_status": "Current official NEET 2026 bulletin/photo evidence"
+    },
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate signature",
+      "requirement_type": "signature",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "not_yet_supported",
+      "applicability": "All applicants",
+      "content_instructions": "JPG/JPEG; current NTA bulletin confirms a separate signature upload. Exact live-portal size must be followed.",
+      "evidence_status": "Current official NEET 2026 bulletin",
+      "file_spec": {
+        "file_size": {
+          "minimum_bytes": 10000,
+          "maximum_bytes": 20000
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    },
+    {
+      "requirement_id": "left_and_right_hand_fingers_and_thumb_impression",
+      "requirement_name": "Left and right hand fingers and thumb impressions",
+      "requirement_type": "thumb_impression",
+      "submission_method": "handwritten_then_uploaded",
+      "requirement_status": "mandatory",
+      "platform_support": "not_yet_supported",
+      "applicability": "All applicants",
+      "content_instructions": "Upload images of impressions from both hands in JPG/JPEG. The 2026 bulletin explicitly lists left and right hand fingers and thumb impressions. Exact file-size range must be taken from the active bulletin/portal.",
+      "evidence_status": "Current official NEET 2026 bulletin",
+      "file_spec": {
+        "file_size": {
+          "minimum_bytes": 20000,
+          "maximum_bytes": 50000
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    },
+    {
+      "requirement_id": "class_x_or_equivalent_marksheet",
+      "requirement_name": "Class X or equivalent marksheet",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "not_yet_supported",
+      "applicability": "All applicants",
+      "content_instructions": "Scanned PDF of the Class X/equivalent marksheet. The bulletin extract confirms this document; use the portal's current PDF size limit.",
+      "evidence_status": "Current 2026 bulletin; specification partly extracted"
+    },
+    {
+      "requirement_id": "category_pwbd_citizenship_certificate",
+      "requirement_name": "Category/PwBD/citizenship certificate",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "not_yet_supported",
+      "applicability": "Candidates claiming the corresponding category, disability or nationality status",
+      "content_instructions": "Upload the applicable prescribed certificate where the form asks for it. Do not upload an unrelated certificate.",
+      "evidence_status": "Current 2026 bulletin; exact applicability varies"
+    }
+  ],
   "provenance": {
     "image_requirements.file_size": {
       "type": "official",
@@ -112,6 +195,30 @@
       "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
       "confidence": 5,
       "approved": true
+    },
+    "requirements[1].file_spec.file_size.minimum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[1].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[2].file_spec.file_size.minimum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published thumb-impression file size for this body. Standing in with 20-50 KB, which is not an average but the only specification in the researched set -- all 13 records that publish one agree on it.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[2].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published thumb-impression file size for this body. Standing in with 20-50 KB, which is not an average but the only specification in the researched set -- all 13 records that publish one agree on it.",
+      "confidence": 1,
+      "approved": false
     }
   },
   "verification": {

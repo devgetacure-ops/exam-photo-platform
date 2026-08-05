@@ -81,6 +81,76 @@
       "processing_support_status": "supported"
     }
   },
+  "requirements": [
+    {
+      "requirement_id": "candidate_photograph",
+      "requirement_name": "Candidate photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants",
+      "content_instructions": "JPG/JPEG; 10-200 KB according to current photo evidence.",
+      "evidence_status": "Current official CUET UG 2026 bulletin"
+    },
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate signature",
+      "requirement_type": "signature",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "not_yet_supported",
+      "applicability": "All applicants",
+      "content_instructions": "JPG/JPEG; separate scanned signature required.",
+      "evidence_status": "Current official CUET UG 2026 bulletin",
+      "file_spec": {
+        "file_size": {
+          "minimum_bytes": 10000,
+          "maximum_bytes": 20000
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    },
+    {
+      "requirement_id": "category_certificate",
+      "requirement_name": "Category certificate",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "not_yet_supported",
+      "applicability": "Candidates claiming a reserved category where the portal requests proof",
+      "content_instructions": "Upload the applicable certificate in the portal-prescribed format.",
+      "evidence_status": "Current official CUET UG application audit/bulletin"
+    },
+    {
+      "requirement_id": "pwd_certificate",
+      "requirement_name": "PwD certificate",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "not_yet_supported",
+      "applicability": "Candidates claiming disability benefit",
+      "content_instructions": "Upload the prescribed disability certificate where applicable.",
+      "evidence_status": "Current official CUET UG application audit/bulletin"
+    },
+    {
+      "requirement_id": "result_awaiting_certificate",
+      "requirement_name": "Result-awaiting certificate",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "not_yet_supported",
+      "applicability": "Candidates whose qualifying result is awaited and for whom the portal asks for this certificate",
+      "content_instructions": "Upload the prescribed result-awaiting certificate.",
+      "evidence_status": "Current official CUET UG application audit"
+    }
+  ],
   "provenance": {
     "image_requirements.file_size": {
       "type": "official",
@@ -106,6 +176,18 @@
       "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
       "confidence": 5,
       "approved": true
+    },
+    "requirements[1].file_spec.file_size.minimum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[1].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
+      "confidence": 1,
+      "approved": false
     }
   },
   "verification": {

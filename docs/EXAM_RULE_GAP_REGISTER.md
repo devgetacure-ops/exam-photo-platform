@@ -69,3 +69,34 @@ later research pass knows exactly what is missing.
 | SSC Constable (GD) Examination 2025 | live capture only | The portal photographs the candidate directly; there is no upload specification and nothing for the platform to deliver. |
 | SSC Multi-Tasking Staff and Havaldar Examination 2025 | live capture only | The portal photographs the candidate directly; there is no upload specification and nothing for the platform to deliver. |
 | UPPSC One Time Registration Photograph | incomplete evidence | no format |
+
+## Deliverables recorded in the research but not encoded
+
+The research could not establish how the candidate provides these,
+so no submission method could be written without guessing one.
+
+| Examination | Deliverable |
+|---|---|
+| GATE 2026 | OBC-NCL/EWS certificate |
+
+## Examinations not encoded that still have deliverables
+
+These were skipped for a *photograph* reason -- the portal captures
+the candidate live, or the photograph evidence is incomplete -- but
+the examination still requires files the platform could prepare.
+Dropping the examination drops those too, which is a coverage gap
+rather than a correct exclusion. A rule record currently requires a
+photograph specification, which is what blocks them.
+
+| Examination | Non-photograph deliverables |
+|---|---:|
+| APPSC Forest Beat Officer / Assistant Beat Officer 2025 | 2 |
+| Indian Army Agniveer CEE 2025-26 - online upload | 2 |
+| JEE (Advanced) 2026 | 6 |
+| MHT-CET 2026 | 1 |
+| RPSC Current Online Application Photograph | 2 |
+| SSC Combined Graduate Level Examination 2026 | 2 |
+| SSC Combined Higher Secondary (10+2) Level Examination 2025 | 2 |
+| SSC Constable (GD) Examination 2025 | 2 |
+| SSC Multi-Tasking Staff and Havaldar Examination 2025 | 2 |
+| UPPSC One Time Registration Photograph | 2 |

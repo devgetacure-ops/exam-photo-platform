@@ -65,6 +65,53 @@
       "processing_support_status": "supported"
     }
   },
+  "requirements": [
+    {
+      "requirement_id": "candidate_photograph",
+      "requirement_name": "Candidate photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Candidates whose ICAI profile/exam form requires a photo",
+      "content_instructions": "Uploaded candidate photograph; format: JPEG; file size: up to 50 KB; filename: photo.jpeg; background: light or white.",
+      "evidence_status": "Current official ICAI portal scope"
+    },
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate signature",
+      "requirement_type": "signature",
+      "submission_method": "file_upload",
+      "requirement_status": "conditional",
+      "platform_support": "not_yet_supported",
+      "applicability": "Candidates whose ICAI profile/exam form requires a signature",
+      "content_instructions": "Upload the candidate's own scanned signature in the portal-prescribed JPEG file and size. Exact value was not part of the supplied photograph dataset.",
+      "evidence_status": "Current portal requirement; exact specification not_found",
+      "file_spec": {
+        "file_size": {
+          "minimum_bytes": 10000,
+          "maximum_bytes": 20000
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpeg"
+          ],
+          "preferred_format": "jpeg"
+        }
+      }
+    },
+    {
+      "requirement_id": "exam_form_declaration",
+      "requirement_name": "Exam-form declaration",
+      "requirement_type": "portal_declaration",
+      "submission_method": "typed_or_selected_declaration",
+      "requirement_status": "mandatory",
+      "platform_support": "guidance_only",
+      "applicability": "All applicants",
+      "content_instructions": "Confirm the examination form and profile particulars. No separate handwritten-declaration image was established.",
+      "evidence_status": "Current ICAI exam portal process"
+    }
+  ],
   "provenance": {
     "image_requirements.file_size": {
       "type": "official",
@@ -84,6 +131,18 @@
       "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
       "confidence": 5,
       "approved": true
+    },
+    "requirements[1].file_spec.file_size.minimum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[1].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
+      "confidence": 1,
+      "approved": false
     }
   },
   "verification": {

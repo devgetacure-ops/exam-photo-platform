@@ -896,23 +896,33 @@ class ExamRule(BaseModel):
                     f"Provenance path '{path}' does not map to any valid field path in the rule configuration."
                 )
 
-        # An interim default is a placeholder for a figure no source published.
-        # A rule resting on one has not been verified, whatever else in it has,
-        # so the two states are made mutually exclusive here rather than left to
-        # each reader to notice. This is the enforcement half of the
-        # interim_default provenance type.
+        # An interim default is a placeholder for a figure no source published,
+        # and a photograph rule resting on one has not been verified whatever
+        # else in it has. This is the enforcement half of the interim_default
+        # provenance type.
+        #
+        # Scoped to ``image_requirements`` on purpose. ``status`` has always
+        # been a statement about the photograph specification -- it is what the
+        # catalogue tiers, the gap register and every current consumer read it
+        # as -- so a placeholder in a signature's file size must not demote the
+        # exam's photograph rule to provisional. A requirement's own
+        # specification quality is carried by its own provenance entry, which is
+        # equally findable. When requirements grow a per-item status of their
+        # own, this scoping is the thing to revisit.
         if self.status in (RuleStatus.VERIFIED, RuleStatus.VERIFIED_WITH_AMBIGUITY):
             interim = sorted(
                 path
                 for path, entry in self.provenance.items()
                 if entry.type == ProvenanceType.INTERIM_DEFAULT
+                and path.startswith("image_requirements")
             )
             if interim:
                 raise ValueError(
                     f"Status '{self.status.value}' conflicts with interim "
-                    f"placeholder values at {', '.join(interim)}. A rule "
-                    "carrying an interim default is provisional at best until "
-                    "the published figure replaces it."
+                    f"placeholder values in the photograph specification at "
+                    f"{', '.join(interim)}. A photograph rule carrying an "
+                    "interim default is provisional at best until the published "
+                    "figure replaces it."
                 )
 
         if self.requirements is not None:

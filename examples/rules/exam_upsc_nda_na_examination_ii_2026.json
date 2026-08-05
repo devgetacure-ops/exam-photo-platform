@@ -96,6 +96,71 @@
       "processing_support_status": "supported"
     }
   },
+  "requirements": [
+    {
+      "requirement_id": "latest_passport_size_photograph",
+      "requirement_name": "Latest passport-size photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants",
+      "content_instructions": "JPG; 20-200 KB; exact filename 'photo.jpg'. Colour, recent, plain white background, frontal full face, head centred, both ears visible, eyes open, natural expression, at least 75% face coverage; no shadows, dark glasses, uniform or signed photograph.",
+      "evidence_status": "Current official UPSC common application instruction"
+    },
+    {
+      "requirement_id": "live_photograph",
+      "requirement_name": "Live photograph",
+      "requirement_type": "photograph",
+      "submission_method": "official_live_capture",
+      "requirement_status": "mandatory",
+      "platform_support": "guidance_only",
+      "applicability": "All applicants",
+      "content_instructions": "Captured during the UPSC application using the current device webcam or by scanning the displayed QR code and using a mobile device. Good lighting and clear face required. The live image is matched with the uploaded passport photograph; mismatch blocks further application.",
+      "evidence_status": "Current official UPSC common application instruction"
+    },
+    {
+      "requirement_id": "triple_signature_image",
+      "requirement_name": "Triple-signature image",
+      "requirement_type": "signature",
+      "submission_method": "handwritten_then_uploaded",
+      "requirement_status": "mandatory",
+      "platform_support": "not_yet_supported",
+      "applicability": "All applicants",
+      "content_instructions": "Sign three times vertically, one below another, on plain white paper using black ink. Scan all three signatures in one clear, correctly oriented image. JPG; filename 'signature.jpg'; 20-100 KB; published image dimension 350-500 pixels.",
+      "evidence_status": "Current official UPSC common application instruction",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 100000,
+          "minimum_bytes": 20000,
+          "published_minimum": 20.0,
+          "published_maximum": 100.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg"
+          ],
+          "preferred_format": "jpg"
+        },
+        "filename": {
+          "mode": "exact",
+          "exact_filename": "signature"
+        }
+      }
+    },
+    {
+      "requirement_id": "application_declaration",
+      "requirement_name": "Application declaration",
+      "requirement_type": "portal_declaration",
+      "submission_method": "typed_or_selected_declaration",
+      "requirement_status": "mandatory",
+      "platform_support": "guidance_only",
+      "applicability": "All applicants",
+      "content_instructions": "Candidate confirms the correctness of the application before final submission. No separate uploaded declaration file was found in the common instruction.",
+      "evidence_status": "Portal step; exact wording varies by application"
+    }
+  ],
   "provenance": {
     "image_requirements.file_size": {
       "type": "official",

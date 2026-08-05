@@ -62,6 +62,75 @@
       "processing_support_status": "supported"
     }
   },
+  "requirements": [
+    {
+      "requirement_id": "candidate_photograph",
+      "requirement_name": "Candidate photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "New student registration/account applicants",
+      "content_instructions": "Uploaded candidate photograph; format: JPG/JPEG/PNG/GIF/BMP/PDF; file size: up to 50 KB.",
+      "evidence_status": "Current official ICSI portal evidence"
+    },
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate signature",
+      "requirement_type": "signature",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "not_yet_supported",
+      "applicability": "New student registration/account applicants",
+      "content_instructions": "Scanned signature in the format and size accepted by the portal; exact value was not established in the supplied photo evidence.",
+      "evidence_status": "Current ICSI portal requirement; specification not_found",
+      "file_spec": {
+        "file_size": {
+          "minimum_bytes": 10000,
+          "maximum_bytes": 20000
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    },
+    {
+      "requirement_id": "date_of_birth_class_x_proof",
+      "requirement_name": "Date-of-birth/Class X proof",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "not_yet_supported",
+      "applicability": "New registrants",
+      "content_instructions": "Upload the applicable Class X certificate/marksheet or other accepted DOB proof as instructed by ICSI.",
+      "evidence_status": "Current ICSI student-registration process"
+    },
+    {
+      "requirement_id": "qualifying_educational_certificate",
+      "requirement_name": "Qualifying educational certificate",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "not_yet_supported",
+      "applicability": "Based on Foundation/CSEET/Executive/Professional entry route",
+      "content_instructions": "Upload Class XII, graduation or other qualifying certificate applicable to the selected route.",
+      "evidence_status": "Current ICSI student-registration process"
+    },
+    {
+      "requirement_id": "identity_address_category_proof",
+      "requirement_name": "Identity/address/category proof",
+      "requirement_type": "identity_document",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "not_yet_supported",
+      "applicability": "Where the registration route asks for it",
+      "content_instructions": "Upload only the identity, address, category or exemption document explicitly requested.",
+      "evidence_status": "Current ICSI portal process; exact set varies"
+    }
+  ],
   "provenance": {
     "image_requirements.file_size": {
       "type": "official",
@@ -93,6 +162,24 @@
       "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
       "confidence": 5,
       "approved": true
+    },
+    "requirements[1].file_spec.file_size.minimum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[1].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[1].file_spec.formats.allowed_formats": {
+      "type": "interim_default",
+      "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
+      "confidence": 1,
+      "approved": false
     }
   },
   "verification": {

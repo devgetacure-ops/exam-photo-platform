@@ -10,6 +10,7 @@ here is a rule every consumer will accept.
 import copy
 import json
 import os
+import re
 from typing import Any
 
 from exam_photo.rule_validation import validate_exam_rule
@@ -315,6 +316,25 @@ def test_interim_default_blocks_verified_status() -> None:
         assert any("interim placeholder values" in e for e in errors), (status, errors)
 
 
+def test_interim_in_a_requirement_does_not_demote_the_photograph_rule() -> None:
+    """``status`` is a statement about the photograph specification.
+
+    A placeholder signature size says nothing about how well the exam's
+    photograph rule is evidenced, so it must not drag the record to
+    provisional.
+    """
+    rule = _base()
+    rule["status"] = "verified"
+    rule["verification"]["verification_status"] = "verified"
+    rule["fictional_example"] = False
+    rule["source_evidence"][0]["official_source"] = True
+    rule["requirements"] = [_signature()]
+    rule["provenance"]["requirements[0].file_spec.file_size.maximum_bytes"] = (
+        _interim_provenance()
+    )
+    assert not _errors(rule)
+
+
 def test_platform_default_is_still_allowed_on_a_verified_rule() -> None:
     """An interim placeholder is not the same thing as a settled policy choice,
     and only the first one blocks verification."""
@@ -330,3 +350,82 @@ def test_platform_default_is_still_allowed_on_a_verified_rule() -> None:
         "approved": True,
     }
     assert not _errors(rule)
+
+
+# --- The generated catalogue ------------------------------------------------
+#
+# These read the encoder's output rather than a hand-built fixture. The
+# catalogue is generated from the research, so a defect in the mapping policy
+# shows up here and nowhere else -- the unit tests above only prove the model
+# rejects a bad record, not that the encoder stops writing one.
+
+_CATALOGUE_DIR = os.path.join(
+    os.path.dirname(__file__), "..", "..", "..", "examples", "rules"
+)
+
+
+def _catalogue() -> list[tuple[str, dict[str, Any]]]:
+    records = []
+    for name in sorted(os.listdir(_CATALOGUE_DIR)):
+        if not name.startswith("exam_") or not name.endswith(".json"):
+            continue
+        with open(os.path.join(_CATALOGUE_DIR, name), encoding="utf-8") as f:
+            records.append((name, json.load(f)))
+    return records
+
+
+def test_every_encoded_examination_carries_an_inventory() -> None:
+    records = _catalogue()
+    assert records, "no generated rule records found"
+    missing = [name for name, rule in records if not rule.get("requirements")]
+    assert not missing, f"records with no deliverable inventory: {missing}"
+
+
+def test_no_non_photograph_deliverable_claims_support_yet() -> None:
+    """The engine that would prepare them is not built.
+
+    Marking one supported on the strength of having a specification would
+    promise an output nothing can produce.
+    """
+    claimed = [
+        (name, requirement["requirement_id"])
+        for name, rule in _catalogue()
+        for requirement in rule["requirements"]
+        if requirement["requirement_type"] != "photograph"
+        and requirement["platform_support"] in ("supported", "partially_supported")
+    ]
+    assert not claimed, f"non-photograph deliverables claiming support: {claimed}"
+
+
+def test_interim_provenance_paths_point_at_a_real_requirement() -> None:
+    """A placeholder must be findable at the field it stands in for.
+
+    The paths are built from a list index, so they go stale silently if the
+    inventory is reordered without the provenance being rebuilt with it.
+    """
+    pattern = re.compile(r"^requirements\[(\d+)\]\.file_spec\.(.+)$")
+    checked = 0
+    for name, rule in _catalogue():
+        for path, entry in rule["provenance"].items():
+            if entry.get("type") != "interim_default":
+                continue
+            match = pattern.match(path)
+            assert match, f"{name}: unexpected interim path {path}"
+            index = int(match.group(1))
+            assert index < len(rule["requirements"]), f"{name}: {path} out of range"
+            spec = rule["requirements"][index].get("file_spec") or {}
+            block = match.group(2).split(".")[0]
+            assert block in spec, f"{name}: {path} names an absent block"
+            checked += 1
+    assert checked, "no interim placeholders found; the guard would pass vacuously"
+
+
+def test_catalogue_records_no_interim_value_in_a_photograph_rule() -> None:
+    offenders = [
+        (name, path)
+        for name, rule in _catalogue()
+        for path, entry in rule["provenance"].items()
+        if entry.get("type") == "interim_default"
+        and path.startswith("image_requirements")
+    ]
+    assert not offenders, f"photograph specifications resting on a guess: {offenders}"

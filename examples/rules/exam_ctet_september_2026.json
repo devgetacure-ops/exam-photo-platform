@@ -68,6 +68,57 @@
       "processing_support_status": "supported"
     }
   },
+  "requirements": [
+    {
+      "requirement_id": "candidate_photograph",
+      "requirement_name": "Candidate photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants",
+      "content_instructions": "JPG/JPEG; 10-100 KB; 3.5 cm x 4.5 cm.",
+      "evidence_status": "Current official CTET bulletin/photo evidence"
+    },
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate signature",
+      "requirement_type": "signature",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "not_yet_supported",
+      "applicability": "All applicants",
+      "content_instructions": "JPG/JPEG; a separate scanned signature is required. Typical CTET limit is 3-30 KB; recheck the September 2026 portal value before submission.",
+      "evidence_status": "Current official CTET bulletin; exact field to recheck",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 30000,
+          "minimum_bytes": 3000,
+          "published_minimum": 3.0,
+          "published_maximum": 30.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    },
+    {
+      "requirement_id": "online_declaration_confirmation",
+      "requirement_name": "Online declaration/confirmation",
+      "requirement_type": "portal_declaration",
+      "submission_method": "typed_or_selected_declaration",
+      "requirement_status": "mandatory",
+      "platform_support": "guidance_only",
+      "applicability": "All applicants",
+      "content_instructions": "Review the particulars and submit the online declaration; no separate handwritten declaration file was located.",
+      "evidence_status": "Current CTET portal process"
+    }
+  ],
   "provenance": {
     "image_requirements.file_size": {
       "type": "official",

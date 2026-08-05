@@ -86,6 +86,30 @@
       "processing_support_status": "supported"
     }
   },
+  "requirements": [
+    {
+      "requirement_id": "student_photograph",
+      "requirement_name": "Student photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Every registered student, normally through the school",
+      "content_instructions": "Uploaded candidate photograph; format: JPG; file size: up to 40 kb; recency: within 180 days.",
+      "evidence_status": "Current official CBSE registration instruction"
+    },
+    {
+      "requirement_id": "student_particulars_supported_by_school_records",
+      "requirement_name": "Student particulars supported by school records",
+      "requirement_type": "certificate_scan",
+      "submission_method": "typed_or_selected_declaration",
+      "requirement_status": "mandatory",
+      "platform_support": "guidance_only",
+      "applicability": "Every registered student, submitted by the school",
+      "content_instructions": "Name, date of birth, parent details and subject particulars must match the school's admission and documentary records. The supplied evidence did not establish separate direct student uploads of birth or academic certificates.",
+      "evidence_status": "School-managed registration; file upload not_found"
+    }
+  ],
   "provenance": {
     "image_requirements.file_size": {
       "type": "official",

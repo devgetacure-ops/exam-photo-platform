@@ -65,6 +65,115 @@
       "processing_support_status": "supported"
     }
   },
+  "requirements": [
+    {
+      "requirement_id": "recent_passport_size_photograph",
+      "requirement_name": "Recent passport-size photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants",
+      "content_instructions": "JPG/JPEG; 20-50 KB; 200 x 230 pixels preferred; approximately 4.5 cm x 3.5 cm; 200 dpi where stated. Light/white background; face clearly visible.",
+      "evidence_status": "Secondary-only upload specification; recheck active portal"
+    },
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate signature",
+      "requirement_type": "signature",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "not_yet_supported",
+      "applicability": "All applicants",
+      "content_instructions": "JPG/JPEG; normally 10-20 KB; about 140 x 60 pixels; signature in black ink on white paper; signed by the applicant; not in capital letters.",
+      "evidence_status": "Secondary-only upload specification; recheck active portal",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 20000,
+          "minimum_bytes": 10000,
+          "published_minimum": 10.0,
+          "published_maximum": 20.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "exact",
+          "width_px": 140,
+          "height_px": 60
+        }
+      }
+    },
+    {
+      "requirement_id": "left_thumb_impression",
+      "requirement_name": "Left thumb impression",
+      "requirement_type": "thumb_impression",
+      "submission_method": "handwritten_then_uploaded",
+      "requirement_status": "mandatory",
+      "platform_support": "not_yet_supported",
+      "applicability": "All applicants",
+      "content_instructions": "JPG/JPEG; normally 20-50 KB; about 240 x 240 pixels; applicant's left thumb impression on white paper using black or blue ink; clear and unsmudged.",
+      "evidence_status": "Secondary-only upload specification; recheck active portal",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 50000,
+          "minimum_bytes": 20000,
+          "published_minimum": 20.0,
+          "published_maximum": 50.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "exact",
+          "width_px": 240,
+          "height_px": 240
+        }
+      }
+    },
+    {
+      "requirement_id": "handwritten_declaration",
+      "requirement_name": "Handwritten declaration",
+      "requirement_type": "handwritten_declaration",
+      "submission_method": "handwritten_then_uploaded",
+      "requirement_status": "mandatory",
+      "platform_support": "not_yet_supported",
+      "applicability": "All applicants",
+      "content_instructions": "JPG/JPEG; normally 50-100 KB; about 800 x 400 pixels; handwritten in English on white paper with black ink; not in capital letters. Standard wording: 'I, ______ (Name of the candidate), hereby declare that all the information submitted by me in the application form is correct, true and valid. I will present the supporting documents as and when required.' Copy the exact live-portal wording.",
+      "evidence_status": "Secondary-only upload specification; recheck active portal",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 100000,
+          "minimum_bytes": 50000,
+          "published_minimum": 50.0,
+          "published_maximum": 100.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "exact",
+          "width_px": 800,
+          "height_px": 400
+        }
+      }
+    }
+  ],
   "provenance": {
     "image_requirements.file_size": {
       "type": "inferred",

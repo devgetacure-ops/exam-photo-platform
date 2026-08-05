@@ -101,6 +101,64 @@
       "processing_support_status": "supported"
     }
   },
+  "requirements": [
+    {
+      "requirement_id": "candidate_photograph",
+      "requirement_name": "Candidate photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants",
+      "content_instructions": "Uploaded candidate photograph; format: JPEG; file size: 50-100 KB; dimensions: 320 x 240 px; 100 dpi; background: white or light colour; face coverage: at least 50%; recency: within 60 days.",
+      "evidence_status": "Current/recent official RRB notice"
+    },
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate signature",
+      "requirement_type": "signature",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "not_yet_supported",
+      "applicability": "All applicants",
+      "content_instructions": "Separate scanned signature image in the format and size shown by the active RRB portal. Exact current value was not available in the supplied photo dataset.",
+      "evidence_status": "Official notice requirement; field-level specification not extracted",
+      "file_spec": {
+        "file_size": {
+          "minimum_bytes": 10000,
+          "maximum_bytes": 20000
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    },
+    {
+      "requirement_id": "aadhaar_authentication_or_alternative_identity_d",
+      "requirement_name": "Aadhaar authentication or alternative identity details",
+      "requirement_type": "identity_document",
+      "submission_method": "external_identity_verification",
+      "requirement_status": "conditional",
+      "platform_support": "guidance_only",
+      "applicability": "All applicants",
+      "content_instructions": "Complete Aadhaar-based authentication where offered, or provide the permitted alternative identity details under the applicable CEN.",
+      "evidence_status": "Official RRB application process; exact route varies"
+    },
+    {
+      "requirement_id": "sc_st_certificate_for_free_rail_travel_authority",
+      "requirement_name": "SC/ST certificate for free rail travel authority",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "not_yet_supported",
+      "applicability": "SC/ST candidates requesting the free travel facility",
+      "content_instructions": "Upload the prescribed caste certificate where the CEN makes it a condition for the travel pass. This is not required from every candidate.",
+      "evidence_status": "Recent RRB CEN practice; verify active portal"
+    }
+  ],
   "provenance": {
     "image_requirements.file_size": {
       "type": "official",
@@ -133,6 +191,24 @@
       "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
       "confidence": 5,
       "approved": true
+    },
+    "requirements[1].file_spec.file_size.minimum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[1].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[1].file_spec.formats.allowed_formats": {
+      "type": "interim_default",
+      "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
+      "confidence": 1,
+      "approved": false
     }
   },
   "verification": {

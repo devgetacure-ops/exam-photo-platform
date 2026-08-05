@@ -31,10 +31,17 @@ application asks for. Across 50 stage-specific records the research counts ~48
 signature items, 44 photographs, 15 thumb impressions, 13 handwritten
 declarations and ~40 certificate or identity scans.
 
-Landed so far (DEC-047, DEC-048): the rule record can carry the full deliverable
-inventory, and interim placeholder values are structurally distinguishable from
-evidence. **Nothing writes either yet** — the encoder pass that populates
-`requirements[]` is the next step, and no rule record carries one today.
+Landed so far (DEC-047, DEC-048, DEC-049): the rule record carries the full
+deliverable inventory, interim placeholder values are structurally
+distinguishable from evidence, and the encoder writes both from versioned
+research. All 39 encoded examinations now carry an inventory — 155 requirements,
+of which 39 are supported (the photographs), 16 guidance-only and 100 not yet
+supported, with 55 interim placeholders on signature and thumb-impression sizes
+and formats.
+
+**No non-photograph deliverable is served yet.** The engine that would prepare
+one is not built, so every such requirement reads `not_yet_supported` and a test
+enforces it. The specifications are written and waiting.
 
 Two consequences of the pivot that contradict statements elsewhere in this file:
 
@@ -107,7 +114,14 @@ State these plainly rather than discovering them again:
 **Rule records are generated, never hand-written.** `scripts/encode_exam_rules.py`
 reads the versioned research in `packages/exam-rules/research/` and rebuilds the
 whole catalogue plus the gap register. The script owns every file matching its
-prefix, so a re-run replaces rather than adds.
+prefix, so a re-run replaces rather than adds. It takes two sidecars — the
+photograph specifications, and the deliverable inventory produced from the
+report by `scripts/extract_deliverables.py`:
+
+```bash
+python scripts/extract_deliverables.py --report packages/exam-rules/research/indian_exam_registration_deliverables_report_2026.md --out packages/exam-rules/research/exam_deliverables_2026.json
+python scripts/encode_exam_rules.py --specs packages/exam-rules/research/exam_photo_specs_2026.json --deliverables packages/exam-rules/research/exam_deliverables_2026.json --out examples/rules --report docs/EXAM_RULE_GAP_REGISTER.md
+```
 
 The consequence matters: **to change a rule, change the evidence and re-run.**
 Editing `examples/rules/exam_*.json` by hand works until the next regeneration

@@ -86,6 +86,57 @@
       "processing_support_status": "supported"
     }
   },
+  "requirements": [
+    {
+      "requirement_id": "candidate_photograph",
+      "requirement_name": "Candidate photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants",
+      "content_instructions": "JPG/JPEG; 10-200 KB; recent colour or black-and-white photograph with about 80% face, without mask.",
+      "evidence_status": "Recent official UGC-NET bulletin; 2026 photo evidence"
+    },
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate signature",
+      "requirement_type": "signature",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "not_yet_supported",
+      "applicability": "All applicants",
+      "content_instructions": "JPG/JPEG; commonly 4-30 KB under NTA bulletin rules; candidate's own clear signature.",
+      "evidence_status": "Recent official UGC-NET bulletin",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 30000,
+          "minimum_bytes": 4000,
+          "published_minimum": 4.0,
+          "published_maximum": 30.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    },
+    {
+      "requirement_id": "pwd_certificate",
+      "requirement_name": "PwD certificate",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "not_yet_supported",
+      "applicability": "Candidates claiming PwD benefit",
+      "content_instructions": "Upload the prescribed certificate in PDF where the application requests it.",
+      "evidence_status": "Recent official UGC-NET bulletin"
+    }
+  ],
   "provenance": {
     "image_requirements.file_size": {
       "type": "official",

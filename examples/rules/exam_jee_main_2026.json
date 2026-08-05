@@ -81,6 +81,68 @@
       "processing_support_status": "supported"
     }
   },
+  "requirements": [
+    {
+      "requirement_id": "candidate_photograph",
+      "requirement_name": "Candidate photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants",
+      "content_instructions": "JPG/JPEG; 10-200 KB. Recent colour or black-and-white photograph; face must be clearly visible. Exact 2026 composition rules should be checked against the active bulletin.",
+      "evidence_status": "Current official photo evidence; current bulletin page available"
+    },
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate signature",
+      "requirement_type": "signature",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "not_yet_supported",
+      "applicability": "All applicants",
+      "content_instructions": "JPG/JPEG; commonly 4-30 KB in NTA application bulletins. Signature must be the candidate's own running signature and clearly legible.",
+      "evidence_status": "Current NTA application requirement; exact 2026 field should be rechecked",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 30000,
+          "minimum_bytes": 4000,
+          "published_minimum": 4.0,
+          "published_maximum": 30.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    },
+    {
+      "requirement_id": "pwd_udid_certificate",
+      "requirement_name": "PwD/UDID certificate",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "not_yet_supported",
+      "applicability": "Candidates claiming PwD-related benefit",
+      "content_instructions": "Upload/verify the prescribed disability or UDID documentation where prompted. The current JEE Main advisory specifically asks candidates to update UDID details before application.",
+      "evidence_status": "Current official JEE Main advisory/bulletin"
+    },
+    {
+      "requirement_id": "category_certificate_particulars",
+      "requirement_name": "Category-certificate particulars",
+      "requirement_type": "certificate_scan",
+      "submission_method": "external_identity_verification",
+      "requirement_status": "conditional",
+      "platform_support": "guidance_only",
+      "applicability": "Candidates claiming EWS/SC/ST/OBC-NCL benefit",
+      "content_instructions": "Keep the current valid category certificate ready and ensure its details are updated. The available current official advisory confirms document readiness; whether a file is uploaded for every category was not conclusively established in the extracted material.",
+      "evidence_status": "Current official JEE Main advisory"
+    }
+  ],
   "provenance": {
     "image_requirements.file_size": {
       "type": "official",
