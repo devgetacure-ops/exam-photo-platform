@@ -48,6 +48,10 @@ right pixel dimensions, under the byte ceiling, correct filename.
 certificate scans joined. `exam_photo.pdf` assembles a PDF from prepared pages
 and restructures an uploaded one to a size limit.
 
+`pdf/document.py` assembles several uploads into one document (DEC-053) — add
+pages to a PDF the candidate already has, reorder them, rotate, omit, repeat.
+Order is a list of stable page references, so the arrangement is replayable.
+
 The load-bearing rule there: a **scan** may be re-encoded and downscaled, a
 **document** may not be re-rendered. A digitally issued certificate's text is
 real text, and rasterising it to hit a byte ceiling destroys what makes it

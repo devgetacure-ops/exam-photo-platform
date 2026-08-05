@@ -21,15 +21,29 @@ to say so.
 """
 
 from exam_photo.pdf.assembly import PdfAssemblyResult, build_pdf_from_images
+from exam_photo.pdf.document import (
+    DocumentPlan,
+    DocumentResult,
+    PageOrigin,
+    PageRef,
+    assemble_document,
+    plan_document,
+)
 from exam_photo.pdf.inspection import PdfInspection, PdfPageKind, inspect_pdf
 from exam_photo.pdf.preparation import PdfPreparationResult, prepare_existing_pdf
 
 __all__ = [
+    "DocumentPlan",
+    "DocumentResult",
+    "PageOrigin",
+    "PageRef",
     "PdfAssemblyResult",
     "PdfInspection",
     "PdfPageKind",
     "PdfPreparationResult",
+    "assemble_document",
     "build_pdf_from_images",
     "inspect_pdf",
+    "plan_document",
     "prepare_existing_pdf",
 ]

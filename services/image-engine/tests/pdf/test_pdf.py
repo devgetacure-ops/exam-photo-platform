@@ -11,7 +11,6 @@ never committed.
 """
 
 import io
-from typing import Any
 
 import numpy as np
 import pytest
@@ -247,7 +246,3 @@ def test_the_prepared_document_still_opens() -> None:
     reopened = inspect_pdf(result.content)
     assert reopened.page_count == 2
     assert result.content.startswith(b"%PDF-")
-
-
-def _unused(_: Any) -> None:  # pragma: no cover - keeps Any imported meaningfully
-    return None
