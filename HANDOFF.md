@@ -39,9 +39,23 @@ of which 39 are supported (the photographs), 16 guidance-only and 100 not yet
 supported, with 55 interim placeholders on signature and thumb-impression sizes
 and formats.
 
-**No non-photograph deliverable is served yet.** The engine that would prepare
-one is not built, so every such requirement reads `not_yet_supported` and a test
-enforces it. The specifications are written and waiting.
+**No non-photograph deliverable is served yet.** Every such requirement reads
+`not_yet_supported` and a test enforces it, because the ink engine below is not
+yet wired to the rule pipeline. The specifications are written and waiting.
+
+The ink-on-paper engine (`exam_photo.ink`, DEC-050) exists and is the opposite
+of the photograph rule: paper is driven to pure white and ink to full strength,
+because paper carries no information in its tones and the mark's identity is its
+shape — which nothing in it touches. Signature, thumb impression and handwritten
+declaration all use it. **No OCR, no declaration text comparison** — the owner
+ruled that out; a declaration is prepared as a plain file.
+
+What it does on the reference set: paper to median 255 on all five inputs, the
+mark's own colour kept, both approved signatures reproduced closely, both thumb
+captures cropped tight, receipt show-through removed, the hand holding the sheet
+rejected. What it does not do: frame a small sheet in a large frame tightly —
+the crop comes out ~1.7× the mark's extent because the sheet's own edge reads as
+ink. Held by a ratcheted test; the file is usable, just loose.
 
 Two consequences of the pivot that contradict statements elsewhere in this file:
 
@@ -188,6 +202,13 @@ root with `EXAM_PHOTO_FACE_MODEL_PATH` / `EXAM_PHOTO_SEGMENTER_MODEL_PATH` and
 their `*_SHA256` set as the workflow sets them.
 
 ## Reference material — local only, never commit
+
+The ink-on-paper reference set is at `C:\Users\dmbar\Pictures\other-exam-uploads`
+— `signature/good` holds two approved outputs (the target), `signature/bad` and
+`thumb impression/` hold real captures. Five images, and every constant in
+`exam_photo.ink` is calibrated against them with the measurement recorded beside
+it. **Known gaps in the set: no pencil or faint-pen sample, and no handwritten
+declaration at all.**
 
 The 40-photo labelled set at `C:\Users\dmbar\Pictures\new-test-images` is the
 current specification; ten are labelled `perfect`. The outputs the owner last
