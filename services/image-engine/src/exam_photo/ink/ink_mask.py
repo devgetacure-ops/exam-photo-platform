@@ -472,9 +472,11 @@ def mass_trimmed_box(mask: np.ndarray[Any, Any]) -> "BoundingBox | None":
     )
 
 
-def framed_box(box: BoundingBox, width: int, height: int) -> BoundingBox:
+def framed_box(
+    box: BoundingBox, width: int, height: int, extra: float = 0.0
+) -> BoundingBox:
     """Grow the ink box by the margin the approved outputs carry."""
-    margin = max(box.width, box.height) * _INK_MARGIN_FRACTION
+    margin = max(box.width, box.height) * (_INK_MARGIN_FRACTION + extra)
     left = max(0.0, box.left - margin)
     top = max(0.0, box.top - margin)
     right = min(float(width), box.right + margin)

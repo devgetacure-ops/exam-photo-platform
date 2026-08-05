@@ -401,3 +401,36 @@ def test_the_separate_parts_of_one_signature_are_all_kept() -> None:
     assert result.crop_box is not None
     assert result.crop_box.left < 160, result.crop_box
     assert result.crop_box.right > 660, result.crop_box
+
+
+def test_an_impression_keeps_the_faint_ink_at_its_edge() -> None:
+    """An impression fades outward, so a white point cuts into the subject.
+
+    This is the loss the product owner spotted twice. Measured on the reference
+    impressions, a white point at depth 0.09 -- chosen at the time for the
+    cleanest paper -- erased 52% and 75% of the non-paper pixels. The clip is
+    now set where it removes nothing, and this test holds it there.
+    """
+    sheet = _impression()
+    result = prepare_ink_document(
+        Image.fromarray(sheet.astype(np.uint8)), InkTreatment.IMPRESSION
+    )
+    delivered = np.asarray(result.image.convert("L")).astype(np.float32)
+
+    # Tone must survive across the whole range, not just at the dense core.
+    faint = ((delivered > 200) & (delivered < 250)).mean()
+    assert faint > 0.05, f"the fading edge was clipped away: {faint:.3f}"
+
+
+def test_an_impression_is_framed_wider_than_its_threshold_box() -> None:
+    """The ink box is drawn where the impression crosses the threshold, and the
+    impression carries on past it."""
+    sheet = _impression()
+    as_impression = prepare_ink_document(
+        Image.fromarray(sheet.astype(np.uint8)), InkTreatment.IMPRESSION
+    )
+    as_mark = prepare_ink_document(
+        Image.fromarray(sheet.astype(np.uint8)), InkTreatment.MARK
+    )
+    assert as_impression.image.width > as_mark.image.width
+    assert as_impression.image.height > as_mark.image.height

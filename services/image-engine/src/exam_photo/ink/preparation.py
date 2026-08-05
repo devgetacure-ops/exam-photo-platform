@@ -78,20 +78,31 @@ class InkTreatment(str, Enum):
 
 
 #: White point per treatment, as depth below paper. Everything lighter than
-#: this becomes paper.
+#: this becomes pure paper, and that clipping is how a scan gets a clean page.
 #:
-#: A mark takes 0.10, just above paper grain, and relies on the ink mask to
-#: clear the page. An impression takes 0.09 -- close, but it reaches the page
-#: differently: no mask is applied, so the white point is the *only* thing
-#: cleaning the paper, and it has to do that without touching ridges.
+#: A mark takes 0.10: it also has the ink mask clearing the page, and a pen
+#: stroke has no faint outer half to lose.
 #:
-#: Swept on the reference impressions, median paper value in the delivered file:
-#: 0.03 -> 194, 0.06 -> 200, 0.09 -> 207 on the closer capture, and 215/223/231
-#: on the further one. Ridge detail is unaffected across the whole range -- the
-#: faintest ridges sit far below any of these -- so the value is chosen on paper
-#: cleanliness alone, and 0.09 is the cleanest that still changes nothing about
-#: the impression itself.
-_WHITE_POINT_DEPTH = {InkTreatment.MARK: 0.10, InkTreatment.IMPRESSION: 0.09}
+#: An impression takes 0.01, which is almost no clipping at all, and the
+#: measurement behind that is stark. An impression fades outward -- its edge is
+#: genuinely faint ink, not a boundary -- so a white point cuts straight through
+#: the subject. Share of the non-paper pixels that get erased, on the two
+#: reference impressions:
+#:
+#: | white point depth | value | closer capture | further capture |
+#: |-------------------|-------|----------------|-----------------|
+#: | 0.09              |  232  |     51.7%      |      74.6%      |
+#: | 0.06              |  240  |     40.4%      |      69.3%      |
+#: | 0.03              |  247  |     15.1%      |      41.8%      |
+#: | 0.02              |  250  |      9.2%      |      22.0%      |
+#: | 0.01              |  252  |      ~0%       |      ~0%        |
+#:
+#: 0.09 was chosen earlier by sweeping for the cleanest *paper*, which is the
+#: wrong thing to optimise: it was discarding three quarters of the impression
+#: to do it, and the product owner saw the loss immediately. The paper does not
+#: need the help -- flattening already leaves it at 248 median and 252 at the
+#: third quartile -- so the clip is set where it removes nothing.
+_WHITE_POINT_DEPTH = {InkTreatment.MARK: 0.10, InkTreatment.IMPRESSION: 0.01}
 
 #: Black-point headroom per treatment, as a multiple of the deepest ink. Higher
 #: is gentler. A mark wants its strokes solid, so 1.15 puts the deepest ink near
@@ -101,6 +112,14 @@ _BLACK_POINT_HEADROOM_BY_TREATMENT = {
     InkTreatment.MARK: 1.15,
     InkTreatment.IMPRESSION: 1.35,
 }
+
+
+#: Extra margin for an impression, added to the mark margin. The ink box is
+#: drawn where the impression crosses the ink threshold, but the impression
+#: continues past that as fading ridge detail, so a box tight to the threshold
+#: cuts the outer pattern off. Measured on the reference impressions, tone
+#: continues 6-9% of the box's size beyond it on every side.
+_IMPRESSION_EXTRA_MARGIN = 0.09
 
 
 @dataclass(frozen=True)
@@ -244,7 +263,8 @@ def prepare_ink_document(
             is_blank=True,
         )
 
-    framed = framed_box(ink.box, flattened.shape[1], flattened.shape[0])
+    extra = _IMPRESSION_EXTRA_MARGIN if treatment is InkTreatment.IMPRESSION else 0.0
+    framed = framed_box(ink.box, flattened.shape[1], flattened.shape[0], extra)
 
     # Map the box back onto the original pixels and render there. The search ran
     # downscaled; the delivered file should carry the resolution the candidate
