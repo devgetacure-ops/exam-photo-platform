@@ -204,6 +204,35 @@ def _bytes_from(value: Any, unit: Any) -> Optional[int]:
         return None
 
 
+def _orient_portrait(
+    width: Optional[int], height: Optional[int]
+) -> tuple[Optional[int], Optional[int], bool]:
+    """Return the pair oriented as a portrait, and whether it was transposed.
+
+    An examination photograph is a head-and-shoulders portrait; none is
+    landscape. Two records in the research nonetheless encode one, and both say
+    so in a sentence that contradicts itself: RRB publishes "35mmX45mm or
+    320 x 240 pixels", where 35x45 mm is portrait at 0.778 and 320x240 is
+    landscape at 1.333. The magnitudes agree -- 240/320 is 0.750, a close match
+    to 0.778 -- so the figure is transposed at source rather than wrong.
+
+    Transposing is a judgement, not a transcription, so it is applied by a rule
+    that states its own scope rather than by editing two records: pixels that
+    come out landscape are turned upright. Nothing else in the set is affected
+    -- the three square records (250x250, 1200x1200, 240x240) are untouched
+    because square is not landscape, and every other record is already
+    portrait.
+
+    Orientation is deliberately the only signal used. Comparing against the
+    published physical size would misfire: IBPS writes "4.5 cm x 3.5 cm" --
+    height first -- alongside a correct portrait 200x230, so an aspect
+    comparison would 'correct' a figure that is already right.
+    """
+    if width and height and width > height:
+        return height, width, True
+    return width, height, False
+
+
 def _aspect_ratio(width: Optional[int], height: Optional[int]) -> Optional[str]:
     """Derive a reduced W:H string. Never guessed -- only computed from pixels."""
     if not width or not height:
@@ -274,13 +303,21 @@ def _dimensions(record: Record) -> dict[str, Any]:
     pref_w = record.v("dimensions.preferred_width_px")
     pref_h = record.v("dimensions.preferred_height_px")
 
+    transposed = False
     if exact_w and exact_h:
+        exact_w, exact_h, transposed = _orient_portrait(int(exact_w), int(exact_h))
         block["mode"] = "exact"
         block["width_px"] = int(exact_w)
         block["height_px"] = int(exact_h)
         ratio = _aspect_ratio(int(exact_w), int(exact_h))
         if ratio:
             block["aspect_ratio"] = ratio
+        if transposed:
+            block["fallback_reason"] = (
+                "The published pixel figure is landscape, which contradicts the "
+                "portrait physical size given in the same sentence. Recorded "
+                "upright; see provenance."
+            )
     elif min_w and max_w and min_h and max_h:
         block["mode"] = "range"
         block["minimum_width_px"] = int(min_w)
@@ -294,6 +331,7 @@ def _dimensions(record: Record) -> dict[str, Any]:
     else:
         block["mode"] = "unspecified"
         if pref_w and pref_h:
+            pref_w, pref_h, transposed = _orient_portrait(int(pref_w), int(pref_h))
             block["preferred_width_px"] = int(pref_w)
             block["preferred_height_px"] = int(pref_h)
             block["fallback_reason"] = (
@@ -312,6 +350,7 @@ def _dimensions(record: Record) -> dict[str, Any]:
     permitted = record.v("permitted_pixel_range")
     if permitted:
         block["permitted_pixel_range"] = str(permitted)
+    block["_transposed"] = transposed
     return block
 
 
@@ -565,6 +604,7 @@ def _provenance(
     tier: str,
     formats_derived: bool,
     dropped_formats: list[str],
+    transposed: bool,
 ) -> dict[str, Any]:
     block: dict[str, Any] = {}
     size_field = record.f("file_size.published_maximum")
@@ -640,6 +680,21 @@ def _provenance(
             "confidence": 4,
             "approved": True,
         }
+    if transposed:
+        block["image_requirements.dimensions.width_px"] = {
+            "type": "inferred",
+            "reasoning": (
+                "The body publishes the pixel figure landscape while giving a "
+                "portrait physical size in the same sentence, and the two agree "
+                "in magnitude but not orientation. Recorded upright, because an "
+                "examination photograph is a head-and-shoulders portrait and no "
+                "body in the researched set requires a landscape one. The "
+                "published figure is preserved verbatim in "
+                "permitted_pixel_range so the transposition is visible."
+            ),
+            "confidence": 3,
+            "approved": True,
+        }
     block["image_requirements.composition.crop_profile"] = {
         "type": "platform_default",
         "reasoning": (
@@ -711,6 +766,8 @@ def build_rule(record: Record, tier: str) -> Optional[dict[str, Any]]:
         and str(published_pref).lower().strip() in formats["allowed_formats"]
     )
     composition = _composition(record)
+    dimensions = _dimensions(record)
+    transposed = bool(dimensions.pop("_transposed", False))
     rule = {
         "schema_version": "1.1",
         "rule_id": rule_id,
@@ -719,7 +776,7 @@ def build_rule(record: Record, tier: str) -> Optional[dict[str, Any]]:
         "exam": exam,
         "source_evidence": _source_evidence(record),
         "image_requirements": {
-            "dimensions": _dimensions(record),
+            "dimensions": dimensions,
             "file_size": file_size,
             "formats": formats,
             "background": _background(record),
@@ -728,7 +785,9 @@ def build_rule(record: Record, tier: str) -> Optional[dict[str, Any]]:
             "filename": _filename(record),
             "exceptional_instructions": _exceptional(record, appearance),
         },
-        "provenance": _provenance(record, tier, formats_derived, dropped_formats),
+        "provenance": _provenance(
+            record, tier, formats_derived, dropped_formats, transposed
+        ),
         "verification": {"verification_status": _STATUS_BY_TIER[tier]},
         "fictional_example": False,
     }

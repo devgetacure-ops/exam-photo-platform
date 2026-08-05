@@ -27,9 +27,10 @@
   "image_requirements": {
     "dimensions": {
       "mode": "exact",
-      "width_px": 320,
-      "height_px": 240,
-      "aspect_ratio": "4:3",
+      "width_px": 240,
+      "height_px": 320,
+      "aspect_ratio": "3:4",
+      "fallback_reason": "The published pixel figure is landscape, which contradicts the portrait physical size given in the same sentence. Recorded upright; see provenance.",
       "dpi": 100,
       "permitted_pixel_range": "35mmX45mm or 320 x 240 pixels"
     },
@@ -119,6 +120,12 @@
       "type": "inferred",
       "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
       "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.dimensions.width_px": {
+      "type": "inferred",
+      "reasoning": "The body publishes the pixel figure landscape while giving a portrait physical size in the same sentence, and the two agree in magnitude but not orientation. Recorded upright, because an examination photograph is a head-and-shoulders portrait and no body in the researched set requires a landscape one. The published figure is preserved verbatim in permitted_pixel_range so the transposition is visible.",
+      "confidence": 3,
       "approved": true
     },
     "image_requirements.composition.crop_profile": {

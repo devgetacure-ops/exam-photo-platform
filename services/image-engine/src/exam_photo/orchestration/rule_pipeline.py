@@ -24,7 +24,11 @@ from exam_photo.providers.crop_planners.deterministic_crop_mode_b_planner import
 from exam_photo.providers.crop_planners.deterministic_crop_planner import (
     DeterministicCropPlanner,
 )
-from exam_photo.providers.crop_planning import CropModeBResult, CropPlanResult
+from exam_photo.providers.crop_planning import (
+    CropIssueCode,
+    CropModeBResult,
+    CropPlanResult,
+)
 from exam_photo.providers.foreground_decontamination import (
     decontaminate_foreground_edges,
 )
@@ -132,6 +136,33 @@ class PipelineStage(str, Enum):
     FINAL_DECODE_VALIDATION = "final_decode_validation"
     FINAL_RULE_VALIDATION = "final_rule_validation"
     FILENAME_GENERATION = "filename_generation"
+
+
+# Crop issues that leave no usable geometry behind, and therefore genuinely
+# stop the pipeline.
+#
+# The list is short on purpose, and everything absent from it is deliberately
+# absent. A clipped head, a head under the exam's coverage floor, a crop that
+# could not hold the whole preservation box, a face off centre -- these are
+# composition defects, and DEC-041 requires the photograph to be produced and
+# the defect reported. What is here instead is structural: no usable input, no
+# resolvable target aspect, an output whose aspect does not match the one that
+# was asked for, or a provider that failed outright. In each of those the plan
+# does not describe a photograph anyone could deliver.
+_CROP_UNUSABLE_CODES = frozenset(
+    {
+        CropIssueCode.CROP_INPUT_INVALID,
+        CropIssueCode.CROP_PROVIDER_FAILED,
+        CropIssueCode.CROP_TARGET_ASPECT_MISSING,
+        CropIssueCode.CROP_TARGET_ASPECT_INVALID,
+        CropIssueCode.CROP_ASPECT_RATIO_MISMATCH,
+        CropIssueCode.CROP_B_INPUT_INVALID,
+        CropIssueCode.CROP_B_PROVIDER_FAILED,
+        CropIssueCode.CROP_B_RANGE_MISSING,
+        CropIssueCode.CROP_B_RANGE_INVALID,
+        CropIssueCode.CROP_B_ASPECT_OUT_OF_RANGE,
+    }
+)
 
 
 class PipelineIssueCode(str, Enum):
@@ -1030,7 +1061,12 @@ class RuleOrchestratedPipeline:
                 dur_stage = (time.perf_counter() - t_stage) * 1000.0
                 assert crop_res is not None
 
-                if not crop_res.validation.is_valid:
+                crop_unusable = [
+                    code
+                    for code in crop_res.validation.issue_codes
+                    if code in _CROP_UNUSABLE_CODES
+                ]
+                if not crop_res.validation.is_valid and crop_unusable:
                     failed = True
                     pipeline_issues.append(PipelineIssueCode.PIPELINE_CROP_FAILED)
                     record_stage(
@@ -1045,7 +1081,51 @@ class RuleOrchestratedPipeline:
                         PipelineStageStatus.FAILED,
                         issues=crop_res.validation.issue_codes,
                         dur=dur_stage / 2,
-                        summary="Crop plan failed compliance constraints.",
+                        summary=(
+                            "Crop planning produced no usable geometry: "
+                            f"{', '.join(str(c) for c in crop_unusable)}."
+                        ),
+                    )
+                elif not crop_res.validation.is_valid:
+                    # Composition fell short, but the plan is geometrically
+                    # usable, so the candidate still receives a photograph.
+                    #
+                    # DEC-041 states it without qualification: no stage anywhere
+                    # in the pipeline may block for an appearance or composition
+                    # reason. Only an undecodable file, no detectable face, or a
+                    # genuinely ambiguous subject may refuse. This branch used to
+                    # fail on any invalid crop, which quietly made the crop
+                    # planner an exception to that policy -- and the constraints
+                    # it was failing on are precisely composition ones. Measured
+                    # on the reviewed set, a photograph the owner had labelled
+                    # perfect produced nothing at all on three of five real exam
+                    # rules, because its subject's hair pins the crop's sides and
+                    # head coverage lands under the exam's published floor.
+                    #
+                    # A crop under the coverage floor is exactly the compromise
+                    # DEC-039 already decided to deliver and report rather than
+                    # refuse; blocking here discarded the tightest crop the
+                    # geometry allowed and returned nothing in its place, which
+                    # is worse on the published requirement and on every other
+                    # axis. The issue codes travel with the result, so the
+                    # compromise stays visible downstream.
+                    pipeline_issues.append(PipelineIssueCode.PIPELINE_CROP_FAILED)
+                    record_stage(
+                        PipelineStage.CROP_CANDIDATE_SCORING,
+                        PipelineStageStatus.WARNING,
+                        issues=crop_res.validation.issue_codes,
+                        dur=dur_stage / 2,
+                        summary="Crop selected under a composition compromise.",
+                    )
+                    record_stage(
+                        PipelineStage.CROP_PLANNING,
+                        PipelineStageStatus.WARNING,
+                        issues=crop_res.validation.issue_codes,
+                        dur=dur_stage / 2,
+                        summary=(
+                            "Crop planned with composition compromises: "
+                            f"{crop_res.crop_box}"
+                        ),
                     )
                 else:
                     record_stage(
