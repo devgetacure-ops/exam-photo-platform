@@ -116,7 +116,7 @@
       "requirement_type": "signature",
       "submission_method": "file_upload",
       "requirement_status": "mandatory",
-      "platform_support": "not_yet_supported",
+      "platform_support": "supported",
       "applicability": "All applicants",
       "content_instructions": "JPG/JPEG; black or dark-blue ink; signature area 70-80% of image; aspect ratio height:width = 1:R, R 2.75-3.75; 250 x 80 to 580 x 180 pixels; 3-300 kB. Applicant's own signature, not capital letters or initials.",
       "evidence_status": "Current official GATE 2026 page",

@@ -882,16 +882,27 @@ def _requirement_status(published: Optional[str]) -> str:
     return "portal_dependent"
 
 
+#: Deliverable types the engine can now prepare, and the treatment each gets is
+#: recorded in ``orchestration/deliverable_pipeline.py``. A type absent from
+#: this set is still reported to the candidate as a requirement -- it just is
+#: not one the platform produces.
+#:
+#: Certificates are absent on purpose. The engine can clean and frame a
+#: photographed page, but portals overwhelmingly want a certificate as a PDF,
+#: and nothing here writes PDF yet. Claiming support on the strength of being
+#: able to produce a JPEG would promise a file the portal will not take.
+_SERVED_TYPES = frozenset({"signature", "thumb_impression", "handwritten_declaration"})
+
+
 def _platform_support(
     requirement_type: str, method: str, photograph_status: str
 ) -> str:
     """What the platform does for one deliverable.
 
-    Non-photograph deliverables are ``not_yet_supported`` even where a full
-    specification exists, because the engine that would prepare them is not
-    built. Marking them supported on the strength of having a specification
-    would be a fictional success: the record would promise an output nothing
-    can produce.
+    A type the engine can prepare is ``supported`` only when the record also
+    carries something to prepare *against* -- a size or a format. Support with
+    no specification behind it is a promise with nothing under it, and the rule
+    model rejects the combination anyway.
     """
     if method == "physical_stage_requirement":
         return "physical_stage"
@@ -899,6 +910,8 @@ def _platform_support(
         return "guidance_only"
     if requirement_type == "photograph":
         return photograph_status
+    if requirement_type in _SERVED_TYPES:
+        return "supported"
     return "not_yet_supported"
 
 
@@ -1004,6 +1017,7 @@ def _requirements(
             suffix += 1
         used_ids.add(requirement_id)
 
+        support = _platform_support(requirement_type, method, photograph_status)
         entry: dict[str, Any] = {
             "requirement_id": requirement_id,
             "requirement_name": name,
@@ -1012,9 +1026,7 @@ def _requirements(
             "requirement_status": _requirement_status(
                 deliverable.get("requirement_status")
             ),
-            "platform_support": _platform_support(
-                requirement_type, method, photograph_status
-            ),
+            "platform_support": support,
         }
         applicability = deliverable.get("applicability")
         if applicability:
@@ -1038,6 +1050,13 @@ def _requirements(
             )
             if spec:
                 entry["file_spec"] = spec
+            # "Supported" has to have something to prepare against. Without a
+            # size or a format there is nothing to aim at, so the claim is
+            # withdrawn rather than made and then failed.
+            if support == "supported" and not (
+                spec.get("file_size") or spec.get("formats")
+            ):
+                entry["platform_support"] = "not_yet_supported"
             index = len(inventory)
             for path in interim_paths:
                 key = f"requirements[{index}].file_spec.{path}"

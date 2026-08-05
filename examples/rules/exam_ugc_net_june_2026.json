@@ -104,7 +104,7 @@
       "requirement_type": "signature",
       "submission_method": "file_upload",
       "requirement_status": "mandatory",
-      "platform_support": "not_yet_supported",
+      "platform_support": "supported",
       "applicability": "All applicants",
       "content_instructions": "JPG/JPEG; commonly 4-30 KB under NTA bulletin rules; candidate's own clear signature.",
       "evidence_status": "Recent official UGC-NET bulletin",

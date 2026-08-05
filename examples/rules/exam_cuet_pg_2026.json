@@ -96,7 +96,7 @@
       "requirement_type": "signature",
       "submission_method": "file_upload",
       "requirement_status": "mandatory",
-      "platform_support": "not_yet_supported",
+      "platform_support": "supported",
       "applicability": "All applicants",
       "content_instructions": "Separate JPG/JPEG signature image; follow the active portal's size limit.",
       "evidence_status": "Current official CUET PG bulletin",

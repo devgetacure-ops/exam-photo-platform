@@ -86,7 +86,7 @@
       "requirement_type": "signature",
       "submission_method": "file_upload",
       "requirement_status": "mandatory",
-      "platform_support": "not_yet_supported",
+      "platform_support": "supported",
       "applicability": "All applicants",
       "content_instructions": "JPG/JPEG; a separate scanned signature is required. Typical CTET limit is 3-30 KB; recheck the September 2026 portal value before submission.",
       "evidence_status": "Current official CTET bulletin; exact field to recheck",

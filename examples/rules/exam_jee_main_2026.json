@@ -99,7 +99,7 @@
       "requirement_type": "signature",
       "submission_method": "file_upload",
       "requirement_status": "mandatory",
-      "platform_support": "not_yet_supported",
+      "platform_support": "supported",
       "applicability": "All applicants",
       "content_instructions": "JPG/JPEG; commonly 4-30 KB in NTA application bulletins. Signature must be the candidate's own running signature and clearly legible.",
       "evidence_status": "Current NTA application requirement; exact 2026 field should be rechecked",

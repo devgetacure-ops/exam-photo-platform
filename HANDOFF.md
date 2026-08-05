@@ -39,9 +39,15 @@ of which 39 are supported (the photographs), 16 guidance-only and 100 not yet
 supported, with 55 interim placeholders on signature and thumb-impression sizes
 and formats.
 
-**No non-photograph deliverable is served yet.** Every such requirement reads
-`not_yet_supported` and a test enforces it, because the ink engine below is not
-yet wired to the rule pipeline. The specifications are written and waiting.
+**104 of 155 requirements are now served** (DEC-051), up from 39: 37
+photographs, 39 signatures, 15 thumb impressions, 13 declarations.
+`orchestration/deliverable_pipeline.py` turns an upload into the actual file --
+right pixel dimensions, under the byte ceiling, correct filename.
+
+Certificate scans and identity documents stay `not_yet_supported`, and a test
+enforces it. The engine can clean and frame a photographed page, but portals
+want certificates as **PDF** and nothing here writes PDF. That is the next
+build: jpg-to-pdf, pdf-to-pdf, and what follows.
 
 The ink-on-paper engine (`exam_photo.ink`, DEC-050) exists and is the opposite
 of the photograph rule: paper is driven to pure white and ink to full strength,

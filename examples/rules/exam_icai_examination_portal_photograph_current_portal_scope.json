@@ -83,7 +83,7 @@
       "requirement_type": "signature",
       "submission_method": "file_upload",
       "requirement_status": "conditional",
-      "platform_support": "not_yet_supported",
+      "platform_support": "supported",
       "applicability": "Candidates whose ICAI profile/exam form requires a signature",
       "content_instructions": "Upload the candidate's own scanned signature in the portal-prescribed JPEG file and size. Exact value was not part of the supplied photograph dataset.",
       "evidence_status": "Current portal requirement; exact specification not_found",

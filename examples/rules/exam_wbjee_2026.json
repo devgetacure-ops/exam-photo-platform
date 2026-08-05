@@ -87,7 +87,7 @@
       "requirement_type": "signature",
       "submission_method": "file_upload",
       "requirement_status": "mandatory",
-      "platform_support": "not_yet_supported",
+      "platform_support": "supported",
       "applicability": "All applicants",
       "content_instructions": "Separate signature image required by the WBJEE application. Exact current size/dimensions not established in supplied evidence.",
       "evidence_status": "Current portal requirement; exact specification not_found",

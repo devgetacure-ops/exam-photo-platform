@@ -54,14 +54,13 @@ _SUPPRESSION_MARGIN = 3
 class InkTreatment(str, Enum):
     """How hard to work on a mark, decided by what the mark is.
 
-    Two settings, because two deliverables want opposite things and one
-    compromise served neither.
+    Three settings, because these deliverables want different things and one
+    compromise served none of them.
 
-    ``MARK`` is a signature or a handwritten declaration: a few thin strokes on
-    a page, where everything that is not a stroke is noise -- show-through,
-    ruling, dirt, the shadow of a fold. Clearing the page is most of the value,
-    and the mark loses nothing by it, because a pen stroke is either there or it
-    is not.
+    ``MARK`` is a signature: a few thin strokes on a page, where everything
+    that is not a stroke is noise -- show-through, ruling, dirt, the shadow of
+    a fold. Clearing the page is most of the value, and the mark loses nothing
+    by it, because a pen stroke is either there or it is not.
 
     ``IMPRESSION`` is a thumb or finger impression, and the opposite is true.
     The deliverable *is* the ridge pattern, which lives in a continuous range of
@@ -71,10 +70,21 @@ class InkTreatment(str, Enum):
     So this treatment does the minimum that still fixes the capture: correct the
     lighting, crop to the impression, balance the levels gently, and otherwise
     leave it alone.
+
+    ``PAGE`` is a whole document -- a handwritten declaration, a certificate, a
+    mark sheet. It differs from the other two on *framing* rather than tone: the
+    deliverable is the sheet, not what is written on it, so it is never cropped
+    to its content. A declaration cropped to its writing would lose the heading
+    above and the date below; a certificate cropped to its text would lose the
+    seal. Tonally it is the most conservative of the three, because a document
+    can carry faint content that matters -- a light stamp, a watermark, a carbon
+    impression -- and clipping that away is altering the document rather than
+    correcting the capture, which the integrity rule forbids.
     """
 
     MARK = "mark"
     IMPRESSION = "impression"
+    PAGE = "page"
 
 
 #: White point per treatment, as depth below paper. Everything lighter than
@@ -102,7 +112,14 @@ class InkTreatment(str, Enum):
 #: to do it, and the product owner saw the loss immediately. The paper does not
 #: need the help -- flattening already leaves it at 248 median and 252 at the
 #: third quartile -- so the clip is set where it removes nothing.
-_WHITE_POINT_DEPTH = {InkTreatment.MARK: 0.10, InkTreatment.IMPRESSION: 0.01}
+_WHITE_POINT_DEPTH = {
+    InkTreatment.MARK: 0.10,
+    InkTreatment.IMPRESSION: 0.01,
+    # A page is cleaned only of what is unambiguously bare paper. Anything
+    # further risks a faint stamp or a carbon impression, and losing those
+    # would be altering the document rather than correcting the capture.
+    InkTreatment.PAGE: 0.03,
+}
 
 #: Black-point headroom per treatment, as a multiple of the deepest ink.
 #:
@@ -121,6 +138,10 @@ _WHITE_POINT_DEPTH = {InkTreatment.MARK: 0.10, InkTreatment.IMPRESSION: 0.01}
 _BLACK_POINT_HEADROOM_BY_TREATMENT = {
     InkTreatment.MARK: 0.90,
     InkTreatment.IMPRESSION: 1.35,
+    # Between the two. A document wants its text to read as black, but it also
+    # carries printed greys -- rule lines, tint blocks, a photocopied
+    # photograph -- that must stay distinguishable from the text.
+    InkTreatment.PAGE: 1.10,
 }
 
 
@@ -283,10 +304,44 @@ def _render(
     return rendered
 
 
+def _prepare_page(
+    source: np.ndarray[Any, Any],
+    analysis: np.ndarray[Any, Any],
+    scale: float,
+    paper: PaperRegion,
+    ink: InkMaskResult,
+) -> InkPreparation:
+    """Deliver the whole sheet, corrected but not cropped to its content."""
+    inv = 1.0 / scale if scale > 0 else 1.0
+    box = BoundingBox(
+        left=max(0.0, paper.box.left * inv),
+        top=max(0.0, paper.box.top * inv),
+        right=min(float(source.shape[1]), paper.box.right * inv),
+        bottom=min(float(source.shape[0]), paper.box.bottom * inv),
+    )
+    region = source[int(box.top) : int(box.bottom), int(box.left) : int(box.right), :]
+    if region.size == 0:
+        region, box = analysis, paper.box
+
+    # No sheet mask is applied. On a mark it sets the world outside the paper to
+    # white; on a page the sheet *is* the frame, and the mask's own boundary
+    # would print as a white rim just inside the document's edge.
+    estimate = estimate_paper_field(region)
+    flattened = flatten_to_paper_white(region, estimate)
+    rendered = _render(flattened, max(ink.ink_depth, 1e-6), InkTreatment.PAGE)
+    return InkPreparation(
+        image=Image.fromarray(rendered.astype(np.uint8)),
+        paper=paper,
+        ink=ink,
+        crop_box=box,
+        is_blank=False,
+    )
+
+
 def prepare_ink_document(
     image: Image.Image, treatment: InkTreatment = InkTreatment.MARK
 ) -> InkPreparation:
-    """Prepare one photograph of a signature, thumb impression or declaration."""
+    """Prepare one photograph of a signature, impression, declaration or page."""
     source = np.asarray(image.convert("RGB")).astype(np.float32)
     analysis, scale = _analysis_copy(source)
 
@@ -299,9 +354,19 @@ def prepare_ink_document(
     flattened[~sheet_mask] = 255.0
 
     # Grouping by proximity is for writing only. An impression is a single
-    # mass and has nothing to be grouped with, so it is left out of it.
+    # mass and has nothing to be grouped with, and a page is not cropped to its
+    # content at all, so neither is grouped.
     cluster = treatment is InkTreatment.MARK
     ink = detect_ink(flattened, sheet_mask, cluster)
+
+    if treatment is InkTreatment.PAGE:
+        # A page is framed by the sheet, not by what is written on it. Cropping
+        # to content would take the heading off a declaration and the seal off a
+        # certificate, and a blank page is still a page: it is delivered rather
+        # than reported empty, because a form with nothing filled in is the
+        # candidate's problem to notice, not this module's to hide.
+        return _prepare_page(source, analysis, scale, paper, ink)
+
     if ink.box is None:
         rendered = _render(
             flattened, max(ink.ink_depth, 1e-6), treatment, None, ink.rejected

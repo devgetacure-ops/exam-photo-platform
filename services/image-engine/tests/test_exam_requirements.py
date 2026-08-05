@@ -381,20 +381,41 @@ def test_every_encoded_examination_carries_an_inventory() -> None:
     assert not missing, f"records with no deliverable inventory: {missing}"
 
 
-def test_no_non_photograph_deliverable_claims_support_yet() -> None:
-    """The engine that would prepare them is not built.
+def test_only_deliverables_the_engine_prepares_claim_support() -> None:
+    """Support is a promise to produce the file, and it is now partly kept.
 
-    Marking one supported on the strength of having a specification would
-    promise an output nothing can produce.
+    Signatures, thumb impressions and handwritten declarations are prepared by
+    ``orchestration/deliverable_pipeline``. Certificate scans and identity
+    documents are not: the engine can clean and frame a photographed page, but
+    portals overwhelmingly want those as PDF and nothing writes PDF yet, so
+    claiming support on the strength of producing a JPEG would promise a file
+    the portal will not take.
     """
+    served = {"photograph", "signature", "thumb_impression", "handwritten_declaration"}
     claimed = [
+        (name, requirement["requirement_id"], requirement["requirement_type"])
+        for name, rule in _catalogue()
+        for requirement in rule["requirements"]
+        if requirement["platform_support"] in ("supported", "partially_supported")
+        and requirement["requirement_type"] not in served
+    ]
+    assert not claimed, f"support claimed for unserved types: {claimed}"
+
+
+def test_a_supported_deliverable_always_has_a_specification() -> None:
+    """A promise to produce a file needs something to produce it against."""
+    empty = [
         (name, requirement["requirement_id"])
         for name, rule in _catalogue()
         for requirement in rule["requirements"]
-        if requirement["requirement_type"] != "photograph"
-        and requirement["platform_support"] in ("supported", "partially_supported")
+        if requirement["platform_support"] == "supported"
+        and requirement["requirement_type"] != "photograph"
+        and not (
+            (requirement.get("file_spec") or {}).get("file_size")
+            or (requirement.get("file_spec") or {}).get("formats")
+        )
     ]
-    assert not claimed, f"non-photograph deliverables claiming support: {claimed}"
+    assert not empty, f"supported with nothing to prepare against: {empty}"
 
 
 def test_interim_provenance_paths_point_at_a_real_requirement() -> None:

@@ -119,7 +119,7 @@
       "requirement_type": "signature",
       "submission_method": "file_upload",
       "requirement_status": "mandatory",
-      "platform_support": "not_yet_supported",
+      "platform_support": "supported",
       "applicability": "All applicants",
       "content_instructions": "Separate scanned signature image in the format and size shown by the active RRB portal. Exact current value was not available in the supplied photo dataset.",
       "evidence_status": "Official notice requirement; field-level specification not extracted",

@@ -84,7 +84,7 @@
       "requirement_type": "signature",
       "submission_method": "file_upload",
       "requirement_status": "portal_dependent",
-      "platform_support": "not_yet_supported",
+      "platform_support": "supported",
       "applicability": "All applicants where the OTR/application asks for it",
       "content_instructions": "A separate signature is normally part of the PSC profile/application, but the exact current file specification was not established by the supplied photograph-only evidence. Follow the active portal.",
       "evidence_status": "Not fully established; not_found for exact specification",

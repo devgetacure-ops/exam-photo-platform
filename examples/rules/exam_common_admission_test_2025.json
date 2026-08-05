@@ -90,7 +90,7 @@
       "requirement_type": "signature",
       "submission_method": "file_upload",
       "requirement_status": "mandatory",
-      "platform_support": "not_yet_supported",
+      "platform_support": "supported",
       "applicability": "All applicants",
       "content_instructions": "Scanned signature image in the dimensions and size shown by the CAT portal. Exact value was not established in the supplied source set.",
       "evidence_status": "CAT registration requirement; exact specification not_found",

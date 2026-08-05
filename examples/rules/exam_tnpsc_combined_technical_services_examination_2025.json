@@ -110,7 +110,7 @@
       "requirement_type": "signature",
       "submission_method": "file_upload",
       "requirement_status": "mandatory",
-      "platform_support": "not_yet_supported",
+      "platform_support": "supported",
       "applicability": "All applicants",
       "content_instructions": "Separate scanned signature in the TNPSC OTR/application profile; exact size was not established in the supplied photo dataset.",
       "evidence_status": "Current TNPSC portal requirement; specification not_found",
