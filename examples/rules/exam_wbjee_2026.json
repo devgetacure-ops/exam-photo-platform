@@ -93,8 +93,8 @@
       "evidence_status": "Current portal requirement; exact specification not_found",
       "file_spec": {
         "file_size": {
-          "minimum_bytes": 10000,
-          "maximum_bytes": 20000
+          "maximum_bytes": 20000,
+          "minimum_bytes": 10000
         },
         "formats": {
           "allowed_formats": [
@@ -137,13 +137,13 @@
       "confidence": 2,
       "approved": false
     },
-    "requirements[1].file_spec.file_size.minimum_bytes": {
+    "requirements[1].file_spec.file_size.maximum_bytes": {
       "type": "interim_default",
       "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
       "confidence": 1,
       "approved": false
     },
-    "requirements[1].file_spec.file_size.maximum_bytes": {
+    "requirements[1].file_spec.file_size.minimum_bytes": {
       "type": "interim_default",
       "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
       "confidence": 1,

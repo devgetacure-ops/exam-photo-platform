@@ -129,7 +129,12 @@
       "platform_support": "not_yet_supported",
       "applicability": "Candidates claiming PwD-related benefit",
       "content_instructions": "Upload/verify the prescribed disability or UDID documentation where prompted. The current JEE Main advisory specifically asks candidates to update UDID details before application.",
-      "evidence_status": "Current official JEE Main advisory/bulletin"
+      "evidence_status": "Current official JEE Main advisory/bulletin",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 400000
+        }
+      }
     },
     {
       "requirement_id": "category_certificate_particulars",
@@ -168,6 +173,12 @@
       "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
       "confidence": 5,
       "approved": true
+    },
+    "requirements[2].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",
+      "confidence": 1,
+      "approved": false
     }
   },
   "verification": {

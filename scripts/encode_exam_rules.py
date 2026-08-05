@@ -757,7 +757,14 @@ _KNOWN_SUBMISSION_METHODS = _DELIVERABLE_METHODS | frozenset(
 #: publish 20-50 KB. Handwritten declarations need no entry -- all 13 publish
 #: 50-100 KB, so there is no gap to fill, and a constant nothing reads is worse
 #: than no constant.
-_INTERIM_FILE_SIZE_KB: dict[str, tuple[int, int, str]] = {
+#:
+#: The certificate ceiling is a product-owner ruling rather than a reading of a
+#: distribution: not one of the 45 certificate deliverables in the research
+#: publishes a file size, so there is nothing to average. 400 KB is set as a
+#: working ceiling until real figures arrive. It carries no minimum, because a
+#: floor invented on top of an invented ceiling would compound the guess, and a
+#: scanned certificate that compresses small is not thereby wrong.
+_INTERIM_FILE_SIZE_KB: dict[str, tuple[Optional[int], int, str]] = {
     "signature": (
         10,
         20,
@@ -774,7 +781,22 @@ _INTERIM_FILE_SIZE_KB: dict[str, tuple[int, int, str]] = {
         "with 20-50 KB, which is not an average but the only specification in "
         "the researched set -- all 13 records that publish one agree on it.",
     ),
+    "certificate_scan": (
+        None,
+        400,
+        "No published file size for this certificate, and none for any of the "
+        "45 certificate deliverables in the research, so no distribution exists "
+        "to stand in for. 400 KB is a product-owner working ceiling pending the "
+        "published figures. No minimum is set: a floor on top of an invented "
+        "ceiling would compound the guess.",
+    ),
 }
+
+#: Deliverable types whose format is stood in for when none is published. The
+#: certificate types are excluded: portals variously accept PDF and JPEG for a
+#: certificate scan, and the engine cannot encode PDF, so a JPG placeholder
+#: would assert a format the body may not take.
+_INTERIM_FORMAT_TYPES = frozenset({"signature", "thumb_impression"})
 
 #: Interim format for an ink-on-paper deliverable whose body published none.
 #: Every published format across the signature, thumb and declaration records in
@@ -904,11 +926,12 @@ def _deliverable_file_spec(
         spec["file_size"] = block
     elif requirement_type in _INTERIM_TYPES:
         low, high, _ = _INTERIM_FILE_SIZE_KB[requirement_type]
-        spec["file_size"] = {
-            "minimum_bytes": low * _BYTES_PER_KB,
-            "maximum_bytes": high * _BYTES_PER_KB,
-        }
-        interim += ["file_size.minimum_bytes", "file_size.maximum_bytes"]
+        block = {"maximum_bytes": high * _BYTES_PER_KB}
+        interim.append("file_size.maximum_bytes")
+        if low is not None:
+            block["minimum_bytes"] = low * _BYTES_PER_KB
+            interim.append("file_size.minimum_bytes")
+        spec["file_size"] = block
 
     formats = parsed.get("formats") or {}
     values = [f for f in (formats.get("values") or []) if f in _ENGINE_FORMATS]
@@ -917,7 +940,7 @@ def _deliverable_file_spec(
             "allowed_formats": values,
             "preferred_format": values[0],
         }
-    elif requirement_type in _INTERIM_TYPES:
+    elif requirement_type in _INTERIM_FORMAT_TYPES:
         spec["formats"] = {"allowed_formats": ["jpg"], "preferred_format": "jpg"}
         interim.append("formats.allowed_formats")
 

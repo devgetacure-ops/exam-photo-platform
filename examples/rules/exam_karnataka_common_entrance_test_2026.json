@@ -91,8 +91,8 @@
       "evidence_status": "Secondary/current portal lead",
       "file_spec": {
         "file_size": {
-          "minimum_bytes": 10000,
-          "maximum_bytes": 20000
+          "maximum_bytes": 20000,
+          "minimum_bytes": 10000
         },
         "formats": {
           "allowed_formats": [
@@ -114,8 +114,8 @@
       "evidence_status": "Secondary lead; must recheck active portal",
       "file_spec": {
         "file_size": {
-          "minimum_bytes": 20000,
-          "maximum_bytes": 50000
+          "maximum_bytes": 50000,
+          "minimum_bytes": 20000
         },
         "formats": {
           "allowed_formats": [
@@ -137,8 +137,8 @@
       "evidence_status": "Secondary lead; must recheck active portal",
       "file_spec": {
         "file_size": {
-          "minimum_bytes": 10000,
-          "maximum_bytes": 20000
+          "maximum_bytes": 20000,
+          "minimum_bytes": 10000
         },
         "formats": {
           "allowed_formats": [
@@ -181,13 +181,13 @@
       "confidence": 2,
       "approved": false
     },
-    "requirements[1].file_spec.file_size.minimum_bytes": {
+    "requirements[1].file_spec.file_size.maximum_bytes": {
       "type": "interim_default",
       "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
       "confidence": 1,
       "approved": false
     },
-    "requirements[1].file_spec.file_size.maximum_bytes": {
+    "requirements[1].file_spec.file_size.minimum_bytes": {
       "type": "interim_default",
       "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
       "confidence": 1,
@@ -199,13 +199,13 @@
       "confidence": 1,
       "approved": false
     },
-    "requirements[2].file_spec.file_size.minimum_bytes": {
+    "requirements[2].file_spec.file_size.maximum_bytes": {
       "type": "interim_default",
       "reasoning": "No published thumb-impression file size for this body. Standing in with 20-50 KB, which is not an average but the only specification in the researched set -- all 13 records that publish one agree on it.",
       "confidence": 1,
       "approved": false
     },
-    "requirements[2].file_spec.file_size.maximum_bytes": {
+    "requirements[2].file_spec.file_size.minimum_bytes": {
       "type": "interim_default",
       "reasoning": "No published thumb-impression file size for this body. Standing in with 20-50 KB, which is not an average but the only specification in the researched set -- all 13 records that publish one agree on it.",
       "confidence": 1,
@@ -217,13 +217,13 @@
       "confidence": 1,
       "approved": false
     },
-    "requirements[3].file_spec.file_size.minimum_bytes": {
+    "requirements[3].file_spec.file_size.maximum_bytes": {
       "type": "interim_default",
       "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
       "confidence": 1,
       "approved": false
     },
-    "requirements[3].file_spec.file_size.maximum_bytes": {
+    "requirements[3].file_spec.file_size.minimum_bytes": {
       "type": "interim_default",
       "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
       "confidence": 1,

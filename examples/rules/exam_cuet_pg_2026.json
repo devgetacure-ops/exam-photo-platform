@@ -102,8 +102,8 @@
       "evidence_status": "Current official CUET PG bulletin",
       "file_spec": {
         "file_size": {
-          "minimum_bytes": 10000,
-          "maximum_bytes": 20000
+          "maximum_bytes": 20000,
+          "minimum_bytes": 10000
         },
         "formats": {
           "allowed_formats": [
@@ -123,7 +123,12 @@
       "platform_support": "not_yet_supported",
       "applicability": "Candidates claiming the relevant benefit",
       "content_instructions": "Upload only where the application asks for documentary proof; exact format/size not extracted.",
-      "evidence_status": "Current official CUET PG bulletin"
+      "evidence_status": "Current official CUET PG bulletin",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 400000
+        }
+      }
     }
   ],
   "provenance": {
@@ -152,15 +157,21 @@
       "confidence": 5,
       "approved": true
     },
+    "requirements[1].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
+      "confidence": 1,
+      "approved": false
+    },
     "requirements[1].file_spec.file_size.minimum_bytes": {
       "type": "interim_default",
       "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
       "confidence": 1,
       "approved": false
     },
-    "requirements[1].file_spec.file_size.maximum_bytes": {
+    "requirements[2].file_spec.file_size.maximum_bytes": {
       "type": "interim_default",
-      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
+      "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",
       "confidence": 1,
       "approved": false
     }

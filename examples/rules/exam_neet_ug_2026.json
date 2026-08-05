@@ -111,8 +111,8 @@
       "evidence_status": "Current official NEET 2026 bulletin",
       "file_spec": {
         "file_size": {
-          "minimum_bytes": 10000,
-          "maximum_bytes": 20000
+          "maximum_bytes": 20000,
+          "minimum_bytes": 10000
         },
         "formats": {
           "allowed_formats": [
@@ -135,8 +135,8 @@
       "evidence_status": "Current official NEET 2026 bulletin",
       "file_spec": {
         "file_size": {
-          "minimum_bytes": 20000,
-          "maximum_bytes": 50000
+          "maximum_bytes": 50000,
+          "minimum_bytes": 20000
         },
         "formats": {
           "allowed_formats": [
@@ -156,7 +156,12 @@
       "platform_support": "not_yet_supported",
       "applicability": "All applicants",
       "content_instructions": "Scanned PDF of the Class X/equivalent marksheet. The bulletin extract confirms this document; use the portal's current PDF size limit.",
-      "evidence_status": "Current 2026 bulletin; specification partly extracted"
+      "evidence_status": "Current 2026 bulletin; specification partly extracted",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 400000
+        }
+      }
     },
     {
       "requirement_id": "category_pwbd_citizenship_certificate",
@@ -167,7 +172,12 @@
       "platform_support": "not_yet_supported",
       "applicability": "Candidates claiming the corresponding category, disability or nationality status",
       "content_instructions": "Upload the applicable prescribed certificate where the form asks for it. Do not upload an unrelated certificate.",
-      "evidence_status": "Current 2026 bulletin; exact applicability varies"
+      "evidence_status": "Current 2026 bulletin; exact applicability varies",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 400000
+        }
+      }
     }
   ],
   "provenance": {
@@ -196,15 +206,21 @@
       "confidence": 5,
       "approved": true
     },
+    "requirements[1].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
+      "confidence": 1,
+      "approved": false
+    },
     "requirements[1].file_spec.file_size.minimum_bytes": {
       "type": "interim_default",
       "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
       "confidence": 1,
       "approved": false
     },
-    "requirements[1].file_spec.file_size.maximum_bytes": {
+    "requirements[2].file_spec.file_size.maximum_bytes": {
       "type": "interim_default",
-      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
+      "reasoning": "No published thumb-impression file size for this body. Standing in with 20-50 KB, which is not an average but the only specification in the researched set -- all 13 records that publish one agree on it.",
       "confidence": 1,
       "approved": false
     },
@@ -214,9 +230,15 @@
       "confidence": 1,
       "approved": false
     },
-    "requirements[2].file_spec.file_size.maximum_bytes": {
+    "requirements[3].file_spec.file_size.maximum_bytes": {
       "type": "interim_default",
-      "reasoning": "No published thumb-impression file size for this body. Standing in with 20-50 KB, which is not an average but the only specification in the researched set -- all 13 records that publish one agree on it.",
+      "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[4].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",
       "confidence": 1,
       "approved": false
     }

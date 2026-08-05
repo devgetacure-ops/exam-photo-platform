@@ -205,7 +205,12 @@
       "platform_support": "not_yet_supported",
       "applicability": "All applicants",
       "content_instructions": "A scanned certificate is required in the current IBPS application family. It is used as documentary support for date of birth/identity particulars as specified in the notice. Exact upload size and format must be read from the active portal because they were not fully extracted here.",
-      "evidence_status": "Current/recent official IBPS notice"
+      "evidence_status": "Current/recent official IBPS notice",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 400000
+        }
+      }
     },
     {
       "requirement_id": "scribe_eligibility_certificate",
@@ -216,7 +221,12 @@
       "platform_support": "not_yet_supported",
       "applicability": "Candidates eligible for and claiming a scribe under the relevant clause",
       "content_instructions": "Upload the certificate in the prescribed format where the notice requires it. Do not upload for candidates not claiming the facility.",
-      "evidence_status": "Current/recent official IBPS notice"
+      "evidence_status": "Current/recent official IBPS notice",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 400000
+        }
+      }
     }
   ],
   "provenance": {
@@ -245,6 +255,18 @@
       "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
       "confidence": 5,
       "approved": true
+    },
+    "requirements[4].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[5].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",
+      "confidence": 1,
+      "approved": false
     }
   },
   "verification": {
