@@ -93,4 +93,5 @@ markers = [
     "mandatory_api: marks tests that depend on local API and job orchestration",
     "mandatory_rule_admin: marks tests that depend on the rule validation and admin endpoints",
     "mandatory_engine_quality: marks engine quality tests for visual and composition hardening",
+    "ink_robustness: sweeps the ink path over synthetic capture variation; slow, and gated like the model-backed suites so the fast subset stays fast",
 ]

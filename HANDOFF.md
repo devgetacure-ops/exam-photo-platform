@@ -62,9 +62,18 @@ is what the product owner rejected on review.
 On the reference set all five deliver clean paper with the mark's colour kept,
 both approved signatures are reproduced closely, both impressions keep every
 ridge, receipt show-through is removed and the hand holding the sheet rejected.
-The hard hand-held photograph now crops to 506×218 against a signature extent of
+The hard hand-held photograph crops to 506×218 against a signature extent of
 about 430×110 — the sheet-edge streak that used to hold it open is gone, removed
 by grouping marks by proximity.
+
+**The reference set is five photographs, so it is not the safety net.**
+`tests/ink/test_ink_robustness.py` is: ~100 synthetic captures across ink colour
+and strength, exposure, colour temperature, uneven light, paper tone, distance,
+focus, noise and show-through, asserting structural properties rather than
+numbers. It is marked `ink_robustness` and runs as its own CI stage. It has
+already caught two defects the reference set could not — a declaration losing
+its lower lines, and proximity grouping running twice at different scales — so
+**add a case to it before tuning a constant against a new photograph.**
 
 Two consequences of the pivot that contradict statements elsewhere in this file:
 

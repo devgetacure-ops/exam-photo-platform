@@ -287,12 +287,23 @@ def drop_edge_connected(
 
 
 #: Gap that still counts as "together", as a fraction of the longer edge.
-#: Writing is a run of marks separated by small gaps -- between letters, between
-#: the two halves of a name -- and the whole run is one thing. At 0.025 a
-#: 400-pixel working copy bridges 10 pixels, which merged every stroke of the
-#: reference signature into a single cluster while leaving the sheet's edge, a
-#: hundred pixels away across bare paper, on its own.
-_CLUSTER_GAP_FRACTION = 0.025
+#:
+#: Writing is a run of marks separated by gaps -- between letters, between words,
+#: and for a handwritten declaration between *lines*. The whole run is one
+#: thing, and the line spacing is what sets this value, because it is the
+#: largest gap that must still be bridged.
+#:
+#: 0.05 bridges a gap of a tenth of the image, since both sides grow. Measured:
+#: a five-line declaration at typical spacing needs 0.048 to hold together, and
+#: the sheet edge on the reference photograph sits far enough from the signature
+#: to stay separate up to 0.12. The value sits in that window, nearer the lower
+#: end so that a wider-spaced hand still merges before an edge does.
+#:
+#: It was 0.025, which merged a signature's letters and nothing else. A
+#: synthetic declaration exposed that: the lower lines became their own clusters,
+#: failed the mass test against the longest line, and were dropped -- the crop
+#: stopped at row 639 of 900, cutting off the last two lines of the statement.
+_CLUSTER_GAP_FRACTION = 0.05
 
 #: A cluster is kept if it holds at least this share of the largest cluster's
 #: ink. Not "keep only the largest": a signature and its separate initial, or a

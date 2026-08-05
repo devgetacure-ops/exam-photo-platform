@@ -104,12 +104,22 @@ class InkTreatment(str, Enum):
 #: third quartile -- so the clip is set where it removes nothing.
 _WHITE_POINT_DEPTH = {InkTreatment.MARK: 0.10, InkTreatment.IMPRESSION: 0.01}
 
-#: Black-point headroom per treatment, as a multiple of the deepest ink. Higher
-#: is gentler. A mark wants its strokes solid, so 1.15 puts the deepest ink near
-#: black. An impression wants its densest area to stay distinguishable from its
-#: second-densest, so 1.35 leaves more room at the bottom.
+#: Black-point headroom per treatment, as a multiple of the deepest ink.
+#:
+#: The black point is 255 * (1 - ink_depth * headroom), so *lower* headroom
+#: raises the black point and deepens the result: at 1.0 the deepest ink lands
+#: exactly on black, and below 1.0 the darkest part of a stroke clips to solid.
+#:
+#: A mark takes 0.90. A signature wants its strokes to read as ink rather than
+#: as grey, and clipping the stroke's core costs nothing because the core is
+#: uniform anyway -- what carries the shape is the boundary, which sits well
+#: above the black point and keeps its gradation.
+#:
+#: An impression takes 1.35, well the other way. Its densest area must stay
+#: distinguishable from its second-densest, because that difference is ridge
+#: detail; clipping the core would flatten the middle of the print into a slab.
 _BLACK_POINT_HEADROOM_BY_TREATMENT = {
-    InkTreatment.MARK: 1.15,
+    InkTreatment.MARK: 0.90,
     InkTreatment.IMPRESSION: 1.35,
 }
 
@@ -165,6 +175,47 @@ def _dilate(mask: np.ndarray[Any, Any], steps: int) -> np.ndarray[Any, Any]:
 #: therefore outside the mask; without a margin it is cut off square and the
 #: mark ends up with a hard, jagged outline.
 _KEEP_MARGIN = 3
+
+
+#: How faint a pixel may be and still be kept, as a fraction of the deepest
+#: ink, when it lies next to something already accepted as ink.
+#:
+#: The detection threshold answers "is there writing here", and it has to be
+#: strict or show-through passes. Rendering asks a different question -- "is
+#: this pixel part of the writing that was found" -- and the strict answer is
+#: wrong for it. A pen stroke varies along its length: it thins on a curve, it
+#: skips where the ball lifted, it fades at the end of a letter. Those parts
+#: fall under the detection threshold, get cleared as background, and the letter
+#: arrives with holes in it -- visible on the reference signature as breaks in
+#: the D and the G.
+#:
+#: 0.28 of the deepest ink keeps the faint interior of a stroke while still
+#: sitting above the reference photograph's show-through, which measures 0.06 to
+#: 0.29 of the deepest ink *and is nowhere near the writing*, which is the other
+#: half of the guard below.
+_KEEP_DEPTH_FRACTION = 0.28
+
+#: How far from accepted ink the loose threshold is allowed to reach, as a
+#: fraction of the longer edge. This is what stops the loose threshold from
+#: readmitting show-through: faint pixels are kept only where they adjoin a
+#: stroke, and show-through covers the parts of the page that the writing does
+#: not.
+_KEEP_REACH_FRACTION = 0.02
+
+
+def _keep_mask(
+    flattened: np.ndarray[Any, Any],
+    strict: np.ndarray[Any, Any],
+    ink_depth: float,
+) -> np.ndarray[Any, Any]:
+    """Everything that belongs to the writing, including its faint parts."""
+    if not strict.any():
+        return strict
+    depth = np.clip(1.0 - flattened.min(axis=2) / 255.0, 0.0, 1.0)
+    loose = depth >= max(ink_depth * _KEEP_DEPTH_FRACTION, 0.04)
+    reach = max(2, round(max(flattened.shape[:2]) * _KEEP_REACH_FRACTION))
+    near: np.ndarray[Any, Any] = loose & _dilate(strict, reach)
+    return near
 
 
 def _render(
@@ -316,12 +367,22 @@ def prepare_ink_document(
     final_estimate = estimate_paper_field(region, region_mask)
     final_flat = flatten_to_paper_white(region, final_estimate)
     final_flat[~region_mask] = 255.0
-    final_ink = detect_ink(final_flat, region_mask, cluster)
+    # Deliberately **not** clustered a second time. Grouping by proximity picks
+    # where to crop; once the crop is made, whatever it excluded is already
+    # gone, and running the test again inside the frame can only remove content
+    # that the first pass decided to keep.
+    #
+    # It did exactly that. Clustering happens at a fixed working resolution, so
+    # the same page cropped is a different scale from the same page whole, and
+    # line spacing that bridged before the crop failed to bridge after it. A
+    # five-line declaration came out with its short final line rendered blank
+    # inside a crop drawn to include it.
+    final_ink = detect_ink(final_flat, region_mask)
     rendered = _render(
         final_flat,
         max(final_ink.ink_depth, 1e-6),
         treatment,
-        final_ink.mask,
+        _keep_mask(final_flat, final_ink.mask, max(final_ink.ink_depth, 1e-6)),
         final_ink.rejected,
     )
 
