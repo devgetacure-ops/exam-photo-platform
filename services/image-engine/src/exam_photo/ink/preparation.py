@@ -29,7 +29,12 @@ import numpy as np
 from PIL import Image
 
 from exam_photo.ink.illumination import estimate_paper_field, flatten_to_paper_white
-from exam_photo.ink.ink_mask import InkMaskResult, detect_ink, framed_box
+from exam_photo.ink.ink_mask import (
+    _MINIMUM_ABSOLUTE_DEPTH,
+    InkMaskResult,
+    detect_ink,
+    framed_box,
+)
 from exam_photo.ink.paper_region import PaperRegion, crop_to_paper
 from exam_photo.models.geometry import BoundingBox
 
@@ -39,12 +44,18 @@ from exam_photo.models.geometry import BoundingBox
 #: pixels, so nothing is lost -- only the search is downscaled.
 _ANALYSIS_EDGE = 1400
 
-#: Depth at or above which ink is rendered at full strength, as a fraction of
-#: the darkest ink present. Below the ink threshold everything goes to white;
-#: between the two, the stroke's own edge softness is preserved by a linear
-#: ramp. Without the ramp a stroke gets a hard jagged border and stops looking
-#: like handwriting.
-_FULL_STRENGTH_FRACTION = 0.85
+#: How far past the deepest ink the black point is set, as a multiple of the
+#: ink depth. At 1.0 the single darkest pixel would map to pure black and every
+#: other tone would be compressed beneath it; at 1.15 the deepest ink lands
+#: near-black with a little headroom, which is what keeps a thumb impression's
+#: densest area from flattening into a solid slab.
+_BLACK_POINT_HEADROOM = 1.15
+
+#: Dilation applied to the rejected-ink mask before it is whitened out, in
+#: pixels of the rendered image. The rejection is computed on a downscaled copy,
+#: so its boundary is coarse; without a margin the soft halo around a rejected
+#: mass survives as a grey fringe.
+_SUPPRESSION_MARGIN = 3
 
 
 @dataclass(frozen=True)
@@ -73,36 +84,85 @@ def _analysis_copy(rgb: np.ndarray[Any, Any]) -> tuple[np.ndarray[Any, Any], flo
     return np.asarray(resized).astype(np.float32), scale
 
 
+def _dilate(mask: np.ndarray[Any, Any], steps: int) -> np.ndarray[Any, Any]:
+    grown = mask
+    for _ in range(steps):
+        spread = grown.copy()
+        spread[1:, :] |= grown[:-1, :]
+        spread[:-1, :] |= grown[1:, :]
+        spread[:, 1:] |= grown[:, :-1]
+        spread[:, :-1] |= grown[:, 1:]
+        grown = spread
+    return grown
+
+
+#: Dilation of the ink mask before it is used to clear the page, in pixels.
+#: A stroke's own antialiased edge falls below the ink threshold and is
+#: therefore outside the mask; without a margin it is cut off square and the
+#: mark ends up with a hard, jagged outline.
+_KEEP_MARGIN = 3
+
+
 def _render(
-    flattened: np.ndarray[Any, Any], depth: np.ndarray[Any, Any], ink_depth: float
+    flattened: np.ndarray[Any, Any],
+    ink_depth: float,
+    keep: "np.ndarray[Any, Any] | None" = None,
+    suppress: "np.ndarray[Any, Any] | None" = None,
 ) -> np.ndarray[Any, Any]:
-    """Paper to white, ink to full strength, hue preserved.
+    """Paper to white, ink to full strength, every tone in between preserved.
 
-    The ramp between the two thresholds is what keeps a stroke looking drawn
-    rather than stencilled: a stroke's edge is genuinely part-covered, and
-    forcing every ink pixel to full opacity turns a smooth curve into a
-    staircase at any size the portal displays it.
+    A **levels stretch**, per channel: everything at or above the white point
+    becomes paper, everything at or below the black point becomes full-strength
+    ink, and the range between the two is stretched linearly across.
+
+    This replaced an alpha composite -- ink opacity ramped against a single
+    flat ink colour -- which was wrong in a way the numbers hid and the eye did
+    not. On a signature it merely thinned the strokes. On a thumb impression it
+    was destructive: an impression is a *continuous* field of density whose
+    ridge pattern lives entirely in the mid-tones, and mapping every tone onto
+    one colour by opacity shredded a solid inked oval into blotchy speckle. The
+    ridge detail is the only reason the impression is being collected at all.
+
+    A stretch keeps that structure because it is monotonic: two tones that
+    differed before still differ after, only further apart. Hue survives for
+    the same reason -- all three channels get the same linear map, so a blue
+    ballpoint stays blue and in fact deepens, which matters because several
+    bodies require ink of a stated colour.
+
+    The white point is set **just above paper grain**, not at the ink
+    threshold, and that division of labour is the point. Clipping at the ink
+    threshold is what a document scanner does to kill show-through, and on a
+    signature it works; on a thumb impression it destroys the subject. An
+    impression's lighter half sits below the ink threshold by construction --
+    that is what makes it lighter -- so clipping there erases half the ridge
+    pattern and leaves a blotchy shell. Measured on the reference impression,
+    a white point at the ink threshold puts everything above value 160 to pure
+    white, and much of the impression lives at 170-200.
+
+    So the tonal curve stays gentle and the *ink mask* does the removing:
+    ``keep`` marks what survives, everything else becomes paper. Show-through
+    is below the ink threshold and therefore outside the mask, so it is cleared
+    just as thoroughly as before -- but by a test that knows what it is looking
+    at, rather than by a brightness cut-off that cannot tell faint ink from
+    faint bleed.
+
+    ``suppress`` marks pixels that were classified as ink and then rejected --
+    a finger, the edge of the desk. They are forced to paper. Without this the
+    rejection only ever affected where the crop was placed, and the rejected
+    object was still rendered inside it: on the reference photograph a finger
+    came through as a large grey smear across the corner of the output.
     """
-    ink_floor = max(ink_depth * 0.55, 0.10)
-    ink_ceiling = max(ink_depth * _FULL_STRENGTH_FRACTION, ink_floor + 1e-3)
-    alpha = np.clip((depth - ink_floor) / (ink_ceiling - ink_floor), 0.0, 1.0)
+    white_point = 255.0 * (1.0 - _MINIMUM_ABSOLUTE_DEPTH)
+    black_point = 255.0 * (1.0 - min(ink_depth * _BLACK_POINT_HEADROOM, 1.0))
+    span = max(white_point - black_point, 1.0)
 
-    # The ink's own colour, taken from the pixels that are unambiguously ink so
-    # a part-covered edge does not dilute it. Preserved rather than forced to
-    # black: a blue signature is blue, and several bodies require ink of a
-    # stated colour, so turning every mark black would destroy the evidence
-    # that the candidate complied.
-    core = depth >= ink_ceiling
-    if core.sum() >= 16:
-        ink_colour = np.percentile(flattened[core], 20.0, axis=0)
-    else:
-        ink_colour = np.array([0.0, 0.0, 0.0], dtype=np.float32)
-
-    white = np.full_like(flattened, 255.0)
     rendered: np.ndarray[Any, Any] = (
-        white * (1.0 - alpha[:, :, None])
-        + ink_colour[None, None, :] * alpha[:, :, None]
+        np.clip((flattened - black_point) / span, 0.0, 1.0) * 255.0
     )
+    if keep is not None:
+        rendered[~_dilate(keep, _KEEP_MARGIN)] = 255.0
+    if suppress is not None and suppress.any():
+        rendered[_dilate(suppress, _SUPPRESSION_MARGIN)] = 255.0
     return rendered
 
 
@@ -121,8 +181,7 @@ def prepare_ink_document(image: Image.Image) -> InkPreparation:
 
     ink = detect_ink(flattened, sheet_mask)
     if ink.box is None:
-        depth = np.clip(1.0 - flattened.min(axis=2) / 255.0, 0.0, 1.0)
-        rendered = _render(flattened, depth, max(ink.ink_depth, 1e-6))
+        rendered = _render(flattened, max(ink.ink_depth, 1e-6), None, ink.rejected)
         return InkPreparation(
             image=Image.fromarray(rendered.astype(np.uint8)),
             paper=paper,
@@ -183,9 +242,13 @@ def prepare_ink_document(image: Image.Image) -> InkPreparation:
     final_estimate = estimate_paper_field(region, region_mask)
     final_flat = flatten_to_paper_white(region, final_estimate)
     final_flat[~region_mask] = 255.0
-    final_depth = np.clip(1.0 - final_flat.min(axis=2) / 255.0, 0.0, 1.0)
     final_ink = detect_ink(final_flat, region_mask)
-    rendered = _render(final_flat, final_depth, max(final_ink.ink_depth, 1e-6))
+    rendered = _render(
+        final_flat,
+        max(final_ink.ink_depth, 1e-6),
+        final_ink.mask,
+        final_ink.rejected,
+    )
 
     return InkPreparation(
         image=Image.fromarray(rendered.astype(np.uint8)),

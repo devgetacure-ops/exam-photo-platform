@@ -108,6 +108,11 @@ class InkMaskResult:
     #: Depth of the darkest ink, 0.0-1.0 below paper white. Near zero means
     #: there is nothing on the page.
     ink_depth: float
+    #: Pixels that were classified as ink and then rejected as not belonging to
+    #: the document -- a finger, the desk beyond the sheet's edge. Carried so
+    #: rendering can force them to paper. Rejecting them from the crop-box
+    #: calculation alone leaves the object still drawn inside the crop.
+    rejected: np.ndarray[Any, Any]
 
 
 def _depth_below_paper(flattened: np.ndarray[Any, Any]) -> np.ndarray[Any, Any]:
@@ -254,6 +259,33 @@ def drop_edge_connected(
     return kept
 
 
+#: A local-density filter was written here and removed.
+#:
+#: The intent was to drop the residue of the sheet's edge -- what survives the
+#: border erosion as a line of marks tracing where the paper met the desk --
+#: on the theory that writing is locally dense and an edge artefact is not.
+#: Measured on the reference photograph over the region holding that edge
+#: against the region holding the signature, at three window sizes:
+#:
+#: | window | signature p10/p50/p90 | edge p10/p50/p90   |
+#: |--------|-----------------------|--------------------|
+#: | 11x11  | 0.182 / 0.289 / 0.397 | 0.083 / 0.231 / 0.405 |
+#: | 21x21  | 0.116 / 0.184 / 0.261 | 0.036 / 0.172 / 0.254 |
+#: | 41x41  | 0.090 / 0.129 / 0.175 | 0.019 / 0.095 / 0.177 |
+#:
+#: The distributions overlap almost completely at every scale, and the edge
+#: region carries 2,243 ink pixels against the signature's 2,226 -- it is not
+#: sparse residue at all, it is a line as substantial as the writing. A
+#: threshold anywhere between them removes as much signature as edge, and the
+#: version that shipped briefly changed ink coverage by 0.06 percentage points
+#: while moving the crop box not at all.
+#:
+#: Removed rather than tuned, per the standing rule that a signal whose
+#: reliability has not been demonstrated should not ship: a filter that cannot
+#: fail is worse than no filter, because it reads as protection. The looseness
+#: it was meant to fix is instead recorded as a known bound.
+
+
 def detect_ink(
     flattened: np.ndarray[Any, Any],
     sheet: "np.ndarray[Any, Any] | None" = None,
@@ -262,24 +294,26 @@ def detect_ink(
     depth = _depth_below_paper(flattened)
     ink_depth = float(np.percentile(depth, 100.0 - _INK_DEPTH_PERCENTILE))
 
+    empty = np.zeros(depth.shape, dtype=bool)
     if ink_depth < _MINIMUM_ABSOLUTE_DEPTH:
         return InkMaskResult(
-            mask=np.zeros(depth.shape, dtype=bool),
+            mask=empty,
             box=None,
             coverage=0.0,
             ink_depth=ink_depth,
+            rejected=empty,
         )
 
     threshold = max(ink_depth * _INK_DEPTH_FRACTION, _MINIMUM_ABSOLUTE_DEPTH)
-    mask = depth >= threshold
-    if sheet is not None:
-        mask = drop_edge_connected(mask, sheet)
+    raw = depth >= threshold
+    mask = drop_edge_connected(raw, sheet) if sheet is not None else raw
+    rejected = raw & ~mask
     coverage = float(mask.mean())
     if not mask.any():
-        return InkMaskResult(mask, None, 0.0, ink_depth)
+        return InkMaskResult(mask, None, 0.0, ink_depth, rejected)
 
     box = mass_trimmed_box(mask)
-    return InkMaskResult(mask, box, coverage, ink_depth)
+    return InkMaskResult(mask, box, coverage, ink_depth, rejected)
 
 
 #: Fraction of ink pixels the box must contain. The remainder is discarded from
