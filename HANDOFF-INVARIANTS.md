@@ -5,6 +5,10 @@ invariant sweep gates.** It is a standing document, not a session note: it
 describes how invariant work is done here and why, and it should be amended
 when the practice changes rather than deleted when a task finishes.
 
+For what the platform does today, what it cannot do, the examination catalogue
+and the open risks, see `HANDOFF.md`. This file is the narrower one: how
+composition work is done.
+
 ---
 
 ## What the invariants are

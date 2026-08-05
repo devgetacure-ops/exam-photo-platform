@@ -1,194 +1,154 @@
-# Session Handoff — Crop & Matte Quality Work
+# Platform State
 
-**Date:** 2026-08-01
-**Status:** Verified fixes in place, uncommitted. One known regression outstanding.
-**Delete this file once the work is committed and the next session is oriented.**
+**Last updated: 2026-08-05.** Branch `feat/pivot`, pushed and green.
 
----
+What this file is: the state a new session cannot reconstruct from the diff.
+Not a session note — keep it current rather than replacing it with a fresh one.
 
-## Read this first
+Read alongside:
 
-The user's spec is **the ideal-output photos**, not any threshold derived from
-first principles:
-
-- Test images: `C:\Users\dmbar\Pictures\Test Images` (60 photos, 6 dimension folders)
-- Ideal outputs: `C:\Users\dmbar\Pictures\Test Images- Ideal Outputs` (1:1 correspondence)
-
-The previous session's main process failure was drifting off these: it started
-optimising an abstract "75% head coverage" target it had derived itself, and
-spent a long time doing feasibility algebra and single-photo debugging instead
-of diffing engine output against the corresponding ideal output.
-
-**Measure engine output against the matching ideal output, per photo, across all
-60. Do not tune against a self-derived threshold.**
-
-Per the user, the two things that matter right now are **crop** and **background
-removal / edge quality**. Everything else waits. If a photo is geometrically
-impossible, log it and move on — do not chase it.
-
-The user's stated crop requirements (verbatim intent):
-- Face coverage 75% is a floor that must not be crossed; 80–90% is better;
-  "the tighter the better" — but never at the cost of clipping hair, ears, chin,
-  or beard line.
-- Edges must look like a studio photo on white, not AI-generated or cut-and-pasted.
-- Compression should land just *below* the size limit, never at or over it.
-- Crop is user-fixable later via UI; background removal is not.
+| File | What it carries |
+|---|---|
+| `HANDOFF-INVARIANTS.md` | How composition work is done here: the invariant sweep, the ratchet, the planner/validator defect class, the verification sequence |
+| `docs/08_DECISION_LOG.md` | DEC-029..046. **Living** — amend an entry when implementation moves; never bend implementation to fit a stale one |
+| `docs/EXAM_RULE_GAP_REGISTER.md` | Generated. Which examinations are encoded, which are not, and why |
+| `AGENTS.md` | The binding operating contract |
 
 ---
 
-## What was actually fixed this session (all verified, all uncommitted)
+## What the platform does today
 
-One root cause behind both user complaints ("crop too loose", "ears gone"):
-**three separate places measured head width from a mask region that extended
-past the neck into the shoulders**, so "head width" silently became "shoulder
-width".
+A candidate selects an examination, uploads a photograph, and receives a
+compliant file. End to end, that works:
 
-Measured on photo `6-3.jpeg`: silhouette width holds at 85–124px through the
-head and neck (y=590–750), then jumps to 224–291px by y=780–810 once shoulders
-enter frame. True head-core width is 124px; the pipeline was using 267px.
+- **Crop** — one composition for every examination: the tightest crop that keeps
+  hair, ears and the chin/beard boundary intact, with the bottom edge anchored
+  just under the chin. Verified against the product owner's ten
+  `perfect`-labelled photographs; below-chin space runs 0.081–0.146 of frame
+  height against an approved-reference median of 0.102.
+- **Background** — BiRefNet matting (the pipeline default), re-run on the crop
+  region at native resolution, composited onto the required colour.
+- **Sizing** — from the examination's published dimensions where they exist,
+  from the body's published *preferred* size where it names one, and otherwise
+  from the photograph's own crop geometry inside a 240–1200 px envelope.
+- **Compression** — binary-searched to land just under the byte ceiling.
+  Measured 30–88% of ceiling across the encoded examinations.
+- **Naming** — the body's required filename where published, otherwise a
+  PII-free default.
 
-| # | File | Fix |
+Verified end to end across five rules spanning every dimension mode: 20 of 20
+outputs correct on pixel dimensions, byte ceiling, format and filename.
+
+## What it demonstrably cannot do
+
+State these plainly rather than discovering them again:
+
+- **Serve a live-capture-only examination.** All four SSC examinations
+  photograph the candidate through the portal. There is no upload, so there is
+  nothing to prepare. Dropped from the catalogue at the owner's direction.
+- **Print a name or date onto the photograph.** TNPSC and Kerala PSC require it.
+  Both records are marked `partially_supported` with the reason stated, so no
+  caller can read a complete success into them.
+- **Detect a beard line.** Three signals were tried and rejected on measured
+  evidence (DEC-035). The engine approximates with a uniform chin-plus-margin.
+- **Detect sunglasses, head coverings or closed eyes to a publishable standard.**
+  Eye-blink scoring was built, measured, found not to separate, and removed.
+  Milestone 23.
+- **Measure a delivered photograph against its own invariants.**
+  `check_composition_invariants` has no pipeline consumer — the sweep is its only
+  caller, so the planner is gated but a real upload is never checked. See the
+  gap note in `HANDOFF-INVARIANTS.md`.
+
+## The examination catalogue
+
+39 encoded, 11 not. Statuses reflect what the evidence supports:
+
+| Status | Count | Meaning |
 |---|---|---|
-| 1 | `providers/crop_planners/deterministic_crop_planner.py` | `_estimate_head_core_x` plausibility check no longer requires the mask band to reach the detector face-box edges (it rejected the *correct* narrow reading on subjects whose hair covers their ears). Replaced with centred-on-face + `_MIN_HEAD_WIDTH_FACE_RATIO` (0.5) / `_MAX_HEAD_WIDTH_FACE_RATIO` (2.6). |
-| 2 | `providers/portrait_composition.py` | `_observed_upper_alpha_box` now reads left/right from a band capped at `face_box.bottom`; bottom still uses the full range. |
-| 3 | `providers/fused_head_refinement.py` | Same chin-cap for the width scan; **and** left/right no longer floor against `geometric_box` (that box widens ear-tragion keypoints assuming ears are visible, which discarded the corrected reading). |
-| 4 | `providers/mediapipe_face_landmarker.py` | `refine()` now crops around the BlazeFace box (`_CROP_MARGIN_RATIO = 1.5`) before running the dense landmarker. Verified on 6-3: **0 faces found on the full frame at every confidence from 0.5 down to 0.01; 1 face immediately once cropped.** This was why the chin fell back to `face_box.bottom` (into the neck) on large photos. |
-| 5 | `providers/crop_planners/deterministic_crop_planner.py` | `_SIDE_MARGIN_RATIO` 0.07 → 0.03, calibrated against the structural feasibility ceiling (see below). |
+| `verified` | 17 | Official dimensions, file size and format |
+| `verified_with_ambiguity` | 15 | Official size and format; the body publishes no pixel dimensions, so the engine sizes from the crop |
+| `provisional` | 7 | Values found only on secondary sources. Kept servable at the owner's direction, with the aggregator citation visible in `source_evidence` |
 
-Verified progression on 6-3 as each fix landed: **0.36 → 0.37 → 0.50 → 0.53**.
+**Rule records are generated, never hand-written.** `scripts/encode_exam_rules.py`
+reads the versioned research in `packages/exam-rules/research/` and rebuilds the
+whole catalogue plus the gap register. The script owns every file matching its
+prefix, so a re-run replaces rather than adds.
 
-### Aggregate, measured across all 60 photos
+The consequence matters: **to change a rule, change the evidence and re-run.**
+Editing `examples/rules/exam_*.json` by hand works until the next regeneration
+silently discards it, and in the meantime the record asserts something no source
+supports.
 
-| | Met 75% floor | Produced no output |
-|---|---|---|
-| Before this session's fixes | 17 / 60 | 3 |
-| After fixes 1–4 | 31 / 60 | 7 |
+## Load-bearing decisions
 
-Coverage nearly doubled, **but 4 more photos now produce no output — that is an
-unfixed regression introduced by these changes.**
+These are not incidental. Undoing one changes what the product is, so undo it
+deliberately and amend the decision log rather than quietly.
 
-Raw per-photo data is in the scratchpad of the previous session; regenerate with
-the diagnostic pattern in "How to reproduce" below rather than trusting stale
-numbers.
+1. **One composition, no per-exam profile** (DEC-045). Every examination gets the
+   tight crop. No researched body publishes a coverage maximum it would breach;
+   all publish minima it clears. The loose presets were removed because they
+   also omitted four settings the tight one carries.
+2. **Produce, never refuse for appearance or composition** (DEC-041, DEC-045).
+   Only an undecodable file, no detectable face, or a genuinely ambiguous
+   subject may block. A refusal and a silent failure are the same outcome to a
+   candidate, and refusing delivers strictly less than the compromise it
+   rejects.
+3. **Never distort to hit a target.** The output preparer refuses on an aspect
+   mismatch beyond 1% rather than stretching, on both the exact and range paths.
+   The delivered aspect always follows the crop.
+4. **Absent is not permissive.** A rule the research recorded as `not_found` is
+   omitted, never defaulted. An absent rule and a permissive rule are different
+   statements and only the first is true.
 
----
+## Open risks, in priority order
 
-## Outstanding / known issues
+1. **M24 throughput.** 16–24 s per photograph on CPU, roughly doubled by the
+   crop-region rematte, so 30–40 s each. At national examination-cycle
+   concurrency this is not viable. **Probe it before investing in matte
+   quality** — a forced model change invalidates part of M22.
+2. **M22 matte defects.** The owner's outstanding flags on the reviewed set:
+   photo 17 a detached hair fragment (the default matte path does no
+   connectivity cleanup at all), photos 18 and 19 soft hair edges where dark
+   hair meets a dark background, photo 8 under-enhancement. The fragment fix is
+   backend-independent and safe to do now; the soft-edge fix is
+   matte-resolution-dependent and should wait on the throughput probe.
+3. **Invariants unwired.** See above — the detector exists and nothing calls it.
+4. **M19 tail.** Confirm the 15 size-only examinations genuinely publish no
+   pixel dimensions. UPPSC and MHT-CET are one field short each (most likely
+   JPEG); CTET and MPSC publish a physical size with no DPI, and either would
+   convert to exact pixels if a stated DPI is found.
+5. **RRB transposition** (DEC-046). Both RRB records publish a
+   self-contradictory figure and are recorded upright as a judgement. Re-check
+   against the live notification before either leaves `verified`.
 
-1. **7 photos produce no output** (up from 3): `1-4`, `3-1`, `3-3`, `5-1`,
-   `5-5`, `6-4`, `6-7`. `3-3` is multi-face, `5-1` is a face-detection failure,
-   `6-7` is background clipping. The other 4 are new regressions from this
-   session's changes. **Highest-priority fix.**
+## Verifying
 
-2. **10 of 58 measurable photos are geometrically impossible at 75%.** Their
-   measured head width exceeds 0.89 × head span, so in a 2:3 frame no crop can
-   hit 75% height coverage. Either the width reading is still too generous on
-   those, or they genuinely need the crop-fix UI. **Per the user: do not burn
-   time here — verify against the ideal outputs, log, move on.**
+`.github/workflows/image-engine-ci.yml` is the source of truth. `pytest` alone
+does not cover the eleven `mandatory_*` marker suites.
 
-3. **A reverted experiment, for the record.** Re-anchoring the crop search's
-   horizontal sweep on the measured head-core centre instead of `face_cx`
-   (`l_ideal = head_core_cx - wc / 2.0`) *broke* 6-3 outright — it returned
-   `is_valid=False` with no output. The reasoning (the ±8% dx sweep can miss
-   mandatory containment when the head core is off-centre in the face box) may
-   still be sound, but the naive change is wrong. **It has been reverted. Do not
-   re-apply without understanding why it failed.**
-
-4. **BiRefNet is not the pipeline default.** Only `api/service.py` auto-selects
-   it. `RuleOrchestratedPipeline` and the CLI still default to
-   `matting_backend="mediapipe"`. Anyone calling the engine directly gets the
-   old, much worse matte.
-
-5. **Decision log is behind.** `docs/08_DECISION_LOG.md` currently ends at
-   DEC-031. DEC-032 (face landmarker) is referenced in code but the log entry
-   should be confirmed; DEC-033/034/035 are referenced in code comments and are
-   **not** written. The fixes above need DEC-036+ entries.
-   `docs/07_REQUIREMENTS_TRACEABILITY.md` also needs updating.
-
----
-
-## Verification state
-
-Run from `services/image-engine`:
-
-- `ruff format --check .` — clean
-- `ruff check .` — clean
-- `mypy src tests` — clean, 111 source files
-- Core pytest subset — **143 passed, 15 skipped**
-
-The `mandatory_*` marker suites were **not** run this session (they need model
-assets + env vars). See `.github/workflows/image-engine-ci.yml` for the exact
-per-marker invocation. **Run them before committing.**
-
----
-
-## Nothing is committed
-
-The entire session's work is in the working tree only — ~2000 insertions across
-32 tracked files plus 17 untracked new files (BiRefNet segmenter, face
-landmarker, manifests, download scripts, benchmark rule configs, new tests,
-`CLAUDE.md`, `mypy.ini`).
-
-This is the single biggest risk right now. Suggested split:
-
-1. Model vendoring infra (manifests, download scripts, `.gitignore`, pyproject `matting` extra)
-2. BiRefNet backend + landmarker provider + wiring (`rule_pipeline`, `api/service`, `settings`, `cli`)
-3. Matte refinement changes (`morphological_refiner`, `foreground_refinement`, `foreground_decontamination`)
-4. Crop geometry fixes (the 5 fixes above) + tests
-5. Docs (decision log, traceability)
-
-Never commit real candidate photos or model weights — see `AGENTS.md`.
-
----
-
-## How to reproduce the measurement
-
-Full pipeline on one photo, forcing BiRefNet:
-
-```python
-import sys, json
-from pathlib import Path
-REPO = Path('C:/Projects/exam-photo-platform')
-sys.path.insert(0, str(REPO / 'services/image-engine/src'))
-from exam_photo.orchestration.rule_pipeline import RuleOrchestratedPipeline, RulePipelineConfig
-from exam_photo.providers.segmenters.birefnet_segmenter import load_manifest_defaults
-
-md, wf, sha, sz = load_manifest_defaults(REPO)
-pipe = RuleOrchestratedPipeline(
-    face_model_path=REPO/'model-assets/blaze_face_short_range.tflite',
-    segmenter_model_path=REPO/'model-assets/selfie_segmentation.tflite',
-    face_expected_sha256='b4578f35940bf5a1a655214a1cce5cab13eba73c1297cd78e1a04c2380b0152f',
-    segmenter_expected_sha256='9ee168ec7c8f2a16c56fe8e1cfbc514974cbbb7e434051b455635f1bd1462f5c',
-    matting_backend='birefnet', birefnet_model_dir=md, birefnet_expected_sha256=sha)
-
-p = Path('C:/Users/dmbar/Pictures/Test Images/6- 1200 × 1800 px ; 72 DPI/6-3.jpeg')
-rule = json.loads((REPO/'examples/rules/benchmark_exact_1200x1800_72dpi_white_bg.json').read_text())
-r = pipe.process_rule(p.read_bytes(), rule,
-    RulePipelineConfig(allow_padding=True, allow_invalid_output=True, quality_mode='high'))
-print(r.portrait_quality_report.get('head_height_ratio'), r.is_valid)
+```bash
+cd services/image-engine && ruff format --check . && ruff check . && .venv/Scripts/python.exe -m mypy src tests
 ```
 
-Interior geometry is easiest to inspect by monkey-patching
-`DeterministicCropPlanner._estimate_crown_y` / `_estimate_chin_y` /
-`_estimate_head_core_x` to print before delegating to the original.
+Current: format, lint and mypy clean across 118 files; 176 core tests passing,
+15 skipped; all eleven marker suites green; invariant sweep at 0 violations of
+960.
 
-Benchmark rule configs matching each test folder's dimensions are in
-`examples/rules/benchmark_exact_*.json`.
+Model assets are present under `model-assets/`. Run marker suites from the repo
+root with `EXAM_PHOTO_FACE_MODEL_PATH` / `EXAM_PHOTO_SEGMENTER_MODEL_PATH` and
+their `*_SHA256` set as the workflow sets them.
 
-Each folder in `Test Images` maps to one rule config by dimensions — e.g.
-`6- 1200 × 1800 px ; 72 DPI` → `benchmark_exact_1200x1800_72dpi_white_bg.json`.
+## Reference material — local only, never commit
 
----
+The 40-photo labelled set at `C:\Users\dmbar\Pictures\new-test-images` is the
+current specification; ten are labelled `perfect`. The outputs the owner last
+reviewed are in `C:\Users\dmbar\Pictures\Engine Outputs - Clean Set` at 413×531.
+**The 60-photo paired set is retired — do not use it**, and do not run
+`scripts/benchmark_reference_pairs.py`, which targets it.
 
-## Recommended next plan
-
-1. Build the **per-photo engine-vs-ideal diff** across all 60, reporting exactly
-   what the user asked for: crop W/H, negative space left, negative space right,
-   headspace above hair, space below chin, and edge behaviour at hair / ears /
-   beard-line / chin / neck. This is the missing feedback loop.
-2. Read composition targets off the ideal outputs' measured distribution;
-   replace any self-derived constants that disagree.
-3. Fix the 7 no-output photos.
-4. Re-run all 60, confirm both coverage and no-output counts improved.
-5. Run the `mandatory_*` suites, then commit in the slices above and update
-   the decision log + traceability matrix.
+The working loop for any composition change: run the ten `perfect` photographs
+through `process_rule`, measure head height, above-hair and below-chin on the
+output, and diff against the reviewed set. The synthetic sweep alone is not
+sufficient — it read zero while a photograph the owner had flagged by eye was
+still visibly wrong, because synthetic head boxes do not extend past the jaw the
+way real ones do.
