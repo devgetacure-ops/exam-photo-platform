@@ -22,6 +22,7 @@ from exam_photo.orchestration.rule_pipeline import (
     RulePipelineConfig,
 )
 from exam_photo.orchestration.rule_resolver import RuleResolutionError, resolve_rule
+from exam_photo.providers.output_preparation import ResizeMode
 
 pytestmark = pytest.mark.mandatory_rule_pipeline
 
@@ -110,7 +111,19 @@ def test_rule_resolver_range_mode():
     assert plan.compression_config.maximum_bytes == 51200
 
 
-def test_rule_resolver_unspecified_dimensions_uses_tight_crop_and_platform_default():
+def test_rule_resolver_unspecified_dimensions_sizes_from_the_photograph():
+    """An exam that publishes no dimensions must not get a constant frame.
+
+    This used to assert a fixed 350x450 taken from a named platform profile.
+    That was wrong in a way the assertion could not see: an unspecified rule
+    resolves to Crop Mode B, whose crop is head-led and whose aspect therefore
+    varies with the subject, and the output preparer was then forcing it into a
+    constant frame under ResizeMode.EXACT -- which only warns on aspect
+    mismatch and resizes anyway. The subject was stretched to fit.
+
+    The contract is now an envelope rather than a target: bounds wide enough
+    that the crop's own aspect survives, and no invented fixed size.
+    """
     rule_path = EXAMPLES_DIR / "sample_unspecified_dimensions.json"
     with open(rule_path, "r", encoding="utf-8") as f:
         data = json.load(f)
@@ -126,9 +139,54 @@ def test_rule_resolver_unspecified_dimensions_uses_tight_crop_and_platform_defau
     assert plan.crop_config.max_head_height_ratio == pytest.approx(0.84)
     assert plan.crop_config.allow_subject_clipping is False
     assert plan.background_config.target_colour_hex == "#FFFFFF"
-    assert plan.output_preparation_config.target_width == 350
-    assert plan.output_preparation_config.target_height == 450
+
+    prep = plan.output_preparation_config
+    assert prep.resize_mode == ResizeMode.RANGE_SELECT
+    assert prep.target_width is None and prep.target_height is None
+    assert prep.min_width == 240 and prep.max_width == 1200
+    assert prep.min_height == 240 and prep.max_height == 1200
     assert plan.target_filename == "candidate_photo"
+
+
+def test_rule_resolver_honours_a_published_preferred_size():
+    """A preferred size the body published is used, not a platform default.
+
+    Twelve records in the 48-examination research sit here -- IBPS, SBI, LIC,
+    RBI, NABARD, NIACL all publish "200 x 230 pixels (preferred)" without
+    mandating it. The resolver had no branch for this case at all, so every one
+    of them was resized to a platform default instead of the number in their
+    own notification.
+    """
+    rule_path = EXAMPLES_DIR / "sample_unspecified_dimensions.json"
+    with open(rule_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    data["image_requirements"]["dimensions"]["preferred_width_px"] = 200
+    data["image_requirements"]["dimensions"]["preferred_height_px"] = 230
+    rule = ExamRule.model_validate(data)
+
+    prep = resolve_rule(rule).output_preparation_config
+
+    assert prep.resize_mode == ResizeMode.RANGE_SELECT
+    assert prep.preferred_width == 200 and prep.preferred_height == 230
+    assert prep.min_width == 200 and prep.max_width == 200
+    assert prep.min_height == 230 and prep.max_height == 230
+
+
+def test_rule_resolver_no_longer_demands_a_platform_default_profile():
+    """An unspecified rule is complete without naming a platform profile.
+
+    The field used to be mandatory because the resolver looked the name up in a
+    table of fixed pixel sizes. Nothing reads it now, so requiring it would
+    force every such rule to carry a value with no effect.
+    """
+    rule_path = EXAMPLES_DIR / "sample_unspecified_dimensions.json"
+    with open(rule_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    data["image_requirements"]["dimensions"].pop("platform_default_profile")
+
+    rule = ExamRule.model_validate(data)
+
+    assert resolve_rule(rule).crop_mode == "b"
 
 
 def test_rule_resolver_allows_padding_without_subject_clipping():

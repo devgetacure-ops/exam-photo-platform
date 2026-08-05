@@ -148,10 +148,16 @@ class DimensionsConfig(BaseModel):
                 raise ValueError(
                     "Unspecified dimensions mode requires a fallback_reason."
                 )
-            if not self.platform_default_profile:
-                raise ValueError(
-                    "Unspecified dimensions mode requires platform_default_profile."
-                )
+            # ``platform_default_profile`` is deliberately no longer required.
+            #
+            # It used to be, because the resolver sized an unspecified-dimension
+            # output by looking the profile name up in a table of fixed pixel
+            # dimensions. That is gone: the output size is now chosen per
+            # photograph from the crop's own geometry, so no named default is
+            # consulted and demanding one would force every such rule to carry a
+            # value nothing reads. The field remains available for recording
+            # what a body's guidance implies, but a rule that omits it is
+            # complete.
 
         return self
 

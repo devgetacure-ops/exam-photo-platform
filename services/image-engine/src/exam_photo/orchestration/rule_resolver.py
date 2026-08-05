@@ -15,93 +15,103 @@ from exam_photo.providers.output_compression import (
 )
 from exam_photo.providers.output_preparation import OutputPreparationConfig, ResizeMode
 
-PROFILE_DEFAULTS = {
-    CropProfile.STANDARD_PASSPORT_PORTRAIT: {
-        "target_head_height_ratio": 0.60,
-        "minimum_head_height_ratio": 0.50,
-        "maximum_head_height_ratio": 0.70,
-        "target_top_margin_ratio": 0.10,
-        "minimum_top_margin_ratio": 0.06,
-        "maximum_top_margin_ratio": 0.15,
-        "target_eye_line_ratio": 0.44,
-        "minimum_eye_line_ratio": 0.40,
-        "maximum_eye_line_ratio": 0.48,
-        "maximum_horizontal_center_offset_ratio": 0.05,
-        "maximum_torso_inclusion_ratio": 0.35,
-    },
-    # Calibrated against 60 reference exam photos across six exam size classes.
-    # Ratios are crown-to-chin fractions of the output frame; bounds track the
-    # p10/p90 of the reference distribution so ordinary variation stays valid.
-    #   head height  mean 0.840  p10 0.768  p90 0.900
-    #   top margin   mean 0.048  p10 0.027  p90 0.075
-    #   eye line     mean 0.486  p10 0.452  p90 0.525
-    #   below chin   mean 0.112
-    CropProfile.TIGHT_EXAM_PORTRAIT: {
-        # 0.75 is a hard floor: exams publish face coverage as a minimum, so
-        # falling under it fails outright.  Tighter is better, so the target
-        # sits above the reference mean (0.840) rather than on it, and the
-        # ceiling only guards against a crop so tight it would clip.
-        "target_head_height_ratio": 0.86,
-        "minimum_head_height_ratio": 0.75,
-        "maximum_head_height_ratio": 0.93,
-        "target_top_margin_ratio": 0.05,
-        "minimum_top_margin_ratio": 0.02,
-        "maximum_top_margin_ratio": 0.10,
-        "target_eye_line_ratio": 0.487,
-        "minimum_eye_line_ratio": 0.43,
-        "maximum_eye_line_ratio": 0.54,
-        "maximum_horizontal_center_offset_ratio": 0.06,
-        "maximum_torso_inclusion_ratio": 0.20,
-        # Reference photos routinely let hair reach or leave the frame edge
-        # (head silhouette touches the left edge in 31/60 and the right edge in
-        # 44/60), so side margins are near zero and a 0.995 foreground-retention
-        # bar is unreachable.  Face containment and head coverage remain the
-        # hard guarantees; these bound how much hair may leave the frame.
-        "minimum_side_margin_ratio": 0.01,
-        "minimum_bottom_margin_ratio": 0.05,
-        # Only a catastrophe guard: face containment and full retention of the
-        # mandatory crown-to-chin head box are the real guarantees.  The seven
-        # subjects that score lowest here (long or voluminous hair) have
-        # reference outputs whose head silhouette spans ~99.5% of frame width
-        # and touches both edges, so heavy hair loss is correct, not a defect.
-        "mask_preservation_threshold": 0.75,
-        # At the reference head size the detector face box centres at ~0.62 of
-        # frame height (chin sits at ~0.87, face box spans ~0.52). The 0.44
-        # passport value would flag every correctly composed tight crop.
-        "preferred_face_center_y_ratio": 0.62,
-    },
-    CropProfile.RELAXED_IDENTITY_PORTRAIT: {
-        "target_head_height_ratio": 0.40,
-        "minimum_head_height_ratio": 0.30,
-        "maximum_head_height_ratio": 0.55,
-        "target_top_margin_ratio": 0.15,
-        "minimum_top_margin_ratio": 0.10,
-        "maximum_top_margin_ratio": 0.20,
-        "target_eye_line_ratio": 0.44,
-        "minimum_eye_line_ratio": 0.40,
-        "maximum_eye_line_ratio": 0.48,
-        "maximum_horizontal_center_offset_ratio": 0.05,
-        "maximum_torso_inclusion_ratio": 0.50,
-    },
-    CropProfile.CUSTOM: {
-        "target_head_height_ratio": 0.60,
-        "minimum_head_height_ratio": 0.50,
-        "maximum_head_height_ratio": 0.70,
-        "target_top_margin_ratio": 0.10,
-        "minimum_top_margin_ratio": 0.06,
-        "maximum_top_margin_ratio": 0.15,
-        "target_eye_line_ratio": 0.44,
-        "minimum_eye_line_ratio": 0.40,
-        "maximum_eye_line_ratio": 0.48,
-        "maximum_horizontal_center_offset_ratio": 0.05,
-        "maximum_torso_inclusion_ratio": 0.35,
-    },
+# One composition, used for every examination.
+#
+# There is deliberately no second profile and no fallback. The presets that used
+# to sit here -- standard passport (0.60 head height) and relaxed identity
+# (0.40) -- existed on the assumption that different examinations want different
+# framings. Measured against 48 examinations' published rules, they do not: not
+# one publishes a face-coverage *maximum* that a tight crop would breach, and
+# the single upper bound anywhere in the set (GATE, "60-70%") is stated on a
+# different basis from head height and is satisfied by this composition anyway
+# -- a tight crop measures ~0.58-0.60 *face* height at 0.86 head height, which
+# lands inside GATE's band.
+#
+# What the published rules do carry is minima: UPSC "at least 75%", RRB "at
+# least 50%", NTA "80% face", CBSE "80% of the image". A single tight
+# composition clears all of them, and where an examination's own dimensions make
+# 0.86 unreachable the relaxation ladder already delivers the tightest crop the
+# geometry allows and reports the compromise (DEC-039). So a looser profile was
+# never the mechanism for handling tight targets -- it just produced a looser
+# photograph than the examination asked for.
+#
+# Keeping them was actively harmful rather than merely unused, because the two
+# loose presets omit four settings this one carries -- side margin, bottom
+# margin, mask-preservation threshold and expected face-centre height. A rule
+# naming a loose profile therefore fell back to CropConfig defaults (0.06 side,
+# 0.08 bottom, 0.995 retention, 0.44 face centre) that the comments below record
+# as wrong for exam framing: at reference head size the face box centres at 0.62
+# of frame height, so the 0.44 value alone would flag every correctly composed
+# crop as mis-centred.
+#
+# ``CropProfile`` remains in the canonical schema and a rule may still name a
+# value; it simply no longer selects geometry. Per-examination deviation is
+# expressed by overriding individual ratios on the rule record, which the
+# resolver already prefers over these defaults and which requires published
+# evidence to justify.
+#
+# Calibrated against 60 reference exam photos across six exam size classes.
+# Ratios are crown-to-chin fractions of the output frame; bounds track the
+# p10/p90 of the reference distribution so ordinary variation stays valid.
+#   head height  mean 0.840  p10 0.768  p90 0.900
+#   top margin   mean 0.048  p10 0.027  p90 0.075
+#   eye line     mean 0.486  p10 0.452  p90 0.525
+#   below chin   mean 0.112
+EXAM_COMPOSITION_DEFAULTS: dict[str, Any] = {
+    # 0.75 is a hard floor: exams publish face coverage as a minimum, so
+    # falling under it fails outright.  Tighter is better, so the target
+    # sits above the reference mean (0.840) rather than on it, and the
+    # ceiling only guards against a crop so tight it would clip.
+    "target_head_height_ratio": 0.86,
+    "minimum_head_height_ratio": 0.75,
+    "maximum_head_height_ratio": 0.93,
+    "target_top_margin_ratio": 0.05,
+    "minimum_top_margin_ratio": 0.02,
+    "maximum_top_margin_ratio": 0.10,
+    "target_eye_line_ratio": 0.487,
+    "minimum_eye_line_ratio": 0.43,
+    "maximum_eye_line_ratio": 0.54,
+    "maximum_horizontal_center_offset_ratio": 0.06,
+    "maximum_torso_inclusion_ratio": 0.20,
+    # Reference photos routinely let hair reach or leave the frame edge
+    # (head silhouette touches the left edge in 31/60 and the right edge in
+    # 44/60), so side margins are near zero and a 0.995 foreground-retention
+    # bar is unreachable.  Face containment and head coverage remain the
+    # hard guarantees; these bound how much hair may leave the frame.
+    "minimum_side_margin_ratio": 0.01,
+    "minimum_bottom_margin_ratio": 0.05,
+    # Only a catastrophe guard: face containment and full retention of the
+    # mandatory crown-to-chin head box are the real guarantees.  The seven
+    # subjects that score lowest here (long or voluminous hair) have
+    # reference outputs whose head silhouette spans ~99.5% of frame width
+    # and touches both edges, so heavy hair loss is correct, not a defect.
+    "mask_preservation_threshold": 0.75,
+    # At the reference head size the detector face box centres at ~0.62 of
+    # frame height (chin sits at ~0.87, face box spans ~0.52). The 0.44
+    # passport value would flag every correctly composed tight crop.
+    "preferred_face_center_y_ratio": 0.62,
 }
 
-PLATFORM_DEFAULT_DIMENSIONS = {
-    "standard_passport_350_450": (350, 450),
-    "tight_exam_portrait_300_400": (300, 400),
-}
+# Output envelope for an examination that publishes no pixel dimensions at all.
+#
+# These are bounds, not a target. The delivered size is chosen per photograph
+# from the crop's own aspect, so the subject is never stretched to meet a
+# constant. Fifteen of the 48 researched examinations land here -- UPSC, the
+# whole NTA family, CBSE, ICAI, ICSI among them -- so this path carries real
+# volume and is not a rare fallback.
+#
+# The floor is set by legibility rather than by any published rule: the smallest
+# dimension any body in the set does publish is Kerala PSC at 150x200, and the
+# tightest file-size ceiling is CBSE at 40 KB, which a 240px edge clears
+# comfortably in JPEG. The ceiling keeps the output inside the range the engine
+# is calibrated on -- the reference set spans 150x200 to 1200x1800 -- and avoids
+# upscaling a crop beyond the detail the source actually holds.
+_UNSPECIFIED_MIN_EDGE_PX = 240
+_UNSPECIFIED_MAX_EDGE_PX = 1200
+# Passport-shaped starting point at a size that satisfies every published
+# file-size ceiling in the set without resampling most crops far from native.
+_UNSPECIFIED_PREFERRED_WIDTH_PX = 413
+_UNSPECIFIED_PREFERRED_HEIGHT_PX = 531
 
 
 class RuleResolutionError(Exception):
@@ -187,7 +197,7 @@ def resolve_rule(
         """Resolve a Crop Mode B head ratio: explicit rule value, else its own default.
 
         Mode B's planner still measures head height against the preservation
-        box, whereas the Mode A profile ratios in ``PROFILE_DEFAULTS`` are
+        box, whereas the Mode A ratios in ``EXAM_COMPOSITION_DEFAULTS`` are
         crown-to-chin fractions (see DEC-029).  The two are not interchangeable
         -- the preservation box runs ~1.14x taller than the real head -- so the
         Mode A numbers must not leak in here.  Mode B keeps the calibration
@@ -195,11 +205,6 @@ def resolve_rule(
         """
         explicit = getattr(comp, field_name, None)
         return hard_default if explicit is None else float(explicit)
-
-    def resolve_platform_dimensions(profile_name: str | None) -> tuple[int, int]:
-        if profile_name and profile_name in PLATFORM_DEFAULT_DIMENSIONS:
-            return PLATFORM_DEFAULT_DIMENSIONS[profile_name]
-        return PLATFORM_DEFAULT_DIMENSIONS["tight_exam_portrait_300_400"]
 
     if dim.mode == DimensionMode.EXACT:
         crop_mode = "a"
@@ -209,10 +214,7 @@ def resolve_rule(
                 "Exact dimension mode is missing width_px or height_px.",
             )
         # Resolve Composition Ratio defaults from presets
-        profile = comp.crop_profile or CropProfile.STANDARD_PASSPORT_PORTRAIT
-        defaults = PROFILE_DEFAULTS.get(
-            profile, PROFILE_DEFAULTS[CropProfile.STANDARD_PASSPORT_PORTRAIT]
-        )
+        defaults = EXAM_COMPOSITION_DEFAULTS
 
         def resolve_margin(field_name: str, hard_default: float) -> float:
             """Rule value, else crop-profile default, else the CropConfig default."""
@@ -281,7 +283,12 @@ def resolve_rule(
             target_aspect_ratio=dim.width_px / dim.height_px,
             allow_padding=allow_padding,
             allow_subject_clipping=allow_subject_clipping,
-            crop_profile=profile,
+            # Passed through for reporting only. It no longer selects geometry
+            # -- every ratio above is already resolved from
+            # ``EXAM_COMPOSITION_DEFAULTS`` or an explicit per-rule override --
+            # but the planner reads its presence to decide adaptive mode, and
+            # downstream diagnostics echo whatever the rule declared.
+            crop_profile=comp.crop_profile or CropProfile.TIGHT_EXAM_PORTRAIT,
             ears_policy=comp.ears_policy,
             target_head_height_ratio=target_head_height,
             minimum_head_height_ratio=min_head_height,
@@ -326,10 +333,7 @@ def resolve_rule(
 
         min_aspect = dim.minimum_width_px / dim.maximum_height_px
         max_aspect = dim.maximum_width_px / dim.minimum_height_px
-        profile = comp.crop_profile or CropProfile.TIGHT_EXAM_PORTRAIT
-        defaults = PROFILE_DEFAULTS.get(
-            profile, PROFILE_DEFAULTS[CropProfile.TIGHT_EXAM_PORTRAIT]
-        )
+        defaults = EXAM_COMPOSITION_DEFAULTS
 
         crop_config = CropModeBConfig(
             min_aspect_ratio=min_aspect,
@@ -348,10 +352,7 @@ def resolve_rule(
         )
     elif dim.mode == DimensionMode.UNSPECIFIED:
         crop_mode = "b"
-        profile = comp.crop_profile or CropProfile.TIGHT_EXAM_PORTRAIT
-        defaults = PROFILE_DEFAULTS.get(
-            profile, PROFILE_DEFAULTS[CropProfile.TIGHT_EXAM_PORTRAIT]
-        )
+        defaults = EXAM_COMPOSITION_DEFAULTS
         crop_config = CropModeBConfig(
             preferred_aspect_ratio=0.75,
             min_aspect_ratio=0.65,
@@ -422,18 +423,54 @@ def resolve_rule(
             preferred_width=dim.preferred_width_px or 300,
             preferred_height=dim.preferred_height_px or 400,
         )
-    else:
-        default_width, default_height = resolve_platform_dimensions(
-            dim.platform_default_profile
-        )
+    elif dim.preferred_width_px is not None and dim.preferred_height_px is not None:
+        # The body published a preferred size without mandating it. Honour it:
+        # it is the examination's own number, and ignoring it in favour of a
+        # platform default substitutes our guess for their statement.
+        #
+        # This branch was previously absent, and the omission was not cosmetic.
+        # Twelve records in the 48-examination set sit here -- IBPS, SBI, LIC,
+        # RBI, NABARD and NIACL all publish "200 x 230 pixels (preferred)" --
+        # and every one of them was being resized to the platform default
+        # instead, so the largest single group of encodable examinations
+        # received dimensions their own notification does not name.
+        #
+        # RANGE_SELECT rather than EXACT so the delivered aspect follows the
+        # crop rather than being forced onto it; see the note below.
         prep_config = OutputPreparationConfig(
-            resize_mode=ResizeMode.EXACT,
-            target_width=default_width,
-            target_height=default_height,
-            min_width=default_width,
-            max_width=default_width,
-            min_height=default_height,
-            max_height=default_height,
+            resize_mode=ResizeMode.RANGE_SELECT,
+            min_width=dim.preferred_width_px,
+            max_width=dim.preferred_width_px,
+            min_height=dim.preferred_height_px,
+            max_height=dim.preferred_height_px,
+            preferred_width=dim.preferred_width_px,
+            preferred_height=dim.preferred_height_px,
+        )
+    else:
+        # Nothing published at all. The size is ours to choose, and it is chosen
+        # from the photograph rather than from a constant.
+        #
+        # The previous behaviour resized to a fixed platform default under
+        # ``ResizeMode.EXACT``, which only *warns* on aspect mismatch and
+        # otherwise resizes anyway. Crop Mode B -- which is what an unspecified
+        # rule resolves to -- produces a head-led crop whose aspect varies with
+        # the subject, so forcing it into a constant frame stretches the face.
+        # That breaches the identity-preservation principle outright, and it
+        # did so silently.
+        #
+        # The envelope below bounds the output to a sane print-portrait size
+        # while leaving the crop's own aspect intact: the range is wide enough
+        # that ``_resolve_range_dimensions`` can always satisfy it without
+        # distortion, and every published file-size ceiling in the set (40 KB
+        # upward) is reachable at these pixel counts.
+        prep_config = OutputPreparationConfig(
+            resize_mode=ResizeMode.RANGE_SELECT,
+            min_width=_UNSPECIFIED_MIN_EDGE_PX,
+            max_width=_UNSPECIFIED_MAX_EDGE_PX,
+            min_height=_UNSPECIFIED_MIN_EDGE_PX,
+            max_height=_UNSPECIFIED_MAX_EDGE_PX,
+            preferred_width=_UNSPECIFIED_PREFERRED_WIDTH_PX,
+            preferred_height=_UNSPECIFIED_PREFERRED_HEIGHT_PX,
         )
 
     # 5. Resolve Output Compression Config
