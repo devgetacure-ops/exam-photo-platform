@@ -199,7 +199,12 @@ class FormatsConfig(BaseModel):
         allowed_normalized = [f.lower().strip() for f in self.allowed_formats]
         pref_normalized = self.preferred_format.lower().strip()
 
-        valid_formats = {"jpeg", "jpg", "png", "webp"}
+        # ``pdf`` is valid for a *deliverable* file specification -- a
+        # certificate or a mark sheet is very often required as one -- and never
+        # for a photograph. The photograph case is refused by ImageRequirements
+        # rather than here, because this same config type serves both and the
+        # constraint belongs where the distinction is known.
+        valid_formats = {"jpeg", "jpg", "png", "webp", "pdf"}
         for fmt in allowed_normalized:
             if fmt not in valid_formats:
                 raise ValueError(
@@ -539,6 +544,8 @@ class AppearanceConfig(BaseModel):
 
 
 class ImageRequirements(BaseModel):
+    """The photograph specification. Always an image, never a document."""
+
     model_config = ConfigDict(extra="forbid")
     dimensions: DimensionsConfig
     file_size: FileSizeConfig
@@ -551,6 +558,16 @@ class ImageRequirements(BaseModel):
     appearance: Optional[AppearanceConfig] = None
     filename: FilenameConfig
     exceptional_instructions: ExceptionalInstructions
+
+    @model_validator(mode="after")
+    def validate_photograph_is_an_image(self) -> "ImageRequirements":
+        if "pdf" in {f.lower().strip() for f in self.formats.allowed_formats}:
+            raise ValueError(
+                "A candidate photograph cannot be a PDF. The format is valid "
+                "for document deliverables, which use file_spec rather than "
+                "image_requirements."
+            )
+        return self
 
 
 class RequirementType(str, Enum):

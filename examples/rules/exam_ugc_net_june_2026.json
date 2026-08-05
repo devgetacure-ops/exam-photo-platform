@@ -131,7 +131,7 @@
       "requirement_type": "certificate_scan",
       "submission_method": "document_scan_upload",
       "requirement_status": "conditional",
-      "platform_support": "not_yet_supported",
+      "platform_support": "supported",
       "applicability": "Candidates claiming PwD benefit",
       "content_instructions": "Upload the prescribed certificate in PDF where the application requests it.",
       "evidence_status": "Recent official UGC-NET bulletin",

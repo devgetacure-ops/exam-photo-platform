@@ -106,7 +106,7 @@
       "requirement_type": "certificate_scan",
       "submission_method": "document_scan_upload",
       "requirement_status": "conditional",
-      "platform_support": "not_yet_supported",
+      "platform_support": "supported",
       "applicability": "Candidates claiming reservation, disability, domicile, age relaxation, experience or a post-specific qualification",
       "content_instructions": "Upload only the certificate explicitly requested by that examination and category. The exact list is notification-specific and was not fully established in the supplied photograph evidence.",
       "evidence_status": "Exam-specific gap; active notification required",

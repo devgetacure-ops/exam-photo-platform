@@ -126,7 +126,7 @@
       "requirement_type": "certificate_scan",
       "submission_method": "document_scan_upload",
       "requirement_status": "conditional",
-      "platform_support": "not_yet_supported",
+      "platform_support": "supported",
       "applicability": "Candidates claiming PwD-related benefit",
       "content_instructions": "Upload/verify the prescribed disability or UDID documentation where prompted. The current JEE Main advisory specifically asks candidates to update UDID details before application.",
       "evidence_status": "Current official JEE Main advisory/bulletin",

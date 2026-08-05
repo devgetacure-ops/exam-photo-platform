@@ -837,7 +837,8 @@
         "allowed_formats": {
           "type": "array",
           "items": {
-            "type": "string"
+            "type": "string",
+            "description": "Image formats, plus 'pdf' which is valid only for a document deliverable's file_spec. A candidate photograph may never be a PDF; the model refuses it."
           },
           "minItems": 1,
           "uniqueItems": true

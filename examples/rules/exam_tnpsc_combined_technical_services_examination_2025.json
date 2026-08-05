@@ -133,7 +133,7 @@
       "requirement_type": "certificate_scan",
       "submission_method": "document_scan_upload",
       "requirement_status": "conditional",
-      "platform_support": "not_yet_supported",
+      "platform_support": "supported",
       "applicability": "Candidates making reservation, PSTM, disability, experience or other special claims",
       "content_instructions": "Upload the exact certificate asked for by the application/claim. The list varies by post and candidate category; do not treat all certificates as universal.",
       "evidence_status": "Exam-specific official notification required",

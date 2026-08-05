@@ -384,14 +384,18 @@ def test_every_encoded_examination_carries_an_inventory() -> None:
 def test_only_deliverables_the_engine_prepares_claim_support() -> None:
     """Support is a promise to produce the file, and it is now partly kept.
 
-    Signatures, thumb impressions and handwritten declarations are prepared by
-    ``orchestration/deliverable_pipeline``. Certificate scans and identity
-    documents are not: the engine can clean and frame a photographed page, but
-    portals overwhelmingly want those as PDF and nothing writes PDF yet, so
-    claiming support on the strength of producing a JPEG would promise a file
-    the portal will not take.
+    Every type ``orchestration/deliverable_pipeline`` routes is served. What is
+    left out is ``portal_declaration`` -- a tick-box on the application form,
+    which is not a file at all and never becomes one.
     """
-    served = {"photograph", "signature", "thumb_impression", "handwritten_declaration"}
+    served = {
+        "photograph",
+        "signature",
+        "thumb_impression",
+        "handwritten_declaration",
+        "certificate_scan",
+        "identity_document",
+    }
     claimed = [
         (name, requirement["requirement_id"], requirement["requirement_type"])
         for name, rule in _catalogue()

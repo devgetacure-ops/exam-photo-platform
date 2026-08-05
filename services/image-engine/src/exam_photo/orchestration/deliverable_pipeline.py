@@ -49,6 +49,10 @@ from exam_photo.orchestration.filename_generation import (
     FilenameGenerationConfig,
     generate_safe_filename,
 )
+from exam_photo.pdf import (
+    build_pdf_from_images,
+    prepare_existing_pdf,
+)
 from exam_photo.providers.compression.deterministic_image_compressor import (
     DeterministicJpegCompressor,
 )
@@ -103,7 +107,9 @@ class DeliverableResult:
     #: refused, on the same reasoning as DEC-041: the candidate still receives
     #: their file and can see for themselves that it is blank.
     is_blank: bool
-    preparation: InkPreparation
+    #: ``None`` when the upload was already a PDF: nothing was prepared from
+    #: pixels, because a PDF is restructured rather than re-rendered.
+    preparation: Optional[InkPreparation]
     findings: list[str]
 
 
@@ -234,6 +240,18 @@ def _output_extension(spec: Optional[DeliverableFileSpec]) -> str:
     return preferred if preferred else "jpg"
 
 
+#: The first bytes of every PDF. Checked rather than trusting the filename,
+#: because the extension is whatever the candidate's phone last called it.
+_PDF_MAGIC = b"%PDF-"
+
+
+def _wants_pdf(spec: Optional[DeliverableFileSpec]) -> bool:
+    formats = spec.formats if spec else None
+    if formats is None:
+        return False
+    return "pdf" in {f.lower().strip() for f in formats.allowed_formats}
+
+
 def prepare_deliverable(
     data: bytes,
     filename: str,
@@ -243,6 +261,13 @@ def prepare_deliverable(
 ) -> DeliverableResult:
     """Prepare one uploaded file into the deliverable a requirement asks for."""
     findings: list[str] = []
+    size = file_spec.file_size if file_spec else None
+    ceiling = size.maximum_bytes if size is not None else _UNSPECIFIED_BYTE_CEILING
+
+    if data.startswith(_PDF_MAGIC):
+        return _prepare_uploaded_pdf(
+            data, requirement_type, file_spec, ceiling, size is None
+        )
 
     normalized = normalize_image_input(data, filename, limits or InputLimits())
     findings.extend(normalized.warnings)
@@ -274,8 +299,24 @@ def prepare_deliverable(
         if not prepared_output.validation.is_valid:
             findings.extend(prepared_output.validation.issue_codes)
 
-    size = file_spec.file_size if file_spec else None
-    ceiling = size.maximum_bytes if size is not None else _UNSPECIFIED_BYTE_CEILING
+    if _wants_pdf(file_spec):
+        assembled = build_pdf_from_images([image], maximum_bytes=ceiling)
+        findings.extend(assembled.findings)
+        return DeliverableResult(
+            content=assembled.content,
+            filename=generate_safe_filename(
+                _published_name(file_spec) or requirement_type.value,
+                config=FilenameGenerationConfig(extension="pdf"),
+            ),
+            width=image.width,
+            height=image.height,
+            byte_size=assembled.byte_size,
+            ceiling_was_unpublished=size is None,
+            is_blank=prepared.is_blank,
+            preparation=prepared,
+            findings=findings,
+        )
+
     compression = DeterministicJpegCompressor().compress_output(
         image.convert("RGB"),
         OutputCompressionConfig(
@@ -312,6 +353,45 @@ def prepare_deliverable(
         ceiling_was_unpublished=size is None,
         is_blank=prepared.is_blank,
         preparation=prepared,
+        findings=findings,
+    )
+
+
+def _prepare_uploaded_pdf(
+    data: bytes,
+    requirement_type: RequirementType,
+    file_spec: Optional[DeliverableFileSpec],
+    ceiling: int,
+    ceiling_unpublished: bool,
+) -> DeliverableResult:
+    """Prepare a PDF the candidate already had.
+
+    Never re-rendered into an image, whatever the requirement's format says.
+    If an examination wants a JPEG and the candidate holds a PDF, the honest
+    answer is that this cannot convert it -- rasterising a digitally issued
+    certificate would turn verifiable text into a picture of text, and doing so
+    silently is worse than saying no.
+    """
+    result = prepare_existing_pdf(data, maximum_bytes=ceiling)
+    findings = list(result.findings)
+    if file_spec is not None and not _wants_pdf(file_spec):
+        findings.append(
+            "The upload is a PDF and this requirement asks for an image. The "
+            "PDF has been prepared as-is; converting it would turn the "
+            "document into a picture of itself."
+        )
+    return DeliverableResult(
+        content=result.content,
+        filename=generate_safe_filename(
+            _published_name(file_spec) or requirement_type.value,
+            config=FilenameGenerationConfig(extension="pdf"),
+        ),
+        width=0,
+        height=0,
+        byte_size=result.byte_size,
+        ceiling_was_unpublished=ceiling_unpublished,
+        is_blank=False,
+        preparation=None,
         findings=findings,
     )
 

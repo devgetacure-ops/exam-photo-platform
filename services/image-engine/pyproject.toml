@@ -24,6 +24,10 @@ dependencies = [
     "fastapi>=0.100.0",
     "uvicorn>=0.20.0",
     "python-multipart>=0.0.6",
+    # PDF reading and structural rewriting. pypdf is pure Python and BSD
+    # licensed; PyMuPDF is faster and can rasterise, but it is AGPL, which is
+    # not compatible with shipping this as a commercial service.
+    "pypdf>=5.0.0",
 ]
 
 [project.optional-dependencies]

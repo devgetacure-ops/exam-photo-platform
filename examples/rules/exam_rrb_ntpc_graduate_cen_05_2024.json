@@ -153,7 +153,7 @@
       "requirement_type": "certificate_scan",
       "submission_method": "document_scan_upload",
       "requirement_status": "conditional",
-      "platform_support": "not_yet_supported",
+      "platform_support": "supported",
       "applicability": "SC/ST candidates requesting the free travel facility",
       "content_instructions": "Upload the prescribed caste certificate where the CEN makes it a condition for the travel pass. This is not required from every candidate.",
       "evidence_status": "Recent RRB CEN practice; verify active portal",

@@ -887,11 +887,21 @@ def _requirement_status(published: Optional[str]) -> str:
 #: this set is still reported to the candidate as a requirement -- it just is
 #: not one the platform produces.
 #:
-#: Certificates are absent on purpose. The engine can clean and frame a
-#: photographed page, but portals overwhelmingly want a certificate as a PDF,
-#: and nothing here writes PDF yet. Claiming support on the strength of being
-#: able to produce a JPEG would promise a file the portal will not take.
-_SERVED_TYPES = frozenset({"signature", "thumb_impression", "handwritten_declaration"})
+#: Certificates and identity documents joined once the PDF path existed. Both
+#: arrive one of two ways and both are handled: a photograph of a sheet becomes
+#: a cleaned page wrapped into a PDF, and a PDF the candidate already holds is
+#: restructured to the size limit without being re-rendered. What is *not*
+#: claimed is converting an existing PDF into an image, which cannot be done
+#: without turning a document into a picture of itself.
+_SERVED_TYPES = frozenset(
+    {
+        "signature",
+        "thumb_impression",
+        "handwritten_declaration",
+        "certificate_scan",
+        "identity_document",
+    }
+)
 
 
 def _platform_support(

@@ -120,7 +120,7 @@
       "requirement_type": "certificate_scan",
       "submission_method": "document_scan_upload",
       "requirement_status": "conditional",
-      "platform_support": "not_yet_supported",
+      "platform_support": "supported",
       "applicability": "Candidates claiming the relevant benefit",
       "content_instructions": "Upload only where the application asks for documentary proof; exact format/size not extracted.",
       "evidence_status": "Current official CUET PG bulletin",

@@ -44,10 +44,15 @@ photographs, 39 signatures, 15 thumb impressions, 13 declarations.
 `orchestration/deliverable_pipeline.py` turns an upload into the actual file --
 right pixel dimensions, under the byte ceiling, correct filename.
 
-Certificate scans and identity documents stay `not_yet_supported`, and a test
-enforces it. The engine can clean and frame a photographed page, but portals
-want certificates as **PDF** and nothing here writes PDF. That is the next
-build: jpg-to-pdf, pdf-to-pdf, and what follows.
+**135 of 155 are served** once the PDF path landed (DEC-052) — the 31
+certificate scans joined. `exam_photo.pdf` assembles a PDF from prepared pages
+and restructures an uploaded one to a size limit.
+
+The load-bearing rule there: a **scan** may be re-encoded and downscaled, a
+**document** may not be re-rendered. A digitally issued certificate's text is
+real text, and rasterising it to hit a byte ceiling destroys what makes it
+verifiable while succeeding on every number being watched. Pages are classified
+by image area and extractable text, and the refusal is structural.
 
 The ink-on-paper engine (`exam_photo.ink`, DEC-050) exists and is the opposite
 of the photograph rule: paper is driven to pure white and ink to full strength,
