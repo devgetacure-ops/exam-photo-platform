@@ -23,6 +23,7 @@ information and the mark's identity is its shape, which nothing here touches.
 """
 
 from dataclasses import dataclass
+from enum import Enum
 from typing import Any, Optional
 
 import numpy as np
@@ -30,7 +31,6 @@ from PIL import Image
 
 from exam_photo.ink.illumination import estimate_paper_field, flatten_to_paper_white
 from exam_photo.ink.ink_mask import (
-    _MINIMUM_ABSOLUTE_DEPTH,
     InkMaskResult,
     detect_ink,
     framed_box,
@@ -44,18 +44,63 @@ from exam_photo.models.geometry import BoundingBox
 #: pixels, so nothing is lost -- only the search is downscaled.
 _ANALYSIS_EDGE = 1400
 
-#: How far past the deepest ink the black point is set, as a multiple of the
-#: ink depth. At 1.0 the single darkest pixel would map to pure black and every
-#: other tone would be compressed beneath it; at 1.15 the deepest ink lands
-#: near-black with a little headroom, which is what keeps a thumb impression's
-#: densest area from flattening into a solid slab.
-_BLACK_POINT_HEADROOM = 1.15
-
 #: Dilation applied to the rejected-ink mask before it is whitened out, in
 #: pixels of the rendered image. The rejection is computed on a downscaled copy,
 #: so its boundary is coarse; without a margin the soft halo around a rejected
 #: mass survives as a grey fringe.
 _SUPPRESSION_MARGIN = 3
+
+
+class InkTreatment(str, Enum):
+    """How hard to work on a mark, decided by what the mark is.
+
+    Two settings, because two deliverables want opposite things and one
+    compromise served neither.
+
+    ``MARK`` is a signature or a handwritten declaration: a few thin strokes on
+    a page, where everything that is not a stroke is noise -- show-through,
+    ruling, dirt, the shadow of a fold. Clearing the page is most of the value,
+    and the mark loses nothing by it, because a pen stroke is either there or it
+    is not.
+
+    ``IMPRESSION`` is a thumb or finger impression, and the opposite is true.
+    The deliverable *is* the ridge pattern, which lives in a continuous range of
+    density, and every operation that decides "this pixel is ink and that one is
+    not" destroys some of it. Measured on the reference impression, clearing the
+    page outside the detected ink punched visible holes through the pattern.
+    So this treatment does the minimum that still fixes the capture: correct the
+    lighting, crop to the impression, balance the levels gently, and otherwise
+    leave it alone.
+    """
+
+    MARK = "mark"
+    IMPRESSION = "impression"
+
+
+#: White point per treatment, as depth below paper. Everything lighter than
+#: this becomes paper.
+#:
+#: A mark takes 0.10, just above paper grain, and relies on the ink mask to
+#: clear the page. An impression takes 0.09 -- close, but it reaches the page
+#: differently: no mask is applied, so the white point is the *only* thing
+#: cleaning the paper, and it has to do that without touching ridges.
+#:
+#: Swept on the reference impressions, median paper value in the delivered file:
+#: 0.03 -> 194, 0.06 -> 200, 0.09 -> 207 on the closer capture, and 215/223/231
+#: on the further one. Ridge detail is unaffected across the whole range -- the
+#: faintest ridges sit far below any of these -- so the value is chosen on paper
+#: cleanliness alone, and 0.09 is the cleanest that still changes nothing about
+#: the impression itself.
+_WHITE_POINT_DEPTH = {InkTreatment.MARK: 0.10, InkTreatment.IMPRESSION: 0.09}
+
+#: Black-point headroom per treatment, as a multiple of the deepest ink. Higher
+#: is gentler. A mark wants its strokes solid, so 1.15 puts the deepest ink near
+#: black. An impression wants its densest area to stay distinguishable from its
+#: second-densest, so 1.35 leaves more room at the bottom.
+_BLACK_POINT_HEADROOM_BY_TREATMENT = {
+    InkTreatment.MARK: 1.15,
+    InkTreatment.IMPRESSION: 1.35,
+}
 
 
 @dataclass(frozen=True)
@@ -106,6 +151,7 @@ _KEEP_MARGIN = 3
 def _render(
     flattened: np.ndarray[Any, Any],
     ink_depth: float,
+    treatment: InkTreatment,
     keep: "np.ndarray[Any, Any] | None" = None,
     suppress: "np.ndarray[Any, Any] | None" = None,
 ) -> np.ndarray[Any, Any]:
@@ -152,21 +198,24 @@ def _render(
     object was still rendered inside it: on the reference photograph a finger
     came through as a large grey smear across the corner of the output.
     """
-    white_point = 255.0 * (1.0 - _MINIMUM_ABSOLUTE_DEPTH)
-    black_point = 255.0 * (1.0 - min(ink_depth * _BLACK_POINT_HEADROOM, 1.0))
+    white_point = 255.0 * (1.0 - _WHITE_POINT_DEPTH[treatment])
+    headroom = _BLACK_POINT_HEADROOM_BY_TREATMENT[treatment]
+    black_point = 255.0 * (1.0 - min(ink_depth * headroom, 1.0))
     span = max(white_point - black_point, 1.0)
 
     rendered: np.ndarray[Any, Any] = (
         np.clip((flattened - black_point) / span, 0.0, 1.0) * 255.0
     )
-    if keep is not None:
+    if keep is not None and treatment is InkTreatment.MARK:
         rendered[~_dilate(keep, _KEEP_MARGIN)] = 255.0
     if suppress is not None and suppress.any():
         rendered[_dilate(suppress, _SUPPRESSION_MARGIN)] = 255.0
     return rendered
 
 
-def prepare_ink_document(image: Image.Image) -> InkPreparation:
+def prepare_ink_document(
+    image: Image.Image, treatment: InkTreatment = InkTreatment.MARK
+) -> InkPreparation:
     """Prepare one photograph of a signature, thumb impression or declaration."""
     source = np.asarray(image.convert("RGB")).astype(np.float32)
     analysis, scale = _analysis_copy(source)
@@ -179,9 +228,14 @@ def prepare_ink_document(image: Image.Image) -> InkPreparation:
     # same effect on every measurement that follows.
     flattened[~sheet_mask] = 255.0
 
-    ink = detect_ink(flattened, sheet_mask)
+    # Grouping by proximity is for writing only. An impression is a single
+    # mass and has nothing to be grouped with, so it is left out of it.
+    cluster = treatment is InkTreatment.MARK
+    ink = detect_ink(flattened, sheet_mask, cluster)
     if ink.box is None:
-        rendered = _render(flattened, max(ink.ink_depth, 1e-6), None, ink.rejected)
+        rendered = _render(
+            flattened, max(ink.ink_depth, 1e-6), treatment, None, ink.rejected
+        )
         return InkPreparation(
             image=Image.fromarray(rendered.astype(np.uint8)),
             paper=paper,
@@ -242,10 +296,11 @@ def prepare_ink_document(image: Image.Image) -> InkPreparation:
     final_estimate = estimate_paper_field(region, region_mask)
     final_flat = flatten_to_paper_white(region, final_estimate)
     final_flat[~region_mask] = 255.0
-    final_ink = detect_ink(final_flat, region_mask)
+    final_ink = detect_ink(final_flat, region_mask, cluster)
     rendered = _render(
         final_flat,
         max(final_ink.ink_depth, 1e-6),
+        treatment,
         final_ink.mask,
         final_ink.rejected,
     )

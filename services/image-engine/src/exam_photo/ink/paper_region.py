@@ -96,11 +96,27 @@ _REGION_PADDING = 0.02
 #: something the sheet has merely surrounded. See ``_fill_holes``.
 _MAXIMUM_HOLE_FRACTION = 0.02
 
-#: Erosion steps applied to the sheet mask, at the working resolution. Two
-#: steps at a 320-pixel working edge is a border of roughly 0.6% of the sheet,
-#: which clears the one-to-three pixel rim of edge shadow measured on the
-#: reference photographs without reaching any ink in them.
-_EROSION_STEPS = 2
+#: Erosion steps applied to the sheet mask, at the working resolution, when the
+#: sheet's own edge is visible in the frame. The paper/background boundary
+#: leaves a band of shadow and partial pixels that reads as ink all the way
+#: round, and it is that band -- not the writing -- that holds the crop box open
+#: across the whole sheet. Six steps at a 320-pixel working edge is a border of
+#: roughly 2%.
+_EROSION_STEPS_BORDERED = 6
+
+#: Erosion steps when no sheet edge is in frame, because the image is already a
+#: crop or a scan. Then there is no boundary band to remove and the "sheet" is
+#: the whole picture, so eroding eats the mark itself: measured on an approved
+#: signature output, six steps took its delivered aspect from 3.84 to 4.14 by
+#: trimming the strokes nearest the edge. Two steps still clears the one-to-three
+#: pixel rim that JPEG ringing leaves at a hard border.
+_EROSION_STEPS_FULL = 2
+
+#: Below this share of the frame, the sheet is taken to have a visible edge and
+#: the wider erosion applies. The reference photographs sit either side of it
+#: with room to spare: the hand-held slip occupies 0.40 of its frame, while the
+#: already-cropped captures occupy 0.90 to 1.00.
+_BORDERED_AREA_FRACTION = 0.85
 
 
 @dataclass(frozen=True)
@@ -313,7 +329,16 @@ def locate_paper(rgb: np.ndarray[Any, Any]) -> PaperRegion:
     if not candidate.any():
         return PaperRegion(full, everything, 1.0, is_fallback=True)
 
-    sheet = _erode(_fill_holes(_label_largest(candidate)), _EROSION_STEPS)
+    filled = _fill_holes(_label_largest(candidate))
+    # How much erosion depends on whether there is an edge to erode. A sheet
+    # photographed whole has a boundary band that must go; an image that is
+    # already a tight crop has none, and eroding it only eats the mark.
+    steps = (
+        _EROSION_STEPS_BORDERED
+        if float(filled.mean()) < _BORDERED_AREA_FRACTION
+        else _EROSION_STEPS_FULL
+    )
+    sheet = _erode(filled, steps)
     if not sheet.any():
         return PaperRegion(full, everything, 1.0, is_fallback=True)
     area_fraction = float(sheet.mean())

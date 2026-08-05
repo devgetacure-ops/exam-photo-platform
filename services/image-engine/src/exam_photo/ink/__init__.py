@@ -26,11 +26,16 @@ from exam_photo.ink.illumination import (
 )
 from exam_photo.ink.ink_mask import InkMaskResult, detect_ink
 from exam_photo.ink.paper_region import PaperRegion, crop_to_paper, locate_paper
-from exam_photo.ink.preparation import InkPreparation, prepare_ink_document
+from exam_photo.ink.preparation import (
+    InkPreparation,
+    InkTreatment,
+    prepare_ink_document,
+)
 
 __all__ = [
     "InkMaskResult",
     "InkPreparation",
+    "InkTreatment",
     "PaperFieldEstimate",
     "PaperRegion",
     "crop_to_paper",

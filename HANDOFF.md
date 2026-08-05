@@ -50,12 +50,21 @@ shape — which nothing in it touches. Signature, thumb impression and handwritt
 declaration all use it. **No OCR, no declaration text comparison** — the owner
 ruled that out; a declaration is prepared as a plain file.
 
-What it does on the reference set: paper to median 255 on all five inputs, the
-mark's own colour kept, both approved signatures reproduced closely, both thumb
-captures cropped tight, receipt show-through removed, the hand holding the sheet
-rejected. What it does not do: frame a small sheet in a large frame tightly —
-the crop comes out ~1.7× the mark's extent because the sheet's own edge reads as
-ink. Held by a ratcheted test; the file is usable, just loose.
+**Two treatments, and they are opposites.** A *mark* (signature, declaration) is
+a few strokes on a page where everything else is noise, so the page is cleared
+outside the detected ink. An *impression* (thumb, finger) is the reverse — the
+deliverable is the ridge pattern, it lives in continuous density, and any
+this-is-ink/this-is-not decision destroys some of it. Impressions get lighting
+correction, a crop and a gentle levels balance, and nothing else. Applying the
+mark treatment to an impression punched visible holes through the pattern; that
+is what the product owner rejected on review.
+
+On the reference set all five deliver clean paper with the mark's colour kept,
+both approved signatures are reproduced closely, both impressions keep every
+ridge, receipt show-through is removed and the hand holding the sheet rejected.
+The hard hand-held photograph now crops to 506×218 against a signature extent of
+about 430×110 — the sheet-edge streak that used to hold it open is gone, removed
+by grouping marks by proximity.
 
 Two consequences of the pivot that contradict statements elsewhere in this file:
 

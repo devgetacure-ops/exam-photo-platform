@@ -20,6 +20,8 @@ import pytest
 from PIL import Image
 
 from exam_photo.ink import (
+    InkPreparation,
+    InkTreatment,
     detect_ink,
     estimate_paper_field,
     flatten_to_paper_white,
@@ -241,22 +243,16 @@ def test_a_badly_lit_page_is_cropped_to_its_mark() -> None:
     assert result.image.height < 320, result.image.size
 
 
-def test_a_small_sheet_on_a_dark_background_is_not_cropped_tightly_yet() -> None:
-    """The case the engine does **not** handle, recorded rather than hidden.
+def test_a_small_sheet_on_a_dark_background_is_cropped_to_its_mark() -> None:
+    """The hard case: the sheet is an object in a larger frame.
 
-    When the sheet is a small object in a larger frame, the boundary between
-    paper and background survives as a line of ink-classified pixels, and it
-    drags the crop box out to the whole sheet. The same defect is visible on
-    the one real hand-held photograph in the reference set, whose crop comes
-    out roughly twice the signature's extent -- so this reproduces a real
-    limitation rather than inventing one.
-
-    What the engine still gets right here is the tonal half: the paper is
-    driven to white and the mark survives. The failure is framing alone, so the
-    delivered file is usable and merely loose. That is why this is a recorded
-    bound and not a blocking defect.
-
-    **The bound may fall. It may never rise.**
+    The boundary between paper and background survives every tonal test as a
+    line of ink-classified pixels -- dark enough to be ink, not solid enough to
+    be an obstruction, not sparse enough for a density test to see. It used to
+    drag the crop out to the whole sheet, and this test recorded that as a
+    bound. Grouping marks by proximity closed it: the sheet's edge runs along
+    the boundary of the page and the writing sits in the middle, so they are
+    different clusters and the small distant one is dropped.
     """
     sheet = _shadow(_paper(1200, 900, level=235, cast=(1.0, 0.97, 0.92)))
     sheet = _stroke(sheet, (400, 400, 800, 500), (40, 45, 130))
@@ -269,12 +265,12 @@ def test_a_small_sheet_on_a_dark_background_is_not_cropped_tightly_yet() -> None
     assert not result.is_blank
     delivered = np.asarray(result.image.convert("RGB")).astype(np.float32)
     assert np.percentile(delivered.min(axis=2), 75) > 250, "paper must be white"
+    assert delivered.min() < 120, "ink must still be dark"
 
-    # An ideal crop is about 470x170. Current behaviour is far looser, and on
-    # this synthetic the mark is lost from the crop entirely -- the sheet edge
-    # wins. Both facts are asserted so that either improving is visible.
-    assert result.image.width <= 900, result.image.size
-    assert result.image.height <= 950, result.image.size
+    # The drawn mark spans 400x70, so with the margin an ideal crop is near
+    # 465x135.
+    assert result.image.width < 620, result.image.size
+    assert result.image.height < 320, result.image.size
 
 
 def test_the_mark_keeps_its_own_colour() -> None:
@@ -315,3 +311,93 @@ def test_a_frame_with_no_bright_content_at_all_falls_back() -> None:
     region = locate_paper(black)
     assert region.is_fallback
     assert region.box.width == 200 and region.box.height == 200
+
+
+# --- Treatment: a mark and an impression want opposite things ---------------
+
+
+def _impression(level: int = 245) -> np.ndarray[Any, Any]:
+    """A blob whose density varies smoothly, like a ridge pattern."""
+    sheet = _paper(400, 500, level=level)
+    ys, xs = np.mgrid[0:500, 0:400]
+    radial = ((ys - 250) / 180.0) ** 2 + ((xs - 200) / 130.0) ** 2
+    inside = radial <= 1.0
+    # Density falls off toward the edge of the blob, and ridges modulate it.
+    density = np.clip(1.0 - radial, 0.0, 1.0) * (
+        0.55 + 0.45 * np.sin(ys / 7.0).clip(0, 1)
+    )
+    for channel, tint in enumerate((0.45, 0.40, 0.95)):
+        sheet[:, :, channel] = np.where(
+            inside, level * (1.0 - density * (1.0 - tint * 0.55)), sheet[:, :, channel]
+        )
+    return sheet
+
+
+def test_impression_treatment_keeps_the_mid_tones_a_mark_would_clear() -> None:
+    """The defect the product owner rejected, as a test.
+
+    Under the mark treatment the page outside the detected ink is cleared,
+    which on an impression punches holes through the ridge pattern. The
+    impression treatment must not do that.
+    """
+    sheet = _impression()
+    as_mark = prepare_ink_document(
+        Image.fromarray(sheet.astype(np.uint8)), InkTreatment.MARK
+    )
+    as_impression = prepare_ink_document(
+        Image.fromarray(sheet.astype(np.uint8)), InkTreatment.IMPRESSION
+    )
+
+    def blanked(result: InkPreparation) -> float:
+        """Share of the delivered frame driven to pure paper.
+
+        This is what "holes punched through the pattern" measures as. The
+        blob covers the same part of both frames, so a treatment that clears
+        more of it has erased more of the impression.
+        """
+        values = np.asarray(result.image.convert("L"))
+        return float((values >= 254).mean())
+
+    assert blanked(as_impression) < blanked(as_mark) - 0.05, (
+        blanked(as_impression),
+        blanked(as_mark),
+    )
+
+
+def test_impression_treatment_still_reaches_white_paper() -> None:
+    """Gentler is not the same as untouched: the capture is still corrected."""
+    sheet = _shadow(_impression(level=200), strength=0.2)
+    result = prepare_ink_document(
+        Image.fromarray(sheet.astype(np.uint8)), InkTreatment.IMPRESSION
+    )
+    delivered = np.asarray(result.image.convert("RGB")).astype(np.float32)
+    assert np.percentile(delivered.min(axis=2), 90) > 235
+
+
+# --- Grouping by proximity --------------------------------------------------
+
+
+def test_a_distant_stray_mark_is_dropped_from_the_crop() -> None:
+    """The sheet's edge is far from the writing, and that is what removes it."""
+    sheet = _paper(1000, 700, level=255)
+    sheet = _stroke(sheet, (120, 320, 520, 380), (30, 35, 130))
+    sheet[40:60, 900:960, :] = 40.0  # a mark in the far corner
+
+    result = prepare_ink_document(Image.fromarray(sheet.astype(np.uint8)))
+
+    assert result.crop_box is not None
+    assert result.crop_box.right < 700, result.crop_box
+    assert result.crop_box.top > 200, result.crop_box
+
+
+def test_the_separate_parts_of_one_signature_are_all_kept() -> None:
+    """Writing is a run of marks with gaps in it; the run is one thing."""
+    sheet = _paper(1000, 400, level=255)
+    sheet = _stroke(sheet, (120, 180, 380, 240), (30, 35, 130))
+    sheet = _stroke(sheet, (430, 180, 700, 240), (30, 35, 130))
+
+    result = prepare_ink_document(Image.fromarray(sheet.astype(np.uint8)))
+
+    assert result.crop_box is not None
+    assert result.crop_box.left < 160, result.crop_box
+    assert result.crop_box.right > 660, result.crop_box
