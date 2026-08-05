@@ -143,150 +143,13 @@
       "type": "object",
       "properties": {
         "dimensions": {
-          "type": "object",
-          "properties": {
-            "mode": {
-              "type": "string",
-              "enum": [
-                "exact",
-                "range",
-                "unspecified"
-              ]
-            },
-            "width_px": {
-              "type": "integer",
-              "minimum": 1
-            },
-            "height_px": {
-              "type": "integer",
-              "minimum": 1
-            },
-            "dpi": {
-              "type": "integer",
-              "minimum": 1
-            },
-            "aspect_ratio": {
-              "type": "string",
-              "pattern": "^[0-9]+:[0-9]+$"
-            },
-            "minimum_width_px": {
-              "type": "integer",
-              "minimum": 1
-            },
-            "maximum_width_px": {
-              "type": "integer",
-              "minimum": 1
-            },
-            "minimum_height_px": {
-              "type": "integer",
-              "minimum": 1
-            },
-            "maximum_height_px": {
-              "type": "integer",
-              "minimum": 1
-            },
-            "preferred_width_px": {
-              "type": "integer",
-              "minimum": 1
-            },
-            "preferred_height_px": {
-              "type": "integer",
-              "minimum": 1
-            },
-            "aspect_ratio_policy": {
-              "type": "string",
-              "enum": [
-                "fixed",
-                "flexible",
-                "derived",
-                "none"
-              ]
-            },
-            "platform_default_profile": {
-              "type": "string"
-            },
-            "permitted_pixel_range": {
-              "type": "string"
-            },
-            "recommended_aspect_ratio": {
-              "type": "string"
-            },
-            "fallback_reason": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "mode"
-          ],
-          "additionalProperties": false
+          "$ref": "#/$defs/dimensions"
         },
         "file_size": {
-          "type": "object",
-          "properties": {
-            "minimum_bytes": {
-              "type": "integer",
-              "minimum": 0
-            },
-            "maximum_bytes": {
-              "type": "integer",
-              "minimum": 1
-            },
-            "target_ceiling_ratio": {
-              "type": "number",
-              "minimum": 0.0,
-              "maximum": 1.0
-            },
-            "safety_margin_bytes": {
-              "type": "integer",
-              "minimum": 0
-            },
-            "size_unit_as_published": {
-              "type": "string"
-            },
-            "published_minimum": {
-              "type": "number"
-            },
-            "published_maximum": {
-              "type": "number"
-            }
-          },
-          "required": [
-            "maximum_bytes"
-          ],
-          "additionalProperties": false
+          "$ref": "#/$defs/fileSize"
         },
         "formats": {
-          "type": "object",
-          "properties": {
-            "allowed_formats": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              },
-              "minItems": 1,
-              "uniqueItems": true
-            },
-            "preferred_format": {
-              "type": "string"
-            },
-            "preserve_transparency": {
-              "type": "boolean"
-            },
-            "strip_metadata": {
-              "type": "boolean"
-            },
-            "colour_space": {
-              "type": "string"
-            },
-            "extension_policy": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "allowed_formats",
-            "preferred_format"
-          ],
-          "additionalProperties": false
+          "$ref": "#/$defs/formats"
         },
         "background": {
           "type": "object",
@@ -512,7 +375,12 @@
             },
             "face_coverage_basis": {
               "type": "string",
-              "enum": ["face_box_area", "face_height", "head_height", "unspecified"],
+              "enum": [
+                "face_box_area",
+                "face_height",
+                "head_height",
+                "unspecified"
+              ],
               "description": "How the body's published face-occupancy percentage is measured. Verified thresholds are 50%, 60-70%, about 75% and 80%, but the bodies do not agree on what is being measured, so the number alone is not comparable across exams."
             },
             "live_capture_required": {
@@ -548,19 +416,30 @@
               "properties": {
                 "policy": {
                   "type": "string",
-                  "enum": ["required", "prohibited", "unspecified"]
+                  "enum": [
+                    "required",
+                    "prohibited",
+                    "unspecified"
+                  ]
                 },
                 "fields": {
                   "type": "array",
                   "items": {
                     "type": "string",
-                    "enum": ["candidate_name", "photograph_date"]
+                    "enum": [
+                      "candidate_name",
+                      "photograph_date"
+                    ]
                   },
                   "uniqueItems": true
                 },
                 "position": {
                   "type": "string",
-                  "enum": ["bottom", "below_image", "unspecified"]
+                  "enum": [
+                    "bottom",
+                    "below_image",
+                    "unspecified"
+                  ]
                 },
                 "source_wording": {
                   "type": "string"
@@ -573,10 +452,15 @@
                     "const": "required"
                   }
                 },
-                "required": ["policy"]
+                "required": [
+                  "policy"
+                ]
               },
               "then": {
-                "required": ["policy", "fields"],
+                "required": [
+                  "policy",
+                  "fields"
+                ],
                 "properties": {
                   "fields": {
                     "minItems": 1
@@ -597,45 +481,7 @@
           "additionalProperties": false
         },
         "filename": {
-          "type": "object",
-          "properties": {
-            "mode": {
-              "type": "string",
-              "enum": [
-                "exact",
-                "pattern",
-                "unspecified"
-              ]
-            },
-            "exact_filename": {
-              "type": "string"
-            },
-            "pattern": {
-              "type": "string"
-            },
-            "allowed_characters": {
-              "type": "string"
-            },
-            "case_sensitive": {
-              "type": "boolean"
-            },
-            "extension_required": {
-              "type": "boolean"
-            },
-            "fallback_basename": {
-              "type": "string"
-            },
-            "collision_policy": {
-              "type": "string"
-            },
-            "instructions": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "mode"
-          ],
-          "additionalProperties": false
+          "$ref": "#/$defs/filename"
         },
         "exceptional_instructions": {
           "type": "object",
@@ -696,6 +542,14 @@
       ],
       "additionalProperties": false
     },
+    "requirements": {
+      "type": "array",
+      "description": "The complete inventory of what this examination requires at this stage. Optional so every record written before the inventory existed stays valid; absent means the deliverable research has not been done for this exam, never that the photograph is the only requirement.",
+      "items": {
+        "$ref": "#/$defs/examRequirement"
+      },
+      "minItems": 1
+    },
     "provenance": {
       "type": "object",
       "additionalProperties": {
@@ -706,8 +560,10 @@
             "enum": [
               "official",
               "inferred",
-              "platform_default"
-            ]
+              "platform_default",
+              "interim_default"
+            ],
+            "description": "'interim_default' marks a value the platform chose because no source published one -- a placeholder standing in until the real figure is supplied. It is deliberately distinct from 'platform_default', which is a settled policy choice: an interim value is known to be wrong-until-replaced, and a rule carrying one may not reach verified status."
           },
           "evidence_reference": {
             "type": "string"
@@ -825,7 +681,11 @@
       "properties": {
         "policy": {
           "type": "string",
-          "enum": ["permitted", "prohibited", "conditional"]
+          "enum": [
+            "permitted",
+            "prohibited",
+            "conditional"
+          ]
         },
         "condition": {
           "type": "string",
@@ -836,7 +696,9 @@
           "description": "Short verbatim anchor from the official bulletin."
         }
       },
-      "required": ["policy"],
+      "required": [
+        "policy"
+      ],
       "additionalProperties": false,
       "if": {
         "properties": {
@@ -844,12 +706,319 @@
             "const": "conditional"
           }
         },
-        "required": ["policy"]
+        "required": [
+          "policy"
+        ]
       },
       "then": {
-        "required": ["policy", "condition"],
+        "required": [
+          "policy",
+          "condition"
+        ],
         "description": "A conditional policy with no stated condition carries no more information than an omitted rule, so the condition is required here rather than left to each consumer to enforce."
       }
+    },
+    "dimensions": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": [
+            "exact",
+            "range",
+            "unspecified"
+          ]
+        },
+        "width_px": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "height_px": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "dpi": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "aspect_ratio": {
+          "type": "string",
+          "pattern": "^[0-9]+:[0-9]+$"
+        },
+        "minimum_width_px": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "maximum_width_px": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "minimum_height_px": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "maximum_height_px": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "preferred_width_px": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "preferred_height_px": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "aspect_ratio_policy": {
+          "type": "string",
+          "enum": [
+            "fixed",
+            "flexible",
+            "derived",
+            "none"
+          ]
+        },
+        "platform_default_profile": {
+          "type": "string"
+        },
+        "permitted_pixel_range": {
+          "type": "string"
+        },
+        "recommended_aspect_ratio": {
+          "type": "string"
+        },
+        "fallback_reason": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "mode"
+      ],
+      "additionalProperties": false
+    },
+    "fileSize": {
+      "type": "object",
+      "properties": {
+        "minimum_bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "maximum_bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "target_ceiling_ratio": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "safety_margin_bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "size_unit_as_published": {
+          "type": "string"
+        },
+        "published_minimum": {
+          "type": "number"
+        },
+        "published_maximum": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "maximum_bytes"
+      ],
+      "additionalProperties": false
+    },
+    "formats": {
+      "type": "object",
+      "properties": {
+        "allowed_formats": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "preferred_format": {
+          "type": "string"
+        },
+        "preserve_transparency": {
+          "type": "boolean"
+        },
+        "strip_metadata": {
+          "type": "boolean"
+        },
+        "colour_space": {
+          "type": "string"
+        },
+        "extension_policy": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "allowed_formats",
+        "preferred_format"
+      ],
+      "additionalProperties": false
+    },
+    "filename": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": [
+            "exact",
+            "pattern",
+            "unspecified"
+          ]
+        },
+        "exact_filename": {
+          "type": "string"
+        },
+        "pattern": {
+          "type": "string"
+        },
+        "allowed_characters": {
+          "type": "string"
+        },
+        "case_sensitive": {
+          "type": "boolean"
+        },
+        "extension_required": {
+          "type": "boolean"
+        },
+        "fallback_basename": {
+          "type": "string"
+        },
+        "collision_policy": {
+          "type": "string"
+        },
+        "instructions": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "mode"
+      ],
+      "additionalProperties": false
+    },
+    "deliverableFileSpec": {
+      "type": "object",
+      "description": "The output specification for one non-photograph deliverable. Every block is optional because the evidence is frequently partial -- a body publishes a signature's file size and nothing else -- and a block the research did not establish is omitted rather than defaulted. The photograph deliverable deliberately has no file_spec: its specification is the top-level image_requirements block, so there is exactly one place a photograph rule lives.",
+      "properties": {
+        "dimensions": {
+          "$ref": "#/$defs/dimensions"
+        },
+        "file_size": {
+          "$ref": "#/$defs/fileSize"
+        },
+        "formats": {
+          "$ref": "#/$defs/formats"
+        },
+        "filename": {
+          "$ref": "#/$defs/filename"
+        }
+      },
+      "additionalProperties": false
+    },
+    "examRequirement": {
+      "type": "object",
+      "description": "One item an examination requires during application. The examination is the product unit and this is a component of it, so the list is the complete inventory of what the candidate must provide -- including the items the platform cannot produce, which are recorded with the support state that says so rather than omitted. An omitted requirement reads as 'this exam does not ask for it', which for a live-capture or physical-stage item is false.",
+      "properties": {
+        "requirement_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9_]+$",
+          "description": "Stable identifier, unique within this rule. Orders and packages reference it, so it must not be regenerated from a display name that can change."
+        },
+        "requirement_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "requirement_type": {
+          "type": "string",
+          "enum": [
+            "photograph",
+            "signature",
+            "thumb_impression",
+            "handwritten_declaration",
+            "certificate_scan",
+            "identity_document",
+            "portal_declaration",
+            "other"
+          ],
+          "description": "What the item is. How it is provided is submission_method and the two are independent: a live portal photograph is type 'photograph' with method 'official_live_capture', not a type of its own."
+        },
+        "submission_method": {
+          "type": "string",
+          "enum": [
+            "file_upload",
+            "handwritten_then_uploaded",
+            "document_scan_upload",
+            "official_live_capture",
+            "external_identity_verification",
+            "typed_or_selected_declaration",
+            "physical_stage_requirement"
+          ],
+          "description": "How the candidate provides the item. This decides whether the platform can act at all: the first three produce a file, the last four happen inside the official portal or at a physical stage and can only be explained."
+        },
+        "requirement_status": {
+          "type": "string",
+          "enum": [
+            "mandatory",
+            "conditional",
+            "optional",
+            "portal_dependent"
+          ],
+          "description": "'conditional' means required only when the candidate claims a category, concession, accommodation or eligibility route, and applicability states which. 'portal_dependent' means the active portal decides and the published material does not."
+        },
+        "applicability": {
+          "type": "string",
+          "description": "Who must provide it, as published -- 'All applicants', 'PwBD candidates claiming a scribe'. Required in practice whenever requirement_status is 'conditional', because a conditional requirement that does not say when it applies carries no more information than an omitted one."
+        },
+        "platform_support": {
+          "type": "string",
+          "enum": [
+            "supported",
+            "partially_supported",
+            "guidance_only",
+            "physical_stage",
+            "not_yet_supported"
+          ],
+          "description": "What the platform does for this item. Kept separate from image_requirements.exceptional_instructions.processing_support_status, which answers a different question -- how completely the photograph pipeline satisfies the photograph rule. 'guidance_only' and 'physical_stage' must never be sold or bundled as outputs."
+        },
+        "file_spec": {
+          "$ref": "#/$defs/deliverableFileSpec"
+        },
+        "content_instructions": {
+          "type": "string",
+          "description": "Published instructions about the content itself rather than the file -- 'sign three times vertically on plain white paper in black ink'. Guidance for the candidate; the platform does not verify it."
+        },
+        "rejection_conditions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Published causes of rejection, verbatim in substance. Guidance only: most are not checkable from the file (DEC-041)."
+        },
+        "evidence_status": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "requirement_id",
+        "requirement_name",
+        "requirement_type",
+        "submission_method",
+        "requirement_status",
+        "platform_support"
+      ],
+      "additionalProperties": false
     }
   }
 }

@@ -1,6 +1,8 @@
 # Platform State
 
-**Last updated: 2026-08-05.** Branch `feat/pivot`, pushed and green.
+**Last updated: 2026-08-05.** Branch `feat/upload-platform-pivot`, pushed and
+green. It was renamed from `feat/pivot`, and `origin/feat/pivot` still points at
+the same commit until it is deleted.
 
 What this file is: the state a new session cannot reconstruct from the diff.
 Not a session note — keep it current rather than replacing it with a fresh one.
@@ -15,6 +17,39 @@ Read alongside:
 | `AGENTS.md` | The binding operating contract |
 
 ---
+
+## Direction
+
+The product is pivoting from photograph preparation to **exam-first application
+upload preparation**: the candidate selects an examination, sees every file it
+requires, and receives the ones the platform can prepare. Two source documents
+drive this — a product-direction report and a 48-examination deliverables
+report, both dated 2026-08-05, held outside the repository.
+
+What that changes, in one line: the photograph is roughly a quarter of what an
+application asks for. Across 50 stage-specific records the research counts ~48
+signature items, 44 photographs, 15 thumb impressions, 13 handwritten
+declarations and ~40 certificate or identity scans.
+
+Landed so far (DEC-047, DEC-048): the rule record can carry the full deliverable
+inventory, and interim placeholder values are structurally distinguishable from
+evidence. **Nothing writes either yet** — the encoder pass that populates
+`requirements[]` is the next step, and no rule record carries one today.
+
+Two consequences of the pivot that contradict statements elsewhere in this file:
+
+- **The four SSC examinations were dropped for the wrong reason.** "Live capture
+  only, nothing to deliver" is true of the photograph and false of the
+  examination — SSC requires an uploaded signature at 10-20 KB. The same applies
+  to several of the 11 not-encoded records, dropped for missing *photograph*
+  fields while carrying signature and certificate requirements.
+- **M19 is no longer the product blocker**, only the blocker for one deliverable
+  type. The deliverables report adds no photograph specifications: spot-checked
+  against UPPSC, MHT-CET and RPSC, the M19 tail gaps are unchanged.
+
+Handwriting OCR and declaration text-comparison are **out of scope** at the
+owner's direction. A declaration is prepared as a plain file — format, size,
+filename — with no content understanding.
 
 ## What the platform does today
 

@@ -14,7 +14,8 @@ Every rule file is a JSON object containing:
 * **status** (string, required): Enum of: `draft`, `provisional`, `verified`, `verified_with_ambiguity`, `expired`, `superseded`.
 * **exam** (object, required): Identifies the target exam cycle.
 * **source_evidence** (array, required): Source documentation evidence.
-* **image_requirements** (object, required): Physical image criteria (dimensions, sizes, etc.).
+* **image_requirements** (object, required): Physical image criteria (dimensions, sizes, etc.) for the examination's candidate photograph.
+* **requirements** (array, optional): The complete inventory of what the examination asks for at this stage. See *Requirements* below. Absence means the deliverable research has not been done for that examination — never that the photograph is the only requirement.
 * **provenance** (object, required): Field-level metadata origin tracking.
 * **verification** (object, required): Quality check status.
 * **effective_period** (object, optional): Cycle applicability period.
@@ -86,6 +87,42 @@ cost of error, covering religious head coverings and prescription eyewear.
 **An omitted appearance field means the body did not specify that rule.** It is
 never read as permission and never as prohibition.
 
+### Requirements
+
+One entry per item the examination asks for during application (DEC-047).
+
+* `requirement_id` (string, required): Unique within the rule, `^[a-z0-9_]+$`. Orders and packages reference it, so it must not be regenerated from a display name.
+* `requirement_name` (string, required).
+* `requirement_type` (string, required): `photograph`, `signature`, `thumb_impression`, `handwritten_declaration`, `certificate_scan`, `identity_document`, `portal_declaration`, `other`.
+* `submission_method` (string, required): `file_upload`, `handwritten_then_uploaded`, `document_scan_upload`, `official_live_capture`, `external_identity_verification`, `typed_or_selected_declaration`, `physical_stage_requirement`.
+* `requirement_status` (string, required): `mandatory`, `conditional`, `optional`, `portal_dependent`.
+* `platform_support` (string, required): `supported`, `partially_supported`, `guidance_only`, `physical_stage`, `not_yet_supported`.
+* `file_spec` (object, optional): `dimensions`, `file_size`, `formats`, `filename`, each reusing the `$defs` the photograph rule uses.
+* `applicability`, `content_instructions`, `rejection_conditions`, `evidence_status`, `notes` (optional).
+
+Type and method are independent: a live portal photograph is a `photograph`
+submitted by `official_live_capture`, not a type of its own.
+
+`platform_support` is a separate vocabulary from
+`image_requirements.exceptional_instructions.processing_support_status`. They
+answer different questions — what the platform does for one item, versus how
+completely the photograph pipeline satisfies a photograph rule.
+
+**The inventory includes items the platform cannot produce.** An omitted
+requirement reads as "this examination does not ask for it", which for a
+live-capture or physical-stage item is false.
+
+### provenance types
+
+`official`, `inferred`, `platform_default`, and `interim_default`.
+
+`interim_default` (DEC-048) marks a value the platform chose because no source
+published one — a placeholder standing in until the real figure is supplied. It
+is deliberately distinct from `platform_default`, which is a settled policy
+choice the platform stands behind. An interim value is known to be
+wrong-until-replaced, and collapsing the two would make every placeholder
+unfindable the moment the real figures arrive.
+
 ---
 
 ## 3. Contradiction Rules
@@ -98,8 +135,21 @@ The schema validator enforces:
 5. Fictional examples cannot have an officially verified status.
 6. A `conditional` appearance policy must state its `condition`. Without one it carries no more information than an omitted rule.
 7. A `required` imprint must name its `fields`. The engine cannot infer whether a body wants the name, the date, or both.
+8. A `photograph` requirement must not carry a `file_spec`. Its specification is `image_requirements`, so there is exactly one place a photograph rule can live.
+9. A submission method the platform cannot execute — `official_live_capture`, `external_identity_verification`, `typed_or_selected_declaration`, `physical_stage_requirement` — cannot be marked `supported` or `partially_supported`.
+10. `platform_support: physical_stage` and `submission_method: physical_stage_requirement` imply each other.
+11. `platform_support: supported` on a non-photograph requirement requires a `file_spec` carrying at least a `file_size` or a `formats` block. "Supported" is a promise to produce the file; dimensions alone leave nothing to encode or compress to.
+12. A `conditional` requirement must state its `applicability`, on the same reasoning as constraint 6.
+13. `requirement_id` is unique within a rule, and at most one photograph requirement may use a file-producing submission method — a rule carries one `image_requirements` block, so it can specify one uploaded photograph.
+14. A rule containing any `interim_default` provenance entry cannot hold `verified` or `verified_with_ambiguity` status. Interim entries additionally require `reasoning`, carry `confidence: 1`, and cannot be `approved`.
 
 Constraints 6 and 7 are expressed in the JSON Schema itself via `if`/`then`,
 not only in the Pydantic mirror. The schema is canonical and the web admin
 console validates against it directly, so a constraint living only in Python
 would let a TypeScript consumer accept an invalid record.
+
+Constraints 8 to 14 are cross-field and currently live in the Pydantic mirror
+only; the JSON Schema carries the shapes and enums. Every current writer —
+the encoder, the admin console and `POST /v1/rules/validate` — goes through
+`validate_exam_rule`, which runs both, so nothing writes a record that skips
+them. A future direct-to-JSON-Schema consumer would be the gap.
