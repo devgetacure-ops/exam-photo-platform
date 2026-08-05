@@ -1,259 +1,230 @@
 # Platform State
 
-**Last updated: 2026-08-05.** Branch `feat/upload-platform-pivot`, pushed and
-green. It was renamed from `feat/pivot`, and `origin/feat/pivot` still points at
-the same commit until it is deleted.
+**Last updated: 2026-08-06.** Branch `feat/upload-platform-pivot`, pushed and
+green. Renamed from `feat/pivot`; `origin/feat/pivot` still points at an old
+commit until someone deletes it.
+
+**The next session is UI work.** Start at *[Where to start: the web app](#where-to-start-the-web-app)*.
 
 What this file is: the state a new session cannot reconstruct from the diff.
-Not a session note — keep it current rather than replacing it with a fresh one.
+Not a session note — keep it current rather than appending to it. It has drifted
+into a chronology twice; if you find yourself writing "then X, then Y", rewrite
+the section as what is true now.
 
 Read alongside:
 
 | File | What it carries |
 |---|---|
-| `HANDOFF-INVARIANTS.md` | How composition work is done here: the invariant sweep, the ratchet, the planner/validator defect class, the verification sequence |
-| `docs/08_DECISION_LOG.md` | DEC-029..046. **Living** — amend an entry when implementation moves; never bend implementation to fit a stale one |
-| `docs/EXAM_RULE_GAP_REGISTER.md` | Generated. Which examinations are encoded, which are not, and why |
 | `AGENTS.md` | The binding operating contract |
+| `docs/08_DECISION_LOG.md` | DEC-029..053. **Living** — amend an entry when implementation moves; never bend implementation to fit a stale one |
+| `HANDOFF-INVARIANTS.md` | How composition work is done here: the invariant sweep, the ratchet, the planner/validator defect class |
+| `docs/EXAM_RULE_GAP_REGISTER.md` | Generated. Which examinations are encoded, which are not, and why |
 
 ---
 
-## Direction
+## What this product is
 
-The product is pivoting from photograph preparation to **exam-first application
-upload preparation**: the candidate selects an examination, sees every file it
-requires, and receives the ones the platform can prepare. Two source documents
-drive this — a product-direction report and a 48-examination deliverables
-report, both dated 2026-08-05, held outside the repository.
+**Exam-first application upload preparation.** A candidate picks an
+examination, sees every file that examination requires, provides the source
+material, and receives the ones the platform can prepare.
 
-What that changes, in one line: the photograph is roughly a quarter of what an
-application asks for. Across 50 stage-specific records the research counts ~48
-signature items, 44 photographs, 15 thumb impressions, 13 handwritten
-declarations and ~40 certificate or identity scans.
+It is no longer a photograph tool. The photograph is roughly a quarter of what
+an application asks for: across the researched set there are ~48 signature
+items, 44 photographs, 15 thumb impressions, 13 handwritten declarations and
+~40 certificate or identity scans.
 
-Landed so far (DEC-047, DEC-048, DEC-049): the rule record carries the full
-deliverable inventory, interim placeholder values are structurally
-distinguishable from evidence, and the encoder writes both from versioned
-research. All 39 encoded examinations now carry an inventory — 155 requirements,
-of which 39 are supported (the photographs), 16 guidance-only and 100 not yet
-supported, with 55 interim placeholders on signature and thumb-impression sizes
-and formats.
+Two source documents drive the pivot — a product-direction report and a
+48-examination deliverables report, both dated 2026-08-05. The deliverables
+report is committed at
+`packages/exam-rules/research/indian_exam_registration_deliverables_report_2026.md`;
+the product-direction report is held outside the repository.
 
-**104 of 155 requirements are now served** (DEC-051), up from 39: 37
-photographs, 39 signatures, 15 thumb impressions, 13 declarations.
-`orchestration/deliverable_pipeline.py` turns an upload into the actual file --
-right pixel dimensions, under the byte ceiling, correct filename.
+## What works, end to end
 
-**135 of 155 are served** once the PDF path landed (DEC-052) — the 31
-certificate scans joined. `exam_photo.pdf` assembles a PDF from prepared pages
-and restructures an uploaded one to a size limit.
+The engine is essentially complete for the deliverable types below. Give it an
+upload and a requirement, get back a compliant file.
 
-`pdf/document.py` assembles several uploads into one document (DEC-053) — add
-pages to a PDF the candidate already has, reorder them, rotate, omit, repeat.
-Order is a list of stable page references, so the arrangement is replayable.
+| Deliverable | Treatment | Notes |
+|---|---|---|
+| Photograph | Face pipeline | Crop, matte, background, size, compress, name |
+| Signature | Ink `MARK` | Page cleared around the strokes, ink deepened |
+| Thumb impression | Ink `IMPRESSION` | Lighting corrected, cropped, **not** masked |
+| Handwritten declaration | Ink `PAGE` | The whole sheet, never cropped to its writing |
+| Certificate / ID scan | Ink `PAGE` + PDF | Image→PDF, or an existing PDF restructured |
+| Multi-page document | `pdf/document.py` | Add pages, reorder, rotate, omit, repeat |
 
-The load-bearing rule there: a **scan** may be re-encoded and downscaled, a
-**document** may not be re-rendered. A digitally issued certificate's text is
-real text, and rasterising it to hit a byte ceiling destroys what makes it
-verifiable while succeeding on every number being watched. Pages are classified
-by image area and extractable text, and the refusal is structural.
+**Catalogue: 39 examinations, 155 requirements.** 135 supported, 16
+guidance-only (live capture and portal declarations — correctly never ours), 2
+partially supported (need a name/date printed on the photograph, which the
+engine cannot render), 2 not yet supported.
 
-The ink-on-paper engine (`exam_photo.ink`, DEC-050) exists and is the opposite
-of the photograph rule: paper is driven to pure white and ink to full strength,
-because paper carries no information in its tones and the mark's identity is its
-shape — which nothing in it touches. Signature, thumb impression and handwritten
-declaration all use it. **No OCR, no declaration text comparison** — the owner
-ruled that out; a declaration is prepared as a plain file.
+**86 interim placeholder values** are in the catalogue, all marked
+`interim_default` in provenance. They are signature and thumb-impression sizes
+and formats, plus a 400 KB certificate ceiling set by the product owner. When
+real per-exam research lands, `type == interim_default` finds every one.
 
-**Two treatments, and they are opposites.** A *mark* (signature, declaration) is
-a few strokes on a page where everything else is noise, so the page is cleared
-outside the detected ink. An *impression* (thumb, finger) is the reverse — the
-deliverable is the ridge pattern, it lives in continuous density, and any
-this-is-ink/this-is-not decision destroys some of it. Impressions get lighting
-correction, a crop and a gentle levels balance, and nothing else. Applying the
-mark treatment to an impression punched visible holes through the pattern; that
-is what the product owner rejected on review.
+## Where to start: the web app
 
-On the reference set all five deliver clean paper with the mark's colour kept,
-both approved signatures are reproduced closely, both impressions keep every
-ridge, receipt show-through is removed and the hand holding the sheet rejected.
-The hard hand-held photograph crops to 506×218 against a signature extent of
-about 430×110 — the sheet-edge streak that used to hold it open is gone, removed
-by grouping marks by proximity.
+`apps/web` is the pre-pivot flow and it is the gap. It does: pick a rule →
+upload one photograph → see validation → download. It has no concept of an
+examination's *inventory*, which is now the product.
 
-**The reference set is five photographs, so it is not the safety net.**
-`tests/ink/test_ink_robustness.py` is: ~100 synthetic captures across ink colour
-and strength, exposure, colour temperature, uneven light, paper tone, distance,
-focus, noise and show-through, asserting structural properties rather than
-numbers. It is marked `ink_robustness` and runs as its own CI stage. It has
-already caught two defects the reference set could not — a declaration losing
-its lower lines, and proximity grouping running twice at different scales — so
-**add a case to it before tuning a constant against a new photograph.**
+What exists and is worth keeping:
 
-Two consequences of the pivot that contradict statements elsewhere in this file:
+- `src/components/upload-card.tsx`, `result-preview.tsx`, `validation-report.tsx`,
+  `processing-status.tsx` — sound parts, wrong composition.
+- `src/app/admin/rules/` — the local rule console. Independent of the pivot and
+  still works.
+- `src/lib/api-client.ts` — talks to the local FastAPI service.
 
-- **The four SSC examinations were dropped for the wrong reason.** "Live capture
-  only, nothing to deliver" is true of the photograph and false of the
-  examination — SSC requires an uploaded signature at 10-20 KB. The same applies
-  to several of the 11 not-encoded records, dropped for missing *photograph*
-  fields while carrying signature and certificate requirements.
-- **M19 is no longer the product blocker**, only the blocker for one deliverable
-  type. The deliverables report adds no photograph specifications: spot-checked
-  against UPPSC, MHT-CET and RPSC, the M19 tail gaps are unchanged.
+What the UI now has to express, in rough order of value:
 
-Handwriting OCR and declaration text-comparison are **out of scope** at the
-owner's direction. A declaration is prepared as a plain file — format, size,
-filename — with no content understanding.
+1. **The kit.** Select an examination, see all its requirements with their
+   status. The data is already in each rule record's `requirements[]`.
+2. **The boundary.** `platform_support` distinguishes `supported` from
+   `guidance_only` and `physical_stage`. These must never look alike — a
+   candidate believing the platform completed their SSC live capture is the
+   product's worst failure mode, and it is a labelling problem, not a technical
+   one.
+3. **Per-item upload and preparation**, including multi-page documents with
+   reordering (`pdf/document.py` is built for exactly this).
+4. **Package delivery** — the ZIP, checklist and validation report.
 
-## What the platform does today
-
-A candidate selects an examination, uploads a photograph, and receives a
-compliant file. End to end, that works:
-
-- **Crop** — one composition for every examination: the tightest crop that keeps
-  hair, ears and the chin/beard boundary intact, with the bottom edge anchored
-  just under the chin. Verified against the product owner's ten
-  `perfect`-labelled photographs; below-chin space runs 0.081–0.146 of frame
-  height against an approved-reference median of 0.102.
-- **Background** — BiRefNet matting (the pipeline default), re-run on the crop
-  region at native resolution, composited onto the required colour.
-- **Sizing** — from the examination's published dimensions where they exist,
-  from the body's published *preferred* size where it names one, and otherwise
-  from the photograph's own crop geometry inside a 240–1200 px envelope.
-- **Compression** — binary-searched to land just under the byte ceiling.
-  Measured 30–88% of ceiling across the encoded examinations.
-- **Naming** — the body's required filename where published, otherwise a
-  PII-free default.
-
-Verified end to end across five rules spanning every dimension mode: 20 of 20
-outputs correct on pixel dimensions, byte ceiling, format and filename.
+**The API does not yet expose any of this.** `api/app.py` serves
+`/v1/process` for a single photograph plus job status, output and rule
+validation. Deliverable preparation
+(`orchestration/deliverable_pipeline.prepare_deliverable`) and document
+assembly (`pdf.assemble_document`) are library calls with no endpoint. Adding
+those endpoints is the first engineering step of the UI work.
 
 ## What it demonstrably cannot do
 
-State these plainly rather than discovering them again:
+State these plainly rather than discovering them again.
 
-- **Serve a live-capture-only examination.** All four SSC examinations
-  photograph the candidate through the portal. There is no upload, so there is
-  nothing to prepare. Dropped from the catalogue at the owner's direction.
-- **Print a name or date onto the photograph.** TNPSC and Kerala PSC require it.
-  Both records are marked `partially_supported` with the reason stated, so no
-  caller can read a complete success into them.
-- **Detect a beard line.** Three signals were tried and rejected on measured
-  evidence (DEC-035). The engine approximates with a uniform chin-plus-margin.
-- **Detect sunglasses, head coverings or closed eyes to a publishable standard.**
-  Eye-blink scoring was built, measured, found not to separate, and removed.
-  Milestone 23.
+- **Serve a live-capture-only examination's photograph.** All four SSC
+  examinations photograph the candidate through the portal. Their *signatures*
+  are deliverable and currently are not encoded — see the gap register's
+  "examinations not encoded that still have deliverables". A rule record
+  requires a photograph specification, and that is what blocks them.
+- **Print a name or date onto a photograph.** TNPSC and Kerala PSC require it.
+  Marked `partially_supported` with the reason, so no caller reads a complete
+  success into them.
+- **Convert an existing PDF into an image.** Deliberate (DEC-052). Rasterising
+  a digitally issued certificate destroys what makes it verifiable.
+- **Detect a beard line**, or **sunglasses, head coverings, closed eyes** to a
+  publishable standard. Signals were built, measured, found not to separate,
+  and removed.
 - **Measure a delivered photograph against its own invariants.**
-  `check_composition_invariants` has no pipeline consumer — the sweep is its only
-  caller, so the planner is gated but a real upload is never checked. See the
-  gap note in `HANDOFF-INVARIANTS.md`.
+  `check_composition_invariants` has no pipeline consumer. See
+  `HANDOFF-INVARIANTS.md`.
+- **Write text into a PDF**, or OCR anything. No declaration text comparison —
+  ruled out by the owner.
 
-## The examination catalogue
+## Rule records are generated, never hand-written
 
-39 encoded, 11 not. Statuses reflect what the evidence supports:
-
-| Status | Count | Meaning |
-|---|---|---|
-| `verified` | 17 | Official dimensions, file size and format |
-| `verified_with_ambiguity` | 15 | Official size and format; the body publishes no pixel dimensions, so the engine sizes from the crop |
-| `provisional` | 7 | Values found only on secondary sources. Kept servable at the owner's direction, with the aggregator citation visible in `source_evidence` |
-
-**Rule records are generated, never hand-written.** `scripts/encode_exam_rules.py`
-reads the versioned research in `packages/exam-rules/research/` and rebuilds the
-whole catalogue plus the gap register. The script owns every file matching its
-prefix, so a re-run replaces rather than adds. It takes two sidecars — the
-photograph specifications, and the deliverable inventory produced from the
-report by `scripts/extract_deliverables.py`:
+`scripts/encode_exam_rules.py` reads the versioned research in
+`packages/exam-rules/research/` and rebuilds the whole catalogue plus the gap
+register. It owns every file matching its prefix, so a re-run replaces rather
+than adds.
 
 ```bash
 python scripts/extract_deliverables.py --report packages/exam-rules/research/indian_exam_registration_deliverables_report_2026.md --out packages/exam-rules/research/exam_deliverables_2026.json
 python scripts/encode_exam_rules.py --specs packages/exam-rules/research/exam_photo_specs_2026.json --deliverables packages/exam-rules/research/exam_deliverables_2026.json --out examples/rules --report docs/EXAM_RULE_GAP_REGISTER.md
 ```
 
-The consequence matters: **to change a rule, change the evidence and re-run.**
-Editing `examples/rules/exam_*.json` by hand works until the next regeneration
-silently discards it, and in the meantime the record asserts something no source
-supports.
+**To change a rule, change the evidence and re-run.** Editing
+`examples/rules/exam_*.json` by hand works until the next regeneration silently
+discards it, and meanwhile the record asserts something no source supports.
 
 ## Load-bearing decisions
 
-These are not incidental. Undoing one changes what the product is, so undo it
-deliberately and amend the decision log rather than quietly.
+Undoing one changes what the product is. Undo it deliberately and amend the
+decision log rather than quietly.
 
-1. **One composition, no per-exam profile** (DEC-045). Every examination gets the
-   tight crop. No researched body publishes a coverage maximum it would breach;
-   all publish minima it clears. The loose presets were removed because they
-   also omitted four settings the tight one carries.
-2. **Produce, never refuse for appearance or composition** (DEC-041, DEC-045).
-   Only an undecodable file, no detectable face, or a genuinely ambiguous
-   subject may block. A refusal and a silent failure are the same outcome to a
-   candidate, and refusing delivers strictly less than the compromise it
-   rejects.
-3. **Never distort to hit a target.** The output preparer refuses on an aspect
-   mismatch beyond 1% rather than stretching, on both the exact and range paths.
-   The delivered aspect always follows the crop.
-4. **Absent is not permissive.** A rule the research recorded as `not_found` is
-   omitted, never defaulted. An absent rule and a permissive rule are different
-   statements and only the first is true.
+1. **Produce, never refuse for appearance or composition** (DEC-041). Only an
+   undecodable file, no detectable face, or a genuinely ambiguous subject may
+   block. A refusal and a silent failure are the same outcome to a candidate.
+2. **Absent is not permissive** (DEC-049). A rule the research recorded as
+   `not_found` is omitted, never defaulted.
+3. **Never distort to hit a target.** Aspect mismatch is padded or refused,
+   never stretched. A stretched signature is not the candidate's signature.
+4. **One composition for every examination** (DEC-045). No per-exam crop
+   profile.
+5. **A scan may be re-encoded; a document may not be re-rendered** (DEC-052).
+   The single most important rule in the PDF path.
+6. **Support is a promise.** `platform_support: supported` requires a
+   specification behind it, and a submission method the platform cannot execute
+   can never be marked supported. Both enforced in the model.
+7. **On paper, correct aggressively; on a face, barely at all** (DEC-043,
+   DEC-050). Opposite rules for opposite subjects, in separate packages so
+   neither gets "simplified" into the other.
+
+## The recurring failure mode
+
+Recorded because it happened four times in one session and cost real rework.
+
+**Every metric that improves by removing content reads as an improvement.**
+Paper got whiter as the thumb impression was destroyed. Ink coverage looked
+correct while a finger was rendered across the output. Crop tightness improved
+while letters lost their strokes. In each case the numbers being watched stayed
+green and only looking at the image caught it.
+
+So: **bring pictures, not numbers.** And before tuning a constant against a new
+photograph, add a case to `tests/ink/test_ink_robustness.py` — the reference set
+is five photographs and is not a safety net. That sweep has already caught two
+defects the reference set could not.
 
 ## Open risks, in priority order
 
-1. **M24 throughput.** 16–24 s per photograph on CPU, roughly doubled by the
-   crop-region rematte, so 30–40 s each. At national examination-cycle
-   concurrency this is not viable. **Probe it before investing in matte
-   quality** — a forced model change invalidates part of M22.
-2. **M22 matte defects.** The owner's outstanding flags on the reviewed set:
-   photo 17 a detached hair fragment (the default matte path does no
-   connectivity cleanup at all), photos 18 and 19 soft hair edges where dark
-   hair meets a dark background, photo 8 under-enhancement. The fragment fix is
-   backend-independent and safe to do now; the soft-edge fix is
-   matte-resolution-dependent and should wait on the throughput probe.
-3. **Invariants unwired.** See above — the detector exists and nothing calls it.
-4. **M19 tail.** Confirm the 15 size-only examinations genuinely publish no
-   pixel dimensions. UPPSC and MHT-CET are one field short each (most likely
-   JPEG); CTET and MPSC publish a physical size with no DPI, and either would
-   convert to exact pixels if a stated DPI is found.
-5. **RRB transposition** (DEC-046). Both RRB records publish a
-   self-contradictory figure and are recorded upright as a judgement. Re-check
-   against the live notification before either leaves `verified`.
+1. **Throughput.** 30–40 s per photograph on CPU. The product owner has taken
+   this as their own item — **do not spend engineering effort on it unasked.**
+2. **The API surface for deliverables.** Everything new is library-only. The UI
+   cannot start without endpoints.
+3. **Ten examinations dropped for a photograph reason** while carrying 23
+   non-photograph deliverables between them, including all four SSC. Fixing it
+   means letting a rule record exist without a photograph specification.
+4. **Service hardening and privacy.** The API is local-only by design — no TLS,
+   auth or rate limiting — and candidate face photographs are sensitive personal
+   data under the DPDP Act. Both precede anything public.
+5. **Invariants unwired**, and the **M22 matte defects** (a detached hair
+   fragment on photo 17; soft hair edges on 18 and 19).
 
 ## Verifying
 
 `.github/workflows/image-engine-ci.yml` is the source of truth. `pytest` alone
-does not cover the eleven `mandatory_*` marker suites.
+covers neither the eleven `mandatory_*` marker suites nor `ink_robustness`.
 
 ```bash
 cd services/image-engine && ruff format --check . && ruff check . && .venv/Scripts/python.exe -m mypy src tests
 ```
 
-Current: format, lint and mypy clean across 118 files; 176 core tests passing,
-15 skipped; all eleven marker suites green; invariant sweep at 0 violations of
-960.
+Current: format, lint and mypy clean across 137 files. 274 fast tests passing,
+15 skipped. `ink_robustness` (~100 synthetic captures) green as its own CI
+stage. Marker suites green. Invariant sweep 0 violations of 960.
 
-Model assets are present under `model-assets/`. Run marker suites from the repo
-root with `EXAM_PHOTO_FACE_MODEL_PATH` / `EXAM_PHOTO_SEGMENTER_MODEL_PATH` and
-their `*_SHA256` set as the workflow sets them.
+Model assets are under `model-assets/`. Run marker suites from the repo root
+with `EXAM_PHOTO_FACE_MODEL_PATH` / `EXAM_PHOTO_SEGMENTER_MODEL_PATH` and their
+`*_SHA256` set as the workflow sets them.
 
 ## Reference material — local only, never commit
 
-The ink-on-paper reference set is at `C:\Users\dmbar\Pictures\other-exam-uploads`
-— `signature/good` holds two approved outputs (the target), `signature/bad` and
-`thumb impression/` hold real captures. Five images, and every constant in
-`exam_photo.ink` is calibrated against them with the measurement recorded beside
-it. Neither remaining gap needs closing, at the owner's direction: **a pencil
-signature is out of scope** (no researched examination accepts one), and a
-**handwritten declaration is an ordinary photographed sheet** — the same kind
-of input as the certificate scans, needing no separate sample.
+| What | Where |
+|---|---|
+| Ink-on-paper set (5 images) | `C:\Users\dmbar\Pictures\other-exam-uploads` |
+| 40-photo labelled set | `C:\Users\dmbar\Pictures\new-test-images` (ten `perfect`) |
+| Reviewed photo outputs | `C:\Users\dmbar\Pictures\Engine Outputs - Clean Set` at 413×531 |
 
-The 40-photo labelled set at `C:\Users\dmbar\Pictures\new-test-images` is the
-current specification; ten are labelled `perfect`. The outputs the owner last
-reviewed are in `C:\Users\dmbar\Pictures\Engine Outputs - Clean Set` at 413×531.
+Every constant in `exam_photo.ink` is calibrated against the ink set, with the
+measurement recorded beside it. Two gaps are closed by owner ruling rather than
+by samples: **a pencil signature is out of scope**, and **a handwritten
+declaration is an ordinary photographed sheet** needing no separate sample.
+
 **The 60-photo paired set is retired — do not use it**, and do not run
 `scripts/benchmark_reference_pairs.py`, which targets it.
 
-The working loop for any composition change: run the ten `perfect` photographs
-through `process_rule`, measure head height, above-hair and below-chin on the
-output, and diff against the reviewed set. The synthetic sweep alone is not
-sufficient — it read zero while a photograph the owner had flagged by eye was
-still visibly wrong, because synthetic head boxes do not extend past the jaw the
-way real ones do.
+For any composition change: run the ten `perfect` photographs through
+`process_rule`, measure head height, above-hair and below-chin on the output,
+and diff against the reviewed set. The synthetic sweep alone is not sufficient
+— it read zero while a photograph the owner had flagged by eye was visibly
+wrong, because synthetic head boxes do not extend past the jaw the way real
+ones do.
