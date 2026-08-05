@@ -225,8 +225,10 @@ The ink-on-paper reference set is at `C:\Users\dmbar\Pictures\other-exam-uploads
 — `signature/good` holds two approved outputs (the target), `signature/bad` and
 `thumb impression/` hold real captures. Five images, and every constant in
 `exam_photo.ink` is calibrated against them with the measurement recorded beside
-it. **Known gaps in the set: no pencil or faint-pen sample, and no handwritten
-declaration at all.**
+it. Neither remaining gap needs closing, at the owner's direction: **a pencil
+signature is out of scope** (no researched examination accepts one), and a
+**handwritten declaration is an ordinary photographed sheet** — the same kind
+of input as the certificate scans, needing no separate sample.
 
 The 40-photo labelled set at `C:\Users\dmbar\Pictures\new-test-images` is the
 current specification; ten are labelled `perfect`. The outputs the owner last

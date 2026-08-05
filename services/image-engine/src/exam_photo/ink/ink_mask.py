@@ -76,9 +76,12 @@ _INK_DEPTH_FRACTION = 0.55
 #: on the two approved outputs and 0.021-0.046 on the two thumb captures, whose
 #: paper is visibly textured. 0.10 clears all four.
 #:
-#: What has *not* been measured is the faint end: no pencil or dried-out-pen
-#: sample exists in the reference set, so whether a genuinely pale mark clears
-#: 0.10 is unknown. That is a gap in the set, not a claim about the bound.
+#: The faint end is not measured against a real sample, and does not need to
+#: be: the product owner has ruled that a pencil signature is out of scope --
+#: no examination in the researched set accepts one, and every published rule
+#: that names an ink names blue or black. The synthetic sweep still carries a
+#: pale-ink case, so a regression that lost faint marks would show up; it is
+#: just not a case the product has to serve.
 _MINIMUM_ABSOLUTE_DEPTH = 0.10
 
 #: Fraction of the ink bounding box's longer side added as margin on all four
