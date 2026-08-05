@@ -1,0 +1,107 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "karnataka-common-entrance-test-2026",
+  "rule_version": "1.0.0",
+  "status": "provisional",
+  "exam": {
+    "exam_id": "karnataka-common-entrance-test-2026",
+    "exam_name": "Karnataka Common Entrance Test 2026",
+    "conducting_body": "Karnataka Examinations Authority",
+    "examination_year": 2026,
+    "application_cycle": "2026",
+    "aliases": [
+      "KCET 2026"
+    ],
+    "application_stage": "application",
+    "jurisdiction": "Karnataka",
+    "category": "entrance"
+  },
+  "source_evidence": [
+    {
+      "source_type": "secondary_reference",
+      "official_source": false,
+      "captured_wording": "3.5 x 4.5 cm; 50 KB; JPG/JPEG; white background",
+      "source_url": "https://engineering.careers360.com/articles/kcet-photo-signature-size-guidelines",
+      "document_title": "KCET 2026 photograph specification"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "unspecified",
+      "fallback_reason": "No pixel dimensions are published by the conducting body. The output size is chosen per photograph from the crop geometry rather than from a fixed default.",
+      "permitted_pixel_range": "3.5 \u00d7 4.5 cm"
+    },
+    "file_size": {
+      "maximum_bytes": 50000,
+      "size_unit_as_published": "KB",
+      "published_maximum": 50.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpg",
+        "jpeg"
+      ],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "exact_colour",
+      "required_colour": "#FFFFFF",
+      "tolerance": 3.0
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "unspecified"
+    },
+    "appearance": {},
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false
+    },
+    "exceptional_instructions": {
+      "processing_support_status": "supported"
+    }
+  },
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "inferred",
+      "evidence_reference": "KCET 2026 photograph specification (https://engineering.careers360.com/articles/kcet-photo-signature-size-guidelines)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 2,
+      "approved": false
+    },
+    "image_requirements.dimensions": {
+      "type": "inferred",
+      "reasoning": "The conducting body publishes no pixel dimensions. The output size is chosen per photograph from the crop geometry, so no dimension is asserted on the body's behalf.",
+      "confidence": 1,
+      "approved": false
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    },
+    "image_requirements": {
+      "type": "inferred",
+      "reasoning": "Values for this examination were located only on secondary sources, not on the conducting body's own material. Recorded so the examination is servable, and held at provisional status so the dependence stays visible until an official source is found.",
+      "confidence": 2,
+      "approved": false
+    }
+  },
+  "verification": {
+    "verification_status": "provisional"
+  },
+  "fictional_example": false
+}

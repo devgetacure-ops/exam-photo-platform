@@ -1,0 +1,132 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "kerala-psc-one-time-registration-photograph",
+  "rule_version": "1.0.0",
+  "status": "verified",
+  "exam": {
+    "exam_id": "kerala-psc-one-time-registration-photograph",
+    "exam_name": "Kerala PSC One Time Registration Photograph",
+    "conducting_body": "Kerala Public Service Commission",
+    "examination_year": 2026,
+    "application_cycle": "current OTR",
+    "application_stage": "application",
+    "jurisdiction": "Kerala",
+    "category": "state_psc"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_webpage",
+      "official_source": true,
+      "captured_wording": "150 pixels width and 200 pixels height; 30 Kb; JPG; white/light coloured background; face at the centre; front facial pose; eyes open; religious custom",
+      "source_url": "https://psc.kerala.gov.in/kpsc/faq.php",
+      "document_title": "Kerala PSC FAQ / One Time Registration",
+      "section_name": "Photograph upload FAQ"
+    },
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "name of the applicant and the date; bottom; within six months",
+      "source_url": "https://keralapsc.gov.in/sites/default/files/2024-11/noti-373-24.pdf",
+      "document_title": "Kerala PSC Notification No. 373/2024",
+      "document_identifier": "373/2024"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "exact",
+      "width_px": 150,
+      "height_px": 200,
+      "aspect_ratio": "3:4"
+    },
+    "file_size": {
+      "maximum_bytes": 30000,
+      "size_unit_as_published": "Kb",
+      "published_maximum": 30.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpg"
+      ],
+      "preferred_format": "jpg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "plain_light",
+      "fallback_colour": "#FFFFFF"
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "unspecified",
+      "face_centred": true,
+      "frontal_pose": true,
+      "eye_visibility": true
+    },
+    "appearance": {
+      "headwear": {
+        "policy": "conditional",
+        "condition": "Cap/goggles prohibited except where required by religious custom; face and shoulders must remain clear.",
+        "source_wording": "religious custom"
+      },
+      "recency_maximum_days": 180,
+      "imprint": {
+        "policy": "required",
+        "fields": [
+          "candidate_name",
+          "photograph_date"
+        ],
+        "position": "bottom"
+      }
+    },
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false
+    },
+    "exceptional_instructions": {
+      "printed_name": true,
+      "printed_date": true,
+      "headwear_restriction": true,
+      "recent_photo_requirement": true,
+      "processing_support_status": "partially_supported",
+      "unsupported_requirement_reasons": [
+        "The body requires the candidate's name and/or the photograph date printed on the image. The engine has no text-rendering capability, so the photograph is produced correctly sized and composed but without the imprint, which the candidate must add before uploading."
+      ]
+    }
+  },
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "Kerala PSC FAQ / One Time Registration - Photograph upload FAQ (https://psc.kerala.gov.in/kpsc/faq.php)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "official",
+      "evidence_reference": "Kerala PSC FAQ / One Time Registration - Photograph upload FAQ (https://psc.kerala.gov.in/kpsc/faq.php)",
+      "reasoning": "Pixel dimensions transcribed from the cited source.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "verified"
+  },
+  "fictional_example": false
+}

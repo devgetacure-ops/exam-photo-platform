@@ -1,0 +1,100 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "mpsc-general-online-application-photograph-instruction",
+  "rule_version": "1.0.0",
+  "status": "verified_with_ambiguity",
+  "exam": {
+    "exam_id": "mpsc-general-online-application-photograph-instruction",
+    "exam_name": "MPSC General Online Application Photograph Instruction",
+    "conducting_body": "Maharashtra Public Service Commission",
+    "examination_year": 2026,
+    "application_cycle": "current portal guide",
+    "application_stage": "application",
+    "jurisdiction": "Maharashtra",
+    "category": "state_psc"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "3.5 cm x 4.5 cm; 50 KB; .jpg or .jpeg; solid colour background; preferably blue, green or red; no shadows; directly facing the camera",
+      "source_url": "https://mpsconline.gov.in/downloads/Instructions-for-Filling-the-Application-Form.pdf",
+      "document_title": "Instructions for Filling the Application Form",
+      "section_name": "Photograph instructions"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "unspecified",
+      "fallback_reason": "No pixel dimensions are published by the conducting body. The output size is chosen per photograph from the crop geometry rather than from a fixed default.",
+      "permitted_pixel_range": "3.5 cm \u00d7 4.5 cm"
+    },
+    "file_size": {
+      "maximum_bytes": 50000,
+      "size_unit_as_published": "KB",
+      "published_maximum": 50.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpg",
+        "jpeg"
+      ],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "plain_background",
+      "fallback_colour": "#FFFFFF",
+      "shadows_allowed": false
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "unspecified",
+      "frontal_pose": true
+    },
+    "appearance": {},
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false
+    },
+    "exceptional_instructions": {
+      "processing_support_status": "supported"
+    }
+  },
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "Instructions for Filling the Application Form - Photograph instructions (https://mpsconline.gov.in/downloads/Instructions-for-Filling-the-Application-Form.pdf)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 3,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "inferred",
+      "reasoning": "The conducting body publishes no pixel dimensions. The output size is chosen per photograph from the crop geometry, so no dimension is asserted on the body's behalf.",
+      "confidence": 1,
+      "approved": false
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "verified_with_ambiguity"
+  },
+  "fictional_example": false
+}

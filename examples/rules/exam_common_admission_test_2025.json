@@ -1,0 +1,113 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "common-admission-test-2025",
+  "rule_version": "1.0.0",
+  "status": "provisional",
+  "exam": {
+    "exam_id": "common-admission-test-2025",
+    "exam_name": "Common Admission Test 2025",
+    "conducting_body": "Indian Institutes of Management",
+    "examination_year": 2025,
+    "application_cycle": "2025",
+    "aliases": [
+      "CAT 2025"
+    ],
+    "application_stage": "application",
+    "jurisdiction": "India",
+    "category": "management_entrance"
+  },
+  "source_evidence": [
+    {
+      "source_type": "secondary_reference",
+      "official_source": false,
+      "captured_wording": "1200 x 1200 pixels; 1 MB; JPEG/JPG; white/off-white; front view; eyes open; not more than 6 months",
+      "source_url": "https://www.reddit.com/r/CATpreparation/",
+      "document_title": "Reproduction of CAT 2025 photograph instructions"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "exact",
+      "width_px": 1200,
+      "height_px": 1200,
+      "aspect_ratio": "1:1"
+    },
+    "file_size": {
+      "maximum_bytes": 1000000,
+      "size_unit_as_published": "MB",
+      "published_maximum": 1.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpeg",
+        "jpg"
+      ],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "plain_light",
+      "fallback_colour": "#FFFFFF"
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "unspecified",
+      "frontal_pose": true,
+      "eye_visibility": true
+    },
+    "appearance": {
+      "recency_maximum_days": 180
+    },
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false
+    },
+    "exceptional_instructions": {
+      "recent_photo_requirement": true,
+      "processing_support_status": "supported"
+    }
+  },
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "inferred",
+      "evidence_reference": "Reproduction of CAT 2025 photograph instructions (https://www.reddit.com/r/CATpreparation/)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 2,
+      "approved": false
+    },
+    "image_requirements.dimensions": {
+      "type": "inferred",
+      "evidence_reference": "Reproduction of CAT 2025 photograph instructions (https://www.reddit.com/r/CATpreparation/)",
+      "reasoning": "Pixel dimensions transcribed from the cited source.",
+      "confidence": 2,
+      "approved": false
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    },
+    "image_requirements": {
+      "type": "inferred",
+      "reasoning": "Values for this examination were located only on secondary sources, not on the conducting body's own material. Recorded so the examination is servable, and held at provisional status so the dependence stays visible until an official source is found.",
+      "confidence": 2,
+      "approved": false
+    }
+  },
+  "verification": {
+    "verification_status": "provisional"
+  },
+  "fictional_example": false
+}

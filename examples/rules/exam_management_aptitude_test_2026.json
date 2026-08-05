@@ -1,0 +1,110 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "management-aptitude-test-2026",
+  "rule_version": "1.0.0",
+  "status": "verified_with_ambiguity",
+  "exam": {
+    "exam_id": "management-aptitude-test-2026",
+    "exam_name": "Management Aptitude Test 2026",
+    "conducting_body": "All India Management Association",
+    "examination_year": 2026,
+    "application_cycle": "2026",
+    "aliases": [
+      "MAT 2026"
+    ],
+    "application_stage": "application",
+    "jurisdiction": "India",
+    "category": "management_entrance"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_webpage",
+      "official_source": true,
+      "captured_wording": "passport size; 10 kb; 50 kb",
+      "source_url": "https://www.aima.in/content/testing-and-assessment/mat/mat",
+      "document_title": "Management Aptitude Test - current application page"
+    },
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": ".jpg/.jpeg; colour photograph",
+      "source_url": "https://apps.aima.in/matdec17/Guidelines.pdf",
+      "document_title": "MAT Guidelines - prior official cycle"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "unspecified",
+      "fallback_reason": "No pixel dimensions are published by the conducting body. The output size is chosen per photograph from the crop geometry rather than from a fixed default."
+    },
+    "file_size": {
+      "maximum_bytes": 50000,
+      "minimum_bytes": 10000,
+      "size_unit_as_published": "kb",
+      "published_maximum": 50.0,
+      "published_minimum": 10.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpg",
+        "jpeg"
+      ],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "unspecified"
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "unspecified"
+    },
+    "appearance": {
+      "monochrome_accepted": false
+    },
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false
+    },
+    "exceptional_instructions": {
+      "black_and_white_restriction": true,
+      "processing_support_status": "supported"
+    }
+  },
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "Management Aptitude Test - current application page (https://www.aima.in/content/testing-and-assessment/mat/mat)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "inferred",
+      "reasoning": "The conducting body publishes no pixel dimensions. The output size is chosen per photograph from the crop geometry, so no dimension is asserted on the body's behalf.",
+      "confidence": 1,
+      "approved": false
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "verified_with_ambiguity"
+  },
+  "fictional_example": false
+}

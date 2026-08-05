@@ -1,0 +1,102 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "icsi-student-registration-examination-account-photograph",
+  "rule_version": "1.0.0",
+  "status": "verified_with_ambiguity",
+  "exam": {
+    "exam_id": "icsi-student-registration-examination-account-photograph",
+    "exam_name": "ICSI Student Registration / Examination Account Photograph",
+    "conducting_body": "Institute of Company Secretaries of India",
+    "examination_year": 2026,
+    "application_cycle": "current",
+    "application_stage": "application",
+    "jurisdiction": "India",
+    "category": "professional_body"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_webpage",
+      "official_source": true,
+      "captured_wording": "student photo; 50 KB; jpg/jpeg/png/gif/bmp/pdf",
+      "source_url": "https://smash.icsi.edu/Scripts/Registration/Instructions.aspx?ID=R2",
+      "document_title": "ICSI Registration Instructions"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "unspecified",
+      "fallback_reason": "No pixel dimensions are published by the conducting body. The output size is chosen per photograph from the crop geometry rather than from a fixed default."
+    },
+    "file_size": {
+      "maximum_bytes": 50000,
+      "size_unit_as_published": "KB",
+      "published_maximum": 50.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpg",
+        "jpeg",
+        "png"
+      ],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "unspecified"
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "unspecified"
+    },
+    "appearance": {},
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false
+    },
+    "exceptional_instructions": {
+      "processing_support_status": "supported"
+    }
+  },
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "ICSI Registration Instructions (https://smash.icsi.edu/Scripts/Registration/Instructions.aspx?ID=R2)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "inferred",
+      "reasoning": "The conducting body publishes no pixel dimensions. The output size is chosen per photograph from the crop geometry, so no dimension is asserted on the body's behalf.",
+      "confidence": 1,
+      "approved": false
+    },
+    "image_requirements.formats.allowed_formats": {
+      "type": "inferred",
+      "reasoning": "The body also permits BMP, GIF, PDF, which this engine cannot produce. The list here is the intersection of what the body accepts and what the engine emits; the narrowing loses nothing for the candidate, since the delivered format is permitted.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "verified_with_ambiguity"
+  },
+  "fictional_example": false
+}

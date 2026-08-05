@@ -1,51 +1,48 @@
 {
   "schema_version": "1.1",
-  "rule_id": "gate-2026",
+  "rule_id": "rrb-ntpc-graduate-cen-05-2024",
   "rule_version": "1.0.0",
   "status": "verified",
   "exam": {
-    "exam_id": "gate-2026",
-    "exam_name": "GATE 2026",
-    "conducting_body": "IIT Guwahati",
-    "examination_year": 2026,
-    "application_cycle": "2026",
-    "aliases": [
-      "Graduate Aptitude Test in Engineering"
-    ],
+    "exam_id": "rrb-ntpc-graduate-cen-05-2024",
+    "exam_name": "RRB NTPC Graduate - CEN 05/2024",
+    "conducting_body": "Railway Recruitment Boards",
+    "examination_year": 2024,
+    "application_cycle": "CEN 05/2024",
     "application_stage": "application",
     "jurisdiction": "India",
-    "category": "entrance"
+    "category": "railways"
   },
   "source_evidence": [
     {
       "source_type": "official_pdf",
       "official_source": true,
-      "captured_wording": "minimum resolution is 200\u00d7260 pixels; 530\u00d7690 pixels; aspect ratio of the face must be between 0.66 and 0.89; 5 kB; 600 kB; JPEG/JPG; white; 60-70%; chin; frontal face view; eyes; Normal spectacles are allowed; except for religious reasons; Face covered by a mask; color photograph",
-      "source_url": "https://gate2026.iitg.ac.in/doc/IB/GATE2026-IB-28092025.pdf",
-      "document_title": "GATE 2026 Information Brochure",
-      "section_name": "6.7 Photograph and Signature Requirements"
+      "captured_wording": "320 x 240 pixels; minimum 100 DPI; 35mmX45mm or 320 x 240 pixels; 50; KB; JPEG; white/light colour background; at least 50%; area of the photograph; chin; full-face view; Eyes should be clearly open; no glare/reflections; without cap; no grinning; Colour Passport Photograph; free from signature/name/dates; must not be older than two months",
+      "source_url": "https://rrbsecunderabad.gov.in/wp-content/uploads/2024/09/CEN-05-2024-NTPC-Graduate_ENG.pdf",
+      "document_title": "CEN 05/2024 - NTPC Graduate",
+      "document_identifier": "CEN 05/2024",
+      "section_name": "Mandatory scanned documents"
     }
   ],
   "image_requirements": {
     "dimensions": {
-      "mode": "range",
-      "minimum_width_px": 200,
-      "maximum_width_px": 530,
-      "minimum_height_px": 260,
-      "maximum_height_px": 690,
-      "permitted_pixel_range": "3.5 cm width \u00d7 4.5 cm height; 200\u00d7260 to 530\u00d7690 pixels; aspect ratio 0.66 to 0.89"
+      "mode": "exact",
+      "width_px": 320,
+      "height_px": 240,
+      "aspect_ratio": "4:3",
+      "dpi": 100,
+      "permitted_pixel_range": "35mmX45mm or 320 x 240 pixels"
     },
     "file_size": {
-      "maximum_bytes": 600000,
-      "minimum_bytes": 5000,
-      "size_unit_as_published": "kB",
-      "published_maximum": 600.0,
-      "published_minimum": 5.0
+      "maximum_bytes": 50000,
+      "minimum_bytes": 20000,
+      "size_unit_as_published": "KB",
+      "published_maximum": 50.0,
+      "published_minimum": 20.0
     },
     "formats": {
       "allowed_formats": [
-        "jpeg",
-        "jpg"
+        "jpeg"
       ],
       "preferred_format": "jpeg",
       "preserve_transparency": false,
@@ -53,17 +50,15 @@
       "colour_space": "sRGB"
     },
     "background": {
-      "mode": "exact_colour",
-      "required_colour": "#FFFFFF",
-      "tolerance": 3.0
+      "mode": "plain_light",
+      "fallback_colour": "#FFFFFF"
     },
     "composition": {
       "crop_profile": "tight_exam_portrait",
       "complete_hair_required": true,
       "complete_chin_required": true,
       "ears_policy": "unspecified",
-      "face_coverage_minimum": 60.0,
-      "face_coverage_maximum": 70.0,
+      "face_coverage_minimum": 50.0,
       "chin_visible": true,
       "frontal_pose": true,
       "eye_visibility": true
@@ -71,20 +66,24 @@
     "appearance": {
       "spectacles": {
         "policy": "conditional",
-        "condition": "Normal vision-correction spectacles are allowed only without glare.",
-        "source_wording": "Normal spectacles are allowed"
+        "condition": "Permitted only without glare/reflections and with eyes clearly visible.",
+        "source_wording": "no glare/reflections"
       },
       "headwear": {
-        "policy": "conditional",
-        "condition": "Prohibited except for religious reasons; full facial features and both face edges must remain visible.",
-        "source_wording": "except for religious reasons"
-      },
-      "face_mask": {
         "policy": "prohibited",
-        "source_wording": "Face covered by a mask"
+        "source_wording": "without cap"
+      },
+      "smile": {
+        "policy": "conditional",
+        "condition": "Natural expression; no grinning, frowning or raised eyebrows.",
+        "source_wording": "no grinning"
       },
       "monochrome_accepted": false,
-      "face_coverage_basis": "unspecified"
+      "face_coverage_basis": "face_box_area",
+      "recency_maximum_days": 60,
+      "imprint": {
+        "policy": "prohibited"
+      }
     },
     "filename": {
       "mode": "unspecified",
@@ -92,23 +91,26 @@
       "case_sensitive": false
     },
     "exceptional_instructions": {
+      "printed_name": false,
+      "printed_date": false,
       "spectacles_restriction": true,
       "headwear_restriction": true,
       "black_and_white_restriction": true,
+      "recent_photo_requirement": true,
       "processing_support_status": "supported"
     }
   },
   "provenance": {
     "image_requirements.file_size": {
       "type": "official",
-      "evidence_reference": "GATE 2026 Information Brochure - 6.7 Photograph and Signature Requirements (https://gate2026.iitg.ac.in/doc/IB/GATE2026-IB-28092025.pdf)",
+      "evidence_reference": "CEN 05/2024 - NTPC Graduate - Mandatory scanned documents (https://rrbsecunderabad.gov.in/wp-content/uploads/2024/09/CEN-05-2024-NTPC-Graduate_ENG.pdf)",
       "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
       "confidence": 5,
       "approved": true
     },
     "image_requirements.dimensions": {
       "type": "official",
-      "evidence_reference": "GATE 2026 Information Brochure - 6.7 Photograph and Signature Requirements (https://gate2026.iitg.ac.in/doc/IB/GATE2026-IB-28092025.pdf)",
+      "evidence_reference": "CEN 05/2024 - NTPC Graduate - Mandatory scanned documents (https://rrbsecunderabad.gov.in/wp-content/uploads/2024/09/CEN-05-2024-NTPC-Graduate_ENG.pdf)",
       "reasoning": "Pixel dimensions transcribed from the cited source.",
       "confidence": 5,
       "approved": true

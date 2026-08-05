@@ -1,0 +1,104 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "rbi-assistant-panel-year-2025-live-photograph-live-capture",
+  "rule_version": "1.0.0",
+  "status": "verified",
+  "exam": {
+    "exam_id": "rbi-assistant-panel-year-2025-live-photograph-live-capture",
+    "exam_name": "RBI Assistant - Panel Year 2025 (live photograph)",
+    "conducting_body": "Reserve Bank of India",
+    "examination_year": 2025,
+    "application_cycle": "2025",
+    "application_stage": "application",
+    "jurisdiction": "India",
+    "category": "banking"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_webpage",
+      "official_source": true,
+      "captured_wording": "preferred; 240 x 240 pixels; 200 DPI; 20 KB; 50 KB; jpg / jpeg; live photograph",
+      "source_url": "https://opportunities.rbi.org.in/scripts/bs_viewcontent.aspx?Id=4912",
+      "document_title": "Recruitment for the Post of Assistant - Panel Year 2025",
+      "section_name": "Paragraph 9.6 / upload instructions"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "unspecified",
+      "preferred_width_px": 240,
+      "preferred_height_px": 240,
+      "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified.",
+      "dpi": 200
+    },
+    "file_size": {
+      "maximum_bytes": 50000,
+      "minimum_bytes": 20000,
+      "size_unit_as_published": "KB",
+      "published_maximum": 50.0,
+      "published_minimum": 20.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpg",
+        "jpeg"
+      ],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "unspecified"
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "unspecified"
+    },
+    "appearance": {
+      "live_capture_required": true
+    },
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false
+    },
+    "exceptional_instructions": {
+      "processing_support_status": "supported"
+    }
+  },
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "Recruitment for the Post of Assistant - Panel Year 2025 - Paragraph 9.6 / upload instructions (https://opportunities.rbi.org.in/scripts/bs_viewcontent.aspx?Id=4912)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 5,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "official",
+      "evidence_reference": "Recruitment for the Post of Assistant - Panel Year 2025 - Paragraph 9.6 / upload instructions (https://opportunities.rbi.org.in/scripts/bs_viewcontent.aspx?Id=4912)",
+      "reasoning": "Pixel dimensions transcribed from the cited source.",
+      "confidence": 5,
+      "approved": true
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "verified"
+  },
+  "fictional_example": false
+}

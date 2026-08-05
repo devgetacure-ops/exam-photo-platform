@@ -1,51 +1,48 @@
 {
   "schema_version": "1.1",
-  "rule_id": "gate-2026",
+  "rule_id": "rbi-officers-in-grade-b-2026-prior-cycle-official-fallback",
   "rule_version": "1.0.0",
   "status": "verified",
   "exam": {
-    "exam_id": "gate-2026",
-    "exam_name": "GATE 2026",
-    "conducting_body": "IIT Guwahati",
+    "exam_id": "rbi-officers-in-grade-b-2026-prior-cycle-official-fallback",
+    "exam_name": "RBI Officers in Grade B 2026 - prior-cycle official fallback",
+    "conducting_body": "Reserve Bank of India",
     "examination_year": 2026,
     "application_cycle": "2026",
-    "aliases": [
-      "Graduate Aptitude Test in Engineering"
-    ],
     "application_stage": "application",
     "jurisdiction": "India",
-    "category": "entrance"
+    "category": "banking"
   },
   "source_evidence": [
     {
-      "source_type": "official_pdf",
+      "source_type": "official_webpage",
       "official_source": true,
-      "captured_wording": "minimum resolution is 200\u00d7260 pixels; 530\u00d7690 pixels; aspect ratio of the face must be between 0.66 and 0.89; 5 kB; 600 kB; JPEG/JPG; white; 60-70%; chin; frontal face view; eyes; Normal spectacles are allowed; except for religious reasons; Face covered by a mask; color photograph",
-      "source_url": "https://gate2026.iitg.ac.in/doc/IB/GATE2026-IB-28092025.pdf",
-      "document_title": "GATE 2026 Information Brochure",
-      "section_name": "6.7 Photograph and Signature Requirements"
+      "captured_wording": "preferred; 200 x 230 pixels; minimum of 200 dpi; 200 x 230 pixels (preferred); 20kb; 50 kb; JPG or JPEG; light-coloured, preferably white; no harsh shadows; Look straight; eyes are clearly visible; no reflections; Religious headwear is allowed; colour picture",
+      "source_url": "https://opportunities.rbi.org.in/Scripts/bs_viewcontent.aspx?Id=2836",
+      "document_title": "Officers in Grade B - official prior-cycle upload instructions",
+      "section_name": "Guidelines for scanning and upload"
     }
   ],
   "image_requirements": {
     "dimensions": {
-      "mode": "range",
-      "minimum_width_px": 200,
-      "maximum_width_px": 530,
-      "minimum_height_px": 260,
-      "maximum_height_px": 690,
-      "permitted_pixel_range": "3.5 cm width \u00d7 4.5 cm height; 200\u00d7260 to 530\u00d7690 pixels; aspect ratio 0.66 to 0.89"
+      "mode": "unspecified",
+      "preferred_width_px": 200,
+      "preferred_height_px": 230,
+      "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified.",
+      "dpi": 200,
+      "permitted_pixel_range": "4.5 cm \u00d7 3.5 cm; 200 x 230 pixels (preferred)"
     },
     "file_size": {
-      "maximum_bytes": 600000,
-      "minimum_bytes": 5000,
-      "size_unit_as_published": "kB",
-      "published_maximum": 600.0,
-      "published_minimum": 5.0
+      "maximum_bytes": 50000,
+      "minimum_bytes": 20000,
+      "size_unit_as_published": "kb",
+      "published_maximum": 50.0,
+      "published_minimum": 20.0
     },
     "formats": {
       "allowed_formats": [
-        "jpeg",
-        "jpg"
+        "jpg",
+        "jpeg"
       ],
       "preferred_format": "jpeg",
       "preserve_transparency": false,
@@ -53,38 +50,30 @@
       "colour_space": "sRGB"
     },
     "background": {
-      "mode": "exact_colour",
-      "required_colour": "#FFFFFF",
-      "tolerance": 3.0
+      "mode": "plain_light",
+      "fallback_colour": "#FFFFFF",
+      "shadows_allowed": false
     },
     "composition": {
       "crop_profile": "tight_exam_portrait",
       "complete_hair_required": true,
       "complete_chin_required": true,
       "ears_policy": "unspecified",
-      "face_coverage_minimum": 60.0,
-      "face_coverage_maximum": 70.0,
-      "chin_visible": true,
       "frontal_pose": true,
       "eye_visibility": true
     },
     "appearance": {
       "spectacles": {
         "policy": "conditional",
-        "condition": "Normal vision-correction spectacles are allowed only without glare.",
-        "source_wording": "Normal spectacles are allowed"
+        "condition": "Permitted only when reflections are absent and eyes are clearly visible.",
+        "source_wording": "no reflections"
       },
       "headwear": {
         "policy": "conditional",
-        "condition": "Prohibited except for religious reasons; full facial features and both face edges must remain visible.",
-        "source_wording": "except for religious reasons"
+        "condition": "Caps/hats/dark glasses are not acceptable; religious headwear is allowed if it does not cover the face.",
+        "source_wording": "Religious headwear is allowed"
       },
-      "face_mask": {
-        "policy": "prohibited",
-        "source_wording": "Face covered by a mask"
-      },
-      "monochrome_accepted": false,
-      "face_coverage_basis": "unspecified"
+      "monochrome_accepted": false
     },
     "filename": {
       "mode": "unspecified",
@@ -101,16 +90,16 @@
   "provenance": {
     "image_requirements.file_size": {
       "type": "official",
-      "evidence_reference": "GATE 2026 Information Brochure - 6.7 Photograph and Signature Requirements (https://gate2026.iitg.ac.in/doc/IB/GATE2026-IB-28092025.pdf)",
+      "evidence_reference": "Officers in Grade B - official prior-cycle upload instructions - Guidelines for scanning and upload (https://opportunities.rbi.org.in/Scripts/bs_viewcontent.aspx?Id=2836)",
       "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
-      "confidence": 5,
+      "confidence": 3,
       "approved": true
     },
     "image_requirements.dimensions": {
       "type": "official",
-      "evidence_reference": "GATE 2026 Information Brochure - 6.7 Photograph and Signature Requirements (https://gate2026.iitg.ac.in/doc/IB/GATE2026-IB-28092025.pdf)",
+      "evidence_reference": "Officers in Grade B - official prior-cycle upload instructions - Guidelines for scanning and upload (https://opportunities.rbi.org.in/Scripts/bs_viewcontent.aspx?Id=2836)",
       "reasoning": "Pixel dimensions transcribed from the cited source.",
-      "confidence": 5,
+      "confidence": 3,
       "approved": true
     },
     "image_requirements.formats.preferred_format": {
