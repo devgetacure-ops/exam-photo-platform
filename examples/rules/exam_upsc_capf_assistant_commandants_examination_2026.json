@@ -1,0 +1,189 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "upsc-capf-assistant-commandants-examination-2026",
+  "rule_version": "1.0.0",
+  "status": "verified_with_ambiguity",
+  "exam": {
+    "exam_id": "upsc-capf-assistant-commandants-examination-2026",
+    "exam_name": "UPSC CAPF (Assistant Commandants) Examination 2026",
+    "conducting_body": "Union Public Service Commission",
+    "examination_year": 2026,
+    "application_cycle": "2026",
+    "aliases": [
+      "CAPF AC 2026"
+    ],
+    "application_stage": "application",
+    "jurisdiction": "India",
+    "category": "central_recruitment"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "passport size; 20KB; 200KB; jpg format; named photo; plain white; Shadows on the face or the background should not be there; at least 75%; area in the photo; both ears; head in the centre; Frontal view; Eyes must be open; avoid glare; no grinning; colour photo; NOT to be signed; live photo is mandatory",
+      "source_url": "https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf",
+      "document_title": "Instructions for Uploading Photo and Signature",
+      "section_name": "Upload of Latest Passport Size Photograph / Capture of Live Photograph"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "unspecified",
+      "fallback_reason": "No pixel dimensions are published by the conducting body. The output size is chosen per photograph from the crop geometry rather than from a fixed default."
+    },
+    "file_size": {
+      "maximum_bytes": 200000,
+      "minimum_bytes": 20000,
+      "size_unit_as_published": "KB",
+      "published_maximum": 200.0,
+      "published_minimum": 20.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpg"
+      ],
+      "preferred_format": "jpg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "exact_colour",
+      "required_colour": "#FFFFFF",
+      "tolerance": 3.0,
+      "shadows_allowed": false
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "required_visible",
+      "face_coverage_minimum": 75.0,
+      "ears_visible": true,
+      "face_centred": true,
+      "frontal_pose": true,
+      "eye_visibility": true
+    },
+    "appearance": {
+      "spectacles": {
+        "policy": "conditional",
+        "condition": "Clear eyeglasses may be worn only without glare; dark/coloured glasses are unacceptable.",
+        "source_wording": "avoid glare"
+      },
+      "smile": {
+        "policy": "conditional",
+        "condition": "Natural expression required; grinning, frowning and raised eyebrows are prohibited.",
+        "source_wording": "no grinning"
+      },
+      "monochrome_accepted": false,
+      "face_coverage_basis": "face_box_area",
+      "live_capture_required": true,
+      "imprint": {
+        "policy": "prohibited"
+      }
+    },
+    "filename": {
+      "mode": "exact",
+      "extension_required": true,
+      "exact_filename": "photo",
+      "case_sensitive": false
+    },
+    "exceptional_instructions": {
+      "printed_name": false,
+      "printed_date": false,
+      "spectacles_restriction": true,
+      "black_and_white_restriction": true,
+      "processing_support_status": "supported"
+    }
+  },
+  "requirements": [
+    {
+      "requirement_id": "latest_passport_size_photograph",
+      "requirement_name": "Latest passport-size photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants",
+      "content_instructions": "JPG; 20-200 KB; exact filename 'photo.jpg'. Colour, recent, plain white background, frontal full face, head centred, both ears visible, eyes open, natural expression, at least 75% face coverage; no shadows, dark glasses, uniform or signed photograph.",
+      "evidence_status": "Current official UPSC common application instruction"
+    },
+    {
+      "requirement_id": "live_photograph",
+      "requirement_name": "Live photograph",
+      "requirement_type": "photograph",
+      "submission_method": "official_live_capture",
+      "requirement_status": "mandatory",
+      "platform_support": "guidance_only",
+      "applicability": "All applicants",
+      "content_instructions": "Captured during the UPSC application using the current device webcam or by scanning the displayed QR code and using a mobile device. Good lighting and clear face required. The live image is matched with the uploaded passport photograph; mismatch blocks further application.",
+      "evidence_status": "Current official UPSC common application instruction"
+    },
+    {
+      "requirement_id": "triple_signature_image",
+      "requirement_name": "Triple-signature image",
+      "requirement_type": "signature",
+      "submission_method": "handwritten_then_uploaded",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants",
+      "content_instructions": "Sign three times vertically, one below another, on plain white paper using black ink. Scan all three signatures in one clear, correctly oriented image. JPG; filename 'signature.jpg'; 20-100 KB; published image dimension 350-500 pixels.",
+      "evidence_status": "Current official UPSC common application instruction",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 100000,
+          "minimum_bytes": 20000,
+          "published_minimum": 20.0,
+          "published_maximum": 100.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg"
+          ],
+          "preferred_format": "jpg"
+        },
+        "filename": {
+          "mode": "exact",
+          "exact_filename": "signature"
+        }
+      }
+    },
+    {
+      "requirement_id": "application_declaration",
+      "requirement_name": "Application declaration",
+      "requirement_type": "portal_declaration",
+      "submission_method": "typed_or_selected_declaration",
+      "requirement_status": "mandatory",
+      "platform_support": "guidance_only",
+      "applicability": "All applicants",
+      "content_instructions": "Candidate confirms the correctness of the application before final submission. No separate uploaded declaration file was found in the common instruction.",
+      "evidence_status": "Portal step; exact wording varies by application"
+    }
+  ],
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "Instructions for Uploading Photo and Signature - Upload of Latest Passport Size Photograph / Capture of Live Photograph (https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 5,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "inferred",
+      "reasoning": "The conducting body publishes no pixel dimensions. The output size is chosen per photograph from the crop geometry, so no dimension is asserted on the body's behalf.",
+      "confidence": 1,
+      "approved": false
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "verified_with_ambiguity"
+  },
+  "fictional_example": false
+}

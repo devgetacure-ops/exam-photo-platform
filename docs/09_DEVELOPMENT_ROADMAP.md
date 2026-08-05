@@ -134,10 +134,157 @@ This phase covers establishing directory, configuration, and interfaces foundati
 - **Exit Criteria**: Unit tests, typechecks, and builds pass; backend API tests verify 422 validation response and no file writes; frontend/backend sync tests pass.
 - **Status**: **Completed (Milestone 17: Local Rule Configuration Console and Validation API)**
 
-*(Milestones 18 to 35: Advanced features, security reviews, and pre-launch hardening)*
+
+### Phase 0.5: Engine Quality Hardening Against a Reference Set
+
+This phase was driven by measurement against user-supplied reference material
+rather than by feature scope: a 60-photo set with matched approved outputs, and
+later a 40-photo adversarial set with human defect labels. Decisions are
+recorded as DEC-029 through DEC-043.
+
+#### Milestone 18: Generalized Engine Visual Quality Hardening
+- **Objective**: Raise matte and composition quality to a publishable standard, replacing the coarse selfie segmenter with a portrait matting backend and correcting the crop geometry against approved reference outputs.
+- **Dependencies**: Milestone 17.
+- **Expected Deliverables**: BiRefNet matting backend and vendored model assets; dense face-landmark refinement; adaptive portrait composition; crop margins calibrated to the approved ideal outputs; matting recomputed on the planned crop region; matched engine-vs-ideal benchmark.
+- **Exit Criteria**: Measured across all 60 reference pairs -- 57/60 produce output, margin mean absolute error 0.0422 against the approved ideals, median delivered head height 0.833 against an ideal 0.855.
+- **Status**: **Completed (Milestone 18)** -- see DEC-029 through DEC-040.
+- **Explicitly Excluded Work**: Appearance classification, candidate-facing messaging, throughput work.
+
+#### Milestone 18B: Candidate Disposition Policy and Natural Enhancement
+- **Objective**: Decide and implement what the platform does with a non-compliant photograph, and apply restrained enhancement only where a capture defect is measured.
+- **Dependencies**: Milestone 18; the 48-examination input-rule research.
+- **Expected Deliverables**: Accept/warn/block policy (DEC-041); per-exam appearance rules with three-state policies in the canonical schema (DEC-042); enhancement planned from measured deficits (DEC-043); 11 real exam rule records; a 40-photo human-labelled ground-truth fixture.
+- **Exit Criteria**: Measured against the reviewer's own labels at an ordinary output size -- 29 accept, 9 warn, 2 block, with zero false positives across the ten photographs labelled clean.
+- **Status**: **Completed (Milestone 18B)**
+- **Explicitly Excluded Work**: Sunglasses, headwear and eye-closure detection, all of which were measured as unreliable with the shipped models and deferred to Milestone 23.
+
+---
+
+### Phase 0.6: Path to Public Launch
+
+Milestones 19 to 30 replace the former placeholder line covering 18-35. The
+governing constraint is that the platform will publish which photographs are
+rejected, so every rejection has to be defensible before launch.
+
+#### Milestone 19: Exam Rule Completeness -- Output Specifications
+- **Objective**: Give every encoded exam a verified output specification so the engine can produce a correctly sized, named and compressed file for a real examination.
+- **Dependencies**: Milestone 18B.
+- **Expected Deliverables**: A second official-source research pass covering pixel dimensions, file size, DPI, format and filename rules for the 11 encoded exams; updated rule records; provenance upgraded from `platform_default` to `official`.
+- **Exit Criteria**: All 11 records leave `provisional` status and produce a correctly sized, correctly named output end to end.
+- **Status**: Not started.
+- **Why this is first**: Every record currently carries `dimensions.mode: unspecified`, because the appearance research deliberately excluded file specifications. Until this closes, the engine cannot size a photograph for any real examination.
+
+#### Milestone 20: Candidate-Facing Disposition Interface
+- **Objective**: Surface in the web application what the engine already computes.
+- **Dependencies**: Milestone 18B.
+- **Expected Deliverables**: An acknowledgement step for `likely_rejection` findings with retaking as the primary action and downloading as a quiet secondary; an inline notice for `possible_issue`; disclosure of any enhancement applied; download enabled in every non-blocked state.
+- **Exit Criteria**: Every finding the engine can emit has a tested interface state; blocked photographs explain themselves in candidate language.
+- **Status**: Not started.
+- **Explicitly Excluded Work**: No appearance signal may be presented as a rejection before its reliability is measured (DEC-041).
+
+#### Milestone 21: Published Upload Instruction Manual
+- **Objective**: Publish the hero-banner guidance telling candidates how to photograph and upload, and what will be rejected.
+- **Dependencies**: Milestone 19.
+- **Expected Deliverables**: Manual content derived from the 48-examination research; per-exam variations surfaced where bodies conflict; citations retained for every claim.
+- **Exit Criteria**: Published, and every stated rule traces to a cited official source.
+- **Status**: Not started.
+- **Explicitly Excluded Work**: Blanket claims the evidence contradicts -- that all examinations require a white background, prohibit smiling, or prohibit spectacles.
+
+#### Milestone 22: Engine Edge-Quality Closeout
+- **Objective**: Close the three known engine defects remaining after Milestone 18.
+- **Dependencies**: Milestone 18.
+- **Expected Deliverables**: Hair-edge colour fringe corrected; crop planning fixed for hard photographs where the subject occupies little of the frame; noise reduction implemented as specified but not built in DEC-043.
+- **Exit Criteria**: Re-verified on the 40-photo adversarial set with no disposition regression.
+- **Status**: Not started.
+
+#### Milestone 23: Appearance Classifiers
+- **Objective**: Detect sunglasses, head coverings and closed eyes to a measured standard.
+- **Dependencies**: Milestone 20.
+- **Expected Deliverables**: A face-attribute classifier scored against the 40-photo label fixture; per-exam interpretation driven by the DEC-042 three-state policies.
+- **Exit Criteria**: Published precision and recall per class; no signal promoted to `likely_rejection` below an agreed bar.
+- **Status**: Not started.
+- **Principal risk**: Head coverings must distinguish a cap from a turban or hijab, because IBPS, GATE and the Indian Navy permit religious coverings that SSC prohibits. Misclassifying these is a discrimination problem rather than an accuracy problem, and the class may ship as advisory guidance instead.
+
+#### Milestone 24: Throughput and Inference Cost
+- **Objective**: Establish whether the engine can serve examination-season demand, and at what cost per photograph.
+- **Dependencies**: Milestone 18.
+- **Expected Deliverables**: Measured latency budget; GPU or reduced-model inference path; a real job queue with backpressure; autoscaling model; unit cost per processed photograph.
+- **Exit Criteria**: A measured throughput and cost figure capacity can be planned against.
+- **Status**: Not started.
+- **Why this is the largest risk**: Measured 16-24 seconds per photograph on CPU, roughly doubled by the crop-region rematte, giving 30-40 seconds each. At the concurrency implied by national examination cycles this is not viable, and a forced model change would partly invalidate Milestone 22.
+
+#### Milestone 25: Service Hardening for Public Exposure
+- **Objective**: Make the processing API safe to expose publicly.
+- **Dependencies**: Milestone 24.
+- **Expected Deliverables**: Authentication, rate limiting, upload size and abuse controls, TLS termination, CORS policy, structured logging and alerting.
+- **Exit Criteria**: Passes an adversarial security review.
+- **Status**: Not started.
+- **Current state**: The API is documented as local-only with no TLS, authentication or rate limiting, and cannot face the public as built.
+
+#### Milestone 26: Privacy, Retention and Data Protection
+- **Objective**: Handle candidate photographs lawfully and demonstrably.
+- **Dependencies**: Milestone 25.
+- **Expected Deliverables**: Retention and deletion policy with enforced guarantees; consent and privacy copy; a documented data-flow and processing record; access controls on stored artifacts.
+- **Exit Criteria**: A documented data lifecycle reviewed by someone qualified to assess it.
+- **Status**: Not started.
+- **Note**: Candidate face photographs are sensitive personal data and India's Digital Personal Data Protection Act 2023 applies. This milestone requires legal input; engineering can implement controls but should not decide what compliance requires.
+
+#### Milestone 27: Exam Catalogue Scale-Out
+- **Objective**: Cover the examinations representing the large majority of candidate volume.
+- **Dependencies**: Milestone 19.
+- **Expected Deliverables**: 30 or more encoded examinations drawn from the 48 already researched; the unverified and partially verified bodies revisited.
+- **Exit Criteria**: Coverage target met, with every record citing an official source and unverified categories recorded as absent rather than assumed.
+- **Status**: Not started.
+
+#### Milestone 28: Accuracy QA and Regression Gate
+- **Objective**: Prevent silent regression in disposition accuracy and crop composition.
+- **Dependencies**: Milestones 22 and 23.
+- **Expected Deliverables**: The 40-photo label fixture wired into CI as an accuracy gate; refreshed paired ideal outputs for composition scoring.
+- **Exit Criteria**: A build fails when disposition accuracy or crop composition regresses beyond an agreed tolerance.
+- **Status**: Not started.
+- **Blocked on input**: The adversarial 40 have no paired ideal outputs, so crop composition currently cannot be scored or gated at all.
+
+#### Milestone 29: Accessibility, Mobile and Language
+- **Objective**: Make the platform usable by the candidates who actually use it.
+- **Dependencies**: Milestones 20 and 21.
+- **Expected Deliverables**: Mobile-first upload and review flow; Hindi at minimum alongside English; WCAG basics on contrast, focus order and labelling.
+- **Exit Criteria**: Usable one-handed on a mid-range Android device on a slow connection.
+- **Status**: Not started.
+
+#### Milestone 30: Pre-Launch Hardening and Load Test
+- **Objective**: Establish launch readiness.
+- **Dependencies**: All of Milestones 19 to 29.
+- **Expected Deliverables**: Full marker-gated test matrix; load test at projected peak; security review; incident runbook; rollback plan.
+- **Exit Criteria**: Documented go/no-go decision.
+- **Status**: Not started.
+
+---
 
 ### Phase 1: Post-MVP & Future Operations
 - **Milestone 36**: Post-MVP crop adjustments editor tool.
 - **Milestone 37**: Background manual mask touchup brush tools.
 - **Milestone 38**: Billing gates and Stripe/Razorpay integrations.
 - **Milestone 39**: Operational analytics, telemetry, and metrics dashboards.
+
+---
+
+## Critical path
+
+`19 -> 21` is the shortest route to the published upload manual. `24 -> 25 -> 26`
+is the longest chain and the one that decides whether the platform can go live
+at all. Milestones 20, 22 and 24 touch different areas and can proceed in
+parallel.
+
+Milestone 24 should be probed early even while feature work continues: if the
+inference budget does not hold, the matting backend changes and part of
+Milestone 22 is rework.
+
+## Related documents needing revision
+
+These predate the current direction and should be rewritten rather than
+consulted:
+
+- `01_MVP_SCOPE.md` (2026-06-17) -- predates the published-rejection-criteria
+  strategy, which changes what the minimum product includes.
+- `05_PRIVACY_SECURITY.md` (2026-06-17) -- governs Milestone 26.
+- `06_QA_STRATEGY.md` (2026-06-17) -- governs Milestone 28.

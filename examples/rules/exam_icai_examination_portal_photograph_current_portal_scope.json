@@ -1,0 +1,152 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "icai-examination-portal-photograph-current-portal-scope",
+  "rule_version": "1.0.0",
+  "status": "verified_with_ambiguity",
+  "exam": {
+    "exam_id": "icai-examination-portal-photograph-current-portal-scope",
+    "exam_name": "ICAI Examination Portal Photograph (current portal scope)",
+    "conducting_body": "Institute of Chartered Accountants of India",
+    "examination_year": 2026,
+    "application_cycle": "current",
+    "application_stage": "application",
+    "jurisdiction": "India",
+    "category": "professional_body"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_application_portal",
+      "official_source": true,
+      "captured_wording": "passport size; 50KB; JPEG; photo.jpeg; light/white background; colour",
+      "source_url": "https://pqc.icaiexam.icai.org/INTT/Home/ImageResize",
+      "document_title": "Image Resize - ICAI examination portal"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "unspecified",
+      "fallback_reason": "No pixel dimensions are published by the conducting body. The output size is chosen per photograph from the crop geometry rather than from a fixed default."
+    },
+    "file_size": {
+      "maximum_bytes": 50000,
+      "size_unit_as_published": "KB",
+      "published_maximum": 50.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpeg"
+      ],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "plain_light",
+      "fallback_colour": "#FFFFFF"
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "unspecified"
+    },
+    "appearance": {
+      "monochrome_accepted": false
+    },
+    "filename": {
+      "mode": "exact",
+      "extension_required": true,
+      "exact_filename": "photo.jpeg",
+      "case_sensitive": false
+    },
+    "exceptional_instructions": {
+      "black_and_white_restriction": true,
+      "processing_support_status": "supported"
+    }
+  },
+  "requirements": [
+    {
+      "requirement_id": "candidate_photograph",
+      "requirement_name": "Candidate photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Candidates whose ICAI profile/exam form requires a photo",
+      "content_instructions": "Uploaded candidate photograph; format: JPEG; file size: up to 50 KB; filename: photo.jpeg; background: light or white.",
+      "evidence_status": "Current official ICAI portal scope"
+    },
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate signature",
+      "requirement_type": "signature",
+      "submission_method": "file_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Candidates whose ICAI profile/exam form requires a signature",
+      "content_instructions": "Upload the candidate's own scanned signature in the portal-prescribed JPEG file and size. Exact value was not part of the supplied photograph dataset.",
+      "evidence_status": "Current portal requirement; exact specification not_found",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 20000,
+          "minimum_bytes": 10000
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpeg"
+          ],
+          "preferred_format": "jpeg"
+        }
+      }
+    },
+    {
+      "requirement_id": "exam_form_declaration",
+      "requirement_name": "Exam-form declaration",
+      "requirement_type": "portal_declaration",
+      "submission_method": "typed_or_selected_declaration",
+      "requirement_status": "mandatory",
+      "platform_support": "guidance_only",
+      "applicability": "All applicants",
+      "content_instructions": "Confirm the examination form and profile particulars. No separate handwritten-declaration image was established.",
+      "evidence_status": "Current ICAI exam portal process"
+    }
+  ],
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "Image Resize - ICAI examination portal (https://pqc.icaiexam.icai.org/INTT/Home/ImageResize)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "inferred",
+      "reasoning": "The conducting body publishes no pixel dimensions. The output size is chosen per photograph from the crop geometry, so no dimension is asserted on the body's behalf.",
+      "confidence": 1,
+      "approved": false
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    },
+    "requirements[1].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[1].file_spec.file_size.minimum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
+      "confidence": 1,
+      "approved": false
+    }
+  },
+  "verification": {
+    "verification_status": "verified_with_ambiguity"
+  },
+  "fictional_example": false
+}

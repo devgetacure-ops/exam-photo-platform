@@ -1,0 +1,243 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "rbi-assistant-panel-year-2025",
+  "rule_version": "1.0.0",
+  "status": "verified",
+  "exam": {
+    "exam_id": "rbi-assistant-panel-year-2025",
+    "exam_name": "RBI Assistant - Panel Year 2025",
+    "conducting_body": "Reserve Bank of India",
+    "examination_year": 2025,
+    "application_cycle": "2025",
+    "application_stage": "application",
+    "jurisdiction": "India",
+    "category": "banking"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_webpage",
+      "official_source": true,
+      "captured_wording": "preferred; 200 x 230 pixels; minimum of 200 dpi; 200 x 230 pixels (preferred); 20kb; 50 kb; JPG or JPEG; light-coloured, preferably white; no harsh shadows; Look straight; eyes are clearly visible; no reflections; Religious headwear is allowed; colour picture; live photograph",
+      "source_url": "https://opportunities.rbi.org.in/scripts/bs_viewcontent.aspx?Id=4912",
+      "document_title": "Recruitment for the Post of Assistant - Panel Year 2025",
+      "section_name": "Paragraph 9.6 / upload instructions"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "unspecified",
+      "preferred_width_px": 200,
+      "preferred_height_px": 230,
+      "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified.",
+      "dpi": 200,
+      "permitted_pixel_range": "4.5 cm \u00d7 3.5 cm; 200 x 230 pixels (preferred)"
+    },
+    "file_size": {
+      "maximum_bytes": 50000,
+      "minimum_bytes": 20000,
+      "size_unit_as_published": "kb",
+      "published_maximum": 50.0,
+      "published_minimum": 20.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpg",
+        "jpeg"
+      ],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "plain_light",
+      "fallback_colour": "#FFFFFF",
+      "shadows_allowed": false
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "unspecified",
+      "frontal_pose": true,
+      "eye_visibility": true
+    },
+    "appearance": {
+      "spectacles": {
+        "policy": "conditional",
+        "condition": "Permitted only when reflections are absent and eyes are clearly visible.",
+        "source_wording": "no reflections"
+      },
+      "headwear": {
+        "policy": "conditional",
+        "condition": "Caps/hats/dark glasses are not acceptable; religious headwear is allowed if it does not cover the face.",
+        "source_wording": "Religious headwear is allowed"
+      },
+      "monochrome_accepted": false,
+      "live_capture_required": true
+    },
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false
+    },
+    "exceptional_instructions": {
+      "spectacles_restriction": true,
+      "headwear_restriction": true,
+      "black_and_white_restriction": true,
+      "processing_support_status": "supported"
+    }
+  },
+  "requirements": [
+    {
+      "requirement_id": "recent_passport_size_photograph",
+      "requirement_name": "Recent passport-size photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants",
+      "content_instructions": "JPG/JPEG; 20-50 KB; 200 x 230 pixels preferred; approximately 4.5 cm x 3.5 cm; 200 dpi where stated. Light/white background; face clearly visible.",
+      "evidence_status": "Current/recent official recruiting notice"
+    },
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate signature",
+      "requirement_type": "signature",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants",
+      "content_instructions": "JPG/JPEG; normally 10-20 KB; about 140 x 60 pixels; signature in black ink on white paper; signed by the applicant; not in capital letters.",
+      "evidence_status": "Current/recent official recruiting notice",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 20000,
+          "minimum_bytes": 10000,
+          "published_minimum": 10.0,
+          "published_maximum": 20.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "exact",
+          "width_px": 140,
+          "height_px": 60
+        }
+      }
+    },
+    {
+      "requirement_id": "left_thumb_impression",
+      "requirement_name": "Left thumb impression",
+      "requirement_type": "thumb_impression",
+      "submission_method": "handwritten_then_uploaded",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants",
+      "content_instructions": "JPG/JPEG; normally 20-50 KB; about 240 x 240 pixels; applicant's left thumb impression on white paper using black or blue ink; clear and unsmudged.",
+      "evidence_status": "Current/recent official recruiting notice",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 50000,
+          "minimum_bytes": 20000,
+          "published_minimum": 20.0,
+          "published_maximum": 50.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "exact",
+          "width_px": 240,
+          "height_px": 240
+        }
+      }
+    },
+    {
+      "requirement_id": "handwritten_declaration",
+      "requirement_name": "Handwritten declaration",
+      "requirement_type": "handwritten_declaration",
+      "submission_method": "handwritten_then_uploaded",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants",
+      "content_instructions": "JPG/JPEG; normally 50-100 KB; about 800 x 400 pixels; handwritten in English on white paper with black ink; not in capital letters. Standard wording: 'I, ______ (Name of the candidate), hereby declare that all the information submitted by me in the application form is correct, true and valid. I will present the supporting documents as and when required.' Copy the exact live-portal wording.",
+      "evidence_status": "Current/recent official recruiting notice",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 100000,
+          "minimum_bytes": 50000,
+          "published_minimum": 50.0,
+          "published_maximum": 100.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "exact",
+          "width_px": 800,
+          "height_px": 400
+        }
+      }
+    },
+    {
+      "requirement_id": "live_photograph",
+      "requirement_name": "Live photograph",
+      "requirement_type": "photograph",
+      "submission_method": "official_live_capture",
+      "requirement_status": "mandatory",
+      "platform_support": "guidance_only",
+      "applicability": "All applicants",
+      "content_instructions": "In addition to the uploaded photograph, capture and upload a live photograph using a webcam or mobile phone. Preferred image 240 x 240 pixels, 200 dpi, 20-50 KB, JPG/JPEG.",
+      "evidence_status": "Current official RBI recruitment page"
+    }
+  ],
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "Recruitment for the Post of Assistant - Panel Year 2025 - Paragraph 9.6 / upload instructions (https://opportunities.rbi.org.in/scripts/bs_viewcontent.aspx?Id=4912)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 5,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "official",
+      "evidence_reference": "Recruitment for the Post of Assistant - Panel Year 2025 - Paragraph 9.6 / upload instructions (https://opportunities.rbi.org.in/scripts/bs_viewcontent.aspx?Id=4912)",
+      "reasoning": "Pixel dimensions transcribed from the cited source.",
+      "confidence": 5,
+      "approved": true
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "verified"
+  },
+  "fictional_example": false
+}

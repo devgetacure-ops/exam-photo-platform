@@ -1,0 +1,144 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "cbse-classes-ix-xi-registration-2025-26",
+  "rule_version": "1.0.0",
+  "status": "verified_with_ambiguity",
+  "exam": {
+    "exam_id": "cbse-classes-ix-xi-registration-2025-26",
+    "exam_name": "CBSE Classes IX/XI Registration 2025-26",
+    "conducting_body": "Central Board of Secondary Education",
+    "examination_year": 2025,
+    "application_cycle": "2025-26",
+    "application_stage": "application",
+    "jurisdiction": "India",
+    "category": "board_registration"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "passport size; 40 kb; jpg file; registration number; Solid colour backgrounds; Solid colour backgrounds are best; 80% of the image; composing 80% of the image; top of the hair; centered; directly facing the camera; Eyes must be open; must not be tinted; smiling is allowed; full colour; last 6 months",
+      "source_url": "https://www.cbse.gov.in/cbsenew/documents/Submission_Registration_Data_Class_IXXI2526_15092025.pdf",
+      "document_title": "Submission of Registration Data for Classes IX/XI, Session 2025-26",
+      "section_name": "Annexure C - Steps for Scanning and Uploading Photographs"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "unspecified",
+      "fallback_reason": "No pixel dimensions are published by the conducting body. The output size is chosen per photograph from the crop geometry rather than from a fixed default."
+    },
+    "file_size": {
+      "maximum_bytes": 40000,
+      "size_unit_as_published": "kb",
+      "published_maximum": 40.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpg"
+      ],
+      "preferred_format": "jpg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "plain_background",
+      "fallback_colour": "#FFFFFF",
+      "instructions": "Solid colour backgrounds are best."
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "unspecified",
+      "face_coverage_target": 80.0,
+      "complete_hair_visible": true,
+      "face_centred": true,
+      "frontal_pose": true,
+      "eye_visibility": true
+    },
+    "appearance": {
+      "spectacles": {
+        "policy": "conditional",
+        "condition": "Tinted glasses are prohibited unless worn daily for medical purposes.",
+        "source_wording": "must not be tinted"
+      },
+      "smile": {
+        "policy": "permitted",
+        "source_wording": "smiling is allowed"
+      },
+      "monochrome_accepted": false,
+      "face_coverage_basis": "head_height",
+      "recency_maximum_days": 180
+    },
+    "filename": {
+      "mode": "pattern",
+      "extension_required": true,
+      "pattern": "<candidate_registration_number>",
+      "case_sensitive": false,
+      "instructions": "Save the photograph with the candidate registration number."
+    },
+    "exceptional_instructions": {
+      "spectacles_restriction": true,
+      "black_and_white_restriction": true,
+      "recent_photo_requirement": true,
+      "processing_support_status": "supported"
+    }
+  },
+  "requirements": [
+    {
+      "requirement_id": "student_photograph",
+      "requirement_name": "Student photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Every registered student, normally through the school",
+      "content_instructions": "Uploaded candidate photograph; format: JPG; file size: up to 40 kb; recency: within 180 days.",
+      "evidence_status": "Current official CBSE registration instruction"
+    },
+    {
+      "requirement_id": "student_particulars_supported_by_school_records",
+      "requirement_name": "Student particulars supported by school records",
+      "requirement_type": "certificate_scan",
+      "submission_method": "typed_or_selected_declaration",
+      "requirement_status": "mandatory",
+      "platform_support": "guidance_only",
+      "applicability": "Every registered student, submitted by the school",
+      "content_instructions": "Name, date of birth, parent details and subject particulars must match the school's admission and documentary records. The supplied evidence did not establish separate direct student uploads of birth or academic certificates.",
+      "evidence_status": "School-managed registration; file upload not_found"
+    }
+  ],
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "Submission of Registration Data for Classes IX/XI, Session 2025-26 - Annexure C - Steps for Scanning and Uploading Photographs (https://www.cbse.gov.in/cbsenew/documents/Submission_Registration_Data_Class_IXXI2526_15092025.pdf)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 5,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "inferred",
+      "reasoning": "The conducting body publishes no pixel dimensions. The output size is chosen per photograph from the crop geometry, so no dimension is asserted on the body's behalf.",
+      "confidence": 1,
+      "approved": false
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "verified_with_ambiguity"
+  },
+  "fictional_example": false
+}

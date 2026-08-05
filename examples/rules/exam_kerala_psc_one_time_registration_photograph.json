@@ -1,0 +1,208 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "kerala-psc-one-time-registration-photograph",
+  "rule_version": "1.0.0",
+  "status": "verified",
+  "exam": {
+    "exam_id": "kerala-psc-one-time-registration-photograph",
+    "exam_name": "Kerala PSC One Time Registration Photograph",
+    "conducting_body": "Kerala Public Service Commission",
+    "examination_year": 2026,
+    "application_cycle": "current OTR",
+    "application_stage": "application",
+    "jurisdiction": "Kerala",
+    "category": "state_psc"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_webpage",
+      "official_source": true,
+      "captured_wording": "150 pixels width and 200 pixels height; 30 Kb; JPG; white/light coloured background; face at the centre; front facial pose; eyes open; religious custom",
+      "source_url": "https://psc.kerala.gov.in/kpsc/faq.php",
+      "document_title": "Kerala PSC FAQ / One Time Registration",
+      "section_name": "Photograph upload FAQ"
+    },
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "name of the applicant and the date; bottom; within six months",
+      "source_url": "https://keralapsc.gov.in/sites/default/files/2024-11/noti-373-24.pdf",
+      "document_title": "Kerala PSC Notification No. 373/2024",
+      "document_identifier": "373/2024"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "exact",
+      "width_px": 150,
+      "height_px": 200,
+      "aspect_ratio": "3:4"
+    },
+    "file_size": {
+      "maximum_bytes": 30000,
+      "size_unit_as_published": "Kb",
+      "published_maximum": 30.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpg"
+      ],
+      "preferred_format": "jpg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "plain_light",
+      "fallback_colour": "#FFFFFF"
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "unspecified",
+      "face_centred": true,
+      "frontal_pose": true,
+      "eye_visibility": true
+    },
+    "appearance": {
+      "headwear": {
+        "policy": "conditional",
+        "condition": "Cap/goggles prohibited except where required by religious custom; face and shoulders must remain clear.",
+        "source_wording": "religious custom"
+      },
+      "recency_maximum_days": 180,
+      "imprint": {
+        "policy": "required",
+        "fields": [
+          "candidate_name",
+          "photograph_date"
+        ],
+        "position": "bottom"
+      }
+    },
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false
+    },
+    "exceptional_instructions": {
+      "printed_name": true,
+      "printed_date": true,
+      "headwear_restriction": true,
+      "recent_photo_requirement": true,
+      "processing_support_status": "partially_supported",
+      "unsupported_requirement_reasons": [
+        "The body requires the candidate's name and/or the photograph date printed on the image. The engine has no text-rendering capability, so the photograph is produced correctly sized and composed but without the imprint, which the candidate must add before uploading."
+      ]
+    }
+  },
+  "requirements": [
+    {
+      "requirement_id": "candidate_photograph",
+      "requirement_name": "Candidate photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "partially_supported",
+      "applicability": "All applicants",
+      "content_instructions": "Uploaded candidate photograph; format: JPG; file size: up to 30 Kb; dimensions: 150 x 200 px; recency: within 180 days.",
+      "evidence_status": "Evidence tier as recorded in supplied photograph report"
+    },
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate signature",
+      "requirement_type": "signature",
+      "submission_method": "file_upload",
+      "requirement_status": "portal_dependent",
+      "platform_support": "supported",
+      "applicability": "All applicants where the OTR/application asks for it",
+      "content_instructions": "A separate signature is normally part of the PSC profile/application, but the exact current file specification was not established by the supplied photograph-only evidence. Follow the active portal.",
+      "evidence_status": "Not fully established; not_found for exact specification",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 20000,
+          "minimum_bytes": 10000
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    },
+    {
+      "requirement_id": "claim_supporting_certificates",
+      "requirement_name": "Claim-supporting certificates",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Candidates claiming reservation, disability, domicile, age relaxation, experience or a post-specific qualification",
+      "content_instructions": "Upload only the certificate explicitly requested by that examination and category. The exact list is notification-specific and was not fully established in the supplied photograph evidence.",
+      "evidence_status": "Exam-specific gap; active notification required",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 400000
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "Kerala PSC FAQ / One Time Registration - Photograph upload FAQ (https://psc.kerala.gov.in/kpsc/faq.php)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "official",
+      "evidence_reference": "Kerala PSC FAQ / One Time Registration - Photograph upload FAQ (https://psc.kerala.gov.in/kpsc/faq.php)",
+      "reasoning": "Pixel dimensions transcribed from the cited source.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    },
+    "requirements[1].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[1].file_spec.file_size.minimum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[1].file_spec.formats.allowed_formats": {
+      "type": "interim_default",
+      "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[2].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",
+      "confidence": 1,
+      "approved": false
+    }
+  },
+  "verification": {
+    "verification_status": "verified"
+  },
+  "fictional_example": false
+}

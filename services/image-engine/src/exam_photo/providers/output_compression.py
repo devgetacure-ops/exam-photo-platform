@@ -28,7 +28,12 @@ class OutputCompressionConfig(BaseModel):
     safety_margin_bytes: int = 512
 
     min_quality: int = 35
-    max_quality: int = 95
+    # Raised from 95 so spare size budget is spent on retained quality rather
+    # than left unused: with a generous ceiling the search previously stopped at
+    # 95 and emitted a file using only ~60% of the permitted bytes.  Held below
+    # 100 because JPEG quality above ~98 inflates size sharply for no visible
+    # gain, which would waste the same budget in the opposite direction.
+    max_quality: int = 98
     initial_quality: int = 92
 
     max_iterations: int = 10
@@ -37,6 +42,7 @@ class OutputCompressionConfig(BaseModel):
     optimize: bool = True
     progressive: bool = False
     strip_metadata: bool = True
+    target_dpi: int | None = Field(default=None, gt=0)
 
     allow_quality_below_minimum: bool = False
     allow_oversize_output: bool = False
@@ -102,9 +108,11 @@ class OutputCompressionValidationReport(BaseModel):
     quality_within_bounds: bool
     decode_after_encode_valid: bool
     metadata_stripped: bool
+    dpi_satisfied: bool | None = None
 
     target_bytes: int
     actual_bytes: int | None = None
+    actual_dpi: int | None = None
     byte_size_ratio_to_max: float | None = None
     final_quality: int | None = None
     iterations_used: int = 0
@@ -133,6 +141,8 @@ class OutputCompressionResult(BaseModel):
     optimize: bool
     progressive: bool
     metadata_stripped: bool
+    target_dpi: int | None = None
+    actual_dpi: int | None = None
 
     validation: OutputCompressionValidationReport
     processing_duration_ms: float

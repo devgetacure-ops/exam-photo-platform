@@ -2,6 +2,20 @@
 
 This technology spike evaluates practical options for local, offline portrait-segmentation and coarse-mask generation on CPU platforms (Windows 64-bit and Linux) for the Indian Exam-Photo Compliance Platform.
 
+> [!IMPORTANT]
+> **Superseded as a recommendation (2026-08-04). Retained as a historical
+> record.** Its conclusion -- the MediaPipe selfie segmenter -- was replaced by
+> BiRefNet after a measured comparison showed the selfie model absorbs
+> background structures into the subject mask (DEC-031). MediaPipe remains
+> selectable for diagnostics but is no longer the product path.
+>
+> Two later findings also qualify this spike's framing. Coarse-mask quality is
+> not the binding constraint: what mattered more was **where** the matte is
+> computed, since a fixed-size model spends its resolution on the whole frame
+> while only the head survives into the output (DEC-040). And the spike's CPU
+> latency figures underestimate the real cost, which is now the largest open
+> risk (Milestone 24).
+
 ---
 
 ## 1. Options Evaluated

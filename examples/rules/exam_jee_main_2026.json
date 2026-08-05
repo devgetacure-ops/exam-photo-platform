@@ -1,0 +1,188 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "jee-main-2026",
+  "rule_version": "1.0.0",
+  "status": "verified_with_ambiguity",
+  "exam": {
+    "exam_id": "jee-main-2026",
+    "exam_name": "JEE (Main) 2026",
+    "conducting_body": "National Testing Agency",
+    "examination_year": 2026,
+    "application_cycle": "2026",
+    "aliases": [
+      "JEE Main"
+    ],
+    "application_stage": "application",
+    "jurisdiction": "India",
+    "category": "entrance"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "passport size; 10 kb; 200 kb; JPG/JPEG; white background; 80% face; including ears; without mask; colour; live photograph",
+      "source_url": "https://cdnbbsr.s3waas.gov.in/s3f8e59f4b2fe7c5705bf878bbd494ccdf/uploads/2025/11/202511021649722475.pdf",
+      "document_title": "Information Bulletin - JEE (Main) 2026",
+      "page_number": 10,
+      "section_name": "Application Procedure"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "unspecified",
+      "fallback_reason": "No pixel dimensions are published by the conducting body. The output size is chosen per photograph from the crop geometry rather than from a fixed default."
+    },
+    "file_size": {
+      "maximum_bytes": 200000,
+      "minimum_bytes": 10000,
+      "size_unit_as_published": "kb",
+      "published_maximum": 200.0,
+      "published_minimum": 10.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpg",
+        "jpeg"
+      ],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "exact_colour",
+      "required_colour": "#FFFFFF",
+      "tolerance": 3.0
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "required_visible",
+      "face_coverage_target": 80.0,
+      "ears_visible": true
+    },
+    "appearance": {
+      "face_mask": {
+        "policy": "prohibited",
+        "source_wording": "without mask"
+      },
+      "monochrome_accepted": false,
+      "face_coverage_basis": "unspecified",
+      "live_capture_required": true
+    },
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false
+    },
+    "exceptional_instructions": {
+      "black_and_white_restriction": true,
+      "processing_support_status": "supported"
+    }
+  },
+  "requirements": [
+    {
+      "requirement_id": "candidate_photograph",
+      "requirement_name": "Candidate photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants",
+      "content_instructions": "JPG/JPEG; 10-200 KB. Recent colour or black-and-white photograph; face must be clearly visible. Exact 2026 composition rules should be checked against the active bulletin.",
+      "evidence_status": "Current official photo evidence; current bulletin page available"
+    },
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate signature",
+      "requirement_type": "signature",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants",
+      "content_instructions": "JPG/JPEG; commonly 4-30 KB in NTA application bulletins. Signature must be the candidate's own running signature and clearly legible.",
+      "evidence_status": "Current NTA application requirement; exact 2026 field should be rechecked",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 30000,
+          "minimum_bytes": 4000,
+          "published_minimum": 4.0,
+          "published_maximum": 30.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    },
+    {
+      "requirement_id": "pwd_udid_certificate",
+      "requirement_name": "PwD/UDID certificate",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Candidates claiming PwD-related benefit",
+      "content_instructions": "Upload/verify the prescribed disability or UDID documentation where prompted. The current JEE Main advisory specifically asks candidates to update UDID details before application.",
+      "evidence_status": "Current official JEE Main advisory/bulletin",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 400000
+        }
+      }
+    },
+    {
+      "requirement_id": "category_certificate_particulars",
+      "requirement_name": "Category-certificate particulars",
+      "requirement_type": "certificate_scan",
+      "submission_method": "external_identity_verification",
+      "requirement_status": "conditional",
+      "platform_support": "guidance_only",
+      "applicability": "Candidates claiming EWS/SC/ST/OBC-NCL benefit",
+      "content_instructions": "Keep the current valid category certificate ready and ensure its details are updated. The available current official advisory confirms document readiness; whether a file is uploaded for every category was not conclusively established in the extracted material.",
+      "evidence_status": "Current official JEE Main advisory"
+    }
+  ],
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "Information Bulletin - JEE (Main) 2026 - Application Procedure (https://cdnbbsr.s3waas.gov.in/s3f8e59f4b2fe7c5705bf878bbd494ccdf/uploads/2025/11/202511021649722475.pdf)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 5,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "inferred",
+      "reasoning": "The conducting body publishes no pixel dimensions. The output size is chosen per photograph from the crop geometry, so no dimension is asserted on the body's behalf.",
+      "confidence": 1,
+      "approved": false
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    },
+    "requirements[2].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",
+      "confidence": 1,
+      "approved": false
+    }
+  },
+  "verification": {
+    "verification_status": "verified_with_ambiguity"
+  },
+  "fictional_example": false
+}

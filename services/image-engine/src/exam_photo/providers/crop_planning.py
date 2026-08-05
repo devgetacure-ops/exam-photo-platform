@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Any, List, Optional, Protocol, runtime_checkable
+from typing import TYPE_CHECKING, Any, List, Optional, Protocol, runtime_checkable
 
 import numpy as np
 from PIL import Image
@@ -10,6 +10,9 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 from exam_photo.models.geometry import BoundingBox
 from exam_photo.providers.face_detection import FaceDetection
 from exam_photo.suitability.issue_codes import IssueSeverity
+
+if TYPE_CHECKING:
+    from exam_photo.providers.portrait_composition import PortraitCompositionResult
 
 
 class CropMode(str, Enum):
@@ -232,6 +235,7 @@ class CropPlanResult(BaseModel):
     eye_line_ratio: Optional[float] = None
     center_offset_ratio: Optional[float] = None
     torso_inclusion_ratio: Optional[float] = None
+    portrait_composition_box: Optional[BoundingBox] = None
     validation: CropValidationReport
     processing_duration_ms: float
     preview_image: Optional[Image.Image] = Field(default=None, exclude=True)
@@ -247,6 +251,7 @@ class CropPlanner(Protocol):
         head_estimate: Optional[BoundingBox],
         refined_mask: Optional[Image.Image] = None,
         alpha_mask: Optional[np.ndarray[Any, Any]] = None,
+        portrait_composition: Optional["PortraitCompositionResult"] = None,
         config: Optional[CropConfig] = None,
     ) -> CropPlanResult: ...
 
@@ -400,6 +405,7 @@ class CropModeBResult(BaseModel):
     eye_line_ratio: Optional[float] = None
     center_offset_ratio: Optional[float] = None
     torso_inclusion_ratio: Optional[float] = None
+    portrait_composition_box: Optional[BoundingBox] = None
     face_center_x_ratio: float
     face_center_y_ratio: float
 

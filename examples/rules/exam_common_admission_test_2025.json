@@ -1,0 +1,211 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "common-admission-test-2025",
+  "rule_version": "1.0.0",
+  "status": "provisional",
+  "exam": {
+    "exam_id": "common-admission-test-2025",
+    "exam_name": "Common Admission Test 2025",
+    "conducting_body": "Indian Institutes of Management",
+    "examination_year": 2025,
+    "application_cycle": "2025",
+    "aliases": [
+      "CAT 2025"
+    ],
+    "application_stage": "application",
+    "jurisdiction": "India",
+    "category": "management_entrance"
+  },
+  "source_evidence": [
+    {
+      "source_type": "secondary_reference",
+      "official_source": false,
+      "captured_wording": "1200 x 1200 pixels; 1 MB; JPEG/JPG; white/off-white; front view; eyes open; not more than 6 months",
+      "source_url": "https://www.reddit.com/r/CATpreparation/",
+      "document_title": "Reproduction of CAT 2025 photograph instructions"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "exact",
+      "width_px": 1200,
+      "height_px": 1200,
+      "aspect_ratio": "1:1"
+    },
+    "file_size": {
+      "maximum_bytes": 1000000,
+      "size_unit_as_published": "MB",
+      "published_maximum": 1.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpeg",
+        "jpg"
+      ],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "plain_light",
+      "fallback_colour": "#FFFFFF"
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "unspecified",
+      "frontal_pose": true,
+      "eye_visibility": true
+    },
+    "appearance": {
+      "recency_maximum_days": 180
+    },
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false
+    },
+    "exceptional_instructions": {
+      "recent_photo_requirement": true,
+      "processing_support_status": "supported"
+    }
+  },
+  "requirements": [
+    {
+      "requirement_id": "candidate_photograph",
+      "requirement_name": "Candidate photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants",
+      "content_instructions": "Uploaded candidate photograph; format: JPEG/JPG; file size: up to 1 MB; dimensions: 1200 x 1200 px; recency: within 180 days.",
+      "evidence_status": "Secondary-only photo specification; recheck CAT portal"
+    },
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate signature",
+      "requirement_type": "signature",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants",
+      "content_instructions": "Scanned signature image in the dimensions and size shown by the CAT portal. Exact value was not established in the supplied source set.",
+      "evidence_status": "CAT registration requirement; exact specification not_found",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 20000,
+          "minimum_bytes": 10000
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    },
+    {
+      "requirement_id": "category_certificate",
+      "requirement_name": "Category certificate",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "SC/ST/NC-OBC/EWS candidates claiming the respective category",
+      "content_instructions": "Upload the CAT-prescribed certificate/form for the claimed category.",
+      "evidence_status": "CAT registration guide; active portal should be treated as final",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 400000
+        }
+      }
+    },
+    {
+      "requirement_id": "pwd_certificate",
+      "requirement_name": "PwD certificate",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "PwD candidates",
+      "content_instructions": "Upload the prescribed disability certificate/form.",
+      "evidence_status": "CAT registration guide; active portal should be treated as final",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 400000
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "inferred",
+      "evidence_reference": "Reproduction of CAT 2025 photograph instructions (https://www.reddit.com/r/CATpreparation/)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 2,
+      "approved": false
+    },
+    "image_requirements.dimensions": {
+      "type": "inferred",
+      "evidence_reference": "Reproduction of CAT 2025 photograph instructions (https://www.reddit.com/r/CATpreparation/)",
+      "reasoning": "Pixel dimensions transcribed from the cited source.",
+      "confidence": 2,
+      "approved": false
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    },
+    "image_requirements": {
+      "type": "inferred",
+      "reasoning": "Values for this examination were located only on secondary sources, not on the conducting body's own material. Recorded so the examination is servable, and held at provisional status so the dependence stays visible until an official source is found.",
+      "confidence": 2,
+      "approved": false
+    },
+    "requirements[1].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[1].file_spec.file_size.minimum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[1].file_spec.formats.allowed_formats": {
+      "type": "interim_default",
+      "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[2].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[3].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",
+      "confidence": 1,
+      "approved": false
+    }
+  },
+  "verification": {
+    "verification_status": "provisional"
+  },
+  "fictional_example": false
+}

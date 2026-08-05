@@ -84,3 +84,9 @@ model_cache/
 *.log
 signed_urls.log
 private_metadata_export.json
+
+# Local scratch: holds processed real candidate photos and downloaded models.
+# Never commit these (AGENTS.md privacy rule).
+/.tmp/
+/services/image-engine/.tmp/
+/.venv-local/

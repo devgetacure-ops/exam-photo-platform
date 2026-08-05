@@ -2,6 +2,19 @@
 
 This document summarizes the research, candidate evaluations, variant selection, model license verification, and benchmark results for the local CPU-capable face detection model integration.
 
+> [!NOTE]
+> **Still current, with two additions since (2026-08-04).** MediaPipe BlazeFace
+> remains the detector, chosen here for its coverage on raw candidate
+> photographs. Two things were added on top of it:
+>
+> - A **dense face landmarker** now refines the chin and eye line, and supplies
+>   head pose (DEC-032). It does not replace detection: BlazeFace has better
+>   coverage on raw photographs, so counting and detection stay here.
+> - **Detection is no longer a pass/fail gate.** The confidence ladder and the
+>   "exactly one face" rule were both found to misjudge real photographs, and
+>   face counting is now delegated to the disposition policy, which weighs a
+>   second face's size against the tier it was found at (DEC-041).
+
 ---
 
 ## 1. Candidate Evaluation Table

@@ -5,7 +5,7 @@ import os
 import secrets
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, Optional, Tuple
 
 from exam_photo.api.contracts import ApiJobStatus
 from exam_photo.api.jobs import JobRegistry, ProcessingJobRecord
@@ -82,6 +82,55 @@ class ApiProcessingService:
         if not face_model_path.is_absolute():
             face_model_path = self.repo_root / face_model_path
         return face_model_path, expected_face_sha
+
+    def _resolve_matting_backend(self) -> Tuple[str, Optional[Path], str]:
+        """Resolve the subject segmentation backend for this service.
+
+        Returns ``(backend, birefnet_model_dir, birefnet_sha256)``.  ``"auto"``
+        selects BiRefNet only when its vendored weights and the optional
+        matting extra are both importable, so a machine that has not run
+        scripts/download_birefnet.py still serves requests on MediaPipe rather
+        than failing every job.
+        """
+        requested = (self.settings.matting_backend or "auto").lower()
+        if requested == "mediapipe":
+            return "mediapipe", None, ""
+
+        try:
+            from exam_photo.providers.segmenters.birefnet_segmenter import (
+                load_manifest_defaults,
+            )
+
+            model_dir, weights_name, sha, _size = load_manifest_defaults(self.repo_root)
+        except Exception:
+            if requested == "birefnet":
+                raise
+            return "mediapipe", None, ""
+
+        weights_present = (model_dir / weights_name).exists()
+        try:
+            import torch  # noqa: F401
+            import transformers  # noqa: F401
+
+            deps_present = True
+        except ImportError:
+            deps_present = False
+
+        if weights_present and deps_present:
+            return "birefnet", model_dir, sha
+        if requested == "birefnet":
+            missing = []
+            if not weights_present:
+                missing.append(
+                    f"weights at {model_dir} (run scripts/download_birefnet.py)"
+                )
+            if not deps_present:
+                missing.append('matting extra (pip install -e ".[dev,matting]")')
+            raise RuntimeError(
+                "matting_backend='birefnet' requested but missing: "
+                + "; ".join(missing)
+            )
+        return "mediapipe", None, ""
 
     def _resolve_segmenter_model(self) -> Tuple[Path, str]:
         """Resolve segmenter model path and expected sha256."""
@@ -166,11 +215,15 @@ class ApiProcessingService:
             face_model, face_sha = self._resolve_face_model()
             segmenter_model, segmenter_sha = self._resolve_segmenter_model()
 
+            backend, birefnet_dir, birefnet_sha = self._resolve_matting_backend()
             pipeline = RuleOrchestratedPipeline(
                 face_model_path=face_model,
                 segmenter_model_path=segmenter_model,
                 face_expected_sha256=face_sha,
                 segmenter_expected_sha256=segmenter_sha,
+                matting_backend=backend,
+                birefnet_model_dir=birefnet_dir,
+                birefnet_expected_sha256=birefnet_sha,
             )
 
             job_dir = self.store.get_file_path(job_id, ".")

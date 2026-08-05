@@ -1,0 +1,229 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "rrb-level-1-posts-cen-08-2024",
+  "rule_version": "1.0.0",
+  "status": "verified",
+  "exam": {
+    "exam_id": "rrb-level-1-posts-cen-08-2024",
+    "exam_name": "RRB Level-1 Posts - CEN 08/2024",
+    "conducting_body": "Railway Recruitment Boards",
+    "examination_year": 2025,
+    "application_cycle": "CEN 08/2024",
+    "application_stage": "application",
+    "jurisdiction": "India",
+    "category": "railways"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "320 x 240 pixels; minimum 100 DPI; 35mmX45mm or 320 x 240 pixels; 50; KB; JPEG; white/light colour background; at least 50%; area of the photograph; chin; full-face view; Eyes should be clearly open; no glare/reflections; without cap; no grinning; Colour Passport Photograph; free from signature/name/dates; must not be older than two months",
+      "source_url": "https://wcr.indianrailways.gov.in/uploads/files/1771596254046-CEN_%2008_2024_English.pdf",
+      "document_title": "CEN No. 08/2024 - Level 1 Posts",
+      "document_identifier": "CEN 08/2024",
+      "section_name": "Mandatory scanned documents"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "exact",
+      "width_px": 240,
+      "height_px": 320,
+      "aspect_ratio": "3:4",
+      "fallback_reason": "The published pixel figure is landscape, which contradicts the portrait physical size given in the same sentence. Recorded upright; see provenance.",
+      "dpi": 100,
+      "permitted_pixel_range": "35mmX45mm or 320 x 240 pixels"
+    },
+    "file_size": {
+      "maximum_bytes": 100000,
+      "minimum_bytes": 50000,
+      "size_unit_as_published": "KB",
+      "published_maximum": 100.0,
+      "published_minimum": 50.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpeg"
+      ],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "plain_light",
+      "fallback_colour": "#FFFFFF"
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "unspecified",
+      "face_coverage_minimum": 50.0,
+      "chin_visible": true,
+      "frontal_pose": true,
+      "eye_visibility": true
+    },
+    "appearance": {
+      "spectacles": {
+        "policy": "conditional",
+        "condition": "Permitted only without glare/reflections and with eyes clearly visible.",
+        "source_wording": "no glare/reflections"
+      },
+      "headwear": {
+        "policy": "prohibited",
+        "source_wording": "without cap"
+      },
+      "smile": {
+        "policy": "conditional",
+        "condition": "Natural expression; no grinning, frowning or raised eyebrows.",
+        "source_wording": "no grinning"
+      },
+      "monochrome_accepted": false,
+      "face_coverage_basis": "face_box_area",
+      "recency_maximum_days": 60,
+      "imprint": {
+        "policy": "prohibited"
+      }
+    },
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false
+    },
+    "exceptional_instructions": {
+      "printed_name": false,
+      "printed_date": false,
+      "spectacles_restriction": true,
+      "headwear_restriction": true,
+      "black_and_white_restriction": true,
+      "recent_photo_requirement": true,
+      "processing_support_status": "supported"
+    }
+  },
+  "requirements": [
+    {
+      "requirement_id": "candidate_photograph",
+      "requirement_name": "Candidate photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants",
+      "content_instructions": "Uploaded candidate photograph; format: JPEG; file size: 50-100 KB; dimensions: 320 x 240 px; 100 dpi; background: white or light colour; face coverage: at least 50%; recency: within 60 days.",
+      "evidence_status": "Current/recent official RRB notice"
+    },
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate signature",
+      "requirement_type": "signature",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants",
+      "content_instructions": "Separate scanned signature image in the format and size shown by the active RRB portal. Exact current value was not available in the supplied photo dataset.",
+      "evidence_status": "Official notice requirement; field-level specification not extracted",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 20000,
+          "minimum_bytes": 10000
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    },
+    {
+      "requirement_id": "aadhaar_authentication_or_alternative_identity_d",
+      "requirement_name": "Aadhaar authentication or alternative identity details",
+      "requirement_type": "identity_document",
+      "submission_method": "external_identity_verification",
+      "requirement_status": "conditional",
+      "platform_support": "guidance_only",
+      "applicability": "All applicants",
+      "content_instructions": "Complete Aadhaar-based authentication where offered, or provide the permitted alternative identity details under the applicable CEN.",
+      "evidence_status": "Official RRB application process; exact route varies"
+    },
+    {
+      "requirement_id": "sc_st_certificate_for_free_rail_travel_authority",
+      "requirement_name": "SC/ST certificate for free rail travel authority",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "SC/ST candidates requesting the free travel facility",
+      "content_instructions": "Upload the prescribed caste certificate where the CEN makes it a condition for the travel pass. This is not required from every candidate.",
+      "evidence_status": "Recent RRB CEN practice; verify active portal",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 400000
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "CEN No. 08/2024 - Level 1 Posts - Mandatory scanned documents (https://wcr.indianrailways.gov.in/uploads/files/1771596254046-CEN_%2008_2024_English.pdf)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 5,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "official",
+      "evidence_reference": "CEN No. 08/2024 - Level 1 Posts - Mandatory scanned documents (https://wcr.indianrailways.gov.in/uploads/files/1771596254046-CEN_%2008_2024_English.pdf)",
+      "reasoning": "Pixel dimensions transcribed from the cited source.",
+      "confidence": 5,
+      "approved": true
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.dimensions.width_px": {
+      "type": "inferred",
+      "reasoning": "The body publishes the pixel figure landscape while giving a portrait physical size in the same sentence, and the two agree in magnitude but not orientation. Recorded upright, because an examination photograph is a head-and-shoulders portrait and no body in the researched set requires a landscape one. The published figure is preserved verbatim in permitted_pixel_range so the transposition is visible.",
+      "confidence": 3,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    },
+    "requirements[1].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[1].file_spec.file_size.minimum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[1].file_spec.formats.allowed_formats": {
+      "type": "interim_default",
+      "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[3].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",
+      "confidence": 1,
+      "approved": false
+    }
+  },
+  "verification": {
+    "verification_status": "verified"
+  },
+  "fictional_example": false
+}

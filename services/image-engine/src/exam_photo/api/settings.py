@@ -20,6 +20,13 @@ class ApiSettings(BaseModel):
     face_expected_sha256: Optional[str] = None
     segmenter_expected_sha256: Optional[str] = None
 
+    # Subject segmentation backend (DEC-031).  "auto" uses BiRefNet when its
+    # vendored weights and the optional matting extra are both present, and
+    # falls back to MediaPipe otherwise, so the served app gets the better
+    # matte without a separate opt-in step and still starts on a machine that
+    # has not run scripts/download_birefnet.py.
+    matting_backend: str = "auto"
+
     # Pipeline output and local CORS toggles
     allow_invalid_output_save: bool = False
     local_cors_enabled: bool = False
@@ -79,6 +86,9 @@ def get_settings() -> ApiSettings:
         kwargs["segmenter_expected_sha256"] = os.environ[
             "EXAM_PHOTO_SEGMENTER_MODEL_SHA256"
         ]
+
+    if "EXAM_PHOTO_MATTING_BACKEND" in os.environ:
+        kwargs["matting_backend"] = os.environ["EXAM_PHOTO_MATTING_BACKEND"].lower()
 
     # Load boolean flags
     if "EXAM_PHOTO_ALLOW_INVALID_OUTPUT_SAVE" in os.environ:

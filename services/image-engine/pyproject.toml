@@ -24,6 +24,10 @@ dependencies = [
     "fastapi>=0.100.0",
     "uvicorn>=0.20.0",
     "python-multipart>=0.0.6",
+    # PDF reading and structural rewriting. pypdf is pure Python and BSD
+    # licensed; PyMuPDF is faster and can rasterise, but it is AGPL, which is
+    # not compatible with shipping this as a commercial service.
+    "pypdf>=5.0.0",
 ]
 
 [project.optional-dependencies]
@@ -38,6 +42,18 @@ dev = [
 # Tests that require a real model are skipped unless EXAM_PHOTO_FACE_MODEL_PATH is set.
 face = [
     "mediapipe~=0.10.35",
+]
+# Matting extra: BiRefNet-based subject segmentation (see DEC-031). Install with
+# pip install -e ".[dev,face,matting]". Optional because it pulls torch, which is
+# a large dependency the core engine and MediaPipe-only deployments do not need.
+matting = [
+    "torch>=2.2.0",
+    "torchvision>=0.17.0",
+    "transformers>=4.40.0",
+    "timm>=1.0.0",
+    "einops>=0.7.0",
+    "kornia>=0.7.0",
+    "huggingface_hub>=0.23.0",
 ]
 
 [tool.hatch.build.targets.wheel]
@@ -81,4 +97,5 @@ markers = [
     "mandatory_api: marks tests that depend on local API and job orchestration",
     "mandatory_rule_admin: marks tests that depend on the rule validation and admin endpoints",
     "mandatory_engine_quality: marks engine quality tests for visual and composition hardening",
+    "ink_robustness: sweeps the ink path over synthetic capture variation; slow, and gated like the model-backed suites so the fast subset stays fast",
 ]

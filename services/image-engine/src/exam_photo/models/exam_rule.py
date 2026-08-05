@@ -1,11 +1,11 @@
 import re
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union, get_args, get_origin
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-from exam_photo.models.provenance import ValueProvenance
+from exam_photo.models.provenance import ProvenanceType, ValueProvenance
 from exam_photo.models.source_evidence import SourceEvidence
 from exam_photo.providers.crop_planning import CropProfile, EarsPolicy
 
@@ -64,6 +64,7 @@ class DimensionsConfig(BaseModel):
     mode: DimensionMode
     width_px: Optional[int] = Field(default=None, gt=0)
     height_px: Optional[int] = Field(default=None, gt=0)
+    dpi: Optional[int] = Field(default=None, gt=0)
     aspect_ratio: Optional[str] = Field(default=None, pattern=r"^[0-9]+:[0-9]+$")
 
     minimum_width_px: Optional[int] = Field(default=None, gt=0)
@@ -147,10 +148,16 @@ class DimensionsConfig(BaseModel):
                 raise ValueError(
                     "Unspecified dimensions mode requires a fallback_reason."
                 )
-            if not self.platform_default_profile:
-                raise ValueError(
-                    "Unspecified dimensions mode requires platform_default_profile."
-                )
+            # ``platform_default_profile`` is deliberately no longer required.
+            #
+            # It used to be, because the resolver sized an unspecified-dimension
+            # output by looking the profile name up in a table of fixed pixel
+            # dimensions. That is gone: the output size is now chosen per
+            # photograph from the crop's own geometry, so no named default is
+            # consulted and demanding one would force every such rule to carry a
+            # value nothing reads. The field remains available for recording
+            # what a body's guidance implies, but a rule that omits it is
+            # complete.
 
         return self
 
@@ -192,7 +199,12 @@ class FormatsConfig(BaseModel):
         allowed_normalized = [f.lower().strip() for f in self.allowed_formats]
         pref_normalized = self.preferred_format.lower().strip()
 
-        valid_formats = {"jpeg", "jpg", "png", "webp"}
+        # ``pdf`` is valid for a *deliverable* file specification -- a
+        # certificate or a mark sheet is very often required as one -- and never
+        # for a photograph. The photograph case is refused by ImageRequirements
+        # rather than here, because this same config type serves both and the
+        # constraint belongs where the distinction is known.
+        valid_formats = {"jpeg", "jpg", "png", "webp", "pdf"}
         for fmt in allowed_normalized:
             if fmt not in valid_formats:
                 raise ValueError(
@@ -409,15 +421,343 @@ class ExceptionalInstructions(BaseModel):
     unsupported_requirement_reasons: List[str] = Field(default_factory=list)
 
 
+class AppearancePolicyValue(str, Enum):
+    PERMITTED = "permitted"
+    PROHIBITED = "prohibited"
+    CONDITIONAL = "conditional"
+
+
+class AppearancePolicy(BaseModel):
+    """A three-state candidate-appearance rule (DEC-042).
+
+    ``CONDITIONAL`` exists because conducting bodies publish rules a boolean
+    cannot express -- "prohibited except for religious reasons", "permitted
+    only if regularly worn".  Forcing those into permitted/prohibited would
+    assert something the body did not say, and those are exactly the cases
+    with the highest cost of error: religious head coverings and prescription
+    eyewear.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+    policy: AppearancePolicyValue
+    condition: Optional[str] = None
+    source_wording: Optional[str] = None
+
+    @model_validator(mode="after")
+    def validate_conditional_has_condition(self) -> "AppearancePolicy":
+        if self.policy == AppearancePolicyValue.CONDITIONAL and not self.condition:
+            raise ValueError(
+                "A 'conditional' appearance policy must state its condition; "
+                "otherwise it carries no more information than an omitted rule."
+            )
+        return self
+
+
+class FaceCoverageBasis(str, Enum):
+    FACE_BOX_AREA = "face_box_area"
+    FACE_HEIGHT = "face_height"
+    HEAD_HEIGHT = "head_height"
+    UNSPECIFIED = "unspecified"
+
+
+class ImprintPolicyValue(str, Enum):
+    REQUIRED = "required"
+    PROHIBITED = "prohibited"
+    UNSPECIFIED = "unspecified"
+
+
+class ImprintField(str, Enum):
+    CANDIDATE_NAME = "candidate_name"
+    PHOTOGRAPH_DATE = "photograph_date"
+
+
+class ImprintPosition(str, Enum):
+    BOTTOM = "bottom"
+    BELOW_IMAGE = "below_image"
+    UNSPECIFIED = "unspecified"
+
+
+class ImprintConfig(BaseModel):
+    """Text a body requires printed on, or forbids from, the photograph.
+
+    Verified conflict: TNPSC, Kerala PSC and CBSE require a name and/or date;
+    Railways prohibits any signature, name, date or mark on the photograph.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+    policy: ImprintPolicyValue = ImprintPolicyValue.UNSPECIFIED
+    fields: List[ImprintField] = Field(default_factory=list)
+    position: ImprintPosition = ImprintPosition.UNSPECIFIED
+    source_wording: Optional[str] = None
+
+    @model_validator(mode="after")
+    def validate_required_names_fields(self) -> "ImprintConfig":
+        if self.policy == ImprintPolicyValue.REQUIRED and not self.fields:
+            raise ValueError(
+                "A required imprint must name the fields to print; the engine "
+                "cannot infer whether the body wants the name, the date or both."
+            )
+        return self
+
+
+class ProhibitedProvenance(str, Enum):
+    SELFIE = "selfie"
+    MOBILE_PHOTOGRAPH = "mobile_photograph"
+    SCANNED_PRINT = "scanned_print"
+    PHOTOGRAPH_OF_A_PHOTOGRAPH = "photograph_of_a_photograph"
+    GROUP_PHOTOGRAPH_CROP = "group_photograph_crop"
+    DIGITALLY_ALTERED = "digitally_altered"
+    WATERMARKED = "watermarked"
+    COMPUTER_GENERATED = "computer_generated"
+
+
+class AppearanceConfig(BaseModel):
+    """Per-exam candidate-appearance rules (DEC-042).
+
+    Every field is optional and absence means the conducting body did not
+    specify it.  Absence must never be read as permission or prohibition --
+    that is the no-silent-assumptions principle applied to appearance.
+
+    These cannot be platform constants: across 48 examinations the verified
+    rules contradict each other on background colour, spectacles, smiling,
+    printed name/date, colour versus monochrome, and face occupancy.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+    spectacles: Optional[AppearancePolicy] = None
+    headwear: Optional[AppearancePolicy] = None
+    smile: Optional[AppearancePolicy] = None
+    facial_hair: Optional[AppearancePolicy] = None
+    face_mask: Optional[AppearancePolicy] = None
+    monochrome_accepted: Optional[bool] = None
+    # The published percentages (50, 60-70, ~75, 80) are not comparable across
+    # bodies because the bodies do not agree on what is being measured.
+    face_coverage_basis: Optional[FaceCoverageBasis] = None
+    # Not checkable from a submitted image, so these drive guidance text only,
+    # never a warning and never a block (DEC-041).
+    live_capture_required: Optional[bool] = None
+    recency_maximum_days: Optional[int] = Field(default=None, ge=1)
+    prohibited_provenance: List[ProhibitedProvenance] = Field(default_factory=list)
+    imprint: Optional[ImprintConfig] = None
+    attestation_required: Optional[bool] = None
+    source_wording: Optional[str] = None
+
+
 class ImageRequirements(BaseModel):
+    """The photograph specification. Always an image, never a document."""
+
     model_config = ConfigDict(extra="forbid")
     dimensions: DimensionsConfig
     file_size: FileSizeConfig
     formats: FormatsConfig
     background: BackgroundConfig
     composition: CompositionConfig
+    # Optional so every existing rule record stays valid; an absent block means
+    # no appearance rule was verified for that exam, not that anything is
+    # permitted.
+    appearance: Optional[AppearanceConfig] = None
     filename: FilenameConfig
     exceptional_instructions: ExceptionalInstructions
+
+    @model_validator(mode="after")
+    def validate_photograph_is_an_image(self) -> "ImageRequirements":
+        if "pdf" in {f.lower().strip() for f in self.formats.allowed_formats}:
+            raise ValueError(
+                "A candidate photograph cannot be a PDF. The format is valid "
+                "for document deliverables, which use file_spec rather than "
+                "image_requirements."
+            )
+        return self
+
+
+class RequirementType(str, Enum):
+    """What a required item *is*.
+
+    How it is provided is :class:`SubmissionMethod`, and the two are
+    independent.  A live portal photograph is a ``PHOTOGRAPH`` submitted by
+    ``OFFICIAL_LIVE_CAPTURE``, not a type of its own -- folding the method into
+    the type would make "how many photographs does this exam want" unanswerable.
+    """
+
+    PHOTOGRAPH = "photograph"
+    SIGNATURE = "signature"
+    THUMB_IMPRESSION = "thumb_impression"
+    HANDWRITTEN_DECLARATION = "handwritten_declaration"
+    CERTIFICATE_SCAN = "certificate_scan"
+    IDENTITY_DOCUMENT = "identity_document"
+    PORTAL_DECLARATION = "portal_declaration"
+    OTHER = "other"
+
+
+class SubmissionMethod(str, Enum):
+    """How the candidate provides an item, as classified by the research.
+
+    This decides whether the platform can act at all.  The first three produce
+    a file the platform can prepare; the last four happen inside the official
+    portal or at a physical stage, and can only be explained.
+    """
+
+    FILE_UPLOAD = "file_upload"
+    HANDWRITTEN_THEN_UPLOADED = "handwritten_then_uploaded"
+    DOCUMENT_SCAN_UPLOAD = "document_scan_upload"
+    OFFICIAL_LIVE_CAPTURE = "official_live_capture"
+    EXTERNAL_IDENTITY_VERIFICATION = "external_identity_verification"
+    TYPED_OR_SELECTED_DECLARATION = "typed_or_selected_declaration"
+    PHYSICAL_STAGE_REQUIREMENT = "physical_stage_requirement"
+
+
+#: Methods that produce a file the platform can prepare.  Everything else is
+#: completed by the candidate elsewhere.
+_DELIVERABLE_METHODS = frozenset(
+    {
+        SubmissionMethod.FILE_UPLOAD,
+        SubmissionMethod.HANDWRITTEN_THEN_UPLOADED,
+        SubmissionMethod.DOCUMENT_SCAN_UPLOAD,
+    }
+)
+
+
+class RequirementStatus(str, Enum):
+    MANDATORY = "mandatory"
+    CONDITIONAL = "conditional"
+    OPTIONAL = "optional"
+    PORTAL_DEPENDENT = "portal_dependent"
+
+
+class PlatformSupport(str, Enum):
+    """What the platform does for one required item.
+
+    Kept separate from :class:`ProcessingSupportStatus`, which answers a
+    different question -- how completely the photograph pipeline satisfies a
+    photograph rule.  One scale for two questions would force every consumer to
+    know which subset of values applied to it.
+
+    ``GUIDANCE_ONLY`` and ``PHYSICAL_STAGE`` exist to keep the boundary between
+    an ordinary upload and an authority-controlled step visible in the data
+    rather than in prose.  Nothing carrying either may be sold, bundled or
+    counted as an output.
+    """
+
+    SUPPORTED = "supported"
+    PARTIALLY_SUPPORTED = "partially_supported"
+    GUIDANCE_ONLY = "guidance_only"
+    PHYSICAL_STAGE = "physical_stage"
+    NOT_YET_SUPPORTED = "not_yet_supported"
+
+
+class DeliverableFileSpec(BaseModel):
+    """The output specification for one non-photograph deliverable.
+
+    Every block is optional because the evidence is routinely partial -- a body
+    publishes a signature's file size and nothing else -- and a block the
+    research did not establish is omitted rather than defaulted, per the same
+    rule that governs photograph fields.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+    dimensions: Optional[DimensionsConfig] = None
+    file_size: Optional[FileSizeConfig] = None
+    formats: Optional[FormatsConfig] = None
+    filename: Optional[FilenameConfig] = None
+
+    @property
+    def is_actionable(self) -> bool:
+        """True when there is enough here to prepare a file against.
+
+        Dimensions alone are not enough: without a format the engine cannot
+        decide what to encode, and without a size ceiling it cannot decide how
+        hard to compress.
+        """
+        return self.file_size is not None or self.formats is not None
+
+
+class ExamRequirement(BaseModel):
+    """One item an examination requires during application.
+
+    The list an exam carries is the *complete* inventory, including items the
+    platform cannot produce.  Those are recorded with the support state that
+    says so rather than omitted, because an omitted requirement reads as "this
+    examination does not ask for it" -- which for a live-capture or
+    physical-stage item is false, and is exactly the confusion that makes a
+    candidate think the platform completed a step it never touched.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+    requirement_id: str = Field(pattern=r"^[a-z0-9_]+$")
+    requirement_name: str = Field(min_length=1)
+    requirement_type: RequirementType
+    submission_method: SubmissionMethod
+    requirement_status: RequirementStatus
+    platform_support: PlatformSupport
+    file_spec: Optional[DeliverableFileSpec] = None
+    applicability: Optional[str] = None
+    content_instructions: Optional[str] = None
+    rejection_conditions: List[str] = Field(default_factory=list)
+    evidence_status: Optional[str] = None
+    notes: Optional[str] = None
+
+    @model_validator(mode="after")
+    def validate_requirement(self) -> "ExamRequirement":
+        # The photograph's specification is ``image_requirements``. Allowing a
+        # second copy here would create two places a photograph rule can live,
+        # and the pipeline would have to pick one.
+        if self.requirement_type == RequirementType.PHOTOGRAPH and self.file_spec:
+            raise ValueError(
+                "A photograph requirement must not carry a file_spec; its "
+                "specification is the rule's image_requirements block."
+            )
+
+        # A method the platform cannot execute cannot be a supported output.
+        # This is the structural form of the product rule that ordinary uploads
+        # and authority-controlled steps must never be presented alike.
+        if self.submission_method not in _DELIVERABLE_METHODS:
+            if self.platform_support in (
+                PlatformSupport.SUPPORTED,
+                PlatformSupport.PARTIALLY_SUPPORTED,
+            ):
+                raise ValueError(
+                    f"Submission method '{self.submission_method.value}' is "
+                    "completed by the candidate outside the platform, so it "
+                    "cannot be marked supported. Use 'guidance_only' or "
+                    "'physical_stage'."
+                )
+
+        if self.submission_method == SubmissionMethod.PHYSICAL_STAGE_REQUIREMENT:
+            if self.platform_support != PlatformSupport.PHYSICAL_STAGE:
+                raise ValueError(
+                    "A physical-stage requirement must carry platform_support "
+                    "'physical_stage'."
+                )
+        elif self.platform_support == PlatformSupport.PHYSICAL_STAGE:
+            raise ValueError(
+                "platform_support 'physical_stage' applies only to a "
+                "physical_stage_requirement submission method."
+            )
+
+        # "Supported" is a promise that the platform can produce this file. For
+        # anything but the photograph, that promise needs a specification
+        # behind it.
+        if (
+            self.platform_support == PlatformSupport.SUPPORTED
+            and self.requirement_type != RequirementType.PHOTOGRAPH
+        ):
+            if self.file_spec is None or not self.file_spec.is_actionable:
+                raise ValueError(
+                    f"Requirement '{self.requirement_id}' is marked supported "
+                    "but carries no file size or format to prepare against. "
+                    "Mark it not_yet_supported until a specification exists."
+                )
+
+        # A conditional requirement that does not say when it applies carries no
+        # more information than an omitted one -- the same reasoning as the
+        # conditional appearance policies in DEC-042.
+        if self.requirement_status == RequirementStatus.CONDITIONAL:
+            if not self.applicability:
+                raise ValueError(
+                    "A conditional requirement must state its applicability."
+                )
+
+        return self
 
 
 class VerificationConfig(BaseModel):
@@ -463,6 +803,35 @@ class Supersession(BaseModel):
     change_summary: Optional[str] = None
 
 
+def _unwrap_annotation(field_type: Any) -> Any:
+    """Reduce ``Optional``/list/dict wrappers to the type they contain.
+
+    Applied repeatedly rather than once, because annotations nest: a field
+    typed ``Optional[List[ExamRequirement]]`` has to shed both the ``Union``
+    and the ``list`` before the element model is reachable.  Handling only a
+    single layer silently reported every path through such a field as invalid.
+    """
+    while True:
+        origin = get_origin(field_type)
+        if origin is Union:
+            named = [arg for arg in get_args(field_type) if arg is not type(None)]
+            if not named:
+                return field_type
+            field_type = named[0]
+        elif origin in (list, set, frozenset, tuple):
+            args = get_args(field_type)
+            if not args:
+                return field_type
+            field_type = args[0]
+        elif origin is dict:
+            args = get_args(field_type)
+            if len(args) < 2:
+                return field_type
+            field_type = args[1]
+        else:
+            return field_type
+
+
 def is_valid_field_path(model_cls: Any, path: str) -> bool:
     parts = path.split(".")
     current_cls = model_cls
@@ -472,37 +841,7 @@ def is_valid_field_path(model_cls: Any, path: str) -> bool:
             return False
         if part not in current_cls.model_fields:
             return False
-        field_info = current_cls.model_fields[part]
-        field_type = field_info.annotation
-
-        from typing import Union, get_args, get_origin
-
-        origin = get_origin(field_type)
-        if origin is Union:
-            args = get_args(field_type)
-            next_cls = None
-            for arg in args:
-                if arg is not type(None) and hasattr(arg, "model_fields"):
-                    next_cls = arg
-                    break
-            if next_cls:
-                current_cls = next_cls
-            else:
-                current_cls = args[0]
-        elif origin is list:
-            args = get_args(field_type)
-            if args and hasattr(args[0], "model_fields"):
-                current_cls = args[0]
-            else:
-                current_cls = args[0] if args else Any
-        elif origin is dict:
-            args = get_args(field_type)
-            if len(args) > 1 and hasattr(args[1], "model_fields"):
-                current_cls = args[1]
-            else:
-                current_cls = args[1] if len(args) > 1 else Any
-        else:
-            current_cls = field_type
+        current_cls = _unwrap_annotation(current_cls.model_fields[part].annotation)
     return True
 
 
@@ -515,6 +854,10 @@ class ExamRule(BaseModel):
     exam: ExamIdentity
     source_evidence: List[SourceEvidence] = Field(min_length=1)
     image_requirements: ImageRequirements
+    # Optional so every record written before the inventory existed stays valid.
+    # Absent means the deliverable research has not been done for this exam --
+    # never that the photograph is the only thing the exam asks for.
+    requirements: Optional[List[ExamRequirement]] = Field(default=None, min_length=1)
     provenance: Dict[str, ValueProvenance]
     verification: VerificationConfig
     effective_period: Optional[EffectivePeriod] = None
@@ -568,6 +911,63 @@ class ExamRule(BaseModel):
             if not is_valid_field_path(ExamRule, path):
                 raise ValueError(
                     f"Provenance path '{path}' does not map to any valid field path in the rule configuration."
+                )
+
+        # An interim default is a placeholder for a figure no source published,
+        # and a photograph rule resting on one has not been verified whatever
+        # else in it has. This is the enforcement half of the interim_default
+        # provenance type.
+        #
+        # Scoped to ``image_requirements`` on purpose. ``status`` has always
+        # been a statement about the photograph specification -- it is what the
+        # catalogue tiers, the gap register and every current consumer read it
+        # as -- so a placeholder in a signature's file size must not demote the
+        # exam's photograph rule to provisional. A requirement's own
+        # specification quality is carried by its own provenance entry, which is
+        # equally findable. When requirements grow a per-item status of their
+        # own, this scoping is the thing to revisit.
+        if self.status in (RuleStatus.VERIFIED, RuleStatus.VERIFIED_WITH_AMBIGUITY):
+            interim = sorted(
+                path
+                for path, entry in self.provenance.items()
+                if entry.type == ProvenanceType.INTERIM_DEFAULT
+                and path.startswith("image_requirements")
+            )
+            if interim:
+                raise ValueError(
+                    f"Status '{self.status.value}' conflicts with interim "
+                    f"placeholder values in the photograph specification at "
+                    f"{', '.join(interim)}. A photograph rule carrying an "
+                    "interim default is provisional at best until the published "
+                    "figure replaces it."
+                )
+
+        if self.requirements is not None:
+            seen: set[str] = set()
+            for requirement in self.requirements:
+                if requirement.requirement_id in seen:
+                    raise ValueError(
+                        f"Duplicate requirement_id '{requirement.requirement_id}'. "
+                        "Orders and packages reference it, so it must be unique "
+                        "within a rule."
+                    )
+                seen.add(requirement.requirement_id)
+
+            # The rule carries exactly one photograph specification, so at most
+            # one requirement can be the thing that specification describes.
+            # Live-capture photographs are unbounded: an exam may require an
+            # uploaded photograph and a portal-captured one.
+            uploaded_photographs = [
+                requirement
+                for requirement in self.requirements
+                if requirement.requirement_type == RequirementType.PHOTOGRAPH
+                and requirement.submission_method in _DELIVERABLE_METHODS
+            ]
+            if len(uploaded_photographs) > 1:
+                raise ValueError(
+                    "More than one uploaded photograph requirement, but a rule "
+                    "carries only one image_requirements block to specify them "
+                    "with."
                 )
 
         return self

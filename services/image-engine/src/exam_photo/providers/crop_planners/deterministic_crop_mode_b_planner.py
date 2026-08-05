@@ -16,6 +16,7 @@ from exam_photo.providers.crop_planning import (
     CropValidationReport,
 )
 from exam_photo.providers.face_detection import FaceDetection
+from exam_photo.providers.portrait_composition import PortraitCompositionResult
 from exam_photo.suitability.issue_codes import IssueSeverity
 
 
@@ -42,6 +43,7 @@ class DeterministicCropModeBPlanner:
         face: FaceDetection,
         head_estimate: Optional[BoundingBox],
         refined_mask: Optional[Image.Image] = None,
+        portrait_composition: Optional[PortraitCompositionResult] = None,
         config: Optional[CropModeBConfig] = None,
     ) -> CropModeBResult:
         start_time = time.perf_counter()
@@ -74,7 +76,11 @@ class DeterministicCropModeBPlanner:
             return self._empty_failed_result(cfg, start_time, issues, issue_codes)
 
         # 2. Establish subject preservation box
-        if head_estimate is not None:
+        composition_box: Optional[BoundingBox] = None
+        if portrait_composition is not None:
+            preserve_box = portrait_composition.preservation_box
+            composition_box = portrait_composition.preservation_box
+        elif head_estimate is not None:
             preserve_box = head_estimate
         else:
             # Fallback face-derived expanded box
@@ -88,9 +94,7 @@ class DeterministicCropModeBPlanner:
                 bottom=min(float(image_height), face_box.bottom + face_h * 0.30),
             )
 
-        h_head = (
-            head_estimate.height if head_estimate is not None else preserve_box.height
-        )
+        h_head = preserve_box.height
 
         # Limit refined mask y-limit to protect hair, beard, scarf, neck
         if refined_mask is not None:
@@ -289,10 +293,11 @@ class DeterministicCropModeBPlanner:
         # 6. Preservation ratio checks
         head_coverage_ratio: Optional[float] = None
         head_preservation_valid: Optional[bool] = None
-        if head_estimate is not None:
-            inter = head_estimate.intersection(crop_box)
+        preservation_reference_box = composition_box or head_estimate
+        if preservation_reference_box is not None:
+            inter = preservation_reference_box.intersection(crop_box)
             if inter is not None:
-                head_coverage_ratio = inter.area / head_estimate.area
+                head_coverage_ratio = inter.area / preservation_reference_box.area
             else:
                 head_coverage_ratio = 0.0
 
@@ -385,9 +390,7 @@ class DeterministicCropModeBPlanner:
         face_center_x_ratio = (face_cx - clamped_l) / crop_box_width
         face_center_y_ratio = (face_cy - clamped_t) / crop_box_height
 
-        w_head = (
-            head_estimate.width if head_estimate is not None else preserve_box.width
-        )
+        w_head = preserve_box.width
         eye_y = face.bounding_box.top + 0.3 * face.bounding_box.height
         if (
             face.landmarks is not None
@@ -396,18 +399,21 @@ class DeterministicCropModeBPlanner:
         ):
             eye_y = (face.landmarks.left_eye.y + face.landmarks.right_eye.y) / 2.0
 
-        head_width_ratio = w_head / crop_box_width if head_estimate else None
+        has_portrait_reference = preservation_reference_box is not None
+        head_width_ratio = w_head / crop_box_width if has_portrait_reference else None
         top_margin_ratio = (
-            (preserve_box.top - clamped_t) / crop_box_height if head_estimate else None
+            (preserve_box.top - clamped_t) / crop_box_height
+            if has_portrait_reference
+            else None
         )
         eye_line_ratio = (
-            (eye_y - clamped_t) / crop_box_height if head_estimate else None
+            (eye_y - clamped_t) / crop_box_height if has_portrait_reference else None
         )
         crop_cx = (clamped_l + clamped_r) / 2.0
         center_offset_ratio = abs(face_cx - crop_cx) / crop_box_width
         torso_inclusion_ratio = (
             max(0.0, clamped_b - preserve_box.bottom) / crop_box_height
-            if head_estimate
+            if has_portrait_reference
             else None
         )
 
@@ -486,22 +492,6 @@ class DeterministicCropModeBPlanner:
             or (mask_preservation_valid is False)
         )
 
-        print(f"DEBUG_CROP_B: preserve_box={preserve_box.model_dump()}")
-        print(f"DEBUG_CROP_B: h_crop={h_crop}, w_crop={w_crop}")
-        print(
-            f"DEBUG_CROP_B: clamped_l={clamped_l}, clamped_t={clamped_t}, clamped_r={clamped_r}, clamped_b={clamped_b}"
-        )
-        print(
-            f"DEBUG_CROP_B: top_margin={top_margin_px}, side_margin_l={left_margin_px}, side_margin_r={right_margin_px}"
-        )
-        print(
-            f"DEBUG_CROP_B: min_top_margin={cfg.minimum_top_margin_ratio * crop_box_height}, min_side_margin={cfg.minimum_side_margin_ratio * crop_box_width}"
-        )
-        print(
-            f"DEBUG_CROP_B: face_cx={face_cx}, face_cy={face_cy}, face_center_x_ratio={face_center_x_ratio}, face_center_y_ratio={face_center_y_ratio}"
-        )
-        print(f"DEBUG_CROP_B: mask_preservation_ratio={mask_preservation_ratio}")
-
         is_valid = (
             len(
                 [
@@ -558,6 +548,7 @@ class DeterministicCropModeBPlanner:
             eye_line_ratio=eye_line_ratio,
             center_offset_ratio=center_offset_ratio,
             torso_inclusion_ratio=torso_inclusion_ratio,
+            portrait_composition_box=composition_box,
             face_center_x_ratio=face_center_x_ratio,
             face_center_y_ratio=face_center_y_ratio,
             head_coverage_ratio=head_coverage_ratio,

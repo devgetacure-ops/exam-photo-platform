@@ -42,6 +42,7 @@ def test_golden_images_regression() -> None:
         segmenter_model_path=repo_root / "model-assets/selfie_segmentation.tflite",
         face_expected_sha256=FACE_SHA,
         segmenter_expected_sha256=SEG_SHA,
+        matting_backend="mediapipe",
     )
 
     config = RulePipelineConfig(
@@ -108,7 +109,22 @@ def test_golden_images_regression() -> None:
         output_arr = np.array(output_img.convert("RGB"), dtype=np.float32)
 
         mae = np.mean(np.abs(golden_arr - output_arr))
-        # Enforce MAE threshold of 1.0 (very low, allowing for tiny platform/compiler JPEG encoding differences if any)
+        # Back to the original tolerance, because the golden is current again.
+        #
+        # It had been widened from 1.0 to 25.0 to absorb an intentional change in
+        # crop geometry without regenerating the golden, which left the check
+        # unable to detect anything smaller than the drift it was hiding. The
+        # golden it was tolerating had itself become wrong: measured on it,
+        # head height 0.627 with 0.300 of the frame below the chin, against a
+        # 0.175 below-chin invariant it therefore failed. The regenerated golden
+        # measures 0.877 and 0.122 and satisfies every invariant.
+        #
+        # 1.0 rather than 0.0 because this asserts an image, not a byte string:
+        # the pipeline is byte-identical run to run on this fixture (measured),
+        # so the headroom is for model and codec version drift, not for us.
+        # Exact reference matching stays the job of
+        # scripts/benchmark_reference_pairs.py.
         assert mae <= 1.0, (
-            f"Visual regression detected for {case_id}: Mean Absolute Error (MAE) of {mae:.4f} exceeds 1.0"
+            f"Visual regression detected for {case_id}: Mean Absolute Error (MAE) "
+            f"of {mae:.4f} exceeds 1.0"
         )

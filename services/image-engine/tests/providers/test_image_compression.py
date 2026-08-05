@@ -153,6 +153,28 @@ def test_metadata_stripped() -> None:
     assert "exif" not in decoded.info
 
 
+def test_jpeg_compression_writes_target_dpi_without_exif() -> None:
+    img = Image.new("RGB", (300, 400), color="blue")
+    config = OutputCompressionConfig(
+        maximum_bytes=50000,
+        strip_metadata=True,
+        target_dpi=72,
+    )
+    preparer = DeterministicJpegCompressor()
+    result = preparer.compress_output(img, config)
+
+    assert result.validation.is_valid
+    assert result.target_dpi == 72
+    assert result.actual_dpi == 72
+    assert result.validation.dpi_satisfied is True
+    assert result.metadata_stripped is True
+
+    assert result.encoded_bytes is not None
+    decoded = Image.open(io.BytesIO(result.encoded_bytes))
+    assert decoded.info.get("dpi") == (72, 72)
+    assert "exif" not in decoded.info
+
+
 def test_encoded_bytes_excluded_from_serialization() -> None:
     img = Image.new("RGB", (300, 400), color="blue")
     config = OutputCompressionConfig(maximum_bytes=50000)

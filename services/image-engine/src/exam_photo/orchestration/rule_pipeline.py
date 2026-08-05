@@ -1,3 +1,5 @@
+import math
+import os
 import time
 from enum import Enum
 from pathlib import Path
@@ -22,7 +24,11 @@ from exam_photo.providers.crop_planners.deterministic_crop_mode_b_planner import
 from exam_photo.providers.crop_planners.deterministic_crop_planner import (
     DeterministicCropPlanner,
 )
-from exam_photo.providers.crop_planning import CropModeBResult, CropPlanResult
+from exam_photo.providers.crop_planning import (
+    CropIssueCode,
+    CropModeBResult,
+    CropPlanResult,
+)
 from exam_photo.providers.foreground_decontamination import (
     decontaminate_foreground_edges,
 )
@@ -35,6 +41,9 @@ from exam_photo.providers.mediapipe_face_detector import MediapipeFaceDetector
 from exam_photo.providers.output_preparers.deterministic_output_preparer import (
     DeterministicOutputPreparer,
 )
+from exam_photo.providers.portrait_composition import (
+    DeterministicPortraitCompositionEstimator,
+)
 from exam_photo.providers.premultiplied_compositing import (
     premultiply_crop_resize_composite,
     safe_crop_numpy,
@@ -46,6 +55,64 @@ from exam_photo.providers.segmenters.mediapipe_segmenter import (
     MediapipeSubjectSegmenter,
 )
 from exam_photo.rule_validation import validate_exam_rule
+from exam_photo.suitability.appearance_signals import (
+    measure_appearance_signals,
+    measure_face_tone,
+)
+from exam_photo.suitability.disposition import (
+    AppearanceFinding,
+    Disposition,
+    DispositionReport,
+    FindingLevel,
+    evaluate_disposition,
+)
+from exam_photo.suitability.enhancement_planner import (
+    EnhancementPlan,
+    apply_enhancement,
+    plan_enhancement,
+    severe_cast_detected,
+)
+from exam_photo.suitability.issue_codes import SuitabilityIssueCode
+
+# Face-detection confidence ladder.  The primary threshold is the provider
+# default; the recovery levels are only consulted when the primary pass returns
+# no detections at all (see Stage 3).
+_FACE_PRIMARY_CONFIDENCE = 0.5
+_FACE_RECOVERY_CONFIDENCES = (0.35, 0.25, 0.15)
+
+
+def _monochrome_accepted(rule: Optional[ExamRule]) -> Optional[bool]:
+    """Whether this exam accepts a black-and-white photograph.
+
+    ``None`` when the conducting body did not specify it, which is neither
+    permission nor prohibition and produces no finding (DEC-042).
+    """
+    if rule is None:
+        return None
+    appearance = rule.image_requirements.appearance
+    return appearance.monochrome_accepted if appearance is not None else None
+
+
+def _find_repo_root() -> Path:
+    """Locate the repository root holding model-manifests/ and model-assets/.
+
+    Defined here rather than imported from the API layer so the engine does not
+    depend on the service that wraps it.
+    """
+    env_val = os.environ.get("EXAM_PHOTO_REPO_ROOT")
+    if env_val:
+        candidate = Path(env_val).resolve()
+        if candidate.exists():
+            return candidate
+
+    current = Path(__file__).resolve().parent
+    for _ in range(7):
+        if (current / "AGENTS.md").exists() or (current / "model-manifests").exists():
+            return current
+        if current.parent == current:
+            break
+        current = current.parent
+    return Path(".").resolve()
 
 
 class PipelineStage(str, Enum):
@@ -54,6 +121,7 @@ class PipelineStage(str, Enum):
     FACE_DETECTION = "face_detection"
     HEAD_ESTIMATION = "head_estimation"
     FUSED_HEAD_REFINEMENT = "fused_head_refinement"
+    PORTRAIT_COMPOSITION = "portrait_composition"
     SUBJECT_SEGMENTATION = "subject_segmentation"
     MASK_REFINEMENT = "mask_refinement"
     CROP_SELECTION = "crop_selection"
@@ -68,6 +136,33 @@ class PipelineStage(str, Enum):
     FINAL_DECODE_VALIDATION = "final_decode_validation"
     FINAL_RULE_VALIDATION = "final_rule_validation"
     FILENAME_GENERATION = "filename_generation"
+
+
+# Crop issues that leave no usable geometry behind, and therefore genuinely
+# stop the pipeline.
+#
+# The list is short on purpose, and everything absent from it is deliberately
+# absent. A clipped head, a head under the exam's coverage floor, a crop that
+# could not hold the whole preservation box, a face off centre -- these are
+# composition defects, and DEC-041 requires the photograph to be produced and
+# the defect reported. What is here instead is structural: no usable input, no
+# resolvable target aspect, an output whose aspect does not match the one that
+# was asked for, or a provider that failed outright. In each of those the plan
+# does not describe a photograph anyone could deliver.
+_CROP_UNUSABLE_CODES = frozenset(
+    {
+        CropIssueCode.CROP_INPUT_INVALID,
+        CropIssueCode.CROP_PROVIDER_FAILED,
+        CropIssueCode.CROP_TARGET_ASPECT_MISSING,
+        CropIssueCode.CROP_TARGET_ASPECT_INVALID,
+        CropIssueCode.CROP_ASPECT_RATIO_MISMATCH,
+        CropIssueCode.CROP_B_INPUT_INVALID,
+        CropIssueCode.CROP_B_PROVIDER_FAILED,
+        CropIssueCode.CROP_B_RANGE_MISSING,
+        CropIssueCode.CROP_B_RANGE_INVALID,
+        CropIssueCode.CROP_B_ASPECT_OUT_OF_RANGE,
+    }
+)
 
 
 class PipelineIssueCode(str, Enum):
@@ -85,6 +180,7 @@ class PipelineIssueCode(str, Enum):
     PIPELINE_FINAL_DECODE_FAILED = "PIPELINE_FINAL_DECODE_FAILED"
     PIPELINE_FINAL_DIMENSIONS_INVALID = "PIPELINE_FINAL_DIMENSIONS_INVALID"
     PIPELINE_FINAL_FORMAT_INVALID = "PIPELINE_FINAL_FORMAT_INVALID"
+    PIPELINE_FINAL_DPI_INVALID = "PIPELINE_FINAL_DPI_INVALID"
     PIPELINE_FINAL_BYTE_SIZE_INVALID = "PIPELINE_FINAL_BYTE_SIZE_INVALID"
     PIPELINE_FILENAME_INVALID = "PIPELINE_FILENAME_INVALID"
     PIPELINE_PROVIDER_FAILED = "PIPELINE_PROVIDER_FAILED"
@@ -111,7 +207,7 @@ class RulePipelineConfig(BaseModel):
 
     save_diagnostic_artifacts: bool = False
     allow_invalid_output: bool = False
-    allow_padding: bool = False
+    allow_padding: bool = True
     allow_quality_below_minimum: bool = False
     allow_oversize_output: bool = False
     allow_subject_clipping: bool = False
@@ -126,7 +222,8 @@ class RulePipelineConfig(BaseModel):
 
 
 def compute_halo_score_float(
-    composite_arr: np.ndarray, alpha_mask: np.ndarray  # type: ignore[type-arg]
+    composite_arr: np.ndarray[Any, Any],
+    alpha_mask: np.ndarray[Any, Any],
 ) -> float:
     gray = (
         0.299 * composite_arr[..., 0]
@@ -143,7 +240,8 @@ def compute_halo_score_float(
 
 
 def compute_spill_score_float(
-    original_arr: np.ndarray, alpha_mask: np.ndarray  # type: ignore[type-arg]
+    original_arr: np.ndarray[Any, Any],
+    alpha_mask: np.ndarray[Any, Any],
 ) -> float:
     mask = (alpha_mask > 0.05) & (alpha_mask < 0.95)
     if not np.any(mask):
@@ -166,7 +264,7 @@ def compute_spill_score_float(
 
 
 def compute_alpha_continuity_float(
-    alpha_mask: np.ndarray,  # type: ignore[type-arg]
+    alpha_mask: np.ndarray[Any, Any],
 ) -> float:
     mask = (alpha_mask > 0.05) & (alpha_mask < 0.95)
     if not np.any(mask):
@@ -177,7 +275,8 @@ def compute_alpha_continuity_float(
 
 
 def compute_background_uniformity_float(
-    composite_arr: np.ndarray, alpha_mask: np.ndarray  # type: ignore[type-arg]
+    composite_arr: np.ndarray[Any, Any],
+    alpha_mask: np.ndarray[Any, Any],
 ) -> float:
     mask = alpha_mask <= 0.05
     if not np.any(mask):
@@ -237,6 +336,15 @@ class RulePipelineResult(BaseModel):
     portrait_quality_report: Optional[dict[str, Any]] = None
     matte_quality_report: Optional[dict[str, Any]] = None
 
+    # Accept / warn / block, plus the findings behind it (DEC-041). A warn
+    # disposition still carries a finished photograph: appearance is never a
+    # blocking reason.
+    appearance_disposition: Optional[str] = None
+    appearance_findings: list[dict[str, Any]] = Field(default_factory=list)
+    # What natural enhancement was applied, for disclosure to the candidate
+    # (DEC-043). Empty when the photograph needed none, which is the common case.
+    enhancements_applied: list[str] = Field(default_factory=list)
+
     encoded_bytes: bytes | None = Field(default=None, exclude=True)
     refined_alpha_mask: Any = Field(default=None, exclude=True)
 
@@ -251,11 +359,71 @@ class RuleOrchestratedPipeline:
         segmenter_model_path: Path,
         face_expected_sha256: str = "",
         segmenter_expected_sha256: str = "",
+        matting_backend: str = "birefnet",
+        birefnet_model_dir: Optional[Path] = None,
+        birefnet_expected_sha256: str = "",
     ):
+        """``matting_backend`` selects the subject segmentation model.
+
+        ``"birefnet"`` is the default subject matting backend (DEC-036) because
+        the product requirement is realistic portrait edges, not the old
+        coarse selfie-segmentation matte.  ``"mediapipe"`` remains selectable
+        for lightweight diagnostics and legacy tests.  When BiRefNet is chosen
+        without explicit model arguments, the vendored model manifest is
+        resolved from the repository root.
+        """
+        if matting_backend not in ("mediapipe", "birefnet"):
+            raise ValueError(
+                f"Unknown matting_backend '{matting_backend}'; expected "
+                "'mediapipe' or 'birefnet'."
+            )
+        if matting_backend == "birefnet" and birefnet_model_dir is None:
+            from exam_photo.providers.segmenters.birefnet_segmenter import (
+                load_manifest_defaults,
+            )
+
+            repo_root = _find_repo_root()
+            birefnet_model_dir, _weights_name, default_sha, _size = (
+                load_manifest_defaults(repo_root)
+            )
+            if not birefnet_expected_sha256:
+                birefnet_expected_sha256 = default_sha
         self.face_model_path = face_model_path
         self.segmenter_model_path = segmenter_model_path
         self.face_expected_sha256 = face_expected_sha256
         self.segmenter_expected_sha256 = segmenter_expected_sha256
+        self.matting_backend = matting_backend
+        self.birefnet_model_dir = birefnet_model_dir
+        self.birefnet_expected_sha256 = birefnet_expected_sha256
+        self._birefnet_segmenter: Optional[Any] = None
+        self._face_landmarker: Optional[Any] = None
+        self._face_landmarker_unavailable = False
+
+    def _refine_face_landmarks(self, image: Image.Image, face: Any) -> Any:
+        """Sharpen the chin and eye line of a detected face (DEC-032).
+
+        Returns ``face`` unchanged when the optional landmarker asset is not
+        vendored, so this stays an enhancement rather than a new hard
+        dependency.  The first failure latches, avoiding a repeated model-load
+        attempt on every image of a batch.
+        """
+        if self._face_landmarker_unavailable:
+            return face
+        if self._face_landmarker is None:
+            from exam_photo.providers.mediapipe_face_landmarker import (
+                MediapipeFaceLandmarker,
+                load_manifest_defaults,
+            )
+
+            repo_root = _find_repo_root()
+            model_path, expected_sha = load_manifest_defaults(repo_root)
+            if not model_path.exists():
+                self._face_landmarker_unavailable = True
+                return face
+            self._face_landmarker = MediapipeFaceLandmarker(
+                model_path=model_path, expected_sha256=expected_sha
+            )
+        return self._face_landmarker.refine(image, face)
 
     def process_rule(
         self,
@@ -337,6 +505,7 @@ class RuleOrchestratedPipeline:
                 plan = resolve_rule(
                     rule,
                     allow_padding=config.allow_padding,
+                    allow_subject_clipping=config.allow_subject_clipping,
                     allow_quality_below_minimum=config.allow_quality_below_minimum,
                     allow_oversize_output=config.allow_oversize_output,
                 )
@@ -401,32 +570,140 @@ class RuleOrchestratedPipeline:
         # Stage 3: Face Detection
         face_result = None
         face = None
+        appearance_report: Optional[DispositionReport] = None
+        enhancement_plan: Optional[EnhancementPlan] = None
         if not failed and norm_result is not None:
             t_stage = time.perf_counter()
             try:
                 detector = MediapipeFaceDetector(
                     model_path=self.face_model_path,
                     expected_sha256=self.face_expected_sha256,
-                    # We can use a lower detection threshold for lincoln/roosevelt if the calling script does,
-                    # but here we use a general default of 0.5.
-                    min_detection_confidence=0.2
-                    if "lincoln" in rule_dict.get("rule_id", "")
-                    or "roosevelt" in rule_dict.get("rule_id", "")
-                    else 0.5,
+                    min_detection_confidence=_FACE_PRIMARY_CONFIDENCE,
                 )
+                recovery_used: float | None = None
                 with detector:
                     face_result = detector.detect_faces(norm_result.image)
+                    # The short-range BlazeFace model is tuned for close selfie
+                    # framing and scores confidently-detectable faces below 0.5
+                    # on ordinary half-body exam submissions (no detections at
+                    # all on 9 of 60 reference photos, all of which resolve to a
+                    # single face at a lower threshold).  When the primary pass
+                    # finds nothing, step the threshold down and accept only an
+                    # unambiguous single face; anything else stays a failure so
+                    # genuine multi-person photos are never silently accepted.
+                    if not face_result.detections:
+                        for level in _FACE_RECOVERY_CONFIDENCES:
+                            retry = detector.detect_faces(
+                                norm_result.image,
+                                config={"min_detection_confidence": level},
+                            )
+                            if len(retry.detections) == 1:
+                                face_result = retry
+                                recovery_used = level
+                                break
+                            if len(retry.detections) > 1:
+                                # Possibly ambiguous -- the disposition policy
+                                # decides.  Recording the tier matters as much
+                                # here as in the single-face branch: leaving it
+                                # unset made a multi-face recovery look like a
+                                # full-confidence detection, which blocked a
+                                # single candidate standing in front of a
+                                # printed banner whose spurious second face
+                                # exists only at the lowest tier.
+                                face_result = retry
+                                recovery_used = level
+                                break
                 dur_stage = (time.perf_counter() - t_stage) * 1000.0
 
-                if len(face_result.detections) == 1:
-                    face = face_result.detections[0]
+                # A second detection is not automatically a second person
+                # (DEC-041).  Requiring exactly one detection rejected a
+                # photograph of a single candidate standing in front of a
+                # printed banner, where a spurious face appears only at the
+                # lowest confidence tier and carries no landmarks.  The
+                # disposition policy decides instead, on how large the second
+                # face is relative to the first and how hard the detector had
+                # to work to find it; anything it does not consider ambiguous
+                # proceeds with the largest face.
+                subject_ambiguous = False
+                if face_result.detections:
+                    face = max(
+                        face_result.detections,
+                        key=lambda d: d.bounding_box.height,
+                    )
+                    # Refine the chin and eye line with dense landmarks where
+                    # the asset is available (DEC-032).  Detection and face
+                    # counting stay with BlazeFace, which has the better
+                    # coverage on raw photos; this only sharpens the two points
+                    # the crop planner is most sensitive to.  Any failure here
+                    # leaves the detector's own points in place.
+                    landmark_note = ""
+                    try:
+                        refined_face = self._refine_face_landmarks(
+                            norm_result.image, face
+                        )
+                        if refined_face is not face:
+                            face = refined_face
+                            landmark_note = (
+                                " Chin and eye line refined by dense landmarks."
+                            )
+                    except Exception as exc:  # noqa: BLE001
+                        landmark_note = f" Landmark refinement unavailable: {exc}."
+
+                    detections_for_policy = [
+                        face if d is not face else face for d in face_result.detections
+                    ]
+                    appearance_signals = measure_appearance_signals(
+                        norm_result.image,
+                        detections_for_policy,
+                        detection_confidence=(
+                            recovery_used
+                            if recovery_used is not None
+                            else _FACE_PRIMARY_CONFIDENCE
+                        ),
+                        landmarks_available=bool(
+                            (face.provider_metadata or {}).get(
+                                "dense_landmarks_found", False
+                            )
+                        ),
+                        target_height_px=(
+                            plan.output_preparation_config.target_height
+                            if plan is not None and plan.output_preparation_config
+                            else None
+                        ),
+                        target_head_height_ratio=(
+                            plan.crop_config.target_head_height_ratio
+                            if plan is not None and plan.crop_config
+                            else None
+                        ),
+                    )
+                    appearance_report = evaluate_disposition(
+                        appearance_signals,
+                        monochrome_accepted=_monochrome_accepted(rule),
+                    )
+                    subject_ambiguous = (
+                        appearance_report.disposition is Disposition.BLOCK
+                    )
+
+                if face_result.detections and not subject_ambiguous:
+                    count = len(face_result.detections)
+                    detected = (
+                        "Exactly 1 face detected."
+                        if count == 1
+                        else f"{count} faces detected; the largest is the subject."
+                    )
+                    if recovery_used is not None:
+                        detected = (
+                            detected[:-1]
+                            + f" at recovery confidence {recovery_used:.2f}."
+                        )
                     record_stage(
                         PipelineStage.FACE_DETECTION,
                         PipelineStageStatus.PASSED,
                         dur=dur_stage,
-                        summary="Exactly 1 face detected.",
+                        summary=detected + landmark_note,
                     )
                 else:
+                    face = None
                     failed = True
                     pipeline_issues.append(
                         PipelineIssueCode.PIPELINE_FACE_COUNT_INVALID
@@ -436,7 +713,12 @@ class RuleOrchestratedPipeline:
                         PipelineStageStatus.FAILED,
                         issues=["FACE_COUNT_INVALID"],
                         dur=dur_stage,
-                        summary=f"Expected exactly 1 face, found {len(face_result.detections)}.",
+                        summary=(
+                            appearance_report.block_reason
+                            if appearance_report is not None
+                            and appearance_report.block_reason
+                            else "No face was detected in this photograph."
+                        ),
                     )
             except Exception as e:
                 failed = True
@@ -502,10 +784,27 @@ class RuleOrchestratedPipeline:
         ):
             t_stage = time.perf_counter()
             try:
-                segmenter = MediapipeSubjectSegmenter(
-                    model_path=self.segmenter_model_path,
-                    expected_sha256=self.segmenter_expected_sha256,
-                )
+                segmenter: Any
+                if self.matting_backend == "birefnet":
+                    # Kept warm across calls: BiRefNet load/verification costs
+                    # real time (torch + weights), unlike MediaPipe's cheap
+                    # per-call reinitialisation.
+                    if self._birefnet_segmenter is None:
+                        from exam_photo.providers.segmenters.birefnet_segmenter import (
+                            BiRefNetSubjectSegmenter,
+                        )
+
+                        assert self.birefnet_model_dir is not None
+                        self._birefnet_segmenter = BiRefNetSubjectSegmenter(
+                            model_dir=self.birefnet_model_dir,
+                            expected_sha256=self.birefnet_expected_sha256,
+                        )
+                    segmenter = self._birefnet_segmenter
+                else:
+                    segmenter = MediapipeSubjectSegmenter(
+                        model_path=self.segmenter_model_path,
+                        expected_sha256=self.segmenter_expected_sha256,
+                    )
                 with segmenter:
                     seg_result = segmenter.segment_subject(
                         norm_result.image,
@@ -580,7 +879,13 @@ class RuleOrchestratedPipeline:
             t_stage = time.perf_counter()
             try:
                 refiner = MorphologicalForegroundRefiner()
-                ref_config = RefinementConfig(quality_mode=config.quality_mode)
+                # A matting backend already resolves the boundary accurately, so
+                # the morphological reconstruction is skipped for it (DEC-033);
+                # the coarse selfie segmenter still needs the full treatment.
+                ref_config = RefinementConfig(
+                    quality_mode=config.quality_mode,
+                    trust_input_alpha=(self.matting_backend == "birefnet"),
+                )
                 ref_result = refiner.refine_mask(
                     image=norm_result.image,
                     coarse_mask=seg_result.coarse_mask,
@@ -666,6 +971,45 @@ class RuleOrchestratedPipeline:
                 )
 
         # Stage 7: Crop Planning
+        portrait_composition = None
+        if (
+            not failed
+            and norm_result is not None
+            and face is not None
+            and fused_head_result is not None
+            and ref_result is not None
+        ):
+            t_stage = time.perf_counter()
+            try:
+                composition_estimator = DeterministicPortraitCompositionEstimator()
+                portrait_composition = composition_estimator.estimate_composition(
+                    image=norm_result.image,
+                    face=face,
+                    head_result=fused_head_result,
+                    alpha_mask=ref_result.refined_alpha_mask,
+                )
+                dur_stage = (time.perf_counter() - t_stage) * 1000.0
+                record_stage(
+                    PipelineStage.PORTRAIT_COMPOSITION,
+                    PipelineStageStatus.PASSED,
+                    issues=portrait_composition.warnings,
+                    dur=dur_stage,
+                    summary="Semantic exam-portrait composition estimated successfully.",
+                )
+            except Exception as e:
+                record_stage(
+                    PipelineStage.PORTRAIT_COMPOSITION,
+                    PipelineStageStatus.WARNING,
+                    issues=["PORTRAIT_COMPOSITION_FAILED"],
+                    dur=0.0,
+                    summary=f"Portrait composition fell back to head geometry: {e}",
+                )
+        else:
+            record_stage(
+                PipelineStage.PORTRAIT_COMPOSITION,
+                PipelineStageStatus.SKIPPED,
+            )
+
         crop_res: CropPlanResult | CropModeBResult | None = None
         if (
             not failed
@@ -695,6 +1039,7 @@ class RuleOrchestratedPipeline:
                             or fused_head_result.geometric_head_bounding_box
                         ),
                         refined_mask=ref_result.refined_binary_mask,
+                        portrait_composition=portrait_composition,
                         config=crop_cfg,
                     )
                 else:
@@ -709,13 +1054,19 @@ class RuleOrchestratedPipeline:
                             or fused_head_result.geometric_head_bounding_box
                         ),
                         refined_mask=ref_result.refined_binary_mask,
+                        portrait_composition=portrait_composition,
                         config=crop_cfg,
                     )
 
                 dur_stage = (time.perf_counter() - t_stage) * 1000.0
                 assert crop_res is not None
 
-                if not crop_res.validation.is_valid:
+                crop_unusable = [
+                    code
+                    for code in crop_res.validation.issue_codes
+                    if code in _CROP_UNUSABLE_CODES
+                ]
+                if not crop_res.validation.is_valid and crop_unusable:
                     failed = True
                     pipeline_issues.append(PipelineIssueCode.PIPELINE_CROP_FAILED)
                     record_stage(
@@ -730,7 +1081,51 @@ class RuleOrchestratedPipeline:
                         PipelineStageStatus.FAILED,
                         issues=crop_res.validation.issue_codes,
                         dur=dur_stage / 2,
-                        summary="Crop plan failed compliance constraints.",
+                        summary=(
+                            "Crop planning produced no usable geometry: "
+                            f"{', '.join(str(c) for c in crop_unusable)}."
+                        ),
+                    )
+                elif not crop_res.validation.is_valid:
+                    # Composition fell short, but the plan is geometrically
+                    # usable, so the candidate still receives a photograph.
+                    #
+                    # DEC-041 states it without qualification: no stage anywhere
+                    # in the pipeline may block for an appearance or composition
+                    # reason. Only an undecodable file, no detectable face, or a
+                    # genuinely ambiguous subject may refuse. This branch used to
+                    # fail on any invalid crop, which quietly made the crop
+                    # planner an exception to that policy -- and the constraints
+                    # it was failing on are precisely composition ones. Measured
+                    # on the reviewed set, a photograph the owner had labelled
+                    # perfect produced nothing at all on three of five real exam
+                    # rules, because its subject's hair pins the crop's sides and
+                    # head coverage lands under the exam's published floor.
+                    #
+                    # A crop under the coverage floor is exactly the compromise
+                    # DEC-039 already decided to deliver and report rather than
+                    # refuse; blocking here discarded the tightest crop the
+                    # geometry allowed and returned nothing in its place, which
+                    # is worse on the published requirement and on every other
+                    # axis. The issue codes travel with the result, so the
+                    # compromise stays visible downstream.
+                    pipeline_issues.append(PipelineIssueCode.PIPELINE_CROP_FAILED)
+                    record_stage(
+                        PipelineStage.CROP_CANDIDATE_SCORING,
+                        PipelineStageStatus.WARNING,
+                        issues=crop_res.validation.issue_codes,
+                        dur=dur_stage / 2,
+                        summary="Crop selected under a composition compromise.",
+                    )
+                    record_stage(
+                        PipelineStage.CROP_PLANNING,
+                        PipelineStageStatus.WARNING,
+                        issues=crop_res.validation.issue_codes,
+                        dur=dur_stage / 2,
+                        summary=(
+                            "Crop planned with composition compromises: "
+                            f"{crop_res.crop_box}"
+                        ),
                     )
                 else:
                     record_stage(
@@ -760,6 +1155,89 @@ class RuleOrchestratedPipeline:
                 PipelineStage.CROP_PLANNING,
                 PipelineStageStatus.SKIPPED,
             )
+
+        # Stage 7A: Crop-region matte refinement (DEC-040).
+        #
+        # The matting model sees a fixed-size square (512 for BiRefNet), so the
+        # alpha detail any part of the subject receives is set by how much of
+        # the *source frame* that part occupies -- not by how large it will be
+        # in the finished photo.  Candidates routinely submit half- or
+        # full-body photos, and the finished exam photo is a tight head crop,
+        # so the head is the small part of the input that becomes the whole
+        # output.  Measured over the 60-photo reference set: the head arrives
+        # with a median of 121 px of alpha detail (worst 42 px) and is then
+        # magnified by a median 2.1x, worst 17.4x, into the output.  Every
+        # photo with visible hair-edge streaking, halo or colour bleed sits in
+        # the high-magnification group.
+        #
+        # Re-running the matte on just the planned crop region spends the
+        # model's whole resolution budget on the part that survives, at the
+        # cost of one extra inference.  The crop geometry is already decided
+        # and is not revisited here, so this cannot feed back into planning.
+        if (
+            not failed
+            and norm_result is not None
+            and ref_result is not None
+            and crop_res is not None
+            and crop_res.crop_box is not None
+            and self._birefnet_segmenter is not None
+        ):
+            t_stage = time.perf_counter()
+            try:
+                alpha_full = ref_result.refined_alpha_mask
+                src_w, src_h = norm_result.image.size
+                box = crop_res.crop_box
+                # A margin beyond the crop keeps the model from having to guess
+                # at the frame edge, where it is least reliable, and gives
+                # decontamination opaque neighbours to propagate from.
+                margin_x = 0.12 * (box.right - box.left)
+                margin_y = 0.12 * (box.bottom - box.top)
+                rx0 = max(0, int(math.floor(box.left - margin_x)))
+                ry0 = max(0, int(math.floor(box.top - margin_y)))
+                rx1 = min(src_w, int(math.ceil(box.right + margin_x)))
+                ry1 = min(src_h, int(math.ceil(box.bottom + margin_y)))
+
+                region_area = max(1, (rx1 - rx0) * (ry1 - ry0))
+                gain = math.sqrt((src_w * src_h) / region_area)
+                if rx1 - rx0 >= 32 and ry1 - ry0 >= 32 and gain >= 1.15:
+                    region = norm_result.image.crop((rx0, ry0, rx1, ry1))
+                    region_result = self._birefnet_segmenter.segment_subject(region)
+                    region_alpha = np.clip(
+                        region_result.probability_mask.astype(np.float32), 0.0, 1.0
+                    )
+                    refreshed = np.array(alpha_full, dtype=np.float32, copy=True)
+                    refreshed[ry0:ry1, rx0:rx1] = region_alpha
+                    ref_result.refined_alpha_mask = refreshed
+                    dur_stage = (time.perf_counter() - t_stage) * 1000.0
+                    record_stage(
+                        PipelineStage.MASK_REFINEMENT,
+                        PipelineStageStatus.PASSED,
+                        dur=dur_stage,
+                        summary=(
+                            "Matte recomputed on the crop region at "
+                            f"{gain:.1f}x the effective alpha resolution."
+                        ),
+                    )
+                else:
+                    record_stage(
+                        PipelineStage.MASK_REFINEMENT,
+                        PipelineStageStatus.SKIPPED,
+                        dur=(time.perf_counter() - t_stage) * 1000.0,
+                        summary=(
+                            "Crop region is close to the full frame; the "
+                            "existing matte already carries full detail."
+                        ),
+                    )
+            except Exception as e:  # noqa: BLE001
+                # The full-frame matte is still perfectly usable, so a failure
+                # here degrades edge detail rather than the whole photo.
+                record_stage(
+                    PipelineStage.MASK_REFINEMENT,
+                    PipelineStageStatus.WARNING,
+                    issues=["CROP_REGION_MATTE_FAILED"],
+                    dur=0.0,
+                    summary=f"Crop-region matte refinement failed: {e}",
+                )
 
         # Stage 7B: Foreground Decontamination
         decon_image = None
@@ -865,6 +1343,38 @@ class RuleOrchestratedPipeline:
                     )
 
                 assert target_w is not None and target_h is not None
+
+                # Natural enhancement (DEC-043), applied to the source before
+                # compositing so the replacement background is laid down at the
+                # rule's exact colour afterwards and cannot be tinted by an
+                # adjustment meant for the subject.
+                tone = (
+                    measure_face_tone(norm_result.image, [face])
+                    if norm_result is not None and face is not None
+                    else None
+                )
+                if tone is not None:
+                    enhancement_plan = plan_enhancement(tone)
+                    if not enhancement_plan.is_noop:
+                        decon_image = apply_enhancement(decon_image, enhancement_plan)
+                    if severe_cast_detected(tone) and appearance_report is not None:
+                        appearance_report.findings.append(
+                            AppearanceFinding(
+                                code=SuitabilityIssueCode.SUITABILITY_LOW_CONTRAST_WARNING,
+                                level=FindingLevel.LIKELY_REJECTION,
+                                message=(
+                                    "This photograph was taken under strongly "
+                                    "coloured lighting. We have reduced it, but "
+                                    "the skin tone may still look unnatural."
+                                ),
+                                remedy=(
+                                    "Retake the photograph in daylight or under "
+                                    "ordinary white indoor lighting."
+                                ),
+                                measured_value=tone.blue_minus_red,
+                            )
+                        )
+
                 prepared_image = premultiply_crop_resize_composite(
                     image=decon_image,
                     alpha=ref_result.refined_alpha_mask,
@@ -915,14 +1425,53 @@ class RuleOrchestratedPipeline:
                                 bg_issues.append("BACKGROUND_SUBJECT_CLIPPING_RISK")
 
                 if bg_issues:
-                    failed = True
-                    pipeline_issues.append(PipelineIssueCode.PIPELINE_BACKGROUND_FAILED)
+                    # Reported, never blocking (DEC-041).  A subject that fills
+                    # too little of the frame, or whose hair reaches the top
+                    # edge, is a composition concern -- and the approved
+                    # reference outputs let hair reach or leave the edge on most
+                    # photographs.  Failing here contradicted the disposition
+                    # contract from inside the pipeline: two photographs that
+                    # the policy had already judged acceptable still produced
+                    # nothing, which is the outcome the policy exists to
+                    # prevent.  Genuinely unusable mattes are caught earlier by
+                    # the segmentation mask validation.
                     record_stage(
                         PipelineStage.BACKGROUND_COMPOSITION,
-                        PipelineStageStatus.FAILED,
+                        PipelineStageStatus.WARNING,
                         issues=bg_issues,
                         dur=dur_stage / 2,
-                        summary="Background composition constraints failed.",
+                        summary=(
+                            "Composed with a background composition concern: "
+                            + ", ".join(bg_issues)
+                        ),
+                    )
+                    if appearance_report is not None:
+                        appearance_report.findings.append(
+                            AppearanceFinding(
+                                code=SuitabilityIssueCode.SUITABILITY_FACE_REGION_TOO_SMALL
+                                if "BACKGROUND_FOREGROUND_TOO_SMALL" in bg_issues
+                                else SuitabilityIssueCode.SUITABILITY_HEAD_TOP_CLIPPED,
+                                level=FindingLevel.POSSIBLE_ISSUE,
+                                message=(
+                                    "You appear small in the frame, so the crop "
+                                    "is loose."
+                                    if "BACKGROUND_FOREGROUND_TOO_SMALL" in bg_issues
+                                    else "Your hair reaches the edge of the photo."
+                                ),
+                                remedy=(
+                                    "Retake the photograph standing closer to "
+                                    "the camera."
+                                    if "BACKGROUND_FOREGROUND_TOO_SMALL" in bg_issues
+                                    else "Retake with a little more space above "
+                                    "your head."
+                                ),
+                            )
+                        )
+                    record_stage(
+                        PipelineStage.OUTPUT_PREPARATION,
+                        PipelineStageStatus.PASSED,
+                        dur=dur_stage / 2,
+                        summary=f"Prepared output successfully with dimensions {target_w}x{target_h}.",
                     )
                 else:
                     record_stage(
@@ -1021,6 +1570,12 @@ class RuleOrchestratedPipeline:
                 "geometric_head_bounding_box": fused_head_result.geometric_head_bounding_box.model_dump()
                 if fused_head_result
                 and fused_head_result.geometric_head_bounding_box is not None
+                else None,
+                "portrait_composition_box": portrait_composition.preservation_box.model_dump()
+                if portrait_composition is not None
+                else None,
+                "portrait_lower_body_exclusion_y": portrait_composition.lower_body_exclusion_y
+                if portrait_composition is not None
                 else None,
                 "head_height_ratio": getattr(crop_res, "head_height_ratio", None),
                 "head_width_ratio": getattr(crop_res, "head_width_ratio", None),
@@ -1176,6 +1731,10 @@ class RuleOrchestratedPipeline:
                                 pipeline_issues.append(
                                     PipelineIssueCode.PIPELINE_FINAL_FORMAT_INVALID
                                 )
+                            elif "DPI" in err:
+                                pipeline_issues.append(
+                                    PipelineIssueCode.PIPELINE_FINAL_DPI_INVALID
+                                )
                             elif "BYTE_SIZE" in err:
                                 pipeline_issues.append(
                                     PipelineIssueCode.PIPELINE_FINAL_BYTE_SIZE_INVALID
@@ -1274,6 +1833,7 @@ class RuleOrchestratedPipeline:
                 "crop_box": None,
                 "head_bounding_box": None,
                 "geometric_head_bounding_box": None,
+                "portrait_composition_box": None,
             }
         )
 
@@ -1313,6 +1873,19 @@ class RuleOrchestratedPipeline:
             processing_duration_ms=duration_ms,
             quality_mode=config.quality_mode,
             diagnostic_artifacts_available=config.save_diagnostic_artifacts,
+            appearance_disposition=(
+                appearance_report.disposition.value
+                if appearance_report is not None
+                else None
+            ),
+            appearance_findings=(
+                [f.model_dump(mode="json") for f in appearance_report.findings]
+                if appearance_report is not None
+                else []
+            ),
+            enhancements_applied=(
+                list(enhancement_plan.applied) if enhancement_plan is not None else []
+            ),
             portrait_quality_report=portrait_quality_report,
             matte_quality_report=matte_quality_report,
             encoded_bytes=comp_result.encoded_bytes

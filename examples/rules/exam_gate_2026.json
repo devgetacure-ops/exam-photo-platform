@@ -1,0 +1,257 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "gate-2026",
+  "rule_version": "1.0.0",
+  "status": "verified",
+  "exam": {
+    "exam_id": "gate-2026",
+    "exam_name": "GATE 2026",
+    "conducting_body": "IIT Guwahati",
+    "examination_year": 2026,
+    "application_cycle": "2026",
+    "aliases": [
+      "Graduate Aptitude Test in Engineering"
+    ],
+    "application_stage": "application",
+    "jurisdiction": "India",
+    "category": "entrance"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "minimum resolution is 200\u00d7260 pixels; 530\u00d7690 pixels; aspect ratio of the face must be between 0.66 and 0.89; 5 kB; 600 kB; JPEG/JPG; white; 60-70%; chin; frontal face view; eyes; Normal spectacles are allowed; except for religious reasons; Face covered by a mask; color photograph",
+      "source_url": "https://gate2026.iitg.ac.in/doc/IB/GATE2026-IB-28092025.pdf",
+      "document_title": "GATE 2026 Information Brochure",
+      "section_name": "6.7 Photograph and Signature Requirements"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "range",
+      "minimum_width_px": 200,
+      "maximum_width_px": 530,
+      "minimum_height_px": 260,
+      "maximum_height_px": 690,
+      "permitted_pixel_range": "3.5 cm width \u00d7 4.5 cm height; 200\u00d7260 to 530\u00d7690 pixels; aspect ratio 0.66 to 0.89"
+    },
+    "file_size": {
+      "maximum_bytes": 600000,
+      "minimum_bytes": 5000,
+      "size_unit_as_published": "kB",
+      "published_maximum": 600.0,
+      "published_minimum": 5.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpeg",
+        "jpg"
+      ],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "exact_colour",
+      "required_colour": "#FFFFFF",
+      "tolerance": 3.0
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "unspecified",
+      "face_coverage_minimum": 60.0,
+      "face_coverage_maximum": 70.0,
+      "chin_visible": true,
+      "frontal_pose": true,
+      "eye_visibility": true
+    },
+    "appearance": {
+      "spectacles": {
+        "policy": "conditional",
+        "condition": "Normal vision-correction spectacles are allowed only without glare.",
+        "source_wording": "Normal spectacles are allowed"
+      },
+      "headwear": {
+        "policy": "conditional",
+        "condition": "Prohibited except for religious reasons; full facial features and both face edges must remain visible.",
+        "source_wording": "except for religious reasons"
+      },
+      "face_mask": {
+        "policy": "prohibited",
+        "source_wording": "Face covered by a mask"
+      },
+      "monochrome_accepted": false,
+      "face_coverage_basis": "unspecified"
+    },
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false
+    },
+    "exceptional_instructions": {
+      "spectacles_restriction": true,
+      "headwear_restriction": true,
+      "black_and_white_restriction": true,
+      "processing_support_status": "supported"
+    }
+  },
+  "requirements": [
+    {
+      "requirement_id": "candidate_photograph",
+      "requirement_name": "Candidate photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants",
+      "content_instructions": "Colour passport photo, 3.5 cm x 4.5 cm; face 60-70%; white background; JPG/JPEG; aspect ratio 0.66-0.89; 200 x 260 to 530 x 690 pixels; 5-600 kB. Frontal face, no obstruction, blur, glare, shadow, mask, cap or other persons.",
+      "evidence_status": "Current official GATE 2026 page"
+    },
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate signature",
+      "requirement_type": "signature",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants",
+      "content_instructions": "JPG/JPEG; black or dark-blue ink; signature area 70-80% of image; aspect ratio height:width = 1:R, R 2.75-3.75; 250 x 80 to 580 x 180 pixels; 3-300 kB. Applicant's own signature, not capital letters or initials.",
+      "evidence_status": "Current official GATE 2026 page",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 300000,
+          "minimum_bytes": 3000,
+          "published_minimum": 3.0,
+          "published_maximum": 300.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "range",
+          "minimum_width_px": 250,
+          "maximum_width_px": 580,
+          "minimum_height_px": 80,
+          "maximum_height_px": 180
+        }
+      }
+    },
+    {
+      "requirement_id": "valid_photo_identity_document",
+      "requirement_name": "Valid photo identity document",
+      "requirement_type": "identity_document",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "not_yet_supported",
+      "applicability": "All applicants",
+      "content_instructions": "Scanned copy of the valid photo ID whose original will be produced at the examination centre. Upload must be clear and readable.",
+      "evidence_status": "Current official GATE required-documents page"
+    },
+    {
+      "requirement_id": "sc_st_certificate",
+      "requirement_name": "SC/ST certificate",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "SC/ST candidates claiming the fee concession/category benefit",
+      "content_instructions": "PDF. GATE FAQ states SC/ST certificate upload is required to avail the fee concession.",
+      "evidence_status": "Current official GATE required-documents page/FAQ",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 400000
+        }
+      }
+    },
+    {
+      "requirement_id": "udid_pwd_certificate",
+      "requirement_name": "UDID/PwD certificate",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "PwD candidates",
+      "content_instructions": "PDF; UDID preferred, otherwise prescribed PwD certificate.",
+      "evidence_status": "Current official GATE required-documents page",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 400000
+        }
+      }
+    },
+    {
+      "requirement_id": "dyslexia_certificate",
+      "requirement_name": "Dyslexia certificate",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Candidates claiming dyslexia-related provision",
+      "content_instructions": "Upload the applicable certificate in PDF.",
+      "evidence_status": "Current official GATE brochure",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 400000
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "GATE 2026 Information Brochure - 6.7 Photograph and Signature Requirements (https://gate2026.iitg.ac.in/doc/IB/GATE2026-IB-28092025.pdf)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 5,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "official",
+      "evidence_reference": "GATE 2026 Information Brochure - 6.7 Photograph and Signature Requirements (https://gate2026.iitg.ac.in/doc/IB/GATE2026-IB-28092025.pdf)",
+      "reasoning": "Pixel dimensions transcribed from the cited source.",
+      "confidence": 5,
+      "approved": true
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    },
+    "requirements[3].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[4].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[5].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",
+      "confidence": 1,
+      "approved": false
+    }
+  },
+  "verification": {
+    "verification_status": "verified"
+  },
+  "fictional_example": false
+}

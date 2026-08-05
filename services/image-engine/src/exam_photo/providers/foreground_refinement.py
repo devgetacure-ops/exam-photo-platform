@@ -29,11 +29,41 @@ class RefinementConfig(BaseModel):
     definite_background_threshold: float = Field(default=0.05, ge=0.0, le=1.0)
     uncertainty_band_scale: float = Field(default=1.0, ge=0.1, le=5.0)
     edge_refinement_radius_ratio: float = Field(default=0.02, ge=0.0, le=0.2)
+    # Contrast window applied to the matted alpha.  Everything at or below the
+    # low threshold becomes fully transparent and everything at or above the
+    # high threshold fully opaque, so a narrow window discards genuine partial
+    # coverage -- exactly the values that describe hair.  The previous
+    # 0.18/0.72 window clipped 46% of the alpha range and cut the soft edge band
+    # measured on reference photos from 4.6% of the frame to 1.2%.  The grey
+    # outline this was fighting comes from background colour retained in
+    # semi-transparent pixels, which foreground_decontamination corrects at
+    # source, so the window here can stay wide.
+    alpha_snap_low_threshold: float = Field(default=0.05, ge=0.0, le=1.0)
+    alpha_snap_high_threshold: float = Field(default=0.92, ge=0.0, le=1.0)
+    # Set when the incoming probability mask already resolves the subject
+    # boundary accurately (a matting model rather than a coarse selfie
+    # segmenter).  The morphological pipeline exists to clean up a noisy,
+    # low-resolution mask; run against an accurate one it is purely
+    # destructive.  Measured on BiRefNet masks, refinement roughly doubled
+    # staircase artifacts along the silhouette (0.074 -> 0.133, 0.085 -> 0.137,
+    # 0.099 -> 0.126 on three photos), removed 15-40% of the genuine soft-alpha
+    # band, and did not improve edge alignment at all (4.72 -> 4.61,
+    # 1.76 -> 1.77, 6.83 -> 6.79).  See DEC-033.
+    trust_input_alpha: bool = False
+
     quality_mode: str = Field(default="balanced", pattern="^(fast|balanced|high)$")
     maximum_matting_pixels: int = Field(default=2000000, ge=100000)
     maximum_boundary_roi_pixels: int = Field(default=500000, ge=10000)
     maximum_native_dimension: int = Field(default=4000, ge=500)
     allow_tiled_boundary_processing: bool = Field(default=False)
+
+    @model_validator(mode="after")
+    def validate_alpha_snap_thresholds(self) -> RefinementConfig:
+        if self.alpha_snap_low_threshold >= self.alpha_snap_high_threshold:
+            raise ValueError(
+                "alpha_snap_low_threshold must be less than alpha_snap_high_threshold."
+            )
+        return self
 
     def effective_radius(self, image_width: int, image_height: int) -> int:
         if self.morphology_radius_ratio is not None:

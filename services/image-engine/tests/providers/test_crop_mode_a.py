@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import numpy as np
 import pytest
 from PIL import Image
 from pydantic import ValidationError
@@ -10,6 +11,9 @@ from pydantic import ValidationError
 from exam_photo.models.geometry import BoundingBox
 from exam_photo.providers import (
     DeterministicCropPlanner,
+)
+from exam_photo.providers.crop_planners.deterministic_crop_planner import (
+    _CHIN_BEARD_MARGIN_RATIO,
 )
 from exam_photo.providers.crop_planning import (
     CropConfig,
@@ -465,6 +469,7 @@ def test_crop_aspect_ratio_preservation_new() -> None:
             head_estimate=head_est,
             config=cfg,
         )
+        assert res.ideal_crop_aspect_ratio is not None
         assert abs(res.ideal_crop_aspect_ratio - aspect) <= 5e-3
         assert abs(res.crop_box_aspect_ratio - aspect) <= 5e-3
 
@@ -512,6 +517,24 @@ def test_crop_tight_vs_relaxed_profiles() -> None:
 
 
 def test_crop_complete_head_containment() -> None:
+    """The crop keeps the whole head, and stops just below the chin.
+
+    Hair, ears and the crown are kept in full: the crop reaches past the head
+    estimate on the top and both sides.
+
+    The bottom is a different promise, and this test used to assert the wrong
+    one.  A head estimate extends below the jaw by a fixed expansion -- here
+    50px, half a face height below a chin at y=300 -- and requiring the crop to
+    reach it made the bottom edge a consequence of the head estimator's padding
+    rather than of the subject's anatomy.  That is the "too loose below the
+    chin" defect: what the crop owes the candidate is the chin plus a small
+    beard margin, and tighter than that whenever the target dimensions allow.
+
+    The precise bottom is asserted as a bound rather than a pixel so this reads
+    as the contract it is: at least the chin-plus-margin line, and not so far
+    below it that the delivered photograph would violate the below-chin
+    invariant in exam_photo.orchestration.output_invariants.
+    """
     planner = DeterministicCropPlanner()
     face_box = BoundingBox(left=200, top=200, right=300, bottom=300)
     face = FaceDetection(bounding_box=face_box, confidence=0.99)
@@ -535,8 +558,92 @@ def test_crop_complete_head_containment() -> None:
     assert res.crop_box.left <= head_est.left
     assert res.crop_box.top <= head_est.top
     assert res.crop_box.right >= head_est.right
-    assert res.crop_box.bottom >= head_est.bottom
+
+    # No landmarks, so the planner's chin estimate is the face box bottom and
+    # the crown is the head estimate's top: a 150px span.
+    chin_y = face_box.bottom
+    span = chin_y - head_est.top
+    crop_height = res.crop_box.bottom - res.crop_box.top
+    assert res.crop_box.bottom >= chin_y + _CHIN_BEARD_MARGIN_RATIO * span
+    assert (res.crop_box.bottom - chin_y) / crop_height <= 0.175
+
     assert res.validation.subject_clipping_detected is False
+
+
+def test_crop_mode_a_falls_back_to_best_preservation_candidate() -> None:
+    planner = DeterministicCropPlanner()
+    face_box = BoundingBox(left=200, top=200, right=300, bottom=300)
+    face = FaceDetection(bounding_box=face_box, confidence=0.99)
+    head_est = BoundingBox(left=180, top=150, right=320, bottom=350)
+
+    cfg = CropConfig(
+        target_width=300,
+        target_height=400,
+        crop_profile=CropProfile.TIGHT_EXAM_PORTRAIT,
+        target_head_height_ratio=0.78,
+        minimum_head_height_ratio=0.70,
+        maximum_head_height_ratio=0.80,
+        target_eye_line_ratio=0.10,
+        minimum_eye_line_ratio=0.10,
+        maximum_eye_line_ratio=0.11,
+        maximum_torso_inclusion_ratio=0.0,
+        allow_subject_clipping=False,
+    )
+
+    res = planner.plan_crop(
+        image_width=1000,
+        image_height=1000,
+        face=face,
+        head_estimate=head_est,
+        config=cfg,
+    )
+
+    assert res.validation.is_valid is True
+    assert CropIssueCode.CROP_NO_VALID_COMPOSITION in res.validation.issue_codes
+    assert res.crop_box.contains(head_est)
+    assert res.crop_box_aspect_ratio == pytest.approx(0.75)
+
+
+def test_crop_mode_a_does_not_double_expand_supplied_head_estimate_with_mask_noise() -> (
+    None
+):
+    planner = DeterministicCropPlanner()
+    face_box = BoundingBox(left=140, top=120, right=220, bottom=210)
+    face = FaceDetection(bounding_box=face_box, confidence=0.99)
+    head_est = BoundingBox(left=115, top=70, right=245, bottom=250)
+    cfg = CropConfig(
+        target_width=300,
+        target_height=400,
+        crop_profile=CropProfile.TIGHT_EXAM_PORTRAIT,
+        target_head_height_ratio=0.75,
+        minimum_head_height_ratio=0.70,
+        maximum_head_height_ratio=0.80,
+    )
+
+    noisy_mask = Image.new("L", (500, 500), 0)
+    mask_arr = np.array(noisy_mask)
+    mask_arr[0:260, 115:245] = 255
+    mask_arr[0:260, 320:360] = 255
+    noisy_mask = Image.fromarray(mask_arr, mode="L")
+
+    without_mask = planner.plan_crop(
+        image_width=500,
+        image_height=500,
+        face=face,
+        head_estimate=head_est,
+        config=cfg,
+    )
+    with_mask = planner.plan_crop(
+        image_width=500,
+        image_height=500,
+        face=face,
+        head_estimate=head_est,
+        refined_mask=noisy_mask,
+        config=cfg,
+    )
+
+    assert with_mask.crop_box == without_mask.crop_box
+    assert with_mask.crop_box.right < 320
 
 
 def test_crop_source_resolution_invariance() -> None:

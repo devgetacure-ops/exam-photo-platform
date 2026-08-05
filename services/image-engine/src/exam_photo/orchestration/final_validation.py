@@ -14,6 +14,7 @@ class FinalValidationReport(BaseModel):
     actual_height: Optional[int] = None
     actual_bytes: Optional[int] = None
     actual_format: Optional[str] = None
+    actual_dpi: Optional[int] = None
     metadata_stripped: bool = False
 
 
@@ -39,6 +40,7 @@ def validate_final_candidate(
         actual_width = img.width
         actual_height = img.height
         actual_format = img.format.upper() if img.format else "UNKNOWN"
+        actual_dpi = _extract_square_dpi(img)
         has_exif = "exif" in img.info
         metadata_stripped = not has_exif
     except Exception:
@@ -52,6 +54,10 @@ def validate_final_candidate(
     # Verify format (must be JPEG)
     if actual_format != "JPEG":
         issue_codes.append("PIPELINE_FINAL_FORMAT_INVALID")
+
+    # Verify DPI when the rule supplies an explicit target.
+    if config.target_dpi is not None and actual_dpi != config.target_dpi:
+        issue_codes.append("PIPELINE_FINAL_DPI_INVALID")
 
     # Verify file size limits
     if actual_size > config.maximum_bytes:
@@ -72,5 +78,21 @@ def validate_final_candidate(
         actual_height=actual_height,
         actual_bytes=actual_size,
         actual_format=actual_format,
+        actual_dpi=actual_dpi,
         metadata_stripped=metadata_stripped,
     )
+
+
+def _extract_square_dpi(image: Image.Image) -> Optional[int]:
+    dpi_value = image.info.get("dpi")
+    if not isinstance(dpi_value, tuple) or len(dpi_value) < 2:
+        return None
+    x_dpi, y_dpi = dpi_value[:2]
+    try:
+        x_int = int(round(float(x_dpi)))
+        y_int = int(round(float(y_dpi)))
+    except (TypeError, ValueError):
+        return None
+    if x_int != y_int:
+        return None
+    return x_int
