@@ -51,6 +51,22 @@ def _erode(
     return result
 
 
+def snap_alpha_contrast(
+    alpha: np.ndarray[Any, Any], low_threshold: float, high_threshold: float
+) -> np.ndarray[Any, Any]:
+    """Removes the broad semi-transparent halo that creates grey outlines
+    after compositing, by remapping ``[low_threshold, high_threshold]`` to
+    ``[0, 1]`` and applying a smoothstep. Shared between the coarse-mask path
+    (which measured these thresholds; see DEC-030) and the trusted-alpha path
+    for portrait-matting backends, whose raw probability mask carries the
+    same kind of broad low-confidence band.
+    """
+    snapped = (alpha - low_threshold) / (high_threshold - low_threshold)
+    snapped = np.clip(snapped, 0.0, 1.0)
+    snapped = snapped * snapped * (3.0 - 2.0 * snapped)
+    return cast(np.ndarray[Any, Any], snapped.astype(np.float32))
+
+
 def _dilate(
     mask: np.ndarray[Any, Any], radius: int, offsets: list[tuple[int, int]]
 ) -> np.ndarray[Any, Any]:
@@ -309,6 +325,9 @@ class MorphologicalForegroundRefiner(ForegroundRefinementProvider):
         # validation report that downstream stages consume.
         if cfg.trust_input_alpha:
             alpha = np.clip(probability_mask.astype(np.float32, copy=True), 0.0, 1.0)
+            alpha = snap_alpha_contrast(
+                alpha, cfg.alpha_snap_low_threshold, cfg.alpha_snap_high_threshold
+            )
             binary_arr = np.where(alpha >= 0.5, 255, 0).astype(np.uint8)
             refined_binary_mask = Image.fromarray(binary_arr, mode="L")
 
@@ -562,12 +581,9 @@ class MorphologicalForegroundRefiner(ForegroundRefinementProvider):
         # Exam photo outputs need a distinct white-background boundary. Guided
         # filtering preserves fine edges, then this contrast step removes the
         # broad semi-transparent halo that creates grey outlines after compositing.
-        alpha = (alpha - cfg.alpha_snap_low_threshold) / (
-            cfg.alpha_snap_high_threshold - cfg.alpha_snap_low_threshold
+        alpha = snap_alpha_contrast(
+            alpha, cfg.alpha_snap_low_threshold, cfg.alpha_snap_high_threshold
         )
-        alpha = np.clip(alpha, 0.0, 1.0)
-        alpha = alpha * alpha * (3.0 - 2.0 * alpha)
-        alpha = alpha.astype(np.float32)
 
         # Refined binary mask (thresholded at 0.5)
         binary_arr = np.where(alpha >= 0.5, 255, 0).astype(np.uint8)
