@@ -14,6 +14,7 @@ from exam_photo.providers.refiners.errors import (
 from exam_photo.providers.refiners.morphological_refiner import (
     MorphologicalForegroundRefiner,
     _disk_offsets,
+    snap_alpha_contrast,
 )
 from tests.fakes.fake_foreground_refiner import FakeForegroundRefiner
 
@@ -243,7 +244,11 @@ def test_refined_alpha_range() -> None:
 def test_trusted_alpha_skips_destructive_refinement(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    """A matting-model alpha must bypass morphology and guided filtering."""
+    """A matting-model alpha must bypass morphology and guided filtering, but
+    still gets the anti-halo contrast snap applied (see DEC-033's amendment):
+    fully opaque/transparent regions are untouched, and the semi-transparent
+    boundary is remapped through the same low/high thresholds as the
+    coarse-mask path."""
     refiner = MorphologicalForegroundRefiner()
     alpha = np.zeros((96, 80), dtype=np.float32)
     alpha[20:76, 18:62] = 1.0
@@ -260,14 +265,18 @@ def test_trusted_alpha_skips_destructive_refinement(
         fail_if_called,
     )
 
-    result = refiner.refine_mask(
-        image,
-        coarse,
-        alpha,
-        config=RefinementConfig(trust_input_alpha=True, quality_mode="high"),
-    )
+    cfg = RefinementConfig(trust_input_alpha=True, quality_mode="high")
+    result = refiner.refine_mask(image, coarse, alpha, config=cfg)
 
-    np.testing.assert_array_equal(result.refined_alpha_mask, alpha)
+    expected = snap_alpha_contrast(
+        alpha, cfg.alpha_snap_low_threshold, cfg.alpha_snap_high_threshold
+    )
+    np.testing.assert_allclose(result.refined_alpha_mask, expected, atol=1e-6)
+    # Fully opaque/transparent regions are exact; only the semi-transparent
+    # boundary rows move.
+    assert np.all(result.refined_alpha_mask[20:76, 18:62] == 1.0)
+    assert np.all(result.refined_alpha_mask[0:19, :] == 0.0)
+    assert not np.array_equal(result.refined_alpha_mask[19, 18:62], alpha[19, 18:62])
     assert result.effective_radius_px == 0
     assert set(np.unique(np.array(result.trimap))).issubset({0, 128, 255})
     assert result.validation.is_valid

@@ -186,8 +186,13 @@ cannot — see the note under **State** below.
 
 Accepted 4, 5 and 13. Flagged 31 and 35 as too loose below the chin, 17 for a
 detached hair fragment, 18 and 19 for soft hair edges, and 8 for
-under-enhancement. The two below-chin flags are fixed (DEC-044); the matte
-defects on 17, 18 and 19 are M22 and the enhancement gap on 8 is DEC-043 work.
+under-enhancement. The two below-chin flags are fixed (DEC-044); M22 is
+tracked as two separate defects. The soft/smudged-edge part (18, 19, and the
+non-fragment part of 17) is fixed by DEC-033's amendment -- the trusted-alpha
+path was skipping an anti-halo contrast correction the coarse-mask path
+already had. The detached hair fragment on 17 is a different defect (a
+disconnected mask region, not edge softness) and remains open. The
+enhancement gap on 8 is DEC-043 work.
 
 Those verdicts are also what the below-chin invariant is calibrated on: every
 accepted photograph sat at or below 0.155 and the two rejected as too loose sat

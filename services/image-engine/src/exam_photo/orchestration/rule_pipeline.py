@@ -50,6 +50,7 @@ from exam_photo.providers.premultiplied_compositing import (
 )
 from exam_photo.providers.refiners.morphological_refiner import (
     MorphologicalForegroundRefiner,
+    snap_alpha_contrast,
 )
 from exam_photo.providers.segmenters.mediapipe_segmenter import (
     MediapipeSubjectSegmenter,
@@ -1230,6 +1231,20 @@ class RuleOrchestratedPipeline:
                     region_result = self._matting_segmenter.segment_subject(region)
                     region_alpha = np.clip(
                         region_result.probability_mask.astype(np.float32), 0.0, 1.0
+                    )
+                    # This splice bypasses MorphologicalForegroundRefiner
+                    # entirely (it calls the segmenter directly), so the
+                    # trusted-alpha path's anti-halo contrast snap never runs
+                    # on it unless it is applied here too -- otherwise the
+                    # crop region, which is what most of the delivered photo
+                    # actually shows, would keep the raw model's broad
+                    # low-confidence band even after the whole-frame alpha it
+                    # replaces was corrected.
+                    default_alpha_thresholds = RefinementConfig()
+                    region_alpha = snap_alpha_contrast(
+                        region_alpha,
+                        default_alpha_thresholds.alpha_snap_low_threshold,
+                        default_alpha_thresholds.alpha_snap_high_threshold,
                     )
                     refreshed = np.array(alpha_full, dtype=np.float32, copy=True)
                     refreshed[ry0:ry1, rx0:rx1] = region_alpha
