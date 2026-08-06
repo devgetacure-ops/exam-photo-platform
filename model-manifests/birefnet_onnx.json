@@ -1,0 +1,20 @@
+{
+  "_comment": "Model manifest for the ONNX export of BiRefNet subject matting (faster-matting Step 1). Same weights, same maths as model-manifests/birefnet.json -- no quantisation. Derived locally by scripts/export_birefnet_onnx.py rather than downloaded; verified bit-for-bit equivalent to the PyTorch original to float tolerance before this manifest is written.",
+  "name": "BiRefNet (ONNX)",
+  "derived_from_repo_id": "ZhengPeng7/BiRefNet",
+  "derived_from_revision": "e2bf8e4460fc8fa32bba5ea4d94b3233d367b0e4",
+  "derived_from_weights_sha256": "9ab37426bf4de0567af6b5d21b16151357149139362e6e8992021b8ce356a154",
+  "export_script": "scripts/export_birefnet_onnx.py",
+  "export_opset": 17,
+  "onnx_filename": "model.onnx",
+  "onnx_sha256": "3b16262e465a6b738ce202c49fb640518a94c17cab7e2e03bb3ac4fce9cfe48c",
+  "onnx_size_bytes": 940792905,
+  "equivalence_check_max_abs_diff": 3.0308961868286133e-05,
+  "equivalence_check_mean_abs_diff": 3.828675332329112e-08,
+  "licence": "MIT",
+  "licence_url": "https://huggingface.co/ZhengPeng7/BiRefNet/blob/main/LICENSE",
+  "inference_input_size": 512,
+  "local_model_dir_env_var": "EXAM_PHOTO_BIREFNET_ONNX_MODEL_DIR",
+  "local_model_dir_default": "model-assets/birefnet_onnx",
+  "redistribution_notes": "MIT licensed, same terms as the PyTorch checkpoint it is derived from. Gitignored like the other model-assets entries; regenerate with scripts/export_birefnet_onnx.py."
+}

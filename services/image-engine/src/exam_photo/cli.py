@@ -541,19 +541,24 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
     )
     proc_parser.add_argument(
         "--matting-backend",
-        choices=["mediapipe", "birefnet"],
-        default="birefnet",
+        choices=["mediapipe", "birefnet", "birefnet_onnx"],
+        default="birefnet_onnx",
         help=(
-            "Subject segmentation model (see DEC-036). 'birefnet' is the "
-            "default and requires the "
+            "Subject segmentation model. 'birefnet_onnx' is the default "
+            "(faster-matting Step 1): the ONNX export of the same BiRefNet "
+            "checkpoint, same weights and maths, requiring only the "
+            'optional matting-onnx extra (pip install -e ".[dev,matting-onnx]") '
+            "and the exported weights (scripts/export_birefnet_onnx.py). "
+            "'birefnet' is the original PyTorch backend, requiring the "
             'optional matting extra (pip install -e ".[dev,matting]") and '
             "vendored weights (scripts/download_birefnet.py)."
         ),
     )
     proc_parser.add_argument(
         "--birefnet-model-dir",
-        help="Path to the vendored BiRefNet model directory. Defaults to the "
-        "path recorded in model-manifests/birefnet.json.",
+        help="Path to the vendored BiRefNet model directory (PyTorch or ONNX, "
+        "matching --matting-backend). Defaults to the path recorded in "
+        "model-manifests/birefnet.json or birefnet_onnx.json.",
     )
 
     # serve-api subcommand
@@ -3360,13 +3365,18 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
                 except Exception:
                     pass
 
-        # Resolve BiRefNet matting settings when selected (DEC-031).
+        # Resolve BiRefNet matting settings when selected (DEC-031, faster-matting Step 1).
         birefnet_model_dir: Optional[Path] = None
         expected_birefnet_sha = ""
-        if args.matting_backend == "birefnet":
-            from exam_photo.providers.segmenters.birefnet_segmenter import (
-                load_manifest_defaults,
-            )
+        if args.matting_backend in ("birefnet", "birefnet_onnx"):
+            if args.matting_backend == "birefnet":
+                from exam_photo.providers.segmenters.birefnet_segmenter import (
+                    load_manifest_defaults,
+                )
+            else:
+                from exam_photo.providers.segmenters.birefnet_onnx_segmenter import (
+                    load_manifest_defaults,
+                )
 
             default_dir, _wfname, default_sha, _size = load_manifest_defaults(repo_root)
             birefnet_model_dir = (

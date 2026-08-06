@@ -359,28 +359,41 @@ class RuleOrchestratedPipeline:
         segmenter_model_path: Path,
         face_expected_sha256: str = "",
         segmenter_expected_sha256: str = "",
-        matting_backend: str = "birefnet",
+        matting_backend: str = "birefnet_onnx",
         birefnet_model_dir: Optional[Path] = None,
         birefnet_expected_sha256: str = "",
     ):
         """``matting_backend`` selects the subject segmentation model.
 
-        ``"birefnet"`` is the default subject matting backend (DEC-036) because
-        the product requirement is realistic portrait edges, not the old
-        coarse selfie-segmentation matte.  ``"mediapipe"`` remains selectable
-        for lightweight diagnostics and legacy tests.  When BiRefNet is chosen
-        without explicit model arguments, the vendored model manifest is
-        resolved from the repository root.
+        ``"birefnet_onnx"`` is the default subject matting backend
+        (faster-matting Step 1): the ONNX export of the same BiRefNet
+        checkpoint the ``"birefnet"`` (PyTorch) backend uses, same weights
+        and same maths, verified numerically equivalent to float tolerance
+        by ``scripts/export_birefnet_onnx.py`` before it is trusted, and
+        roughly 2x faster on CPU with no torch/transformers dependency.
+        ``"birefnet"`` (PyTorch) remains selectable for comparison, and
+        ``"mediapipe"`` remains selectable for lightweight diagnostics and
+        legacy tests. When either BiRefNet backend is chosen without
+        explicit model arguments, the vendored model manifest is resolved
+        from the repository root.
         """
-        if matting_backend not in ("mediapipe", "birefnet"):
+        if matting_backend not in ("mediapipe", "birefnet", "birefnet_onnx"):
             raise ValueError(
                 f"Unknown matting_backend '{matting_backend}'; expected "
-                "'mediapipe' or 'birefnet'."
+                "'mediapipe', 'birefnet' or 'birefnet_onnx'."
             )
-        if matting_backend == "birefnet" and birefnet_model_dir is None:
-            from exam_photo.providers.segmenters.birefnet_segmenter import (
-                load_manifest_defaults,
-            )
+        if (
+            matting_backend in ("birefnet", "birefnet_onnx")
+            and birefnet_model_dir is None
+        ):
+            if matting_backend == "birefnet":
+                from exam_photo.providers.segmenters.birefnet_segmenter import (
+                    load_manifest_defaults,
+                )
+            else:
+                from exam_photo.providers.segmenters.birefnet_onnx_segmenter import (
+                    load_manifest_defaults,
+                )
 
             repo_root = _find_repo_root()
             birefnet_model_dir, _weights_name, default_sha, _size = (
@@ -395,7 +408,7 @@ class RuleOrchestratedPipeline:
         self.matting_backend = matting_backend
         self.birefnet_model_dir = birefnet_model_dir
         self.birefnet_expected_sha256 = birefnet_expected_sha256
-        self._birefnet_segmenter: Optional[Any] = None
+        self._matting_segmenter: Optional[Any] = None
         self._face_landmarker: Optional[Any] = None
         self._face_landmarker_unavailable = False
 
@@ -785,21 +798,32 @@ class RuleOrchestratedPipeline:
             t_stage = time.perf_counter()
             try:
                 segmenter: Any
-                if self.matting_backend == "birefnet":
-                    # Kept warm across calls: BiRefNet load/verification costs
-                    # real time (torch + weights), unlike MediaPipe's cheap
+                if self.matting_backend in ("birefnet", "birefnet_onnx"):
+                    # Kept warm across calls: both BiRefNet backends' load/
+                    # verification costs real time (weights, and for the
+                    # PyTorch backend torch itself), unlike MediaPipe's cheap
                     # per-call reinitialisation.
-                    if self._birefnet_segmenter is None:
-                        from exam_photo.providers.segmenters.birefnet_segmenter import (
-                            BiRefNetSubjectSegmenter,
-                        )
-
+                    if self._matting_segmenter is None:
                         assert self.birefnet_model_dir is not None
-                        self._birefnet_segmenter = BiRefNetSubjectSegmenter(
-                            model_dir=self.birefnet_model_dir,
-                            expected_sha256=self.birefnet_expected_sha256,
-                        )
-                    segmenter = self._birefnet_segmenter
+                        if self.matting_backend == "birefnet":
+                            from exam_photo.providers.segmenters.birefnet_segmenter import (
+                                BiRefNetSubjectSegmenter,
+                            )
+
+                            self._matting_segmenter = BiRefNetSubjectSegmenter(
+                                model_dir=self.birefnet_model_dir,
+                                expected_sha256=self.birefnet_expected_sha256,
+                            )
+                        else:
+                            from exam_photo.providers.segmenters.birefnet_onnx_segmenter import (
+                                BiRefNetONNXSubjectSegmenter,
+                            )
+
+                            self._matting_segmenter = BiRefNetONNXSubjectSegmenter(
+                                model_dir=self.birefnet_model_dir,
+                                expected_sha256=self.birefnet_expected_sha256,
+                            )
+                    segmenter = self._matting_segmenter
                 else:
                     segmenter = MediapipeSubjectSegmenter(
                         model_path=self.segmenter_model_path,
@@ -884,7 +908,9 @@ class RuleOrchestratedPipeline:
                 # the coarse selfie segmenter still needs the full treatment.
                 ref_config = RefinementConfig(
                     quality_mode=config.quality_mode,
-                    trust_input_alpha=(self.matting_backend == "birefnet"),
+                    trust_input_alpha=(
+                        self.matting_backend in ("birefnet", "birefnet_onnx")
+                    ),
                 )
                 ref_result = refiner.refine_mask(
                     image=norm_result.image,
@@ -1180,7 +1206,7 @@ class RuleOrchestratedPipeline:
             and ref_result is not None
             and crop_res is not None
             and crop_res.crop_box is not None
-            and self._birefnet_segmenter is not None
+            and self._matting_segmenter is not None
         ):
             t_stage = time.perf_counter()
             try:
@@ -1201,7 +1227,7 @@ class RuleOrchestratedPipeline:
                 gain = math.sqrt((src_w * src_h) / region_area)
                 if rx1 - rx0 >= 32 and ry1 - ry0 >= 32 and gain >= 1.15:
                     region = norm_result.image.crop((rx0, ry0, rx1, ry1))
-                    region_result = self._birefnet_segmenter.segment_subject(region)
+                    region_result = self._matting_segmenter.segment_subject(region)
                     region_alpha = np.clip(
                         region_result.probability_mask.astype(np.float32), 0.0, 1.0
                     )
