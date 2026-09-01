@@ -1,0 +1,71 @@
+{
+  "generated_by": "scripts/encode_exam_rules.py",
+  "examinations": [
+    {
+      "exam_name": "APPSC Forest Beat Officer / Assistant Beat Officer 2025",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 2
+    },
+    {
+      "exam_name": "Indian Army Agniveer CEE 2025-26 - online upload",
+      "reason": "incomplete evidence",
+      "detail": "no file size; conflicting: file_size.published_maximum, file_size.published_minimum",
+      "non_photograph_deliverables": 2
+    },
+    {
+      "exam_name": "Indian Army Agniveer CEE 2025-26 - rally/document verification",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 0
+    },
+    {
+      "exam_name": "JEE (Advanced) 2026",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 6
+    },
+    {
+      "exam_name": "MHT-CET 2026",
+      "reason": "incomplete evidence",
+      "detail": "no format",
+      "non_photograph_deliverables": 1
+    },
+    {
+      "exam_name": "RPSC Current Online Application Photograph",
+      "reason": "incomplete evidence",
+      "detail": "no file size; conflicting: dimensions.mode, file_size.published_maximum",
+      "non_photograph_deliverables": 2
+    },
+    {
+      "exam_name": "SSC Combined Graduate Level Examination 2026",
+      "reason": "live capture only",
+      "detail": "The portal photographs the candidate directly; there is no upload specification and nothing for the platform to deliver.",
+      "non_photograph_deliverables": 2
+    },
+    {
+      "exam_name": "SSC Combined Higher Secondary (10+2) Level Examination 2025",
+      "reason": "live capture only",
+      "detail": "The portal photographs the candidate directly; there is no upload specification and nothing for the platform to deliver.",
+      "non_photograph_deliverables": 2
+    },
+    {
+      "exam_name": "SSC Constable (GD) Examination 2025",
+      "reason": "live capture only",
+      "detail": "The portal photographs the candidate directly; there is no upload specification and nothing for the platform to deliver.",
+      "non_photograph_deliverables": 2
+    },
+    {
+      "exam_name": "SSC Multi-Tasking Staff and Havaldar Examination 2025",
+      "reason": "live capture only",
+      "detail": "The portal photographs the candidate directly; there is no upload specification and nothing for the platform to deliver.",
+      "non_photograph_deliverables": 2
+    },
+    {
+      "exam_name": "UPPSC One Time Registration Photograph",
+      "reason": "incomplete evidence",
+      "detail": "no format",
+      "non_photograph_deliverables": 2
+    }
+  ]
+}

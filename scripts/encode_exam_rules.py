@@ -1334,6 +1334,9 @@ def main() -> int:
         unmatched_deliverables,
         unserved_deliverables,
     )
+    _write_unavailable(
+        args.out / UNAVAILABLE_FILENAME, skipped, unserved_deliverables
+    )
 
     print(f"written  : {len(written)}")
     print(f"skipped  : {len(skipped)}")
@@ -1348,6 +1351,50 @@ def main() -> int:
         for message in messages:
             print(f"     {message}")
     return 1 if rejected else 0
+
+
+#: File name of the machine-readable twin of the gap register's "not encoded"
+#: sections, written beside the rule records rather than beside the markdown.
+#:
+#: The register is prose for a person deciding what to research next. This is
+#: the same finding for the application, which has to show a candidate
+#: searching "SSC CGL" that the examination exists and is not yet available --
+#: an absence discovered at the portal is worse than one admitted in the picker
+#: (DEC-055, KIT-002). It sits in the catalogue directory because it is
+#: catalogue data and the service already resolves that one root; parsing the
+#: markdown at runtime was the alternative and is not one.
+UNAVAILABLE_FILENAME = "unavailable_examinations.json"
+
+
+def _write_unavailable(
+    path: Path,
+    skipped: list[tuple[str, str, str]],
+    unserved_deliverables: list[tuple[str, int]],
+) -> None:
+    """Write the machine-readable list of examinations that were not encoded.
+
+    Emitted unconditionally alongside the markdown register rather than behind
+    its own flag. An optional output is one a later regeneration forgets to
+    ask for, and a picker that silently stops listing unavailable examinations
+    looks exactly like a platform that dropped them.
+    """
+    counts = dict(unserved_deliverables)
+    payload = {
+        "generated_by": "scripts/encode_exam_rules.py",
+        "examinations": [
+            {
+                "exam_name": name,
+                "reason": reason,
+                "detail": detail,
+                # How much the candidate loses by this examination being
+                # absent: the deliverables the platform could have prepared if
+                # a rule record did not require a photograph specification.
+                "non_photograph_deliverables": counts.get(name, 0),
+            }
+            for name, reason, detail in sorted(skipped)
+        ],
+    }
+    path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
 
 
 def _write_report(
