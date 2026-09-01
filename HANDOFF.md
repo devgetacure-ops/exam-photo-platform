@@ -1,10 +1,12 @@
 # Platform State
 
-**Last updated: 2026-08-06.** Branch `feat/upload-platform-pivot`, pushed and
-green. Renamed from `feat/pivot`; `origin/feat/pivot` still points at an old
-commit until someone deletes it.
+**Last updated: 2026-09-01.** Branch `feat/upload-kit-ui`, off `main`. The
+pivot is merged (`615535a`). The kit API surface is built and committed
+(DEC-054..057); the web foundation — TS contracts, API client, the
+localStorage kit store — is in. Not yet pushed.
 
-**The next session is UI work.** Start at *[Where to start: the web app](#where-to-start-the-web-app)*.
+**The next session is UI components.** The API and the client are done;
+what is left is the screens. Start at *[Where to start: the web app](#where-to-start-the-web-app)*.
 
 What this file is: the state a new session cannot reconstruct from the diff.
 Not a session note — keep it current rather than appending to it. It has drifted
@@ -72,30 +74,47 @@ examination's *inventory*, which is now the product.
 What exists and is worth keeping:
 
 - `src/components/upload-card.tsx`, `result-preview.tsx`, `validation-report.tsx`,
-  `processing-status.tsx` — sound parts, wrong composition.
+  `processing-status.tsx` — sound parts, wrong composition. Recompose into a
+  per-requirement panel rather than rebuild.
 - `src/app/admin/rules/` — the local rule console. Independent of the pivot and
-  still works.
-- `src/lib/api-client.ts` — talks to the local FastAPI service.
+  still works. Keeps calling `/v1/process`, which is retained unchanged.
+- `src/lib/api-client.ts` — now also has `listExams`, `getExam`,
+  `prepareRequirement` (throws `RequirementNotServedError` on a 409),
+  `planDocument`, `assembleDocument`, `getKitPackage`, `kitPackageDownloadUrl`.
+- `src/lib/kit-state.ts` — the localStorage kit store (DEC-057): `startKit`,
+  `getKit`, `recordPreparation`, `forgetRequirement`, `clearKit`. Keyed per
+  examination.
+- `src/lib/types.ts` — TS mirrors of every new contract.
 
 What the UI now has to express, in rough order of value:
 
 1. **The kit.** Select an examination, see all its requirements with their
-   status. The data is already in each rule record's `requirements[]`.
-2. **The boundary.** `platform_support` distinguishes `supported` from
-   `guidance_only` and `physical_stage`. These must never look alike — a
-   candidate believing the platform completed their SSC live capture is the
-   product's worst failure mode, and it is a labelling problem, not a technical
-   one.
-3. **Per-item upload and preparation**, including multi-page documents with
-   reordering (`pdf/document.py` is built for exactly this).
-4. **Package delivery** — the ZIP, checklist and validation report.
+   status. `GET /v1/exams/{exam_id}` returns `requirements[]`; the kit store
+   holds which job prepared each one.
+2. **The boundary.** `platform_support` (five values, never a boolean)
+   distinguishes `supported` from `guidance_only` and `physical_stage`. These
+   must never look alike — a candidate believing the platform completed their
+   SSC live capture is the product's worst failure mode, and it is a labelling
+   problem, not a technical one. Same for the 11 unencoded examinations, which
+   `GET /v1/exams` returns in a separate `unavailable` list.
+3. **Per-item upload and preparation** via `prepareRequirement`, including
+   multi-page documents through the `planDocument` → arrange → `assembleDocument`
+   pair. Three outcome states: clean, produced-with-caveats, blocked (WEB-002).
+4. **Package delivery** — `getKitPackage` for the checklist, the ZIP via
+   `kitPackageDownloadUrl`.
 
-**The API does not yet expose any of this.** `api/app.py` serves
-`/v1/process` for a single photograph plus job status, output and rule
-validation. Deliverable preparation
-(`orchestration/deliverable_pipeline.prepare_deliverable`) and document
-assembly (`pdf.assemble_document`) are library calls with no endpoint. Adding
-those endpoints is the first engineering step of the UI work.
+**The API is done.** `GET /v1/exams`, `GET /v1/exams/{exam_id}`,
+`POST /v1/exams/{exam_id}/requirements/{requirement_id}/prepare`, the document
+pair (`.../requirements/{id}/documents` then `/v1/documents/{job_id}/assemble`),
+and `GET /v1/kits/{kit_id}/package(/download)`. Contracts in `api/contracts.py`,
+catalogue reader in `orchestration/rule_catalogue.py`. The support gate returns
+409 with the requirement's own vocabulary before the upload is read.
+
+**Not verified locally:** the `mandatory_api` marker suite needs the model
+assets and env vars from `image-engine-ci.yml`; `model-assets/` is empty in this
+checkout. The one pre-existing failure in the fast subset
+(`test_crop_cli_save_preview_overwrite_protection`) also needs the face model
+and is unrelated to this branch.
 
 ## What it demonstrably cannot do
 
@@ -181,8 +200,11 @@ defects the reference set could not.
 
 1. **Throughput.** 30–40 s per photograph on CPU. The product owner has taken
    this as their own item — **do not spend engineering effort on it unasked.**
-2. **The API surface for deliverables.** Everything new is library-only. The UI
-   cannot start without endpoints.
+2. **Synchronous preparation has a deployment ceiling** (DEC-054). A photograph
+   is 30–40 s and `prepare` blocks on it; nginx defaults to 60 s, Cloudflare to
+   100 s. The escape hatch is designed — return 202 with a job id and let the
+   client poll `GET /v1/jobs/{id}` — but not built. Do not discover this in
+   production.
 3. **Ten examinations dropped for a photograph reason** while carrying 23
    non-photograph deliverables between them, including all four SSC. Fixing it
    means letting a rule record exist without a photograph specification.
