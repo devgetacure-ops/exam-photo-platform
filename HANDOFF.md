@@ -123,9 +123,12 @@ State these plainly rather than discovering them again.
 ## Rule records are generated, never hand-written
 
 `scripts/encode_exam_rules.py` reads the versioned research in
-`packages/exam-rules/research/` and rebuilds the whole catalogue plus the gap
-register. It owns every file matching its prefix, so a re-run replaces rather
-than adds.
+`packages/exam-rules/research/` and rebuilds the whole catalogue, the gap
+register, and `examples/rules/unavailable_examinations.json` — the
+machine-readable list of the eleven examinations it could not encode, which the
+picker needs so a candidate searching SSC CGL is told the examination exists
+rather than shown nothing. It owns every file matching its prefix, so a re-run
+replaces rather than adds.
 
 ```bash
 python scripts/extract_deliverables.py --report packages/exam-rules/research/indian_exam_registration_deliverables_report_2026.md --out packages/exam-rules/research/exam_deliverables_2026.json
