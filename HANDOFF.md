@@ -211,8 +211,11 @@ defects the reference set could not.
 4. **Service hardening and privacy.** The API is local-only by design — no TLS,
    auth or rate limiting — and candidate face photographs are sensitive personal
    data under the DPDP Act. Both precede anything public.
-5. **Invariants unwired**, and the **M22 matte defects** (a detached hair
-   fragment on photo 17; soft hair edges on 18 and 19).
+5. **Invariants unwired**, and the remaining **M22 matte defect**: a detached
+   hair fragment on photo 17 (a disconnected mask region). Its soft/smudged
+   hair-edge half (18, 19, and the non-fragment part of 17) is fixed --
+   DEC-033's trusted-alpha path was skipping an anti-halo contrast correction
+   the coarse-mask path already had.
 
 ## Verifying
 

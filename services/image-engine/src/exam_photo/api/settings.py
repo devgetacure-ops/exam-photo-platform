@@ -27,11 +27,13 @@ class ApiSettings(BaseModel):
     face_expected_sha256: Optional[str] = None
     segmenter_expected_sha256: Optional[str] = None
 
-    # Subject segmentation backend (DEC-031).  "auto" uses BiRefNet when its
-    # vendored weights and the optional matting extra are both present, and
-    # falls back to MediaPipe otherwise, so the served app gets the better
-    # matte without a separate opt-in step and still starts on a machine that
-    # has not run scripts/download_birefnet.py.
+    # Subject segmentation backend (DEC-031; faster-matting Step 1). "auto"
+    # prefers the ONNX BiRefNet export when it is present (same weights and
+    # maths as the PyTorch backend, ~2x faster on CPU, no torch dependency),
+    # then the PyTorch backend, then falls back to MediaPipe -- so the served
+    # app gets the better matte without a separate opt-in step and still
+    # starts on a machine that has not run the model acquisition/export
+    # scripts.
     matting_backend: str = "auto"
 
     # Pipeline output and local CORS toggles

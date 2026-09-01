@@ -205,19 +205,28 @@ class ApiProcessingService:
             face_model_path = self.repo_root / face_model_path
         return face_model_path, expected_face_sha
 
-    def _resolve_matting_backend(self) -> Tuple[str, Optional[Path], str]:
-        """Resolve the subject segmentation backend for this service.
+    def _resolve_birefnet_onnx(self) -> Optional[Tuple[Path, str]]:
+        """Return (model_dir, sha256) if the ONNX BiRefNet backend is usable
+        on this machine, else None."""
+        try:
+            from exam_photo.providers.segmenters.birefnet_onnx_segmenter import (
+                load_manifest_defaults,
+            )
 
-        Returns ``(backend, birefnet_model_dir, birefnet_sha256)``.  ``"auto"``
-        selects BiRefNet only when its vendored weights and the optional
-        matting extra are both importable, so a machine that has not run
-        scripts/download_birefnet.py still serves requests on MediaPipe rather
-        than failing every job.
-        """
-        requested = (self.settings.matting_backend or "auto").lower()
-        if requested == "mediapipe":
-            return "mediapipe", None, ""
+            model_dir, weights_name, sha, _size = load_manifest_defaults(self.repo_root)
+        except Exception:
+            return None
+        if not (model_dir / weights_name).exists():
+            return None
+        try:
+            import onnxruntime  # noqa: F401
+        except ImportError:
+            return None
+        return model_dir, sha
 
+    def _resolve_birefnet_torch(self) -> Optional[Tuple[Path, str]]:
+        """Return (model_dir, sha256) if the PyTorch BiRefNet backend is
+        usable on this machine, else None."""
         try:
             from exam_photo.providers.segmenters.birefnet_segmenter import (
                 load_manifest_defaults,
@@ -225,33 +234,58 @@ class ApiProcessingService:
 
             model_dir, weights_name, sha, _size = load_manifest_defaults(self.repo_root)
         except Exception:
-            if requested == "birefnet":
-                raise
-            return "mediapipe", None, ""
-
-        weights_present = (model_dir / weights_name).exists()
+            return None
+        if not (model_dir / weights_name).exists():
+            return None
         try:
             import torch  # noqa: F401
             import transformers  # noqa: F401
-
-            deps_present = True
         except ImportError:
-            deps_present = False
+            return None
+        return model_dir, sha
 
-        if weights_present and deps_present:
-            return "birefnet", model_dir, sha
-        if requested == "birefnet":
-            missing = []
-            if not weights_present:
-                missing.append(
-                    f"weights at {model_dir} (run scripts/download_birefnet.py)"
+    def _resolve_matting_backend(self) -> Tuple[str, Optional[Path], str]:
+        """Resolve the subject segmentation backend for this service.
+
+        Returns ``(backend, birefnet_model_dir, birefnet_sha256)``. ``"auto"``
+        (the default) prefers the ONNX backend (faster-matting Step 1: same
+        weights and maths as the PyTorch backend, roughly 2x faster on CPU,
+        and needs only the lightweight ``matting-onnx`` extra rather than
+        torch), then falls back to the PyTorch backend, then to MediaPipe --
+        so a machine that has not run the model acquisition/export scripts
+        still serves requests rather than failing every job.
+        """
+        requested = (self.settings.matting_backend or "auto").lower()
+        if requested == "mediapipe":
+            return "mediapipe", None, ""
+
+        if requested == "birefnet_onnx":
+            resolved = self._resolve_birefnet_onnx()
+            if resolved is None:
+                raise RuntimeError(
+                    "matting_backend='birefnet_onnx' requested but missing "
+                    "the exported weights (run scripts/export_birefnet_onnx.py) "
+                    'or the matting-onnx extra (pip install -e ".[dev,matting-onnx]").'
                 )
-            if not deps_present:
-                missing.append('matting extra (pip install -e ".[dev,matting]")')
-            raise RuntimeError(
-                "matting_backend='birefnet' requested but missing: "
-                + "; ".join(missing)
-            )
+            return "birefnet_onnx", resolved[0], resolved[1]
+
+        if requested == "birefnet":
+            resolved = self._resolve_birefnet_torch()
+            if resolved is None:
+                raise RuntimeError(
+                    "matting_backend='birefnet' requested but missing the "
+                    "vendored weights (run scripts/download_birefnet.py) or "
+                    'the matting extra (pip install -e ".[dev,matting]").'
+                )
+            return "birefnet", resolved[0], resolved[1]
+
+        # "auto": prefer ONNX, then PyTorch, then MediaPipe.
+        onnx_resolved = self._resolve_birefnet_onnx()
+        if onnx_resolved is not None:
+            return "birefnet_onnx", onnx_resolved[0], onnx_resolved[1]
+        torch_resolved = self._resolve_birefnet_torch()
+        if torch_resolved is not None:
+            return "birefnet", torch_resolved[0], torch_resolved[1]
         return "mediapipe", None, ""
 
     def _resolve_segmenter_model(self) -> Tuple[Path, str]:

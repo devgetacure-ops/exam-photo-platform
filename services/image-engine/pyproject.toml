@@ -46,6 +46,9 @@ face = [
 # Matting extra: BiRefNet-based subject segmentation (see DEC-031). Install with
 # pip install -e ".[dev,face,matting]". Optional because it pulls torch, which is
 # a large dependency the core engine and MediaPipe-only deployments do not need.
+# Also required to run scripts/export_birefnet_onnx.py (the ONNX export needs the
+# PyTorch checkpoint as its source), but not required to run the ONNX backend
+# itself -- see the `matting-onnx` extra below.
 matting = [
     "torch>=2.2.0",
     "torchvision>=0.17.0",
@@ -54,6 +57,15 @@ matting = [
     "einops>=0.7.0",
     "kornia>=0.7.0",
     "huggingface_hub>=0.23.0",
+    "onnx>=1.16.0",
+    "deform_conv2d_onnx_exporter>=1.1.0",
+]
+# ONNX matting extra (faster-matting Step 1): the "birefnet_onnx" backend at
+# runtime. No torch/transformers -- onnxruntime alone runs the exported graph,
+# which is the point: a deployment that only ever uses this backend does not
+# need the ~2 GB `matting` extra. Install with pip install -e ".[dev,face,matting-onnx]".
+matting-onnx = [
+    "onnxruntime>=1.20.0",
 ]
 
 [tool.hatch.build.targets.wheel]
