@@ -58,7 +58,7 @@ class RequirementNotServedError(PermissionError):
     Raised for any requirement whose ``platform_support`` is not ``supported``
     or ``partially_supported``. The rule model already refuses to *record* an
     impossible support state; this is the independent second barrier that
-    refuses to *act* on one (DEC-055). A candidate believing the platform
+    refuses to *act* on one (DEC-056). A candidate believing the platform
     completed their live capture is this product's worst failure mode, and
     leaving the check to the browser would put the whole boundary behind one
     layer of client code.
@@ -418,7 +418,7 @@ class ApiProcessingService:
             record.output_byte_size = (
                 len(result.encoded_bytes) if result.encoded_bytes else None
             )
-            # DEC-055's third state, on the photograph path too: a compliant
+            # DEC-056's third state, on the photograph path too: a compliant
             # file with warnings against it is not the same outcome as a clean
             # one, and neither is the same as no file at all.
             if not result.is_valid:
@@ -455,7 +455,7 @@ class ApiProcessingService:
         return record
 
     # ------------------------------------------------------------------
-    # Requirement resolution and the platform-support gate (DEC-055)
+    # Requirement resolution and the platform-support gate (DEC-056)
     # ------------------------------------------------------------------
 
     def resolve_requirement(
@@ -496,7 +496,7 @@ class ApiProcessingService:
         The photograph path is `process_job_sync` and is reached through the
         same endpoint; the split is made by `requirement_type` at the edge so
         the caller names an item of an examination rather than a pipeline
-        (DEC-054).
+        (DEC-055).
         """
         self.check_upload_limit(len(upload))
 
@@ -691,7 +691,7 @@ class ApiProcessingService:
     def _outcome_for(result: DeliverableResult) -> str:
         """Which of the three outcome states a prepared file landed in.
 
-        DEC-055: a file produced with something worth reading about it is its
+        DEC-056: a file produced with something worth reading about it is its
         own state, not a success with a footnote. A two-state contract files
         every finding under success, where nobody reads it.
         """
@@ -700,7 +700,7 @@ class ApiProcessingService:
         return "prepared"
 
     # ------------------------------------------------------------------
-    # The package (DEC-054 step 4, DEC-055, DEC-056)
+    # The package (DEC-055 step 4, DEC-056, DEC-057)
     # ------------------------------------------------------------------
 
     def build_kit_package(self, kit_id: str) -> Tuple[bytes, dict[str, Any]]:
@@ -732,7 +732,7 @@ class ApiProcessingService:
                     "byte_size": record.output_byte_size,
                     "included": False,
                 }
-                # DEC-055: nothing carrying a non-served support state may be
+                # DEC-056: nothing carrying a non-served support state may be
                 # counted as an output.  Such a job should never exist -- the
                 # gate refuses it at the edge -- so this is a second reading of
                 # the same rule at the point where a file would be handed over.
@@ -831,7 +831,7 @@ class ApiProcessingService:
     ) -> dict[str, Any]:
         """The report somebody opens after a portal rejects a file.
 
-        DEC-056: every interim value is named here explicitly. In the
+        DEC-057: every interim value is named here explicitly. In the
         application the same fact is a quiet marker, because a candidate cannot
         act on it -- but this is read at the moment a file has been rejected,
         and "this ceiling was our estimate, not a published figure" is then the

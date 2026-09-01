@@ -154,7 +154,7 @@ export async function getOutputBlob(jobId: string): Promise<Blob> {
   }
 }
 
-// --- Exam catalogue and kit (DEC-054) --------------------------------------
+// --- Exam catalogue and kit (DEC-055) --------------------------------------
 
 /**
  * Reads `detail` off an error body, tolerating a plain-text or empty response.
@@ -184,7 +184,7 @@ function unreachableApiMessage(err: unknown): Error {
   return new Error(e.message || "An unknown error occurred.");
 }
 
-/** Every examination the platform holds a rule for, plus the ones it does not (DEC-055). */
+/** Every examination the platform holds a rule for, plus the ones it does not (DEC-056). */
 export async function listExams(): Promise<ExamList> {
   const url = new URL("/v1/exams", API_BASE_URL);
   try {
@@ -215,7 +215,7 @@ export async function getExam(examId: string): Promise<ExamDetail> {
 /**
  * Prepare one requirement of one examination. Throws {@link RequirementNotServedError}
  * when the support gate refuses (HTTP 409) so the caller can tell the candidate
- * what to do instead rather than surfacing a bare failure (DEC-055).
+ * what to do instead rather than surfacing a bare failure (DEC-056).
  */
 export async function prepareRequirement({
   examId,
@@ -333,7 +333,7 @@ export async function assembleDocument(
   }
 }
 
-/** The checklist for a kit, without downloading the archive (DEC-056). */
+/** The checklist for a kit, without downloading the archive (DEC-057). */
 export async function getKitPackage(kitId: string): Promise<KitPackage> {
   const url = new URL(
     `/v1/kits/${encodeURIComponent(kitId)}/package`,

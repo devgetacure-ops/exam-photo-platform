@@ -36,7 +36,7 @@ class ProcessingJobRecord(BaseModel):
     quality_mode: Optional[str] = None
     diagnostic_available: Optional[bool] = None
 
-    # --- Kit and requirement identity (DEC-054, DEC-057) -------------------
+    # --- Kit and requirement identity (DEC-055, DEC-058) -------------------
     #
     # `kit_id` is a grouping key written into the manifest that already
     # exists, not a record of its own: gathering a kit is a scan of manifests
@@ -47,7 +47,7 @@ class ProcessingJobRecord(BaseModel):
     exam_id: Optional[str] = None
     requirement_id: Optional[str] = None
     requirement_type: Optional[str] = None
-    #: Carried verbatim from the rule record so the package can honour DEC-055
+    #: Carried verbatim from the rule record so the package can honour DEC-056
     #: without re-reading the catalogue, and never reduced to a boolean.
     platform_support: Optional[str] = None
 
@@ -55,7 +55,7 @@ class ProcessingJobRecord(BaseModel):
     #
     # DEC-041 makes production the rule and refusal the exception, so these
     # record what is *true about* a file that was produced rather than whether
-    # one was.  DEC-055 turns them into the third UI state.
+    # one was.  DEC-056 turns them into the third UI state.
     outcome: Optional[str] = None
     findings: List[str] = Field(default_factory=list)
     is_blank: Optional[bool] = None

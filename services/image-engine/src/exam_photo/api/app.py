@@ -311,7 +311,7 @@ def _gate_or_409(exam_id: str, requirement: Any) -> None:
     """Refuse to act on a requirement the platform does not prepare.
 
     The 409 body carries the requirement's own vocabulary rather than a generic
-    message, so a caller can tell the candidate what to do instead. DEC-055:
+    message, so a caller can tell the candidate what to do instead. DEC-056:
     this is the second of two independent barriers, the first being the rule
     model's refusal to record an impossible support state at all.
     """
@@ -389,7 +389,7 @@ async def prepare_requirement(
     """Prepare one item of one examination.
 
     One endpoint for every requirement type, dispatching on the type itself
-    (DEC-054). The alternative -- a photograph route beside a deliverable route
+    (DEC-055). The alternative -- a photograph route beside a deliverable route
     -- would require the browser to know which engine serves which requirement,
     duplicating `_TREATMENT_BY_TYPE` with nothing keeping the copy honest, and
     would invert *Exam First, Tool Second*: a caller names an item of an

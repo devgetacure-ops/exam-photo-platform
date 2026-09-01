@@ -1360,7 +1360,7 @@ def main() -> int:
 #: the same finding for the application, which has to show a candidate
 #: searching "SSC CGL" that the examination exists and is not yet available --
 #: an absence discovered at the portal is worse than one admitted in the picker
-#: (DEC-055, KIT-002). It sits in the catalogue directory because it is
+#: (DEC-056, KIT-002). It sits in the catalogue directory because it is
 #: catalogue data and the service already resolves that one root; parsing the
 #: markdown at runtime was the alternative and is not one.
 UNAVAILABLE_FILENAME = "unavailable_examinations.json"

@@ -1,4 +1,4 @@
-"""API tests for kit preparation, documents and packaging (DEC-054..057)."""
+"""API tests for kit preparation, documents and packaging (DEC-055..058)."""
 
 import io
 import json
@@ -98,7 +98,7 @@ def _prepare(requirement: str, content: bytes, kit_id=None, exam: str = EXAM):
 
 
 # ----------------------------------------------------------------------
-# The support gate (DEC-055)
+# The support gate (DEC-056)
 # ----------------------------------------------------------------------
 
 
@@ -155,7 +155,7 @@ def test_malformed_requirement_identifiers_are_rejected(api, requirement_id):
 
 
 # ----------------------------------------------------------------------
-# Preparation, dispatching by requirement type (DEC-054)
+# Preparation, dispatching by requirement type (DEC-055)
 # ----------------------------------------------------------------------
 
 
@@ -335,7 +335,7 @@ def test_assembling_a_job_that_holds_no_document_is_refused(api):
 
 
 # ----------------------------------------------------------------------
-# The package (DEC-054 step 4, DEC-055, DEC-056)
+# The package (DEC-055 step 4, DEC-056, DEC-057)
 # ----------------------------------------------------------------------
 
 
@@ -389,7 +389,7 @@ def test_the_archive_carries_the_files_the_checklist_and_the_report(api):
 
 @pytest.mark.mandatory_api
 def test_the_validation_report_names_every_platform_estimate(api):
-    """DEC-056: disclosure proportionate to what the reader can do.
+    """DEC-057: disclosure proportionate to what the reader can do.
 
     Quiet in the application, explicit here -- this is the artifact somebody
     opens after a portal rejects a file.

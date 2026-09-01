@@ -2,7 +2,7 @@
 
 **Last updated: 2026-09-01.** Branch `feat/upload-kit-ui`, off `main`. The
 pivot is merged (`615535a`). The kit API surface is built and committed
-(DEC-054..057); the web foundation — TS contracts, API client, the
+(DEC-055..058); the web foundation — TS contracts, API client, the
 localStorage kit store — is in. Not yet pushed.
 
 **The next session is UI components.** The API and the client are done;
@@ -81,7 +81,7 @@ What exists and is worth keeping:
 - `src/lib/api-client.ts` — now also has `listExams`, `getExam`,
   `prepareRequirement` (throws `RequirementNotServedError` on a 409),
   `planDocument`, `assembleDocument`, `getKitPackage`, `kitPackageDownloadUrl`.
-- `src/lib/kit-state.ts` — the localStorage kit store (DEC-057): `startKit`,
+- `src/lib/kit-state.ts` — the localStorage kit store (DEC-058): `startKit`,
   `getKit`, `recordPreparation`, `forgetRequirement`, `clearKit`. Keyed per
   examination.
 - `src/lib/types.ts` — TS mirrors of every new contract.
@@ -200,7 +200,7 @@ defects the reference set could not.
 
 1. **Throughput.** 30–40 s per photograph on CPU. The product owner has taken
    this as their own item — **do not spend engineering effort on it unasked.**
-2. **Synchronous preparation has a deployment ceiling** (DEC-054). A photograph
+2. **Synchronous preparation has a deployment ceiling** (DEC-055). A photograph
    is 30–40 s and `prepare` blocks on it; nginx defaults to 60 s, Cloudflare to
    100 s. The escape hatch is designed — return 202 with a job id and let the
    client poll `GET /v1/jobs/{id}` — but not built. Do not discover this in

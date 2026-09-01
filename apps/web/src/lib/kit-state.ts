@@ -1,5 +1,5 @@
 /**
- * The kit lives in the browser, and is lost with it (DEC-057).
+ * The kit lives in the browser, and is lost with it (DEC-058).
  *
  * A kit is one examination's inventory in progress: which requirements have
  * been prepared, and which job on the server holds each result. Requirements

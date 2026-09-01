@@ -60,7 +60,7 @@ class RequirementSummary(BaseModel):
     """One requirement as the picker and the kit list need it.
 
     ``platform_support`` and ``submission_method`` are carried as their own
-    string values and are never reduced to a boolean or a bucket. DEC-055: a
+    string values and are never reduced to a boolean or a bucket. DEC-056: a
     ``can_prepare`` field is precisely the mechanism by which ``supported``,
     ``partially_supported`` and ``guidance_only`` become indistinguishable, and
     it would deliver the product's worst failure mode through the contract
@@ -110,7 +110,7 @@ class UnavailableExamResponse(BaseModel):
     Shown in the picker rather than omitted, on the same reasoning that keeps a
     guidance-only row on screen: a candidate searching SSC CGL and finding
     nothing concludes the platform does not cover it, and an absence discovered
-    at the portal is worse than one admitted here (DEC-055).
+    at the portal is worse than one admitted here (DEC-056).
     """
 
     exam_name: str
@@ -161,12 +161,12 @@ class ExamDetailResponse(BaseModel):
     #: The photograph specification, carried verbatim from the record.
     image_requirements: dict[str, Any] = Field(default_factory=dict)
     #: Per-field provenance, so a caller can tell a published figure from a
-    #: platform estimate without a second request (DEC-056).
+    #: platform estimate without a second request (DEC-057).
     provenance: dict[str, Any] = Field(default_factory=dict)
 
 
 class PreparationOutcome(str, Enum):
-    """The three states a preparation attempt can land in (DEC-055).
+    """The three states a preparation attempt can land in (DEC-056).
 
     ``PREPARED_WITH_FINDINGS`` exists because DEC-041 makes production the rule
     and refusal the exception: a blank page, an unreachable published minimum,

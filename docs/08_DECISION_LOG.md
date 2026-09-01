@@ -641,7 +641,7 @@ and what it measured -- so entries are amended in place rather than deleted.
 - **Affected Modules**: `services/image-engine/src/exam_photo/pdf/document.py`, `services/image-engine/tests/pdf/test_pdf_document.py`.
 - **Approval Owner**: Product Owner
 
-### DEC-054: An Examination Is Named, Not Uploaded
+### DEC-055: An Examination Is Named, Not Uploaded
 - **Date**: 2026-08-06
 - **Status**: Approved
 - **Problem**: Everything the pivot built is library-only. `orchestration/deliverable_pipeline.prepare_deliverable` and `pdf.assemble_document` have no endpoint, and `api/app.py` serves `/v1/process` for a single photograph plus job status, output and rule validation. That was the stated blocker for UI work. Reading the service alongside the web app found a larger one underneath it: **the catalogue itself is unreachable**. Nothing under `services/image-engine/src` references `examples/rules/` -- there is no catalogue loader and no setting pointing at one -- and the web app's rule picker offers two bundled fictional samples plus a JSON file upload. `/v1/process` takes the entire rule as a form field precisely because the client was assumed to hold it. So the 39 encoded examinations and their 155 requirements are invisible to every caller, and the two highest-value screens -- the inventory, and the boundary between what the platform prepares and what it does not -- cannot be rendered at all, independently of whether the deliverable pipelines are exposed.
@@ -652,7 +652,7 @@ and what it measured -- so entries are amended in place rather than deleted.
 - **Affected Modules**: `services/image-engine/src/exam_photo/api/` (`app.py`, `service.py`, `contracts.py`, `settings.py`, `jobs.py`), `orchestration/rule_catalogue.py`, `apps/web/src/lib/api-client.ts`, `apps/web/src/lib/types.ts`.
 - **Approval Owner**: Product Owner
 
-### DEC-055: The Boundary Is Enforced Twice and Never Reduced to a Boolean
+### DEC-056: The Boundary Is Enforced Twice and Never Reduced to a Boolean
 - **Date**: 2026-08-06
 - **Status**: Approved
 - **Problem**: `prepare_deliverable`'s own docstring states that it does not decide whether the platform should be preparing a requirement at all, and that the caller must filter out requirements whose submission method or platform support says otherwise. Once the API exists, that caller is a browser. A candidate believing the platform completed their SSC live capture is this product's worst failure mode, and it is a labelling problem rather than a technical one -- so leaving the filter in the client puts the entire boundary behind one layer of application code and one CSS class.
@@ -663,7 +663,7 @@ and what it measured -- so entries are amended in place rather than deleted.
 - **Affected Modules**: `scripts/encode_exam_rules.py`, `examples/rules/unavailable_examinations.json`, `services/image-engine/src/exam_photo/orchestration/rule_catalogue.py`, `api/app.py`, `api/contracts.py`, `apps/web/src/app/`, `apps/web/src/components/`.
 - **Approval Owner**: Product Owner
 
-### DEC-056: Disclosure Proportionate to What the Reader Can Do
+### DEC-057: Disclosure Proportionate to What the Reader Can Do
 - **Date**: 2026-08-06
 - **Status**: Approved
 - **Problem**: 86 values in the catalogue are `interim_default` -- a specification the platform chose because no body published one -- spread across 24 of the 39 examinations and sitting on 71 file sizes and 15 formats. DEC-048 built the label so that a placeholder could never quietly become a fact. It did not settle what a *candidate* is told. Showing a signature ceiling of 20 KB as though it were published asserts something no source supports; flagging it prominently states something the candidate cannot act on.
@@ -673,7 +673,7 @@ and what it measured -- so entries are amended in place rather than deleted.
 - **Affected Modules**: `apps/web/src/components/`, the package validation report (`services/image-engine/src/exam_photo/api/`).
 - **Approval Owner**: Product Owner
 
-### DEC-057: The Kit Lives in the Browser, and Is Lost With It
+### DEC-058: The Kit Lives in the Browser, and Is Lost With It
 - **Date**: 2026-08-06
 - **Status**: Approved
 - **Problem**: A kit is one examination's inventory in progress -- which requirements have been prepared, and which job holds each result. Requirements are completed in arbitrary order and potentially across several sittings, because a candidate has their signature to hand today and their caste certificate next week, so the mapping has to survive a page reload. The job registry is keyed by job and has no notion of a set.

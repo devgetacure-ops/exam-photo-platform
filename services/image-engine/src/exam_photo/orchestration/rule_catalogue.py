@@ -4,12 +4,12 @@ The rule records in ``examples/rules/`` are generated from versioned research
 and have, until now, been reachable only by a caller that already held a path.
 Nothing in the service read the directory at all, so the 39 encoded
 examinations and their requirements were invisible to the API and therefore to
-the application (DEC-054).
+the application (DEC-055).
 
 This module is the read side of that catalogue and nothing more. It does not
 resolve a rule into a processing plan -- ``rule_resolver`` does that -- and it
 does not decide what the platform will prepare, which is the API's gate to
-apply (DEC-055).
+apply (DEC-056).
 
 Two properties are worth stating because they are load-bearing.
 
@@ -62,7 +62,7 @@ class UnavailableExamination:
     Carried so the picker can show it rather than omit it. A candidate
     searching for SSC CGL and finding nothing concludes the platform does not
     cover the examination; an absence discovered at the portal is worse than
-    one admitted here (DEC-055).
+    one admitted here (DEC-056).
     """
 
     exam_name: str
@@ -105,7 +105,7 @@ def support_counts(rule: ExamRule) -> dict[PlatformSupport, int]:
 
     Returned as the full five-key mapping with explicit zeros rather than as a
     sparse count, so a caller cannot read a missing key as "none of these" in
-    one place and "not computed" in another. DEC-055 forbids collapsing these
+    one place and "not computed" in another. DEC-056 forbids collapsing these
     five values into a boolean anywhere downstream; keeping all five present
     here is the same rule applied one layer earlier.
     """

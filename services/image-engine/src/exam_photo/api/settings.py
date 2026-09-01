@@ -14,7 +14,7 @@ class ApiSettings(BaseModel):
     max_upload_bytes: int = Field(default=5 * 1024 * 1024)  # 5 MB
     job_ttl_seconds: int = Field(default=3600)  # 1 hour
 
-    # Where the encoded examination catalogue is read from (DEC-054).  Relative
+    # Where the encoded examination catalogue is read from (DEC-055).  Relative
     # paths resolve against the repository root, the same way the model paths
     # do.  The directory is still named `examples/rules` while holding the real
     # generated catalogue; renaming it touches the encoder, the gap register

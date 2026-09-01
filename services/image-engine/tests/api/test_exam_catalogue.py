@@ -1,4 +1,4 @@
-"""API integration tests for the examination catalogue endpoints (DEC-054)."""
+"""API integration tests for the examination catalogue endpoints (DEC-055)."""
 
 import pytest
 from fastapi.testclient import TestClient
@@ -57,7 +57,7 @@ def test_unavailable_examinations_are_not_merged_into_the_selectable_list():
 
 @pytest.mark.mandatory_api
 def test_summary_carries_all_five_support_counts():
-    """DEC-055: the five values are never collapsed, including in a count."""
+    """DEC-056: the five values are never collapsed, including in a count."""
     response = client.get("/v1/exams")
     exam = next(e for e in response.json()["exams"] if e["exam_id"] == EXAM_ID)
 
@@ -101,7 +101,7 @@ def test_get_exam_returns_the_inventory():
 
 @pytest.mark.mandatory_api
 def test_requirement_carries_its_support_value_not_a_boolean():
-    """DEC-055: no response field reduces platform_support to a boolean."""
+    """DEC-056: no response field reduces platform_support to a boolean."""
     body = client.get(f"/v1/exams/{EXAM_ID}").json()
 
     for requirement in body["requirements"]:
@@ -142,7 +142,7 @@ def test_signature_requirement_carries_its_published_spec():
 
 @pytest.mark.mandatory_api
 def test_provenance_is_returned_so_estimates_are_distinguishable():
-    """DEC-056: a caller tells a published figure from a platform estimate."""
+    """DEC-057: a caller tells a published figure from a platform estimate."""
     body = client.get(f"/v1/exams/{EXAM_ID}").json()
 
     assert body["provenance"]

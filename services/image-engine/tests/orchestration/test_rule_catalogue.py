@@ -1,4 +1,4 @@
-"""Tests for reading the encoded examination catalogue (DEC-054)."""
+"""Tests for reading the encoded examination catalogue (DEC-055)."""
 
 import json
 from pathlib import Path
@@ -168,7 +168,7 @@ def test_a_broken_sidecar_is_reported_rather_than_ignored(tmp_path, real_record)
 
 
 def test_catalogue_wide_support_totals_match_the_recorded_figures():
-    """DEC-055 quotes these; if the catalogue moves, the entry must be amended."""
+    """DEC-056 quotes these; if the catalogue moves, the entry must be amended."""
     catalogue = load_catalogue(CATALOGUE_ROOT)
 
     totals = {support: 0 for support in PlatformSupport}

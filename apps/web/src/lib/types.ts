@@ -58,12 +58,12 @@ export interface PipelineReport {
 }
 
 
-// --- Exam catalogue (DEC-054) ------------------------------------------------
+// --- Exam catalogue (DEC-055) ------------------------------------------------
 
 /**
  * The five states a requirement can sit in relative to the platform. Carried as
  * the string it is and never reduced to a boolean anywhere in the client
- * (DEC-055): `supported` and `partially_supported` mean the platform prepares a
+ * (DEC-056): `supported` and `partially_supported` mean the platform prepares a
  * file, `guidance_only` and `physical_stage` mean the candidate does it
  * themselves, `not_yet_supported` means it is coming.
  */
@@ -118,7 +118,7 @@ export interface ExamSummary {
 
 /**
  * An examination the research covers that the catalogue does not encode. Shown
- * in the picker as a non-selectable row rather than omitted (DEC-055).
+ * in the picker as a non-selectable row rather than omitted (DEC-056).
  */
 export interface UnavailableExam {
   exam_name: string;
@@ -171,13 +171,13 @@ export interface ExamDetail {
   provenance: Record<string, { type?: string; [k: string]: unknown }>;
 }
 
-// --- Preparation (DEC-054, DEC-055) -----------------------------------------
+// --- Preparation (DEC-055, DEC-056) -----------------------------------------
 
 /**
  * The outcome states a preparation attempt lands in. `prepared_with_findings`
  * is a first-class state, not a flavour of success: a blank page, an
  * unreachable published minimum, an invented ceiling and an oversized document
- * are all reported about a file that exists (DEC-041, DEC-055).
+ * are all reported about a file that exists (DEC-041, DEC-056).
  */
 export type PreparationOutcome =
   | "prepared"
@@ -264,7 +264,7 @@ export interface DocumentPlan {
   unreadable: Record<string, string>;
 }
 
-// --- Kit package (DEC-054 step 4, DEC-056) --------------------------------
+// --- Kit package (DEC-055 step 4, DEC-057) --------------------------------
 
 export interface KitPackageItem {
   requirement_id?: string | null;
