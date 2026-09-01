@@ -11,6 +11,11 @@ from exam_photo.api.contracts import ApiJobStatus
 
 JOB_ID_REGEX = re.compile(r"^job_[A-Za-z0-9_-]+$")
 
+#: A kit identifier is minted by the browser and arrives from an untrusted
+#: caller.  It is only ever a grouping key -- never a path segment -- but it
+#: does appear in a URL, so its shape is pinned here and checked at the edge.
+KIT_ID_REGEX = re.compile(r"^kit_[A-Za-z0-9_-]{1,64}$")
+
 
 class ProcessingJobRecord(BaseModel):
     """Schema representing a job's manifest."""
@@ -30,6 +35,41 @@ class ProcessingJobRecord(BaseModel):
     matte_quality_report: Optional[dict[str, Any]] = None
     quality_mode: Optional[str] = None
     diagnostic_available: Optional[bool] = None
+
+    # --- Kit and requirement identity (DEC-054, DEC-057) -------------------
+    #
+    # `kit_id` is a grouping key written into the manifest that already
+    # exists, not a record of its own: gathering a kit is a scan of manifests
+    # the registry already performs at startup.  All four are optional because
+    # `/v1/process` still serves a caller that holds a rule and names no
+    # examination.
+    kit_id: Optional[str] = None
+    exam_id: Optional[str] = None
+    requirement_id: Optional[str] = None
+    requirement_type: Optional[str] = None
+    #: Carried verbatim from the rule record so the package can honour DEC-055
+    #: without re-reading the catalogue, and never reduced to a boolean.
+    platform_support: Optional[str] = None
+
+    # --- Deliverable outcome ----------------------------------------------
+    #
+    # DEC-041 makes production the rule and refusal the exception, so these
+    # record what is *true about* a file that was produced rather than whether
+    # one was.  DEC-055 turns them into the third UI state.
+    outcome: Optional[str] = None
+    findings: List[str] = Field(default_factory=list)
+    is_blank: Optional[bool] = None
+    ceiling_was_unpublished: Optional[bool] = None
+    exceeds_ceiling: Optional[bool] = None
+    output_byte_size: Optional[int] = None
+    output_width: Optional[int] = None
+    output_height: Optional[int] = None
+    #: Set so the download route can serve a PDF as a PDF.  The photograph
+    #: path is always JPEG; a deliverable may be either.
+    output_media_type: Optional[str] = None
+    #: Uploaded sources for a multi-page document, in the order they arrived
+    #: (DEC-053).  Held so `assemble` can re-read what `plan` accepted.
+    document_sources: List[str] = Field(default_factory=list)
 
 
 class JobRegistry:
@@ -101,6 +141,24 @@ class JobRegistry:
             record.status = ApiJobStatus.DELETED
             record.updated_at = datetime.now(timezone.utc).isoformat()
             self._cache[job_id] = record
+
+    def jobs_in_kit(self, kit_id: str) -> List[ProcessingJobRecord]:
+        """Every live job belonging to one kit, oldest first.
+
+        Reads from disk before filtering, so a kit assembled by an earlier
+        process -- or before a restart -- is still gatherable. Deleted jobs are
+        excluded: a candidate who removed a deliverable did so deliberately and
+        it must not reappear in their package.
+        """
+        if not KIT_ID_REGEX.match(kit_id):
+            return []
+        self.scan_manifests()
+        matching = [
+            record
+            for record in self._cache.values()
+            if record.kit_id == kit_id and record.status != ApiJobStatus.DELETED
+        ]
+        return sorted(matching, key=lambda record: record.created_at)
 
     def _save_to_disk(self, record: ProcessingJobRecord) -> None:
         path = self._get_manifest_path(record.job_id)

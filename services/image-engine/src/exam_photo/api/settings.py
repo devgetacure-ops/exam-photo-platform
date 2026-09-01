@@ -14,6 +14,13 @@ class ApiSettings(BaseModel):
     max_upload_bytes: int = Field(default=5 * 1024 * 1024)  # 5 MB
     job_ttl_seconds: int = Field(default=3600)  # 1 hour
 
+    # Where the encoded examination catalogue is read from (DEC-054).  Relative
+    # paths resolve against the repository root, the same way the model paths
+    # do.  The directory is still named `examples/rules` while holding the real
+    # generated catalogue; renaming it touches the encoder, the gap register
+    # and every documented path, so the name is carried rather than changed.
+    catalogue_root: Optional[Path] = None
+
     # Model configuration overrides
     face_model_path: Optional[Path] = None
     segmenter_model_path: Optional[Path] = None
@@ -72,6 +79,8 @@ def get_settings() -> ApiSettings:
         kwargs["max_upload_bytes"] = int(os.environ["EXAM_PHOTO_MAX_UPLOAD_BYTES"])
     if "EXAM_PHOTO_JOB_TTL_SECONDS" in os.environ:
         kwargs["job_ttl_seconds"] = int(os.environ["EXAM_PHOTO_JOB_TTL_SECONDS"])
+    if "EXAM_PHOTO_CATALOGUE_ROOT" in os.environ:
+        kwargs["catalogue_root"] = Path(os.environ["EXAM_PHOTO_CATALOGUE_ROOT"])
 
     # Load model configuration paths and hashes from environment
     if "EXAM_PHOTO_FACE_MODEL_PATH" in os.environ:
