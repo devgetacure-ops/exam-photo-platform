@@ -1,9 +1,9 @@
 # Platform State
 
-**Last updated: 2026-09-01.** Branch `feat/upload-kit-ui`, off `main`. The
-pivot is merged (`615535a`). The kit API surface is built and committed
-(DEC-055..058); the web foundation — TS contracts, API client, the
-localStorage kit store — is in. Not yet pushed.
+**Last updated: 2026-09-02.** Branch `feat/upload-kit-ui`, merged up to date
+with `main` (which carries the ONNX matting backend, DEC-054). The kit API
+surface is built and committed (DEC-055..058); the web foundation — TS
+contracts, API client, the localStorage kit store — is in. Not yet pushed.
 
 **The next session is UI components.** The API and the client are done;
 what is left is the screens. Start at *[Where to start: the web app](#where-to-start-the-web-app)*.
@@ -110,11 +110,15 @@ and `GET /v1/kits/{kit_id}/package(/download)`. Contracts in `api/contracts.py`,
 catalogue reader in `orchestration/rule_catalogue.py`. The support gate returns
 409 with the requirement's own vocabulary before the upload is read.
 
-**Not verified locally:** the `mandatory_api` marker suite needs the model
-assets and env vars from `image-engine-ci.yml`; `model-assets/` is empty in this
-checkout. The one pre-existing failure in the fast subset
-(`test_crop_cli_save_preview_overwrite_protection`) also needs the face model
-and is unrelated to this branch.
+**Not verified locally:** every `mandatory_*` marker suite needs the model
+assets and env vars from `image-engine-ci.yml`, and `model-assets/` is empty in
+this checkout — so is the ONNX weight the default matting backend now wants.
+The one failure in the fast subset
+(`test_crop_cli_save_preview_overwrite_protection`) needs the face model for the
+same reason and is unrelated to this branch. Fetch the assets before trusting a
+local run: `python scripts/download_model.py --variant short_range --yes`,
+`python scripts/download_segmenter.py --variant <variant> --yes`, and
+`python scripts/export_birefnet_onnx.py` for the ONNX graph.
 
 ## What it demonstrably cannot do
 
@@ -198,20 +202,37 @@ defects the reference set could not.
 
 ## Open risks, in priority order
 
-1. **Throughput.** 30–40 s per photograph on CPU. The product owner has taken
-   this as their own item — **do not spend engineering effort on it unasked.**
-2. **Synchronous preparation has a deployment ceiling** (DEC-055). A photograph
-   is 30–40 s and `prepare` blocks on it; nginx defaults to 60 s, Cloudflare to
-   100 s. The escape hatch is designed — return 202 with a job id and let the
-   client poll `GET /v1/jobs/{id}` — but not built. Do not discover this in
-   production.
-3. **Ten examinations dropped for a photograph reason** while carrying 23
+1. **Cold start is 100–150 s and nothing warms the process.** onnxruntime pays
+   a one-time thread-pool and arena spin-up on its *first* inference in a
+   process, then never again (DEC-054). Both segmenters keep their session warm
+   across calls, but nothing creates it at boot: there is no `lifespan` or
+   startup hook, and `/health` returns `healthy` immediately regardless. So the
+   first candidate to reach a fresh worker waits over two minutes, and a load
+   balancer has no way to tell a warm process from a cold one. Needs a warmup
+   call at boot plus a readiness signal distinct from liveness. Not built,
+   because there is no deployment machinery yet to build it against — no
+   Dockerfile, no compose file, nothing. **Do this before the first deploy, not
+   after.**
+2. **Throughput is 10.64 s per photograph**, mean over the ten `perfect`
+   photographs at 413×531, warmed (DEC-054, measured 2026-08-06 — it was 21.38 s
+   before the ONNX backend). The product owner has taken further speed work as
+   their own item — **do not spend engineering effort on it unasked.** The
+   remaining obvious target is DEC-040's double matte: BiRefNet runs twice per
+   photograph, once whole-frame and once on the crop region, and the first pass
+   only feeds crop planning. That is a real quality trade, not free.
+3. **Synchronous preparation has a deployment ceiling** (DEC-055). `prepare`
+   blocks on the pipeline; nginx defaults to 60 s and Cloudflare cuts at 100 s.
+   At 10.64 s plus upload this is no longer close, so the 202-plus-polling
+   escape hatch — return a job id and let the client poll `GET /v1/jobs/{id}` —
+   is a scale-later decision rather than an urgent one. It stops being
+   comfortable if the cold-start warmup above is skipped.
+4. **Ten examinations dropped for a photograph reason** while carrying 23
    non-photograph deliverables between them, including all four SSC. Fixing it
    means letting a rule record exist without a photograph specification.
-4. **Service hardening and privacy.** The API is local-only by design — no TLS,
+5. **Service hardening and privacy.** The API is local-only by design — no TLS,
    auth or rate limiting — and candidate face photographs are sensitive personal
    data under the DPDP Act. Both precede anything public.
-5. **Invariants unwired**, and the remaining **M22 matte defect**: a detached
+6. **Invariants unwired**, and the remaining **M22 matte defect**: a detached
    hair fragment on photo 17 (a disconnected mask region). Its soft/smudged
    hair-edge half (18, 19, and the non-fragment part of 17) is fixed --
    DEC-033's trusted-alpha path was skipping an anti-halo contrast correction
@@ -226,9 +247,11 @@ covers neither the eleven `mandatory_*` marker suites nor `ink_robustness`.
 cd services/image-engine && ruff format --check . && ruff check . && .venv/Scripts/python.exe -m mypy src tests
 ```
 
-Current: format, lint and mypy clean across 137 files. 274 fast tests passing,
-15 skipped. `ink_robustness` (~100 synthetic captures) green as its own CI
-stage. Marker suites green. Invariant sweep 0 violations of 960.
+Current: format, lint and mypy clean across 142 files. 382 fast tests passing,
+15 skipped, and one failing **only for want of a model asset** in a checkout
+with an empty `model-assets/` (`test_crop_cli_save_preview_overwrite_protection`
+needs the face detector). `ink_robustness` (~100 synthetic captures) green as
+its own CI stage. Marker suites green in CI. Invariant sweep 0 violations of 960.
 
 Model assets are under `model-assets/`. Run marker suites from the repo root
 with `EXAM_PHOTO_FACE_MODEL_PATH` / `EXAM_PHOTO_SEGMENTER_MODEL_PATH` and their

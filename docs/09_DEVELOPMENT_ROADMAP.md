@@ -210,8 +210,9 @@ rejected, so every rejection has to be defensible before launch.
 - **Dependencies**: Milestone 18.
 - **Expected Deliverables**: Measured latency budget; GPU or reduced-model inference path; a real job queue with backpressure; autoscaling model; unit cost per processed photograph.
 - **Exit Criteria**: A measured throughput and cost figure capacity can be planned against.
-- **Status**: Not started.
-- **Why this is the largest risk**: Measured 16-24 seconds per photograph on CPU, roughly doubled by the crop-region rematte, giving 30-40 seconds each. At the concurrency implied by national examination cycles this is not viable, and a forced model change would partly invalidate Milestone 22.
+- **Status**: Partially addressed. DEC-054 exported BiRefNet to ONNX and made it the default matting backend, halving the figure below without touching the maths: mean per-photograph time over the ten `perfect` photographs at 413x531 fell from 21.38 s to **10.64 s**, warmed, with delivered JPEGs pixel-equivalent to the PyTorch backend. The queue, autoscaling and unit-cost deliverables are untouched.
+- **Why this was the largest risk**: Originally measured at 16-24 seconds per photograph on CPU, roughly doubled by the crop-region rematte, giving 30-40 seconds each -- not viable at the concurrency implied by national examination cycles. The ONNX export removed the acute half of that without the model change that would have partly invalidated Milestone 22.
+- **What remains**: Two items, in this order. (1) **Cold start**: onnxruntime pays a 100-150 s one-time spin-up on its first inference in a process and nothing warms the process at boot, so the first request to a fresh worker is catastrophic and `/health` cannot distinguish a warm process from a cold one. This is a readiness-protocol gap, not a throughput one, and it must be closed before the first deploy. (2) **The double matte**: DEC-040 runs BiRefNet twice per photograph, whole-frame then crop-region, and the first pass exists only to feed crop planning. Reducing its resolution is the obvious remaining lever, but it trades against the resolution argument DEC-040 was built on, so it needs measurement rather than assumption.
 
 #### Milestone 25: Service Hardening for Public Exposure
 - **Objective**: Make the processing API safe to expose publicly.
