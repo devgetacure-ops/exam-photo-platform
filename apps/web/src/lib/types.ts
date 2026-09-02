@@ -386,3 +386,26 @@ export interface RuleDocument {
   };
   [key: string]: unknown;
 }
+
+// --- Picker search index (built at build time, shipped to the client) -------
+
+/**
+ * One row of the client-side search index. Deliberately small: the whole
+ * catalogue ships with the landing page so predictive search costs no network
+ * round trip, and every field here is paid for 50 times over.
+ *
+ * Lives here rather than beside the build-time reader because the picker is a
+ * client component and must not import from a `server-only` module.
+ */
+export interface SearchEntry {
+  id: string;
+  name: string;
+  body: string;
+  year: number;
+  aliases: string[];
+  /** How many requirements the platform actually prepares. Drives the row summary. */
+  prepares: number;
+  total: number;
+  /** Present only on rows that cannot be selected (DEC-056). */
+  unavailable?: { reason: string; detail: string; deliverables: number };
+}

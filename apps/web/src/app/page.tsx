@@ -1,211 +1,236 @@
-"use client";
+import Link from "next/link";
+import { ExamSearch } from "../components/exam-search";
+import { loadSearchIndex } from "../lib/catalogue.server";
 
-import React, { useState } from "react";
-import { PrivacyNotice } from "../components/privacy-notice";
-import { RuleSelector } from "../components/rule-selector";
-import { UploadCard } from "../components/upload-card";
-import { ProcessingStatus } from "../components/processing-status";
-import { ValidationReport } from "../components/validation-report";
-import { ResultPreview } from "../components/result-preview";
-import { processImage, getReport } from "../lib/api-client";
-import { ProcessImageResponse, PipelineReport } from "../lib/types";
+/**
+ * The landing page.
+ *
+ * The copy leads with proof rather than persuasion. This audience is
+ * frightened, not browsing — a rejected photograph can cost a year — so the
+ * thing that converts is evidence that we know their examination's rules
+ * better than they do. Every claim on this page is a number we can defend from
+ * the catalogue, and the price is visible before anything is asked of them.
+ *
+ * Rendered from the catalogue on disk, so it is real HTML for a crawler and it
+ * works with the processing service switched off.
+ */
 
-export default function Home() {
-  const [selectedRule, setSelectedRule] = useState<object | null>(null);
-  const [selectedRuleName, setSelectedRuleName] = useState<string>("");
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [allowInvalidOutput, setAllowInvalidOutput] = useState(false);
+export default async function Home() {
+  const { exams, unavailable } = await loadSearchIndex();
 
-  const [processingStatus, setProcessingStatus] = useState<
-    "idle" | "sending" | "processing" | "succeeded" | "failed" | "error"
-  >("idle");
-  const [processingMessage, setProcessingMessage] = useState<string>("");
-
-  const [jobResponse, setJobResponse] = useState<ProcessImageResponse | null>(null);
-  const [pipelineReport, setPipelineReport] = useState<PipelineReport | null>(null);
-
-  const handleRuleSelected = (rule: object | null, name: string) => {
-    setSelectedRule(rule);
-    setSelectedRuleName(name);
-    // Reset output when rules change
-    handleResetOutput();
-  };
-
-  const handleFileSelected = (file: File | null) => {
-    setSelectedFile(file);
-    // Reset output when file changes
-    handleResetOutput();
-  };
-
-  const handleResetOutput = () => {
-    setProcessingStatus("idle");
-    setProcessingMessage("");
-    setJobResponse(null);
-    setPipelineReport(null);
-  };
-
-  const handleProcess = async () => {
-    if (!selectedFile || !selectedRule) return;
-
-    setProcessingStatus("sending");
-    setProcessingMessage("Uploading files and rule configuration...");
-    setJobResponse(null);
-    setPipelineReport(null);
-
-    try {
-      // 1. Process via local API
-      const response = await processImage({
-        image: selectedFile,
-        ruleJson: selectedRule,
-        allowInvalidOutput,
-      });
-
-      setProcessingStatus("processing");
-      setProcessingMessage("Parsing results and running diagnostics...");
-
-      // 2. Fetch compliance report
-      const report = await getReport(response.job_id);
-
-      setJobResponse(response);
-      setPipelineReport(report);
-      setProcessingStatus(report.is_valid ? "succeeded" : "failed");
-      setProcessingMessage("");
-    } catch (err) {
-      const error = err as Error;
-      setProcessingStatus("error");
-      setProcessingMessage(error.message || "An unexpected error occurred.");
-    }
-  };
-
-  const handleDeleteCleanup = () => {
-    // Clear local memory states on deletion
-    setSelectedFile(null);
-    setJobResponse(null);
-    setPipelineReport(null);
-    setProcessingStatus("idle");
-    setProcessingMessage("");
-  };
-
-  const isFormValid = selectedRule !== null && selectedFile !== null;
+  const prepared = exams.reduce((sum, exam) => sum + exam.prepares, 0);
 
   return (
-    <div className="flex-1 bg-slate-50 dark:bg-zinc-950 font-sans text-slate-800 dark:text-zinc-200">
-      <header className="bg-white dark:bg-zinc-900 border-b border-slate-200 dark:border-zinc-800 py-6 px-4 sm:px-8">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <div className="space-y-0.5">
-            <div className="flex items-center gap-2">
-              <h1 className="text-lg font-bold tracking-tight text-slate-900 dark:text-white">
-                Exam Photo Compliance
-              </h1>
-              <span className="bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/30 text-[10px] font-semibold px-2 py-0.5 rounded-full">
-                Local MVP
-              </span>
-            </div>
-            <p className="text-xs text-slate-500 dark:text-zinc-400">
-              Prepare rule-based exam photos with privacy-first processing.
-            </p>
-          </div>
+    <main className="flex flex-1 flex-col">
+      {/* ---------------------------------------------------------------- */}
+      <header className="border-b border-line">
+        <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-4 sm:px-8">
+          <span className="font-semibold tracking-tight">
+            Upload<span className="text-accent">Ready</span>
+          </span>
+          <nav className="flex items-center gap-5 text-sm text-ink-soft">
+            <Link href="/coverage" className="hover:text-ink">
+              Exams we cover
+            </Link>
+            <Link href="/pricing" className="hover:text-ink">
+              Pricing
+            </Link>
+          </nav>
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto py-8 px-4 sm:px-8 space-y-8">
-        <PrivacyNotice />
+      {/* --- Hero: the search is the product, so it opens the page ------- */}
+      <section className="mx-auto w-full max-w-3xl px-5 pt-14 pb-10 sm:px-8 sm:pt-24">
+        <p className="label mb-5">
+          {exams.length} examinations · {prepared} uploads we prepare
+        </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-          {/* Left Column: Input Steps */}
-          <div className="space-y-6">
-            <RuleSelector
-              onRuleSelected={handleRuleSelected}
-              selectedName={selectedRuleName}
-            />
+        <h1 className="text-4xl leading-[1.08] font-semibold sm:text-6xl">
+          Your exam has rules
+          <br />
+          about the files you upload.
+          <br />
+          <span className="text-accent">We already know them.</span>
+        </h1>
 
-            <UploadCard
-              onFileSelected={handleFileSelected}
-              selectedFile={selectedFile}
-            />
+        <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink-soft">
+          Pick your examination and we prepare every file it asks for —
+          photograph, signature, thumb impression, declaration, certificates —
+          cropped, sized, compressed and named to that exam&rsquo;s own published
+          specification.
+        </p>
 
-            {isFormValid && (
-              <div className="bg-white dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-lg p-5 shadow-sm space-y-4">
-                <div>
-                  <h2 className="text-base font-semibold text-slate-900 dark:text-white">
-                    Step 3: Run Processing
-                  </h2>
-                  <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
-                    Click below to evaluate the photo against selected rules.
-                  </p>
-                </div>
+        <div className="mt-9">
+          <ExamSearch exams={exams} unavailable={unavailable} />
+        </div>
 
-                <details className="group border border-slate-200 dark:border-zinc-800 rounded p-3 text-xs bg-slate-50 dark:bg-zinc-900/50">
-                  <summary className="font-semibold text-slate-700 dark:text-zinc-300 cursor-pointer select-none list-none flex items-center justify-between">
-                    <span>Developer Options</span>
-                    <span className="text-[10px] text-slate-400 group-open:rotate-180 transition-transform">▼</span>
-                  </summary>
-                  <div className="mt-3 flex items-center gap-3">
-                    <input
-                      id="allow-invalid-checkbox"
-                      type="checkbox"
-                      checked={allowInvalidOutput}
-                      onChange={(e) => setAllowInvalidOutput(e.target.checked)}
-                      className="w-4 h-4 rounded text-indigo-650 focus:ring-indigo-500/20 border-slate-300 bg-slate-50 dark:bg-zinc-900 dark:border-zinc-750"
-                    />
-                    <label
-                      htmlFor="allow-invalid-checkbox"
-                      className="font-medium text-slate-700 dark:text-zinc-300 cursor-pointer"
+        <p className="mt-4 text-sm text-muted">
+          Try{" "}
+          <span className="spec text-ink-soft">CAT</span>,{" "}
+          <span className="spec text-ink-soft">IBPS PO</span> or{" "}
+          <span className="spec text-ink-soft">RBI Assistant</span> — full names and
+          abbreviations both work.
+        </p>
+      </section>
+
+      {/* --- The specificity proof -------------------------------------- */}
+      <section className="border-y border-line bg-surface">
+        <div className="mx-auto max-w-5xl px-5 py-14 sm:px-8 sm:py-20">
+          <h2 className="max-w-2xl text-2xl font-semibold sm:text-3xl">
+            Every exam wants something different, and none of them says so
+            clearly.
+          </h2>
+          <p className="mt-4 max-w-2xl text-ink-soft">
+            These are real specifications from three examinations in our
+            catalogue. They have nothing in common — which is exactly why a
+            generic resizer cannot help you.
+          </p>
+
+          <div className="mt-10 grid gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-3">
+            {[
+              {
+                exam: "CAT 2025",
+                body: "Indian Institutes of Management",
+                rows: [
+                  ["Dimensions", "1200 × 1200 px"],
+                  ["File size", "up to 1 MB"],
+                  ["Format", "JPEG"],
+                  ["Recency", "within 180 days"],
+                ],
+              },
+              {
+                exam: "RBI Assistant 2025",
+                body: "Reserve Bank of India",
+                rows: [
+                  ["Signature", "10–20 KB"],
+                  ["Thumb impression", "20–50 KB"],
+                  ["Declaration", "50–100 KB"],
+                  ["Live photo", "at the centre"],
+                ],
+              },
+              {
+                exam: "SSC CGL 2026",
+                body: "Staff Selection Commission",
+                rows: [
+                  ["Photograph", "captured by portal"],
+                  ["Signature", "still required"],
+                  ["Our status", "not yet covered"],
+                  ["We say so", "up front"],
+                ],
+              },
+            ].map((card) => (
+              <div key={card.exam} className="bg-surface p-6">
+                <p className="font-medium">{card.exam}</p>
+                <p className="mt-0.5 text-xs text-muted">{card.body}</p>
+                <dl className="mt-5 space-y-2.5">
+                  {card.rows.map(([term, value]) => (
+                    <div
+                      key={term}
+                      className="flex items-baseline justify-between gap-4 border-b border-line pb-2.5 last:border-0"
                     >
-                      Allow saving output when check fails (Allow Invalid Output)
-                    </label>
-                  </div>
-                </details>
-
-                <button
-                  type="button"
-                  onClick={handleProcess}
-                  disabled={processingStatus === "sending" || processingStatus === "processing"}
-                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs py-2.5 px-4 rounded shadow-sm transition-colors focus:ring-2 focus:ring-indigo-500/20 outline-none flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M14.7 15.3a6 6 0 01-9.4-7.5l-3-3m0 0l-3 3m3-3h12a6 6 0 016 6v3m0 0v6"
-                    />
-                  </svg>
-                  Process Photo
-                </button>
+                      <dt className="text-sm text-muted">{term}</dt>
+                      <dd className="spec text-sm text-ink">{value}</dd>
+                    </div>
+                  ))}
+                </dl>
               </div>
-            )}
-          </div>
-
-          {/* Right Column: Status & Reports */}
-          <div className="space-y-6">
-            <ProcessingStatus status={processingStatus} message={processingMessage} />
-
-            {pipelineReport && jobResponse && (
-              <ValidationReport report={pipelineReport} />
-            )}
-
-            {jobResponse && (
-              <ResultPreview
-                jobId={jobResponse.job_id}
-                outputFilename={jobResponse.output_filename || null}
-                outputUrl={jobResponse.output_url || null}
-                onDelete={handleDeleteCleanup}
-              />
-            )}
+            ))}
           </div>
         </div>
-      </main>
+      </section>
 
-      <footer className="bg-white dark:bg-zinc-900 border-t border-slate-200 dark:border-zinc-800 py-6 px-4 mt-12 text-center text-xs text-slate-400 dark:text-zinc-500">
-        <p>© 2026 Indian Exam-Photo Compliance Platform. Built for Local MVP & Privacy-First Testing.</p>
+      {/* --- Price, stated before anything is asked ---------------------- */}
+      <section className="mx-auto w-full max-w-5xl px-5 py-14 sm:px-8 sm:py-20">
+        <div className="grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
+          <div>
+            <h2 className="text-2xl font-semibold sm:text-3xl">
+              See the finished file before you pay for it.
+            </h2>
+            <p className="mt-4 text-ink-soft">
+              Upload, and we prepare your file straight away — you see exactly
+              what you are getting, watermarked, before any payment. If it is
+              not right, you have not spent anything.
+            </p>
+            <ul className="mt-6 space-y-3 text-sm text-ink-soft">
+              {[
+                "No account. No password. Nothing to sign up for.",
+                "We ask only where to send the file.",
+                "Everything you upload is deleted after 30 minutes.",
+              ].map((line) => (
+                <li key={line} className="flex gap-3">
+                  <svg
+                    className="mt-0.5 size-4 shrink-0 text-accent"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    aria-hidden="true"
+                  >
+                    <path d="m5 13 4 4L19 7" />
+                  </svg>
+                  {line}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+            <div className="rounded-xl border border-line bg-surface p-6">
+              <p className="label">Photo Ready</p>
+              <p className="mt-2 text-3xl font-semibold">
+                ₹4
+                <span className="ml-1 text-sm font-normal text-muted">final</span>
+              </p>
+              <p className="mt-3 text-sm text-ink-soft">
+                Your photograph, prepared to your exam&rsquo;s specification.
+              </p>
+            </div>
+
+            {/* The bundle is the economic engine, so it is the visually
+                preferred choice — but the anchor is the real work it
+                replaces, never an invented "worth ₹99" figure. */}
+            <div className="rounded-xl border-2 border-accent bg-accent-soft p-6">
+              <p className="label text-accent-ink">Complete kit · best value</p>
+              <p className="mt-2 text-3xl font-semibold text-accent-ink">
+                ₹8
+                <span className="ml-1 text-sm font-normal text-accent-ink/70">
+                  final
+                </span>
+              </p>
+              <p className="mt-3 text-sm text-accent-ink/90">
+                Every supported upload your exam asks for, prepared together and
+                packaged.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <p className="mt-8 text-sm text-muted">
+          Final price shown. No fee added at checkout.
+        </p>
+      </section>
+
+      {/* --- The boundary, stated on the landing page -------------------- */}
+      <section className="border-t border-line bg-sunk">
+        <div className="mx-auto max-w-5xl px-5 py-12 sm:px-8">
+          <h2 className="text-lg font-semibold">What we will not pretend to do</h2>
+          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-ink-soft">
+            Some exams photograph you at the centre, or take your declaration
+            through their own portal. Those are never files we can make, and we
+            will tell you so on your exam&rsquo;s page rather than quietly leaving
+            them off your list. {unavailable.length} examinations we have
+            researched are not covered yet — they are in the search results too,
+            marked, so you find out here and not on the application deadline.
+          </p>
+        </div>
+      </section>
+
+      <footer className="mt-auto border-t border-line">
+        <div className="mx-auto flex max-w-5xl flex-col gap-2 px-5 py-8 text-xs text-muted sm:flex-row sm:justify-between sm:px-8">
+          <p>Specifications are researched per exam and dated. Report anything wrong.</p>
+          <p>Uploads deleted after 30 minutes.</p>
+        </div>
       </footer>
-    </div>
+    </main>
   );
 }

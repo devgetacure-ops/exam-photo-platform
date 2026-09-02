@@ -1,26 +1,228 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* ==========================================================================
+   Design tokens
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+   The identity is a precision instrument, not a government form and not a
+   startup landing page. Candidates arrive anxious — a rejected photograph can
+   cost a year — so the page has to read as competence rather than persuasion.
+   Everything here serves that: exact numbers set in mono, generous measure,
+   one confident accent, and no decoration that does not carry information.
+
+   Accent is a process cyan, the ink a photo lab prints with. It is uncommon
+   enough to avoid the default-template look, calm rather than urgent, and it
+   carries no political reading in an Indian context.
+
+   Semantic colours are deliberately NOT the accent. "Ready", "check this" and
+   "we cannot" must survive being seen next to the brand colour without
+   blurring into it — that distinction is the product's worst failure mode
+   (DEC-056) and it is a colour problem before it is a copy problem.
+   ========================================================================== */
+
+:root {
+  /* Ground and ink. Neutrals carry a slight cool bias toward the accent so
+     they read as chosen rather than inherited from a framework default. */
+  --paper: #fbfcfd;
+  --surface: #ffffff;
+  --sunk: #f1f4f6;
+  --line: #e2e8ec;
+  --line-strong: #c9d4da;
+  --ink: #101d24;
+  --ink-soft: #43555f;
+  --muted: #71838d;
+
+  /* Accent */
+  --accent: #06687d;
+  --accent-hover: #055364;
+  --accent-ink: #04505f;
+  --accent-soft: #e2f1f5;
+  --on-accent: #ffffff;
+
+  /* Semantic — a file we made and it is clean */
+  --ready: #17714a;
+  --ready-soft: #e3f2ea;
+  /* Semantic — a file exists, but read this before you submit it */
+  --caveat: #96590a;
+  --caveat-soft: #fbeedb;
+  /* Semantic — we could not produce it */
+  --blocked: #a4353c;
+  --blocked-soft: #fbe6e6;
+  /* Not ours to make: live capture, portal declarations, physical stages. */
+  --self: #7c4a12;
+  --self-soft: #fbf0e2;
+  --self-line: #e8cfa8;
+
+  --focus: #06687d;
+  --shadow-sm: 0 1px 2px rgba(16, 29, 36, 0.06);
+  --shadow-md: 0 1px 2px rgba(16, 29, 36, 0.05), 0 10px 28px -14px rgba(16, 29, 36, 0.22);
+  --shadow-lg: 0 2px 4px rgba(16, 29, 36, 0.05), 0 24px 56px -24px rgba(16, 29, 36, 0.28);
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  :root:not([data-theme="light"]) {
+    --paper: #0b1418;
+    --surface: #121e23;
+    --sunk: #0f1a1f;
+    --line: #21323a;
+    --line-strong: #32474f;
+    --ink: #e9eef0;
+    --ink-soft: #b0c0c6;
+    --muted: #7f939b;
+
+    --accent: #4bb8d0;
+    --accent-hover: #6bcadf;
+    --accent-ink: #9ddcea;
+    --accent-soft: #0c2e37;
+    --on-accent: #04222a;
+
+    --ready: #58bd8a;
+    --ready-soft: #10261c;
+    --caveat: #d3963f;
+    --caveat-soft: #2a2011;
+    --blocked: #e0868c;
+    --blocked-soft: #2c1719;
+    --self: #d9a05e;
+    --self-soft: #2a2015;
+    --self-line: #4a3721;
+
+    --focus: #4bb8d0;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 1px 2px rgba(0, 0, 0, 0.35), 0 10px 28px -14px rgba(0, 0, 0, 0.7);
+    --shadow-lg: 0 2px 4px rgba(0, 0, 0, 0.35), 0 24px 56px -24px rgba(0, 0, 0, 0.75);
   }
 }
 
+:root[data-theme="dark"] {
+  --paper: #0b1418;
+  --surface: #121e23;
+  --sunk: #0f1a1f;
+  --line: #21323a;
+  --line-strong: #32474f;
+  --ink: #e9eef0;
+  --ink-soft: #b0c0c6;
+  --muted: #7f939b;
+
+  --accent: #4bb8d0;
+  --accent-hover: #6bcadf;
+  --accent-ink: #9ddcea;
+  --accent-soft: #0c2e37;
+  --on-accent: #04222a;
+
+  --ready: #58bd8a;
+  --ready-soft: #10261c;
+  --caveat: #d3963f;
+  --caveat-soft: #2a2011;
+  --blocked: #e0868c;
+  --blocked-soft: #2c1719;
+  --self: #d9a05e;
+  --self-soft: #2a2015;
+  --self-line: #4a3721;
+
+  --focus: #4bb8d0;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 1px 2px rgba(0, 0, 0, 0.35), 0 10px 28px -14px rgba(0, 0, 0, 0.7);
+  --shadow-lg: 0 2px 4px rgba(0, 0, 0, 0.35), 0 24px 56px -24px rgba(0, 0, 0, 0.75);
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-sunk: var(--sunk);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-muted: var(--muted);
+
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-on-accent: var(--on-accent);
+
+  --color-ready: var(--ready);
+  --color-ready-soft: var(--ready-soft);
+  --color-caveat: var(--caveat);
+  --color-caveat-soft: var(--caveat-soft);
+  --color-blocked: var(--blocked);
+  --color-blocked-soft: var(--blocked-soft);
+  --color-self: var(--self);
+  --color-self-soft: var(--self-soft);
+  --color-self-line: var(--self-line);
+
+  --font-sans: var(--font-instrument), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, "SF Mono", Menlo, monospace;
+
+  --shadow-card: var(--shadow-md);
+  --shadow-float: var(--shadow-lg);
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+* {
+  border-color: var(--line);
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Specifications are the product's substance — 1200x1200, 10-20 KB, JPEG.
+   Setting them in mono with lining figures is information design, not styling:
+   digits line up between rows so two specs can be compared by eye. */
+.spec {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "zero" 1;
+  letter-spacing: -0.01em;
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+  letter-spacing: -0.02em;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+/* One visible focus treatment everywhere, including for keyboard users who
+   never see a hover state. */
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+::selection {
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
