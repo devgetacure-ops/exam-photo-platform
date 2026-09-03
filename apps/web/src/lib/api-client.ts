@@ -177,8 +177,15 @@ async function errorDetail(response: Response, fallback: string): Promise<string
 function unreachableApiMessage(err: unknown): Error {
   const e = err as Error;
   if (e instanceof TypeError && e.message.includes("fetch")) {
+    // A blocked cross-origin request and a dead server are the same TypeError
+    // to the browser, and the service ships with CORS off by default -- so
+    // naming only the server sends whoever reads this to restart something
+    // that is already running. Both causes are named, in the order they bite.
     return new Error(
-      "The processing API is not reachable. Start it with: python -m exam_photo serve-api --host 127.0.0.1 --port 8000"
+      "Could not reach the processing service. Either it is not running " +
+        "(start it with: python -m exam_photo serve-api --host 127.0.0.1 --port 8000), " +
+        "or it is running without browser access enabled " +
+        "(set EXAM_PHOTO_LOCAL_CORS_ENABLED=true before starting it)."
     );
   }
   return new Error(e.message || "An unknown error occurred.");

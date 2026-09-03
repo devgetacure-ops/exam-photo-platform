@@ -74,3 +74,22 @@ npm test
 # Production Compile
 npm run build
 ```
+
+## Running against the processing service
+
+The catalogue (search, exam pages, specifications) is read from
+`examples/rules/` at build time, so `npm run dev` works with nothing else
+running. Only *preparing* a file needs the engine.
+
+The service ships with browser access off, because it is local-only by design.
+A browser request without it fails as an ordinary network error, so start it
+with CORS enabled:
+
+```bash
+cd services/image-engine
+EXAM_PHOTO_LOCAL_CORS_ENABLED=true .venv/Scripts/python.exe -m exam_photo serve-api --host 127.0.0.1 --port 8000
+```
+
+`http://localhost:3000` and `http://127.0.0.1:3000` are already in the
+service's allowlist. Point the web app elsewhere with
+`NEXT_PUBLIC_EXAM_PHOTO_API_BASE_URL`.

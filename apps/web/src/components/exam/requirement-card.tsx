@@ -1,6 +1,7 @@
 import type { RequirementSummary, ExamDetail } from "../../lib/types";
 import { requirementSpecRows, photographSpecRows, type SpecRow } from "../../lib/spec-format";
 import { DiagramFor } from "./framing-diagram";
+import { RequirementUpload } from "./requirement-upload";
 
 /**
  * One requirement of one examination.
@@ -246,6 +247,16 @@ export function RequirementCard({ requirement, index, exam }: Props) {
             </p>
           )}
         </div>
+      </div>
+
+      <div className="border-t border-line px-5 pb-5">
+        <RequirementUpload
+          examId={exam.exam_id}
+          examName={exam.exam_name}
+          requirementId={requirement.requirement_id}
+          requirementName={requirement.requirement_name}
+          requirementType={requirement.requirement_type}
+        />
       </div>
     </article>
   );
