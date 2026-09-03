@@ -1,12 +1,13 @@
 # Platform State
 
 **Last updated: 2026-09-02.** Branch `feat/upload-kit-ui`, merged up to date
-with `main` (which carries the ONNX matting backend, DEC-054). The kit API
-surface is built and committed (DEC-055..058); the web foundation — TS
-contracts, API client, the localStorage kit store — is in. Not yet pushed.
+with `main` (which carries the ONNX matting backend, DEC-054). The kit API is
+built (DEC-055..058), and so is the read half of the web app: a candidate can
+search 39 examinations and see everything each one asks for, on statically
+generated pages. Not yet pushed.
 
-**The next session is UI components.** The API and the client are done;
-what is left is the screens. Start at *[Where to start: the web app](#where-to-start-the-web-app)*.
+**The next session is upload, preview and payment** — the half that produces
+files and takes money. Start at *[Where to start: the web app](#where-to-start-the-web-app)*.
 
 What this file is: the state a new session cannot reconstruct from the diff.
 Not a session note — keep it current rather than appending to it. It has drifted
@@ -18,7 +19,7 @@ Read alongside:
 | File | What it carries |
 |---|---|
 | `AGENTS.md` | The binding operating contract |
-| `docs/08_DECISION_LOG.md` | DEC-029..053. **Living** — amend an entry when implementation moves; never bend implementation to fit a stale one |
+| `docs/08_DECISION_LOG.md` | DEC-029..058. **Living** — amend an entry when implementation moves; never bend implementation to fit a stale one |
 | `HANDOFF-INVARIANTS.md` | How composition work is done here: the invariant sweep, the ratchet, the planner/validator defect class |
 | `docs/EXAM_RULE_GAP_REGISTER.md` | Generated. Which examinations are encoded, which are not, and why |
 
@@ -67,41 +68,69 @@ real per-exam research lands, `type == interim_default` finds every one.
 
 ## Where to start: the web app
 
-`apps/web` is the pre-pivot flow and it is the gap. It does: pick a rule →
-upload one photograph → see validation → download. It has no concept of an
-examination's *inventory*, which is now the product.
+**The read half of the product is built.** A candidate can find their
+examination and see everything it asks for. What is missing is the half that
+takes money and produces files.
 
-What exists and is worth keeping:
+Two architectural facts a new session must not re-derive:
 
-- `src/components/upload-card.tsx`, `result-preview.tsx`, `validation-report.tsx`,
-  `processing-status.tsx` — sound parts, wrong composition. Recompose into a
-  per-requirement panel rather than rebuild.
-- `src/app/admin/rules/` — the local rule console. Independent of the pivot and
-  still works. Keeps calling `/v1/process`, which is retained unchanged.
-- `src/lib/api-client.ts` — now also has `listExams`, `getExam`,
-  `prepareRequirement` (throws `RequirementNotServedError` on a 409),
-  `planDocument`, `assembleDocument`, `getKitPackage`, `kitPackageDownloadUrl`.
-- `src/lib/kit-state.ts` — the localStorage kit store (DEC-058): `startKit`,
-  `getKit`, `recordPreparation`, `forgetRequirement`, `clearKit`. Keyed per
-  examination.
-- `src/lib/types.ts` — TS mirrors of every new contract.
+**The catalogue is read at BUILD time, not over the API.** `lib/catalogue.server.ts`
+reads `examples/rules/` from disk and every exam page is statically generated —
+39 of them. This is deliberate (WEB-003): the pricing strategy makes SEO the
+primary channel, and a page whose content arrives by client-side `fetch` is an
+empty document to a crawler. It also means search and specifications work with
+the processing service switched off. `api-client.ts` is for *preparing* files,
+which is the one thing that cannot be precomputed. Re-running the encoder
+requires a rebuild to show up.
 
-What the UI now has to express, in rough order of value:
+**The boundary is carried three ways, not one.** Grouping ("We prepare these" /
+"You do these yourself"), colour, and affordance — a requirement the platform
+does not prepare has no upload control at all. Removing any one of the three
+puts the product's worst failure mode back on the table.
 
-1. **The kit.** Select an examination, see all its requirements with their
-   status. `GET /v1/exams/{exam_id}` returns `requirements[]`; the kit store
-   holds which job prepared each one.
-2. **The boundary.** `platform_support` (five values, never a boolean)
-   distinguishes `supported` from `guidance_only` and `physical_stage`. These
-   must never look alike — a candidate believing the platform completed their
-   SSC live capture is the product's worst failure mode, and it is a labelling
-   problem, not a technical one. Same for the 11 unencoded examinations, which
-   `GET /v1/exams` returns in a separate `unavailable` list.
-3. **Per-item upload and preparation** via `prepareRequirement`, including
-   multi-page documents through the `planDocument` → arrange → `assembleDocument`
-   pair. Three outcome states: clean, produced-with-caveats, blocked (WEB-002).
-4. **Package delivery** — `getKitPackage` for the checklist, the ZIP via
-   `kitPackageDownloadUrl`.
+### Built
+
+| Piece | Where |
+|---|---|
+| Design tokens, both themes | `src/app/globals.css` — semantic colours are deliberately not the accent |
+| Landing page + predictive picker | `src/app/page.tsx`, `components/exam-search.tsx` — names, aliases, bodies; separator-insensitive |
+| Exam page, 39 static pages | `src/app/exam/[examId]/page.tsx` |
+| Specification rendering | `lib/spec-format.ts` — published figures over our byte conversion; `est.` marks a value we chose |
+| Photograph rules per exam | `lib/appearance-rules.ts` — spectacles, headwear, expression, imprint, from the record only |
+| Visual guidance | `components/exam/framing-diagram.tsx` — SVG, not photographs |
+| Honest citation | `components/exam/source-note.tsx` — 7 of 39 exams have no official source |
+
+### Not built, in order
+
+1. **Upload and preparation.** The per-requirement flow: `prepareRequirement`,
+   the three outcome states (clean / prepared-with-findings / blocked, WEB-002),
+   and the 409 gate response. `upload-card.tsx`, `result-preview.tsx`,
+   `validation-report.tsx` and `processing-status.tsx` survive from the
+   pre-pivot flow and should be recomposed into a per-requirement panel rather
+   than rebuilt.
+2. **The watermarked preview, and payment.** Razorpay, decided. Generate the
+   preview *before* payment so the ~10.6 s wait lands while the candidate is
+   engaged rather than after they have paid, and so the purchase decision is
+   made against the real result.
+3. **Delivery.** Download, email, and a `wa.me` share link — the candidate
+   sends it themselves, which needs no WhatsApp Business integration and routes
+   no candidate photograph through Meta.
+4. **Multi-page documents** via `planDocument` → arrange → `assembleDocument`.
+5. **`/coverage` and `/pricing`** — linked from the landing page, do not exist.
+
+### Decided, not yet built
+
+- **Identify a session by an unguessable token, never by IP.** Carrier-grade
+  NAT on Indian mobile networks puts thousands of candidates behind one address:
+  an IP-keyed cache would serve one candidate another's face photograph and
+  signature, and would simultaneously lose files for anyone whose IP rotates.
+  `kit-state.ts` already mints a `kit_id` for exactly this.
+- **No right-click blocking.** It stops nobody and reads as cheap. The
+  protection that works is that the clean file never reaches the browser before
+  payment; the preview is watermarked server-side at reduced resolution.
+- **Reject-gallery examples are synthetic.** Real candidate photographs may
+  never ship. The SVG diagrams already cover framing; anything richer is drawn
+  or commissioned, never a real candidate.
 
 **The API is done.** `GET /v1/exams`, `GET /v1/exams/{exam_id}`,
 `POST /v1/exams/{exam_id}/requirements/{requirement_id}/prepare`, the document
