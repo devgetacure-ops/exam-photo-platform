@@ -29,6 +29,21 @@ const TYPE_LABELS: Record<string, string> = {
   other: "Document",
 };
 
+/**
+ * Does this `applicability` narrow who the requirement applies to?
+ *
+ * 114 of the 116 values in the catalogue are the bare "All applicants", which
+ * tells the reader nothing and, shown in the caveat colour, actively misleads —
+ * it implies a condition on a row that has none. The handful that genuinely
+ * narrow ("PwD candidates", "SC/ST candidates requesting the free travel
+ * facility") are exactly the ones worth a candidate's attention, so the colour
+ * is spent only on those.
+ */
+function narrowsAudience(applicability: string | null | undefined): boolean {
+  if (!applicability) return false;
+  return applicability.trim().toLowerCase() !== "all applicants";
+}
+
 /** Why a requirement is not ours, in the candidate's terms rather than the schema's. */
 function notOursBecause(requirement: RequirementSummary): string {
   switch (requirement.submission_method) {
@@ -179,8 +194,24 @@ export function RequirementCard({ requirement, index, exam }: Props) {
               used.
             </p>
           )}
-          {requirement.applicability && (
-            <p className="mt-3 text-sm text-caveat">{requirement.applicability}</p>
+          {narrowsAudience(requirement.applicability) && (
+            <p className="mt-3 flex items-start gap-2 text-sm text-caveat">
+              <svg
+                className="mt-0.5 size-4 shrink-0"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                aria-hidden="true"
+              >
+                <circle cx="12" cy="12" r="9" />
+                <path d="M12 8v5M12 16h.01" />
+              </svg>
+              <span>
+                <span className="font-medium">Only for:</span>{" "}
+                {requirement.applicability}
+              </span>
+            </p>
           )}
         </div>
       </div>
