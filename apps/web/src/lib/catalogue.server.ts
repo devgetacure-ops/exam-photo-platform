@@ -36,6 +36,7 @@ import type {
   RequirementCounts,
   RequirementSummary,
   SearchEntry,
+  SourceEvidence,
   UnavailableExam,
 } from "./types";
 
@@ -70,6 +71,8 @@ interface RawRule {
   image_requirements?: Record<string, unknown>;
   requirements?: Record<string, unknown>[];
   provenance?: Record<string, { type?: string; [k: string]: unknown }>;
+  source_evidence?: unknown;
+  verification?: { verification_status?: string };
 }
 
 function countSupport(requirements: RequirementSummary[]): RequirementCounts {
@@ -128,6 +131,10 @@ function toDetail(raw: RawRule): ExamDetail | null {
     requirement_counts: countSupport(requirements ?? []),
     image_requirements: raw.image_requirements ?? {},
     provenance: raw.provenance ?? {},
+    source_evidence: Array.isArray(raw.source_evidence)
+      ? (raw.source_evidence as SourceEvidence[])
+      : [],
+    verification_status: raw.verification?.verification_status ?? null,
   };
 }
 

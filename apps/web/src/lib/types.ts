@@ -149,6 +149,20 @@ export interface RequirementSummary {
   file_spec?: Record<string, unknown> | null;
 }
 
+/**
+ * Where a rule came from. `official_source` is load-bearing and is never
+ * assumed: 7 of the 39 examinations rest on secondary references — one of them
+ * a forum reproduction of the notification — and presenting that as an official
+ * citation would be a false claim about evidence.
+ */
+export interface SourceEvidence {
+  source_type: string;
+  official_source: boolean;
+  captured_wording?: string | null;
+  source_url?: string | null;
+  document_title?: string | null;
+}
+
 export interface ExamDetail {
   exam_id: string;
   exam_name: string;
@@ -169,6 +183,9 @@ export interface ExamDetail {
   image_requirements: Record<string, unknown>;
   /** Per-field provenance; `type === "interim_default"` marks a platform estimate. */
   provenance: Record<string, { type?: string; [k: string]: unknown }>;
+  source_evidence: SourceEvidence[];
+  /** `verified` | `verified_with_ambiguity` | `provisional`. */
+  verification_status: string | null;
 }
 
 // --- Preparation (DEC-055, DEC-056) -----------------------------------------
