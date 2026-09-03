@@ -4,7 +4,8 @@ import { useCallback, useRef, useState } from "react";
 
 import { prepareRequirement } from "../../lib/api-client";
 import { validateImageFile } from "../../lib/file-validation";
-import { recordPreparation, startKit } from "../../lib/kit-state";
+import { startKit } from "../../lib/kit-state";
+import { useKit } from "./use-kit";
 import {
   RequirementNotServedError,
   type PrepareRequirementResponse,
@@ -68,6 +69,7 @@ export function RequirementUpload({
   const [message, setMessage] = useState<string | null>(null);
   const [dragging, setDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const { record } = useKit(examId);
 
   const submit = useCallback(
     async (file: File) => {
@@ -97,7 +99,7 @@ export function RequirementUpload({
           file,
           kitId: kit.kitId,
         });
-        recordPreparation(examId, prepared, examName);
+        record(prepared, examName);
         setResult(prepared);
         setPhase("done");
       } catch (error) {
@@ -112,7 +114,7 @@ export function RequirementUpload({
         );
       }
     },
-    [examId, examName, requirementId]
+    [examId, examName, requirementId, record]
   );
 
   const onDrop = (event: React.DragEvent) => {

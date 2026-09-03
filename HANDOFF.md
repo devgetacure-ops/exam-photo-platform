@@ -1,6 +1,6 @@
 # Platform State
 
-**Last updated: 2026-09-02.** Branch `feat/upload-kit-ui`, merged up to date
+**Last updated: 2026-09-04.** Branch `feat/upload-kit-ui`, merged up to date
 with `main` (which carries the ONNX matting backend, DEC-054). The kit API is
 built (DEC-055..058), and so is the read half of the web app: a candidate can
 search 39 examinations and see everything each one asks for, on statically
@@ -95,11 +95,12 @@ puts the product's worst failure mode back on the table.
 | Piece | Where |
 |---|---|
 | Design tokens, both themes | `src/app/globals.css` — semantic colours are deliberately not the accent |
-| Landing page + predictive picker | `src/app/page.tsx`, `components/exam-search.tsx` — names, aliases, bodies; separator-insensitive |
-| Exam page, 39 static pages | `src/app/exam/[examId]/page.tsx` |
+| Landing page — the search **is** the page | `src/app/page.tsx`, `components/exam-search.tsx` — one screen, focused on arrival |
+| Exam workspace, 39 static pages | `src/app/exam/[examId]/page.tsx` + `components/exam/kit-workspace.tsx` — fixed file list left, one file's detail right |
+| Rules & sources, 39 more pages | `src/app/exam/[examId]/rules/page.tsx` — reference split off the workspace |
+| Real accepted/rejected examples | `scripts/generate_guidance_examples.py` → `public/examples/` |
 | Specification rendering | `lib/spec-format.ts` — published figures over our byte conversion; `est.` marks a value we chose |
 | Photograph rules per exam | `lib/appearance-rules.ts` — spectacles, headwear, expression, imprint, from the record only |
-| Visual guidance | `components/exam/framing-diagram.tsx` — SVG, not photographs |
 | Honest citation | `components/exam/source-note.tsx` — 7 of 39 exams have no official source |
 | Published rejection conditions | `scripts/encode_exam_rules.py` routes them (DEC-059); shown per requirement, attributed to the exam |
 | Upload and preparation | `components/exam/requirement-upload.tsx` — client island, records the job against the kit |
@@ -117,9 +118,11 @@ puts the product's worst failure mode back on the table.
    sends it themselves, which needs no WhatsApp Business integration and routes
    no candidate photograph through Meta.
 4. **Multi-page documents** via `planDocument` → arrange → `assembleDocument`.
-5. **`/coverage` and `/pricing`** — linked from the landing page, do not exist.
-6. **The kit view.** Per-requirement preparation works, but nothing yet shows
-   the kit as a whole or calls `getKitPackage` for the ZIP and checklist.
+5. **The package.** Nothing calls `getKitPackage` yet, so there is no ZIP and
+   no checklist at the end. The rail's price button is a placeholder.
+6. **Mobile.** Explicitly out of scope as a responsive pass — the product owner
+   wants a separate design for it, not a reflow of this one. The workspace is
+   built for desktop and its two-pane grid assumes that.
 
 `upload-card.tsx`, `result-preview.tsx`, `validation-report.tsx` and
 `processing-status.tsx` still survive from the pre-pivot flow, now unused by

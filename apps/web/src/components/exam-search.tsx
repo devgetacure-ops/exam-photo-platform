@@ -18,6 +18,8 @@ import type { SearchEntry } from "../lib/types";
 interface Props {
   exams: SearchEntry[];
   unavailable: SearchEntry[];
+  /** Focus on mount — on the landing page the search *is* the page. */
+  autoFocus?: boolean;
 }
 
 /** A match, plus how good it was, so exact and prefix hits outrank substrings. */
@@ -111,7 +113,7 @@ function score(entry: SearchEntry, query: string): Ranked | null {
   return { entry, score: best, via };
 }
 
-export function ExamSearch({ exams, unavailable }: Props) {
+export function ExamSearch({ exams, unavailable, autoFocus = false }: Props) {
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
@@ -160,7 +162,7 @@ export function ExamSearch({ exams, unavailable }: Props) {
     <div className="w-full">
       <div
         className="group flex items-center gap-3 rounded-xl border border-line-strong bg-surface
-                   px-4 py-3.5 shadow-card transition-colors
+                   px-5 py-4 shadow-card transition-colors
                    focus-within:border-accent focus-within:ring-4 focus-within:ring-accent-soft"
       >
         <svg
@@ -184,6 +186,7 @@ export function ExamSearch({ exams, unavailable }: Props) {
             setActive(0);
           }}
           onKeyDown={onKeyDown}
+          autoFocus={autoFocus}
           placeholder="Search your exam — SSC, CAT, IBPS PO, NEET…"
           aria-label="Search for your examination"
           aria-autocomplete="list"
@@ -192,8 +195,8 @@ export function ExamSearch({ exams, unavailable }: Props) {
           role="combobox"
           autoComplete="off"
           spellCheck={false}
-          className="w-full bg-transparent text-base text-ink outline-none
-                     placeholder:text-muted sm:text-lg
+          className="w-full bg-transparent text-lg text-ink outline-none
+                     placeholder:text-muted
                      [&::-webkit-search-cancel-button]:appearance-none"
         />
         {query && (
