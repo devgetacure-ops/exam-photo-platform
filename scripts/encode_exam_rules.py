@@ -996,14 +996,81 @@ def _deliverable_file_spec(
     return spec, interim
 
 
+#: A research null-statement, not a rejection condition. The deliverables
+#: report writes this on 15 of the 50 records to record that it looked and
+#: found nothing beyond the portal's own format validation. Storing it as a
+#: `rejection_conditions` entry would turn "we found no evidence" into an
+#: assertion about the examination, which is the inversion AGENTS.md forbids
+#: and DEC-049 already settled for rules ("absent is not permissive").
+_NO_CONDITION_SENTINEL = "No additional explicit rejection condition was established"
+
+#: Which deliverable a published rejection condition is about.
+#:
+#: The research records these per examination, but the schema attaches them to
+#: the requirement they concern, so each condition is routed by the deliverable
+#: it names. Word boundaries are load-bearing rather than cosmetic: without
+#: them "capital letters" matches the cap rule and puts a signature condition on
+#: the photograph, and "that" matches the hat rule. Every pattern here is
+#: covered by a test asserting the routing of all 19 conditions in the report.
+_REJECTION_CUES: dict[str, str] = {
+    "photograph": (
+        r"\bphotographs?\b|\bphotos?\b|\bface\b|\bfacial\b|\bpose\b|\beyes?\b"
+        r"|spectacle|glasses|\bcaps?\b|\bhats?\b|headwear|\bmask\b|shadow"
+        r"|ear lobe|frontal|selfie"
+    ),
+    "signature": r"\bsignatures?\b|\bsigned?\b",
+    "thumb_impression": r"\bthumb\b|\bfinger|\bimpressions?\b",
+    "handwritten_declaration": r"\bdeclarations?\b|handwritten",
+    "certificate_scan": r"\bcertificates?\b|\bdocuments?\b|\bscans?\b",
+    "identity_document": r"\bcertificates?\b|\bdocuments?\b|\bidentity\b",
+}
+
+
+def _route_rejection_conditions(
+    conditions: list[str],
+) -> tuple[dict[str, list[str]], list[str]]:
+    """Sort published rejection conditions by the deliverable they concern.
+
+    Returns the conditions keyed by requirement type, plus the ones that belong
+    to the application as a whole rather than to any single upload.
+
+    A condition naming several deliverables is attached to each of them --
+    "Unclear photograph, signature, thumb impression or declaration can lead to
+    rejection" is genuinely about all four, and dropping it from three would
+    understate the risk on those uploads.
+    """
+    by_type: dict[str, list[str]] = {}
+    application_level: list[str] = []
+
+    for condition in conditions:
+        text = str(condition).strip()
+        if not text or text.startswith(_NO_CONDITION_SENTINEL):
+            continue
+        matched = [
+            requirement_type
+            for requirement_type, pattern in _REJECTION_CUES.items()
+            if re.search(pattern, text, re.IGNORECASE)
+        ]
+        if matched:
+            for requirement_type in matched:
+                by_type.setdefault(requirement_type, []).append(text)
+        else:
+            application_level.append(text)
+
+    return by_type, application_level
+
+
 def _requirements(
-    deliverables: list[dict[str, Any]], photograph_status: str
+    deliverables: list[dict[str, Any]],
+    photograph_status: str,
+    rejection_by_type: Optional[dict[str, list[str]]] = None,
 ) -> tuple[list[dict[str, Any]], dict[str, Any], list[str]]:
     """Convert one exam's deliverables into the rule's inventory.
 
     Returns the inventory, the provenance entries for any interim value it
     contains, and the names of deliverables that could not be encoded.
     """
+    rejection_by_type = rejection_by_type or {}
     inventory: list[dict[str, Any]] = []
     provenance: dict[str, Any] = {}
     unencodable: list[str] = []
@@ -1050,6 +1117,14 @@ def _requirements(
         note = deliverable.get("important_note")
         if note:
             entry["notes"] = str(note)
+
+        # Published causes of rejection for this kind of upload. Guidance only:
+        # most are not checkable from the file, so they are shown to the
+        # candidate rather than enforced (DEC-041 -- produce, never refuse for
+        # appearance).
+        published_rejections = rejection_by_type.get(requirement_type)
+        if published_rejections:
+            entry["rejection_conditions"] = list(published_rejections)
 
         # The photograph's specification is image_requirements; a second copy
         # here is rejected by the model and would be a second truth if it were
@@ -1098,6 +1173,7 @@ def build_rule(
     record: Record,
     tier: str,
     deliverables: Optional[list[dict[str, Any]]] = None,
+    rejection_conditions: Optional[list[str]] = None,
 ) -> tuple[Optional[dict[str, Any]], list[str]]:
     file_size = _file_size(record)
     formats_result = _formats(record)
@@ -1138,8 +1214,13 @@ def build_rule(
     dimensions = _dimensions(record)
     transposed = bool(dimensions.pop("_transposed", False))
     exceptional = _exceptional(record, appearance)
+    rejection_by_type, application_rejections = _route_rejection_conditions(
+        rejection_conditions or []
+    )
     inventory, interim_provenance, unencodable = _requirements(
-        deliverables or [], str(exceptional["processing_support_status"])
+        deliverables or [],
+        str(exceptional["processing_support_status"]),
+        rejection_by_type,
     )
     rule = {
         "schema_version": "1.1",
@@ -1165,6 +1246,8 @@ def build_rule(
         "verification": {"verification_status": _STATUS_BY_TIER[tier]},
         "fictional_example": False,
     }
+    if application_rejections:
+        rule["application_rejection_conditions"] = application_rejections
     if inventory:
         # Placed directly after the photograph specification so the record reads
         # in the order the product does: the exam, its evidence, its photograph
@@ -1211,6 +1294,10 @@ def main() -> int:
     # absent from the other is reported rather than dropped silently, because a
     # silent miss looks exactly like an exam that requires only a photograph.
     deliverables_by_key: dict[tuple[str, str], list[dict[str, Any]]] = {}
+    #: The report records published causes of rejection per examination rather
+    #: than per upload, so they are carried alongside and routed to the
+    #: requirement each one names when the rule is built.
+    rejections_by_key: dict[tuple[str, str], list[str]] = {}
     if args.deliverables:
         for entry in json.loads(args.deliverables.read_text(encoding="utf-8")):
             key = (
@@ -1218,6 +1305,9 @@ def main() -> int:
                 str(entry.get("application_stage") or "application").strip(),
             )
             deliverables_by_key[key] = entry.get("deliverables") or []
+            rejections_by_key[key] = [
+                str(item) for item in (entry.get("rejection_conditions") or [])
+            ]
     unmatched_specs: list[str] = []
     matched_keys: set[tuple[str, str]] = set()
 
@@ -1295,7 +1385,10 @@ def main() -> int:
             continue
 
         rule, unencodable = build_rule(
-            record, tier, deliverables_by_key.get(stage_key, [])
+            record,
+            tier,
+            deliverables_by_key.get(stage_key, []),
+            rejections_by_key.get(stage_key, []),
         )
         for item in unencodable:
             unencodable_items.append((record.name, item))

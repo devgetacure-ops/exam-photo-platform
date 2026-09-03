@@ -858,6 +858,12 @@ class ExamRule(BaseModel):
     # Absent means the deliverable research has not been done for this exam --
     # never that the photograph is the only thing the exam asks for.
     requirements: Optional[List[ExamRequirement]] = Field(default=None, min_length=1)
+    # Published causes of rejection that concern the whole application rather
+    # than any single upload -- "the application is not registered unless all
+    # mandatory image fields are uploaded". A condition naming a particular
+    # deliverable belongs on that requirement instead, so this list stays small.
+    # Guidance only, like the per-requirement list: not checkable from a file.
+    application_rejection_conditions: Optional[List[str]] = Field(default=None)
     provenance: Dict[str, ValueProvenance]
     verification: VerificationConfig
     effective_period: Optional[EffectivePeriod] = None

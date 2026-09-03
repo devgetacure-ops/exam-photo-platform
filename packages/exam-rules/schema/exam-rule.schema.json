@@ -550,6 +550,13 @@
       },
       "minItems": 1
     },
+    "application_rejection_conditions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Published causes of rejection that concern the application as a whole rather than any single upload. Conditions naming a particular deliverable belong on that requirement instead. Guidance only: not checkable from a file (DEC-041)."
+    },
     "provenance": {
       "type": "object",
       "additionalProperties": {

@@ -72,6 +72,7 @@ interface RawRule {
   requirements?: Record<string, unknown>[];
   provenance?: Record<string, { type?: string; [k: string]: unknown }>;
   source_evidence?: unknown;
+  application_rejection_conditions?: unknown;
   verification?: { verification_status?: string };
 }
 
@@ -135,6 +136,11 @@ function toDetail(raw: RawRule): ExamDetail | null {
       ? (raw.source_evidence as SourceEvidence[])
       : [],
     verification_status: raw.verification?.verification_status ?? null,
+    application_rejection_conditions: Array.isArray(
+      raw.application_rejection_conditions
+    )
+      ? (raw.application_rejection_conditions as string[])
+      : [],
   };
 }
 

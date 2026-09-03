@@ -82,7 +82,11 @@
       "platform_support": "supported",
       "applicability": "All applicants",
       "content_instructions": "Uploaded candidate photograph; format: JPEG/JPG; file size: up to 1 MB; dimensions: 1200 x 1200 px; recency: within 180 days.",
-      "evidence_status": "Secondary-only photo specification; recheck CAT portal"
+      "evidence_status": "Secondary-only photo specification; recheck CAT portal",
+      "rejection_conditions": [
+        "Non-frontal or side-facing pose can fail the stated requirement.",
+        "Eyes must be visible/open as stated."
+      ]
     },
     {
       "requirement_id": "candidate_signature",

@@ -97,7 +97,11 @@
       "platform_support": "supported",
       "applicability": "All applicants",
       "content_instructions": "JPG/JPEG; 10-200 KB according to the current photo evidence. Recent photograph with the candidate's face clearly visible.",
-      "evidence_status": "Current official NEET 2026 bulletin/photo evidence"
+      "evidence_status": "Current official NEET 2026 bulletin/photo evidence",
+      "rejection_conditions": [
+        "Spectacle glare, dark or coloured glasses can make the photograph unacceptable.",
+        "A face mask/covering is restricted according to the stated policy."
+      ]
     },
     {
       "requirement_id": "candidate_signature",

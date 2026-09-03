@@ -96,7 +96,11 @@
       "platform_support": "supported",
       "applicability": "All applicants",
       "content_instructions": "JPG/JPEG; 10-200 KB; recent colour or black-and-white photograph with about 80% face, without mask.",
-      "evidence_status": "Recent official UGC-NET bulletin; 2026 photo evidence"
+      "evidence_status": "Recent official UGC-NET bulletin; 2026 photo evidence",
+      "rejection_conditions": [
+        "Spectacle glare, dark or coloured glasses can make the photograph unacceptable.",
+        "A face mask/covering is restricted according to the stated policy."
+      ]
     },
     {
       "requirement_id": "candidate_signature",

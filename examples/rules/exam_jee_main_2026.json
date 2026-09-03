@@ -91,7 +91,10 @@
       "platform_support": "supported",
       "applicability": "All applicants",
       "content_instructions": "JPG/JPEG; 10-200 KB. Recent colour or black-and-white photograph; face must be clearly visible. Exact 2026 composition rules should be checked against the active bulletin.",
-      "evidence_status": "Current official photo evidence; current bulletin page available"
+      "evidence_status": "Current official photo evidence; current bulletin page available",
+      "rejection_conditions": [
+        "A face mask/covering is restricted according to the stated policy."
+      ]
     },
     {
       "requirement_id": "candidate_signature",

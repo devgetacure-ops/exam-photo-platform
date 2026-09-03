@@ -111,7 +111,13 @@
       "platform_support": "supported",
       "applicability": "All applicants",
       "content_instructions": "Uploaded candidate photograph; format: JPEG; file size: 50-100 KB; dimensions: 320 x 240 px; 100 dpi; background: white or light colour; face coverage: at least 50%; recency: within 60 days.",
-      "evidence_status": "Current/recent official RRB notice"
+      "evidence_status": "Current/recent official RRB notice",
+      "rejection_conditions": [
+        "Non-frontal or side-facing pose can fail the stated requirement.",
+        "Eyes must be visible/open as stated.",
+        "Spectacle glare, dark or coloured glasses can make the photograph unacceptable.",
+        "Caps/hats are restricted; any permitted religious covering must leave required facial features visible."
+      ]
     },
     {
       "requirement_id": "candidate_signature",

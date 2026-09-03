@@ -106,7 +106,15 @@
       "platform_support": "supported",
       "applicability": "All applicants",
       "content_instructions": "JPG; 20-200 KB; exact filename 'photo.jpg'. Colour, recent, plain white background, frontal full face, head centred, both ears visible, eyes open, natural expression, at least 75% face coverage; no shadows, dark glasses, uniform or signed photograph.",
-      "evidence_status": "Current official UPSC common application instruction"
+      "evidence_status": "Current official UPSC common application instruction",
+      "rejection_conditions": [
+        "Shadows on the face or background are not accepted.",
+        "Non-frontal or side-facing pose can fail the stated requirement.",
+        "Eyes must be visible/open as stated.",
+        "Spectacle glare, dark or coloured glasses can make the photograph unacceptable.",
+        "Face coverage below 75%, blurred image, misaligned face, face too close/out of frame, or ear lobes not visible are explicit UPSC rejection examples.",
+        "A live-photo mismatch with the uploaded passport photograph prevents the candidate from proceeding."
+      ]
     },
     {
       "requirement_id": "live_photograph",
@@ -117,7 +125,15 @@
       "platform_support": "guidance_only",
       "applicability": "All applicants",
       "content_instructions": "Captured during the UPSC application using the current device webcam or by scanning the displayed QR code and using a mobile device. Good lighting and clear face required. The live image is matched with the uploaded passport photograph; mismatch blocks further application.",
-      "evidence_status": "Current official UPSC common application instruction"
+      "evidence_status": "Current official UPSC common application instruction",
+      "rejection_conditions": [
+        "Shadows on the face or background are not accepted.",
+        "Non-frontal or side-facing pose can fail the stated requirement.",
+        "Eyes must be visible/open as stated.",
+        "Spectacle glare, dark or coloured glasses can make the photograph unacceptable.",
+        "Face coverage below 75%, blurred image, misaligned face, face too close/out of frame, or ear lobes not visible are explicit UPSC rejection examples.",
+        "A live-photo mismatch with the uploaded passport photograph prevents the candidate from proceeding."
+      ]
     },
     {
       "requirement_id": "triple_signature_image",
@@ -129,6 +145,9 @@
       "applicability": "All applicants",
       "content_instructions": "Sign three times vertically, one below another, on plain white paper using black ink. Scan all three signatures in one clear, correctly oriented image. JPG; filename 'signature.jpg'; 20-100 KB; published image dimension 350-500 pixels.",
       "evidence_status": "Current official UPSC common application instruction",
+      "rejection_conditions": [
+        "A signature image that is not exactly three vertically arranged signatures, is blurred/dark, incorrectly oriented, or outside the published file specification is rejected."
+      ],
       "file_spec": {
         "file_size": {
           "maximum_bytes": 100000,

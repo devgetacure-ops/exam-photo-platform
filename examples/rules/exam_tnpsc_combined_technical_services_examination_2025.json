@@ -102,7 +102,10 @@
       "platform_support": "partially_supported",
       "applicability": "All applicants",
       "content_instructions": "Uploaded candidate photograph; format: JPG; file size: 20-50 KB; dimensions: 130 x 170 px; 200 dpi; filename: Photograph.jpg; background: white; recency: within 90 days.",
-      "evidence_status": "Current official TNPSC instruction"
+      "evidence_status": "Current official TNPSC instruction",
+      "rejection_conditions": [
+        "Non-frontal or side-facing pose can fail the stated requirement."
+      ]
     },
     {
       "requirement_id": "candidate_signature",

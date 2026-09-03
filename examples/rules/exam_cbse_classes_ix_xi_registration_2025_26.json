@@ -96,7 +96,12 @@
       "platform_support": "supported",
       "applicability": "Every registered student, normally through the school",
       "content_instructions": "Uploaded candidate photograph; format: JPG; file size: up to 40 kb; recency: within 180 days.",
-      "evidence_status": "Current official CBSE registration instruction"
+      "evidence_status": "Current official CBSE registration instruction",
+      "rejection_conditions": [
+        "Non-frontal or side-facing pose can fail the stated requirement.",
+        "Eyes must be visible/open as stated.",
+        "Spectacle glare, dark or coloured glasses can make the photograph unacceptable."
+      ]
     },
     {
       "requirement_id": "student_particulars_supported_by_school_records",

@@ -88,7 +88,10 @@
       "platform_support": "supported",
       "applicability": "All applicants",
       "content_instructions": "JPG/JPEG; 10-200 KB according to current photo evidence.",
-      "evidence_status": "Current official CUET PG bulletin"
+      "evidence_status": "Current official CUET PG bulletin",
+      "rejection_conditions": [
+        "A face mask/covering is restricted according to the stated policy."
+      ]
     },
     {
       "requirement_id": "candidate_signature",

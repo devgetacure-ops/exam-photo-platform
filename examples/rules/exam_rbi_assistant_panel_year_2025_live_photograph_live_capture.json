@@ -79,7 +79,10 @@
       "platform_support": "supported",
       "applicability": "All applicants",
       "content_instructions": "JPG/JPEG; 20-50 KB; 200 x 230 pixels preferred; approximately 4.5 cm x 3.5 cm; 200 dpi where stated. Light/white background; face clearly visible.",
-      "evidence_status": "Current/recent official recruiting notice"
+      "evidence_status": "Current/recent official recruiting notice",
+      "rejection_conditions": [
+        "Unclear photograph, signature, thumb impression or declaration can lead to rejection."
+      ]
     },
     {
       "requirement_id": "candidate_signature",
@@ -91,6 +94,10 @@
       "applicability": "All applicants",
       "content_instructions": "JPG/JPEG; normally 10-20 KB; about 140 x 60 pixels; signature in black ink on white paper; signed by the applicant; not in capital letters.",
       "evidence_status": "Current/recent official recruiting notice",
+      "rejection_conditions": [
+        "Unclear photograph, signature, thumb impression or declaration can lead to rejection.",
+        "Signature or handwritten declaration in capital letters is not accepted in the cited banking-family instructions."
+      ],
       "file_spec": {
         "file_size": {
           "maximum_bytes": 20000,
@@ -123,6 +130,9 @@
       "applicability": "All applicants",
       "content_instructions": "JPG/JPEG; normally 20-50 KB; about 240 x 240 pixels; applicant's left thumb impression on white paper using black or blue ink; clear and unsmudged.",
       "evidence_status": "Current/recent official recruiting notice",
+      "rejection_conditions": [
+        "Unclear photograph, signature, thumb impression or declaration can lead to rejection."
+      ],
       "file_spec": {
         "file_size": {
           "maximum_bytes": 50000,
@@ -155,6 +165,10 @@
       "applicability": "All applicants",
       "content_instructions": "JPG/JPEG; normally 50-100 KB; about 800 x 400 pixels; handwritten in English on white paper with black ink; not in capital letters. Standard wording: 'I, ______ (Name of the candidate), hereby declare that all the information submitted by me in the application form is correct, true and valid. I will present the supporting documents as and when required.' Copy the exact live-portal wording.",
       "evidence_status": "Current/recent official recruiting notice",
+      "rejection_conditions": [
+        "Unclear photograph, signature, thumb impression or declaration can lead to rejection.",
+        "Signature or handwritten declaration in capital letters is not accepted in the cited banking-family instructions."
+      ],
       "file_spec": {
         "file_size": {
           "maximum_bytes": 100000,
@@ -186,7 +200,10 @@
       "platform_support": "guidance_only",
       "applicability": "All applicants",
       "content_instructions": "In addition to the uploaded photograph, capture and upload a live photograph using a webcam or mobile phone. Preferred image 240 x 240 pixels, 200 dpi, 20-50 KB, JPG/JPEG.",
-      "evidence_status": "Current official RBI recruitment page"
+      "evidence_status": "Current official RBI recruitment page",
+      "rejection_conditions": [
+        "Unclear photograph, signature, thumb impression or declaration can lead to rejection."
+      ]
     }
   ],
   "provenance": {
@@ -220,5 +237,8 @@
   "verification": {
     "verification_status": "verified"
   },
-  "fictional_example": false
+  "fictional_example": false,
+  "application_rejection_conditions": [
+    "The online application is not registered unless all mandatory image fields are uploaded."
+  ]
 }

@@ -76,7 +76,11 @@
       "platform_support": "supported",
       "applicability": "All applicants",
       "content_instructions": "Uploaded candidate photograph; format: JPG/JPEG; file size: up to 50 KB; background: preferably blue, green or red.",
-      "evidence_status": "Evidence tier as recorded in supplied photograph report"
+      "evidence_status": "Evidence tier as recorded in supplied photograph report",
+      "rejection_conditions": [
+        "Shadows on the face or background are not accepted.",
+        "Non-frontal or side-facing pose can fail the stated requirement."
+      ]
     },
     {
       "requirement_id": "candidate_signature",

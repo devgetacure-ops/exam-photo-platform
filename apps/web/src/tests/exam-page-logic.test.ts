@@ -158,6 +158,7 @@ function examWith(overrides: Partial<ExamDetail>): ExamDetail {
     provenance: {},
     source_evidence: [],
     verification_status: "verified",
+    application_rejection_conditions: [],
     ...overrides,
   };
 }

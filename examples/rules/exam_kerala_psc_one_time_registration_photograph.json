@@ -107,7 +107,12 @@
       "platform_support": "partially_supported",
       "applicability": "All applicants",
       "content_instructions": "Uploaded candidate photograph; format: JPG; file size: up to 30 Kb; dimensions: 150 x 200 px; recency: within 180 days.",
-      "evidence_status": "Evidence tier as recorded in supplied photograph report"
+      "evidence_status": "Evidence tier as recorded in supplied photograph report",
+      "rejection_conditions": [
+        "Non-frontal or side-facing pose can fail the stated requirement.",
+        "Eyes must be visible/open as stated.",
+        "Caps/hats are restricted; any permitted religious covering must leave required facial features visible."
+      ]
     },
     {
       "requirement_id": "candidate_signature",

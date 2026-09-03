@@ -108,7 +108,15 @@
       "platform_support": "supported",
       "applicability": "All applicants",
       "content_instructions": "Colour passport photo, 3.5 cm x 4.5 cm; face 60-70%; white background; JPG/JPEG; aspect ratio 0.66-0.89; 200 x 260 to 530 x 690 pixels; 5-600 kB. Frontal face, no obstruction, blur, glare, shadow, mask, cap or other persons.",
-      "evidence_status": "Current official GATE 2026 page"
+      "evidence_status": "Current official GATE 2026 page",
+      "rejection_conditions": [
+        "Non-frontal or side-facing pose can fail the stated requirement.",
+        "Eyes must be visible/open as stated.",
+        "Spectacle glare, dark or coloured glasses can make the photograph unacceptable.",
+        "Caps/hats are restricted; any permitted religious covering must leave required facial features visible.",
+        "A face mask/covering is restricted according to the stated policy.",
+        "Photographs outside the stated size, aspect ratio, pose, background and visibility rules can lead to rejection without fee refund."
+      ]
     },
     {
       "requirement_id": "candidate_signature",
@@ -120,6 +128,9 @@
       "applicability": "All applicants",
       "content_instructions": "JPG/JPEG; black or dark-blue ink; signature area 70-80% of image; aspect ratio height:width = 1:R, R 2.75-3.75; 250 x 80 to 580 x 180 pixels; 3-300 kB. Applicant's own signature, not capital letters or initials.",
       "evidence_status": "Current official GATE 2026 page",
+      "rejection_conditions": [
+        "A signature that does not match at the examination can lead to disqualification."
+      ],
       "file_spec": {
         "file_size": {
           "maximum_bytes": 300000,
@@ -153,7 +164,10 @@
       "platform_support": "not_yet_supported",
       "applicability": "All applicants",
       "content_instructions": "Scanned copy of the valid photo ID whose original will be produced at the examination centre. Upload must be clear and readable.",
-      "evidence_status": "Current official GATE required-documents page"
+      "evidence_status": "Current official GATE required-documents page",
+      "rejection_conditions": [
+        "Unreadable documents may delay processing and may lead to rejection."
+      ]
     },
     {
       "requirement_id": "sc_st_certificate",
@@ -165,6 +179,9 @@
       "applicability": "SC/ST candidates claiming the fee concession/category benefit",
       "content_instructions": "PDF. GATE FAQ states SC/ST certificate upload is required to avail the fee concession.",
       "evidence_status": "Current official GATE required-documents page/FAQ",
+      "rejection_conditions": [
+        "Unreadable documents may delay processing and may lead to rejection."
+      ],
       "file_spec": {
         "file_size": {
           "maximum_bytes": 400000
@@ -181,6 +198,9 @@
       "applicability": "PwD candidates",
       "content_instructions": "PDF; UDID preferred, otherwise prescribed PwD certificate.",
       "evidence_status": "Current official GATE required-documents page",
+      "rejection_conditions": [
+        "Unreadable documents may delay processing and may lead to rejection."
+      ],
       "file_spec": {
         "file_size": {
           "maximum_bytes": 400000
@@ -197,6 +217,9 @@
       "applicability": "Candidates claiming dyslexia-related provision",
       "content_instructions": "Upload the applicable certificate in PDF.",
       "evidence_status": "Current official GATE brochure",
+      "rejection_conditions": [
+        "Unreadable documents may delay processing and may lead to rejection."
+      ],
       "file_spec": {
         "file_size": {
           "maximum_bytes": 400000

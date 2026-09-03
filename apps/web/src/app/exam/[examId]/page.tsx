@@ -229,6 +229,32 @@ export default async function ExamPage({
           </section>
         )}
 
+        {/*
+          Causes of rejection that are about the application rather than any
+          one upload, so they belong to the page rather than to a card.
+        */}
+        {exam.application_rejection_conditions.length > 0 && (
+          <section className="mt-14 rounded-xl border border-caveat-soft bg-caveat-soft/40 p-5 sm:p-6">
+            <h2 className="text-lg font-semibold text-caveat">
+              About the application itself
+            </h2>
+            <ul className="mt-3 space-y-2">
+              {exam.application_rejection_conditions.map((condition) => (
+                <li
+                  key={condition}
+                  className="flex gap-2 text-sm leading-relaxed text-ink-soft"
+                >
+                  <span
+                    aria-hidden="true"
+                    className="mt-2 size-1 shrink-0 rounded-full bg-caveat"
+                  />
+                  <span>{condition}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
         {/* --- Price ----------------------------------------------------- */}
         {ours.length > 0 && (
           <section className="mt-14">

@@ -194,6 +194,38 @@ export function RequirementCard({ requirement, index, exam }: Props) {
               used.
             </p>
           )}
+          {/*
+            What this examination itself says will get the file rejected.
+            Kept separate from anything we check: these are the body's own
+            published causes, most of them not verifiable from a file at all
+            (DEC-041 — we produce and warn, we do not refuse for appearance).
+            Attributing them to the exam rather than to us is the point; a
+            candidate who reads "we reject shadows" hears a different and
+            wrong thing from "your exam rejects shadows".
+          */}
+          {requirement.rejection_conditions.length > 0 && (
+            <div className="mt-4 rounded-lg border border-blocked-soft bg-blocked-soft/40 p-3.5">
+              <p className="label text-blocked">
+                What gets this rejected
+              </p>
+              <ul className="mt-2 space-y-1.5">
+                {requirement.rejection_conditions.map((condition) => (
+                  <li
+                    key={condition}
+                    className="flex gap-2 text-sm leading-relaxed text-ink-soft"
+                  >
+                    <span aria-hidden="true" className="mt-2 size-1 shrink-0 rounded-full bg-blocked" />
+                    <span>{condition}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-2.5 text-xs text-muted">
+                Published by the exam, not by us. We prepare your file and flag
+                what we can see — the rest is worth checking yourself.
+              </p>
+            </div>
+          )}
+
           {narrowsAudience(requirement.applicability) && (
             <p className="mt-3 flex items-start gap-2 text-sm text-caveat">
               <svg

@@ -186,6 +186,12 @@ export interface ExamDetail {
   source_evidence: SourceEvidence[];
   /** `verified` | `verified_with_ambiguity` | `provisional`. */
   verification_status: string | null;
+  /**
+   * Published causes of rejection that concern the whole application rather
+   * than any single upload. Conditions naming a deliverable live on that
+   * requirement instead, so this list stays short.
+   */
+  application_rejection_conditions: string[];
 }
 
 // --- Preparation (DEC-055, DEC-056) -----------------------------------------
