@@ -6,8 +6,10 @@ built (DEC-055..058), and so is the read half of the web app: a candidate can
 search 39 examinations and see everything each one asks for, on statically
 generated pages. Not yet pushed.
 
-**The next session is upload, preview and payment** — the half that produces
-files and takes money. Start at *[Where to start: the web app](#where-to-start-the-web-app)*.
+**The next session is payment and delivery.** Upload and preparation are
+built and verified against the running engine; what is missing is Razorpay,
+the watermark, and getting the file to the candidate. Start at
+*[Where to start: the web app](#where-to-start-the-web-app)*.
 
 What this file is: the state a new session cannot reconstruct from the diff.
 Not a session note — keep it current rather than appending to it. It has drifted
@@ -99,24 +101,41 @@ puts the product's worst failure mode back on the table.
 | Photograph rules per exam | `lib/appearance-rules.ts` — spectacles, headwear, expression, imprint, from the record only |
 | Visual guidance | `components/exam/framing-diagram.tsx` — SVG, not photographs |
 | Honest citation | `components/exam/source-note.tsx` — 7 of 39 exams have no official source |
+| Published rejection conditions | `scripts/encode_exam_rules.py` routes them (DEC-059); shown per requirement, attributed to the exam |
+| Upload and preparation | `components/exam/requirement-upload.tsx` — client island, records the job against the kit |
+| Three outcome states | `components/exam/outcome-result.tsx` — clean / with-findings / blocked |
 
 ### Not built, in order
 
-1. **Upload and preparation.** The per-requirement flow: `prepareRequirement`,
-   the three outcome states (clean / prepared-with-findings / blocked, WEB-002),
-   and the 409 gate response. `upload-card.tsx`, `result-preview.tsx`,
-   `validation-report.tsx` and `processing-status.tsx` survive from the
-   pre-pivot flow and should be recomposed into a per-requirement panel rather
-   than rebuilt.
-2. **The watermarked preview, and payment.** Razorpay, decided. Generate the
-   preview *before* payment so the ~10.6 s wait lands while the candidate is
-   engaged rather than after they have paid, and so the purchase decision is
-   made against the real result.
+1. **The watermark.** `outcome-result.tsx` already tells the candidate the
+   preview is watermarked, and **it is not** — the service returns the clean
+   file. Either watermark server-side at reduced resolution before payment, or
+   change the copy. Do not ship the current pairing.
+2. **Payment.** Razorpay, decided. The ordering is already right: preparation
+   happens first and the candidate decides against the real result.
 3. **Delivery.** Download, email, and a `wa.me` share link — the candidate
    sends it themselves, which needs no WhatsApp Business integration and routes
    no candidate photograph through Meta.
 4. **Multi-page documents** via `planDocument` → arrange → `assembleDocument`.
 5. **`/coverage` and `/pricing`** — linked from the landing page, do not exist.
+6. **The kit view.** Per-requirement preparation works, but nothing yet shows
+   the kit as a whole or calls `getKitPackage` for the ZIP and checklist.
+
+`upload-card.tsx`, `result-preview.tsx`, `validation-report.tsx` and
+`processing-status.tsx` still survive from the pre-pivot flow, now unused by
+the candidate path. Fold in what is useful or delete them.
+
+### Running it locally
+
+The catalogue is build-time, so `npm run dev` needs nothing else. Preparing a
+file needs the engine, **and the engine ships with browser access off**:
+
+```bash
+EXAM_PHOTO_LOCAL_CORS_ENABLED=true .venv/Scripts/python.exe -m exam_photo serve-api --host 127.0.0.1 --port 8000
+```
+
+Without it every upload fails as an ordinary network error, because a blocked
+cross-origin request and a dead server are the same `TypeError` to a browser.
 
 ### Decided, not yet built
 
