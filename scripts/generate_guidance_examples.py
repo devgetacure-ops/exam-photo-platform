@@ -1,20 +1,33 @@
 """Generate the accepted/rejected example images used on the exam pages.
 
-Why real photographs rather than drawings: a candidate is trying to judge their
-own photo against a standard, and a diagram of a head in a box does not tell
-them whether *their* photo is too tight. A real portrait does.
+Why real photographs rather than drawings: a candidate is judging their own
+photo against a standard, and a diagram of a head in a box cannot tell them
+whether *theirs* is cropped too tight. A photograph can.
 
 Why one portrait rather than several: every "wrong" example is derived from the
-same source frame, so framing is the only variable between them. A gallery of
-different people would let the reader attribute the difference to the person.
+same source frame, so framing is the only thing that differs between them. A
+gallery of different people would let the reader attribute the difference to
+the person instead of to the mistake.
 
-The source is public domain and already tracked in `tests/fixtures/` with its
-licence -- Albert Einstein, Oren Jack Turner, published in the US before 1928.
-No candidate photograph is ever committed (AGENTS.md), and this script exists
-so the outputs are reproducible rather than hand-made artefacts nobody can
-regenerate.
+**The source portrait matters, and it is not in this repo.** It has to be the
+photograph a candidate should be trying to match: a person facing the camera
+square on, neutral expression, even light, plain background, head and shoulders
+only. The historical portraits under `tests/fixtures/` are deliberately the
+opposite -- they were chosen as edge cases for the engine (a side profile,
+a turban, spectacles, low contrast), so using one as the ideal teaches the
+wrong lesson.
+
+A synthetic (AI-generated) face is the better choice here, not merely an
+acceptable substitute: no real person's likeness is being used to advertise a
+commercial service, so there is no publicity-rights question to answer. An
+Indian face suits the audience.
+
+Drop the source at `assets/reference-portrait.jpg` and run::
 
     python scripts/generate_guidance_examples.py
+
+The script refuses to run without it rather than falling back to a fixture,
+because a wrong "ideal" is worse than a missing one.
 """
 
 from __future__ import annotations
@@ -25,7 +38,9 @@ from pathlib import Path
 from PIL import Image, ImageDraw, ImageEnhance, ImageFilter
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-SOURCE = REPO_ROOT / "tests" / "fixtures" / "single_face_frontal.jpg"
+#: The ideal reference photograph. Deliberately *not* a `tests/fixtures/`
+#: portrait -- those are engine edge cases, not the standard to match.
+SOURCE = REPO_ROOT / "assets" / "reference-portrait.jpg"
 OUT_DIR = REPO_ROOT / "apps" / "web" / "public" / "examples"
 
 #: Small on purpose. These sit beside a form on a phone over a slow connection,
@@ -185,7 +200,21 @@ def _signature(good: bool) -> Image.Image:
 
 def main() -> int:
     if not SOURCE.exists():
-        print(f"source portrait missing: {SOURCE}")
+        print(f"No reference portrait at {SOURCE}.")
+        print()
+        print("It must be the photo a candidate should be trying to match:")
+        print("  - facing the camera square on, looking into the lens")
+        print("  - neutral expression, eyes open, nothing covering the face")
+        print("  - even light, no shadow across the face")
+        print("  - plain light background")
+        print("  - head and shoulders, portrait orientation, >= 800px tall")
+        print()
+        print("A synthetic/AI-generated face is preferred: no real person's")
+        print("likeness is then used to advertise a commercial service.")
+        print()
+        print("Refusing to fall back to a test fixture -- those are engine edge")
+        print("cases (side profile, turban, spectacles), and a wrong 'ideal'")
+        print("teaches the wrong lesson.")
         return 1
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)

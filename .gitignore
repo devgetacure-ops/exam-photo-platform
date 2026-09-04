@@ -49,6 +49,23 @@ temp/
 *.webp
 *.tiff
 *.bmp
+
+# Two deliberate exceptions to the blanket image ban above. The ban exists to
+# stop a real candidate's photograph ever reaching version control, and it
+# stays. Neither of these is a candidate photograph:
+#
+#   assets/reference-portrait.jpg   the ideal-photo source, a synthetic face
+#   apps/web/public/examples/*      the accepted/rejected examples derived from
+#                                   it by scripts/generate_guidance_examples.py
+#
+# These MUST be tracked: they are served by the web app, so a clone without
+# them builds a site whose guidance images are all broken -- which is exactly
+# what happened before this exception was added, and it passed locally because
+# the files were present on the machine that generated them.
+!assets/reference-portrait.jpg
+!apps/web/public/examples/*.jpg
+!apps/web/public/examples/*.png
+!apps/web/public/examples/*.webp
 # Ignore generated outputs
 output/
 downloads/
