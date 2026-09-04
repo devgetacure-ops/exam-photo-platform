@@ -1,33 +1,32 @@
 """Generate the accepted/rejected example images used on the exam pages.
 
-Why real photographs rather than drawings: a candidate is judging their own
-photo against a standard, and a diagram of a head in a box cannot tell them
-whether *theirs* is cropped too tight. A photograph can.
+Why photographs rather than drawings: a candidate is judging their own photo
+against a standard, and a diagram of a head in a box cannot tell them whether
+*theirs* is cropped too tight. A photograph can.
 
 Why one portrait rather than several: every "wrong" example is derived from the
 same source frame, so framing is the only thing that differs between them. A
-gallery of different people would let the reader attribute the difference to
-the person instead of to the mistake.
+gallery of different people would let a reader attribute the difference to the
+person instead of to the mistake.
 
-**The source portrait matters, and it is not in this repo.** It has to be the
-photograph a candidate should be trying to match: a person facing the camera
-square on, neutral expression, even light, plain background, head and shoulders
-only. The historical portraits under `tests/fixtures/` are deliberately the
-opposite -- they were chosen as edge cases for the engine (a side profile,
-a turban, spectacles, low contrast), so using one as the ideal teaches the
-wrong lesson.
+The source is `assets/reference-portrait.jpg` -- a synthetic (GAN-generated)
+face, not a photograph of any living person, so no real likeness is used to
+advertise a commercial service. See `assets/README.md` for its provenance and
+for why the portraits under `tests/fixtures/` must never be used here: every
+one of those was chosen as an engine EDGE CASE (a side profile, a turban,
+spectacles, low contrast), so using one as the ideal teaches the reverse of
+the rule.
 
-A synthetic (AI-generated) face is the better choice here, not merely an
-acceptable substitute: no real person's likeness is being used to advertise a
-commercial service, so there is no publicity-rights question to answer. An
-Indian face suits the audience.
-
-Drop the source at `assets/reference-portrait.jpg` and run::
+Known gap: the reference face is European. The audience is Indian candidates
+and the ideal photo should look like someone they recognise. The generator
+that produced it ignored its own age filter on non-default ethnicities and
+returned children, so this is a placeholder to be replaced rather than a
+settled choice -- drop a better portrait at the same path and re-run.
 
     python scripts/generate_guidance_examples.py
 
-The script refuses to run without it rather than falling back to a fixture,
-because a wrong "ideal" is worse than a missing one.
+The script refuses to run without the source rather than falling back to a
+fixture, because a wrong "ideal" is worse than a missing one.
 """
 
 from __future__ import annotations
@@ -43,29 +42,25 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 SOURCE = REPO_ROOT / "assets" / "reference-portrait.jpg"
 OUT_DIR = REPO_ROOT / "apps" / "web" / "public" / "examples"
 
-#: Small on purpose. These sit beside a form on a phone over a slow connection,
-#: and they only have to communicate framing.
-TILE = (240, 300)
+#: Small on purpose -- these sit beside a form and only have to communicate
+#: framing. The 3:4 ratio matches the reference portrait exactly: resizing a
+#: 3:4 source into a 4:5 tile squashes the face, and a platform whose first
+#: principle is "never distort to hit a target" cannot ship a stretched
+#: example of the thing it refuses to do.
+TILE = (240, 320)
 QUALITY = 82
 
 
 def _passport_crop(source: Image.Image) -> Image.Image:
-    """A correctly framed head-and-shoulders crop.
+    """The reference, at tile size.
 
-    Head occupying roughly three-quarters of the height with margin above the
-    hair and the shoulders entering at the base -- the composition the engine
-    targets, so the example matches what the platform actually produces.
+    The source portrait is already the ideal composition -- head centred, a
+    margin above the hair, shoulders meeting the bottom edge, plain ground --
+    so this is a resize rather than a crop. Everything below derives its
+    mistake from *this* frame, which is what keeps framing the only variable
+    between the examples.
     """
-    width, height = source.size
-    # The source is already a tight head-and-shoulders portrait; a light inset
-    # gives the margin above the hair without cutting the shoulders.
-    box = (
-        int(width * 0.06),
-        int(height * 0.02),
-        int(width * 0.94),
-        int(height * 0.92),
-    )
-    return source.crop(box).resize(TILE, Image.LANCZOS)
+    return source.resize(TILE, Image.LANCZOS)
 
 
 def _too_far(source: Image.Image) -> Image.Image:
@@ -81,10 +76,10 @@ def _too_tight(source: Image.Image) -> Image.Image:
     """Cropped into the hair and chin, which most portals reject."""
     width, height = source.size
     box = (
-        int(width * 0.20),
-        int(height * 0.22),
-        int(width * 0.80),
-        int(height * 0.74),
+        int(width * 0.17),
+        int(height * 0.17),
+        int(width * 0.83),
+        int(height * 0.72),
     )
     return source.crop(box).resize(TILE, Image.LANCZOS)
 
@@ -103,10 +98,12 @@ def _side_shadow(source: Image.Image) -> Image.Image:
     shadow = Image.new("L", TILE, 255)
     draw = ImageDraw.Draw(shadow)
     for x in range(TILE[0]):
-        # A soft ramp darkening the left third rather than a hard edge.
-        value = int(255 * min(1.0, 0.25 + 1.5 * (x / TILE[0])))
-        draw.line([(x, 0), (x, TILE[1])], fill=value)
-    shadow = shadow.filter(ImageFilter.GaussianBlur(radius=12))
+        # A smooth ramp across the whole width. A steep one reads as a pasted
+        # band rather than as light falling unevenly on a face.
+        ratio = x / (TILE[0] - 1)
+        value = int(255 * (0.30 + 0.70 * ratio**1.4))
+        draw.line([(x, 0), (x, TILE[1])], fill=min(255, value))
+    shadow = shadow.filter(ImageFilter.GaussianBlur(radius=26))
     black = Image.new("RGB", TILE, (0, 0, 0))
     return Image.composite(good, black, shadow)
 
