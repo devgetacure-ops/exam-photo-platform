@@ -251,9 +251,20 @@ class ApiProcessingService:
         (the default) prefers the ONNX backend (faster-matting Step 1: same
         weights and maths as the PyTorch backend, roughly 2x faster on CPU,
         and needs only the lightweight ``matting-onnx`` extra rather than
-        torch), then falls back to the PyTorch backend, then to MediaPipe --
-        so a machine that has not run the model acquisition/export scripts
-        still serves requests rather than failing every job.
+        torch), then the PyTorch backend.
+
+        **``"auto"`` never resolves to MediaPipe** (DEC-060). It used to, so
+        that a machine without the model assets still served requests instead
+        of failing every job. That reasoning is wrong for a paid product: the
+        MediaPipe mask is 256px and on a real photograph it leaves visibly
+        blocky edges with pieces missing from the ear and hair. Serving that
+        silently means charging for output the platform would not stand
+        behind, and the candidate cannot tell which backend produced their
+        file. A job that fails loudly can be retried; a bad file that was paid
+        for and submitted cannot.
+
+        MediaPipe stays selectable explicitly, for diagnostics and for the
+        tests that assert against its coarse mask.
         """
         requested = (self.settings.matting_backend or "auto").lower()
         if requested == "mediapipe":
@@ -279,14 +290,26 @@ class ApiProcessingService:
                 )
             return "birefnet", resolved[0], resolved[1]
 
-        # "auto": prefer ONNX, then PyTorch, then MediaPipe.
+        # "auto": prefer ONNX, then PyTorch. Never MediaPipe -- see above.
         onnx_resolved = self._resolve_birefnet_onnx()
         if onnx_resolved is not None:
             return "birefnet_onnx", onnx_resolved[0], onnx_resolved[1]
         torch_resolved = self._resolve_birefnet_torch()
         if torch_resolved is not None:
             return "birefnet", torch_resolved[0], torch_resolved[1]
-        return "mediapipe", None, ""
+        raise RuntimeError(
+            "No BiRefNet matting backend is available, and the service will "
+            "not silently fall back to MediaPipe for a paid output (DEC-060). "
+            "Fix it with one of:\n"
+            "  python scripts/download_birefnet.py --yes        "
+            "# then the PyTorch backend works\n"
+            "  python scripts/export_birefnet_onnx.py           "
+            "# ~2x faster; needs the `matting` extra installed\n"
+            '  pip install -e ".[dev,face,matting]"             '
+            "# if the export fails on a missing onnx dependency\n"
+            "To run the coarse backend deliberately, for diagnostics only, "
+            "set EXAM_PHOTO_MATTING_BACKEND=mediapipe."
+        )
 
     def _resolve_segmenter_model(self) -> Tuple[Path, str]:
         """Resolve segmenter model path and expected sha256."""
