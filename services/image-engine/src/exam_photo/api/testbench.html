@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Engine test bench</title>
+<style>
+  :root { color-scheme: light dark; --line:#d5dade; --ink:#12222a; --muted:#6d7c84;
+          --bg:#fbfcfd; --card:#fff; --accent:#06687d; --bad:#a4353c; --ok:#17714a; --warn:#96590a; }
+  @media (prefers-color-scheme: dark) { :root {
+    --line:#2a373d; --ink:#e8eded; --muted:#8b999f; --bg:#0e1518; --card:#161f23;
+    --accent:#4fb6cc; --bad:#e08b91; --ok:#5cbb85; --warn:#d59a4a; } }
+  * { box-sizing:border-box }
+  body { margin:0; background:var(--bg); color:var(--ink); font:14px/1.5 system-ui,sans-serif }
+  header { padding:14px 20px; border-bottom:1px solid var(--line); display:flex; gap:16px; align-items:baseline }
+  h1 { font-size:15px; margin:0; font-weight:600 }
+  .sub { color:var(--muted); font-size:12px }
+  main { display:grid; grid-template-columns:340px 1fr; min-height:calc(100vh - 51px) }
+  .panel { border-right:1px solid var(--line); padding:18px; display:flex; flex-direction:column; gap:14px }
+  label { display:block; font-size:12px; color:var(--muted); margin-bottom:4px }
+  select, input[type=file], button { width:100%; padding:8px; border:1px solid var(--line);
+    border-radius:6px; background:var(--card); color:var(--ink); font:inherit }
+  button { background:var(--accent); color:#fff; border-color:var(--accent); cursor:pointer; font-weight:600 }
+  button:disabled { opacity:.5; cursor:not-allowed }
+  .row { display:flex; gap:8px } .row > * { flex:1 }
+  .out { padding:18px; overflow:auto }
+  .imgwrap { background:repeating-conic-gradient(#0002 0 25%, transparent 0 50%) 0 0/16px 16px;
+             display:inline-block; border:1px solid var(--line); border-radius:6px }
+  img.result { display:block; max-width:100%; max-height:62vh }
+  table { border-collapse:collapse; font-size:12px; margin-top:10px; width:100% }
+  td,th { text-align:left; padding:3px 10px 3px 0; border-bottom:1px solid var(--line); vertical-align:top }
+  .pill { display:inline-block; padding:2px 8px; border-radius:4px; font-size:12px; font-weight:600 }
+  .ok{background:#17714a22;color:var(--ok)} .bad{background:#a4353c22;color:var(--bad)}
+  .warn{background:#96590a22;color:var(--warn)}
+  .mono { font-family:ui-monospace,Menlo,monospace; font-variant-numeric:tabular-nums }
+  .muted { color:var(--muted) } .big { font-size:26px; font-weight:700 }
+  .err { color:var(--bad); white-space:pre-wrap }
+  details { margin-top:12px } summary { cursor:pointer; color:var(--muted); font-size:12px }
+  pre { background:var(--card); border:1px solid var(--line); border-radius:6px; padding:10px;
+        overflow:auto; max-height:340px; font-size:11px }
+</style>
+</head>
+<body>
+<header>
+  <h1>Engine test bench</h1>
+  <span class="sub">any exam &times; any photo &mdash; served by the engine, so no CORS</span>
+</header>
+
+<main>
+  <div class="panel">
+    <div>
+      <label for="exam">Exam</label>
+      <select id="exam"><option>loading…</option></select>
+    </div>
+    <div>
+      <label for="req">Requirement</label>
+      <select id="req"></select>
+    </div>
+    <div id="spec" class="mono sub"></div>
+    <div>
+      <label for="file">Photo / file</label>
+      <input type="file" id="file" accept="image/*,application/pdf">
+    </div>
+    <div class="row">
+      <div>
+        <label for="quality">Quality</label>
+        <select id="quality">
+          <option>balanced</option><option>high</option><option>fast</option>
+        </select>
+      </div>
+      <div>
+        <label for="allow">Save invalid</label>
+        <select id="allow"><option value="true">yes</option><option value="false">no</option></select>
+      </div>
+    </div>
+    <button id="run" disabled>Run</button>
+    <div id="status" class="sub"></div>
+    <div class="sub muted" style="margin-top:auto">
+      Backend is whatever the service resolved at startup. It will refuse to
+      run on the coarse MediaPipe mask unless you ask for it explicitly.
+    </div>
+  </div>
+
+  <div class="out" id="out"><p class="muted">Pick an exam, choose a file, press Run.</p></div>
+</main>
+
+<script>
+const $ = s => document.querySelector(s);
+let EXAMS = [], DETAIL = null;
+
+async function boot() {
+  const r = await fetch('/v1/exams');
+  const d = await r.json();
+  EXAMS = d.exams.sort((a,b) => a.exam_name.localeCompare(b.exam_name));
+  $('#exam').innerHTML = EXAMS.map(e =>
+    `<option value="${e.exam_id}">${e.exam_name}</option>`).join('');
+  await loadExam();
+}
+
+async function loadExam() {
+  const id = $('#exam').value;
+  DETAIL = await (await fetch('/v1/exams/' + id)).json();
+  // Only requirements the platform actually prepares can be run.
+  const reqs = (DETAIL.requirements || []).filter(r =>
+    r.platform_support === 'supported' || r.platform_support === 'partially_supported');
+  $('#req').innerHTML = reqs.length
+    ? reqs.map(r => `<option value="${r.requirement_id}">${r.requirement_name} — ${r.requirement_type}</option>`).join('')
+    : '<option value="">(nothing this platform prepares)</option>';
+  showSpec();
+}
+
+function showSpec() {
+  const rid = $('#req').value;
+  const r = (DETAIL.requirements || []).find(x => x.requirement_id === rid);
+  if (!r) { $('#spec').textContent = ''; return; }
+  let bits = [];
+  if (r.requirement_type === 'photograph') {
+    const ir = DETAIL.image_requirements || {};
+    const d = ir.dimensions || {}, f = ir.file_size || {};
+    if (d.width_px) bits.push(`${d.width_px}×${d.height_px}px`);
+    else if (d.preferred_width_px) bits.push(`${d.preferred_width_px}×${d.preferred_height_px}px pref`);
+    if (f.published_maximum) bits.push(`≤${f.published_maximum}${f.size_unit_as_published||''}`);
+    else if (f.maximum_bytes) bits.push(`≤${Math.round(f.maximum_bytes/1000)}KB`);
+  } else {
+    const fs = (r.file_spec||{}).file_size||{}, dm = (r.file_spec||{}).dimensions||{};
+    if (dm.width_px) bits.push(`${dm.width_px}×${dm.height_px}px`);
+    if (fs.minimum_bytes && fs.maximum_bytes)
+      bits.push(`${Math.round(fs.minimum_bytes/1000)}–${Math.round(fs.maximum_bytes/1000)}KB`);
+    else if (fs.maximum_bytes) bits.push(`≤${Math.round(fs.maximum_bytes/1000)}KB`);
+  }
+  $('#spec').textContent = bits.join('  ·  ');
+}
+
+function ready() {
+  $('#run').disabled = !($('#file').files[0] && $('#req').value);
+}
+
+async function run() {
+  const file = $('#file').files[0];
+  const examId = $('#exam').value, reqId = $('#req').value;
+  $('#run').disabled = true;
+  $('#status').textContent = 'preparing…';
+  $('#out').innerHTML = '<p class="muted">Working. First run after a restart is slow — the matting model loads once.</p>';
+
+  const fd = new FormData();
+  fd.append('file', file);
+  const qs = new URLSearchParams({
+    allow_invalid_output: $('#allow').value,
+    quality_mode: $('#quality').value,
+  });
+  const t0 = performance.now();
+  try {
+    const res = await fetch(`/v1/exams/${examId}/requirements/${reqId}/prepare?${qs}`,
+                            { method:'POST', body: fd });
+    const wall = ((performance.now()-t0)/1000).toFixed(1);
+    const body = await res.json();
+    if (!res.ok) { fail(body, res.status); return; }
+    await render(body, wall, file);
+  } catch (e) {
+    $('#out').innerHTML = `<p class="err">${e.message}</p>`;
+  } finally {
+    $('#status').textContent = '';
+    ready();
+  }
+}
+
+function fail(body, status) {
+  const d = body.detail;
+  const msg = typeof d === 'string' ? d : (d && d.detail) || JSON.stringify(body, null, 2);
+  $('#out').innerHTML = `<p><span class="pill bad">HTTP ${status}</span></p><p class="err">${msg}</p>`;
+}
+
+async function render(b, wall, file) {
+  const cls = b.outcome === 'prepared' ? 'ok'
+            : b.outcome === 'prepared_with_findings' ? 'warn' : 'bad';
+  const src = URL.createObjectURL(file);
+  let html = `
+    <p><span class="pill ${cls}">${b.outcome}</span>
+       <span class="mono muted">&nbsp; ${wall}s wall</span></p>
+    <div style="display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start">
+      <div><div class="sub muted">input</div>
+        <div class="imgwrap"><img class="result" src="${src}"></div></div>`;
+  if (b.output_url) {
+    html += `<div><div class="sub muted">output</div>
+        <div class="imgwrap"><img class="result" src="/v1/jobs/${b.job_id}/output?t=${Date.now()}"></div></div>`;
+  }
+  html += `</div>
+    <table>
+      <tr><th>valid</th><td>${b.is_valid}</td><th>size</th><td class="mono">${b.width||'–'}×${b.height||'–'}</td></tr>
+      <tr><th>bytes</th><td class="mono">${b.byte_size ?? '–'}</td><th>file</th><td class="mono">${b.output_filename||'–'}</td></tr>
+    </table>`;
+  if ((b.findings||[]).length)
+    html += `<p class="sub muted" style="margin-top:12px">findings</p><ul>` +
+            b.findings.map(f=>`<li>${f}</li>`).join('') + `</ul>`;
+  if ((b.issue_codes||[]).length)
+    html += `<p class="sub muted">issue codes</p><p class="mono">${b.issue_codes.join(', ')}</p>`;
+
+  $('#out').innerHTML = html;
+
+  // Stage timings are the useful part when something is slow.
+  try {
+    const rep = await (await fetch(`/v1/jobs/${b.job_id}/report`)).json();
+    const stages = rep.stage_reports || [];
+    if (stages.length) {
+      const rows = stages.map(s => {
+        const c = s.status==='passed'?'ok':s.status==='warning'?'warn':'bad';
+        return `<tr><td>${s.stage}</td><td><span class="pill ${c}">${s.status}</span></td>
+                <td class="mono">${(s.details&&s.details.duration_ms)||s.duration_ms||''}</td></tr>`;
+      }).join('');
+      $('#out').insertAdjacentHTML('beforeend',
+        `<details open><summary>stages</summary><table>${rows}</table></details>`);
+    }
+    $('#out').insertAdjacentHTML('beforeend',
+      `<details><summary>full report</summary><pre>${JSON.stringify(rep,null,2)}</pre></details>`);
+  } catch {}
+}
+
+$('#exam').onchange = () => { loadExam().then(ready); };
+$('#req').onchange = () => { showSpec(); ready(); };
+$('#file').onchange = ready;
+$('#run').onclick = run;
+boot().then(ready);
+</script>
+</body>
+</html>

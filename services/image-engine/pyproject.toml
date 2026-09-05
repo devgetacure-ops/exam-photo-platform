@@ -70,6 +70,9 @@ matting-onnx = [
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/exam_photo"]
+# The test bench is a data file next to the module that serves it; without
+# this it is dropped from the wheel and /test 500s on an installed copy.
+artifacts = ["src/exam_photo/api/*.html"]
 
 [tool.ruff]
 line-length = 88

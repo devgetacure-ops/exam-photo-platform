@@ -2,6 +2,7 @@
 
 import json
 import re
+from pathlib import Path
 from typing import Any, List, Optional
 
 from fastapi import FastAPI, File, Form, HTTPException, Query, Request, UploadFile
@@ -94,6 +95,22 @@ async def catch_all_exception_handler(request: Request, exc: Exception) -> JSONR
         status_code=500,
         content={"detail": "An internal server error occurred."},
     )
+
+
+@app.get("/test", include_in_schema=False)
+def test_bench() -> Response:
+    """A one-page manual test bench for the engine.
+
+    Served by the service itself rather than by the web app, for two reasons.
+    It is same-origin, so it sidesteps the CORS toggle that otherwise makes
+    every browser request fail as an ordinary network error. And it is a
+    testing tool rather than the product: any exam crossed with any file,
+    showing input beside output plus stage timings and the raw report, with
+    none of the pricing or guidance the candidate-facing app wraps around the
+    same call.
+    """
+    page = Path(__file__).with_name("testbench.html")
+    return Response(content=page.read_text(encoding="utf-8"), media_type="text/html")
 
 
 @app.get("/health")
