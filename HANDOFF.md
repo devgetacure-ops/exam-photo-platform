@@ -161,15 +161,35 @@ and `GET /v1/kits/{kit_id}/package(/download)`. Contracts in `api/contracts.py`,
 catalogue reader in `orchestration/rule_catalogue.py`. The support gate returns
 409 with the requirement's own vocabulary before the upload is read.
 
-**Not verified locally:** every `mandatory_*` marker suite needs the model
-assets and env vars from `image-engine-ci.yml`, and `model-assets/` is empty in
-this checkout — so is the ONNX weight the default matting backend now wants.
-The one failure in the fast subset
-(`test_crop_cli_save_preview_overwrite_protection`) needs the face model for the
-same reason and is unrelated to this branch. Fetch the assets before trusting a
-local run: `python scripts/download_model.py --variant short_range --yes`,
-`python scripts/download_segmenter.py --variant <variant> --yes`, and
-`python scripts/export_birefnet_onnx.py` for the ONNX graph.
+### Testing the engine locally
+
+`model-assets/` is populated on this machine (it is gitignored, so a fresh
+clone starts empty and every `mandatory_*` suite skips):
+
+```bash
+python scripts/download_model.py --variant short_range --yes
+python scripts/download_segmenter.py --variant selfie_multiclass_256x256 --yes
+python scripts/download_face_landmarker.py --yes
+python scripts/download_birefnet.py --yes          # 425 MB
+```
+
+Run a folder of photographs and get a contact sheet:
+
+```bash
+python scripts/run_photo_set.py --input-dir "<folder>" --contact-sheet
+```
+
+**Always judge output on `--matting-backend birefnet`.** The mediapipe
+segmenter is a 256 px mask: on a real photograph it leaves blocky, stair-
+stepped edges with chunks bitten out of the ear, and output judged on it is
+being judged on the wrong thing. It is a fallback for machines without the
+weights, not a quality setting.
+
+**A stale venv silently breaks the ONNX export.** `onnx` and
+`deform_conv2d_onnx_exporter` are declared in the `matting` extra but a venv
+created before they were added will not have them, and
+`export_birefnet_onnx.py` then fails two dependencies deep with unrelated-
+looking errors. Re-run `pip install -e ".[dev,face,matting]"` first.
 
 ## What it demonstrably cannot do
 
