@@ -35,6 +35,13 @@ def decontaminate_foreground_edges(
     # band -- which is a genuine failure, not the ordinary cost of pulling
     # colour across a soft edge.
     max_outlier_fraction: float = 0.35,
+    # How much of the uncertain band may go unresolved before decontamination
+    # is called unreliable. Measured across the same twelve photographs: nine
+    # left nothing unresolved at all, and the other three ran 0.0005, 0.0059
+    # and 0.0565. 0.15 is roughly 2.6x the worst observed, so it stays silent
+    # through normal operation and still fires well before enough of the band
+    # survives uncorrected to show as a grey outline in the composite.
+    max_unresolved_fraction: float = 0.15,
 ) -> tuple[Image.Image, list[str]]:
     """Applies color decontamination strictly within the uncertain boundary region (0.05 < alpha < 0.95).
 
@@ -116,8 +123,20 @@ def decontaminate_foreground_edges(
         known_flag[resolved_y, resolved_x] = True
         to_resolve[resolved_y, resolved_x] = False
 
+    # Same defect as the outlier gate below, in the other direction: a single
+    # pixel the propagation could not reach within `max_search_distance`
+    # flagged the whole photograph. Some unreachable pixels are normal -- an
+    # isolated wisp of hair surrounded by background has no opaque neighbour to
+    # borrow colour from, and no search radius fixes that. What matters is
+    # whether a meaningful share of the band went unresolved, because that is
+    # when the band is genuinely wider than the search can cross and a grey
+    # outline survives into the composite.
     if np.any(to_resolve):
-        issues.append("EDGE_DECONTAMINATION_UNCERTAIN")
+        unresolved_fraction = float(
+            np.count_nonzero(to_resolve) / max(1, np.count_nonzero(uncertain_mask))
+        )
+        if unresolved_fraction > max_unresolved_fraction:
+            issues.append("EDGE_DECONTAMINATION_UNCERTAIN")
 
     decon_mask = uncertain_mask & (~to_resolve)
     if np.any(decon_mask):

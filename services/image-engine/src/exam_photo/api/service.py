@@ -4,6 +4,7 @@ import io
 import json
 import os
 import secrets
+import threading
 import zipfile
 from datetime import datetime, timezone
 from pathlib import Path
@@ -150,6 +151,12 @@ class ApiProcessingService:
         # Load existing manifests on startup
         self.registry.scan_manifests()
 
+        # The matting pipeline is expensive to build -- an onnxruntime session
+        # over a 940 MB graph -- and nothing about it varies per request, so it
+        # is built on first use and reused (DEC-062).
+        self._pipeline: Optional[RuleOrchestratedPipeline] = None
+        self._pipeline_lock = threading.Lock()
+
         # Read the examination catalogue once at startup.  It is 39 records of
         # roughly 10 KB, it changes only when the encoder is re-run, and every
         # picker request would otherwise re-read and re-validate the whole
@@ -243,6 +250,41 @@ class ApiProcessingService:
         except ImportError:
             return None
         return model_dir, sha
+
+    def _get_pipeline(self) -> RuleOrchestratedPipeline:
+        """The pipeline, built once for the life of the service.
+
+        It used to be constructed inside `process_job_sync`, so every request
+        built a fresh one -- and with it a fresh onnxruntime `InferenceSession`
+        over a 940 MB BiRefNet graph. The model was being loaded from disk for
+        every photograph.
+
+        Measured on one warm request before the change, the two matting stages
+        cost 13.9 s and 14.1 s, while the same `segment_subject` call measured
+        5.5 s standalone. The gap was session construction, paid twice per
+        photograph and attributed to inference by every timing we had -- which
+        is why the engine looked far slower in the service than on the bench.
+
+        Every constructor argument derives from settings, which do not change
+        while the process runs, so there is nothing per-request to vary. The
+        segmenters carry their own `RLock`, so sharing one instance across the
+        threadpool FastAPI runs sync endpoints on is what they were built for.
+        """
+        with self._pipeline_lock:
+            if self._pipeline is None:
+                face_model, face_sha = self._resolve_face_model()
+                segmenter_model, segmenter_sha = self._resolve_segmenter_model()
+                backend, birefnet_dir, birefnet_sha = self._resolve_matting_backend()
+                self._pipeline = RuleOrchestratedPipeline(
+                    face_model_path=face_model,
+                    segmenter_model_path=segmenter_model,
+                    face_expected_sha256=face_sha,
+                    segmenter_expected_sha256=segmenter_sha,
+                    matting_backend=backend,
+                    birefnet_model_dir=birefnet_dir,
+                    birefnet_expected_sha256=birefnet_sha,
+                )
+            return self._pipeline
 
     def _resolve_matting_backend(self) -> Tuple[str, Optional[Path], str]:
         """Resolve the subject segmentation backend for this service.
@@ -404,20 +446,8 @@ class ApiProcessingService:
         artifact_names = ["input.jpg", "rule.json"]
 
         try:
-            # 2. Instantiate pipeline using resolved models
-            face_model, face_sha = self._resolve_face_model()
-            segmenter_model, segmenter_sha = self._resolve_segmenter_model()
-
-            backend, birefnet_dir, birefnet_sha = self._resolve_matting_backend()
-            pipeline = RuleOrchestratedPipeline(
-                face_model_path=face_model,
-                segmenter_model_path=segmenter_model,
-                face_expected_sha256=face_sha,
-                segmenter_expected_sha256=segmenter_sha,
-                matting_backend=backend,
-                birefnet_model_dir=birefnet_dir,
-                birefnet_expected_sha256=birefnet_sha,
-            )
+            # 2. The pipeline, built once and reused (DEC-062).
+            pipeline = self._get_pipeline()
 
             job_dir = self.store.get_file_path(job_id, ".")
 
