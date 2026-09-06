@@ -41,7 +41,7 @@ from exam_photo.api.contracts import (
     RuleValidationResponse,
     UnavailableExamResponse,
 )
-from exam_photo.api.jobs import KIT_ID_REGEX
+from exam_photo.api.jobs import KIT_ID_REGEX, ProcessingJobRecord
 from exam_photo.api.service import (
     ApiProcessingService,
     RequirementNotFoundError,
@@ -456,6 +456,21 @@ def _gate_or_409(exam_id: str, requirement: Any) -> None:
         ) from err
 
 
+def _job_or_expired(job_id: str) -> Optional[ProcessingJobRecord]:
+    """Fetch a job, erasing it first if its retention deadline has passed.
+
+    Every job route reads through here, so retention is bounded by the
+    deadline itself and not by when the sweeper next runs (DEC-066). An
+    expired job comes back marked `DELETED`, which each route's existing
+    guard already refuses -- so this adds no new status to the wire and the
+    routes keep their own wording for what could not be found.
+    """
+    record = service.registry.get_job(job_id)
+    if record is not None:
+        service.expire_job_if_due(record)
+    return record
+
+
 def _validated_kit_id(kit_id: Optional[str]) -> Optional[str]:
     if kit_id is None or kit_id == "":
         return None
@@ -653,7 +668,7 @@ def assemble_requirement_document(
     if not JOB_ID_REGEX.match(job_id):
         raise HTTPException(status_code=400, detail="Invalid job ID format")
 
-    record = service.registry.get_job(job_id)
+    record = _job_or_expired(job_id)
     if not record or record.status == ApiJobStatus.DELETED:
         raise HTTPException(status_code=404, detail="Document job not found")
     if not record.document_sources:
@@ -755,7 +770,7 @@ def get_job_status(job_id: str) -> JobStatusResponse:
     if not JOB_ID_REGEX.match(job_id):
         raise HTTPException(status_code=400, detail="Invalid job ID format")
 
-    record = service.registry.get_job(job_id)
+    record = _job_or_expired(job_id)
     if not record:
         raise HTTPException(status_code=404, detail="Job not found")
 
@@ -799,7 +814,7 @@ def get_job_report(job_id: str) -> Response:
     if not JOB_ID_REGEX.match(job_id):
         raise HTTPException(status_code=400, detail="Invalid job ID format")
 
-    record = service.registry.get_job(job_id)
+    record = _job_or_expired(job_id)
     if not record or record.status == ApiJobStatus.DELETED:
         raise HTTPException(status_code=404, detail="Job or report not found")
 
@@ -821,7 +836,7 @@ def get_job_preview(job_id: str) -> Response:
     if not JOB_ID_REGEX.match(job_id):
         raise HTTPException(status_code=400, detail="Invalid job ID format")
 
-    record = service.registry.get_job(job_id)
+    record = _job_or_expired(job_id)
     if not record or record.status == ApiJobStatus.DELETED:
         raise HTTPException(status_code=404, detail="Job or preview not found")
 
@@ -854,7 +869,7 @@ def get_job_output(job_id: str) -> Response:
     if not JOB_ID_REGEX.match(job_id):
         raise HTTPException(status_code=400, detail="Invalid job ID format")
 
-    record = service.registry.get_job(job_id)
+    record = _job_or_expired(job_id)
     if not record or record.status == ApiJobStatus.DELETED:
         raise HTTPException(status_code=404, detail="Job or output not found")
 
@@ -899,7 +914,7 @@ def delete_job(job_id: str) -> dict[str, str]:
     if not JOB_ID_REGEX.match(job_id):
         raise HTTPException(status_code=400, detail="Invalid job ID format")
 
-    record = service.registry.get_job(job_id)
+    record = _job_or_expired(job_id)
     if not record or record.status == ApiJobStatus.DELETED:
         raise HTTPException(status_code=404, detail="Job not found or already deleted")
 

@@ -8,7 +8,6 @@ import threading
 import time
 import zipfile
 from contextlib import contextmanager
-from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Iterator, Optional, Tuple
 
@@ -642,6 +641,33 @@ class ApiProcessingService:
         self.registry.update_job(record)
         return record
 
+    def expire_job_if_due(self, record: ProcessingJobRecord) -> bool:
+        """Erase a job whose retention deadline has passed, on the way to it.
+
+        The sweeper (DEC-064) runs on a timer, so between an artifact
+        expiring and the next sweep there was a window -- up to
+        `cleanup_interval_seconds`, five minutes by default -- in which an
+        expired file was still served in full. A deletion promise measured
+        in minutes cannot carry a five-minute hole of that kind, so expiry
+        is enforced on the read path as well and the timer becomes the
+        backstop for jobs nobody touches again (DEC-066).
+
+        Marking the record `DELETED` rather than reporting expiry separately
+        is deliberate: every route already refuses a deleted job, so this
+        needs no new status on the wire and no change to the shared contract.
+        """
+        if record.status == ApiJobStatus.DELETED or not record.is_expired():
+            return False
+        try:
+            self.store.delete_job_directory(record.job_id)
+        except OSError:
+            # The sweeper in this or another worker may have removed the
+            # directory already (DEC-064). The record is still marked below:
+            # the caller must be refused either way.
+            pass
+        self.registry.delete_job(record.job_id)
+        return True
+
     def check_upload_limit(self, size_bytes: int) -> None:
         """Raise an error if the uploaded content size exceeds setting limits."""
         if size_bytes > self.settings.max_upload_bytes:
@@ -1250,11 +1276,10 @@ class ApiProcessingService:
     def cleanup_expired_jobs(self) -> int:
         """Scan all manifests on disk and clean up expired job artifacts."""
         records = self.registry.scan_manifests()
-        now_str = datetime.now(timezone.utc).isoformat()
         deleted_count = 0
 
         for record in records:
-            if record.status != ApiJobStatus.DELETED and record.expires_at < now_str:
+            if record.status != ApiJobStatus.DELETED and record.is_expired():
                 try:
                     self.store.delete_job_directory(record.job_id)
                 except OSError:

@@ -29,6 +29,10 @@ env/
 # Local configuration & secrets
 .env
 .env.*
+# ...but the deployment template is documentation, not configuration. It holds
+# only defaults and empty placeholders, and `.env.*` had silently kept it out
+# of the repository while deploy/README.md and DEC-065 both pointed at it.
+!deploy/.env.example
 .secrets
 secrets/
 *.pem

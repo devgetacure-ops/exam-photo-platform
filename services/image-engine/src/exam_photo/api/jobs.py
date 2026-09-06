@@ -86,6 +86,22 @@ class ProcessingJobRecord(BaseModel):
     preview_width: Optional[int] = None
     preview_height: Optional[int] = None
 
+    def is_expired(self, now: Optional[datetime] = None) -> bool:
+        """Whether this job has passed its retention deadline (DEC-066).
+
+        An `expires_at` that cannot be parsed reads as **expired** rather
+        than as never-expiring. A corrupt manifest must not be the one path
+        that grants a candidate's photograph unlimited retention, and there
+        is no safe reading of a retention deadline nobody can decode.
+        """
+        try:
+            expires = datetime.fromisoformat(self.expires_at)
+        except ValueError:
+            return True
+        if expires.tzinfo is None:
+            expires = expires.replace(tzinfo=timezone.utc)
+        return (now or datetime.now(timezone.utc)) >= expires
+
 
 class JobRegistry:
     """Manages job records by storing them in memory and persisting job.json manifests."""
@@ -163,7 +179,10 @@ class JobRegistry:
         Reads from disk before filtering, so a kit assembled by an earlier
         process -- or before a restart -- is still gatherable. Deleted jobs are
         excluded: a candidate who removed a deliverable did so deliberately and
-        it must not reappear in their package.
+        it must not reappear in their package. **Expired jobs are excluded on
+        the same footing** (DEC-066): a package assembled between an artifact
+        expiring and the sweeper reaching it would otherwise hand back a file
+        the retention promise says is already gone.
         """
         if not KIT_ID_REGEX.match(kit_id):
             return []
@@ -171,7 +190,9 @@ class JobRegistry:
         matching = [
             record
             for record in self._cache.values()
-            if record.kit_id == kit_id and record.status != ApiJobStatus.DELETED
+            if record.kit_id == kit_id
+            and record.status != ApiJobStatus.DELETED
+            and not record.is_expired()
         ]
         return sorted(matching, key=lambda record: record.created_at)
 

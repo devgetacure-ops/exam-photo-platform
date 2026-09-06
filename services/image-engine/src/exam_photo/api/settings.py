@@ -12,7 +12,13 @@ class ApiSettings(BaseModel):
 
     artifact_root: Path = Field(default_factory=lambda: Path(".tmp/artifacts"))
     max_upload_bytes: int = Field(default=5 * 1024 * 1024)  # 5 MB
-    job_ttl_seconds: int = Field(default=3600)  # 1 hour
+    # DEC-066: thirty minutes, and it is a published promise rather than a
+    # convenience default. A candidate who pays and does not download inside
+    # the window must prepare the file again; that cost was accepted against
+    # holding a face photograph and a signature for twice as long. Access ends
+    # at exactly this deadline -- `ProcessingJobRecord.is_expired` is checked
+    # on the read path -- and the sweeper erases the bytes behind it.
+    job_ttl_seconds: int = Field(default=1800)  # 30 minutes
 
     # Where the encoded examination catalogue is read from (DEC-055).  Relative
     # paths resolve against the repository root, the same way the model paths

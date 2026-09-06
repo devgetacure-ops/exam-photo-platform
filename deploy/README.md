@@ -118,11 +118,10 @@ serving container has no use for torch.
       Confirm with `curl -s localhost/ready | grep operator_surface` — it must
       say `authenticated`.
 - [ ] `SITE_ADDRESS` set to the real hostname, so Caddy gets a certificate.
-- [ ] **`EXAM_PHOTO_JOB_TTL_SECONDS` settled.** It is 3600 and
-      `docs/UI_ENGINE_HANDOFF.md` contemplates a 30-minute deletion guarantee,
-      which is half that. The sweeper makes either real; the published claim
-      and this number must match. DEC-058 records that this is a privacy
-      decision taken on its own evidence.
+- [ ] **`EXAM_PHOTO_JOB_TTL_SECONDS` left at 1800.** Thirty minutes is
+      settled (DEC-066) and published as a deletion guarantee, so raising it
+      makes the product's own claim false. Access ends at the deadline itself,
+      not at the next sweep.
 - [ ] `EXAM_PHOTO_PURCHASE_GATE_ENABLED` **not** set to false. False serves
       clean files to anyone holding a job id.
 - [ ] Backups, if artifacts matter to you. They are meant to expire, so

@@ -305,7 +305,7 @@ EXAM_PHOTO_ALLOWED_ORIGINS=https://your-domain      # or serve same-origin behin
 EXAM_PHOTO_OPERATOR_TOKEN=<long random secret>      # gates /v1/process, /v1/rules/validate, /v1/cleanup-expired, /test
 EXAM_PHOTO_MAX_CONCURRENT_PREPARATIONS=<~core count>
 EXAM_PHOTO_CLEANUP_INTERVAL_SECONDS=300
-EXAM_PHOTO_JOB_TTL_SECONDS=<settle this first, see open risk 6>
+EXAM_PHOTO_JOB_TTL_SECONDS=1800                     # DEC-066: a published promise
 ```
 
 Point the load balancer's readiness probe at **`/ready`**, not `/health`.
@@ -492,13 +492,22 @@ defects the reference set could not.
    expired-artifact sweeper now actually runs, so retention is enforced rather
    than merely asserted. **Still outstanding: TLS** (assumed terminated at the
    proxy — make sure it is), edge abuse filtering, and the question below.
-6. **`job_ttl_seconds` is 3600 and the interface contemplates 30 minutes.**
-   The sweeper (DEC-064) makes either number real; which it should be is
-   unsettled. DEC-058 records that changing it is a privacy decision to be
-   taken on its own evidence and not a convenience knob, and
-   `docs/UI_ENGINE_HANDOFF.md` lists a *30-minute* deletion guarantee as
-   outstanding — half the current value. **Settle this before publishing any
-   deletion claim**, because the claim and the setting must match.
+6. ~~**`job_ttl_seconds` is 3600 and the interface contemplates 30
+   minutes.**~~ **Settled at thirty minutes (DEC-066).** `job_ttl_seconds`
+   defaults to 1800 and the guarantee may be published. Settling it exposed
+   the real defect, which neither DEC-058 nor DEC-064 had noticed: **expiry
+   was enforced only by the sweeper**, so nothing on the read path consulted
+   `expires_at` and an expired -- and *paid* -- job returned **200 with the
+   clean file** for up to `cleanup_interval_seconds` past its deadline.
+   Access now ends at the deadline itself: `is_expired()` is checked on all
+   six job routes, which erase the job on the way to refusing it, expired
+   jobs leave their kit, and the sweeper is the backstop for jobs nobody
+   reads again. One product question is left open and named in
+   `docs/UI_ENGINE_HANDOFF.md`: **a candidate who pays and returns after
+   thirty minutes has bought a file that no longer exists** -- refund, free
+   re-preparation, or a warning before checkout is a product decision, and
+   it should be made before launch rather than by the first candidate it
+   happens to.
 7. **Invariants unwired**, and the remaining **M22 matte defect**: a detached
    hair fragment on photo 17 (a disconnected mask region). Its soft/smudged
    hair-edge half (18, 19, and the non-fragment part of 17) is fixed --
