@@ -513,6 +513,18 @@ defects the reference set could not.
    hair-edge half (18, 19, and the non-fragment part of 17) is fixed --
    DEC-033's trusted-alpha path was skipping an anti-halo contrast correction
    the coarse-mask path already had.
+8. **`apps/web/public/examples/portrait-*.jpg` are committed, and their
+   provenance is unconfirmed.** They are photorealistic portraits of an
+   identifiable-looking person. They were untracked when this was first
+   noticed; they are now **in history**, added by `27bf5a3` on this branch,
+   which is a change of kind rather than of degree -- an untracked file is
+   deleted, a committed one is rewritten out of history. AGENTS.md forbids
+   committing real candidate photographs and this file records that
+   reject-gallery examples must be synthetic. `docs/UI_ENGINE_HANDOFF.md`
+   states they are fictional guidance assets and not customer uploads, which
+   is an answer but not evidence of one. **Confirm how they were produced
+   before this branch merges**, because the cost of being wrong rises the
+   moment it does.
 
 ## Verifying
 
