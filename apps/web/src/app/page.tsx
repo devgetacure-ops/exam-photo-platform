@@ -1,60 +1,121 @@
+import Image from "next/image";
+import Link from "next/link";
 import { ExamSearch } from "../components/exam-search";
+import { SiteHeader } from "../components/site-header";
 import { loadSearchIndex } from "../lib/catalogue.server";
 
-/**
- * The landing page is the search box.
- *
- * A candidate arrives with one thing in mind — the name of their examination —
- * and one job to do. An earlier version put a hero, a three-card feature grid
- * and a pricing block above and around that, which meant scrolling past three
- * screens of pitch before anything could be typed. Nobody came here to read
- * about us.
- *
- * So: the search field is the first and largest thing, focused on arrival, and
- * the only supporting text is the two facts that decide whether to bother —
- * how many exams we cover and what it costs.
- */
-
 export default async function Home() {
-  const { exams, unavailable } = await loadSearchIndex();
-
-  return (
-    <main className="flex min-h-dvh flex-col">
-      <header className="flex items-center justify-between px-8 py-5">
-        <span className="font-semibold tracking-tight">
-          Upload<span className="text-accent">Ready</span>
-        </span>
-        <span className="spec text-xs text-muted">
-          ₹4 a file · ₹8 the set
-        </span>
-      </header>
-
-      <div className="flex flex-1 items-center justify-center px-6 pb-32">
-        <div className="w-full max-w-2xl">
-          <h1 className="text-3xl font-semibold tracking-tight sm:text-[2.6rem] sm:leading-[1.1]">
-            Which exam are you applying for?
-          </h1>
-          <p className="mt-3 text-ink-soft">
-            We prepare every file it asks for, to that exam&rsquo;s own published
-            rules.
-          </p>
-
-          <div className="mt-7">
-            <ExamSearch exams={exams} unavailable={unavailable} autoFocus />
-          </div>
-
-          <p className="mt-4 text-sm text-muted">
-            {exams.length} exams covered. Full names and short forms both work —
-            try <span className="spec text-ink-soft">CAT</span>,{" "}
-            <span className="spec text-ink-soft">IBPS PO</span>,{" "}
-            <span className="spec text-ink-soft">RBI Assistant</span>.
-          </p>
-        </div>
-      </div>
-
-      <footer className="px-8 py-6 text-xs text-muted">
-        You see every file before you pay. Uploads deleted after 30 minutes.
-      </footer>
-    </main>
-  );
+    const { exams, unavailable } = await loadSearchIndex();
+    const popular = [
+        { label: "IBPS PO", exam: exams.find((e) => e.name.includes("IBPS CRP PO")) },
+        { label: "NEET UG", exam: exams.find((e) => e.name.includes("NEET")) },
+        { label: "GATE", exam: exams.find((e) => e.name.includes("GATE")) },
+    ].filter((item) => item.exam);
+    return (
+        <main className="landing">
+            <SiteHeader />
+            <section className="landing-hero">
+                <div className="arrival-copy">
+                    <p className="eyebrow">
+                        Less file fixing. More getting ahead.
+                    </p>
+                    <h1>
+                        Your exam is a big deal.
+                        <br />
+                        <span>Your uploads shouldn’t be.</span>
+                    </h1>
+                    <p className="hero-description">
+                        Photograph, signature, documents. Get the files your
+                        application needs, prepared to your exam’s stored rules.
+                    </p>
+                    <div className="search-section">
+                        <p className="search-label">
+                            Which exam are you applying for?
+                        </p>
+                        <ExamSearch exams={exams} unavailable={unavailable} />
+                        <div className="popular-exams">
+                            <span>Popular</span>
+                        {popular.map(({ label, exam }) => (
+                            <Link key={exam!.id} href={`/exam/${exam!.id}`}>
+                                {label}
+                                </Link>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="landing-assurance">
+                        <span>₹4 a file · ₹8 the kit</span>
+                        <span>No account needed</span>
+                        <span>{exams.length} exams covered</span>
+                    </div>
+                </div>
+                <div className="landing-visual">
+                    <div className="sample-label">
+                        One less thing on your list.
+                    </div>
+                    <Image
+                        width={1086}
+                        height={1448}
+                        priority
+                        src="/examples/portrait-studio.png"
+                        alt="Fictional example of a clearly framed application photograph"
+                        className="landing-portrait"
+                    />
+                    <div className="sample-spec">
+                        <span>Your photograph</span>
+                        <strong>Cropped. Sized. Prepared.</strong>
+                    </div>
+                    <p>Example only · Your exam sets the specifications</p>
+                </div>
+            </section>
+            <section className="how-section" id="how-it-works">
+                <div>
+                    <p className="eyebrow">A small task, taken care of.</p>
+                    <h2>
+                        From “what size?”
+                        <br />
+                        to ready for your application.
+                    </h2>
+                </div>
+                <ol>
+                    <li>
+                        <span>01</span>
+                        <div>
+                            <h3>Find your exam</h3>
+                            <p>
+                                See the files it asks for, with visual guidance
+                                and sources.
+                            </p>
+                        </div>
+                    </li>
+                    <li>
+                        <span>02</span>
+                        <div>
+                            <h3>Add your files</h3>
+                            <p>
+                                We handle the sizing and formatting. Review
+                                anything that needs attention.
+                            </p>
+                        </div>
+                    </li>
+                    <li>
+                        <span>03</span>
+                        <div>
+                            <h3>Review before you buy</h3>
+                            <p>
+                                Choose an individual file or your complete
+                                prepared kit.
+                            </p>
+                        </div>
+                    </li>
+                </ol>
+            </section>
+            <footer className="site-footer">
+                <span>UploadReady · Made for the application ahead.</span>
+                <span>
+                    Prepared to stored rules. Final acceptance is decided by
+                    your exam authority.
+                </span>
+            </footer>
+        </main>
+    );
 }

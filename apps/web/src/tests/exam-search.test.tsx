@@ -60,6 +60,11 @@ function type(value: string) {
 }
 
 describe("exam picker search", () => {
+  test("abbreviations can skip intervening catalogue words", () => {
+    render(<ExamSearch exams={[{ ...exams[0], name: "IBPS CRP PO/MT-XVI", aliases: [] }]} unavailable={[]} />);
+    type("IBPS PO");
+    expect(screen.getByRole("option").textContent).toContain("IBPS CRP PO/MT-XVI");
+  });
   beforeEach(() => {
     push.mockClear();
   });

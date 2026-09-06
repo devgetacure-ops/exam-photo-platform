@@ -2,7 +2,7 @@
 
 import { useCallback, useSyncExternalStore } from "react";
 
-import { getKit, recordPreparation, type KitEntry } from "../../lib/kit-state";
+import { getKit, recordPreparation, forgetRequirement, type KitEntry } from "../../lib/kit-state";
 import type { PrepareRequirementResponse } from "../../lib/types";
 
 /**
@@ -69,5 +69,10 @@ export function useKit(examId: string) {
     [examId]
   );
 
-  return { entries, record };
+  const forget = useCallback((requirementId: string) => {
+    const kit = forgetRequirement(examId, requirementId);
+    cache.set(examId, { ...kit?.requirements });
+    listeners.forEach(notify => notify());
+  }, [examId]);
+  return { entries, record, forget };
 }

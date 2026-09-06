@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { loadExam, loadExams } from "../../../lib/catalogue.server";
 import { liveCaptureStance } from "../../../lib/appearance-rules";
+import { SiteHeader } from "../../../components/site-header";
 import { KitWorkspace } from "../../../components/exam/kit-workspace";
 
 /**
@@ -59,28 +59,7 @@ export default async function ExamPage({
   const liveCapture = liveCaptureStance(exam.image_requirements, preparesPhotograph);
 
   return (
-    <main className="flex h-dvh flex-col">
-      <header className="flex shrink-0 items-center justify-between border-b border-line px-6 py-3">
-        <div className="flex items-baseline gap-3">
-          <Link href="/" className="font-semibold tracking-tight">
-            Upload<span className="text-accent">Ready</span>
-          </Link>
-          <span className="text-line-strong">/</span>
-          <span className="text-sm font-medium">{exam.exam_name}</span>
-          <span className="text-xs text-muted">{exam.conducting_body}</span>
-        </div>
-        <div className="flex items-center gap-4">
-          <Link
-            href={`/exam/${exam.exam_id}/rules`}
-            className="text-sm text-ink-soft hover:text-ink"
-          >
-            Rules &amp; sources
-          </Link>
-          <Link href="/" className="text-sm text-ink-soft hover:text-ink">
-            Change exam
-          </Link>
-        </div>
-      </header>
+    <main className="exam-page"><SiteHeader mobileTitle={`${exam.exam_name} upload kit`}/>
 
       {/*
         Live capture is the one thing that must be said before the candidate
@@ -89,18 +68,16 @@ export default async function ExamPage({
         upload" on the 16 exams that want both.
       */}
       {liveCapture === "additional" && (
-        <p className="shrink-0 border-b border-self-line bg-self-soft px-6 py-2 text-sm text-ink-soft">
-          <span className="font-medium text-self">Note:</span> this exam also
-          photographs you at the centre — that is{" "}
-          <span className="text-ink">in addition to</span> the photo you upload
-          here, not instead of it.
-        </p>
+        <details className="live-capture-note">
+          <summary>Centre photograph also required</summary>
+          <p>This exam also photographs you at the centre. That is in addition to the photo you upload here, not instead of it.</p>
+        </details>
       )}
       {liveCapture === "instead" && (
-        <p className="shrink-0 border-b border-self-line bg-self-soft px-6 py-2 text-sm text-ink-soft">
-          <span className="font-medium text-self">Note:</span> this exam
-          photographs you itself, so there is no photo to upload.
-        </p>
+        <details className="live-capture-note">
+          <summary>The exam takes this photograph</summary>
+          <p>This exam photographs you itself, so there is no photo to upload.</p>
+        </details>
       )}
 
       <KitWorkspace exam={exam} />

@@ -1,6 +1,6 @@
 "use client";
 
-import { jobOutputUrl } from "../../lib/api-client";
+import { getApiBaseUrl } from "../../lib/api-client";
 import type { PrepareRequirementResponse } from "../../lib/types";
 import { formatBytes } from "../../lib/spec-format";
 
@@ -76,6 +76,7 @@ export function OutcomeResult({ result, requirementName, onReplace }: Props) {
 
   const substantive = result.findings.filter((finding) => !isRoutine(finding));
   const routine = result.findings.filter(isRoutine);
+  const expiry = result.expires_at ? new Date(result.expires_at) : null;
   // The API's outcome is authoritative about whether a file was produced; what
   // counts as worth the candidate's attention is a presentation judgement, and
   // routine normalisation is not it.
@@ -151,11 +152,13 @@ export function OutcomeResult({ result, requirementName, onReplace }: Props) {
         protection that actually works — blocking right-click stops nobody and
         would make a page selling precision feel cheap.
       */}
-      {result.output_url && (
+      {result.preview_url && result.preview_watermarked === true && (
         <figure className="mt-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={jobOutputUrl(result.job_id)}
+            src={new URL(result.preview_url, getApiBaseUrl()).toString()}
+            onContextMenu={(event) => event.preventDefault()}
+            draggable={false}
             alt={`Prepared ${requirementName}`}
             className="max-h-64 rounded border border-line bg-surface object-contain"
           />
@@ -163,6 +166,16 @@ export function OutcomeResult({ result, requirementName, onReplace }: Props) {
             Preview — watermarked until you buy it.
           </figcaption>
         </figure>
+      )}
+
+      {result.output_url && !(result.preview_url && result.preview_watermarked === true) && (
+        <p className="mt-3 text-sm text-ink-soft">Your file was prepared. A protected preview is not available yet.</p>
+      )}
+
+      {expiry && !Number.isNaN(expiry.getTime()) && (
+        <p className="mt-3 text-xs text-muted">
+          Scheduled for deletion at <time dateTime={result.expires_at ?? undefined} suppressHydrationWarning>{expiry.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</time>.
+        </p>
       )}
 
       {hasFindings && (

@@ -134,6 +134,14 @@ describe("preparing one requirement", () => {
     await waitFor(() => expect(screen.getByRole("alert")).toBeTruthy());
   });
 
+  test("engine setup details are not exposed to candidates", async () => {
+    prepareRequirement.mockRejectedValue(new Error("Run download_birefnet.py to install BiRefNet weights"));
+    renderUpload();
+    drop(image());
+    await waitFor(() => expect(screen.getByRole("alert").textContent).toMatch(/temporarily unavailable/i));
+    expect(screen.queryByText(/download_birefnet/i)).toBeNull();
+  });
+
   test("a successful preparation is recorded in the kit (DEC-058)", async () => {
     prepareRequirement.mockResolvedValue(prepared());
     renderUpload();
@@ -168,10 +176,15 @@ describe("preparing one requirement", () => {
 });
 
 describe("the outcome view", () => {
+  test("clean output is never exposed as an unpaid preview", () => {
+    render(<OutcomeResult result={prepared({ output_url: "/v1/jobs/job_1/output" })} requirementName="Signature" onReplace={() => {}} />);
+    expect(screen.queryByRole("img")).toBeNull();
+    expect(screen.getByText(/protected preview is not available/i)).toBeTruthy();
+  });
   test("the preview is labelled as watermarked until purchase", () => {
     render(
       <OutcomeResult
-        result={prepared({ output_url: "/v1/jobs/job_1/output" })}
+        result={prepared({ preview_url: "/v1/jobs/job_1/preview", preview_watermarked: true })}
         requirementName="Candidate signature"
         onReplace={() => {}}
       />

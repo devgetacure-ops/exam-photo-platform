@@ -69,9 +69,17 @@ function rateOne(haystack: string, q: string): number {
 
 /** Best score across the spaced and compact spellings of both sides. */
 function rate(raw: string, query: string): number {
+  const words = normalise(raw).split(" ");
+  const tokens = normalise(query).split(" ");
+  let position = -1;
+  const orderedMatch = tokens.length > 1 && tokens.every(token => {
+    position = words.findIndex((word, index) => index > position && word.startsWith(token));
+    return position >= 0;
+  });
   return Math.max(
     rateOne(normalise(raw), normalise(query)),
-    rateOne(compact(raw), compact(query))
+    rateOne(compact(raw), compact(query)),
+    orderedMatch ? 45 : 0
   );
 }
 
@@ -143,7 +151,7 @@ export function ExamSearch({ exams, unavailable, autoFocus = false }: Props) {
   const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "ArrowDown") {
       event.preventDefault();
-      setActive((i) => Math.min(i + 1, navigable.length - 1));
+      setActive((i) => Math.max(0, Math.min(i + 1, navigable.length - 1)));
     } else if (event.key === "ArrowUp") {
       event.preventDefault();
       setActive((i) => Math.max(i - 1, 0));
@@ -191,6 +199,7 @@ export function ExamSearch({ exams, unavailable, autoFocus = false }: Props) {
           aria-label="Search for your examination"
           aria-autocomplete="list"
           aria-controls={listId}
+          aria-activedescendant={available[active] ? `${listId}-${active}` : undefined}
           aria-expanded={hasResults}
           role="combobox"
           autoComplete="off"
@@ -225,16 +234,14 @@ export function ExamSearch({ exams, unavailable, autoFocus = false }: Props) {
             <p className="px-4 py-6 text-sm text-ink-soft">
               Nothing matches <span className="font-medium text-ink">“{query}”</span>.
               We cover 39 examinations so far — if yours is missing,{" "}
-              <a href="/coverage" className="text-accent underline underline-offset-2">
-                tell us which one
-              </a>{" "}
-              and we will research it.
+              try its full name or a different abbreviation.
             </p>
           )}
 
           {available.map((row, index) => (
             <button
               key={row.entry.id}
+              id={`${listId}-${index}`}
               type="button"
               role="option"
               aria-selected={index === active}

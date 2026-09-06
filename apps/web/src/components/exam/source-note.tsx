@@ -1,4 +1,5 @@
 import type { ExamDetail } from "../../lib/types";
+import { ReportIssue } from "./report-issue";
 
 /**
  * Where this exam's rules came from, stated honestly.
@@ -128,14 +129,7 @@ export function SourceNote({
       )}
 
       <p className="mt-5 text-sm">
-        <a
-          href={`mailto:corrections@example.invalid?subject=${encodeURIComponent(
-            `Correction: ${exam.exam_name}`
-          )}`}
-          className="text-accent underline underline-offset-2"
-        >
-          Something here look wrong?
-        </a>{" "}
+        <ReportIssue examName={exam.exam_name} ruleId={exam.rule_id}/>{" "}
         <span className="text-muted">
           Tell us and we will re-check it against the notification. Rules change
           between cycles and we would rather hear it from you than have you find

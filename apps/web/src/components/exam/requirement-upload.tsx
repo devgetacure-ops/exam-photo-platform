@@ -12,6 +12,7 @@ import {
   type RequirementNotServed,
 } from "../../lib/types";
 import { OutcomeResult } from "./outcome-result";
+import { PreparationLoader } from "./preparation-loader";
 
 /**
  * Preparing one requirement.
@@ -56,6 +57,17 @@ const PROMPT: Record<string, string> = {
   identity_document: "Add your identity document",
 };
 
+function candidateError(error: unknown): string {
+  const detail = error instanceof Error ? error.message.toLowerCase() : "";
+  if (detail.includes("birefnet") || detail.includes("download_birefnet")) {
+    return "Photo preparation is temporarily unavailable. Please try again shortly.";
+  }
+  if (detail.includes("not reachable") || detail.includes("failed to fetch") || detail.includes("network")) {
+    return "We can’t reach file preparation right now. Please try again in a moment.";
+  }
+  return "We couldn’t prepare that file. Please try again.";
+}
+
 export function RequirementUpload({
   examId,
   examName,
@@ -69,10 +81,20 @@ export function RequirementUpload({
   const [message, setMessage] = useState<string | null>(null);
   const [dragging, setDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const { record } = useKit(examId);
+  const { record, forget } = useKit(examId);
 
   const submit = useCallback(
     async (file: File) => {
+      if (file.size > 5 * 1024 * 1024) {
+        setPhase("error");
+        setMessage("Choose a file smaller than 5 MB.");
+        return;
+      }
+      if (file.type === "application/pdf" && !["certificate_scan", "identity_document"].includes(requirementType)) {
+        setPhase("error");
+        setMessage("Choose a JPEG, PNG or WebP image for this requirement.");
+        return;
+      }
       // A PDF is a legitimate certificate upload, so the image-only check runs
       // for the requirements that genuinely take an image.
       if (file.type !== "application/pdf") {
@@ -109,12 +131,10 @@ export function RequirementUpload({
           return;
         }
         setPhase("error");
-        setMessage(
-          error instanceof Error ? error.message : "Something went wrong."
-        );
+        setMessage(candidateError(error));
       }
     },
-    [examId, examName, requirementId, record]
+    [examId, examName, requirementId, requirementType, record]
   );
 
   const onDrop = (event: React.DragEvent) => {
@@ -125,25 +145,8 @@ export function RequirementUpload({
   };
 
   if (phase === "working") {
-    return (
-      <div
-        className="mt-4 rounded-lg border border-line bg-sunk p-5 text-center"
-        role="status"
-        aria-live="polite"
-      >
-        <div className="mx-auto flex w-fit items-center gap-3">
-          <span
-            aria-hidden="true"
-            className="size-4 animate-spin rounded-full border-2 border-line-strong border-t-accent"
-          />
-          <span className="text-sm font-medium">Preparing your file…</span>
-        </div>
-        <p className="mt-2 text-sm text-muted">
-          This takes about ten seconds. We are cropping, sizing and compressing
-          it to {examName}&rsquo;s specification.
-        </p>
-      </div>
-    );
+    return <PreparationLoader />;
+
   }
 
   if (phase === "refused" && refusal) {
@@ -168,6 +171,7 @@ export function RequirementUpload({
         result={result}
         requirementName={requirementName}
         onReplace={() => {
+          forget(requirementId);
           setResult(null);
           setPhase("idle");
         }}
@@ -176,7 +180,7 @@ export function RequirementUpload({
   }
 
   return (
-    <div className="mt-4">
+    <div className="requirement-upload-root mt-4">
       <div
         onDragOver={(event) => {
           event.preventDefault();
@@ -191,17 +195,17 @@ export function RequirementUpload({
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
-          className="text-sm font-medium text-accent underline underline-offset-2"
+          className="primary-button upload-button"
         >
           {PROMPT[requirementType] ?? "Add your file"}
         </button>
         <p className="mt-1 text-sm text-muted">
-          or drop it here — JPEG, PNG or PDF, up to 5&nbsp;MB
+          or drop it here — JPEG, PNG, WebP{["certificate_scan", "identity_document"].includes(requirementType) ? " or PDF" : ""}, up to 5&nbsp;MB
         </p>
         <input
           ref={inputRef}
           type="file"
-          accept={ACCEPT}
+          accept={["certificate_scan", "identity_document"].includes(requirementType) ? ACCEPT : "image/jpeg,image/png,image/webp"}
           className="sr-only"
           aria-label={`Upload for ${requirementName}`}
           onChange={(event) => {
@@ -231,8 +235,7 @@ export function RequirementUpload({
       )}
 
       <p className="mt-2 text-xs text-muted">
-        You see the finished file before you pay. Everything you upload is
-        deleted after 30 minutes.
+        No account needed. Review the result before you pay.
       </p>
     </div>
   );

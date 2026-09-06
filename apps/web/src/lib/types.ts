@@ -209,6 +209,9 @@ export type PreparationOutcome =
   | "not_produced";
 
 export interface PrepareRequirementResponse {
+  /** Optional secure preview contract. Never substitute the clean output URL. */
+  preview_url?: string | null;
+  preview_watermarked?: boolean;
   job_id: string;
   kit_id?: string | null;
   exam_id: string;
