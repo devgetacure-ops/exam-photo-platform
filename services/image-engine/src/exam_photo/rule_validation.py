@@ -28,6 +28,43 @@ def format_field_path(loc: tuple[Any, ...]) -> str:
     return "".join(path)
 
 
+#: Where the canonical JSON Schema lives, relative to a repository root.
+_SCHEMA_RELATIVE = os.path.join(
+    "packages", "exam-rules", "schema", "exam-rule.schema.json"
+)
+
+
+def _canonical_schema_path() -> str:
+    """Locate the canonical JSON Schema, in a checkout or an installed copy.
+
+    The original resolution walked four directories up from ``__file__``,
+    which lands on the repository root only when the package is imported from
+    the source tree. **Once the package is installed** -- a wheel, a container,
+    anything with a real ``site-packages`` -- the same walk lands in the
+    interpreter's ``lib`` grandparent and the schema is never found, so every
+    rule fails validation with ``RULE_VALIDATION_SCHEMA_UNAVAILABLE``.
+
+    So the repository root is honoured first, the same way the model assets and
+    the catalogue already resolve, and the relative walk stays as the fallback
+    for a plain checkout.
+    """
+    explicit = os.environ.get("EXAM_PHOTO_RULE_SCHEMA_PATH")
+    if explicit:
+        return os.path.abspath(explicit)
+
+    repo_root = os.environ.get("EXAM_PHOTO_REPO_ROOT")
+    if repo_root:
+        candidate = os.path.abspath(os.path.join(repo_root, _SCHEMA_RELATIVE))
+        if os.path.exists(candidate):
+            return candidate
+
+    return os.path.abspath(
+        os.path.join(
+            os.path.dirname(__file__), "..", "..", "..", "..", _SCHEMA_RELATIVE
+        )
+    )
+
+
 def validate_exam_rule(rule_dict: Dict[str, Any]) -> List[ValidationErrorModel]:
     """Validates an examination rule dictionary against canonical constraints.
 
@@ -36,19 +73,7 @@ def validate_exam_rule(rule_dict: Dict[str, Any]) -> List[ValidationErrorModel]:
     errors: List[ValidationErrorModel] = []
 
     # 1. Validate against the canonical JSON Schema
-    schema_path = os.path.abspath(
-        os.path.join(
-            os.path.dirname(__file__),
-            "..",
-            "..",
-            "..",
-            "..",
-            "packages",
-            "exam-rules",
-            "schema",
-            "exam-rule.schema.json",
-        )
-    )
+    schema_path = _canonical_schema_path()
 
     if os.path.exists(schema_path):
         try:

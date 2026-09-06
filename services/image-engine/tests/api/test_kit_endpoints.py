@@ -97,6 +97,20 @@ def _prepare(requirement: str, content: bytes, kit_id=None, exam: str = EXAM):
     )
 
 
+def _release(api, job_id: str) -> None:
+    """Stand in for the payment confirmation (DEC-063).
+
+    There is deliberately no HTTP route that releases a job, so a test that
+    wants the clean file calls the same seam Razorpay will.
+    """
+    api.release_job(job_id)
+
+
+def _release_kit(api, kit_id: str) -> None:
+    for record in api.registry.jobs_in_kit(kit_id):
+        api.release_job(record.job_id)
+
+
 # ----------------------------------------------------------------------
 # The support gate (DEC-056)
 # ----------------------------------------------------------------------
@@ -178,6 +192,7 @@ def test_a_signature_is_prepared_to_its_published_specification(api):
 @pytest.mark.mandatory_api
 def test_the_prepared_file_is_downloadable_with_its_own_media_type(api):
     body = _prepare(SIGNATURE, _signature_photo()).json()
+    _release(api, body["job_id"])
 
     output = client.get(body["output_url"])
 
@@ -301,6 +316,7 @@ def test_assembly_honours_the_candidates_order_and_omissions(api):
     assert body["output_filename"].endswith(".pdf")
     assert body["output_media_type"] == "application/pdf"
 
+    _release(api, body["job_id"])
     output = client.get(body["output_url"])
     assert output.headers["content-type"].startswith("application/pdf")
     assert output.content.startswith(b"%PDF-")
@@ -343,6 +359,7 @@ def test_assembling_a_job_that_holds_no_document_is_refused(api):
 def test_the_package_gathers_a_kits_files(api):
     kit = "kit_abc123"
     _prepare(SIGNATURE, _signature_photo(), kit_id=kit)
+    _release_kit(api, kit)
 
     response = client.get(f"/v1/kits/{kit}/package")
 
@@ -375,6 +392,7 @@ def test_the_checklist_lists_every_requirement_including_refused_ones(api):
 def test_the_archive_carries_the_files_the_checklist_and_the_report(api):
     kit = "kit_archive"
     _prepare(SIGNATURE, _signature_photo(), kit_id=kit)
+    _release_kit(api, kit)
 
     response = client.get(f"/v1/kits/{kit}/package/download")
 
@@ -396,6 +414,7 @@ def test_the_validation_report_names_every_platform_estimate(api):
     """
     kit = "kit_estimates"
     _prepare(ESTIMATE_SIGNATURE, _signature_photo(), kit_id=kit, exam=ESTIMATE_EXAM)
+    _release_kit(api, kit)
 
     response = client.get(f"/v1/kits/{kit}/package/download")
     with zipfile.ZipFile(io.BytesIO(response.content)) as bundle:

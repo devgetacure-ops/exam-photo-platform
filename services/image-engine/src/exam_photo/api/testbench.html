@@ -179,15 +179,38 @@ async function render(b, wall, file) {
     <div style="display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start">
       <div><div class="sub muted">input</div>
         <div class="imgwrap"><img class="result" src="${src}"></div></div>`;
+  // The clean output is behind the purchase gate (DEC-063), so this asks for
+  // it and falls back to the watermarked preview when the service answers 402.
+  // Quality work needs the clean file: run the service with
+  // EXAM_PHOTO_PURCHASE_GATE_ENABLED=false. Judging a matte on a watermarked
+  // half-resolution copy is judging it on the wrong thing.
+  let gated = false;
   if (b.output_url) {
-    html += `<div><div class="sub muted">output</div>
-        <div class="imgwrap"><img class="result" src="/v1/jobs/${b.job_id}/output?t=${Date.now()}"></div></div>`;
+    let outSrc = `/v1/jobs/${b.job_id}/output?t=${Date.now()}`;
+    try {
+      const probe = await fetch(outSrc, { method: 'GET' });
+      if (probe.status === 402) {
+        gated = true;
+        outSrc = b.preview_url ? `${b.preview_url}?t=${Date.now()}` : null;
+      } else {
+        outSrc = URL.createObjectURL(await probe.blob());
+      }
+    } catch { outSrc = null; }
+    if (outSrc) {
+      html += `<div><div class="sub muted">${gated ? 'preview (watermarked)' : 'output'}</div>
+        <div class="imgwrap"><img class="result" src="${outSrc}"></div></div>`;
+    }
   }
   html += `</div>
     <table>
       <tr><th>valid</th><td>${b.is_valid}</td><th>size</th><td class="mono">${b.width||'–'}×${b.height||'–'}</td></tr>
       <tr><th>bytes</th><td class="mono">${b.byte_size ?? '–'}</td><th>file</th><td class="mono">${b.output_filename||'–'}</td></tr>
     </table>`;
+  if (gated)
+    html += `<p class="sub muted">Shown above is the watermarked preview at reduced
+             resolution. The clean file is behind the purchase gate; start the service
+             with <span class="mono">EXAM_PHOTO_PURCHASE_GATE_ENABLED=false</span> to
+             judge output quality.</p>`;
   if ((b.findings||[]).length)
     html += `<p class="sub muted" style="margin-top:12px">findings</p><ul>` +
             b.findings.map(f=>`<li>${f}</li>`).join('') + `</ul>`;

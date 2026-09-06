@@ -1,0 +1,26 @@
+# Build context hygiene. `model-assets/` is the important one: it is several
+# gigabytes and belongs in a volume, not in an image layer (see deploy/README).
+.git
+.github
+**/.venv
+**/venv
+**/__pycache__
+**/*.pyc
+**/.pytest_cache
+**/.mypy_cache
+**/.ruff_cache
+**/node_modules
+**/.next
+**/.tmp
+model-assets
+model-manifests/*.partial
+tests/golden-images
+**/*.jpg
+**/*.jpeg
+**/*.png
+!apps/web/public/**
+!tests/fixtures/**
+docs
+*.md
+!README.md
+!services/image-engine/README.md

@@ -5,12 +5,14 @@ import json
 import os
 import secrets
 import threading
+import time
 import zipfile
+from contextlib import contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, Iterator, Optional, Tuple
 
-from exam_photo.api.contracts import ApiJobStatus
+from exam_photo.api.contracts import ApiJobStatus, JobEntitlement
 from exam_photo.api.jobs import JobRegistry, ProcessingJobRecord
 from exam_photo.api.settings import ApiSettings
 from exam_photo.api.storage import LocalArtifactStore
@@ -41,12 +43,25 @@ from exam_photo.pdf import (
     assemble_document,
     plan_document,
 )
+from exam_photo.preview import (
+    PREVIEW_FILENAME,
+    PreviewUnavailableError,
+    render_watermarked_preview,
+)
 
 
 class UploadLimitExceededError(ValueError):
     """Exception raised when an upload exceeds the allowed byte size limit."""
 
     pass
+
+
+class ServiceBusyError(RuntimeError):
+    """Every preparation slot is occupied (DEC-064).
+
+    Distinct from a failure: nothing is wrong with the request, and retrying
+    it shortly will work. The API turns this into 429 with `Retry-After`.
+    """
 
 
 class RequirementNotFoundError(LookupError):
@@ -156,6 +171,27 @@ class ApiProcessingService:
         # is built on first use and reused (DEC-062).
         self._pipeline: Optional[RuleOrchestratedPipeline] = None
         self._pipeline_lock = threading.Lock()
+
+        # Boot warmup and the artifact sweeper (DEC-064).  Four states, and
+        # the distinctions matter to a load balancer: "not_started" (the
+        # lifespan hook has not run, so this process cannot yet claim
+        # anything), "warming", "ready", "failed", and "skipped" for a host
+        # that deliberately turned warmup off.  Conflating the last two with
+        # the first would make `warmup_on_boot=false` a permanent 503 and the
+        # flag unusable behind a load balancer.
+        self._warmup_state = "not_started"
+        self._warmup_error: Optional[str] = None
+        self._warmup_started_at: Optional[float] = None
+        self._warmup_finished_at: Optional[float] = None
+        self._sweeper_thread: Optional[threading.Thread] = None
+        self._sweeper_stop = threading.Event()
+
+        # The only thing standing between a public port and 10 s of CPU per
+        # request.  A bounded semaphore rather than a counter so that an
+        # unbalanced release raises instead of quietly widening the limit.
+        self._preparation_slots = threading.BoundedSemaphore(
+            settings.max_concurrent_preparations
+        )
 
         # Read the examination catalogue once at startup.  It is 39 records of
         # roughly 10 KB, it changes only when the encoder is re-run, and every
@@ -397,6 +433,215 @@ class ApiProcessingService:
         """Generate a random urlsafe token for a job ID."""
         return f"job_{secrets.token_urlsafe(16)}"
 
+    # ------------------------------------------------------------------
+    # What protects the CPU (DEC-064)
+    # ------------------------------------------------------------------
+
+    @contextmanager
+    def preparation_slot(self) -> Iterator[None]:
+        """Hold one of the limited preparation slots, or refuse immediately.
+
+        The pipeline is roughly 10 s of CPU per photograph, so an unbounded
+        public endpoint is an invitation to exhaust the box. This caps how many
+        run at once and refuses the rest with a `Retry-After`, which is the
+        honest answer -- a request queued behind a hundred others would be cut
+        by nginx or Cloudflare long before it ran anyway.
+
+        There is deliberately **no per-IP limit**. Carrier-grade NAT on Indian
+        mobile networks puts thousands of candidates behind a single address:
+        a per-IP quota either punishes everyone sharing a carrier or is set so
+        high it protects nothing. A global cap protects the resource that is
+        actually scarce without ever penalising a candidate for their network.
+        """
+        if not self._preparation_slots.acquire(blocking=False):
+            raise ServiceBusyError(
+                "The service is preparing as many files as it can at once."
+            )
+        try:
+            yield
+        finally:
+            self._preparation_slots.release()
+
+    # ------------------------------------------------------------------
+    # Boot warmup, readiness and the artifact sweeper (DEC-064)
+    # ------------------------------------------------------------------
+
+    def warmup(self) -> None:
+        """Build the pipeline and run one real inference.
+
+        Called from a background thread at boot. Records its own outcome so
+        `GET /ready` can report it: a host without the BiRefNet weights fails
+        here, loudly and at deployment time, which is where DEC-060 wants that
+        failure rather than on a candidate's first request.
+        """
+        self._warmup_started_at = time.monotonic()
+        try:
+            self._get_pipeline().warmup()
+        except Exception as error:  # noqa: BLE001 - reported, never raised
+            self._warmup_error = f"{type(error).__name__}: {error}"
+            self._warmup_state = "failed"
+        else:
+            self._warmup_error = None
+            self._warmup_state = "ready"
+        finally:
+            self._warmup_finished_at = time.monotonic()
+
+    def readiness(self) -> Dict[str, Any]:
+        """Whether this process can serve a photograph, and since when.
+
+        Deliberately distinct from `/health`. A process is *live* the moment
+        it binds a port and *ready* only once the model has run once; a load
+        balancer that cannot tell those apart routes the first candidate of
+        every deploy into a 100-150 s wait that nginx or Cloudflare will cut
+        before it finishes.
+        """
+        elapsed: Optional[float] = None
+        if self._warmup_started_at is not None:
+            end = self._warmup_finished_at or time.monotonic()
+            elapsed = round(end - self._warmup_started_at, 1)
+
+        # A host that turned warmup off is as ready as it is going to get;
+        # only a process that has not run the hook, is still warming, or
+        # failed, should be kept out of the rotation.
+        ready = self._warmup_state in ("ready", "skipped")
+
+        return {
+            "status": "ready" if ready else self._warmup_state,
+            "warmup": self._warmup_state,
+            "warmup_seconds": elapsed,
+            "error": self._warmup_error,
+            "matting_backend": self.settings.matting_backend,
+            "purchase_gate": (
+                "enabled" if self.settings.purchase_gate_enabled else "disabled"
+            ),
+            # Surfaced because an unauthenticated operator surface is a
+            # deployment mistake that is otherwise completely silent.
+            "operator_surface": (
+                "authenticated" if self.settings.operator_token else "unauthenticated"
+            ),
+        }
+
+    def start_background_workers(self) -> None:
+        """Start the boot warmup and the expired-artifact sweeper."""
+        if self._warmup_state == "not_started":
+            if self.settings.warmup_on_boot:
+                self._warmup_state = "warming"
+                threading.Thread(
+                    target=self.warmup, name="exam-photo-warmup", daemon=True
+                ).start()
+            else:
+                self._warmup_state = "skipped"
+
+        if self._sweeper_thread is None:
+            self._sweeper_stop.clear()
+            self._sweeper_thread = threading.Thread(
+                target=self._sweep_forever, name="exam-photo-sweeper", daemon=True
+            )
+            self._sweeper_thread.start()
+
+    def stop_background_workers(self) -> None:
+        """Ask the sweeper to finish. Warmup is a daemon and is left to exit."""
+        self._sweeper_stop.set()
+        thread, self._sweeper_thread = self._sweeper_thread, None
+        if thread is not None:
+            thread.join(timeout=5.0)
+
+    def _sweep_forever(self) -> None:
+        """Delete expired artifacts on a timer, for the life of the process.
+
+        `expires_at` was written onto every manifest and acted on by nothing:
+        `POST /v1/cleanup-expired` existed and no caller invoked it, so a
+        candidate's face photograph stayed on disk for the life of the host.
+        A retention policy nothing enforces is a retention claim.
+
+        A failed sweep must never stop the loop -- one unreadable directory
+        would otherwise silently end retention for the whole process.
+        """
+        interval = self.settings.cleanup_interval_seconds
+        while not self._sweeper_stop.wait(interval):
+            try:
+                self.cleanup_expired_jobs()
+            except Exception:  # noqa: BLE001 - one bad sweep is not the last
+                continue
+
+    # ------------------------------------------------------------------
+    # The purchase gate and its preview (DEC-063)
+    # ------------------------------------------------------------------
+
+    def write_preview(
+        self, record: ProcessingJobRecord, output_bytes: bytes
+    ) -> ProcessingJobRecord:
+        """Render and store the watermarked preview of a finished file.
+
+        Never fails the job it is previewing. A preparation that succeeded has
+        produced the candidate's file, and losing the preview of it is a lesser
+        outcome than losing the file; where no preview can be made the fields
+        stay unset and the caller reports the absence honestly, which is what
+        stops a client from showing the clean output believing it is protected.
+        """
+        try:
+            preview = render_watermarked_preview(
+                output_bytes, media_type=record.output_media_type
+            )
+        except PreviewUnavailableError:
+            # The ordinary case is a PDF: rendering a page needs a rasteriser
+            # this repository deliberately does not carry (DEC-063).
+            record.preview_filename = None
+            record.preview_watermarked = False
+            record.preview_width = None
+            record.preview_height = None
+            return record
+
+        try:
+            self.store.write_file(record.job_id, PREVIEW_FILENAME, preview.content)
+        except OSError:
+            # A disk that cannot take the preview has still taken the file the
+            # candidate paid to have made.  Losing the preview costs a purchase
+            # gate on one job; letting this propagate would land the job in the
+            # pipeline-failure handler and lose the file itself.
+            record.preview_filename = None
+            record.preview_watermarked = False
+            record.preview_width = None
+            record.preview_height = None
+            return record
+
+        if PREVIEW_FILENAME not in record.artifact_names:
+            record.artifact_names.append(PREVIEW_FILENAME)
+        record.preview_filename = PREVIEW_FILENAME
+        record.preview_watermarked = True
+        record.preview_width = preview.width
+        record.preview_height = preview.height
+        return record
+
+    def output_is_released(self, record: ProcessingJobRecord) -> bool:
+        """Whether this job's clean output may be served.
+
+        With the gate switched off every job is released, which is the state
+        engine quality work needs: judging a matte on a watermarked
+        half-resolution copy is judging it on the wrong thing.
+        """
+        if not self.settings.purchase_gate_enabled:
+            return True
+        return record.entitlement == JobEntitlement.RELEASED
+
+    def release_job(self, job_id: str) -> ProcessingJobRecord:
+        """Release one job's clean output, once it has been paid for.
+
+        This is the seam a payment confirmation calls, and it is deliberately
+        reachable only from inside the process. There is no HTTP route that
+        releases a job: an unauthenticated one would not be a weaker gate than
+        none but a worse one, because it reads as protection to anyone
+        scanning the route list. When Razorpay lands, its verified webhook --
+        signature checked against the shared secret before anything else --
+        is what should call this.
+        """
+        record = self.registry.get_job(job_id)
+        if record is None or record.status == ApiJobStatus.DELETED:
+            raise KeyError(job_id)
+        record.entitlement = JobEntitlement.RELEASED
+        self.registry.update_job(record)
+        return record
+
     def check_upload_limit(self, size_bytes: int) -> None:
         """Raise an error if the uploaded content size exceeds setting limits."""
         if size_bytes > self.settings.max_upload_bytes:
@@ -434,6 +679,11 @@ class ApiProcessingService:
             record.requirement_id = requirement.requirement_id
             record.requirement_type = requirement.requirement_type.value
             record.platform_support = requirement.platform_support.value
+        else:
+            # `/v1/process` names no examination: it serves the local-only
+            # rule-admin console and never reaches a candidate, so its output
+            # is not behind the purchase gate (DEC-063).
+            record.entitlement = JobEntitlement.RELEASED
         self.registry.update_job(record)
 
         self.store.write_file(job_id, "input.jpg", image_bytes)
@@ -505,6 +755,11 @@ class ApiProcessingService:
             record.output_byte_size = (
                 len(result.encoded_bytes) if result.encoded_bytes else None
             )
+            # The pipeline knows the finished pixel size; before this it was
+            # reported only for the deliverable path, leaving a photograph's
+            # dimensions null in a response that has fields for them.
+            record.output_width = result.final_width
+            record.output_height = result.final_height
             # DEC-056's third state, on the photograph path too: a compliant
             # file with warnings against it is not the same outcome as a clean
             # one, and neither is the same as no file at all.
@@ -514,6 +769,14 @@ class ApiProcessingService:
                 record.outcome = "prepared_with_findings"
             else:
                 record.outcome = "prepared"
+
+            # The watermarked preview (DEC-063). Built from the encoded bytes
+            # that were written, so it is a preview of the delivered file and
+            # not of an intermediate.
+            if should_save_output and result.encoded_bytes:
+                record.artifact_names = artifact_names
+                self.write_preview(record, result.encoded_bytes)
+                artifact_names = record.artifact_names
 
         except Exception:
             # Pipeline failure fallback
@@ -660,6 +923,11 @@ class ApiProcessingService:
         record.ceiling_was_unpublished = result.ceiling_was_unpublished
         record.findings = list(result.findings)
         record.artifact_names = artifact_names
+        # The watermarked preview (DEC-063). A signature or a declaration is an
+        # image and gets one; a certificate assembled as a PDF does not, and
+        # `preview_watermarked` stays False rather than claiming a mark that
+        # was never applied.
+        self.write_preview(record, result.content)
         self.registry.update_job(record)
         return record
 
@@ -771,6 +1039,10 @@ class ApiProcessingService:
         )
         if filename not in record.artifact_names:
             record.artifact_names.append(filename)
+        # An assembled document is a PDF, so `write_preview` records that no
+        # preview exists rather than inventing one (DEC-063). Called anyway so
+        # the fields are set from the artifact and not left at their defaults.
+        self.write_preview(record, result.content)
         self.registry.update_job(record)
         return record, result
 
@@ -828,7 +1100,13 @@ class ApiProcessingService:
                     PlatformSupport.PARTIALLY_SUPPORTED.value,
                     None,
                 }
-                if record.output_filename and servable:
+                # DEC-063: an unreleased file is described in the checklist
+                # and left out of the archive.  Skipping it here rather than
+                # only refusing at the route means a caller that reaches this
+                # method directly still cannot obtain a file nobody paid for.
+                released = self.output_is_released(record)
+                item["awaiting_release"] = bool(record.output_filename) and not released
+                if record.output_filename and servable and released:
                     try:
                         content = self.store.read_file(
                             record.job_id, record.output_filename
@@ -908,6 +1186,14 @@ class ApiProcessingService:
             "exam_id": entry.exam_id if entry is not None else None,
             "exam_name": entry.rule.exam.exam_name if entry is not None else None,
             "files_included": sum(1 for item in items if item["included"]),
+            # DEC-063: how many prepared files the archive is holding back for
+            # want of a payment.  The route refuses the download while this is
+            # non-zero; the checklist itself stays readable, because what an
+            # examination asks for is not something a candidate should have to
+            # buy in order to see.
+            "awaiting_release": sum(
+                1 for item in items if item.get("awaiting_release")
+            ),
             "requirements": requirements,
             "items": items,
         }
@@ -969,7 +1255,15 @@ class ApiProcessingService:
 
         for record in records:
             if record.status != ApiJobStatus.DELETED and record.expires_at < now_str:
-                self.store.delete_job_directory(record.job_id)
+                try:
+                    self.store.delete_job_directory(record.job_id)
+                except OSError:
+                    # Another worker's sweeper may have removed this directory
+                    # between the scan and now -- each uvicorn worker runs its
+                    # own sweeper (DEC-064). One racing or locked directory
+                    # must not abort the rest of the sweep, or a single stuck
+                    # job would silently end retention for every other one.
+                    continue
                 self.registry.delete_job(record.job_id)
                 deleted_count += 1
 

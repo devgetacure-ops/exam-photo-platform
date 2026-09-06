@@ -1,0 +1,118 @@
+# One small VPS, ONNX-only, warmed at boot (DEC-065).
+#
+# Run from the repository root so the build context reaches `examples/rules/`
+# and `model-manifests/`:
+#
+#   docker compose -f deploy/docker-compose.yml --profile setup run --rm model-fetch
+#   docker compose -f deploy/docker-compose.yml up -d
+#
+# The first command is a one-off that fills the model volume. See deploy/README.
+
+name: exam-upload
+
+services:
+  # ---------------------------------------------------------------------
+  # One-shot: fill the model volume. Not part of `up`.
+  # ---------------------------------------------------------------------
+  #
+  # The weights are ~1.4 GB downloaded and ~940 MB exported. They live in a
+  # volume rather than in the image on purpose: baking them in would make
+  # every deploy a multi-gigabyte pull for bytes that never change, on a
+  # connection where that is the slowest part of shipping.
+  model-fetch:
+    profiles: ["setup"]
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+      target: modelfetch
+    volumes:
+      - models:/app/model-assets
+    environment:
+      EXAM_PHOTO_REPO_ROOT: /app
+
+  # ---------------------------------------------------------------------
+  # The engine
+  # ---------------------------------------------------------------------
+  engine:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+      target: runtime
+    restart: unless-stopped
+    env_file: [.env]
+    environment:
+      EXAM_PHOTO_REPO_ROOT: /app
+      EXAM_PHOTO_ARTIFACT_ROOT: /app/.tmp/artifacts
+      EXAM_PHOTO_CATALOGUE_ROOT: /app/examples/rules
+      # No CORS at all: the proxy below serves the app and the API from one
+      # origin, which is the shape that has no cross-origin problem to solve.
+      # Set EXAM_PHOTO_ALLOWED_ORIGINS in .env only if you split them.
+      EXAM_PHOTO_WORKERS: ${EXAM_PHOTO_WORKERS:-1}
+    volumes:
+      # Read-only: nothing at runtime has any business writing to the weights,
+      # and a corrupt model fails its sha256 check rather than degrading
+      # quietly.
+      - models:/app/model-assets:ro
+      # Candidate files never touch the container's writable layer, and the
+      # sweeper's deletions are real deletions on a real filesystem.
+      - artifacts:/app/.tmp/artifacts
+    # Each worker holds its own warm BiRefNet session at roughly 2.4 GB
+    # resident, peaking near 2.9 GB during inference. This limit is a
+    # tripwire, not a target: if the container is being OOM-killed, the box is
+    # too small -- do not lower the limit to make the symptom go away.
+    mem_limit: ${ENGINE_MEM_LIMIT:-4g}
+    healthcheck:
+      # Inherited from the image, restated so it is visible where an operator
+      # looks. `/ready`, never `/health`.
+      test: ["CMD", "python", "-c", "import sys,urllib.request; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/ready', timeout=8).status == 200 else 1)"]
+      interval: 15s
+      timeout: 10s
+      start_period: 600s
+      retries: 3
+    expose: ["8000"]
+
+  # ---------------------------------------------------------------------
+  # The candidate app
+  # ---------------------------------------------------------------------
+  web:
+    build:
+      context: ..
+      dockerfile: deploy/web.Dockerfile
+      target: runtime
+    restart: unless-stopped
+    environment:
+      # Same-origin: the browser calls /v1/... on the page's own host and the
+      # proxy routes it to the engine. Nothing here needs the engine's address.
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-}
+    expose: ["3000"]
+
+  # ---------------------------------------------------------------------
+  # The proxy: TLS, and one origin for both halves
+  # ---------------------------------------------------------------------
+  proxy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on:
+      engine:
+        # The engine must be *ready*, not merely started, before the proxy
+        # sends it anything. This is the whole point of DEC-064's readiness
+        # split: without it the first candidate of every deploy lands on a
+        # cold worker and is cut by a gateway timeout.
+        condition: service_healthy
+      web:
+        condition: service_started
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:-:80}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  models:
+  artifacts:
+  caddy_data:
+  caddy_config:

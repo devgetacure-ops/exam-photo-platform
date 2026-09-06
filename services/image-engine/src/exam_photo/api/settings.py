@@ -2,7 +2,7 @@
 
 import os
 from pathlib import Path
-from typing import Optional
+from typing import List, Optional
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -30,15 +30,65 @@ class ApiSettings(BaseModel):
     # Subject segmentation backend (DEC-031; faster-matting Step 1). "auto"
     # prefers the ONNX BiRefNet export when it is present (same weights and
     # maths as the PyTorch backend, ~2x faster on CPU, no torch dependency),
-    # then the PyTorch backend, then falls back to MediaPipe -- so the served
-    # app gets the better matte without a separate opt-in step and still
-    # starts on a machine that has not run the model acquisition/export
-    # scripts.
+    # then the PyTorch backend, and otherwise **raises** rather than falling
+    # back to MediaPipe: a paid output never comes from the coarse backend
+    # (DEC-060). MediaPipe stays selectable explicitly for diagnostics.
     matting_backend: str = "auto"
+
+    # The purchase gate (DEC-063). On by default, for the reason DEC-060
+    # records about `model-assets/`: a fresh clone and a fresh deployment host
+    # start in exactly the state an insecure default would ship, and a gate
+    # that has to be switched on is a gate that will be off in production.
+    # Switch it off for engine quality work -- judging a matte on a
+    # watermarked half-resolution copy is judging it on the wrong thing.
+    purchase_gate_enabled: bool = True
 
     # Pipeline output and local CORS toggles
     allow_invalid_output_save: bool = False
     local_cors_enabled: bool = False
+
+    # --- Deployment hardening (DEC-064) -----------------------------------
+
+    #: Browser origins allowed to call the API.  Empty means the two localhost
+    #: development origins, which is what `local_cors_enabled` has always
+    #: meant.  A real deployment either lists its domain here or -- better --
+    #: serves the app and the engine from one origin behind a reverse proxy,
+    #: where CORS never enters into it.
+    allowed_origins: List[str] = Field(default_factory=list)
+
+    #: Run one real inference at boot so a candidate does not pay the
+    #: first-inference cost.  Measured on this codebase: 48.8 s for the first
+    #: segmentation in a process against 7.7 s for the second.
+    warmup_on_boot: bool = True
+
+    #: How often the expired-artifact sweeper runs.  Nothing swept before
+    #: this: `POST /v1/cleanup-expired` existed and no caller invoked it, so
+    #: `expires_at` was an assertion the service never acted on.
+    cleanup_interval_seconds: int = 300
+
+    #: Shared secret for the operator surface (`/v1/process`,
+    #: `/v1/rules/validate`, `/v1/cleanup-expired`, `/test`).  Empty leaves
+    #: them open, which is right for local development and wrong in public;
+    #: `GET /ready` reports which of the two a running process is in.
+    #: It deliberately does not gate the candidate surface -- a browser would
+    #: have to carry the token and would hand it to anyone opening the network
+    #: tab.
+    operator_token: str = ""
+
+    #: How many files one document request may carry.  `max_upload_bytes`
+    #: bounds each file and nothing bounded the count, so a single request
+    #: could hand the service an unlimited number of 5 MB uploads to hold in
+    #: memory and write to disk.  A certificate with its annexures is rarely
+    #: more than a handful of pages.
+    max_document_files: int = 20
+
+    #: How many preparations may run at once.  The pipeline is ~10 s of CPU
+    #: per photograph, so this is what actually protects the box.  There is no
+    #: per-IP limit by design: carrier-grade NAT puts thousands of candidates
+    #: behind one address, so a per-IP quota punishes a shared carrier or is
+    #: set so high it protects nothing.  Default 2 is sized for a small VPS;
+    #: set it to about the core count of the deployment box, measured.
+    max_concurrent_preparations: int = 2
 
     @field_validator("artifact_root")
     @classmethod
@@ -59,6 +109,30 @@ class ApiSettings(BaseModel):
         """Ensure max upload bytes is strictly positive."""
         if v <= 0:
             raise ValueError("max_upload_bytes must be greater than 0")
+        return v
+
+    @field_validator("cleanup_interval_seconds")
+    @classmethod
+    def validate_cleanup_interval(cls, v: int) -> int:
+        """Ensure the sweeper interval is strictly positive."""
+        if v <= 0:
+            raise ValueError("cleanup_interval_seconds must be greater than 0")
+        return v
+
+    @field_validator("max_document_files")
+    @classmethod
+    def validate_max_document_files(cls, v: int) -> int:
+        """Ensure at least one file can be sent."""
+        if v < 1:
+            raise ValueError("max_document_files must be at least 1")
+        return v
+
+    @field_validator("max_concurrent_preparations")
+    @classmethod
+    def validate_concurrency(cls, v: int) -> int:
+        """Ensure at least one preparation can run."""
+        if v < 1:
+            raise ValueError("max_concurrent_preparations must be at least 1")
         return v
 
     @field_validator("job_ttl_seconds")
@@ -108,5 +182,31 @@ def get_settings() -> ApiSettings:
     if "EXAM_PHOTO_LOCAL_CORS_ENABLED" in os.environ:
         val = os.environ["EXAM_PHOTO_LOCAL_CORS_ENABLED"].lower()
         kwargs["local_cors_enabled"] = val in ("1", "true", "yes")
+    if "EXAM_PHOTO_PURCHASE_GATE_ENABLED" in os.environ:
+        val = os.environ["EXAM_PHOTO_PURCHASE_GATE_ENABLED"].lower()
+        kwargs["purchase_gate_enabled"] = val in ("1", "true", "yes")
+    if "EXAM_PHOTO_WARMUP_ON_BOOT" in os.environ:
+        val = os.environ["EXAM_PHOTO_WARMUP_ON_BOOT"].lower()
+        kwargs["warmup_on_boot"] = val in ("1", "true", "yes")
+
+    # Deployment hardening (DEC-064)
+    if "EXAM_PHOTO_ALLOWED_ORIGINS" in os.environ:
+        kwargs["allowed_origins"] = [
+            origin.strip()
+            for origin in os.environ["EXAM_PHOTO_ALLOWED_ORIGINS"].split(",")
+            if origin.strip()
+        ]
+    if "EXAM_PHOTO_CLEANUP_INTERVAL_SECONDS" in os.environ:
+        kwargs["cleanup_interval_seconds"] = int(
+            os.environ["EXAM_PHOTO_CLEANUP_INTERVAL_SECONDS"]
+        )
+    if "EXAM_PHOTO_OPERATOR_TOKEN" in os.environ:
+        kwargs["operator_token"] = os.environ["EXAM_PHOTO_OPERATOR_TOKEN"]
+    if "EXAM_PHOTO_MAX_DOCUMENT_FILES" in os.environ:
+        kwargs["max_document_files"] = int(os.environ["EXAM_PHOTO_MAX_DOCUMENT_FILES"])
+    if "EXAM_PHOTO_MAX_CONCURRENT_PREPARATIONS" in os.environ:
+        kwargs["max_concurrent_preparations"] = int(
+            os.environ["EXAM_PHOTO_MAX_CONCURRENT_PREPARATIONS"]
+        )
 
     return ApiSettings(**kwargs)

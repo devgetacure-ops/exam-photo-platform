@@ -16,6 +16,20 @@ class ApiJobStatus(str, Enum):
     DELETED = "DELETED"
 
 
+class JobEntitlement(str, Enum):
+    """Whether a job's clean output may be served (DEC-063).
+
+    A job prepared through the candidate path starts ``PREVIEW_ONLY`` and only
+    a payment confirmation inside the process may move it: there is
+    deliberately no HTTP route that releases one, because an unauthenticated
+    release endpoint is not a weaker gate than none but a worse one -- it looks
+    like protection to everyone reading the route list.
+    """
+
+    PREVIEW_ONLY = "preview_only"
+    RELEASED = "released"
+
+
 class ProcessImageResponse(BaseModel):
     """Response returned upon initiating a processing request."""
 
@@ -48,6 +62,9 @@ class JobStatusResponse(BaseModel):
     output_filename: Optional[str] = None
     report_url: Optional[str] = None
     output_url: Optional[str] = None
+    preview_url: Optional[str] = None
+    preview_watermarked: bool = False
+    entitlement: JobEntitlement = JobEntitlement.PREVIEW_ONLY
     rule_compliant: Optional[bool] = None
     visual_quality_acceptable: Optional[bool] = None
     portrait_quality_report: Optional[dict[str, Any]] = None
@@ -221,6 +238,18 @@ class PrepareRequirementResponse(BaseModel):
     width: Optional[int] = None
     height: Optional[int] = None
 
+    # --- The purchase gate (DEC-063) --------------------------------------
+    #
+    # `output_url` names a route that answers 402 until the job is released.
+    # The preview is what a candidate may actually see before paying, and
+    # `preview_watermarked` is set from the artifact that was written rather
+    # than from the intent to write one: it is `False` wherever no mark was
+    # burned in, so a client that trusts it is never shown a clean file
+    # believing it is protected.
+    preview_url: Optional[str] = None
+    preview_watermarked: bool = False
+    entitlement: JobEntitlement = JobEntitlement.PREVIEW_ONLY
+
     #: Everything the pipeline reported rather than raised.
     findings: List[str] = Field(default_factory=list)
     is_blank: Optional[bool] = None
@@ -279,6 +308,9 @@ class KitPackageItem(BaseModel):
     platform_support: Optional[str] = None
     outcome: Optional[str] = None
     included: bool = False
+    #: DEC-063: prepared, and held out of the archive for want of a payment.
+    #: Distinct from `included: False` for a requirement that produced nothing.
+    awaiting_release: bool = False
     filename: Optional[str] = None
     byte_size: Optional[int] = None
     findings: List[str] = Field(default_factory=list)
@@ -291,6 +323,8 @@ class KitPackageResponse(BaseModel):
     exam_id: Optional[str] = None
     exam_name: Optional[str] = None
     files_included: int = 0
+    #: How many prepared files the download is refusing to hand over (DEC-063).
+    awaiting_release: int = 0
     package_url: Optional[str] = None
     requirements: List[dict[str, Any]] = Field(default_factory=list)
     items: List[KitPackageItem] = Field(default_factory=list)

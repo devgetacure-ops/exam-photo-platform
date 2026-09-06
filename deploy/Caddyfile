@@ -1,0 +1,60 @@
+# One origin for both halves, which is why the engine needs no CORS at all
+# (DEC-064/DEC-065). The browser calls /v1/... on the page's own host; Caddy
+# decides which container answers.
+#
+# SITE_ADDRESS is ":80" by default for a local trial. Set it to your domain in
+# .env and Caddy obtains and renews a certificate on its own.
+
+{$SITE_ADDRESS} {
+	encode gzip
+
+	# An upload is bounded at the edge as well as in the application. The
+	# engine caps each file at 5 MB and a document at 20 files; this stops a
+	# body larger than that ever being read into the process.
+	request_body {
+		max_size 110MB
+	}
+
+	header {
+		# The clean file is sold and the preview is a candidate's face.
+		# Neither should be framed, sniffed, or leak a full referrer.
+		Referrer-Policy "strict-origin-when-cross-origin"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+	}
+
+	# --- probes, first ----------------------------------------------------
+	# Ordering is load-bearing: `handle` blocks are evaluated in order, so
+	# this must precede the /v1 block or the engine matcher swallows these two
+	# paths and the restriction below never runs.
+	#
+	# `/ready` reports the matting backend, the purchase-gate state and
+	# whether the operator surface is authenticated. That is exactly the
+	# reconnaissance an attacker wants, so it is answered only on a private
+	# network -- a load balancer or another container still reaches it.
+	@probes path /health /ready
+	handle @probes {
+		@public not remote_ip private_ranges
+		respond @public 404
+		reverse_proxy engine:8000
+	}
+
+	# --- the engine -------------------------------------------------------
+	@engine path /v1/* /test
+	handle @engine {
+		reverse_proxy engine:8000 {
+			# The pipeline is ~10 s per photograph and the first request after
+			# a restart is far longer, so this is set above both. nginx's 60 s
+			# default is what would otherwise cut a healthy preparation in
+			# half and report it as a gateway error.
+			transport http {
+				read_timeout 180s
+			}
+		}
+	}
+
+	# --- the app ----------------------------------------------------------
+	handle {
+		reverse_proxy web:3000
+	}
+}

@@ -2,10 +2,22 @@
 
 import json
 import re
+import secrets
+from contextlib import asynccontextmanager
 from pathlib import Path
-from typing import Any, List, Optional
+from typing import Any, AsyncIterator, List, Optional
 
-from fastapi import FastAPI, File, Form, HTTPException, Query, Request, UploadFile
+from fastapi import (
+    Depends,
+    FastAPI,
+    File,
+    Form,
+    Header,
+    HTTPException,
+    Query,
+    Request,
+    UploadFile,
+)
 from fastapi.responses import JSONResponse, Response
 
 from exam_photo.api.contracts import (
@@ -34,12 +46,14 @@ from exam_photo.api.service import (
     ApiProcessingService,
     RequirementNotFoundError,
     RequirementNotServedError,
+    ServiceBusyError,
     UploadLimitExceededError,
 )
 from exam_photo.api.settings import get_settings
 from exam_photo.models.exam_rule import RequirementType
 from exam_photo.orchestration.rule_catalogue import CatalogueEntry, support_counts
 from exam_photo.pdf import PageOrigin, PageRef
+from exam_photo.preview import PREVIEW_MEDIA_TYPE
 from exam_photo.rule_validation import validate_exam_rule
 
 JOB_ID_REGEX = re.compile(r"^job_[A-Za-z0-9_-]+$")
@@ -52,29 +66,85 @@ EXAM_ID_REGEX = re.compile(r"^[a-z0-9\-]+$")
 # A requirement identifier is `^[a-z0-9_]+$` in the model. Same reasoning.
 REQUIREMENT_ID_REGEX = re.compile(r"^[a-z0-9_]+$")
 
-app = FastAPI(
-    title="Indian Exam-Photo Compliance Local API",
-    description="Local-only API service for validating and cropping exam photos.",
-    version="1.0.0",
-)
-
 # Initialize service using global settings
 settings = get_settings()
 service = ApiProcessingService(settings)
 
-if settings.local_cors_enabled:
+#: Development origins, used when browser access is enabled and no explicit
+#: origin list is given.
+_LOCAL_ORIGINS = ["http://127.0.0.1:3000", "http://localhost:3000"]
+
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
+    """Warm the model and start the artifact sweeper (DEC-064).
+
+    Warmup runs on a background thread rather than blocking startup. A process
+    that binds its port late is indistinguishable from one that crashed;
+    binding immediately and answering `GET /ready` with `warming` is something
+    an orchestrator can act on, and is what makes a rolling deploy possible.
+    """
+    service.start_background_workers()
+    try:
+        yield
+    finally:
+        service.stop_background_workers()
+
+
+app = FastAPI(
+    title="Indian Exam-Photo Compliance Local API",
+    description="Local-only API service for validating and cropping exam photos.",
+    version="1.0.0",
+    lifespan=lifespan,
+)
+
+_allowed_origins = settings.allowed_origins or (
+    _LOCAL_ORIGINS if settings.local_cors_enabled else []
+)
+if _allowed_origins:
     from fastapi.middleware.cors import CORSMiddleware
 
+    # A deployed origin is configured, never hardcoded (DEC-064). Serving the
+    # app and the engine from one origin behind a reverse proxy is better
+    # still, and then this list stays empty.
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=[
-            "http://127.0.0.1:3000",
-            "http://localhost:3000",
-        ],
+        allow_origins=_allowed_origins,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+
+def require_operator(
+    x_operator_token: Optional[str] = Header(default=None),  # noqa: B008
+) -> None:
+    """Gate the operator surface on a shared secret (DEC-064).
+
+    Guards `/v1/process`, `/v1/rules/validate`, `/v1/cleanup-expired` and the
+    `/test` bench -- routes no candidate touches and where the damage is
+    asymmetric: rule validation changes what the platform believes an
+    examination requires, and `/v1/process` is an ungated pipeline exempt from
+    the DEC-063 purchase gate.
+
+    The candidate surface is deliberately not gated this way. A browser would
+    have to carry the token and would hand it to anyone who opened the network
+    tab, so it would protect nothing while looking like it did.
+
+    With no token configured the surface stays open -- correct for local
+    development -- and `GET /ready` reports `operator_surface:
+    "unauthenticated"` so the state is visible where a deployment checks.
+    """
+    expected = service.settings.operator_token
+    if not expected:
+        return
+    if x_operator_token is None or not secrets.compare_digest(
+        x_operator_token, expected
+    ):
+        raise HTTPException(
+            status_code=401,
+            detail="This endpoint requires a valid X-Operator-Token header.",
+        )
 
 
 @app.exception_handler(Exception)
@@ -97,7 +167,11 @@ async def catch_all_exception_handler(request: Request, exc: Exception) -> JSONR
     )
 
 
-@app.get("/test", include_in_schema=False)
+@app.get(
+    "/test",
+    include_in_schema=False,
+    dependencies=[Depends(require_operator)],  # noqa: B008
+)
 def test_bench() -> Response:
     """A one-page manual test bench for the engine.
 
@@ -115,8 +189,28 @@ def test_bench() -> Response:
 
 @app.get("/health")
 def health_check() -> dict[str, str]:
-    """Return the status of the local processing API."""
+    """Liveness: the process is up and answering.
+
+    Deliberately says nothing about whether the model is loaded. Readiness is
+    `GET /ready`, and conflating the two is what routes the first candidate of
+    every deploy into a cold worker (DEC-064).
+    """
     return {"status": "healthy"}
+
+
+@app.get("/ready")
+def readiness_check(response: Response) -> dict[str, Any]:
+    """Readiness: this process can serve a photograph now (DEC-064).
+
+    503 while warming and 503 on a failed warmup, so a load balancer keeps
+    traffic away until the first inference has been paid for. A failure names
+    what is missing -- on a host without the BiRefNet weights that is
+    DEC-060's loud deployment failure arriving where a deployment looks.
+    """
+    state = service.readiness()
+    if state["status"] != "ready":
+        response.status_code = 503
+    return state
 
 
 def _summarise(entry: CatalogueEntry) -> ExamSummaryResponse:
@@ -224,7 +318,11 @@ def get_exam(exam_id: str) -> ExamDetailResponse:
     )
 
 
-@app.post("/v1/process", response_model=ProcessImageResponse)
+@app.post(
+    "/v1/process",
+    response_model=ProcessImageResponse,
+    dependencies=[Depends(require_operator)],  # noqa: B008
+)
 async def process_image(
     file: UploadFile = File(...),  # noqa: B008
     rule: str = Form(...),  # noqa: B008
@@ -257,16 +355,23 @@ async def process_image(
             detail="Invalid JSON format for rule",
         ) from err
 
-    # 3. Process job synchronously
+    # 3. Process job synchronously, inside the same global concurrency limit
+    # as the candidate path (DEC-064): the operator surface is authenticated,
+    # but its CPU is the same CPU, and an unbounded console would starve the
+    # candidates the box exists to serve.
     job_id = service.generate_job_id()
-    record = service.process_job_sync(
-        job_id=job_id,
-        image_bytes=image_bytes,
-        rule_dict=rule_dict,
-        allow_invalid_output=allow_invalid_output,
-        quality_mode=quality_mode,
-        save_diagnostic_artifacts=save_diagnostic_artifacts,
-    )
+    try:
+        with service.preparation_slot():
+            record = service.process_job_sync(
+                job_id=job_id,
+                image_bytes=image_bytes,
+                rule_dict=rule_dict,
+                allow_invalid_output=allow_invalid_output,
+                quality_mode=quality_mode,
+                save_diagnostic_artifacts=save_diagnostic_artifacts,
+            )
+    except ServiceBusyError as err:
+        raise _busy(err) from err
 
     # 4. Expose API relative URL routes
     report_url = f"/v1/jobs/{job_id}/report"
@@ -359,6 +464,20 @@ def _validated_kit_id(kit_id: Optional[str]) -> Optional[str]:
     return kit_id
 
 
+def _busy(error: ServiceBusyError) -> HTTPException:
+    """429 with a `Retry-After`, rather than a queue nobody survives.
+
+    A request held behind a hundred others would be cut by nginx or Cloudflare
+    long before it ran, so telling the caller to come back is the honest
+    answer. The hint is one photograph's work, which is what a slot frees in.
+    """
+    return HTTPException(
+        status_code=429,
+        detail=f"{error} Please retry in a few seconds.",
+        headers={"Retry-After": "15"},
+    )
+
+
 def _preparation_response(
     record: Any, exam_id: str, requirement: Any
 ) -> PrepareRequirementResponse:
@@ -380,6 +499,14 @@ def _preparation_response(
         byte_size=record.output_byte_size,
         width=record.output_width,
         height=record.output_height,
+        # DEC-063. `preview_url` is served only where a mark was actually
+        # burned in, so a client can never be shown a clean file while being
+        # told it is watermarked.
+        preview_url=(
+            f"/v1/jobs/{job_id}/preview" if record.preview_watermarked else None
+        ),
+        preview_watermarked=record.preview_watermarked,
+        entitlement=record.entitlement,
         findings=list(record.findings),
         is_blank=record.is_blank,
         ceiling_was_unpublished=record.ceiling_was_unpublished,
@@ -419,27 +546,34 @@ async def prepare_requirement(
     upload = await _read_upload(file)
     job_id = service.generate_job_id()
 
-    if requirement.requirement_type == RequirementType.PHOTOGRAPH:
-        record = service.process_job_sync(
-            job_id=job_id,
-            image_bytes=upload,
-            rule_dict=rule.model_dump(mode="json", exclude_none=True),
-            allow_invalid_output=allow_invalid_output,
-            quality_mode=quality_mode,
-            kit_id=kit,
-            exam_id=exam_id,
-            requirement=requirement,
-        )
-    else:
-        record = service.prepare_requirement_sync(
-            job_id=job_id,
-            upload=upload,
-            filename=file.filename or "upload",
-            rule=rule,
-            requirement=requirement,
-            exam_id=exam_id,
-            kit_id=kit,
-        )
+    # Bounded concurrency, not a per-IP quota (DEC-064). The slot is taken
+    # after the support gate and the upload read, so a refused requirement or
+    # an oversized file never occupies one.
+    try:
+        with service.preparation_slot():
+            if requirement.requirement_type == RequirementType.PHOTOGRAPH:
+                record = service.process_job_sync(
+                    job_id=job_id,
+                    image_bytes=upload,
+                    rule_dict=rule.model_dump(mode="json", exclude_none=True),
+                    allow_invalid_output=allow_invalid_output,
+                    quality_mode=quality_mode,
+                    kit_id=kit,
+                    exam_id=exam_id,
+                    requirement=requirement,
+                )
+            else:
+                record = service.prepare_requirement_sync(
+                    job_id=job_id,
+                    upload=upload,
+                    filename=file.filename or "upload",
+                    rule=rule,
+                    requirement=requirement,
+                    exam_id=exam_id,
+                    kit_id=kit,
+                )
+    except ServiceBusyError as err:
+        raise _busy(err) from err
 
     return _preparation_response(record, exam_id, requirement)
 
@@ -465,6 +599,19 @@ async def plan_requirement_document(
 
     if not files:
         raise HTTPException(status_code=400, detail="No files were supplied")
+
+    # `_read_upload` bounds each file; nothing bounded the count, so one
+    # request could hand the service an unlimited number of 5 MB uploads to
+    # hold in memory and write to disk (DEC-064).
+    if len(files) > service.settings.max_document_files:
+        raise HTTPException(
+            status_code=413,
+            detail=(
+                f"A document may carry at most "
+                f"{service.settings.max_document_files} files; "
+                f"{len(files)} were supplied."
+            ),
+        )
 
     uploads: list[tuple[bytes, str]] = []
     for upload in files:
@@ -561,6 +708,7 @@ def get_kit_package_manifest(kit_id: str) -> KitPackageResponse:
         exam_id=checklist.get("exam_id"),
         exam_name=checklist.get("exam_name"),
         files_included=checklist.get("files_included", 0),
+        awaiting_release=checklist.get("awaiting_release", 0),
         package_url=f"/v1/kits/{kit_id}/package/download",
         requirements=checklist.get("requirements", []),
         items=[KitPackageItem(**item) for item in checklist.get("items", [])],
@@ -573,9 +721,24 @@ def download_kit_package(kit_id: str) -> Response:
     if not KIT_ID_REGEX.match(kit_id):
         raise HTTPException(status_code=400, detail="Invalid kit ID format")
     try:
-        archive, _checklist = service.build_kit_package(kit_id)
+        archive, checklist = service.build_kit_package(kit_id)
     except KeyError as err:
         raise HTTPException(status_code=404, detail="Kit not found") from err
+
+    # DEC-063: the archive is the clean files. The builder already leaves an
+    # unreleased one out of it, and the download is refused rather than served
+    # short, because a package silently missing the photograph is worse than
+    # one the candidate is told they have not paid for.
+    awaiting = int(checklist.get("awaiting_release", 0))
+    if awaiting:
+        raise HTTPException(
+            status_code=402,
+            detail=(
+                f"{awaiting} prepared file(s) in this kit have not been paid "
+                "for. The checklist is available at "
+                f"/v1/kits/{kit_id}/package."
+            ),
+        )
 
     return Response(
         content=archive,
@@ -598,11 +761,14 @@ def get_job_status(job_id: str) -> JobStatusResponse:
 
     report_url = None
     output_url = None
+    preview_url = None
 
     if record.status != ApiJobStatus.DELETED:
         report_url = f"/v1/jobs/{job_id}/report"
         if record.output_filename:
             output_url = f"/v1/jobs/{job_id}/output"
+        if record.preview_watermarked:
+            preview_url = f"/v1/jobs/{job_id}/preview"
 
     return JobStatusResponse(
         job_id=record.job_id,
@@ -615,6 +781,9 @@ def get_job_status(job_id: str) -> JobStatusResponse:
         output_filename=record.output_filename,
         report_url=report_url,
         output_url=output_url,
+        preview_url=preview_url,
+        preview_watermarked=record.preview_watermarked,
+        entitlement=record.entitlement,
         rule_compliant=record.rule_compliant,
         visual_quality_acceptable=record.visual_quality_acceptable,
         portrait_quality_report=record.portrait_quality_report,
@@ -641,9 +810,47 @@ def get_job_report(job_id: str) -> Response:
     return Response(content=report_data, media_type="application/json")
 
 
+@app.get("/v1/jobs/{job_id}/preview")
+def get_job_preview(job_id: str) -> Response:
+    """Stream the watermarked, reduced-resolution preview (DEC-063).
+
+    This is the only image of a prepared file the browser may have before it
+    is paid for. The mark is burned into the pixels of a downscale, so there
+    is no layer to switch off and no clean copy underneath it.
+    """
+    if not JOB_ID_REGEX.match(job_id):
+        raise HTTPException(status_code=400, detail="Invalid job ID format")
+
+    record = service.registry.get_job(job_id)
+    if not record or record.status == ApiJobStatus.DELETED:
+        raise HTTPException(status_code=404, detail="Job or preview not found")
+
+    # `preview_watermarked` is written from the artifact, so an unmarked file
+    # can never be served from this route by mistake.
+    if not record.preview_watermarked or not record.preview_filename:
+        raise HTTPException(
+            status_code=404,
+            detail="No preview could be rendered for this file",
+        )
+
+    if not service.store.file_exists(job_id, record.preview_filename):
+        raise HTTPException(status_code=404, detail="Preview artifact not on disk")
+
+    return Response(
+        content=service.store.read_file(job_id, record.preview_filename),
+        media_type=PREVIEW_MEDIA_TYPE,
+        headers={
+            "Content-Disposition": 'inline; filename="preview.jpg"',
+            # A preview is one candidate's face. Nothing between here and the
+            # browser may keep a copy of it.
+            "Cache-Control": "private, no-store",
+        },
+    )
+
+
 @app.get("/v1/jobs/{job_id}/output")
 def get_job_output(job_id: str) -> Response:
-    """Stream raw JPEG output candidate if it exists and validation constraints are met."""
+    """Stream the clean prepared file, once the job is released (DEC-063)."""
     if not JOB_ID_REGEX.match(job_id):
         raise HTTPException(status_code=400, detail="Invalid job ID format")
 
@@ -653,6 +860,18 @@ def get_job_output(job_id: str) -> Response:
 
     if not record.output_filename:
         raise HTTPException(status_code=404, detail="Output artifact not available")
+
+    # The purchase gate. 402 rather than 403 because the condition is
+    # payment and is expected to clear, and the message names the preview so
+    # a caller is told what it may have instead.
+    if not service.output_is_released(record):
+        raise HTTPException(
+            status_code=402,
+            detail=(
+                "This file has not been paid for. A watermarked preview is "
+                f"available at /v1/jobs/{job_id}/preview."
+            ),
+        )
 
     # Enforce validity: must be succeeded or failed but invalid-output-save was allowed
     # (which implies the output file actually exists in registry and store)
@@ -693,14 +912,21 @@ def delete_job(job_id: str) -> dict[str, str]:
     return {"detail": "Job artifacts deleted successfully"}
 
 
-@app.post("/v1/cleanup-expired")
+@app.post(
+    "/v1/cleanup-expired",
+    dependencies=[Depends(require_operator)],  # noqa: B008
+)
 def cleanup_expired() -> dict[str, int]:
     """Trigger TTL cleanup of expired job folders on disk."""
     count = service.cleanup_expired_jobs()
     return {"cleaned_count": count}
 
 
-@app.post("/v1/rules/validate", response_model=RuleValidationResponse)
+@app.post(
+    "/v1/rules/validate",
+    response_model=RuleValidationResponse,
+    dependencies=[Depends(require_operator)],  # noqa: B008
+)
 def validate_rule(req: RuleValidationRequest) -> RuleValidationResponse:
     """Validate an exam rule against canonical schema and pydantic constraints."""
     errors = validate_exam_rule(req.rule)

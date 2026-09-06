@@ -413,6 +413,63 @@ class RuleOrchestratedPipeline:
         self._face_landmarker: Optional[Any] = None
         self._face_landmarker_unavailable = False
 
+    def _segmenter_for_matting(self) -> Any:
+        """The subject segmenter this pipeline mattes with.
+
+        Both BiRefNet backends are kept warm across calls: their load and
+        verification cost real time (the weights, and for the PyTorch backend
+        torch itself), unlike MediaPipe's cheap per-call reinitialisation.
+
+        Separated from ``process_rule`` so that a service can build it at boot
+        rather than on a candidate's request (DEC-064). It used to be inline,
+        which meant the only way to construct the model was to run a whole
+        photograph through the pipeline.
+        """
+        if self.matting_backend not in ("birefnet", "birefnet_onnx"):
+            return MediapipeSubjectSegmenter(
+                model_path=self.segmenter_model_path,
+                expected_sha256=self.segmenter_expected_sha256,
+            )
+
+        if self._matting_segmenter is None:
+            assert self.birefnet_model_dir is not None
+            if self.matting_backend == "birefnet":
+                from exam_photo.providers.segmenters.birefnet_segmenter import (
+                    BiRefNetSubjectSegmenter,
+                )
+
+                self._matting_segmenter = BiRefNetSubjectSegmenter(
+                    model_dir=self.birefnet_model_dir,
+                    expected_sha256=self.birefnet_expected_sha256,
+                )
+            else:
+                from exam_photo.providers.segmenters.birefnet_onnx_segmenter import (
+                    BiRefNetONNXSubjectSegmenter,
+                )
+
+                self._matting_segmenter = BiRefNetONNXSubjectSegmenter(
+                    model_dir=self.birefnet_model_dir,
+                    expected_sha256=self.birefnet_expected_sha256,
+                )
+        return self._matting_segmenter
+
+    def warmup(self) -> None:
+        """Pay the first-inference cost now, so a candidate does not (DEC-064).
+
+        onnxruntime spins up its thread pool and memory arena on the **first
+        inference** in a process and never again (DEC-054), which is why this
+        runs a real segmentation rather than only constructing the session:
+        loading the graph and calling nothing would leave the entire 100-150 s
+        penalty for the first candidate while reporting the process ready.
+
+        The image is small and synthetic. The point is to execute the graph,
+        not to produce a result, so nothing here is read.
+        """
+        segmenter = self._segmenter_for_matting()
+        probe = Image.new("RGB", (256, 256), (128, 128, 128))
+        with segmenter:
+            segmenter.segment_subject(probe)
+
     def _refine_face_landmarks(self, image: Image.Image, face: Any) -> Any:
         """Sharpen the chin and eye line of a detected face (DEC-032).
 
@@ -798,38 +855,7 @@ class RuleOrchestratedPipeline:
         ):
             t_stage = time.perf_counter()
             try:
-                segmenter: Any
-                if self.matting_backend in ("birefnet", "birefnet_onnx"):
-                    # Kept warm across calls: both BiRefNet backends' load/
-                    # verification costs real time (weights, and for the
-                    # PyTorch backend torch itself), unlike MediaPipe's cheap
-                    # per-call reinitialisation.
-                    if self._matting_segmenter is None:
-                        assert self.birefnet_model_dir is not None
-                        if self.matting_backend == "birefnet":
-                            from exam_photo.providers.segmenters.birefnet_segmenter import (
-                                BiRefNetSubjectSegmenter,
-                            )
-
-                            self._matting_segmenter = BiRefNetSubjectSegmenter(
-                                model_dir=self.birefnet_model_dir,
-                                expected_sha256=self.birefnet_expected_sha256,
-                            )
-                        else:
-                            from exam_photo.providers.segmenters.birefnet_onnx_segmenter import (
-                                BiRefNetONNXSubjectSegmenter,
-                            )
-
-                            self._matting_segmenter = BiRefNetONNXSubjectSegmenter(
-                                model_dir=self.birefnet_model_dir,
-                                expected_sha256=self.birefnet_expected_sha256,
-                            )
-                    segmenter = self._matting_segmenter
-                else:
-                    segmenter = MediapipeSubjectSegmenter(
-                        model_path=self.segmenter_model_path,
-                        expected_sha256=self.segmenter_expected_sha256,
-                    )
+                segmenter: Any = self._segmenter_for_matting()
                 with segmenter:
                     seg_result = segmenter.segment_subject(
                         norm_result.image,

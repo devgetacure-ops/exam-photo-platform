@@ -7,7 +7,7 @@ from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel, Field
 
-from exam_photo.api.contracts import ApiJobStatus
+from exam_photo.api.contracts import ApiJobStatus, JobEntitlement
 
 JOB_ID_REGEX = re.compile(r"^job_[A-Za-z0-9_-]+$")
 
@@ -70,6 +70,21 @@ class ProcessingJobRecord(BaseModel):
     #: Uploaded sources for a multi-page document, in the order they arrived
     #: (DEC-053).  Held so `assemble` can re-read what `plan` accepted.
     document_sources: List[str] = Field(default_factory=list)
+
+    # --- The purchase gate (DEC-063) --------------------------------------
+    #
+    # Defaults to `PREVIEW_ONLY` so that a manifest written before this field
+    # existed, or by a path that forgot to set it, is gated rather than given
+    # away.  `/v1/process` sets `RELEASED` explicitly: it serves the local-only
+    # rule-admin console, names no examination and never reaches a candidate.
+    entitlement: JobEntitlement = JobEntitlement.PREVIEW_ONLY
+    #: The watermarked reduced-resolution copy, where one could be rendered.
+    preview_filename: Optional[str] = None
+    #: `True` only where a mark was actually burned into pixels that were
+    #: written to disk.  Never set from the intention to render one.
+    preview_watermarked: bool = False
+    preview_width: Optional[int] = None
+    preview_height: Optional[int] = None
 
 
 class JobRegistry:

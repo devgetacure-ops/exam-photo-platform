@@ -19,6 +19,9 @@ python scripts/export_birefnet_onnx.py             # 940 MB, needs the `matting`
 There is a browser test bench at **`/test`** on the running service: any exam
 crossed with any file, input beside output, stage timings and the raw report.
 Served by the engine itself, so it is same-origin and needs no CORS toggle.
+Start the service with `EXAM_PHOTO_PURCHASE_GATE_ENABLED=false` when using it to
+judge quality, or the bench shows the watermarked preview instead of the output
+(DEC-063) -- it says which one it is showing.
 
 Batch a folder with `python scripts/run_photo_set.py --input-dir "<folder>"
 --contact-sheet`. Note it spawns a process per photo, so its per-photo times
@@ -83,16 +86,31 @@ into the delivered photograph. Do not take it to hit a latency number.
 
 # Platform State
 
-**Last updated: 2026-09-05.** Branch `feat/upload-kit-ui`, merged up to date
+**Last updated: 2026-09-06.** Branch `feat/upload-kit-ui`, merged up to date
 with `main` (which carries the ONNX matting backend, DEC-054). The kit API is
 built (DEC-055..058), and so is the read half of the web app: a candidate can
 search 39 examinations and see everything each one asks for, on statically
-generated pages. Not yet pushed.
+generated pages.
 
-**The next session is payment and delivery.** Upload and preparation are
-built and verified against the running engine; what is missing is Razorpay,
-the watermark, and getting the file to the candidate. Start at
-*[Where to start: the web app](#where-to-start-the-web-app)*.
+**Both lanes share one working tree**, at `C:/Projects/exam-photo-platform` on
+`feat/upload-kit-ui`. That is why `git status` always shows the other lane's
+uncommitted work and why neither lane can commit without staging by path. It is
+the single biggest source of friction in this arrangement and it is fixable --
+see *[Two agents, one repository](#two-agents-one-repository)*.
+
+**The engine lane is committed and pushed. Codex's UI work is not** -- the
+modified app/component files and the four new components are uncommitted in the
+tree. Check `git status` before assuming anything is clean.
+
+**The engine is deployable and cannot yet take money.** The watermarked preview
+and purchase gate are built (DEC-063), the service warms itself, sweeps expired
+artifacts and gates its operator surface (DEC-064), and `deploy/` holds a
+working Dockerfile, compose file and reverse proxy (DEC-065). What is missing is
+**Razorpay** -- `release_job` is the seam and nothing calls it, so every clean
+file answers 402 -- and **delivery**, and the **2026 research refresh**.
+
+**None of those need Docker.** Deployment work is done to the point where the
+next useful step happens on a real VPS, not here.
 
 ## Two agents, one repository
 
@@ -101,17 +119,40 @@ Design and engine are split. **Do not cross the line without saying so.**
 | Owner | Files |
 |---|---|
 | **Codex** — UI/UX | `apps/web/src/app/**`, `apps/web/src/components/**`, `globals.css`, everything visual |
-| **This lane** — engine | `services/image-engine/**`, `scripts/**`, `packages/exam-rules/**`, `examples/rules/**` |
+| **This lane** — engine | `services/image-engine/**`, `scripts/**`, `packages/exam-rules/**`, `examples/rules/**`, `deploy/**` |
 | **Shared contract** | `apps/web/src/lib/types.ts`, `apps/web/src/lib/api-client.ts` |
 
+**One tree is the problem, not one branch.** Both lanes currently work in the
+same checkout, so they cannot be on different branches and every `git status`
+mixes them. `git worktree` fixes it and this repo already uses worktrees:
+
+```bash
+git worktree add ../exam-photo-ui -b feat/ui
+```
+
+Codex then works in `../exam-photo-ui` on `feat/ui`; the engine lane keeps this
+directory. **Give the new worktree to the UI lane, not the engine lane** --
+`model-assets/` is gitignored and 2.5 GB, so a second worktree starts without
+it, and the UI is the half that does not need it.
+
+The file sets are disjoint, so merges are clean **except in three documents both
+lanes append to**: `HANDOFF.md`, `docs/08_DECISION_LOG.md` and
+`docs/07_REQUIREMENTS_TRACEABILITY.md`. Expect an end-of-file conflict in those
+on every merge; the resolution is always "keep both sides".
+
 The shared files describe what the API returns, so an edit there is a request
-to the other side rather than a local change. Codex has already used them that
-way: it declared `preview_url` and `preview_watermarked` on
-`PrepareRequirementResponse` and wired `outcome-result.tsx` to show a
-watermarked preview when the backend asserts one, falling back to the clean
-output when it does not. That is an open request against the engine, and it is
-the right shape -- the UI now only claims "watermarked" when the backend says
-so.
+to the other side rather than a local change. Codex used them that way to ask
+for `preview_url` and `preview_watermarked` on `PrepareRequirementResponse`,
+and **the engine now serves both** under exactly those names (DEC-063), so
+`types.ts` needs no change for them.
+
+**Open in the other direction**, and additive, so nothing breaks while it is
+unread: the engine's `PrepareRequirementResponse` and `JobStatusResponse` also
+carry `entitlement` (`"preview_only" | "released"`), and `KitPackageResponse`
+carries `awaiting_release: number` with `awaiting_release: boolean` per item.
+Those are what a payment interface needs in order to say *why* a download is
+unavailable rather than only that it is. Declaring them in `types.ts` is Codex's
+call, not the engine's.
 
 What this file is: the state a new session cannot reconstruct from the diff.
 Not a session note — keep it current rather than appending to it. It has drifted
@@ -123,7 +164,7 @@ Read alongside:
 | File | What it carries |
 |---|---|
 | `AGENTS.md` | The binding operating contract |
-| `docs/08_DECISION_LOG.md` | DEC-029..062. **Living** — amend an entry when implementation moves; never bend implementation to fit a stale one |
+| `docs/08_DECISION_LOG.md` | DEC-029..065. **Living** — amend an entry when implementation moves; never bend implementation to fit a stale one |
 | `HANDOFF-INVARIANTS.md` | How composition work is done here: the invariant sweep, the ratchet, the planner/validator defect class |
 | `docs/EXAM_RULE_GAP_REGISTER.md` | Generated. Which examinations are encoded, which are not, and why |
 
@@ -207,29 +248,36 @@ puts the product's worst failure mode back on the table.
 | Published rejection conditions | `scripts/encode_exam_rules.py` routes them (DEC-059); shown per requirement, attributed to the exam |
 | Upload and preparation | `components/exam/requirement-upload.tsx` — client island, records the job against the kit |
 | Three outcome states | `components/exam/outcome-result.tsx` — clean / with-findings / blocked |
+| The watermarked preview and the purchase gate | Engine: `src/exam_photo/preview/`, `api/app.py` (`/v1/jobs/{id}/preview`, 402 on `/output`). UI already wired by Codex |
 
 ### Not built, in order
 
-1. **The watermarked preview — engine work, not UI work.** Codex has declared
-   the contract (`preview_url`, `preview_watermarked`) and built the UI for it;
-   the service serves neither field, so the UI currently falls back to showing
-   the clean file and there is no purchase gate at all. **This belongs on the
-   engine side and cannot be done in the browser**: the whole point is that the
-   clean file never reaches the client before payment, so the watermark has to
-   be burned in server-side at reduced resolution. A browser-side watermark
-   would already have the clean file in the page and would protect nothing.
-   This is the first thing to build.
-2. **Payment.** Razorpay, decided. The ordering is already right: preparation
-   happens first and the candidate decides against the real result.
-3. **Delivery.** Download, email, and a `wa.me` share link — the candidate
+1. **Payment.** Razorpay, decided. The ordering is already right: preparation
+   happens first and the candidate decides against the real result. **The
+   engine side is waiting for exactly one call.** `ApiProcessingService.
+   release_job(job_id)` moves a job from `preview_only` to `released`, and
+   until something calls it nothing in the candidate path can download a clean
+   file — `/v1/jobs/{id}/output` and `/v1/kits/{id}/package/download` both
+   answer 402 (DEC-063). There is deliberately **no HTTP route** that releases
+   a job, because an unauthenticated one reads as protection and is none. The
+   Razorpay webhook, with its signature verified against the shared secret
+   before anything else, is what should call it.
+2. **Delivery.** Download, email, and a `wa.me` share link — the candidate
    sends it themselves, which needs no WhatsApp Business integration and routes
    no candidate photograph through Meta.
-4. **Multi-page documents** via `planDocument` → arrange → `assembleDocument`.
-5. **The package.** Nothing calls `getKitPackage` yet, so there is no ZIP and
-   no checklist at the end. The rail's price button is a placeholder.
-6. **Mobile.** Explicitly out of scope as a responsive pass — the product owner
+3. **Multi-page documents** via `planDocument` → arrange → `assembleDocument`.
+4. **The package.** Nothing calls `getKitPackage` yet, so there is no ZIP and
+   no checklist at the end. The rail's price button is a placeholder. Note the
+   download is now gated: the checklist stays readable, the archive does not.
+5. **Mobile.** Explicitly out of scope as a responsive pass — the product owner
    wants a separate design for it, not a reflow of this one. The workspace is
    built for desktop and its two-pane grid assumes that.
+6. **A preview for a PDF deliverable.** A certificate assembled as a PDF gets
+   no preview — `preview_watermarked` is `false` and `preview_url` is null,
+   which is honest — but it is still gated, so a candidate currently buys a
+   certificate scan unseen. Rendering a page needs a rasteriser this repository
+   deliberately does not carry (PyMuPDF is AGPL). DEC-052 does not forbid one
+   for a *preview*; that rule governs the delivered file.
 
 `upload-card.tsx`, `result-preview.tsx`, `validation-report.tsx` and
 `processing-status.tsx` still survive from the pre-pivot flow, now unused by
@@ -247,6 +295,34 @@ EXAM_PHOTO_LOCAL_CORS_ENABLED=true .venv/Scripts/python.exe -m exam_photo serve-
 Without it every upload fails as an ordinary network error, because a blocked
 cross-origin request and a dead server are the same `TypeError` to a browser.
 
+### Deploying it
+
+Every hardening knob is off or permissive by default so local development is
+unchanged; a public host must set all of these (DEC-064):
+
+```bash
+EXAM_PHOTO_ALLOWED_ORIGINS=https://your-domain      # or serve same-origin behind a proxy and leave unset
+EXAM_PHOTO_OPERATOR_TOKEN=<long random secret>      # gates /v1/process, /v1/rules/validate, /v1/cleanup-expired, /test
+EXAM_PHOTO_MAX_CONCURRENT_PREPARATIONS=<~core count>
+EXAM_PHOTO_CLEANUP_INTERVAL_SECONDS=300
+EXAM_PHOTO_JOB_TTL_SECONDS=<settle this first, see open risk 6>
+```
+
+Point the load balancer's readiness probe at **`/ready`**, not `/health`.
+`/health` is liveness only and answers 200 while the model is still loading;
+that distinction is the whole reason a rolling deploy does not take the fleet
+cold. `/ready` also reports `operator_surface: "unauthenticated"` when no token
+is set, which is the one place an open operator surface is visible.
+
+**The purchase gate is on by default** (DEC-063), so `/v1/jobs/{id}/output`
+answers 402 and the browser gets `/v1/jobs/{id}/preview` — the finished file at
+half resolution with the mark burned into it. That is the correct behaviour for
+the product and the wrong one for judging engine output, so add
+`EXAM_PHOTO_PURCHASE_GATE_ENABLED=false` for any quality work. Judging a matte
+on a watermarked half-resolution copy is judging it on the wrong thing, the same
+trap as the MediaPipe backend. The `/test` bench asks for the clean file, falls
+back to the preview on a 402, and says which one it is showing.
+
 ### Decided, not yet built
 
 - **Identify a session by an unguessable token, never by IP.** Carrier-grade
@@ -256,7 +332,8 @@ cross-origin request and a dead server are the same `TypeError` to a browser.
   `kit-state.ts` already mints a `kit_id` for exactly this.
 - **No right-click blocking.** It stops nobody and reads as cheap. The
   protection that works is that the clean file never reaches the browser before
-  payment; the preview is watermarked server-side at reduced resolution.
+  payment; the preview is watermarked server-side at reduced resolution. **Both
+  halves of that are now built** (DEC-063) — see the purchase gate below.
 - **Reject-gallery examples are synthetic.** Real candidate photographs may
   never ship. The SVG diagrams already cover framing; anything richer is drawn
   or commissioned, never a real candidate.
@@ -264,7 +341,7 @@ cross-origin request and a dead server are the same `TypeError` to a browser.
 **The API is done.** `GET /v1/exams`, `GET /v1/exams/{exam_id}`,
 `POST /v1/exams/{exam_id}/requirements/{requirement_id}/prepare`, the document
 pair (`.../requirements/{id}/documents` then `/v1/documents/{job_id}/assemble`),
-and `GET /v1/kits/{kit_id}/package(/download)`. Contracts in `api/contracts.py`,
+`GET /v1/jobs/{job_id}/preview`, and `GET /v1/kits/{kit_id}/package(/download)`. Contracts in `api/contracts.py`,
 catalogue reader in `orchestration/rule_catalogue.py`. The support gate returns
 409 with the requirement's own vocabulary before the upload is read.
 
@@ -380,17 +457,17 @@ defects the reference set could not.
 
 ## Open risks, in priority order
 
-1. **Cold start is 100–150 s and nothing warms the process.** onnxruntime pays
-   a one-time thread-pool and arena spin-up on its *first* inference in a
-   process, then never again (DEC-054). Both segmenters keep their session warm
-   across calls, but nothing creates it at boot: there is no `lifespan` or
-   startup hook, and `/health` returns `healthy` immediately regardless. So the
-   first candidate to reach a fresh worker waits over two minutes, and a load
-   balancer has no way to tell a warm process from a cold one. Needs a warmup
-   call at boot plus a readiness signal distinct from liveness. Not built,
-   because there is no deployment machinery yet to build it against — no
-   Dockerfile, no compose file, nothing. **Do this before the first deploy, not
-   after.**
+1. ~~**Cold start and nothing warms the process.**~~ **Fixed (DEC-064).** A
+   `lifespan` hook warms the model on a background thread at boot and
+   `GET /ready` reports `warming` / `ready` / `failed`, 503 on the first and
+   last, while `/health` stays liveness-only. Measured on this machine: the
+   first inference in a process costs **48.8 s** and the second **7.7 s**, so
+   warmup absorbs roughly 41 s that used to fall on the first candidate.
+   Verified live — the process binds and answers `/health` at 200 while
+   `/ready` is 503 `warming` with an elapsed count. Deployment machinery now
+   exists in `deploy/` (DEC-065) and the compose healthcheck reads `/ready`.
+   **Both images are built and the stack has run**, which found three
+   things listed under *Deployment* below.
 2. **Throughput is 10.64 s per photograph**, mean over the ten `perfect`
    photographs at 413×531, warmed (DEC-054, measured 2026-08-06 — it was 21.38 s
    before the ONNX backend). The product owner has taken further speed work as
@@ -407,10 +484,22 @@ defects the reference set could not.
 4. **Ten examinations dropped for a photograph reason** while carrying 23
    non-photograph deliverables between them, including all four SSC. Fixing it
    means letting a rule record exist without a photograph specification.
-5. **Service hardening and privacy.** The API is local-only by design — no TLS,
-   auth or rate limiting — and candidate face photographs are sensitive personal
-   data under the DPDP Act. Both precede anything public.
-6. **Invariants unwired**, and the remaining **M22 matte defect**: a detached
+5. **Service hardening and privacy — partly done (DEC-064).** An operator token
+   now gates `/v1/process`, `/v1/rules/validate`, `/v1/cleanup-expired` and
+   `/test`; the candidate surface stays open because a browser cannot hold a
+   secret, and its CPU is protected by a global concurrency cap (429 with
+   `Retry-After`) rather than a per-IP quota, which CGNAT makes unusable. The
+   expired-artifact sweeper now actually runs, so retention is enforced rather
+   than merely asserted. **Still outstanding: TLS** (assumed terminated at the
+   proxy — make sure it is), edge abuse filtering, and the question below.
+6. **`job_ttl_seconds` is 3600 and the interface contemplates 30 minutes.**
+   The sweeper (DEC-064) makes either number real; which it should be is
+   unsettled. DEC-058 records that changing it is a privacy decision to be
+   taken on its own evidence and not a convenience knob, and
+   `docs/UI_ENGINE_HANDOFF.md` lists a *30-minute* deletion guarantee as
+   outstanding — half the current value. **Settle this before publishing any
+   deletion claim**, because the claim and the setting must match.
+7. **Invariants unwired**, and the remaining **M22 matte defect**: a detached
    hair fragment on photo 17 (a disconnected mask region). Its soft/smudged
    hair-edge half (18, 19, and the non-fragment part of 17) is fixed --
    DEC-033's trusted-alpha path was skipping an anti-halo contrast correction
@@ -434,6 +523,70 @@ its own CI stage. Marker suites green in CI. Invariant sweep 0 violations of 960
 Model assets are under `model-assets/`. Run marker suites from the repo root
 with `EXAM_PHOTO_FACE_MODEL_PATH` / `EXAM_PHOTO_SEGMENTER_MODEL_PATH` and their
 `*_SHA256` set as the workflow sets them.
+
+## Deployment
+
+`deploy/` holds the whole of it (DEC-065): a two-target Dockerfile for the
+engine, one for the web app, a compose file, a Caddyfile and `.env.example`.
+Read `deploy/README.md` before the first deploy.
+
+**The number that decides the box: a warm worker holds ~2.4 GB resident and
+peaks near 2.9 GB during inference**, measured on this codebase. So a 2 GB VPS
+— the ordinary reading of "one small VPS" — cannot run this; **4 GB is the
+floor for one worker**. It also corrects the throughput plan above: workers are
+processes and each holds its own session, so "several worker processes each
+holding a warm pipeline" costs 2.4 GB *each*, and four workers is a 16 GB box
+rather than a configuration change.
+
+### What building it actually found
+
+Written, then built, then run. The build found nothing; **running a real
+photograph found two defects and one hard limit.**
+
+1. **The canonical JSON Schema was unreachable from any installed copy.**
+   `rule_validation.py` located `exam-rule.schema.json` by walking four
+   directories up from `__file__` — the repository root in a checkout, and
+   `site-packages`' grandparent anywhere else. Every rule then failed with
+   `RULE_VALIDATION_SCHEMA_UNAVAILABLE`, so **every job failed**. This was a
+   latent defect affecting the wheel build too, not a packaging slip. It now
+   honours `EXAM_PHOTO_REPO_ROOT` first and keeps the relative walk as the
+   checkout fallback (`tests/test_rule_schema_resolution.py`).
+2. **mediapipe needs `libGLESv2.so.2` to *run*, not to import.** It `dlopen`s
+   the GLES libraries only when a detector executes, so the package imported
+   cleanly and the first real photograph failed with a message naming nothing
+   to do with faces. `libgles2` and `libegl1` are now in the base image. **An
+   import smoke test does not catch this** — only a real inference does.
+3. **The stack does not fit in 4 GB.** Running it in a 3.6 GB Docker VM killed
+   uvicorn mid-inference at **3.1 GB resident** (`anon-rss:3115756kB`, a global
+   OOM). 4 GB is the floor for the **engine container alone**; the whole stack
+   wants **6 GB**. The sizing table in `deploy/README.md` was corrected from
+   this, not estimated.
+
+Also measured: **container warmup is 186–316 s**, against 48.8 s for the same
+inference natively — the model file is on a volume. The healthcheck's
+`start_period` is 600 s for that reason; 300 s was tried and one run only
+survived on the retries. Too short means a crash loop, not a slow start.
+
+**Verified working end to end**: engine image 1.21 GB with torch correctly
+absent, web image generating **39 exam pages and 39 rules pages**, Caddyfile
+`Valid configuration`, same-origin routing, the operator gate (401/200), and
+the proxy holding until the engine reported *ready*. **Not verified**: a
+photograph completing inside the container — it needs 3.1 GB and this machine
+cannot give it. That belongs on the VPS.
+
+Three things the shape depends on, none of them obvious from the files:
+
+- **Weights live in a named volume**, filled once by the `model-fetch` profile,
+  never baked into an image. They are ~2.5 GB that never change between
+  deploys.
+- **Caddy gives one origin**, so `EXAM_PHOTO_ALLOWED_ORIGINS` stays unset and
+  there is no CORS to configure. `/health` and `/ready` are answered only from
+  private ranges, because `/ready` reports the matting backend, the
+  purchase-gate state and whether the operator surface is authenticated.
+- **The web image reproduces the repository layout** rather than flattening the
+  app, because `catalogue.server.ts` resolves the catalogue as
+  `process.cwd()/../../examples/rules`. Flatten it and every exam page vanishes
+  from the build with no error worth the name, so the build asserts they exist.
 
 ## Reference material — local only, never commit
 
