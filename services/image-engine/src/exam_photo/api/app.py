@@ -28,6 +28,7 @@ from exam_photo.api.contracts import (
     ExamDetailResponse,
     ExamListResponse,
     ExamSummaryResponse,
+    JobRetentionResponse,
     JobStatusResponse,
     KitPackageItem,
     KitPackageResponse,
@@ -46,6 +47,7 @@ from exam_photo.api.service import (
     ApiProcessingService,
     RequirementNotFoundError,
     RequirementNotServedError,
+    RetentionCeilingReachedError,
     ServiceBusyError,
     UploadLimitExceededError,
 )
@@ -799,6 +801,7 @@ def get_job_status(job_id: str) -> JobStatusResponse:
         preview_url=preview_url,
         preview_watermarked=record.preview_watermarked,
         entitlement=record.entitlement,
+        extendable=service.job_is_extendable(record),
         rule_compliant=record.rule_compliant,
         visual_quality_acceptable=record.visual_quality_acceptable,
         portrait_quality_report=record.portrait_quality_report,
@@ -905,6 +908,45 @@ def get_job_output(job_id: str) -> Response:
         headers={
             "Content-Disposition": (f'attachment; filename="{record.output_filename}"')
         },
+    )
+
+
+@app.post("/v1/jobs/{job_id}/extend", response_model=JobRetentionResponse)
+def extend_job_retention(job_id: str) -> JobRetentionResponse:
+    """Give a live job one more retention window (DEC-067).
+
+    Unauthenticated on purpose, like the rest of the candidate surface: a
+    browser cannot hold a secret, and the worst this route can do is keep
+    one file for `job_max_lifetime_seconds`, which is exactly what every
+    file used to get unconditionally. It cannot resurrect an expired job and
+    it cannot release one -- payment is a separate gate (DEC-063).
+    """
+    if not JOB_ID_REGEX.match(job_id):
+        raise HTTPException(status_code=400, detail="Invalid job ID format")
+
+    try:
+        record = service.extend_job(job_id)
+    except KeyError:
+        raise HTTPException(
+            status_code=404,
+            detail=(
+                "This file is no longer available. It may have reached its "
+                "deletion time, after which nothing can be extended."
+            ),
+        ) from None
+    except RetentionCeilingReachedError:
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                "This file has already been kept for as long as the platform "
+                "will keep it. Download it now, or prepare it again later."
+            ),
+        ) from None
+
+    return JobRetentionResponse(
+        job_id=record.job_id,
+        expires_at=record.expires_at,
+        extendable=service.job_is_extendable(record),
     )
 
 

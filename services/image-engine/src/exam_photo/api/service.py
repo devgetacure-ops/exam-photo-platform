@@ -8,11 +8,16 @@ import threading
 import time
 import zipfile
 from contextlib import contextmanager
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Dict, Iterator, Optional, Tuple
 
 from exam_photo.api.contracts import ApiJobStatus, JobEntitlement
-from exam_photo.api.jobs import JobRegistry, ProcessingJobRecord
+from exam_photo.api.jobs import (
+    JobRegistry,
+    ProcessingJobRecord,
+    parse_manifest_timestamp,
+)
 from exam_photo.api.settings import ApiSettings
 from exam_photo.api.storage import LocalArtifactStore
 from exam_photo.models.exam_rule import (
@@ -60,6 +65,16 @@ class ServiceBusyError(RuntimeError):
 
     Distinct from a failure: nothing is wrong with the request, and retrying
     it shortly will work. The API turns this into 429 with `Retry-After`.
+    """
+
+
+class RetentionCeilingReachedError(RuntimeError):
+    """This job cannot be kept any longer (DEC-067).
+
+    Distinct from "not found": the file is still there and still
+    downloadable right now. What has run out is room to postpone its
+    deletion, and the caller is told so rather than being given a silent
+    no-op that looks like a successful extension.
     """
 
 
@@ -667,6 +682,58 @@ class ApiProcessingService:
             pass
         self.registry.delete_job(record.job_id)
         return True
+
+    def extend_job(self, job_id: str) -> ProcessingJobRecord:
+        """Give a live job one more retention window, up to its ceiling.
+
+        This exists because DEC-066's thirty minutes is short enough to catch
+        a candidate who is still working, and the alternative -- holding
+        every file for longer in case a few need it -- makes everyone pay for
+        those few. An extension is asked for, by the one person whose file it
+        is, and it is bounded twice: a new window is measured from now rather
+        than added to what is left, and no extension may pass
+        `job_max_lifetime_seconds` measured from creation, so repeating the
+        request cannot walk a file forward indefinitely.
+
+        **An expired job cannot be extended.** Its artifacts are gone by the
+        time this is reached, so there is nothing to keep, and saying so as a
+        404 is the truth. That is precisely why the interface must warn
+        before the deadline rather than offer this after it (DEC-067).
+        """
+        record = self.registry.get_job(job_id)
+        if record is None or record.status == ApiJobStatus.DELETED:
+            raise KeyError(job_id)
+        if self.expire_job_if_due(record):
+            raise KeyError(job_id)
+
+        ceiling = record.lifetime_ceiling(self.settings.job_max_lifetime_seconds)
+        if ceiling is None:
+            raise RetentionCeilingReachedError(job_id)
+
+        now = datetime.now(timezone.utc)
+        proposed = min(now + timedelta(seconds=self.settings.job_ttl_seconds), ceiling)
+        current = parse_manifest_timestamp(record.expires_at)
+        if current is not None and proposed <= current:
+            # Already at the ceiling, or the request bought nothing. Refusing
+            # is better than returning success and an unchanged deadline.
+            raise RetentionCeilingReachedError(job_id)
+
+        record.expires_at = proposed.isoformat()
+        self.registry.update_job(record)
+        return record
+
+    def job_is_extendable(self, record: ProcessingJobRecord) -> bool:
+        """Whether `extend_job` would currently buy this job any more time."""
+        ceiling = record.lifetime_ceiling(self.settings.job_max_lifetime_seconds)
+        if ceiling is None or record.is_expired():
+            return False
+        current = parse_manifest_timestamp(record.expires_at)
+        proposed = min(
+            datetime.now(timezone.utc)
+            + timedelta(seconds=self.settings.job_ttl_seconds),
+            ceiling,
+        )
+        return current is None or proposed > current
 
     def check_upload_limit(self, size_bytes: int) -> None:
         """Raise an error if the uploaded content size exceeds setting limits."""

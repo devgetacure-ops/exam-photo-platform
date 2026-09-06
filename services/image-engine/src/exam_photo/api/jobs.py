@@ -17,6 +17,23 @@ JOB_ID_REGEX = re.compile(r"^job_[A-Za-z0-9_-]+$")
 KIT_ID_REGEX = re.compile(r"^kit_[A-Za-z0-9_-]{1,64}$")
 
 
+def parse_manifest_timestamp(stamp: str) -> Optional[datetime]:
+    """Read a manifest timestamp, or `None` if it cannot be read.
+
+    Callers treat `None` as the answer least favourable to retention: a
+    timestamp nobody can decode must never be the path by which a
+    candidate's photograph is kept. A naive stamp is read as UTC, which is
+    what every writer here produces.
+    """
+    try:
+        parsed = datetime.fromisoformat(stamp)
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed
+
+
 class ProcessingJobRecord(BaseModel):
     """Schema representing a job's manifest."""
 
@@ -94,13 +111,23 @@ class ProcessingJobRecord(BaseModel):
         that grants a candidate's photograph unlimited retention, and there
         is no safe reading of a retention deadline nobody can decode.
         """
-        try:
-            expires = datetime.fromisoformat(self.expires_at)
-        except ValueError:
+        expires = parse_manifest_timestamp(self.expires_at)
+        if expires is None:
             return True
-        if expires.tzinfo is None:
-            expires = expires.replace(tzinfo=timezone.utc)
         return (now or datetime.now(timezone.utc)) >= expires
+
+    def lifetime_ceiling(self, max_seconds: int) -> Optional[datetime]:
+        """The furthest this job's deadline may ever be pushed (DEC-067).
+
+        Measured from creation, so a candidate cannot walk a file forward
+        indefinitely one extension at a time. `None` where `created_at`
+        cannot be parsed, which callers must read as *no extension allowed*:
+        a job whose age is unknowable has no demonstrable room left.
+        """
+        created = parse_manifest_timestamp(self.created_at)
+        if created is None:
+            return None
+        return created + timedelta(seconds=max_seconds)
 
 
 class JobRegistry:

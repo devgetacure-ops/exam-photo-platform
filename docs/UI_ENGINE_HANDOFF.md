@@ -62,3 +62,45 @@ minutes has bought a file that no longer exists. Whether that is a refund, a
 free re-preparation, or a warning shown before checkout is a product decision,
 and it should be made before launch rather than by the first candidate it
 happens to.
+
+## The expiry warning and the extension: what the engine now serves
+
+2026-09-06, DEC-067. The product owner's answer to the question above was
+**warn before checkout, and let the candidate keep the file longer.** One
+thing to know before building it:
+
+**Those are not alternatives.** An extension can only be taken *before* the
+deadline — afterwards the artifacts are gone and there is nothing left to
+extend, and `POST /extend` answers 404 saying so. A candidate who was never
+told the deadline exists will never use the extension. **The warning is a
+precondition of the extension working at all.** Build the warning even if the
+extension waits.
+
+For the warning, the engine needs no change and none was made:
+
+- **`expires_at`** is on `JobStatusResponse` and `PrepareRequirementResponse`,
+  is already declared in `types.ts`, and since DEC-066 is authoritative — the
+  deadline itself, not an estimate. Count down against it.
+
+For the extension, two additions, both additive so nothing breaks unread:
+
+- **`POST /v1/jobs/{job_id}/extend`** → `{job_id, expires_at, extendable}`.
+  Grants one more full window (30 min from *now*, not added to what is left),
+  bounded at one hour from the job's creation. **404** if the job is unknown
+  or already expired; **409** if it has reached that ceiling. Refusing rather
+  than returning an unchanged deadline is deliberate — a success that changes
+  nothing teaches a candidate to trust a button that has stopped working.
+- **`extendable: boolean`** on `JobStatusResponse`, so the button can be
+  hidden before it starts answering 409 rather than after.
+
+Declaring both in `types.ts` is your call, as with `entitlement` and
+`awaiting_release`.
+
+**One thing the interface must get right, and it is a claim rather than a
+control.** The published wording is now *"deleted within 30 minutes, or within
+an hour if you ask us to keep it"* — **not** a flat thirty. Writing "deleted in
+30 minutes" beside a button that extends to sixty is exactly the mismatch
+DEC-066 existed to close, and would be worse for being introduced knowingly.
+
+**Extension does not release.** An extended job still answers 402 until it is
+paid for; retention and payment are separate gates and stay separate.

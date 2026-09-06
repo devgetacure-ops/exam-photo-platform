@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 from typing import List, Optional
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 
 class ApiSettings(BaseModel):
@@ -19,6 +19,14 @@ class ApiSettings(BaseModel):
     # at exactly this deadline -- `ProcessingJobRecord.is_expired` is checked
     # on the read path -- and the sweeper erases the bytes behind it.
     job_ttl_seconds: int = Field(default=1800)  # 30 minutes
+
+    # DEC-067: the ceiling a candidate's own extensions cannot pass. Set to
+    # 3600 deliberately -- the longest a file can now live, and only because
+    # someone asked for it, is exactly what every file used to get
+    # unconditionally before DEC-066. So the extension option cannot make the
+    # product hold anything longer than it already did, and the default case
+    # is half of it.
+    job_max_lifetime_seconds: int = Field(default=3600)  # 1 hour
 
     # Where the encoded examination catalogue is read from (DEC-055).  Relative
     # paths resolve against the repository root, the same way the model paths
@@ -149,6 +157,21 @@ class ApiSettings(BaseModel):
             raise ValueError("job_ttl_seconds must be greater than 0")
         return v
 
+    @model_validator(mode="after")
+    def validate_lifetime_ceiling(self) -> "ApiSettings":
+        """The ceiling cannot be shorter than the window it bounds.
+
+        A ceiling below the TTL would mean every job was born already past
+        its maximum lifetime, and the extension route would refuse a job that
+        had never been extended -- a configuration that reads as working and
+        is not.
+        """
+        if self.job_max_lifetime_seconds < self.job_ttl_seconds:
+            raise ValueError(
+                "job_max_lifetime_seconds must be at least job_ttl_seconds"
+            )
+        return self
+
 
 def get_settings() -> ApiSettings:
     """Load settings from environment variables with defaults."""
@@ -161,6 +184,10 @@ def get_settings() -> ApiSettings:
         kwargs["max_upload_bytes"] = int(os.environ["EXAM_PHOTO_MAX_UPLOAD_BYTES"])
     if "EXAM_PHOTO_JOB_TTL_SECONDS" in os.environ:
         kwargs["job_ttl_seconds"] = int(os.environ["EXAM_PHOTO_JOB_TTL_SECONDS"])
+    if "EXAM_PHOTO_JOB_MAX_LIFETIME_SECONDS" in os.environ:
+        kwargs["job_max_lifetime_seconds"] = int(
+            os.environ["EXAM_PHOTO_JOB_MAX_LIFETIME_SECONDS"]
+        )
     if "EXAM_PHOTO_CATALOGUE_ROOT" in os.environ:
         kwargs["catalogue_root"] = Path(os.environ["EXAM_PHOTO_CATALOGUE_ROOT"])
 

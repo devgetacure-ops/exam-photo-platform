@@ -122,6 +122,10 @@ serving container has no use for torch.
       settled (DEC-066) and published as a deletion guarantee, so raising it
       makes the product's own claim false. Access ends at the deadline itself,
       not at the next sweep.
+- [ ] **`EXAM_PHOTO_JOB_MAX_LIFETIME_SECONDS` reflected in the published
+      claim.** A candidate may extend one file to this ceiling (DEC-067), so
+      the honest wording is "deleted within 30 minutes, or within an hour if
+      you ask us to keep it" -- not a flat thirty.
 - [ ] `EXAM_PHOTO_PURCHASE_GATE_ENABLED` **not** set to false. False serves
       clean files to anyone holding a job id.
 - [ ] Backups, if artifacts matter to you. They are meant to expire, so

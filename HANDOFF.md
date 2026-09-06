@@ -503,11 +503,16 @@ defects the reference set could not.
    six job routes, which erase the job on the way to refusing it, expired
    jobs leave their kit, and the sweeper is the backstop for jobs nobody
    reads again. One product question is left open and named in
-   `docs/UI_ENGINE_HANDOFF.md`: **a candidate who pays and returns after
-   thirty minutes has bought a file that no longer exists** -- refund, free
-   re-preparation, or a warning before checkout is a product decision, and
-   it should be made before launch rather than by the first candidate it
-   happens to.
+   `docs/UI_ENGINE_HANDOFF.md`: a candidate who pays and returns after thirty
+   minutes has bought a file that no longer exists. **Settled by DEC-067:**
+   warn before checkout, and let the candidate extend once, to a ceiling of
+   one hour from creation -- which is what every file used to get
+   unconditionally, so the option cannot lengthen the worst case. The engine
+   serves `POST /v1/jobs/{id}/extend` and an `extendable` flag; **the warning
+   is the UI lane's and the feature is inert without it**, because an
+   extension can only be taken before the deadline. The published claim is
+   now "within thirty minutes, or an hour if you ask" and must be written
+   that way.
 7. **Invariants unwired**, and the remaining **M22 matte defect**: a detached
    hair fragment on photo 17 (a disconnected mask region). Its soft/smudged
    hair-edge half (18, 19, and the non-fragment part of 17) is fixed --

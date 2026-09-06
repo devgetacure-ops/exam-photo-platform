@@ -17,7 +17,11 @@ from fastapi.testclient import TestClient
 
 from exam_photo.api.app import app
 from exam_photo.api.contracts import ApiJobStatus, JobEntitlement
-from exam_photo.api.jobs import JobRegistry, ProcessingJobRecord
+from exam_photo.api.jobs import (
+    JobRegistry,
+    ProcessingJobRecord,
+    parse_manifest_timestamp,
+)
 from exam_photo.api.settings import ApiSettings
 from exam_photo.api.storage import LocalArtifactStore
 
@@ -199,3 +203,123 @@ def test_the_sweeper_still_collects_a_job_nobody_came_back_for(api):
 
     assert api.cleanup_expired_jobs() == 1
     assert not (api.settings.artifact_root / "job_retention").exists()
+
+
+# ----------------------------------------------------------------------
+# Extending a live job (DEC-067)
+# ----------------------------------------------------------------------
+
+
+def test_the_lifetime_ceiling_is_the_ttl_the_product_used_to_give_everyone():
+    """The bound is chosen so extension cannot lengthen the worst case.
+
+    3600 was the unconditional default before DEC-066, so the longest a file
+    can now live -- and only because someone asked -- is exactly what every
+    file used to get without asking.
+    """
+    settings = ApiSettings()
+
+    assert settings.job_max_lifetime_seconds == 3600
+    assert settings.job_max_lifetime_seconds >= settings.job_ttl_seconds
+
+
+def test_a_ceiling_below_the_ttl_is_refused():
+    """Otherwise every job is born past its maximum and extension never works."""
+    with pytest.raises(ValueError, match="at least job_ttl_seconds"):
+        ApiSettings(job_ttl_seconds=1800, job_max_lifetime_seconds=600)
+
+
+def test_extending_a_live_job_moves_its_deadline_forward(api):
+    _finished_job(api, age_seconds=+60)
+    before = api.registry.get_job("job_retention").expires_at
+
+    response = client.post("/v1/jobs/job_retention/extend")
+
+    assert response.status_code == 200
+    assert response.json()["expires_at"] > before
+    assert client.get("/v1/jobs/job_retention/output").status_code == 200
+
+
+def test_the_new_window_is_measured_from_now_not_added_to_what_is_left(api):
+    """A candidate asking with two minutes left wants a full window, not 32."""
+    _finished_job(api, age_seconds=+120)
+
+    granted = parse_manifest_timestamp(
+        client.post("/v1/jobs/job_retention/extend").json()["expires_at"]
+    )
+
+    expected = datetime.now(timezone.utc) + timedelta(
+        seconds=api.settings.job_ttl_seconds
+    )
+    assert abs((granted - expected).total_seconds()) < 30
+
+
+def test_extension_stops_at_the_ceiling_measured_from_creation(api):
+    """Otherwise repeating the request walks a file forward for ever."""
+    record = _finished_job(api, age_seconds=+60)
+    # Born 55 minutes ago against a 60-minute ceiling: 5 minutes of room.
+    record.created_at = (datetime.now(timezone.utc) - timedelta(minutes=55)).isoformat()
+    api.registry.update_job(record)
+
+    granted = parse_manifest_timestamp(
+        client.post("/v1/jobs/job_retention/extend").json()["expires_at"]
+    )
+
+    ceiling = datetime.now(timezone.utc) + timedelta(minutes=5)
+    assert granted <= ceiling + timedelta(seconds=30)
+
+
+def test_a_job_at_its_ceiling_is_refused_rather_than_silently_unchanged(api):
+    """409, not a 200 whose deadline did not move."""
+    record = _finished_job(api, age_seconds=+60)
+    record.created_at = (datetime.now(timezone.utc) - timedelta(hours=2)).isoformat()
+    api.registry.update_job(record)
+
+    response = client.post("/v1/jobs/job_retention/extend")
+
+    assert response.status_code == 409
+    assert client.get("/v1/jobs/job_retention/output").status_code == 200
+
+
+def test_an_expired_job_cannot_be_extended(api):
+    """There is nothing left to keep. This is why the warning must come first."""
+    _finished_job(api, age_seconds=-60)
+
+    response = client.post("/v1/jobs/job_retention/extend")
+
+    assert response.status_code == 404
+    assert not (api.settings.artifact_root / "job_retention").exists()
+
+
+def test_extending_does_not_release_a_gated_job(api):
+    """Retention and payment are separate gates and must stay separate."""
+    record = _finished_job(api, age_seconds=+60)
+    record.entitlement = JobEntitlement.PREVIEW_ONLY
+    api.registry.update_job(record)
+
+    assert client.post("/v1/jobs/job_retention/extend").status_code == 200
+    assert client.get("/v1/jobs/job_retention/output").status_code == 402
+
+
+def test_status_says_whether_a_further_extension_would_buy_anything(api):
+    """So the interface can stop offering a button that will answer 409."""
+    record = _finished_job(api, age_seconds=+60)
+    assert client.get("/v1/jobs/job_retention").json()["extendable"] is True
+
+    record.created_at = (datetime.now(timezone.utc) - timedelta(hours=2)).isoformat()
+    api.registry.update_job(record)
+
+    assert client.get("/v1/jobs/job_retention").json()["extendable"] is False
+
+
+def test_a_creation_time_nobody_can_parse_grants_no_extension(api):
+    """A job whose age is unknowable has no demonstrable room left."""
+    record = _finished_job(api, age_seconds=+60)
+    record.created_at = "whenever"
+    api.registry.update_job(record)
+
+    assert client.post("/v1/jobs/job_retention/extend").status_code == 409
+
+
+def test_extending_an_unknown_job_is_404(api):
+    assert client.post("/v1/jobs/job_nonexistent/extend").status_code == 404

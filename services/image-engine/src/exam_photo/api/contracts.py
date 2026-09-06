@@ -65,12 +65,30 @@ class JobStatusResponse(BaseModel):
     preview_url: Optional[str] = None
     preview_watermarked: bool = False
     entitlement: JobEntitlement = JobEntitlement.PREVIEW_ONLY
+    #: DEC-067. Additive, so nothing breaks while it is unread. Whether
+    #: `POST /v1/jobs/{job_id}/extend` would currently buy this job more
+    #: time -- false once it has reached its lifetime ceiling.
+    extendable: bool = False
     rule_compliant: Optional[bool] = None
     visual_quality_acceptable: Optional[bool] = None
     portrait_quality_report: Optional[dict[str, Any]] = None
     matte_quality_report: Optional[dict[str, Any]] = None
     quality_mode: Optional[str] = None
     diagnostic_available: Optional[bool] = None
+
+
+class JobRetentionResponse(BaseModel):
+    """What a job's retention looks like after an extension (DEC-067).
+
+    ``extendable`` is what the interface needs in order to stop offering a
+    button that will start answering 409: it is false once the job has
+    reached ``job_max_lifetime_seconds`` measured from its creation.
+    """
+
+    job_id: str
+    expires_at: str
+    #: Whether a *further* extension would buy any more time.
+    extendable: bool
 
 
 class RequirementSummary(BaseModel):
