@@ -63,15 +63,18 @@ Ranked, and the constraint is the product owner's: **no quality compromise.**
    latency of one. Several worker processes each holding a warm pipeline
    scales close to linearly -- which the DEC-062 caching finally makes
    possible, since before it every request paid a model load.
-3. **Hold INT8 quantisation to the same bar the ONNX export was held to.**
-   DEC-054 ruled quantisation out as a quality trade, but ruled it out *a
-   priori*. The export itself was not trusted on principle -- it was trusted
-   because it was proved numerically equivalent to the PyTorch original (max
-   abs difference 3e-5) before the manifest was written, and the script refuses
-   to write one if the check fails. Quantisation can be put through the same
-   gate: if it passes, it is not a quality trade, and typical CPU speedups are
-   2-3x; if it fails, it is rejected on evidence rather than on assumption.
-   This is the most promising untried avenue.
+3. ~~INT8 quantisation~~ **— tried and rejected on measurement, 2026-09-05.**
+   DEC-054 ruled it out a priori as a quality trade; it was worth putting
+   through the same numerical-equivalence gate the ONNX export passed rather
+   than assuming. It never reached the accuracy question, because it failed on
+   size and speed first: `quantize_dynamic(QInt8)` produced a **larger** graph
+   (941 MB to 1063 MB) and inference became so much slower that four passes did
+   not finish in ten minutes, against roughly 5 s each for fp32. BiRefNet's
+   graph is mostly ops dynamic quantisation cannot fold, so it inserts
+   quantise/dequantise pairs around them and pays the conversion without ever
+   getting the integer arithmetic. Static quantisation with a calibration set
+   might behave differently, but it is a much larger undertaking and would
+   still have to clear the equivalence gate. Do not re-try the dynamic form.
 
 **Not on the table: removing DEC-040's second matte.** It is half the runtime
 and the obvious cut, and it is a real quality trade -- the crop-region re-matte
