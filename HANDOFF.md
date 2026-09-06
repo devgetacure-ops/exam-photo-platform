@@ -1,6 +1,86 @@
+### Testing the engine locally
+
+`model-assets/` is gitignored, so a fresh clone starts empty and every
+`mandatory_*` suite skips silently. **Fetch all four, and both segmenter
+variants** -- the golden-image test loads `selfie_segmentation.tflite` while
+the pipeline default uses `selfie_multiclass_256x256.tflite`, and fetching only
+one makes `test_golden_images_regression` fail in a way that reads exactly like
+a composition regression:
+
+```bash
+python scripts/download_model.py --variant short_range --yes
+python scripts/download_segmenter.py --variant selfie_multiclass_256x256 --yes
+python scripts/download_segmenter.py --variant selfie_bin_general --yes
+python scripts/download_face_landmarker.py --yes
+python scripts/download_birefnet.py --yes          # 425 MB
+python scripts/export_birefnet_onnx.py             # 940 MB, needs the `matting` extra
+```
+
+There is a browser test bench at **`/test`** on the running service: any exam
+crossed with any file, input beside output, stage timings and the raw report.
+Served by the engine itself, so it is same-origin and needs no CORS toggle.
+
+Batch a folder with `python scripts/run_photo_set.py --input-dir "<folder>"
+--contact-sheet`. Note it spawns a process per photo, so its per-photo times
+include a cold start each and overstate the real cost.
+
+**Two traps that cost real time here.**
+
+*A stale venv silently breaks the ONNX export.* `onnx` and
+`deform_conv2d_onnx_exporter` are in the `matting` extra, but a venv created
+before they were added will not have them, and the export then fails two
+dependencies deep with errors naming neither. Re-run
+`pip install -e ".[dev,face,matting]"`.
+
+*Never judge output on the MediaPipe backend.* Its 256px mask leaves blocky
+edges with pieces missing from the ear and hair. It is no longer reachable
+through `auto` at all (DEC-060) and is selectable only for diagnostics.
+
+## Performance: what is actually true
+
+**~10 s per photograph, warm.** Two BiRefNet inferences at roughly 5 s each,
+plus about 1.3 s for everything else.
+
+The engine was never slow. The *service* was: it rebuilt the pipeline on every
+request and reloaded a 940 MB ONNX model each time (DEC-062). Fixing that took
+22.4 s to 10.1 s. **Every timing taken through the CLI is misleading for the
+same reason** -- a fresh process per invocation -- which is why 413x531 once
+measured slower than 1200x1200 and no resolution-based explanation ever fit.
+Measure through the warm service, never the CLI.
+
+### Reducing it further, without trading quality
+
+Ranked, and the constraint is the product owner's: **no quality compromise.**
+
+1. **A GPU execution provider.** Same graph, same weights, same maths,
+   different hardware -- the only lever here with zero quality risk. The
+   installed onnxruntime is CPU-only (`AzureExecutionProvider`,
+   `CPUExecutionProvider`), and this machine has integrated AMD graphics with
+   512 MB, which will not hold a 940 MB model. On a deployment box with a
+   discrete GPU this is the big one.
+2. **Throughput over latency.** At Rs 4 a photograph the thing that actually
+   bites is a deadline-day spike, and that is photographs per hour, not the
+   latency of one. Several worker processes each holding a warm pipeline
+   scales close to linearly -- which the DEC-062 caching finally makes
+   possible, since before it every request paid a model load.
+3. **Hold INT8 quantisation to the same bar the ONNX export was held to.**
+   DEC-054 ruled quantisation out as a quality trade, but ruled it out *a
+   priori*. The export itself was not trusted on principle -- it was trusted
+   because it was proved numerically equivalent to the PyTorch original (max
+   abs difference 3e-5) before the manifest was written, and the script refuses
+   to write one if the check fails. Quantisation can be put through the same
+   gate: if it passes, it is not a quality trade, and typical CPU speedups are
+   2-3x; if it fails, it is rejected on evidence rather than on assumption.
+   This is the most promising untried avenue.
+
+**Not on the table: removing DEC-040's second matte.** It is half the runtime
+and the obvious cut, and it is a real quality trade -- the crop-region re-matte
+is what spends the model's resolution on the part of the frame that survives
+into the delivered photograph. Do not take it to hit a latency number.
+
 # Platform State
 
-**Last updated: 2026-09-04.** Branch `feat/upload-kit-ui`, merged up to date
+**Last updated: 2026-09-05.** Branch `feat/upload-kit-ui`, merged up to date
 with `main` (which carries the ONNX matting backend, DEC-054). The kit API is
 built (DEC-055..058), and so is the read half of the web app: a candidate can
 search 39 examinations and see everything each one asks for, on statically
@@ -10,6 +90,25 @@ generated pages. Not yet pushed.
 built and verified against the running engine; what is missing is Razorpay,
 the watermark, and getting the file to the candidate. Start at
 *[Where to start: the web app](#where-to-start-the-web-app)*.
+
+## Two agents, one repository
+
+Design and engine are split. **Do not cross the line without saying so.**
+
+| Owner | Files |
+|---|---|
+| **Codex** — UI/UX | `apps/web/src/app/**`, `apps/web/src/components/**`, `globals.css`, everything visual |
+| **This lane** — engine | `services/image-engine/**`, `scripts/**`, `packages/exam-rules/**`, `examples/rules/**` |
+| **Shared contract** | `apps/web/src/lib/types.ts`, `apps/web/src/lib/api-client.ts` |
+
+The shared files describe what the API returns, so an edit there is a request
+to the other side rather than a local change. Codex has already used them that
+way: it declared `preview_url` and `preview_watermarked` on
+`PrepareRequirementResponse` and wired `outcome-result.tsx` to show a
+watermarked preview when the backend asserts one, falling back to the clean
+output when it does not. That is an open request against the engine, and it is
+the right shape -- the UI now only claims "watermarked" when the backend says
+so.
 
 What this file is: the state a new session cannot reconstruct from the diff.
 Not a session note — keep it current rather than appending to it. It has drifted
@@ -21,7 +120,7 @@ Read alongside:
 | File | What it carries |
 |---|---|
 | `AGENTS.md` | The binding operating contract |
-| `docs/08_DECISION_LOG.md` | DEC-029..058. **Living** — amend an entry when implementation moves; never bend implementation to fit a stale one |
+| `docs/08_DECISION_LOG.md` | DEC-029..062. **Living** — amend an entry when implementation moves; never bend implementation to fit a stale one |
 | `HANDOFF-INVARIANTS.md` | How composition work is done here: the invariant sweep, the ratchet, the planner/validator defect class |
 | `docs/EXAM_RULE_GAP_REGISTER.md` | Generated. Which examinations are encoded, which are not, and why |
 
@@ -108,10 +207,15 @@ puts the product's worst failure mode back on the table.
 
 ### Not built, in order
 
-1. **The watermark.** `outcome-result.tsx` already tells the candidate the
-   preview is watermarked, and **it is not** — the service returns the clean
-   file. Either watermark server-side at reduced resolution before payment, or
-   change the copy. Do not ship the current pairing.
+1. **The watermarked preview — engine work, not UI work.** Codex has declared
+   the contract (`preview_url`, `preview_watermarked`) and built the UI for it;
+   the service serves neither field, so the UI currently falls back to showing
+   the clean file and there is no purchase gate at all. **This belongs on the
+   engine side and cannot be done in the browser**: the whole point is that the
+   clean file never reaches the client before payment, so the watermark has to
+   be burned in server-side at reduced resolution. A browser-side watermark
+   would already have the clean file in the page and would protect nothing.
+   This is the first thing to build.
 2. **Payment.** Razorpay, decided. The ordering is already right: preparation
    happens first and the candidate decides against the real result.
 3. **Delivery.** Download, email, and a `wa.me` share link — the candidate
