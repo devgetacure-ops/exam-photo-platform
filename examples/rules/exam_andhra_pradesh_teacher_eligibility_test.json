@@ -1,25 +1,26 @@
 {
   "schema_version": "1.1",
-  "rule_id": "icai-examination-portal-photograph-current-portal-scope",
+  "rule_id": "andhra-pradesh-teacher-eligibility-test",
   "rule_version": "1.0.0",
   "status": "verified_with_ambiguity",
   "exam": {
-    "exam_id": "icai-examination-portal-photograph-current-portal-scope",
-    "exam_name": "ICAI Examination Portal Photograph (current portal scope)",
-    "conducting_body": "Institute of Chartered Accountants of India",
-    "examination_year": 2026,
-    "application_cycle": "current",
+    "exam_id": "andhra-pradesh-teacher-eligibility-test",
+    "exam_name": "Andhra Pradesh Teacher Eligibility Test",
+    "conducting_body": "Department of School Education Andhra Pradesh",
+    "examination_year": 2024,
+    "application_cycle": "2024",
     "application_stage": "application",
-    "jurisdiction": "India",
-    "category": "professional_body"
+    "jurisdiction": "Andhra Pradesh",
+    "category": "teacher_eligibility"
   },
   "source_evidence": [
     {
-      "source_type": "official_application_portal",
+      "source_type": "official_pdf",
       "official_source": true,
-      "captured_wording": "passport size; 50KB; JPEG; photo.jpeg; light/white background; colour",
-      "source_url": "https://pqc.icaiexam.icai.org/INTT/Home/ImageResize",
-      "document_title": "Image Resize - ICAI examination portal"
+      "captured_wording": "not more than 50kb; *.jpeg format",
+      "source_url": "https://aptet.apcfss.in/Documents/Information_Bulletin_2024_New.pdf",
+      "document_title": "APTET 2024 Information Bulletin",
+      "section_name": "Photograph and signature combined scan"
     }
   ],
   "image_requirements": {
@@ -42,8 +43,7 @@
       "colour_space": "sRGB"
     },
     "background": {
-      "mode": "plain_light",
-      "fallback_colour": "#FFFFFF"
+      "mode": "unspecified"
     },
     "composition": {
       "crop_profile": "tight_exam_portrait",
@@ -51,42 +51,27 @@
       "complete_chin_required": true,
       "ears_policy": "unspecified"
     },
-    "appearance": {
-      "monochrome_accepted": false
-    },
+    "appearance": {},
     "filename": {
-      "mode": "exact",
+      "mode": "unspecified",
       "extension_required": true,
-      "exact_filename": "photo.jpeg",
       "case_sensitive": false
     },
     "exceptional_instructions": {
-      "black_and_white_restriction": true,
       "processing_support_status": "supported"
     }
   },
   "requirements": [
     {
-      "requirement_id": "candidate_photograph",
-      "requirement_name": "Candidate photograph",
-      "requirement_type": "photograph",
-      "submission_method": "file_upload",
-      "requirement_status": "conditional",
-      "platform_support": "supported",
-      "applicability": "Candidates whose ICAI profile/exam form requires a photo",
-      "content_instructions": "Uploaded candidate photograph; format: JPEG; file size: up to 50 KB; filename: photo.jpeg; background: light or white.",
-      "evidence_status": "Current official ICAI portal scope"
-    },
-    {
-      "requirement_id": "candidate_signature",
-      "requirement_name": "Candidate signature",
+      "requirement_id": "combined_candidate_photograph_and_signature_imag",
+      "requirement_name": "Combined candidate photograph and signature image",
       "requirement_type": "signature",
       "submission_method": "file_upload",
       "requirement_status": "mandatory",
       "platform_support": "supported",
-      "applicability": "Applicants whose portal profile/exam form requires signature",
-      "content_instructions": "JPEG; maximum 50 KB; candidate\u2019s own signature; black ink on white paper; not in capital letters; no minimum published",
-      "evidence_status": "Official ICAI exam portal image instructions",
+      "applicability": "All applicants",
+      "content_instructions": "JPEG; maximum 50 KB; photo pasted on white paper with black-ink signature below and scanned together",
+      "evidence_status": "Official APTET 2024 Information Bulletin",
       "file_spec": {
         "file_size": {
           "maximum_bytes": 50000,
@@ -100,25 +85,14 @@
           "preferred_format": "jpg"
         }
       }
-    },
-    {
-      "requirement_id": "exam_form_declaration",
-      "requirement_name": "Exam-form declaration",
-      "requirement_type": "portal_declaration",
-      "submission_method": "typed_or_selected_declaration",
-      "requirement_status": "mandatory",
-      "platform_support": "guidance_only",
-      "applicability": "All applicants",
-      "content_instructions": "Confirm the examination form and profile particulars. No separate handwritten-declaration image was established.",
-      "evidence_status": "Current ICAI exam portal process"
     }
   ],
   "provenance": {
     "image_requirements.file_size": {
       "type": "official",
-      "evidence_reference": "Image Resize - ICAI examination portal (https://pqc.icaiexam.icai.org/INTT/Home/ImageResize)",
+      "evidence_reference": "APTET 2024 Information Bulletin - Photograph and signature combined scan (https://aptet.apcfss.in/Documents/Information_Bulletin_2024_New.pdf)",
       "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
-      "confidence": 4,
+      "confidence": 5,
       "approved": true
     },
     "image_requirements.dimensions": {
@@ -127,13 +101,19 @@
       "confidence": 1,
       "approved": false
     },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
     "image_requirements.composition.crop_profile": {
       "type": "platform_default",
       "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
       "confidence": 5,
       "approved": true
     },
-    "requirements[1].file_spec.formats.allowed_formats": {
+    "requirements[0].file_spec.formats.allowed_formats": {
       "type": "interim_default",
       "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
       "confidence": 1,

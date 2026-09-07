@@ -144,6 +144,26 @@
           "maximum_bytes": 400000
         }
       }
+    },
+    {
+      "requirement_id": "pwd_pwbd_certificate",
+      "requirement_name": "PwD/PwBD certificate",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "PwD/PwBD applicants where requested",
+      "content_instructions": "PDF; 50\u2013300 KB",
+      "evidence_status": "Official UGC-NET June 2026 Information Bulletin",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 300000,
+          "minimum_bytes": 50000,
+          "published_minimum": 50,
+          "published_maximum": 300,
+          "size_unit_as_published": "KB"
+        }
+      }
     }
   ],
   "provenance": {

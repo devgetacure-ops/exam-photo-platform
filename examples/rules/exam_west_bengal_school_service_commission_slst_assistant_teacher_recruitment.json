@@ -1,35 +1,34 @@
 {
   "schema_version": "1.1",
-  "rule_id": "management-aptitude-test-2026",
+  "rule_id": "west-bengal-school-service-commission-slst-assistant-teacher-recruitment",
   "rule_version": "1.0.0",
   "status": "verified_with_ambiguity",
   "exam": {
-    "exam_id": "management-aptitude-test-2026",
-    "exam_name": "Management Aptitude Test 2026",
-    "conducting_body": "All India Management Association",
-    "examination_year": 2026,
-    "application_cycle": "2026",
-    "aliases": [
-      "MAT 2026"
-    ],
+    "exam_id": "west-bengal-school-service-commission-slst-assistant-teacher-recruitment",
+    "exam_name": "West Bengal School Service Commission SLST Assistant Teacher Recruitment",
+    "conducting_body": "West Bengal School Service Commission",
+    "examination_year": 2025,
+    "application_cycle": "2025",
     "application_stage": "application",
-    "jurisdiction": "India",
-    "category": "management_entrance"
+    "jurisdiction": "West Bengal",
+    "category": "teacher_recruitment"
   },
   "source_evidence": [
     {
       "source_type": "official_webpage",
       "official_source": true,
-      "captured_wording": "passport size; 10 kb; 50 kb",
-      "source_url": "https://www.aima.in/content/testing-and-assessment/mat/mat",
-      "document_title": "Management Aptitude Test - current application page"
+      "captured_wording": "Recent color photo (3.5cm x 4.5cm)",
+      "source_url": "https://www.westbengalssc.com/otr/howToApply/",
+      "document_title": "WBSSC Assistant Teacher Recruitment Application Guide",
+      "section_name": "Photo Upload"
     },
     {
-      "source_type": "official_pdf",
+      "source_type": "official_webpage",
       "official_source": true,
-      "captured_wording": ".jpg/.jpeg; colour photograph",
-      "source_url": "https://apps.aima.in/matdec17/Guidelines.pdf",
-      "document_title": "MAT Guidelines - prior official cycle"
+      "captured_wording": "30KB; 60KB; between 30KB and 60KB; JPG Only; White background",
+      "source_url": "https://www.westbengalssc.com/otr/howToApply/",
+      "document_title": "WBSSC Assistant Teacher Recruitment Application Guide",
+      "section_name": "Photo Requirements"
     }
   ],
   "image_requirements": {
@@ -38,18 +37,17 @@
       "fallback_reason": "No pixel dimensions are published by the conducting body. The output size is chosen per photograph from the crop geometry rather than from a fixed default."
     },
     "file_size": {
-      "maximum_bytes": 50000,
-      "minimum_bytes": 10000,
-      "size_unit_as_published": "kb",
-      "published_maximum": 50.0,
-      "published_minimum": 10.0
+      "maximum_bytes": 60000,
+      "minimum_bytes": 30000,
+      "size_unit_as_published": "KB",
+      "published_maximum": 60.0,
+      "published_minimum": 30.0
     },
     "formats": {
       "allowed_formats": [
-        "jpg",
-        "jpeg"
+        "jpg"
       ],
-      "preferred_format": "jpeg",
+      "preferred_format": "jpg",
       "preserve_transparency": false,
       "strip_metadata": true,
       "colour_space": "sRGB"
@@ -63,16 +61,13 @@
       "complete_chin_required": true,
       "ears_policy": "unspecified"
     },
-    "appearance": {
-      "monochrome_accepted": false
-    },
+    "appearance": {},
     "filename": {
       "mode": "unspecified",
       "extension_required": true,
       "case_sensitive": false
     },
     "exceptional_instructions": {
-      "black_and_white_restriction": true,
       "processing_support_status": "supported"
     }
   },
@@ -84,43 +79,17 @@
       "submission_method": "file_upload",
       "requirement_status": "mandatory",
       "platform_support": "supported",
-      "applicability": "All applicants",
-      "content_instructions": "Uploaded candidate photograph; format: JPG/JPEG; file size: 10-50 kb.",
-      "evidence_status": "Current official AIMA/MAT source"
-    },
-    {
-      "requirement_id": "candidate_signature",
-      "requirement_name": "Candidate signature",
-      "requirement_type": "signature",
-      "submission_method": "file_upload",
-      "requirement_status": "mandatory",
-      "platform_support": "supported",
-      "applicability": "All applicants",
-      "content_instructions": "JPG/JPEG; 5\u201320 KB",
-      "evidence_status": "Current AIMA MAT application instructions",
-      "file_spec": {
-        "file_size": {
-          "maximum_bytes": 20000,
-          "minimum_bytes": 5000,
-          "published_minimum": 5,
-          "published_maximum": 20,
-          "size_unit_as_published": "KB"
-        },
-        "formats": {
-          "allowed_formats": [
-            "jpg"
-          ],
-          "preferred_format": "jpg"
-        }
-      }
+      "applicability": "All applicants unless the cited authority instruction states otherwise",
+      "content_instructions": "JPG; 30-60 KB",
+      "evidence_status": "Official completion-pass photograph evidence"
     }
   ],
   "provenance": {
     "image_requirements.file_size": {
       "type": "official",
-      "evidence_reference": "Management Aptitude Test - current application page (https://www.aima.in/content/testing-and-assessment/mat/mat)",
+      "evidence_reference": "WBSSC Assistant Teacher Recruitment Application Guide - Photo Requirements (https://www.westbengalssc.com/otr/howToApply/)",
       "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
-      "confidence": 4,
+      "confidence": 5,
       "approved": true
     },
     "image_requirements.dimensions": {
@@ -140,12 +109,6 @@
       "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
       "confidence": 5,
       "approved": true
-    },
-    "requirements[1].file_spec.formats.allowed_formats": {
-      "type": "interim_default",
-      "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
-      "confidence": 1,
-      "approved": false
     }
   },
   "verification": {

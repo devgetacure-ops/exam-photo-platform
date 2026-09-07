@@ -2,7 +2,7 @@
   "schema_version": "1.1",
   "rule_id": "karnataka-psc-current-recruitment-portal-photograph",
   "rule_version": "1.0.0",
-  "status": "provisional",
+  "status": "verified",
   "exam": {
     "exam_id": "karnataka-psc-current-recruitment-portal-photograph",
     "exam_name": "Karnataka PSC Current Recruitment Portal Photograph",
@@ -17,9 +17,17 @@
     {
       "source_type": "official_application_portal",
       "official_source": false,
-      "captured_wording": "100 x 100 pixels to 150 x 150 pixels; 200 KB; JPG/JPEG/PNG",
+      "captured_wording": "100 x 100 pixels to 150 x 150 pixels",
       "source_url": "https://apply.registernow.in/KPSC/Registration/",
       "document_title": "KPSC recruitment registration portal"
+    },
+    {
+      "source_type": "official_webpage",
+      "official_source": true,
+      "captured_wording": "Minimum 100 x 100 pixels; Maximum 150 x 150 pixels; Max File Size: 200KB; ONLY JPG/JPEG/PNG",
+      "source_url": "https://apply.registernow.in/KPSC/Registration/",
+      "document_title": "KPSC current registration portal",
+      "section_name": "Photograph"
     }
   ],
   "image_requirements": {
@@ -82,15 +90,16 @@
       "requirement_name": "Candidate signature",
       "requirement_type": "signature",
       "submission_method": "file_upload",
-      "requirement_status": "portal_dependent",
+      "requirement_status": "mandatory",
       "platform_support": "supported",
-      "applicability": "All applicants where the OTR/application asks for it",
-      "content_instructions": "A separate signature is normally part of the PSC profile/application, but the exact current file specification was not established by the supplied photograph-only evidence. Follow the active portal.",
-      "evidence_status": "Not fully established; not_found for exact specification",
+      "applicability": "All registrants",
+      "content_instructions": "JPG/JPEG/PNG; maximum 50 KB; 50\u00d750 to 150\u00d7150 px; no minimum file size published",
+      "evidence_status": "Current official KPSC registration portal",
       "file_spec": {
         "file_size": {
-          "maximum_bytes": 20000,
-          "minimum_bytes": 10000
+          "maximum_bytes": 50000,
+          "published_maximum": 50,
+          "size_unit_as_published": "KB"
         },
         "formats": {
           "allowed_formats": [
@@ -115,22 +124,33 @@
           "maximum_bytes": 400000
         }
       }
+    },
+    {
+      "requirement_id": "claim_supporting_documents",
+      "requirement_name": "Claim-supporting documents",
+      "requirement_type": "other",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "not_yet_supported",
+      "applicability": "Where the active recruitment asks for documentary proof",
+      "content_instructions": "not_found",
+      "evidence_status": "Current registration page confirms document upload stage but publishes no universal certificate file-size maximum."
     }
   ],
   "provenance": {
     "image_requirements.file_size": {
-      "type": "inferred",
-      "evidence_reference": "KPSC recruitment registration portal (https://apply.registernow.in/KPSC/Registration/)",
+      "type": "official",
+      "evidence_reference": "KPSC current registration portal - Photograph (https://apply.registernow.in/KPSC/Registration/)",
       "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
-      "confidence": 3,
-      "approved": false
+      "confidence": 5,
+      "approved": true
     },
     "image_requirements.dimensions": {
-      "type": "inferred",
-      "evidence_reference": "KPSC recruitment registration portal (https://apply.registernow.in/KPSC/Registration/)",
+      "type": "official",
+      "evidence_reference": "KPSC current registration portal - Photograph (https://apply.registernow.in/KPSC/Registration/)",
       "reasoning": "Pixel dimensions transcribed from the cited source.",
-      "confidence": 3,
-      "approved": false
+      "confidence": 5,
+      "approved": true
     },
     "image_requirements.formats.preferred_format": {
       "type": "inferred",
@@ -143,24 +163,6 @@
       "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
       "confidence": 5,
       "approved": true
-    },
-    "image_requirements": {
-      "type": "inferred",
-      "reasoning": "Values for this examination were located only on secondary sources, not on the conducting body's own material. Recorded so the examination is servable, and held at provisional status so the dependence stays visible until an official source is found.",
-      "confidence": 2,
-      "approved": false
-    },
-    "requirements[1].file_spec.file_size.maximum_bytes": {
-      "type": "interim_default",
-      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
-      "confidence": 1,
-      "approved": false
-    },
-    "requirements[1].file_spec.file_size.minimum_bytes": {
-      "type": "interim_default",
-      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
-      "confidence": 1,
-      "approved": false
     },
     "requirements[1].file_spec.formats.allowed_formats": {
       "type": "interim_default",
@@ -176,7 +178,7 @@
     }
   },
   "verification": {
-    "verification_status": "provisional"
+    "verification_status": "verified"
   },
   "fictional_example": false
 }

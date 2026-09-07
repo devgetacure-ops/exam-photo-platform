@@ -104,17 +104,19 @@
       "requirement_status": "mandatory",
       "platform_support": "supported",
       "applicability": "All applicants",
-      "content_instructions": "JPG/JPEG; separate scanned signature required.",
-      "evidence_status": "Current official CUET UG 2026 bulletin",
+      "content_instructions": "JPG/JPEG; 10\u201350 KB",
+      "evidence_status": "Official CUET (UG) 2026 Information Bulletin",
       "file_spec": {
         "file_size": {
-          "maximum_bytes": 20000,
-          "minimum_bytes": 10000
+          "maximum_bytes": 50000,
+          "minimum_bytes": 10000,
+          "published_minimum": 10,
+          "published_maximum": 50,
+          "size_unit_as_published": "KB"
         },
         "formats": {
           "allowed_formats": [
-            "jpg",
-            "jpeg"
+            "jpg"
           ],
           "preferred_format": "jpg"
         }
@@ -167,6 +169,46 @@
           "maximum_bytes": 400000
         }
       }
+    },
+    {
+      "requirement_id": "pwd_udid_certificate",
+      "requirement_name": "PwD/UDID certificate",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "PwD applicants",
+      "content_instructions": "PDF; 50\u2013300 KB",
+      "evidence_status": "Official CUET (UG) 2026 Information Bulletin",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 300000,
+          "minimum_bytes": 50000,
+          "published_minimum": 50,
+          "published_maximum": 300,
+          "size_unit_as_published": "KB"
+        }
+      }
+    },
+    {
+      "requirement_id": "identity_proof_scan_when_aadhaar_digilocker_is_n",
+      "requirement_name": "Identity proof scan when Aadhaar/DigiLocker is not used",
+      "requirement_type": "identity_document",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Applicants using the applicable alternative identity route",
+      "content_instructions": "JPG/JPEG; 10\u2013200 KB",
+      "evidence_status": "Official CUET (UG) 2026 Information Bulletin",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 200000,
+          "minimum_bytes": 10000,
+          "published_minimum": 10,
+          "published_maximum": 200,
+          "size_unit_as_published": "KB"
+        }
+      }
     }
   ],
   "provenance": {
@@ -195,15 +237,9 @@
       "confidence": 5,
       "approved": true
     },
-    "requirements[1].file_spec.file_size.maximum_bytes": {
+    "requirements[1].file_spec.formats.allowed_formats": {
       "type": "interim_default",
-      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
-      "confidence": 1,
-      "approved": false
-    },
-    "requirements[1].file_spec.file_size.minimum_bytes": {
-      "type": "interim_default",
-      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
+      "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
       "confidence": 1,
       "approved": false
     },

@@ -29,7 +29,7 @@ def test_loads_the_real_catalogue():
     catalogue = load_catalogue(CATALOGUE_ROOT)
 
     assert catalogue.unreadable == {}
-    assert len(catalogue.entries) == 39
+    assert len(catalogue.entries) == 52
     entry = catalogue.get("ibps-crp-customer-service-associates-xv")
     assert entry is not None
     assert entry.rule.exam.exam_name == "IBPS CRP Customer Service Associates-XV"
@@ -123,7 +123,7 @@ def test_unavailable_examinations_are_read_from_the_encoder_sidecar():
     catalogue = load_catalogue(CATALOGUE_ROOT)
 
     names = {item.exam_name for item in catalogue.unavailable}
-    assert len(catalogue.unavailable) == 11
+    assert len(catalogue.unavailable) == 83
     assert "SSC Combined Graduate Level Examination 2026" in names
     assert all(item.reason for item in catalogue.unavailable)
     assert all(item.detail for item in catalogue.unavailable)
@@ -131,15 +131,20 @@ def test_unavailable_examinations_are_read_from_the_encoder_sidecar():
     with_deliverables = [
         item for item in catalogue.unavailable if item.non_photograph_deliverables > 0
     ]
-    assert len(with_deliverables) == 10
-    assert sum(item.non_photograph_deliverables for item in with_deliverables) == 23
+    # DEC-068 grew this sharply: 81 of the 83 unencodable examinations carry
+    # non-photograph deliverables, 135 between them. Every one is a signature
+    # or certificate the platform could prepare and cannot reach, because a
+    # rule record still requires a photograph specification. That is HANDOFF's
+    # open risk 4, and this assertion is the measure of how large it now is.
+    assert len(with_deliverables) == 81
+    assert sum(item.non_photograph_deliverables for item in with_deliverables) == 135
 
 
 def test_the_sidecar_is_never_mistaken_for_a_rule_record():
     catalogue = load_catalogue(CATALOGUE_ROOT)
 
     assert "unavailable_examinations.json" not in catalogue.unreadable
-    assert len(catalogue.entries) == 39
+    assert len(catalogue.entries) == 52
 
 
 def test_a_catalogue_without_the_sidecar_still_serves(tmp_path, real_record):
@@ -176,8 +181,8 @@ def test_catalogue_wide_support_totals_match_the_recorded_figures():
         for support, count in support_counts(entry.rule).items():
             totals[support] += count
 
-    assert sum(totals.values()) == 155
-    assert totals[PlatformSupport.SUPPORTED] == 135
+    assert sum(totals.values()) == 215
+    assert totals[PlatformSupport.SUPPORTED] == 189
     assert totals[PlatformSupport.GUIDANCE_ONLY] == 16
-    assert totals[PlatformSupport.PARTIALLY_SUPPORTED] == 2
-    assert totals[PlatformSupport.NOT_YET_SUPPORTED] == 2
+    assert totals[PlatformSupport.PARTIALLY_SUPPORTED] == 3
+    assert totals[PlatformSupport.NOT_YET_SUPPORTED] == 7

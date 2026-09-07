@@ -70,9 +70,9 @@
       "submission_method": "file_upload",
       "requirement_status": "mandatory",
       "platform_support": "supported",
-      "applicability": "New student registration/account applicants",
-      "content_instructions": "Uploaded candidate photograph; format: JPG/JPEG/PNG/GIF/BMP/PDF; file size: up to 50 KB.",
-      "evidence_status": "Current official ICSI portal evidence"
+      "applicability": "Student registration/account applicants",
+      "content_instructions": "JPG/JPEG/PNG/GIF/BMP/PDF; 20\u201350 KB",
+      "evidence_status": "Official ICSI registration instructions"
     },
     {
       "requirement_id": "candidate_signature",
@@ -81,13 +81,16 @@
       "submission_method": "file_upload",
       "requirement_status": "mandatory",
       "platform_support": "supported",
-      "applicability": "New student registration/account applicants",
-      "content_instructions": "Scanned signature in the format and size accepted by the portal; exact value was not established in the supplied photo evidence.",
-      "evidence_status": "Current ICSI portal requirement; specification not_found",
+      "applicability": "Student registration/account applicants",
+      "content_instructions": "JPG/JPEG/PNG/GIF/BMP/PDF; 10\u201320 KB",
+      "evidence_status": "Official ICSI registration instructions",
       "file_spec": {
         "file_size": {
           "maximum_bytes": 20000,
-          "minimum_bytes": 10000
+          "minimum_bytes": 10000,
+          "published_minimum": 10,
+          "published_maximum": 20,
+          "size_unit_as_published": "KB"
         },
         "formats": {
           "allowed_formats": [
@@ -104,12 +107,15 @@
       "submission_method": "document_scan_upload",
       "requirement_status": "mandatory",
       "platform_support": "supported",
-      "applicability": "New registrants",
-      "content_instructions": "Upload the applicable Class X certificate/marksheet or other accepted DOB proof as instructed by ICSI.",
-      "evidence_status": "Current ICSI student-registration process",
+      "applicability": "Student registration/account applicants",
+      "content_instructions": "JPG/JPEG/PNG/GIF/BMP/PDF; maximum 2 MB",
+      "evidence_status": "Official ICSI registration instructions",
+      "notes": "Authority publishes 2 MB; parsed KB value is a convenience for engineering only. Preserve 2 MB wording in UI.",
       "file_spec": {
         "file_size": {
-          "maximum_bytes": 400000
+          "maximum_bytes": 2048000,
+          "published_maximum": 2048,
+          "size_unit_as_published": "KB"
         }
       }
     },
@@ -118,14 +124,17 @@
       "requirement_name": "Qualifying educational certificate",
       "requirement_type": "certificate_scan",
       "submission_method": "document_scan_upload",
-      "requirement_status": "conditional",
+      "requirement_status": "mandatory",
       "platform_support": "supported",
-      "applicability": "Based on Foundation/CSEET/Executive/Professional entry route",
-      "content_instructions": "Upload Class XII, graduation or other qualifying certificate applicable to the selected route.",
-      "evidence_status": "Current ICSI student-registration process",
+      "applicability": "As applicable to the selected registration route",
+      "content_instructions": "JPG/JPEG/PNG/GIF/BMP/PDF; maximum 2 MB",
+      "evidence_status": "Official ICSI registration instructions",
+      "notes": "Authority publishes 2 MB.",
       "file_spec": {
         "file_size": {
-          "maximum_bytes": 400000
+          "maximum_bytes": 2048000,
+          "published_maximum": 2048,
+          "size_unit_as_published": "KB"
         }
       }
     },
@@ -139,6 +148,42 @@
       "applicability": "Where the registration route asks for it",
       "content_instructions": "Upload only the identity, address, category or exemption document explicitly requested.",
       "evidence_status": "Current ICSI portal process; exact set varies"
+    },
+    {
+      "requirement_id": "category_certificate",
+      "requirement_name": "Category certificate",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Non-general category applicants where requested",
+      "content_instructions": "JPG/JPEG/PNG/GIF/BMP/PDF; maximum 2 MB",
+      "evidence_status": "Official ICSI registration instructions",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 2048000,
+          "published_maximum": 2048,
+          "size_unit_as_published": "KB"
+        }
+      }
+    },
+    {
+      "requirement_id": "identity_proof",
+      "requirement_name": "Identity proof",
+      "requirement_type": "identity_document",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Student registration/account applicants",
+      "content_instructions": "JPG/JPEG/PNG/GIF/BMP/PDF; maximum 2 MB",
+      "evidence_status": "Official ICSI registration instructions",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 2048000,
+          "published_maximum": 2048,
+          "size_unit_as_published": "KB"
+        }
+      }
     }
   ],
   "provenance": {
@@ -173,33 +218,9 @@
       "confidence": 5,
       "approved": true
     },
-    "requirements[1].file_spec.file_size.maximum_bytes": {
-      "type": "interim_default",
-      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
-      "confidence": 1,
-      "approved": false
-    },
-    "requirements[1].file_spec.file_size.minimum_bytes": {
-      "type": "interim_default",
-      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
-      "confidence": 1,
-      "approved": false
-    },
     "requirements[1].file_spec.formats.allowed_formats": {
       "type": "interim_default",
       "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
-      "confidence": 1,
-      "approved": false
-    },
-    "requirements[2].file_spec.file_size.maximum_bytes": {
-      "type": "interim_default",
-      "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",
-      "confidence": 1,
-      "approved": false
-    },
-    "requirements[3].file_spec.file_size.maximum_bytes": {
-      "type": "interim_default",
-      "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",
       "confidence": 1,
       "approved": false
     }

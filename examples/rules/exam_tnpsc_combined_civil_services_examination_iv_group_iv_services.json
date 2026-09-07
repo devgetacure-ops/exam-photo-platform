@@ -1,30 +1,44 @@
 {
   "schema_version": "1.1",
-  "rule_id": "tnpsc-combined-technical-services-examination-2025",
+  "rule_id": "tnpsc-combined-civil-services-examination-iv-group-iv-services",
   "rule_version": "1.0.0",
   "status": "verified",
   "exam": {
-    "exam_id": "tnpsc-combined-technical-services-examination-2025",
-    "exam_name": "TNPSC Combined Technical Services Examination 2025",
+    "exam_id": "tnpsc-combined-civil-services-examination-iv-group-iv-services",
+    "exam_name": "TNPSC Combined Civil Services Examination IV (Group IV Services)",
     "conducting_body": "Tamil Nadu Public Service Commission",
     "examination_year": 2025,
     "application_cycle": "2025",
-    "aliases": [
-      "TNPSC CTS"
-    ],
     "application_stage": "application",
     "jurisdiction": "Tamil Nadu",
-    "category": "state_psc"
+    "category": "state_recruitment"
   },
   "source_evidence": [
     {
       "source_type": "official_pdf",
       "official_source": true,
-      "captured_wording": "130 pixels width and 170 pixels height; 200 DPI; 20 KB; 50 KB; Photograph.jpg; white background; 115 pixels; both ears; frontal view; name of the applicant and the date; bottom; last 3 months",
-      "source_url": "https://www.tnpsc.gov.in/static_pdf/document/instructions-to-candiates.pdf",
-      "document_title": "Instructions to Candidates / Combined Technical Services 2025",
-      "page_number": 14,
-      "section_name": "Photograph upload instructions"
+      "captured_wording": "3.5 cm (130 pixels); 4.5 cm (170 pixels); 200 DPI; 20 KB\u201350 KB; saved as \u201cPhotograph.jpg\u201d and uploaded",
+      "source_url": "https://tnpsc.gov.in/static_pdf/document/instructions-to-candidates_2025.pdf",
+      "document_title": "TNPSC Instructions to Applicants 2025",
+      "section_name": "Photograph upload"
+    },
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "Photograph.jpg",
+      "source_url": "https://tnpsc.gov.in/static_pdf/document/instructions-to-candidates_2025.pdf",
+      "document_title": "TNPSC Instructions to Applicants 2025",
+      "document_identifier": "SRC-TNPSC-INSTR-2025",
+      "section_name": "photo.filename"
+    },
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "name and the date the photograph was taken printed below",
+      "source_url": "https://tnpsc.gov.in/static_pdf/document/instructions-to-candidates_2025.pdf",
+      "document_title": "TNPSC Instructions to Applicants 2025",
+      "document_identifier": "SRC-TNPSC-INSTR-2025",
+      "section_name": "photo.imprint"
     }
   ],
   "image_requirements": {
@@ -33,8 +47,7 @@
       "width_px": 130,
       "height_px": 170,
       "aspect_ratio": "13:17",
-      "dpi": 200,
-      "permitted_pixel_range": "3.5 cm width (130 pixels) \u00d7 4.5 cm height (170 pixels); candidate image 3.0 cm (115 pixels), imprint 1.5 cm (55 pixels)"
+      "dpi": 200
     },
     "file_size": {
       "maximum_bytes": 50000,
@@ -53,39 +66,32 @@
       "colour_space": "sRGB"
     },
     "background": {
-      "mode": "exact_colour",
-      "required_colour": "#FFFFFF",
-      "tolerance": 3.0
+      "mode": "unspecified"
     },
     "composition": {
       "crop_profile": "tight_exam_portrait",
       "complete_hair_required": true,
       "complete_chin_required": true,
-      "ears_policy": "required_visible",
-      "ears_visible": true,
-      "frontal_pose": true
+      "ears_policy": "unspecified"
     },
     "appearance": {
-      "recency_maximum_days": 90,
       "imprint": {
         "policy": "required",
         "fields": [
           "candidate_name",
           "photograph_date"
-        ],
-        "position": "bottom"
+        ]
       }
     },
     "filename": {
       "mode": "exact",
       "extension_required": true,
       "exact_filename": "Photograph.jpg",
-      "case_sensitive": true
+      "case_sensitive": false
     },
     "exceptional_instructions": {
       "printed_name": true,
       "printed_date": true,
-      "recent_photo_requirement": true,
       "processing_support_status": "partially_supported",
       "unsupported_requirement_reasons": [
         "The body requires the candidate's name and/or the photograph date printed on the image. The engine has no text-rendering capability, so the photograph is produced correctly sized and composed but without the imprint, which the candidate must add before uploading."
@@ -100,11 +106,10 @@
       "submission_method": "file_upload",
       "requirement_status": "mandatory",
       "platform_support": "partially_supported",
-      "applicability": "All applicants",
-      "content_instructions": "Uploaded candidate photograph; format: JPG; file size: 20-50 KB; dimensions: 130 x 170 px; 200 dpi; filename: Photograph.jpg; background: white; recency: within 90 days.",
-      "evidence_status": "Current official TNPSC instruction",
+      "applicability": "All applicants unless the cited notice states a conditional workflow",
+      "content_instructions": "20-50 KB",
+      "evidence_status": "Official source-qualified rule in supplied FINAL research package",
       "rejection_conditions": [
-        "Non-frontal or side-facing pose can fail the stated requirement.",
         "Failure to upload clear images of the photograph and signature will result in rejection of online application after due process.",
         "In case of uploading an inappropriate photograph, the application is liable to be rejected after due process."
       ]
@@ -116,9 +121,9 @@
       "submission_method": "file_upload",
       "requirement_status": "mandatory",
       "platform_support": "supported",
-      "applicability": "All applicants",
-      "content_instructions": "JPG; 10\u201320 KB; 230\u00d775 px; 200 DPI; Signature.jpg",
-      "evidence_status": "Official TNPSC instructions / CTS notice",
+      "applicability": "All applicants unless the cited notice states otherwise",
+      "content_instructions": "10\u201320 KB; Signature.jpg",
+      "evidence_status": "Official source-qualified rule in supplied FINAL research package",
       "rejection_conditions": [
         "Failure to upload clear images of the photograph and signature will result in rejection of online application after due process."
       ],
@@ -137,43 +142,21 @@
           "preferred_format": "jpg"
         }
       }
-    },
-    {
-      "requirement_id": "supporting_certificates_for_claims",
-      "requirement_name": "Supporting certificates for claims",
-      "requirement_type": "certificate_scan",
-      "submission_method": "document_scan_upload",
-      "requirement_status": "conditional",
-      "platform_support": "supported",
-      "applicability": "Candidates making reservation, PSTM, disability, experience or other special claims",
-      "content_instructions": "Upload the exact certificate asked for by the application/claim. The list varies by post and candidate category; do not treat all certificates as universal.",
-      "evidence_status": "Exam-specific official notification required",
-      "file_spec": {
-        "file_size": {
-          "maximum_bytes": 400000
-        }
-      }
     }
   ],
   "provenance": {
     "image_requirements.file_size": {
       "type": "official",
-      "evidence_reference": "Instructions to Candidates / Combined Technical Services 2025 - Photograph upload instructions (https://www.tnpsc.gov.in/static_pdf/document/instructions-to-candiates.pdf)",
+      "evidence_reference": "TNPSC Instructions to Applicants 2025 - Photograph upload (https://tnpsc.gov.in/static_pdf/document/instructions-to-candidates_2025.pdf)",
       "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
       "confidence": 5,
       "approved": true
     },
     "image_requirements.dimensions": {
       "type": "official",
-      "evidence_reference": "Instructions to Candidates / Combined Technical Services 2025 - Photograph upload instructions (https://www.tnpsc.gov.in/static_pdf/document/instructions-to-candiates.pdf)",
+      "evidence_reference": "TNPSC Instructions to Applicants 2025 - Photograph upload (https://tnpsc.gov.in/static_pdf/document/instructions-to-candidates_2025.pdf)",
       "reasoning": "Pixel dimensions transcribed from the cited source.",
       "confidence": 5,
-      "approved": true
-    },
-    "image_requirements.formats.preferred_format": {
-      "type": "inferred",
-      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
-      "confidence": 4,
       "approved": true
     },
     "image_requirements.composition.crop_profile": {
@@ -185,12 +168,6 @@
     "requirements[1].file_spec.formats.allowed_formats": {
       "type": "interim_default",
       "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
-      "confidence": 1,
-      "approved": false
-    },
-    "requirements[2].file_spec.file_size.maximum_bytes": {
-      "type": "interim_default",
-      "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",
       "confidence": 1,
       "approved": false
     }

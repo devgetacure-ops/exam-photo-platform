@@ -1,43 +1,53 @@
 {
   "schema_version": "1.1",
-  "rule_id": "mpsc-general-online-application-photograph-instruction",
+  "rule_id": "osssc-combined-recruitment-examination",
   "rule_version": "1.0.0",
   "status": "verified_with_ambiguity",
   "exam": {
-    "exam_id": "mpsc-general-online-application-photograph-instruction",
-    "exam_name": "MPSC General Online Application Photograph Instruction",
-    "conducting_body": "Maharashtra Public Service Commission",
-    "examination_year": 2026,
-    "application_cycle": "current portal guide",
+    "exam_id": "osssc-combined-recruitment-examination",
+    "exam_name": "OSSSC Combined Recruitment Examination",
+    "conducting_body": "Odisha Sub-ordinate Staff Selection Commission",
+    "examination_year": 2024,
+    "application_cycle": "CRE 2023 examination cycle",
     "application_stage": "application",
-    "jurisdiction": "Maharashtra",
-    "category": "state_psc"
+    "jurisdiction": "Odisha",
+    "category": "state_recruitment"
   },
   "source_evidence": [
     {
       "source_type": "official_pdf",
       "official_source": true,
-      "captured_wording": "3.5 cm x 4.5 cm; 50 KB; .jpg or .jpeg; solid colour background; preferably blue, green or red; no shadows; directly facing the camera",
-      "source_url": "https://mpsconline.gov.in/downloads/Instructions-for-Filling-the-Application-Form.pdf",
-      "document_title": "Instructions for Filling the Application Form",
-      "section_name": "Photograph instructions"
+      "captured_wording": "20Kbs to 100Kbs",
+      "source_url": "https://www.osssc.gov.in/Docs/CRE-2023-Detail_adv-762.PDF",
+      "document_title": "OSSSC CRE-2023 Detailed Advertisement",
+      "section_name": "Pre-requisites for Registration/Re-registration and Online Application"
+    },
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "20Kbs to 100Kbs; \u201cjpg/jpeg/png\u201d",
+      "source_url": "https://www.osssc.gov.in/Docs/CRE-2023-Detail_adv-762.PDF",
+      "document_title": "OSSSC CRE-2023 Detailed Advertisement",
+      "section_name": "Pre-requisites"
     }
   ],
   "image_requirements": {
     "dimensions": {
       "mode": "unspecified",
-      "fallback_reason": "No pixel dimensions are published by the conducting body. The output size is chosen per photograph from the crop geometry rather than from a fixed default.",
-      "permitted_pixel_range": "3.5 cm \u00d7 4.5 cm"
+      "fallback_reason": "No pixel dimensions are published by the conducting body. The output size is chosen per photograph from the crop geometry rather than from a fixed default."
     },
     "file_size": {
-      "maximum_bytes": 50000,
+      "maximum_bytes": 100000,
+      "minimum_bytes": 20000,
       "size_unit_as_published": "KB",
-      "published_maximum": 50.0
+      "published_maximum": 100.0,
+      "published_minimum": 20.0
     },
     "formats": {
       "allowed_formats": [
         "jpg",
-        "jpeg"
+        "jpeg",
+        "png"
       ],
       "preferred_format": "jpeg",
       "preserve_transparency": false,
@@ -45,16 +55,13 @@
       "colour_space": "sRGB"
     },
     "background": {
-      "mode": "plain_background",
-      "fallback_colour": "#FFFFFF",
-      "shadows_allowed": false
+      "mode": "unspecified"
     },
     "composition": {
       "crop_profile": "tight_exam_portrait",
       "complete_hair_required": true,
       "complete_chin_required": true,
-      "ears_policy": "unspecified",
-      "frontal_pose": true
+      "ears_policy": "unspecified"
     },
     "appearance": {},
     "filename": {
@@ -75,26 +82,30 @@
       "requirement_status": "mandatory",
       "platform_support": "supported",
       "applicability": "All applicants",
-      "content_instructions": "Uploaded candidate photograph; format: JPG/JPEG; file size: up to 50 KB; background: preferably blue, green or red.",
-      "evidence_status": "Evidence tier as recorded in supplied photograph report",
+      "content_instructions": "JPG/JPEG/PNG; 20\u2013100 KB",
+      "evidence_status": "Official OSSSC CRE-2023 detailed advertisement",
       "rejection_conditions": [
-        "Shadows on the face or background are not accepted.",
-        "Non-frontal or side-facing pose can fail the stated requirement."
+        "The photograph and full specimen signature must be clearly identifiable/visible, otherwise the application shall be liable to rejection."
       ]
     },
     {
-      "requirement_id": "candidate_signature",
-      "requirement_name": "Candidate signature",
+      "requirement_id": "full_specimen_signature",
+      "requirement_name": "Full specimen signature",
       "requirement_type": "signature",
       "submission_method": "file_upload",
       "requirement_status": "mandatory",
       "platform_support": "supported",
       "applicability": "All applicants",
-      "content_instructions": "JPG/JPEG; maximum 50 KB; 3.5 cm \u00d7 1.5 cm; no minimum published",
-      "evidence_status": "Official MPSC online application instructions",
+      "content_instructions": "JPG/JPEG/PNG; 20\u201350 KB",
+      "evidence_status": "Official OSSSC CRE-2023 detailed advertisement",
+      "rejection_conditions": [
+        "The photograph and full specimen signature must be clearly identifiable/visible, otherwise the application shall be liable to rejection."
+      ],
       "file_spec": {
         "file_size": {
           "maximum_bytes": 50000,
+          "minimum_bytes": 20000,
+          "published_minimum": 20,
           "published_maximum": 50,
           "size_unit_as_published": "KB"
         },
@@ -105,30 +116,14 @@
           "preferred_format": "jpg"
         }
       }
-    },
-    {
-      "requirement_id": "claim_supporting_certificates",
-      "requirement_name": "Claim-supporting certificates",
-      "requirement_type": "certificate_scan",
-      "submission_method": "document_scan_upload",
-      "requirement_status": "conditional",
-      "platform_support": "supported",
-      "applicability": "Candidates claiming reservation, disability, domicile, age relaxation, experience or a post-specific qualification",
-      "content_instructions": "Upload only the certificate explicitly requested by that examination and category. The exact list is notification-specific and was not fully established in the supplied photograph evidence.",
-      "evidence_status": "Exam-specific gap; active notification required",
-      "file_spec": {
-        "file_size": {
-          "maximum_bytes": 400000
-        }
-      }
     }
   ],
   "provenance": {
     "image_requirements.file_size": {
       "type": "official",
-      "evidence_reference": "Instructions for Filling the Application Form - Photograph instructions (https://mpsconline.gov.in/downloads/Instructions-for-Filling-the-Application-Form.pdf)",
+      "evidence_reference": "OSSSC CRE-2023 Detailed Advertisement - Pre-requisites for Registration/Re-registration and Online Application (https://www.osssc.gov.in/Docs/CRE-2023-Detail_adv-762.PDF)",
       "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
-      "confidence": 3,
+      "confidence": 5,
       "approved": true
     },
     "image_requirements.dimensions": {
@@ -154,16 +149,13 @@
       "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
       "confidence": 1,
       "approved": false
-    },
-    "requirements[2].file_spec.file_size.maximum_bytes": {
-      "type": "interim_default",
-      "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",
-      "confidence": 1,
-      "approved": false
     }
   },
   "verification": {
     "verification_status": "verified_with_ambiguity"
   },
-  "fictional_example": false
+  "fictional_example": false,
+  "application_rejection_conditions": [
+    "Incomplete applications shall be summarily rejected."
+  ]
 }

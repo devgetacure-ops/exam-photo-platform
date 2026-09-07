@@ -2,7 +2,7 @@
   "schema_version": "1.1",
   "rule_id": "gic-assistant-manager-2024-25",
   "rule_version": "1.0.0",
-  "status": "provisional",
+  "status": "verified",
   "exam": {
     "exam_id": "gic-assistant-manager-2024-25",
     "exam_name": "GIC Assistant Manager 2024-25",
@@ -15,24 +15,33 @@
   },
   "source_evidence": [
     {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "Dimensions 200 x 230 pixels (preferred); Set the scanner resolution to a minimum of 200 dpi; Size of file should be between 20 kb - 50 kb; The image file should be jpg or jpeg format",
+      "source_url": "https://www.gicre.in/images/2024/Detailed_Advertisement_for_Recruitment_of_AMs_in_GIC_Re_2024_-_v3_-_Final.pdf",
+      "document_title": "Detailed Advertisement for Recruitment of Assistant Managers in GIC Re 2024",
+      "section_name": "Guidelines for scanning and upload of documents"
+    },
+    {
       "source_type": "secondary_reference",
       "official_source": false,
-      "captured_wording": "preferred; 200 x 230 pixels; 20 KB; 50 KB; JPG/JPEG",
+      "captured_wording": "200 x 230 pixels",
       "source_url": "https://testbook.com/gic-assistant-manager/apply-online",
       "document_title": "GIC Assistant Manager photo specification reproduction"
     }
   ],
   "image_requirements": {
     "dimensions": {
-      "mode": "unspecified",
-      "preferred_width_px": 200,
-      "preferred_height_px": 230,
-      "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified."
+      "mode": "exact",
+      "width_px": 200,
+      "height_px": 230,
+      "aspect_ratio": "20:23",
+      "dpi": 200
     },
     "file_size": {
       "maximum_bytes": 50000,
       "minimum_bytes": 20000,
-      "size_unit_as_published": "KB",
+      "size_unit_as_published": "kb",
       "published_maximum": 50.0,
       "published_minimum": 20.0
     },
@@ -41,7 +50,7 @@
         "jpg",
         "jpeg"
       ],
-      "preferred_format": "jpeg",
+      "preferred_format": "jpg",
       "preserve_transparency": false,
       "strip_metadata": true,
       "colour_space": "sRGB"
@@ -88,18 +97,21 @@
       "requirement_status": "mandatory",
       "platform_support": "supported",
       "applicability": "All applicants",
-      "content_instructions": "JPG/JPEG; normally 10-20 KB; about 140 x 60 pixels; signature in black ink on white paper; signed by the applicant; not in capital letters.",
-      "evidence_status": "Secondary-only upload specification; recheck active portal",
+      "content_instructions": "jpg or jpeg; 140 x 60 pixels (preferred); 10-20 kb; scanner minimum 200 dpi",
+      "evidence_status": "Official GIC Re 2024 detailed advertisement",
+      "notes": "Signature in CAPITAL LETTERS shall not be accepted.",
       "rejection_conditions": [
         "Unclear photograph, signature, thumb impression or declaration can lead to rejection.",
-        "Signature or handwritten declaration in capital letters is not accepted in the cited banking-family instructions."
+        "Signature or handwritten declaration in capital letters is not accepted in the cited banking-family instructions.",
+        "Signature / Hand written declaration in CAPITAL LETTERS shall NOT be accepted.",
+        "If the Applicant's signature on the attendance sheet or Call letter, signed at the time of the examination, does not match the signature uploaded, the applicant will be disqualified."
       ],
       "file_spec": {
         "file_size": {
           "maximum_bytes": 20000,
           "minimum_bytes": 10000,
-          "published_minimum": 10.0,
-          "published_maximum": 20.0,
+          "published_minimum": 10,
+          "published_maximum": 20,
           "size_unit_as_published": "KB"
         },
         "formats": {
@@ -108,11 +120,6 @@
             "jpeg"
           ],
           "preferred_format": "jpg"
-        },
-        "dimensions": {
-          "mode": "exact",
-          "width_px": 140,
-          "height_px": 60
         }
       }
     },
@@ -120,12 +127,12 @@
       "requirement_id": "left_thumb_impression",
       "requirement_name": "Left thumb impression",
       "requirement_type": "thumb_impression",
-      "submission_method": "handwritten_then_uploaded",
+      "submission_method": "file_upload",
       "requirement_status": "mandatory",
       "platform_support": "supported",
       "applicability": "All applicants",
-      "content_instructions": "JPG/JPEG; normally 20-50 KB; about 240 x 240 pixels; applicant's left thumb impression on white paper using black or blue ink; clear and unsmudged.",
-      "evidence_status": "Secondary-only upload specification; recheck active portal",
+      "content_instructions": "jpg or jpeg; 20-50 kb",
+      "evidence_status": "Official GIC Re 2024 detailed advertisement",
       "rejection_conditions": [
         "Unclear photograph, signature, thumb impression or declaration can lead to rejection."
       ],
@@ -133,8 +140,8 @@
         "file_size": {
           "maximum_bytes": 50000,
           "minimum_bytes": 20000,
-          "published_minimum": 20.0,
-          "published_maximum": 50.0,
+          "published_minimum": 20,
+          "published_maximum": 50,
           "size_unit_as_published": "KB"
         },
         "formats": {
@@ -143,34 +150,31 @@
             "jpeg"
           ],
           "preferred_format": "jpg"
-        },
-        "dimensions": {
-          "mode": "exact",
-          "width_px": 240,
-          "height_px": 240
         }
       }
     },
     {
-      "requirement_id": "handwritten_declaration",
-      "requirement_name": "Handwritten declaration",
+      "requirement_id": "hand_written_declaration",
+      "requirement_name": "Hand written declaration",
       "requirement_type": "handwritten_declaration",
-      "submission_method": "handwritten_then_uploaded",
+      "submission_method": "file_upload",
       "requirement_status": "mandatory",
       "platform_support": "supported",
       "applicability": "All applicants",
-      "content_instructions": "JPG/JPEG; normally 50-100 KB; about 800 x 400 pixels; handwritten in English on white paper with black ink; not in capital letters. Standard wording: 'I, ______ (Name of the candidate), hereby declare that all the information submitted by me in the application form is correct, true and valid. I will present the supporting documents as and when required.' Copy the exact live-portal wording.",
-      "evidence_status": "Secondary-only upload specification; recheck active portal",
+      "content_instructions": "jpg or jpeg; 50-100 kb",
+      "evidence_status": "Official GIC Re 2024 detailed advertisement",
+      "notes": "Hand written declaration in CAPITAL LETTERS shall not be accepted.",
       "rejection_conditions": [
         "Unclear photograph, signature, thumb impression or declaration can lead to rejection.",
-        "Signature or handwritten declaration in capital letters is not accepted in the cited banking-family instructions."
+        "Signature or handwritten declaration in capital letters is not accepted in the cited banking-family instructions.",
+        "Signature / Hand written declaration in CAPITAL LETTERS shall NOT be accepted."
       ],
       "file_spec": {
         "file_size": {
           "maximum_bytes": 100000,
           "minimum_bytes": 50000,
-          "published_minimum": 50.0,
-          "published_maximum": 100.0,
+          "published_minimum": 50,
+          "published_maximum": 100,
           "size_unit_as_published": "KB"
         },
         "formats": {
@@ -179,34 +183,23 @@
             "jpeg"
           ],
           "preferred_format": "jpg"
-        },
-        "dimensions": {
-          "mode": "exact",
-          "width_px": 800,
-          "height_px": 400
         }
       }
     }
   ],
   "provenance": {
     "image_requirements.file_size": {
-      "type": "inferred",
-      "evidence_reference": "GIC Assistant Manager photo specification reproduction (https://testbook.com/gic-assistant-manager/apply-online)",
+      "type": "official",
+      "evidence_reference": "Detailed Advertisement for Recruitment of Assistant Managers in GIC Re 2024 - Guidelines for scanning and upload of documents (https://www.gicre.in/images/2024/Detailed_Advertisement_for_Recruitment_of_AMs_in_GIC_Re_2024_-_v3_-_Final.pdf)",
       "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
-      "confidence": 2,
-      "approved": false
+      "confidence": 5,
+      "approved": true
     },
     "image_requirements.dimensions": {
-      "type": "inferred",
-      "evidence_reference": "GIC Assistant Manager photo specification reproduction (https://testbook.com/gic-assistant-manager/apply-online)",
+      "type": "official",
+      "evidence_reference": "Detailed Advertisement for Recruitment of Assistant Managers in GIC Re 2024 - Guidelines for scanning and upload of documents (https://www.gicre.in/images/2024/Detailed_Advertisement_for_Recruitment_of_AMs_in_GIC_Re_2024_-_v3_-_Final.pdf)",
       "reasoning": "Pixel dimensions transcribed from the cited source.",
-      "confidence": 2,
-      "approved": false
-    },
-    "image_requirements.formats.preferred_format": {
-      "type": "inferred",
-      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
-      "confidence": 4,
+      "confidence": 5,
       "approved": true
     },
     "image_requirements.composition.crop_profile": {
@@ -214,16 +207,10 @@
       "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
       "confidence": 5,
       "approved": true
-    },
-    "image_requirements": {
-      "type": "inferred",
-      "reasoning": "Values for this examination were located only on secondary sources, not on the conducting body's own material. Recorded so the examination is servable, and held at provisional status so the dependence stays visible until an official source is found.",
-      "confidence": 2,
-      "approved": false
     }
   },
   "verification": {
-    "verification_status": "provisional"
+    "verification_status": "verified"
   },
   "fictional_example": false,
   "application_rejection_conditions": [

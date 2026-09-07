@@ -1,39 +1,53 @@
 {
   "schema_version": "1.1",
-  "rule_id": "icai-examination-portal-photograph-current-portal-scope",
+  "rule_id": "xavier-aptitude-test",
   "rule_version": "1.0.0",
-  "status": "verified_with_ambiguity",
+  "status": "verified",
   "exam": {
-    "exam_id": "icai-examination-portal-photograph-current-portal-scope",
-    "exam_name": "ICAI Examination Portal Photograph (current portal scope)",
-    "conducting_body": "Institute of Chartered Accountants of India",
-    "examination_year": 2026,
-    "application_cycle": "current",
+    "exam_id": "xavier-aptitude-test",
+    "exam_name": "Xavier Aptitude Test",
+    "conducting_body": "XLRI Xavier School of Management",
+    "examination_year": 2025,
+    "application_cycle": "2025",
     "application_stage": "application",
     "jurisdiction": "India",
-    "category": "professional_body"
+    "category": "management_entrance"
   },
   "source_evidence": [
     {
-      "source_type": "official_application_portal",
+      "source_type": "official_pdf",
       "official_source": true,
-      "captured_wording": "passport size; 50KB; JPEG; photo.jpeg; light/white background; colour",
-      "source_url": "https://pqc.icaiexam.icai.org/INTT/Home/ImageResize",
-      "document_title": "Image Resize - ICAI examination portal"
+      "captured_wording": "Preferred dimensions: 200 x 230 pixels; 20KB to 50KB",
+      "source_url": "https://xatonline.in/assets/pdf/XAT-Bulletin-2025.pdf",
+      "document_title": "XAT 2025 Bulletin",
+      "section_name": "Photograph image"
+    },
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "JPG or JPEG",
+      "source_url": "https://xatonline.in/assets/pdf/XAT-Bulletin-2025.pdf",
+      "document_title": "XAT 2025 Bulletin",
+      "section_name": "Scanning the Photograph & Signature"
     }
   ],
   "image_requirements": {
     "dimensions": {
       "mode": "unspecified",
-      "fallback_reason": "No pixel dimensions are published by the conducting body. The output size is chosen per photograph from the crop geometry rather than from a fixed default."
+      "preferred_width_px": 200,
+      "preferred_height_px": 230,
+      "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified."
     },
     "file_size": {
       "maximum_bytes": 50000,
+      "minimum_bytes": 20000,
       "size_unit_as_published": "KB",
-      "published_maximum": 50.0
+      "published_maximum": 50.0,
+      "published_minimum": 20.0
     },
     "formats": {
       "allowed_formats": [
+        "jpg",
         "jpeg"
       ],
       "preferred_format": "jpeg",
@@ -42,8 +56,7 @@
       "colour_space": "sRGB"
     },
     "background": {
-      "mode": "plain_light",
-      "fallback_colour": "#FFFFFF"
+      "mode": "unspecified"
     },
     "composition": {
       "crop_profile": "tight_exam_portrait",
@@ -51,17 +64,13 @@
       "complete_chin_required": true,
       "ears_policy": "unspecified"
     },
-    "appearance": {
-      "monochrome_accepted": false
-    },
+    "appearance": {},
     "filename": {
-      "mode": "exact",
+      "mode": "unspecified",
       "extension_required": true,
-      "exact_filename": "photo.jpeg",
       "case_sensitive": false
     },
     "exceptional_instructions": {
-      "black_and_white_restriction": true,
       "processing_support_status": "supported"
     }
   },
@@ -71,11 +80,11 @@
       "requirement_name": "Candidate photograph",
       "requirement_type": "photograph",
       "submission_method": "file_upload",
-      "requirement_status": "conditional",
+      "requirement_status": "mandatory",
       "platform_support": "supported",
-      "applicability": "Candidates whose ICAI profile/exam form requires a photo",
-      "content_instructions": "Uploaded candidate photograph; format: JPEG; file size: up to 50 KB; filename: photo.jpeg; background: light or white.",
-      "evidence_status": "Current official ICAI portal scope"
+      "applicability": "All applicants",
+      "content_instructions": "JPG/JPEG; 20\u201350 KB; preferred 200\u00d7230 px",
+      "evidence_status": "Official XAT 2025 bulletin"
     },
     {
       "requirement_id": "candidate_signature",
@@ -84,13 +93,18 @@
       "submission_method": "file_upload",
       "requirement_status": "mandatory",
       "platform_support": "supported",
-      "applicability": "Applicants whose portal profile/exam form requires signature",
-      "content_instructions": "JPEG; maximum 50 KB; candidate\u2019s own signature; black ink on white paper; not in capital letters; no minimum published",
-      "evidence_status": "Official ICAI exam portal image instructions",
+      "applicability": "All applicants",
+      "content_instructions": "JPG/JPEG; 10\u201320 KB; preferred 140\u00d760 px",
+      "evidence_status": "Official XAT 2025 bulletin",
+      "rejection_conditions": [
+        "Any mismatch between the uploaded signature and the signature at the examination may result in disqualification."
+      ],
       "file_spec": {
         "file_size": {
-          "maximum_bytes": 50000,
-          "published_maximum": 50,
+          "maximum_bytes": 20000,
+          "minimum_bytes": 10000,
+          "published_minimum": 10,
+          "published_maximum": 20,
           "size_unit_as_published": "KB"
         },
         "formats": {
@@ -100,32 +114,28 @@
           "preferred_format": "jpg"
         }
       }
-    },
-    {
-      "requirement_id": "exam_form_declaration",
-      "requirement_name": "Exam-form declaration",
-      "requirement_type": "portal_declaration",
-      "submission_method": "typed_or_selected_declaration",
-      "requirement_status": "mandatory",
-      "platform_support": "guidance_only",
-      "applicability": "All applicants",
-      "content_instructions": "Confirm the examination form and profile particulars. No separate handwritten-declaration image was established.",
-      "evidence_status": "Current ICAI exam portal process"
     }
   ],
   "provenance": {
     "image_requirements.file_size": {
       "type": "official",
-      "evidence_reference": "Image Resize - ICAI examination portal (https://pqc.icaiexam.icai.org/INTT/Home/ImageResize)",
+      "evidence_reference": "XAT 2025 Bulletin - Photograph image (https://xatonline.in/assets/pdf/XAT-Bulletin-2025.pdf)",
       "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
-      "confidence": 4,
+      "confidence": 5,
       "approved": true
     },
     "image_requirements.dimensions": {
+      "type": "official",
+      "evidence_reference": "XAT 2025 Bulletin - Photograph image (https://xatonline.in/assets/pdf/XAT-Bulletin-2025.pdf)",
+      "reasoning": "Pixel dimensions transcribed from the cited source.",
+      "confidence": 5,
+      "approved": true
+    },
+    "image_requirements.formats.preferred_format": {
       "type": "inferred",
-      "reasoning": "The conducting body publishes no pixel dimensions. The output size is chosen per photograph from the crop geometry, so no dimension is asserted on the body's behalf.",
-      "confidence": 1,
-      "approved": false
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
     },
     "image_requirements.composition.crop_profile": {
       "type": "platform_default",
@@ -141,7 +151,7 @@
     }
   },
   "verification": {
-    "verification_status": "verified_with_ambiguity"
+    "verification_status": "verified"
   },
   "fictional_example": false
 }

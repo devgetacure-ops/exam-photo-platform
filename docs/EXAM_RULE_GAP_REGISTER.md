@@ -5,17 +5,21 @@ evidence research. Do not edit by hand: re-running the script rebuilds
 both the rule records and this register, so a manual edit here is lost
 and a manual edit to a rule record silently diverges from its evidence.
 
-**Encoded: 39. Not encoded: 11. Rejected by validation: 0.**
+**Encoded: 52. Not encoded: 83. Rejected by validation: 0.**
 
 ## Encoded
 
 | Examination | Tier | Record |
 |---|---|---|
+| Common Admission Test 2025 | Full specification (official dimensions, size and format) | `exam_common_admission_test_2025.json` |
 | GATE 2026 | Full specification (official dimensions, size and format) | `exam_gate_2026.json` |
+| GIC Assistant Manager 2024-25 | Full specification (official dimensions, size and format) | `exam_gic_assistant_manager_2024_25.json` |
 | IBPS CRP Customer Service Associates-XV | Full specification (official dimensions, size and format) | `exam_ibps_crp_customer_service_associates_xv.json` |
 | IBPS CRP PO/MT-XVI | Full specification (official dimensions, size and format) | `exam_ibps_crp_po_mt_xvi.json` |
 | IBPS CRP Regional Rural Banks-XIV | Full specification (official dimensions, size and format) | `exam_ibps_crp_regional_rural_banks_xiv.json` |
 | IBPS CRP Specialist Officers-XVI | Full specification (official dimensions, size and format) | `exam_ibps_crp_specialist_officers_xvi.json` |
+| Karnataka PSC Current Recruitment Portal Photograph | Full specification (official dimensions, size and format) | `exam_karnataka_psc_current_recruitment_portal_photograph.json` |
+| Kerala Engineering Architecture Medical Entrance Examination | Full specification (official dimensions, size and format) | `exam_kerala_engineering_architecture_medical_entrance_examination.json` |
 | Kerala PSC One Time Registration Photograph | Full specification (official dimensions, size and format) | `exam_kerala_psc_one_time_registration_photograph.json` |
 | LIC Assistant Administrative Officers (Generalist) 2025 | Full specification (official dimensions, size and format) | `exam_lic_assistant_administrative_officers_generalist_2025.json` |
 | NABARD Grade A 2025 | Full specification (official dimensions, size and format) | `exam_nabard_grade_a_2025.json` |
@@ -27,14 +31,14 @@ and a manual edit to a rule record silently diverges from its evidence.
 | RRB NTPC Graduate - CEN 05/2024 | Full specification (official dimensions, size and format) | `exam_rrb_ntpc_graduate_cen_05_2024.json` |
 | SBI Junior Associates 2025 | Full specification (official dimensions, size and format) | `exam_sbi_junior_associates_2025.json` |
 | SBI Probationary Officers 2025 | Full specification (official dimensions, size and format) | `exam_sbi_probationary_officers_2025.json` |
+| TNPSC Combined Civil Services Examination I (Group I) | Full specification (official dimensions, size and format) | `exam_tnpsc_combined_civil_services_examination_i_group_i.json` |
+| TNPSC Combined Civil Services Examination II (Group II/IIA) | Full specification (official dimensions, size and format) | `exam_tnpsc_combined_civil_services_examination_ii_group_ii_iia.json` |
+| TNPSC Combined Civil Services Examination IV (Group IV Services) | Full specification (official dimensions, size and format) | `exam_tnpsc_combined_civil_services_examination_iv_group_iv_services.json` |
 | TNPSC Combined Technical Services Examination 2025 | Full specification (official dimensions, size and format) | `exam_tnpsc_combined_technical_services_examination_2025.json` |
-| BPSC Current Recruitment Photograph Specification | Secondary sources only -- provisional | `exam_bpsc_current_recruitment_photograph_specification.json` |
-| Common Admission Test 2025 | Secondary sources only -- provisional | `exam_common_admission_test_2025.json` |
-| GIC Assistant Manager 2024-25 | Secondary sources only -- provisional | `exam_gic_assistant_manager_2024_25.json` |
+| Xavier Aptitude Test | Full specification (official dimensions, size and format) | `exam_xavier_aptitude_test.json` |
 | Karnataka Common Entrance Test 2026 | Secondary sources only -- provisional | `exam_karnataka_common_entrance_test_2026.json` |
-| Karnataka PSC Current Recruitment Portal Photograph | Secondary sources only -- provisional | `exam_karnataka_psc_current_recruitment_portal_photograph.json` |
-| WBJEE 2026 | Secondary sources only -- provisional | `exam_wbjee_2026.json` |
-| WBPSC / WBCS Current Online Application Photograph | Secondary sources only -- provisional | `exam_wbpsc_wbcs_current_online_application_photograph.json` |
+| Andhra Pradesh Teacher Eligibility Test | Size and format only -- no pixel dimensions published | `exam_andhra_pradesh_teacher_eligibility_test.json` |
+| BSSC Second Inter-Level Combined Competitive Examination | Size and format only -- no pixel dimensions published | `exam_bssc_second_inter_level_combined_competitive_examination.json` |
 | CBSE Classes IX/XI Registration 2025-26 | Size and format only -- no pixel dimensions published | `exam_cbse_classes_ix_xi_registration_2025_26.json` |
 | CTET September 2026 | Size and format only -- no pixel dimensions published | `exam_ctet_september_2026.json` |
 | CUET (PG) 2026 | Size and format only -- no pixel dimensions published | `exam_cuet_pg_2026.json` |
@@ -42,14 +46,23 @@ and a manual edit to a rule record silently diverges from its evidence.
 | ICAI Examination Portal Photograph (current portal scope) | Size and format only -- no pixel dimensions published | `exam_icai_examination_portal_photograph_current_portal_scope.json` |
 | ICSI Student Registration / Examination Account Photograph | Size and format only -- no pixel dimensions published | `exam_icsi_student_registration_examination_account_photograph.json` |
 | JEE (Main) 2026 | Size and format only -- no pixel dimensions published | `exam_jee_main_2026.json` |
+| Joint CSIR-UGC NET | Size and format only -- no pixel dimensions published | `exam_joint_csir_ugc_net.json` |
 | MPSC General Online Application Photograph Instruction | Size and format only -- no pixel dimensions published | `exam_mpsc_general_online_application_photograph_instruction.json` |
+| Maharashtra Teacher Eligibility Test (MAHA TET) | Size and format only -- no pixel dimensions published | `exam_maharashtra_teacher_eligibility_test_maha_tet.json` |
 | Management Aptitude Test 2026 | Size and format only -- no pixel dimensions published | `exam_management_aptitude_test_2026.json` |
 | NEET (UG) 2026 | Size and format only -- no pixel dimensions published | `exam_neet_ug_2026.json` |
+| OSSSC Combined Recruitment Examination | Size and format only -- no pixel dimensions published | `exam_osssc_combined_recruitment_examination.json` |
+| RPF Constable | Size and format only -- no pixel dimensions published | `exam_rpf_constable.json` |
+| RPF Sub-Inspector | Size and format only -- no pixel dimensions published | `exam_rpf_sub_inspector.json` |
+| RRB Ministerial and Isolated Categories | Size and format only -- no pixel dimensions published | `exam_rrb_ministerial_and_isolated_categories.json` |
 | UGC-NET June 2026 | Size and format only -- no pixel dimensions published | `exam_ugc_net_june_2026.json` |
 | UPSC CAPF (Assistant Commandants) Examination 2026 | Size and format only -- no pixel dimensions published | `exam_upsc_capf_assistant_commandants_examination_2026.json` |
 | UPSC Civil Services Examination 2026 | Size and format only -- no pixel dimensions published | `exam_upsc_civil_services_examination_2026.json` |
 | UPSC Combined Defence Services Examination (II) 2026 | Size and format only -- no pixel dimensions published | `exam_upsc_combined_defence_services_examination_ii_2026.json` |
 | UPSC NDA & NA Examination (II) 2026 | Size and format only -- no pixel dimensions published | `exam_upsc_nda_na_examination_ii_2026.json` |
+| WBJEE 2026 | Size and format only -- no pixel dimensions published | `exam_wbjee_2026.json` |
+| WBPSC / WBCS Current Online Application Photograph | Size and format only -- no pixel dimensions published | `exam_wbpsc_wbcs_current_online_application_photograph.json` |
+| West Bengal School Service Commission SLST Assistant Teacher Recruitment | Size and format only -- no pixel dimensions published | `exam_west_bengal_school_service_commission_slst_assistant_teacher_recruitment.json` |
 
 ## Not encoded
 
@@ -58,17 +71,89 @@ later research pass knows exactly what is missing.
 
 | Examination | Reason | Detail |
 |---|---|---|
+| AP EAPCET | incomplete evidence | no file size and no format |
+| AP Mega DSC Teacher Recruitment | incomplete evidence | no file size and no format |
+| AP POLYCET | incomplete evidence | no file size and no format |
 | APPSC Forest Beat Officer / Assistant Beat Officer 2025 | incomplete evidence | no file size and no format |
+| APPSC Group I Services Examination | incomplete evidence | no file size and no format |
+| APPSC Group II Services Examination | incomplete evidence | no file size and no format |
+| All India Sainik Schools Entrance Examination | incomplete evidence | no file size and no format |
+| Assam Direct Recruitment Grade III | incomplete evidence | no file size and no format |
+| Assam Direct Recruitment Grade IV | incomplete evidence | no file size and no format |
+| BITS Admission Test | incomplete evidence | no file size and no format |
+| BPSC Current Recruitment Photograph Specification | live capture only | The portal photographs the candidate directly; there is no upload specification and nothing for the platform to deliver. |
+| BPSC Teacher Recruitment Examination (TRE) | incomplete evidence | no file size and no format |
+| Bihar B.Ed Common Entrance Test | incomplete evidence | no file size and no format |
+| Bihar D.El.Ed Joint Entrance Examination | incomplete evidence | no file size and no format |
+| Bihar Police Constable Recruitment | incomplete evidence | no file size and no format |
+| Bihar Secondary Teacher Eligibility Test | incomplete evidence | no file size and no format |
+| CG Vyapam Pre-B.Ed Entrance Examination | incomplete evidence | no file size and no format |
+| DSSSB Major Recruitment Examination Family | incomplete evidence | no file size and no format |
+| Delhi Police Constable (Executive) | live capture only | The portal photographs the candidate directly; there is no upload specification and nothing for the platform to deliver. |
+| GUJCET | incomplete evidence | no file size and no format |
+| Gujarat Police Lokrakshak Recruitment | incomplete evidence | no file size and no format |
+| Gujarat Police PSI Recruitment | incomplete evidence | no file size and no format |
+| HSSC CET Group D | incomplete evidence | no file size and no format |
+| Haryana CET Group C | incomplete evidence | no file size and no format |
+| Haryana Teacher Eligibility Test | incomplete evidence | no file size and no format |
+| Indian Air Force Agniveervayu Recruitment | incomplete evidence | no file size and no format |
 | Indian Army Agniveer CEE 2025-26 - online upload | incomplete evidence | no file size; conflicting: file_size.published_maximum, file_size.published_minimum |
 | Indian Army Agniveer CEE 2025-26 - rally/document verification | incomplete evidence | no file size and no format |
+| Indian Army Agniveer Recruitment | incomplete evidence | no file size and no format |
+| Indian Navy Agniveer SSR/MR Recruitment | incomplete evidence | no format |
 | JEE (Advanced) 2026 | incomplete evidence | no file size and no format |
+| JKSSB Police Constable Recruitment | live capture only | The portal photographs the candidate directly; there is no upload specification and nothing for the platform to deliver. |
+| JSSC Combined Graduate Level Examination | incomplete evidence | no file size and no format |
+| Jawahar Navodaya Vidyalaya Selection Test Class VI | incomplete evidence | no file size and no format |
+| Jharkhand Police Constable Recruitment | incomplete evidence | no file size and no format |
+| Joint Entrance Examination Council Uttar Pradesh Polytechnic Entrance | incomplete evidence | no file size and no format |
+| Karnataka Teacher Eligibility Test | incomplete evidence | no file size and no format |
+| Kendriya Vidyalaya Sangathan Direct Recruitment Examination | incomplete evidence | no file size |
+| MAH MBA/MMS CET | incomplete evidence | no format |
 | MHT-CET 2026 | incomplete evidence | no format |
+| MP Patwari Recruitment Examination | incomplete evidence | no file size and no format |
+| MP Police Constable Recruitment Test | incomplete evidence | no file size and no format |
+| MP Primary School Teacher Eligibility Test | incomplete evidence | no file size and no format |
+| Maharashtra Police Recruitment | incomplete evidence | no file size and no format |
+| NEET-PG | incomplete evidence | no file size and no format |
+| Odisha Joint Entrance Examination (OJEE) | incomplete evidence | no file size and no format |
 | RPSC Current Online Application Photograph | incomplete evidence | no file size; conflicting: dimensions.mode, file_size.published_maximum |
+| RRB JE/DMS/CMA | live capture only | The portal photographs the candidate directly; there is no upload specification and nothing for the platform to deliver. |
+| RRB Paramedical Categories | live capture only | The portal photographs the candidate directly; there is no upload specification and nothing for the platform to deliver. |
+| RRB Section Controller | live capture only | The portal photographs the candidate directly; there is no upload specification and nothing for the platform to deliver. |
+| RRB Technician | live capture only | The portal photographs the candidate directly; there is no upload specification and nothing for the platform to deliver. |
+| Rajasthan CET Graduate Level | live capture only | The portal photographs the candidate directly; there is no upload specification and nothing for the platform to deliver. |
+| Rajasthan CET Senior Secondary Level | live capture only | The portal photographs the candidate directly; there is no upload specification and nothing for the platform to deliver. |
+| Rajasthan Eligibility Examination for Teachers (REET) | incomplete evidence | no file size and no format |
+| Rajasthan Grade IV Recruitment | live capture only | The portal photographs the candidate directly; there is no upload specification and nothing for the platform to deliver. |
+| Rajasthan Patwari Recruitment | live capture only | The portal photographs the candidate directly; there is no upload specification and nothing for the platform to deliver. |
+| Rajasthan Police Constable Recruitment | incomplete evidence | no file size and no format |
+| Rajasthan Pre-D.El.Ed Examination (BSTC) | incomplete evidence | no file size and no format |
+| Rajasthan Pre-Teacher Education Test | incomplete evidence | no file size and no format |
 | SSC Combined Graduate Level Examination 2026 | live capture only | The portal photographs the candidate directly; there is no upload specification and nothing for the platform to deliver. |
 | SSC Combined Higher Secondary (10+2) Level Examination 2025 | live capture only | The portal photographs the candidate directly; there is no upload specification and nothing for the platform to deliver. |
 | SSC Constable (GD) Examination 2025 | live capture only | The portal photographs the candidate directly; there is no upload specification and nothing for the platform to deliver. |
+| SSC Junior Engineer Examination | incomplete evidence | no file size and no format |
 | SSC Multi-Tasking Staff and Havaldar Examination 2025 | live capture only | The portal photographs the candidate directly; there is no upload specification and nothing for the platform to deliver. |
+| SSC Selection Post Phase XIII | live capture only | The portal photographs the candidate directly; there is no upload specification and nothing for the platform to deliver. |
+| SSC Stenographer Grade C & D Examination | incomplete evidence | no file size and no format |
+| SSC Sub-Inspector in Delhi Police and CAPFs Examination | incomplete evidence | no file size and no format |
+| TG EAPCET | incomplete evidence | no file size and no format |
+| TG/TS POLYCET | incomplete evidence | no file size and no format |
+| TGPSC Group I Services Examination | incomplete evidence | no file size and no format |
+| TGPSC Group II Services Examination | incomplete evidence | no file size and no format |
+| TGPSC Group III Services Examination | incomplete evidence | no file size and no format |
+| TSPSC Group IV Services | incomplete evidence | no file size and no format |
+| Telangana DSC Teacher Recruitment | incomplete evidence | no file size and no format |
+| Telangana Teacher Eligibility Test (TG TET) | incomplete evidence | no file size and no format |
+| UP B.Ed Joint Entrance Examination | incomplete evidence | no file size and no format |
+| UPPSC Combined State/Upper Subordinate Services Examination (PCS) | incomplete evidence | no file size and no format |
 | UPPSC One Time Registration Photograph | incomplete evidence | no format |
+| UPPSC Review Officer / Assistant Review Officer | incomplete evidence | no file size and no format |
+| UPSC Engineering Services Examination | incomplete evidence | no file size and no format |
+| UPSSSC Preliminary Eligibility Test (PET) | incomplete evidence | no file size and no format |
+| Uttar Pradesh Police Constable Recruitment | incomplete evidence | no file size and no format |
+| West Bengal Primary Teacher Eligibility Test | incomplete evidence | no file size and no format |
 
 ## Deliverables recorded in the research but not encoded
 
@@ -77,7 +162,27 @@ so no submission method could be written without guessing one.
 
 | Examination | Deliverable |
 |---|---|
+| Andhra Pradesh Teacher Eligibility Test | Application upload deliverables |
+| BSSC Second Inter-Level Combined Competitive Examination | Candidate photograph |
+| CUET (UG) 2026 | Live candidate photograph |
 | GATE 2026 | OBC-NCL/EWS certificate |
+| IBPS CRP Customer Service Associates-XV | Candidate photograph |
+| IBPS CRP Customer Service Associates-XV | Live candidate photograph |
+| IBPS CRP PO/MT-XVI | Candidate photograph |
+| IBPS CRP PO/MT-XVI | Live candidate photograph |
+| IBPS CRP Regional Rural Banks-XIV | Candidate photograph |
+| IBPS CRP Regional Rural Banks-XIV | Live candidate photograph |
+| IBPS CRP Specialist Officers-XVI | Candidate photograph |
+| IBPS CRP Specialist Officers-XVI | Live candidate photograph |
+| JEE (Main) 2026 | Live candidate photograph |
+| Joint CSIR-UGC NET | Application upload deliverables |
+| Kerala Engineering Architecture Medical Entrance Examination | Application upload deliverables |
+| Maharashtra Teacher Eligibility Test (MAHA TET) | Application upload deliverables |
+| NEET (UG) 2026 | Live photograph captured through the application portal |
+| OSSSC Combined Recruitment Examination | Application upload deliverables |
+| TNPSC Combined Civil Services Examination I (Group I) | Application upload deliverables |
+| TNPSC Combined Civil Services Examination II (Group II/IIA) | Application upload deliverables |
+| Xavier Aptitude Test | Application upload deliverables |
 
 ## Examinations not encoded that still have deliverables
 
@@ -90,13 +195,84 @@ photograph specification, which is what blocks them.
 
 | Examination | Non-photograph deliverables |
 |---|---:|
+| AP Mega DSC Teacher Recruitment | 2 |
+| AP POLYCET | 1 |
 | APPSC Forest Beat Officer / Assistant Beat Officer 2025 | 2 |
+| APPSC Group I Services Examination | 1 |
+| APPSC Group II Services Examination | 1 |
+| All India Sainik Schools Entrance Examination | 3 |
+| Assam Direct Recruitment Grade III | 1 |
+| Assam Direct Recruitment Grade IV | 1 |
+| BITS Admission Test | 1 |
+| BPSC Current Recruitment Photograph Specification | 6 |
+| BPSC Teacher Recruitment Examination (TRE) | 3 |
+| Bihar B.Ed Common Entrance Test | 1 |
+| Bihar D.El.Ed Joint Entrance Examination | 2 |
+| Bihar Police Constable Recruitment | 1 |
+| Bihar Secondary Teacher Eligibility Test | 1 |
+| CG Vyapam Pre-B.Ed Entrance Examination | 1 |
+| DSSSB Major Recruitment Examination Family | 4 |
+| Delhi Police Constable (Executive) | 1 |
+| GUJCET | 1 |
+| Gujarat Police Lokrakshak Recruitment | 1 |
+| Gujarat Police PSI Recruitment | 1 |
+| HSSC CET Group D | 2 |
+| Haryana CET Group C | 2 |
+| Haryana Teacher Eligibility Test | 1 |
+| Indian Air Force Agniveervayu Recruitment | 4 |
 | Indian Army Agniveer CEE 2025-26 - online upload | 2 |
+| Indian Army Agniveer Recruitment | 2 |
+| Indian Navy Agniveer SSR/MR Recruitment | 1 |
 | JEE (Advanced) 2026 | 6 |
-| MHT-CET 2026 | 1 |
+| JKSSB Police Constable Recruitment | 2 |
+| JSSC Combined Graduate Level Examination | 1 |
+| Jawahar Navodaya Vidyalaya Selection Test Class VI | 2 |
+| Jharkhand Police Constable Recruitment | 1 |
+| Joint Entrance Examination Council Uttar Pradesh Polytechnic Entrance | 1 |
+| Karnataka Teacher Eligibility Test | 1 |
+| Kendriya Vidyalaya Sangathan Direct Recruitment Examination | 1 |
+| MAH MBA/MMS CET | 1 |
+| MHT-CET 2026 | 4 |
+| MP Patwari Recruitment Examination | 4 |
+| MP Police Constable Recruitment Test | 4 |
+| MP Primary School Teacher Eligibility Test | 4 |
+| Maharashtra Police Recruitment | 1 |
+| NEET-PG | 3 |
+| Odisha Joint Entrance Examination (OJEE) | 1 |
 | RPSC Current Online Application Photograph | 2 |
+| RRB JE/DMS/CMA | 1 |
+| RRB Paramedical Categories | 1 |
+| RRB Section Controller | 1 |
+| RRB Technician | 1 |
+| Rajasthan CET Graduate Level | 1 |
+| Rajasthan CET Senior Secondary Level | 1 |
+| Rajasthan Eligibility Examination for Teachers (REET) | 1 |
+| Rajasthan Grade IV Recruitment | 1 |
+| Rajasthan Patwari Recruitment | 1 |
+| Rajasthan Police Constable Recruitment | 1 |
+| Rajasthan Pre-D.El.Ed Examination (BSTC) | 2 |
+| Rajasthan Pre-Teacher Education Test | 1 |
 | SSC Combined Graduate Level Examination 2026 | 2 |
 | SSC Combined Higher Secondary (10+2) Level Examination 2025 | 2 |
 | SSC Constable (GD) Examination 2025 | 2 |
+| SSC Junior Engineer Examination | 1 |
 | SSC Multi-Tasking Staff and Havaldar Examination 2025 | 2 |
+| SSC Selection Post Phase XIII | 1 |
+| SSC Stenographer Grade C & D Examination | 1 |
+| SSC Sub-Inspector in Delhi Police and CAPFs Examination | 1 |
+| TG EAPCET | 1 |
+| TG/TS POLYCET | 1 |
+| TGPSC Group I Services Examination | 1 |
+| TGPSC Group II Services Examination | 1 |
+| TGPSC Group III Services Examination | 1 |
+| TSPSC Group IV Services | 1 |
+| Telangana DSC Teacher Recruitment | 2 |
+| Telangana Teacher Eligibility Test (TG TET) | 1 |
+| UP B.Ed Joint Entrance Examination | 1 |
+| UPPSC Combined State/Upper Subordinate Services Examination (PCS) | 2 |
 | UPPSC One Time Registration Photograph | 2 |
+| UPPSC Review Officer / Assistant Review Officer | 2 |
+| UPSC Engineering Services Examination | 2 |
+| UPSSSC Preliminary Eligibility Test (PET) | 1 |
+| Uttar Pradesh Police Constable Recruitment | 1 |
+| West Bengal Primary Teacher Eligibility Test | 1 |

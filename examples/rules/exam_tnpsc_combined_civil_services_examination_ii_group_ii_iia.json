@@ -1,0 +1,158 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "tnpsc-combined-civil-services-examination-ii-group-ii-iia",
+  "rule_version": "1.0.0",
+  "status": "verified",
+  "exam": {
+    "exam_id": "tnpsc-combined-civil-services-examination-ii-group-ii-iia",
+    "exam_name": "TNPSC Combined Civil Services Examination II (Group II/IIA)",
+    "conducting_body": "Tamil Nadu Public Service Commission",
+    "examination_year": 2024,
+    "application_cycle": "2024",
+    "application_stage": "application",
+    "jurisdiction": "Tamil Nadu",
+    "category": "state_psc_recruitment"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "3.5 cm (130 pixels); 4.5 cm (170 pixels); 200 DPI; 20 KB\u201350 KB; saved as \u201cPhotograph.jpg\u201d and uploaded",
+      "source_url": "https://tnpsc.gov.in/static_pdf/document/instructions-to-candidates_2025.pdf",
+      "document_title": "TNPSC Instructions to Applicants 2025",
+      "section_name": "Photograph upload"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "exact",
+      "width_px": 130,
+      "height_px": 170,
+      "aspect_ratio": "13:17",
+      "dpi": 200
+    },
+    "file_size": {
+      "maximum_bytes": 50000,
+      "minimum_bytes": 20000,
+      "size_unit_as_published": "KB",
+      "published_maximum": 50.0,
+      "published_minimum": 20.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpg"
+      ],
+      "preferred_format": "jpg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "unspecified"
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "unspecified"
+    },
+    "appearance": {},
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false
+    },
+    "exceptional_instructions": {
+      "processing_support_status": "supported"
+    }
+  },
+  "requirements": [
+    {
+      "requirement_id": "candidate_photograph",
+      "requirement_name": "Candidate photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "portal_dependent",
+      "platform_support": "supported",
+      "applicability": "As required by the active authority application/notification",
+      "content_instructions": "not_found",
+      "evidence_status": "Application asset identified at authority/application-family level; exact current technical specification and, where noted, conditionality were not fully established.",
+      "notes": "This row is intentionally evidence-gated. No numeric value or format has been inferred from secondary sources.",
+      "rejection_conditions": [
+        "Failure to upload clear images of the photograph and signature will result in rejection of online application after due process.",
+        "In case of uploading an inappropriate photograph, the application is liable to be rejected after due process."
+      ]
+    },
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate signature",
+      "requirement_type": "signature",
+      "submission_method": "file_upload",
+      "requirement_status": "portal_dependent",
+      "platform_support": "supported",
+      "applicability": "As required by the active authority application/notification",
+      "content_instructions": "not_found",
+      "evidence_status": "Application asset identified at authority/application-family level; exact current technical specification and, where noted, conditionality were not fully established.",
+      "notes": "This row is intentionally evidence-gated. No numeric value or format has been inferred from secondary sources.",
+      "rejection_conditions": [
+        "Failure to upload clear images of the photograph and signature will result in rejection of online application after due process."
+      ],
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 20000,
+          "minimum_bytes": 10000
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "TNPSC Instructions to Applicants 2025 - Photograph upload (https://tnpsc.gov.in/static_pdf/document/instructions-to-candidates_2025.pdf)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 5,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "official",
+      "evidence_reference": "TNPSC Instructions to Applicants 2025 - Photograph upload (https://tnpsc.gov.in/static_pdf/document/instructions-to-candidates_2025.pdf)",
+      "reasoning": "Pixel dimensions transcribed from the cited source.",
+      "confidence": 5,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    },
+    "requirements[1].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[1].file_spec.file_size.minimum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[1].file_spec.formats.allowed_formats": {
+      "type": "interim_default",
+      "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
+      "confidence": 1,
+      "approved": false
+    }
+  },
+  "verification": {
+    "verification_status": "verified"
+  },
+  "fictional_example": false
+}

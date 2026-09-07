@@ -130,12 +130,16 @@
       "submission_method": "document_scan_upload",
       "requirement_status": "conditional",
       "platform_support": "supported",
-      "applicability": "Candidates claiming PwD-related benefit",
-      "content_instructions": "Upload/verify the prescribed disability or UDID documentation where prompted. The current JEE Main advisory specifically asks candidates to update UDID details before application.",
-      "evidence_status": "Current official JEE Main advisory/bulletin",
+      "applicability": "PwD/UDID applicants",
+      "content_instructions": "PDF; 50\u2013300 KB",
+      "evidence_status": "Official JEE (Main) 2026 Information Bulletin",
       "file_spec": {
         "file_size": {
-          "maximum_bytes": 400000
+          "maximum_bytes": 300000,
+          "minimum_bytes": 50000,
+          "published_minimum": 50,
+          "published_maximum": 300,
+          "size_unit_as_published": "KB"
         }
       }
     },
@@ -149,6 +153,46 @@
       "applicability": "Candidates claiming EWS/SC/ST/OBC-NCL benefit",
       "content_instructions": "Keep the current valid category certificate ready and ensure its details are updated. The available current official advisory confirms document readiness; whether a file is uploaded for every category was not conclusively established in the extracted material.",
       "evidence_status": "Current official JEE Main advisory"
+    },
+    {
+      "requirement_id": "class_x_equivalent_certificate",
+      "requirement_name": "Class X/equivalent certificate",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants where requested by the current form",
+      "content_instructions": "PDF; 50\u2013300 KB",
+      "evidence_status": "Official JEE (Main) 2026 Information Bulletin",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 300000,
+          "minimum_bytes": 50000,
+          "published_minimum": 50,
+          "published_maximum": 300,
+          "size_unit_as_published": "KB"
+        }
+      }
+    },
+    {
+      "requirement_id": "identity_proof_scan",
+      "requirement_name": "Identity proof scan",
+      "requirement_type": "identity_document",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Where Aadhaar/DigiLocker authentication is not used and the bulletin requests an identity scan",
+      "content_instructions": "JPG/JPEG; 10\u2013200 KB",
+      "evidence_status": "Official JEE (Main) 2026 Information Bulletin",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 200000,
+          "minimum_bytes": 10000,
+          "published_minimum": 10,
+          "published_maximum": 200,
+          "size_unit_as_published": "KB"
+        }
+      }
     }
   ],
   "provenance": {
@@ -176,12 +220,6 @@
       "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
       "confidence": 5,
       "approved": true
-    },
-    "requirements[2].file_spec.file_size.maximum_bytes": {
-      "type": "interim_default",
-      "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",
-      "confidence": 1,
-      "approved": false
     }
   },
   "verification": {

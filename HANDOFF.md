@@ -201,13 +201,14 @@ upload and a requirement, get back a compliant file.
 | Certificate / ID scan | Ink `PAGE` + PDF | Image→PDF, or an existing PDF restructured |
 | Multi-page document | `pdf/document.py` | Add pages, reorder, rotate, omit, repeat |
 
-**Catalogue: 39 examinations, 155 requirements.** 135 supported, 16
-guidance-only (live capture and portal declarations — correctly never ours), 2
+**Catalogue: 52 examinations, 215 requirements.** 189 supported, 16
+guidance-only (live capture and portal declarations — correctly never ours), 3
 partially supported (need a name/date printed on the photograph, which the
-engine cannot render), 2 not yet supported.
+engine cannot render), 7 not yet supported. Grew from 39/155 in DEC-068, which
+folded six research deliveries in additively.
 
-**86 interim placeholder values** are in the catalogue, all marked
-`interim_default` in provenance. They are signature and thumb-impression sizes
+**63 interim placeholder values** are in the catalogue, all marked
+`interim_default` in provenance (86 before DEC-068). They are signature and thumb-impression sizes
 and formats, plus a 400 KB certificate ceiling set by the product owner. When
 real per-exam research lands, `type == interim_default` finds every one.
 
@@ -413,6 +414,17 @@ python scripts/extract_deliverables.py --report packages/exam-rules/research/ind
 python scripts/encode_exam_rules.py --specs packages/exam-rules/research/exam_photo_specs_2026.json --deliverables packages/exam-rules/research/exam_deliverables_2026.json --out examples/rules --report docs/EXAM_RULE_GAP_REGISTER.md
 ```
 
+**A delivery is merged, never adopted** (DEC-068). `scripts/merge_research_delivery.py`
+folds a new delivery into the research corpus field by field: a `not_found`
+never displaces an established value, rejection conditions are unioned, and
+deliverables union on a punctuation-insensitive name with the deeper entry
+winning. Replacing the corpus with the newest delivery would have cost 204
+rejection conditions and five working examinations. Values read straight from
+an authority document go in a versioned overlay, applied last. **Do not re-run
+`extract_deliverables.py` after a merge** — it regenerates
+`exam_deliverables_2026.json` from the 2026 markdown report and discards
+everything merged since.
+
 **To change a rule, change the evidence and re-run.** Editing
 `examples/rules/exam_*.json` by hand works until the next regeneration silently
 discards it, and meanwhile the record asserts something no source supports.
@@ -481,9 +493,18 @@ defects the reference set could not.
    escape hatch — return a job id and let the client poll `GET /v1/jobs/{id}` —
    is a scale-later decision rather than an urgent one. It stops being
    comfortable if the cold-start warmup above is skipped.
-4. **Ten examinations dropped for a photograph reason** while carrying 23
-   non-photograph deliverables between them, including all four SSC. Fixing it
-   means letting a rule record exist without a photograph specification.
+4. **81 examinations dropped for a photograph reason**, carrying **135
+   non-photograph deliverables** between them -- every one a signature or
+   certificate the platform could prepare and cannot reach. It was 10 and 23
+   before DEC-068 folded in the 2026 research, so **this is now the largest
+   single gap in the product**, and it grows with every research pass that
+   finds an examination without a photograph rule. Fixing it means letting a
+   rule record exist without a photograph specification: `image_requirements`
+   is currently required by both `packages/exam-rules/schema/exam-rule.schema.json`
+   and `models/exam_rule.py`, and the web app reads it when generating exam
+   pages, so it is a **cross-lane change** and needs Codex before it lands.
+   `test_rule_catalogue.py` asserts the 81/135 figures, so the day the change
+   works those numbers move and the test says so.
 5. **Service hardening and privacy — partly done (DEC-064).** An operator token
    now gates `/v1/process`, `/v1/rules/validate`, `/v1/cleanup-expired` and
    `/test`; the candidate surface stays open because a browser cannot hold a

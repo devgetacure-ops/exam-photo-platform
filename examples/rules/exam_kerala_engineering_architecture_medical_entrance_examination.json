@@ -1,0 +1,254 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "kerala-engineering-architecture-medical-entrance-examination",
+  "rule_version": "1.0.0",
+  "status": "verified",
+  "exam": {
+    "exam_id": "kerala-engineering-architecture-medical-entrance-examination",
+    "exam_name": "Kerala Engineering Architecture Medical Entrance Examination",
+    "conducting_body": "Commissioner for Entrance Examinations Kerala",
+    "examination_year": 2026,
+    "application_cycle": "2026",
+    "application_stage": "application",
+    "jurisdiction": "Kerala",
+    "category": "state_entrance"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "150 pixels width; 200 pixels height; between 15 kb and 100 kb; 15 kb to 100 kb; jpg format (.jpeg)",
+      "source_url": "https://cee.kerala.gov.in/keamonline2026/pdf/howtoupload.pdf",
+      "document_title": "KEAM 2026 How to Upload",
+      "section_name": "Photograph Specifications"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "exact",
+      "width_px": 150,
+      "height_px": 200,
+      "aspect_ratio": "3:4"
+    },
+    "file_size": {
+      "maximum_bytes": 100000,
+      "minimum_bytes": 15000,
+      "size_unit_as_published": "KB",
+      "published_maximum": 100.0,
+      "published_minimum": 15.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpg",
+        "jpeg"
+      ],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "unspecified"
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "unspecified"
+    },
+    "appearance": {},
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false
+    },
+    "exceptional_instructions": {
+      "processing_support_status": "supported"
+    }
+  },
+  "requirements": [
+    {
+      "requirement_id": "candidate_photograph",
+      "requirement_name": "Candidate photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants",
+      "content_instructions": "JPG/JPEG; 15\u2013100 KB; 150\u00d7200 px",
+      "evidence_status": "Official KEAM 2026 upload instructions"
+    },
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate signature",
+      "requirement_type": "signature",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants",
+      "content_instructions": "JPG/JPEG; 10\u2013100 KB; 150\u00d7100 px",
+      "evidence_status": "Official KEAM 2026 upload instructions",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 100000,
+          "minimum_bytes": 10000,
+          "published_minimum": 10,
+          "published_maximum": 100,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    },
+    {
+      "requirement_id": "class_x_certificate",
+      "requirement_name": "Class X certificate",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants",
+      "content_instructions": "PDF; less than 500 KB",
+      "evidence_status": "Official KEAM 2026 upload instructions",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 500000,
+          "published_maximum": 500,
+          "size_unit_as_published": "KB"
+        }
+      }
+    },
+    {
+      "requirement_id": "date_of_birth_proof",
+      "requirement_name": "Date-of-birth proof",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants",
+      "content_instructions": "PDF; less than 500 KB",
+      "evidence_status": "Official KEAM 2026 upload instructions",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 500000,
+          "published_maximum": 500,
+          "size_unit_as_published": "KB"
+        }
+      }
+    },
+    {
+      "requirement_id": "nativity_proof",
+      "requirement_name": "Nativity proof",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants",
+      "content_instructions": "PDF; less than 500 KB",
+      "evidence_status": "Official KEAM 2026 upload instructions",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 500000,
+          "published_maximum": 500,
+          "size_unit_as_published": "KB"
+        }
+      }
+    },
+    {
+      "requirement_id": "communal_reservation_supporting_certificate",
+      "requirement_name": "Communal reservation supporting certificate",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Applicants claiming communal reservation",
+      "content_instructions": "PDF; less than 500 KB",
+      "evidence_status": "Official KEAM 2026 upload instructions",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 500000,
+          "published_maximum": 500,
+          "size_unit_as_published": "KB"
+        }
+      }
+    },
+    {
+      "requirement_id": "special_reservation_supporting_certificate",
+      "requirement_name": "Special reservation supporting certificate",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Applicants claiming special reservation",
+      "content_instructions": "PDF; less than 500 KB",
+      "evidence_status": "Official KEAM 2026 upload instructions",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 500000,
+          "published_maximum": 500,
+          "size_unit_as_published": "KB"
+        }
+      }
+    },
+    {
+      "requirement_id": "annual_family_income_supporting_document",
+      "requirement_name": "Annual family income supporting document",
+      "requirement_type": "other",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "not_yet_supported",
+      "applicability": "Where the claim/application requires it",
+      "content_instructions": "PDF; less than 500 KB",
+      "evidence_status": "Official KEAM 2026 upload instructions",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 500000,
+          "published_maximum": 500,
+          "size_unit_as_published": "KB"
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "KEAM 2026 How to Upload - Photograph Specifications (https://cee.kerala.gov.in/keamonline2026/pdf/howtoupload.pdf)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 5,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "official",
+      "evidence_reference": "KEAM 2026 How to Upload - Photograph Specifications (https://cee.kerala.gov.in/keamonline2026/pdf/howtoupload.pdf)",
+      "reasoning": "Pixel dimensions transcribed from the cited source.",
+      "confidence": 5,
+      "approved": true
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    },
+    "requirements[1].file_spec.formats.allowed_formats": {
+      "type": "interim_default",
+      "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
+      "confidence": 1,
+      "approved": false
+    }
+  },
+  "verification": {
+    "verification_status": "verified"
+  },
+  "fictional_example": false
+}

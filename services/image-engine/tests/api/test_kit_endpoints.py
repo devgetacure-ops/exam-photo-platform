@@ -25,9 +25,11 @@ SIGNATURE = "candidate_signature"
 PHOTOGRAPH = "candidate_photograph"
 DECLARATION = "online_declaration_confirmation"
 
-# BPSC's claim certificates are the multi-page document case, at a 400 KB
-# ceiling that DEC-049 records as an interim platform estimate.
-DOC_EXAM = "bpsc-current-recruitment-photograph-specification"
+# WBPSC's claim certificates are the multi-page document case, at a 400 KB
+# ceiling that DEC-049 records as an interim platform estimate. This was BPSC
+# until DEC-068 withdrew it: BPSC photographs the candidate through a web
+# camera, so it carries no photograph specification and is no longer encoded.
+DOC_EXAM = "wbpsc-wbcs-current-online-application-photograph"
 DOC_REQUIREMENT = "claim_supporting_certificates"
 
 # CTET publishes its signature specification, so it carries no interim values.

@@ -2,7 +2,7 @@
   "schema_version": "1.1",
   "rule_id": "common-admission-test-2025",
   "rule_version": "1.0.0",
-  "status": "provisional",
+  "status": "verified",
   "exam": {
     "exam_id": "common-admission-test-2025",
     "exam_name": "Common Admission Test 2025",
@@ -18,9 +18,17 @@
   },
   "source_evidence": [
     {
+      "source_type": "official_application_portal",
+      "official_source": true,
+      "captured_wording": "1200 x 1200 pixels; less than or equal to 80 KB; .jpg or .jpeg; white background",
+      "source_url": "https://cdn.digialm.com/per/g06/pub/32842/EForms/image/CAT2025/Registration_Guide.pdf",
+      "document_title": "CAT 2025 Registration Guide",
+      "section_name": "Upload Documents"
+    },
+    {
       "source_type": "secondary_reference",
       "official_source": false,
-      "captured_wording": "1200 x 1200 pixels; 1 MB; JPEG/JPG; white/off-white; front view; eyes open; not more than 6 months",
+      "captured_wording": "front view; eyes open; not more than 6 months",
       "source_url": "https://www.reddit.com/r/CATpreparation/",
       "document_title": "Reproduction of CAT 2025 photograph instructions"
     }
@@ -33,14 +41,14 @@
       "aspect_ratio": "1:1"
     },
     "file_size": {
-      "maximum_bytes": 1000000,
-      "size_unit_as_published": "MB",
-      "published_maximum": 1.0
+      "maximum_bytes": 80000,
+      "size_unit_as_published": "KB",
+      "published_maximum": 80.0
     },
     "formats": {
       "allowed_formats": [
-        "jpeg",
-        "jpg"
+        "jpg",
+        "jpeg"
       ],
       "preferred_format": "jpeg",
       "preserve_transparency": false,
@@ -48,8 +56,7 @@
       "colour_space": "sRGB"
     },
     "background": {
-      "mode": "plain_light",
-      "fallback_colour": "#FFFFFF"
+      "mode": "unspecified"
     },
     "composition": {
       "crop_profile": "tight_exam_portrait",
@@ -96,12 +103,13 @@
       "requirement_status": "mandatory",
       "platform_support": "supported",
       "applicability": "All applicants",
-      "content_instructions": "Scanned signature image in the dimensions and size shown by the CAT portal. Exact value was not established in the supplied source set.",
-      "evidence_status": "CAT registration requirement; exact specification not_found",
+      "content_instructions": "JPG/JPEG; maximum 80 KB; 80 mm \u00d7 35 mm; no minimum size published",
+      "evidence_status": "CAT 2025 registration guide on official exam vendor publication path",
       "file_spec": {
         "file_size": {
-          "maximum_bytes": 20000,
-          "minimum_bytes": 10000
+          "maximum_bytes": 80000,
+          "published_maximum": 80,
+          "size_unit_as_published": "KB"
         },
         "formats": {
           "allowed_formats": [
@@ -118,9 +126,9 @@
       "submission_method": "document_scan_upload",
       "requirement_status": "conditional",
       "platform_support": "supported",
-      "applicability": "SC/ST/NC-OBC/EWS candidates claiming the respective category",
-      "content_instructions": "Upload the CAT-prescribed certificate/form for the claimed category.",
-      "evidence_status": "CAT registration guide; active portal should be treated as final",
+      "applicability": "Applicants claiming EWS/NC-OBC/SC/ST as applicable",
+      "content_instructions": "PDF; numeric file-size maximum not published in the registration guide",
+      "evidence_status": "CAT 2025 registration guide on official exam vendor publication path",
       "file_spec": {
         "file_size": {
           "maximum_bytes": 400000
@@ -134,9 +142,9 @@
       "submission_method": "document_scan_upload",
       "requirement_status": "conditional",
       "platform_support": "supported",
-      "applicability": "PwD candidates",
-      "content_instructions": "Upload the prescribed disability certificate/form.",
-      "evidence_status": "CAT registration guide; active portal should be treated as final",
+      "applicability": "Applicants claiming PwD",
+      "content_instructions": "PDF; numeric file-size maximum not published in the registration guide",
+      "evidence_status": "CAT 2025 registration guide on official exam vendor publication path",
       "file_spec": {
         "file_size": {
           "maximum_bytes": 400000
@@ -146,18 +154,18 @@
   ],
   "provenance": {
     "image_requirements.file_size": {
-      "type": "inferred",
-      "evidence_reference": "Reproduction of CAT 2025 photograph instructions (https://www.reddit.com/r/CATpreparation/)",
+      "type": "official",
+      "evidence_reference": "CAT 2025 Registration Guide - Upload Documents (https://cdn.digialm.com/per/g06/pub/32842/EForms/image/CAT2025/Registration_Guide.pdf)",
       "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
-      "confidence": 2,
-      "approved": false
+      "confidence": 4,
+      "approved": true
     },
     "image_requirements.dimensions": {
-      "type": "inferred",
-      "evidence_reference": "Reproduction of CAT 2025 photograph instructions (https://www.reddit.com/r/CATpreparation/)",
+      "type": "official",
+      "evidence_reference": "CAT 2025 Registration Guide - Upload Documents (https://cdn.digialm.com/per/g06/pub/32842/EForms/image/CAT2025/Registration_Guide.pdf)",
       "reasoning": "Pixel dimensions transcribed from the cited source.",
-      "confidence": 2,
-      "approved": false
+      "confidence": 4,
+      "approved": true
     },
     "image_requirements.formats.preferred_format": {
       "type": "inferred",
@@ -170,24 +178,6 @@
       "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
       "confidence": 5,
       "approved": true
-    },
-    "image_requirements": {
-      "type": "inferred",
-      "reasoning": "Values for this examination were located only on secondary sources, not on the conducting body's own material. Recorded so the examination is servable, and held at provisional status so the dependence stays visible until an official source is found.",
-      "confidence": 2,
-      "approved": false
-    },
-    "requirements[1].file_spec.file_size.maximum_bytes": {
-      "type": "interim_default",
-      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
-      "confidence": 1,
-      "approved": false
-    },
-    "requirements[1].file_spec.file_size.minimum_bytes": {
-      "type": "interim_default",
-      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
-      "confidence": 1,
-      "approved": false
     },
     "requirements[1].file_spec.formats.allowed_formats": {
       "type": "interim_default",
@@ -209,7 +199,7 @@
     }
   },
   "verification": {
-    "verification_status": "provisional"
+    "verification_status": "verified"
   },
   "fictional_example": false
 }

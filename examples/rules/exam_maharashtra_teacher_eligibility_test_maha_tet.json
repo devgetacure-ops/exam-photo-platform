@@ -1,0 +1,274 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "maharashtra-teacher-eligibility-test-maha-tet",
+  "rule_version": "1.0.0",
+  "status": "verified_with_ambiguity",
+  "exam": {
+    "exam_id": "maharashtra-teacher-eligibility-test-maha-tet",
+    "exam_name": "Maharashtra Teacher Eligibility Test (MAHA TET)",
+    "conducting_body": "Maharashtra State Council of Examination",
+    "examination_year": 2026,
+    "application_cycle": "2026",
+    "application_stage": "application",
+    "jurisdiction": "Maharashtra",
+    "category": "teacher_eligibility"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "17 kb to 51 kb; .jpg format",
+      "source_url": "https://www.mahatet.in/Images/ImportantDocuments/Instructions.pdf",
+      "document_title": "MAHA TET application instructions",
+      "section_name": "Document upload"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "unspecified",
+      "fallback_reason": "No pixel dimensions are published by the conducting body. The output size is chosen per photograph from the crop geometry rather than from a fixed default."
+    },
+    "file_size": {
+      "maximum_bytes": 51000,
+      "minimum_bytes": 17000,
+      "size_unit_as_published": "KB",
+      "published_maximum": 51.0,
+      "published_minimum": 17.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpg"
+      ],
+      "preferred_format": "jpg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "unspecified"
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "unspecified"
+    },
+    "appearance": {},
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false
+    },
+    "exceptional_instructions": {
+      "processing_support_status": "supported"
+    }
+  },
+  "requirements": [
+    {
+      "requirement_id": "self_declaration_with_signature_and_left_thumb_i",
+      "requirement_name": "Self-declaration with signature and left-thumb impression",
+      "requirement_type": "thumb_impression",
+      "submission_method": "handwritten_then_uploaded",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants",
+      "content_instructions": "JPG; 17\u2013500 KB",
+      "evidence_status": "Official MAHA TET application instructions",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 500000,
+          "minimum_bytes": 17000,
+          "published_minimum": 17,
+          "published_maximum": 500,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    },
+    {
+      "requirement_id": "candidate_photograph",
+      "requirement_name": "Candidate photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants",
+      "content_instructions": "JPG; 17\u201351 KB",
+      "evidence_status": "Official MAHA TET application instructions"
+    },
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate signature",
+      "requirement_type": "signature",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants",
+      "content_instructions": "JPG; 17\u201351 KB",
+      "evidence_status": "Official MAHA TET application instructions",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 51000,
+          "minimum_bytes": 17000,
+          "published_minimum": 17,
+          "published_maximum": 51,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    },
+    {
+      "requirement_id": "identity_proof",
+      "requirement_name": "Identity proof",
+      "requirement_type": "identity_document",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants",
+      "content_instructions": "PDF; 30\u2013500 KB",
+      "evidence_status": "Official MAHA TET application instructions",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 500000,
+          "minimum_bytes": 30000,
+          "published_minimum": 30,
+          "published_maximum": 500,
+          "size_unit_as_published": "KB"
+        }
+      }
+    },
+    {
+      "requirement_id": "name_change_certificate",
+      "requirement_name": "Name-change certificate",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Applicants indicating a name change",
+      "content_instructions": "JPG; 17\u2013500 KB",
+      "evidence_status": "Official MAHA TET application instructions",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 500000,
+          "minimum_bytes": 17000,
+          "published_minimum": 17,
+          "published_maximum": 500,
+          "size_unit_as_published": "KB"
+        }
+      }
+    },
+    {
+      "requirement_id": "disability_certificate",
+      "requirement_name": "Disability certificate",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Applicants declaring disability",
+      "content_instructions": "PDF; 30\u2013500 KB",
+      "evidence_status": "Official MAHA TET application instructions",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 500000,
+          "minimum_bytes": 30000,
+          "published_minimum": 30,
+          "published_maximum": 500,
+          "size_unit_as_published": "KB"
+        }
+      }
+    },
+    {
+      "requirement_id": "ex_serviceman_certificate",
+      "requirement_name": "Ex-serviceman certificate",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Ex-serviceman applicants",
+      "content_instructions": "PDF; 30\u2013500 KB",
+      "evidence_status": "Official MAHA TET application instructions",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 500000,
+          "minimum_bytes": 30000,
+          "published_minimum": 30,
+          "published_maximum": 500,
+          "size_unit_as_published": "KB"
+        }
+      }
+    },
+    {
+      "requirement_id": "martyr_soldier_family_ex_serviceman_proof",
+      "requirement_name": "Martyr-soldier family/ex-serviceman proof",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Applicants claiming the martyr-soldier spouse/family provision",
+      "content_instructions": "PDF; 30\u2013500 KB",
+      "evidence_status": "Official MAHA TET application instructions",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 500000,
+          "minimum_bytes": 30000,
+          "published_minimum": 30,
+          "published_maximum": 500,
+          "size_unit_as_published": "KB"
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "MAHA TET application instructions - Document upload (https://www.mahatet.in/Images/ImportantDocuments/Instructions.pdf)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 5,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "inferred",
+      "reasoning": "The conducting body publishes no pixel dimensions. The output size is chosen per photograph from the crop geometry, so no dimension is asserted on the body's behalf.",
+      "confidence": 1,
+      "approved": false
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    },
+    "requirements[0].file_spec.formats.allowed_formats": {
+      "type": "interim_default",
+      "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[2].file_spec.formats.allowed_formats": {
+      "type": "interim_default",
+      "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
+      "confidence": 1,
+      "approved": false
+    }
+  },
+  "verification": {
+    "verification_status": "verified_with_ambiguity"
+  },
+  "fictional_example": false
+}

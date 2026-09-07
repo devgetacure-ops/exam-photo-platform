@@ -119,15 +119,16 @@
       "requirement_name": "Candidate signature",
       "requirement_type": "signature",
       "submission_method": "file_upload",
-      "requirement_status": "portal_dependent",
+      "requirement_status": "mandatory",
       "platform_support": "supported",
-      "applicability": "All applicants where the OTR/application asks for it",
-      "content_instructions": "A separate signature is normally part of the PSC profile/application, but the exact current file specification was not established by the supplied photograph-only evidence. Follow the active portal.",
-      "evidence_status": "Not fully established; not_found for exact specification",
+      "applicability": "All OTR registrants",
+      "content_instructions": "JPG; maximum 30 KB; 150\u00d7100 px; blue/black ink on white paper; no minimum published",
+      "evidence_status": "Current official Kerala PSC Thulasi portal",
       "file_spec": {
         "file_size": {
-          "maximum_bytes": 20000,
-          "minimum_bytes": 10000
+          "maximum_bytes": 30000,
+          "published_maximum": 30,
+          "size_unit_as_published": "KB"
         },
         "formats": {
           "allowed_formats": [
@@ -180,18 +181,6 @@
       "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
       "confidence": 5,
       "approved": true
-    },
-    "requirements[1].file_spec.file_size.maximum_bytes": {
-      "type": "interim_default",
-      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
-      "confidence": 1,
-      "approved": false
-    },
-    "requirements[1].file_spec.file_size.minimum_bytes": {
-      "type": "interim_default",
-      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
-      "confidence": 1,
-      "approved": false
     },
     "requirements[1].file_spec.formats.allowed_formats": {
       "type": "interim_default",

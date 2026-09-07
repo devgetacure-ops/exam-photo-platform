@@ -1,25 +1,34 @@
 {
   "schema_version": "1.1",
-  "rule_id": "icai-examination-portal-photograph-current-portal-scope",
+  "rule_id": "bssc-second-inter-level-combined-competitive-examination",
   "rule_version": "1.0.0",
   "status": "verified_with_ambiguity",
   "exam": {
-    "exam_id": "icai-examination-portal-photograph-current-portal-scope",
-    "exam_name": "ICAI Examination Portal Photograph (current portal scope)",
-    "conducting_body": "Institute of Chartered Accountants of India",
-    "examination_year": 2026,
-    "application_cycle": "current",
+    "exam_id": "bssc-second-inter-level-combined-competitive-examination",
+    "exam_name": "BSSC Second Inter-Level Combined Competitive Examination",
+    "conducting_body": "Bihar Staff Selection Commission",
+    "examination_year": 2023,
+    "application_cycle": "Second Inter-Level 2023 recruitment",
     "application_stage": "application",
-    "jurisdiction": "India",
-    "category": "professional_body"
+    "jurisdiction": "Bihar",
+    "category": "state_recruitment"
   },
   "source_evidence": [
     {
-      "source_type": "official_application_portal",
+      "source_type": "official_pdf",
       "official_source": true,
-      "captured_wording": "passport size; 50KB; JPEG; photo.jpeg; light/white background; colour",
-      "source_url": "https://pqc.icaiexam.icai.org/INTT/Home/ImageResize",
-      "document_title": "Image Resize - ICAI examination portal"
+      "captured_wording": "A passport size photograph with a 3.5cm width and 4.5cm height of the face; 20KB; 50KB; between 20KB-50KB; .jpg only; White or a light color; 60%-70%; Both the ears MUST be visible in the photo; without any cap/hat",
+      "source_url": "https://www.onlinebssc.com/25interlevela/awscdn/notice/How_To_Apply_02_23A.pdf",
+      "document_title": "How To Apply \u2014 Adv. No. 02/23(A) Second Inter Level Combined Competitive Examination",
+      "section_name": "Annexure-A Photograph Image"
+    },
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "After uploading photograph and signature candidate has to take a LIVE PHOTO and upload it.",
+      "source_url": "https://www.onlinebssc.com/25interlevela/awscdn/notice/How_To_Apply_02_23A.pdf",
+      "document_title": "How To Apply \u2014 Adv. No. 02/23(A) Second Inter Level Combined Competitive Examination",
+      "section_name": "Application Step-5"
     }
   ],
   "image_requirements": {
@@ -29,54 +38,45 @@
     },
     "file_size": {
       "maximum_bytes": 50000,
+      "minimum_bytes": 20000,
       "size_unit_as_published": "KB",
-      "published_maximum": 50.0
+      "published_maximum": 50.0,
+      "published_minimum": 20.0
     },
     "formats": {
       "allowed_formats": [
-        "jpeg"
+        "jpg"
       ],
-      "preferred_format": "jpeg",
+      "preferred_format": "jpg",
       "preserve_transparency": false,
       "strip_metadata": true,
       "colour_space": "sRGB"
     },
     "background": {
-      "mode": "plain_light",
-      "fallback_colour": "#FFFFFF"
+      "mode": "unspecified"
     },
     "composition": {
       "crop_profile": "tight_exam_portrait",
       "complete_hair_required": true,
       "complete_chin_required": true,
-      "ears_policy": "unspecified"
+      "ears_policy": "required_visible",
+      "face_coverage_minimum": 60.0,
+      "face_coverage_maximum": 70.0,
+      "ears_visible": true
     },
     "appearance": {
-      "monochrome_accepted": false
+      "live_capture_required": true
     },
     "filename": {
-      "mode": "exact",
+      "mode": "unspecified",
       "extension_required": true,
-      "exact_filename": "photo.jpeg",
       "case_sensitive": false
     },
     "exceptional_instructions": {
-      "black_and_white_restriction": true,
       "processing_support_status": "supported"
     }
   },
   "requirements": [
-    {
-      "requirement_id": "candidate_photograph",
-      "requirement_name": "Candidate photograph",
-      "requirement_type": "photograph",
-      "submission_method": "file_upload",
-      "requirement_status": "conditional",
-      "platform_support": "supported",
-      "applicability": "Candidates whose ICAI profile/exam form requires a photo",
-      "content_instructions": "Uploaded candidate photograph; format: JPEG; file size: up to 50 KB; filename: photo.jpeg; background: light or white.",
-      "evidence_status": "Current official ICAI portal scope"
-    },
     {
       "requirement_id": "candidate_signature",
       "requirement_name": "Candidate signature",
@@ -84,13 +84,15 @@
       "submission_method": "file_upload",
       "requirement_status": "mandatory",
       "platform_support": "supported",
-      "applicability": "Applicants whose portal profile/exam form requires signature",
-      "content_instructions": "JPEG; maximum 50 KB; candidate\u2019s own signature; black ink on white paper; not in capital letters; no minimum published",
-      "evidence_status": "Official ICAI exam portal image instructions",
+      "applicability": "All applicants",
+      "content_instructions": ".jpg only; 10-20 KB is stated, with a separate instruction that the scanned image must not exceed 50KB; 80x280 to 160x560 pixels",
+      "evidence_status": "Official completion-pass source",
       "file_spec": {
         "file_size": {
-          "maximum_bytes": 50000,
-          "published_maximum": 50,
+          "maximum_bytes": 20000,
+          "minimum_bytes": 10000,
+          "published_minimum": 10,
+          "published_maximum": 20,
           "size_unit_as_published": "KB"
         },
         "formats": {
@@ -100,25 +102,14 @@
           "preferred_format": "jpg"
         }
       }
-    },
-    {
-      "requirement_id": "exam_form_declaration",
-      "requirement_name": "Exam-form declaration",
-      "requirement_type": "portal_declaration",
-      "submission_method": "typed_or_selected_declaration",
-      "requirement_status": "mandatory",
-      "platform_support": "guidance_only",
-      "applicability": "All applicants",
-      "content_instructions": "Confirm the examination form and profile particulars. No separate handwritten-declaration image was established.",
-      "evidence_status": "Current ICAI exam portal process"
     }
   ],
   "provenance": {
     "image_requirements.file_size": {
       "type": "official",
-      "evidence_reference": "Image Resize - ICAI examination portal (https://pqc.icaiexam.icai.org/INTT/Home/ImageResize)",
+      "evidence_reference": "How To Apply \u2014 Adv. No. 02/23(A) Second Inter Level Combined Competitive Examination - Annexure-A Photograph Image (https://www.onlinebssc.com/25interlevela/awscdn/notice/How_To_Apply_02_23A.pdf)",
       "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
-      "confidence": 4,
+      "confidence": 5,
       "approved": true
     },
     "image_requirements.dimensions": {
@@ -127,13 +118,19 @@
       "confidence": 1,
       "approved": false
     },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
     "image_requirements.composition.crop_profile": {
       "type": "platform_default",
       "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
       "confidence": 5,
       "approved": true
     },
-    "requirements[1].file_spec.formats.allowed_formats": {
+    "requirements[0].file_spec.formats.allowed_formats": {
       "type": "interim_default",
       "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
       "confidence": 1,

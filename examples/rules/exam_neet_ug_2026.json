@@ -100,7 +100,12 @@
       "evidence_status": "Current official NEET 2026 bulletin/photo evidence",
       "rejection_conditions": [
         "Spectacle glare, dark or coloured glasses can make the photograph unacceptable.",
-        "A face mask/covering is restricted according to the stated policy."
+        "A face mask/covering is restricted according to the stated policy.",
+        "Application without photographs shall be rejected.",
+        "Applications not complying with these instructions or with unclear photographs are liable to be rejected.",
+        "Polaroid and Computer-generated photos are not acceptable.",
+        "if the photographs uploaded are found to be fabricated i.e. de-shaped or seem to be hand-made or computer made, the application of the candidate will be rejected",
+        "In case someone else's photographs have been uploaded, the candidature shall be cancelled"
       ]
     },
     {
@@ -110,13 +115,20 @@
       "submission_method": "file_upload",
       "requirement_status": "mandatory",
       "platform_support": "supported",
-      "applicability": "All applicants",
-      "content_instructions": "JPG/JPEG; current NTA bulletin confirms a separate signature upload. Exact live-portal size must be followed.",
-      "evidence_status": "Current official NEET 2026 bulletin",
+      "applicability": "All candidates",
+      "content_instructions": "JPG/JPEG, between 10 kb and 100 kb. Full signature in running handwriting.",
+      "evidence_status": "Read in full from the official NEET (UG)-2026 Information Bulletin, Chapter 3, Step 2(d)",
+      "notes": "Widely circulated secondary sources give 3-30 kb and 4-30 kb for this deliverable. Both are wrong against the official bulletin, which publishes 10 kb to 100 kb.",
+      "rejection_conditions": [
+        "The NTA will reject the application forms with no signature."
+      ],
       "file_spec": {
         "file_size": {
-          "maximum_bytes": 20000,
-          "minimum_bytes": 10000
+          "maximum_bytes": 100000,
+          "minimum_bytes": 10000,
+          "published_minimum": 10,
+          "published_maximum": 100,
+          "size_unit_as_published": "KB"
         },
         "formats": {
           "allowed_formats": [
@@ -137,6 +149,9 @@
       "applicability": "All applicants",
       "content_instructions": "Upload images of impressions from both hands in JPG/JPEG. The 2026 bulletin explicitly lists left and right hand fingers and thumb impressions. Exact file-size range must be taken from the active bulletin/portal.",
       "evidence_status": "Current official NEET 2026 bulletin",
+      "rejection_conditions": [
+        "unclear Left and Right hand fingers and thumb Impressions in Online Application Forms will also be rejected."
+      ],
       "file_spec": {
         "file_size": {
           "maximum_bytes": 50000,
@@ -155,15 +170,19 @@
       "requirement_id": "class_x_or_equivalent_marksheet",
       "requirement_name": "Class X or equivalent marksheet",
       "requirement_type": "certificate_scan",
-      "submission_method": "document_scan_upload",
+      "submission_method": "file_upload",
       "requirement_status": "mandatory",
       "platform_support": "supported",
-      "applicability": "All applicants",
-      "content_instructions": "Scanned PDF of the Class X/equivalent marksheet. The bulletin extract confirms this document; use the portal's current PDF size limit.",
-      "evidence_status": "Current 2026 bulletin; specification partly extracted",
+      "applicability": "All candidates",
+      "content_instructions": "PDF, between 50 kb and 300 kb.",
+      "evidence_status": "Read in full from the official NEET (UG)-2026 Information Bulletin, Chapter 3, Step 2(d)",
       "file_spec": {
         "file_size": {
-          "maximum_bytes": 400000
+          "maximum_bytes": 300000,
+          "minimum_bytes": 50000,
+          "published_minimum": 50,
+          "published_maximum": 300,
+          "size_unit_as_published": "KB"
         }
       }
     },
@@ -182,6 +201,271 @@
           "maximum_bytes": 400000
         }
       }
+    },
+    {
+      "requirement_id": "category_certificate_sc_st_obc_ncl_ews",
+      "requirement_name": "Category certificate (SC / ST / OBC-NCL / EWS)",
+      "requirement_type": "certificate_scan",
+      "submission_method": "file_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Candidates claiming a reserved category",
+      "content_instructions": "PDF, between 50 kb and 300 kb.",
+      "evidence_status": "Read in full from the official NEET (UG)-2026 Information Bulletin, Chapter 3, Step 2(d)",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 300000,
+          "minimum_bytes": 50000,
+          "published_minimum": 50,
+          "published_maximum": 300,
+          "size_unit_as_published": "KB"
+        }
+      }
+    },
+    {
+      "requirement_id": "class_x_or_equivalent_passing_certificate",
+      "requirement_name": "Class X or equivalent passing certificate",
+      "requirement_type": "certificate_scan",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All candidates; used as date of birth proof",
+      "content_instructions": "PDF, between 50 kb and 300 kb.",
+      "evidence_status": "Read in full from the official NEET (UG)-2026 Information Bulletin, Chapter 3, Step 2(d)",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 300000,
+          "minimum_bytes": 50000,
+          "published_minimum": 50,
+          "published_maximum": 300,
+          "size_unit_as_published": "KB"
+        }
+      }
+    },
+    {
+      "requirement_id": "cgpa_grade_to_percentage_conversion_certificate",
+      "requirement_name": "CGPA / grade to percentage conversion certificate",
+      "requirement_type": "certificate_scan",
+      "submission_method": "file_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Candidates whose Class X marks are expressed in CGPA or grades",
+      "content_instructions": "PDF, between 50 kb and 300 kb.",
+      "evidence_status": "Read in full from the official NEET (UG)-2026 Information Bulletin, Chapter 3, Step 2(d)",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 300000,
+          "minimum_bytes": 50000,
+          "published_minimum": 50,
+          "published_maximum": 300,
+          "size_unit_as_published": "KB"
+        }
+      }
+    },
+    {
+      "requirement_id": "identity_proof",
+      "requirement_name": "Identity proof",
+      "requirement_type": "identity_document",
+      "submission_method": "file_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Candidates verifying identity by a method other than Aadhaar or DigiLocker",
+      "content_instructions": "CONFLICTING. One clause gives JPG/JPEG between 10 kb and 200 kb; a later clause in the same list gives between 50 kb and 300 kb with no format named.",
+      "evidence_status": "Read in full from the official NEET (UG)-2026 Information Bulletin; conflict between Chapter 3, Step 2(d)(viii) and Step 2(d)(xv), both on page 16",
+      "notes": "Second unresolved conflict inside the same official document, two clauses apart in the same numbered list.",
+      "file_spec": {
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    },
+    {
+      "requirement_id": "pwd_pwbd_udid_certificate",
+      "requirement_name": "PwD / PwBD / UDID certificate",
+      "requirement_type": "certificate_scan",
+      "submission_method": "file_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Candidates claiming PwD or PwBD status without a verifiable UDID number",
+      "content_instructions": "PDF, between 50 kb and 300 kb.",
+      "evidence_status": "Read in full from the official NEET (UG)-2026 Information Bulletin, Chapter 3, Step 2(d)",
+      "notes": "Candidates who supply a UDID card number that verifies against the DePwD portal are not asked to upload the certificate.",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 300000,
+          "minimum_bytes": 50000,
+          "published_minimum": 50,
+          "published_maximum": 300,
+          "size_unit_as_published": "KB"
+        }
+      }
+    },
+    {
+      "requirement_id": "address_proof_present_and_permanent",
+      "requirement_name": "Address proof (present and permanent)",
+      "requirement_type": "certificate_scan",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All candidates",
+      "content_instructions": "PDF, between 50 kb and 300 kb.",
+      "evidence_status": "Read in full from the official NEET (UG)-2026 Information Bulletin, Chapter 3, Step 2(d)",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 300000,
+          "minimum_bytes": 50000,
+          "published_minimum": 50,
+          "published_maximum": 300,
+          "size_unit_as_published": "KB"
+        }
+      }
+    },
+    {
+      "requirement_id": "nri_oci_foreign_national_citizenship_certificate",
+      "requirement_name": "NRI / OCI / Foreign national citizenship certificate or documentary proof",
+      "requirement_type": "certificate_scan",
+      "submission_method": "file_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Candidates of nationality other than Indian, and NRI/OCI candidates",
+      "content_instructions": "PDF, between 50 kb and 300 kb. Format of the Embassy Certificate at Appendix-VI and of the citizenship proof at Appendix-VII.",
+      "evidence_status": "Read in full from the official NEET (UG)-2026 Information Bulletin, Chapter 3, Step 2(d)",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 300000,
+          "minimum_bytes": 50000,
+          "published_minimum": 50,
+          "published_maximum": 300,
+          "size_unit_as_published": "KB"
+        }
+      }
+    },
+    {
+      "requirement_id": "citizenship_certificate",
+      "requirement_name": "Citizenship certificate",
+      "requirement_type": "certificate_scan",
+      "submission_method": "file_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Candidates for whom applicable, as named in the Step 2(b) upload list",
+      "content_instructions": "Named in the bulletin's list of documents to be uploaded, in PDF/JPG/JPEG. No separate file size is published for this item.",
+      "evidence_status": "Read in full from the official NEET (UG)-2026 Information Bulletin, Chapter 3, Step 2(b); listed but not separately specified",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 400000
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    },
+    {
+      "requirement_id": "scribe_s_signature",
+      "requirement_name": "Scribe's signature",
+      "requirement_type": "signature",
+      "submission_method": "file_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "PwD/PwBD candidates using their own scribe",
+      "content_instructions": "Between 10 kb and 100 kb, clearly legible. No format is separately named for this item.",
+      "evidence_status": "Read in full from the official NEET (UG)-2026 Information Bulletin, Chapter 3, Step 2(d)",
+      "rejection_conditions": [
+        "The NTA will reject the application forms with no signature."
+      ],
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 100000,
+          "minimum_bytes": 10000,
+          "published_minimum": 10,
+          "published_maximum": 100,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    },
+    {
+      "requirement_id": "scribe_s_qualification_certificate",
+      "requirement_name": "Scribe's qualification certificate",
+      "requirement_type": "certificate_scan",
+      "submission_method": "file_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "PwD/PwBD candidates using their own scribe",
+      "content_instructions": "Between 50 kb and 300 kb, clearly legible. No format is separately named for this item.",
+      "evidence_status": "Read in full from the official NEET (UG)-2026 Information Bulletin, Chapter 3, Step 2(d)",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 300000,
+          "minimum_bytes": 50000,
+          "published_minimum": 50,
+          "published_maximum": 300,
+          "size_unit_as_published": "KB"
+        }
+      }
+    },
+    {
+      "requirement_id": "undertaking_for_using_own_scribe_annexure_iii_an",
+      "requirement_name": "Undertaking for using own scribe (Annexure-III / Annexure-V)",
+      "requirement_type": "other",
+      "submission_method": "file_upload",
+      "requirement_status": "conditional",
+      "platform_support": "not_yet_supported",
+      "applicability": "PwD/PwBD candidates using their own scribe",
+      "content_instructions": "Between 50 kb and 300 kb, clearly legible. Prescribed proforma at Annexure-III (40% or more disability) or Annexure-V (less than 40%).",
+      "evidence_status": "Read in full from the official NEET (UG)-2026 Information Bulletin, Chapter 3, Step 2(d)",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 300000,
+          "minimum_bytes": 50000,
+          "published_minimum": 50,
+          "published_maximum": 300,
+          "size_unit_as_published": "KB"
+        }
+      }
+    },
+    {
+      "requirement_id": "certificate_of_physical_limitation_to_write_anne",
+      "requirement_name": "Certificate of physical limitation to write (Annexure-II / Annexure-IV)",
+      "requirement_type": "certificate_scan",
+      "submission_method": "file_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Candidates seeking a scribe or compensatory time who must certify a physical limitation to write",
+      "content_instructions": "Between 50 kb and 300 kb, clearly legible.",
+      "evidence_status": "Read in full from the official NEET (UG)-2026 Information Bulletin, Chapter 3, Step 2(d)",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 300000,
+          "minimum_bytes": 50000,
+          "published_minimum": 50,
+          "published_maximum": 300,
+          "size_unit_as_published": "KB"
+        }
+      }
+    },
+    {
+      "requirement_id": "verification_of_identity_certificate_attested_by",
+      "requirement_name": "Verification of identity certificate attested by Principal/Headmaster or a Class-I Gazetted Officer (Annexure-VI)",
+      "requirement_type": "identity_document",
+      "submission_method": "file_upload",
+      "requirement_status": "conditional",
+      "platform_support": "not_yet_supported",
+      "applicability": "Candidates whose live photograph does not match UIDAI records, and candidates verifying identity by a method other than Aadhaar",
+      "content_instructions": "Signed and attested certificate carrying a recent photograph, in the Annexure-VI proforma. No file size or format is published for this item.",
+      "evidence_status": "Read in full from the official NEET (UG)-2026 Information Bulletin, Chapter 3, Step 2(d)(xviii); no file specification stated"
     }
   ],
   "provenance": {
@@ -210,18 +494,6 @@
       "confidence": 5,
       "approved": true
     },
-    "requirements[1].file_spec.file_size.maximum_bytes": {
-      "type": "interim_default",
-      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
-      "confidence": 1,
-      "approved": false
-    },
-    "requirements[1].file_spec.file_size.minimum_bytes": {
-      "type": "interim_default",
-      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
-      "confidence": 1,
-      "approved": false
-    },
     "requirements[2].file_spec.file_size.maximum_bytes": {
       "type": "interim_default",
       "reasoning": "No published thumb-impression file size for this body. Standing in with 20-50 KB, which is not an average but the only specification in the researched set -- all 13 records that publish one agree on it.",
@@ -234,15 +506,21 @@
       "confidence": 1,
       "approved": false
     },
-    "requirements[3].file_spec.file_size.maximum_bytes": {
+    "requirements[4].file_spec.file_size.maximum_bytes": {
       "type": "interim_default",
       "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",
       "confidence": 1,
       "approved": false
     },
-    "requirements[4].file_spec.file_size.maximum_bytes": {
+    "requirements[12].file_spec.file_size.maximum_bytes": {
       "type": "interim_default",
       "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[13].file_spec.formats.allowed_formats": {
+      "type": "interim_default",
+      "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
       "confidence": 1,
       "approved": false
     }
@@ -250,5 +528,8 @@
   "verification": {
     "verification_status": "verified_with_ambiguity"
   },
-  "fictional_example": false
+  "fictional_example": false,
+  "application_rejection_conditions": [
+    "Incomplete applications and applications not in accordance with instructions are liable to be rejected without any further intimation."
+  ]
 }

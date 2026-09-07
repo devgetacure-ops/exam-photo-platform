@@ -2,7 +2,7 @@
   "schema_version": "1.1",
   "rule_id": "wbjee-2026",
   "rule_version": "1.0.0",
-  "status": "provisional",
+  "status": "verified_with_ambiguity",
   "exam": {
     "exam_id": "wbjee-2026",
     "exam_name": "WBJEE 2026",
@@ -18,11 +18,12 @@
   },
   "source_evidence": [
     {
-      "source_type": "secondary_reference",
-      "official_source": false,
-      "captured_wording": "recent colour photograph; 10 KB; 200 KB; JPG/JPEG",
-      "source_url": "https://www.collegeadmission.in/uploads/notices/exam/51/2026/pdf/1773303344-wbjee-2026-information-bulletin.pdf",
-      "document_title": "WBJEE 2026 Information Bulletin - reproduced copy"
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "recent colour photograph; 10 KB; 200 KB; 10 KB to 200 KB; JPG/JPEG",
+      "source_url": "https://cdnbbsr.s3waas.gov.in/s3d2a27e83d429f0dcae6b937cf440aeb1/uploads/2026/03/202603101506582412.pdf",
+      "document_title": "INFORMATION BULLETIN-WBJEE-2026",
+      "section_name": "Uploading of images"
     }
   ],
   "image_requirements": {
@@ -89,12 +90,15 @@
       "requirement_status": "mandatory",
       "platform_support": "supported",
       "applicability": "All applicants",
-      "content_instructions": "Separate signature image required by the WBJEE application. Exact current size/dimensions not established in supplied evidence.",
-      "evidence_status": "Current portal requirement; exact specification not_found",
+      "content_instructions": "JPG/JPEG; 4\u201330 KB",
+      "evidence_status": "Official WBJEE 2026 bulletin",
       "file_spec": {
         "file_size": {
-          "maximum_bytes": 20000,
-          "minimum_bytes": 10000
+          "maximum_bytes": 30000,
+          "minimum_bytes": 4000,
+          "published_minimum": 4,
+          "published_maximum": 30,
+          "size_unit_as_published": "KB"
         },
         "formats": {
           "allowed_formats": [
@@ -107,11 +111,11 @@
   ],
   "provenance": {
     "image_requirements.file_size": {
-      "type": "inferred",
-      "evidence_reference": "WBJEE 2026 Information Bulletin - reproduced copy (https://www.collegeadmission.in/uploads/notices/exam/51/2026/pdf/1773303344-wbjee-2026-information-bulletin.pdf)",
+      "type": "official",
+      "evidence_reference": "INFORMATION BULLETIN-WBJEE-2026 - Uploading of images (https://cdnbbsr.s3waas.gov.in/s3d2a27e83d429f0dcae6b937cf440aeb1/uploads/2026/03/202603101506582412.pdf)",
       "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
-      "confidence": 3,
-      "approved": false
+      "confidence": 5,
+      "approved": true
     },
     "image_requirements.dimensions": {
       "type": "inferred",
@@ -131,24 +135,6 @@
       "confidence": 5,
       "approved": true
     },
-    "image_requirements": {
-      "type": "inferred",
-      "reasoning": "Values for this examination were located only on secondary sources, not on the conducting body's own material. Recorded so the examination is servable, and held at provisional status so the dependence stays visible until an official source is found.",
-      "confidence": 2,
-      "approved": false
-    },
-    "requirements[1].file_spec.file_size.maximum_bytes": {
-      "type": "interim_default",
-      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
-      "confidence": 1,
-      "approved": false
-    },
-    "requirements[1].file_spec.file_size.minimum_bytes": {
-      "type": "interim_default",
-      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
-      "confidence": 1,
-      "approved": false
-    },
     "requirements[1].file_spec.formats.allowed_formats": {
       "type": "interim_default",
       "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
@@ -157,7 +143,7 @@
     }
   },
   "verification": {
-    "verification_status": "provisional"
+    "verification_status": "verified_with_ambiguity"
   },
   "fictional_example": false
 }

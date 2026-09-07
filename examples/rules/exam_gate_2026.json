@@ -166,7 +166,8 @@
       "content_instructions": "Scanned copy of the valid photo ID whose original will be produced at the examination centre. Upload must be clear and readable.",
       "evidence_status": "Current official GATE required-documents page",
       "rejection_conditions": [
-        "Unreadable documents may delay processing and may lead to rejection."
+        "Unreadable documents may delay processing and may lead to rejection.",
+        "Uploading unreadable documents may lead to delays in processing the application and may lead to rejection of candidature."
       ]
     },
     {
@@ -180,7 +181,8 @@
       "content_instructions": "PDF. GATE FAQ states SC/ST certificate upload is required to avail the fee concession.",
       "evidence_status": "Current official GATE required-documents page/FAQ",
       "rejection_conditions": [
-        "Unreadable documents may delay processing and may lead to rejection."
+        "Unreadable documents may delay processing and may lead to rejection.",
+        "Uploading unreadable documents may lead to delays in processing the application and may lead to rejection of candidature."
       ],
       "file_spec": {
         "file_size": {
@@ -199,7 +201,8 @@
       "content_instructions": "PDF; UDID preferred, otherwise prescribed PwD certificate.",
       "evidence_status": "Current official GATE required-documents page",
       "rejection_conditions": [
-        "Unreadable documents may delay processing and may lead to rejection."
+        "Unreadable documents may delay processing and may lead to rejection.",
+        "Uploading unreadable documents may lead to delays in processing the application and may lead to rejection of candidature."
       ],
       "file_spec": {
         "file_size": {
@@ -218,13 +221,25 @@
       "content_instructions": "Upload the applicable certificate in PDF.",
       "evidence_status": "Current official GATE brochure",
       "rejection_conditions": [
-        "Unreadable documents may delay processing and may lead to rejection."
+        "Unreadable documents may delay processing and may lead to rejection.",
+        "Uploading unreadable documents may lead to delays in processing the application and may lead to rejection of candidature."
       ],
       "file_spec": {
         "file_size": {
           "maximum_bytes": 400000
         }
       }
+    },
+    {
+      "requirement_id": "scribe_compensatory_time_annexure_s",
+      "requirement_name": "Scribe/compensatory-time annexure(s)",
+      "requirement_type": "other",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "not_yet_supported",
+      "applicability": "Applicants claiming applicable scribe/compensatory provisions",
+      "content_instructions": "PDF; numeric file-size maximum not published",
+      "evidence_status": "Official GATE 2026 required-documents page"
     }
   ],
   "provenance": {

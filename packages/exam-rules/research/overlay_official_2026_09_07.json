@@ -1,0 +1,551 @@
+{
+  "_note": "Official values researched directly on 2026-09-07, after two research passes recorded them as not_found. Every field carries the authority document it was read from. Applied over the delivered research by scripts/merge_research_delivery.py. See DEC-068.",
+  "specs": {
+    "WBPSC / WBCS Current Online Application Photograph": {
+      "file_size.published_maximum": {
+        "status": "verified",
+        "value": 100,
+        "captured_wording": "File size of scanned photograph should not be more than 100KB",
+        "confidence": 5,
+        "source_type": "official_pdf",
+        "official_source": true,
+        "source_url": "https://wbpsc.gov.in/pdf_file/Guideline.pdf",
+        "document_title": "Guidelines for filling up the Online Application Form",
+        "document_identifier": null,
+        "page_number": null,
+        "section_name": "How to Upload image file of my scanned photograph and signature",
+        "access_date": "2026-09-07",
+        "bytes_if_1000": 100000,
+        "bytes_if_1024": 102400,
+        "unit_ambiguous": true
+      },
+      "file_size.published_minimum": {
+        "status": "not_found",
+        "value": null,
+        "captured_wording": null,
+        "confidence": 0,
+        "source_type": "official_pdf",
+        "official_source": true,
+        "source_url": "https://wbpsc.gov.in/pdf_file/Guideline.pdf",
+        "document_title": "Guidelines for filling up the Online Application Form",
+        "document_identifier": null,
+        "page_number": null,
+        "section_name": "How to Upload image file of my scanned photograph and signature",
+        "access_date": "2026-09-07"
+      },
+      "file_size.size_unit_as_published": {
+        "status": "verified",
+        "value": "KB",
+        "captured_wording": "100KB",
+        "confidence": 5,
+        "source_type": "official_pdf",
+        "official_source": true,
+        "source_url": "https://wbpsc.gov.in/pdf_file/Guideline.pdf",
+        "document_title": "Guidelines for filling up the Online Application Form",
+        "document_identifier": null,
+        "page_number": null,
+        "section_name": "How to Upload image file of my scanned photograph and signature",
+        "access_date": "2026-09-07"
+      },
+      "formats.allowed_formats": {
+        "status": "verified",
+        "value": [
+          "JPEG"
+        ],
+        "captured_wording": "for scanning and uploading in \"jpeg\" format only",
+        "confidence": 5,
+        "source_type": "official_pdf",
+        "official_source": true,
+        "source_url": "https://wbpsc.gov.in/pdf_file/Guideline.pdf",
+        "document_title": "Guidelines for filling up the Online Application Form",
+        "document_identifier": null,
+        "page_number": null,
+        "section_name": "How to Upload image file of my scanned photograph and signature",
+        "access_date": "2026-09-07"
+      },
+      "formats.preferred_format": {
+        "status": "verified",
+        "value": "JPEG",
+        "captured_wording": "\"jpeg\" format only",
+        "confidence": 5,
+        "source_type": "official_pdf",
+        "official_source": true,
+        "source_url": "https://wbpsc.gov.in/pdf_file/Guideline.pdf",
+        "document_title": "Guidelines for filling up the Online Application Form",
+        "document_identifier": null,
+        "page_number": null,
+        "section_name": "How to Upload image file of my scanned photograph and signature",
+        "access_date": "2026-09-07"
+      },
+      "dimensions.mode": {
+        "status": "verified",
+        "value": "unspecified",
+        "captured_wording": "photo should be within 3.5 x 4.5 cm in size",
+        "confidence": 5,
+        "source_type": "official_pdf",
+        "official_source": true,
+        "source_url": "https://wbpsc.gov.in/pdf_file/Guideline.pdf",
+        "document_title": "Guidelines for filling up the Online Application Form",
+        "document_identifier": null,
+        "page_number": null,
+        "section_name": "How to Upload image file of my scanned photograph and signature",
+        "access_date": "2026-09-07"
+      },
+      "dimensions.width_px": {
+        "status": "not_found",
+        "value": null,
+        "captured_wording": null,
+        "confidence": 0,
+        "source_type": "official_pdf",
+        "official_source": true,
+        "source_url": "https://wbpsc.gov.in/pdf_file/Guideline.pdf",
+        "document_title": "Guidelines for filling up the Online Application Form",
+        "document_identifier": null,
+        "page_number": null,
+        "section_name": "How to Upload image file of my scanned photograph and signature",
+        "access_date": "2026-09-07"
+      },
+      "dimensions.height_px": {
+        "status": "not_found",
+        "value": null,
+        "captured_wording": null,
+        "confidence": 0,
+        "source_type": "official_pdf",
+        "official_source": true,
+        "source_url": "https://wbpsc.gov.in/pdf_file/Guideline.pdf",
+        "document_title": "Guidelines for filling up the Online Application Form",
+        "document_identifier": null,
+        "page_number": null,
+        "section_name": "How to Upload image file of my scanned photograph and signature",
+        "access_date": "2026-09-07"
+      },
+      "dpi": {
+        "status": "verified",
+        "value": 100,
+        "captured_wording": "scanning resolution should be within 100 dpi",
+        "confidence": 5,
+        "source_type": "official_pdf",
+        "official_source": true,
+        "source_url": "https://wbpsc.gov.in/pdf_file/Guideline.pdf",
+        "document_title": "Guidelines for filling up the Online Application Form",
+        "document_identifier": null,
+        "page_number": null,
+        "section_name": "How to Upload image file of my scanned photograph and signature",
+        "access_date": "2026-09-07"
+      }
+    },
+    "GIC Assistant Manager 2024-25": {
+      "file_size.published_maximum": {
+        "status": "verified",
+        "value": 50,
+        "captured_wording": "Size of file should be between 20 kb - 50 kb",
+        "confidence": 5,
+        "source_type": "official_pdf",
+        "official_source": true,
+        "source_url": "https://www.gicre.in/images/2024/Detailed_Advertisement_for_Recruitment_of_AMs_in_GIC_Re_2024_-_v3_-_Final.pdf",
+        "document_title": "Detailed Advertisement for Recruitment of Assistant Managers in GIC Re 2024",
+        "document_identifier": null,
+        "page_number": null,
+        "section_name": "Guidelines for scanning and upload of documents",
+        "access_date": "2026-09-07",
+        "bytes_if_1000": 50000,
+        "bytes_if_1024": 51200,
+        "unit_ambiguous": true
+      },
+      "file_size.published_minimum": {
+        "status": "verified",
+        "value": 20,
+        "captured_wording": "Size of file should be between 20 kb - 50 kb",
+        "confidence": 5,
+        "source_type": "official_pdf",
+        "official_source": true,
+        "source_url": "https://www.gicre.in/images/2024/Detailed_Advertisement_for_Recruitment_of_AMs_in_GIC_Re_2024_-_v3_-_Final.pdf",
+        "document_title": "Detailed Advertisement for Recruitment of Assistant Managers in GIC Re 2024",
+        "document_identifier": null,
+        "page_number": null,
+        "section_name": "Guidelines for scanning and upload of documents",
+        "access_date": "2026-09-07",
+        "bytes_if_1000": 20000,
+        "bytes_if_1024": 20480,
+        "unit_ambiguous": true
+      },
+      "file_size.size_unit_as_published": {
+        "status": "verified",
+        "value": "kb",
+        "captured_wording": "20 kb - 50 kb",
+        "confidence": 5,
+        "source_type": "official_pdf",
+        "official_source": true,
+        "source_url": "https://www.gicre.in/images/2024/Detailed_Advertisement_for_Recruitment_of_AMs_in_GIC_Re_2024_-_v3_-_Final.pdf",
+        "document_title": "Detailed Advertisement for Recruitment of Assistant Managers in GIC Re 2024",
+        "document_identifier": null,
+        "page_number": null,
+        "section_name": "Guidelines for scanning and upload of documents",
+        "access_date": "2026-09-07"
+      },
+      "formats.allowed_formats": {
+        "status": "verified",
+        "value": [
+          "JPG",
+          "JPEG"
+        ],
+        "captured_wording": "The image file should be jpg or jpeg format",
+        "confidence": 5,
+        "source_type": "official_pdf",
+        "official_source": true,
+        "source_url": "https://www.gicre.in/images/2024/Detailed_Advertisement_for_Recruitment_of_AMs_in_GIC_Re_2024_-_v3_-_Final.pdf",
+        "document_title": "Detailed Advertisement for Recruitment of Assistant Managers in GIC Re 2024",
+        "document_identifier": null,
+        "page_number": null,
+        "section_name": "Guidelines for scanning and upload of documents",
+        "access_date": "2026-09-07"
+      },
+      "formats.preferred_format": {
+        "status": "verified",
+        "value": "JPG",
+        "captured_wording": "jpg or jpeg format",
+        "confidence": 5,
+        "source_type": "official_pdf",
+        "official_source": true,
+        "source_url": "https://www.gicre.in/images/2024/Detailed_Advertisement_for_Recruitment_of_AMs_in_GIC_Re_2024_-_v3_-_Final.pdf",
+        "document_title": "Detailed Advertisement for Recruitment of Assistant Managers in GIC Re 2024",
+        "document_identifier": null,
+        "page_number": null,
+        "section_name": "Guidelines for scanning and upload of documents",
+        "access_date": "2026-09-07"
+      },
+      "dimensions.mode": {
+        "status": "verified",
+        "value": "exact",
+        "captured_wording": "Dimensions 200 x 230 pixels (preferred)",
+        "confidence": 5,
+        "source_type": "official_pdf",
+        "official_source": true,
+        "source_url": "https://www.gicre.in/images/2024/Detailed_Advertisement_for_Recruitment_of_AMs_in_GIC_Re_2024_-_v3_-_Final.pdf",
+        "document_title": "Detailed Advertisement for Recruitment of Assistant Managers in GIC Re 2024",
+        "document_identifier": null,
+        "page_number": null,
+        "section_name": "Guidelines for scanning and upload of documents",
+        "access_date": "2026-09-07"
+      },
+      "dimensions.width_px": {
+        "status": "verified",
+        "value": 200,
+        "captured_wording": "Dimensions 200 x 230 pixels (preferred)",
+        "confidence": 5,
+        "source_type": "official_pdf",
+        "official_source": true,
+        "source_url": "https://www.gicre.in/images/2024/Detailed_Advertisement_for_Recruitment_of_AMs_in_GIC_Re_2024_-_v3_-_Final.pdf",
+        "document_title": "Detailed Advertisement for Recruitment of Assistant Managers in GIC Re 2024",
+        "document_identifier": null,
+        "page_number": null,
+        "section_name": "Guidelines for scanning and upload of documents",
+        "access_date": "2026-09-07"
+      },
+      "dimensions.height_px": {
+        "status": "verified",
+        "value": 230,
+        "captured_wording": "Dimensions 200 x 230 pixels (preferred)",
+        "confidence": 5,
+        "source_type": "official_pdf",
+        "official_source": true,
+        "source_url": "https://www.gicre.in/images/2024/Detailed_Advertisement_for_Recruitment_of_AMs_in_GIC_Re_2024_-_v3_-_Final.pdf",
+        "document_title": "Detailed Advertisement for Recruitment of Assistant Managers in GIC Re 2024",
+        "document_identifier": null,
+        "page_number": null,
+        "section_name": "Guidelines for scanning and upload of documents",
+        "access_date": "2026-09-07"
+      },
+      "dpi": {
+        "status": "verified",
+        "value": 200,
+        "captured_wording": "Set the scanner resolution to a minimum of 200 dpi",
+        "confidence": 5,
+        "source_type": "official_pdf",
+        "official_source": true,
+        "source_url": "https://www.gicre.in/images/2024/Detailed_Advertisement_for_Recruitment_of_AMs_in_GIC_Re_2024_-_v3_-_Final.pdf",
+        "document_title": "Detailed Advertisement for Recruitment of Assistant Managers in GIC Re 2024",
+        "document_identifier": null,
+        "page_number": null,
+        "section_name": "Guidelines for scanning and upload of documents",
+        "access_date": "2026-09-07"
+      }
+    },
+    "BPSC Current Recruitment Photograph Specification": {
+      "appearance.live_capture_required": {
+        "status": "verified",
+        "value": true,
+        "captured_wording": "aavedak ko ek web camera ki aavashyakta hogi, jisse ve apna live photo capture karenge -- Krutidev-encoded Hindi: the applicant will need a web camera with which to capture their live photo",
+        "confidence": 5,
+        "source_type": "official_pdf",
+        "official_source": true,
+        "source_url": "https://bpsconline.bihar.gov.in/downloads/Instruction_Online_Application.pdf",
+        "document_title": "BPSC Online Application - Instructions (One Time Registration)",
+        "document_identifier": null,
+        "page_number": null,
+        "section_name": "Step 6: Photo and signature",
+        "access_date": "2026-09-07"
+      },
+      "file_size.published_maximum": {
+        "status": "not_found",
+        "value": null,
+        "captured_wording": null,
+        "confidence": 0,
+        "source_type": "official_pdf",
+        "official_source": true,
+        "source_url": "https://bpsconline.bihar.gov.in/downloads/Instruction_Online_Application.pdf",
+        "document_title": "BPSC Online Application - Instructions (One Time Registration)",
+        "document_identifier": null,
+        "page_number": null,
+        "section_name": "Step 6: Photo and signature",
+        "access_date": "2026-09-07"
+      },
+      "file_size.published_minimum": {
+        "status": "not_found",
+        "value": null,
+        "captured_wording": null,
+        "confidence": 0,
+        "source_type": "official_pdf",
+        "official_source": true,
+        "source_url": "https://bpsconline.bihar.gov.in/downloads/Instruction_Online_Application.pdf",
+        "document_title": "BPSC Online Application - Instructions (One Time Registration)",
+        "document_identifier": null,
+        "page_number": null,
+        "section_name": "Step 6: Photo and signature",
+        "access_date": "2026-09-07"
+      },
+      "formats.allowed_formats": {
+        "status": "not_found",
+        "value": null,
+        "captured_wording": null,
+        "confidence": 0,
+        "source_type": "official_pdf",
+        "official_source": true,
+        "source_url": "https://bpsconline.bihar.gov.in/downloads/Instruction_Online_Application.pdf",
+        "document_title": "BPSC Online Application - Instructions (One Time Registration)",
+        "document_identifier": null,
+        "page_number": null,
+        "section_name": "Step 6: Photo and signature",
+        "access_date": "2026-09-07"
+      },
+      "formats.preferred_format": {
+        "status": "not_found",
+        "value": null,
+        "captured_wording": null,
+        "confidence": 0,
+        "source_type": "official_pdf",
+        "official_source": true,
+        "source_url": "https://bpsconline.bihar.gov.in/downloads/Instruction_Online_Application.pdf",
+        "document_title": "BPSC Online Application - Instructions (One Time Registration)",
+        "document_identifier": null,
+        "page_number": null,
+        "section_name": "Step 6: Photo and signature",
+        "access_date": "2026-09-07"
+      },
+      "dimensions.mode": {
+        "status": "not_found",
+        "value": null,
+        "captured_wording": null,
+        "confidence": 0,
+        "source_type": "official_pdf",
+        "official_source": true,
+        "source_url": "https://bpsconline.bihar.gov.in/downloads/Instruction_Online_Application.pdf",
+        "document_title": "BPSC Online Application - Instructions (One Time Registration)",
+        "document_identifier": null,
+        "page_number": null,
+        "section_name": "Step 6: Photo and signature",
+        "access_date": "2026-09-07"
+      },
+      "dimensions.width_px": {
+        "status": "not_found",
+        "value": null,
+        "captured_wording": null,
+        "confidence": 0,
+        "source_type": "official_pdf",
+        "official_source": true,
+        "source_url": "https://bpsconline.bihar.gov.in/downloads/Instruction_Online_Application.pdf",
+        "document_title": "BPSC Online Application - Instructions (One Time Registration)",
+        "document_identifier": null,
+        "page_number": null,
+        "section_name": "Step 6: Photo and signature",
+        "access_date": "2026-09-07"
+      },
+      "dimensions.height_px": {
+        "status": "not_found",
+        "value": null,
+        "captured_wording": null,
+        "confidence": 0,
+        "source_type": "official_pdf",
+        "official_source": true,
+        "source_url": "https://bpsconline.bihar.gov.in/downloads/Instruction_Online_Application.pdf",
+        "document_title": "BPSC Online Application - Instructions (One Time Registration)",
+        "document_identifier": null,
+        "page_number": null,
+        "section_name": "Step 6: Photo and signature",
+        "access_date": "2026-09-07"
+      }
+    }
+  },
+  "deliverables": {
+    "WBPSC / WBCS Current Online Application Photograph": [
+      {
+        "name": "Candidate signature",
+        "requirement_status": "Mandatory",
+        "submission_method": "file_upload",
+        "applicability": "All applicants",
+        "specification": "jpeg format only; file size not more than 20 kb; signature using Blue/Black pen on white sheet",
+        "evidence_status": "Official WBPSC online application guidelines",
+        "source_url": "https://wbpsc.gov.in/pdf_file/Guideline.pdf",
+        "important_note": null,
+        "parsed": {
+          "file_size_kb": {
+            "minimum": null,
+            "maximum": 20,
+            "source_wording": "Signature (file size not more than 20 kb)"
+          },
+          "formats": {
+            "values": [
+              "jpeg"
+            ],
+            "source_wording": "in \"jpeg\" format only"
+          }
+        }
+      }
+    ],
+    "GIC Assistant Manager 2024-25": [
+      {
+        "name": "Candidate signature",
+        "requirement_status": "Mandatory",
+        "submission_method": "file_upload",
+        "applicability": "All applicants",
+        "specification": "jpg or jpeg; 140 x 60 pixels (preferred); 10-20 kb; scanner minimum 200 dpi",
+        "evidence_status": "Official GIC Re 2024 detailed advertisement",
+        "source_url": "https://www.gicre.in/images/2024/Detailed_Advertisement_for_Recruitment_of_AMs_in_GIC_Re_2024_-_v3_-_Final.pdf",
+        "important_note": "Signature in CAPITAL LETTERS shall not be accepted.",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 10,
+            "maximum": 20,
+            "source_wording": "between 10-20 kb for signature"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "The image file should be jpg or jpeg format"
+          }
+        }
+      },
+      {
+        "name": "Left thumb impression",
+        "requirement_status": "Mandatory",
+        "submission_method": "file_upload",
+        "applicability": "All applicants",
+        "specification": "jpg or jpeg; 20-50 kb",
+        "evidence_status": "Official GIC Re 2024 detailed advertisement",
+        "source_url": "https://www.gicre.in/images/2024/Detailed_Advertisement_for_Recruitment_of_AMs_in_GIC_Re_2024_-_v3_-_Final.pdf",
+        "important_note": null,
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 20,
+            "maximum": 50,
+            "source_wording": "20-50 kb for left thumb impression"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "The image file should be jpg or jpeg format"
+          }
+        }
+      },
+      {
+        "name": "Hand written declaration",
+        "requirement_status": "Mandatory",
+        "submission_method": "file_upload",
+        "applicability": "All applicants",
+        "specification": "jpg or jpeg; 50-100 kb",
+        "evidence_status": "Official GIC Re 2024 detailed advertisement",
+        "source_url": "https://www.gicre.in/images/2024/Detailed_Advertisement_for_Recruitment_of_AMs_in_GIC_Re_2024_-_v3_-_Final.pdf",
+        "important_note": "Hand written declaration in CAPITAL LETTERS shall not be accepted.",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 50,
+            "maximum": 100,
+            "source_wording": "50-100 kb for hand written declaration"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "The image file should be jpg or jpeg format"
+          }
+        }
+      }
+    ],
+    "BPSC Current Recruitment Photograph Specification": [
+      {
+        "name": "Candidate photograph",
+        "requirement_status": "Mandatory",
+        "submission_method": "live_capture",
+        "applicability": "All applicants",
+        "specification": "Captured live through a web camera on the application portal; there is no photograph upload.",
+        "evidence_status": "Official BPSC online application instructions",
+        "source_url": "https://bpsconline.bihar.gov.in/downloads/Instruction_Online_Application.pdf",
+        "important_note": "The platform cannot prepare this deliverable: the authority photographs the candidate directly.",
+        "parsed": {}
+      },
+      {
+        "name": "Candidate signature (English)",
+        "requirement_status": "Mandatory",
+        "submission_method": "file_upload",
+        "applicability": "All applicants",
+        "specification": "Not more than 20 kb; width between 150-220 pixels and height between 250-320 pixels",
+        "evidence_status": "Official BPSC online application instructions",
+        "source_url": "https://bpsconline.bihar.gov.in/downloads/Instruction_Online_Application.pdf",
+        "important_note": "BPSC requires two signatures, one in English and one in Hindi.",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": null,
+            "maximum": 20,
+            "source_wording": "hastakshar photo ka aakar 20 kb se adhik nahi hona chahiye"
+          },
+          "formats": {
+            "values": [],
+            "source_wording": null
+          }
+        }
+      },
+      {
+        "name": "Candidate signature (Hindi)",
+        "requirement_status": "Mandatory",
+        "submission_method": "file_upload",
+        "applicability": "All applicants",
+        "specification": "Not more than 20 kb; width between 150-220 pixels and height between 250-320 pixels",
+        "evidence_status": "Official BPSC online application instructions",
+        "source_url": "https://bpsconline.bihar.gov.in/downloads/Instruction_Online_Application.pdf",
+        "important_note": "BPSC requires two signatures, one in English and one in Hindi.",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": null,
+            "maximum": 20,
+            "source_wording": "hastakshar photo ka aakar 20 kb se adhik nahi hona chahiye"
+          },
+          "formats": {
+            "values": [],
+            "source_wording": null
+          }
+        }
+      }
+    ]
+  },
+  "rejection_conditions": {
+    "GIC Assistant Manager 2024-25": [
+      "Signature / Hand written declaration in CAPITAL LETTERS shall NOT be accepted.",
+      "If the Applicant's signature on the attendance sheet or Call letter, signed at the time of the examination, does not match the signature uploaded, the applicant will be disqualified."
+    ]
+  }
+}

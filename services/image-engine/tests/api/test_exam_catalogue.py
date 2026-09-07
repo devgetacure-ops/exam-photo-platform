@@ -16,8 +16,8 @@ def test_list_exams_returns_the_catalogue():
 
     assert response.status_code == 200
     body = response.json()
-    assert body["total"] == 39
-    assert len(body["exams"]) == 39
+    assert body["total"] == 52
+    assert len(body["exams"]) == 52
     assert body["unreadable"] == {}
 
     names = [exam["exam_name"] for exam in body["exams"]]
@@ -29,7 +29,7 @@ def test_the_list_shows_examinations_that_are_not_yet_available():
     """KIT-002: an absence found at the portal is worse than one admitted here."""
     body = client.get("/v1/exams").json()
 
-    assert len(body["unavailable"]) == 11
+    assert len(body["unavailable"]) == 83
     names = {item["exam_name"] for item in body["unavailable"]}
     assert "SSC Combined Graduate Level Examination 2026" in names
 
@@ -51,7 +51,7 @@ def test_unavailable_examinations_are_not_merged_into_the_selectable_list():
     selectable = {exam["exam_name"] for exam in body["exams"]}
     unavailable = {item["exam_name"] for item in body["unavailable"]}
 
-    assert body["total"] == len(body["exams"]) == 39
+    assert body["total"] == len(body["exams"]) == 52
     assert selectable.isdisjoint(unavailable)
 
 
@@ -142,8 +142,14 @@ def test_signature_requirement_carries_its_published_spec():
 
 @pytest.mark.mandatory_api
 def test_provenance_is_returned_so_estimates_are_distinguishable():
-    """DEC-057: a caller tells a published figure from a platform estimate."""
-    body = client.get(f"/v1/exams/{EXAM_ID}").json()
+    """DEC-057: a caller tells a published figure from a platform estimate.
+
+    Asks CUET (UG) rather than the module's `EXAM_ID`, because DEC-068's
+    research replaced every interim value IBPS carried. That an examination
+    stops having estimates is the point of the work, so this test follows
+    the estimates rather than pinning an examination to keep them.
+    """
+    body = client.get("/v1/exams/cuet-ug-2026").json()
 
     assert body["provenance"]
     types = {entry["type"] for entry in body["provenance"].values()}

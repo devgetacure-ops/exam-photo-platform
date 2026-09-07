@@ -2,10 +2,160 @@
   "generated_by": "scripts/encode_exam_rules.py",
   "examinations": [
     {
+      "exam_name": "AP EAPCET",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 0
+    },
+    {
+      "exam_name": "AP Mega DSC Teacher Recruitment",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 2
+    },
+    {
+      "exam_name": "AP POLYCET",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 1
+    },
+    {
       "exam_name": "APPSC Forest Beat Officer / Assistant Beat Officer 2025",
       "reason": "incomplete evidence",
       "detail": "no file size and no format",
       "non_photograph_deliverables": 2
+    },
+    {
+      "exam_name": "APPSC Group I Services Examination",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 1
+    },
+    {
+      "exam_name": "APPSC Group II Services Examination",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 1
+    },
+    {
+      "exam_name": "All India Sainik Schools Entrance Examination",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 3
+    },
+    {
+      "exam_name": "Assam Direct Recruitment Grade III",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 1
+    },
+    {
+      "exam_name": "Assam Direct Recruitment Grade IV",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 1
+    },
+    {
+      "exam_name": "BITS Admission Test",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 1
+    },
+    {
+      "exam_name": "BPSC Current Recruitment Photograph Specification",
+      "reason": "live capture only",
+      "detail": "The portal photographs the candidate directly; there is no upload specification and nothing for the platform to deliver.",
+      "non_photograph_deliverables": 6
+    },
+    {
+      "exam_name": "BPSC Teacher Recruitment Examination (TRE)",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 3
+    },
+    {
+      "exam_name": "Bihar B.Ed Common Entrance Test",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 1
+    },
+    {
+      "exam_name": "Bihar D.El.Ed Joint Entrance Examination",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 2
+    },
+    {
+      "exam_name": "Bihar Police Constable Recruitment",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 1
+    },
+    {
+      "exam_name": "Bihar Secondary Teacher Eligibility Test",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 1
+    },
+    {
+      "exam_name": "CG Vyapam Pre-B.Ed Entrance Examination",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 1
+    },
+    {
+      "exam_name": "DSSSB Major Recruitment Examination Family",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 4
+    },
+    {
+      "exam_name": "Delhi Police Constable (Executive)",
+      "reason": "live capture only",
+      "detail": "The portal photographs the candidate directly; there is no upload specification and nothing for the platform to deliver.",
+      "non_photograph_deliverables": 1
+    },
+    {
+      "exam_name": "GUJCET",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 1
+    },
+    {
+      "exam_name": "Gujarat Police Lokrakshak Recruitment",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 1
+    },
+    {
+      "exam_name": "Gujarat Police PSI Recruitment",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 1
+    },
+    {
+      "exam_name": "HSSC CET Group D",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 2
+    },
+    {
+      "exam_name": "Haryana CET Group C",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 2
+    },
+    {
+      "exam_name": "Haryana Teacher Eligibility Test",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 1
+    },
+    {
+      "exam_name": "Indian Air Force Agniveervayu Recruitment",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 4
     },
     {
       "exam_name": "Indian Army Agniveer CEE 2025-26 - online upload",
@@ -20,15 +170,111 @@
       "non_photograph_deliverables": 0
     },
     {
+      "exam_name": "Indian Army Agniveer Recruitment",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 2
+    },
+    {
+      "exam_name": "Indian Navy Agniveer SSR/MR Recruitment",
+      "reason": "incomplete evidence",
+      "detail": "no format",
+      "non_photograph_deliverables": 1
+    },
+    {
       "exam_name": "JEE (Advanced) 2026",
       "reason": "incomplete evidence",
       "detail": "no file size and no format",
       "non_photograph_deliverables": 6
     },
     {
+      "exam_name": "JKSSB Police Constable Recruitment",
+      "reason": "live capture only",
+      "detail": "The portal photographs the candidate directly; there is no upload specification and nothing for the platform to deliver.",
+      "non_photograph_deliverables": 2
+    },
+    {
+      "exam_name": "JSSC Combined Graduate Level Examination",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 1
+    },
+    {
+      "exam_name": "Jawahar Navodaya Vidyalaya Selection Test Class VI",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 2
+    },
+    {
+      "exam_name": "Jharkhand Police Constable Recruitment",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 1
+    },
+    {
+      "exam_name": "Joint Entrance Examination Council Uttar Pradesh Polytechnic Entrance",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 1
+    },
+    {
+      "exam_name": "Karnataka Teacher Eligibility Test",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 1
+    },
+    {
+      "exam_name": "Kendriya Vidyalaya Sangathan Direct Recruitment Examination",
+      "reason": "incomplete evidence",
+      "detail": "no file size",
+      "non_photograph_deliverables": 1
+    },
+    {
+      "exam_name": "MAH MBA/MMS CET",
+      "reason": "incomplete evidence",
+      "detail": "no format",
+      "non_photograph_deliverables": 1
+    },
+    {
       "exam_name": "MHT-CET 2026",
       "reason": "incomplete evidence",
       "detail": "no format",
+      "non_photograph_deliverables": 4
+    },
+    {
+      "exam_name": "MP Patwari Recruitment Examination",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 4
+    },
+    {
+      "exam_name": "MP Police Constable Recruitment Test",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 4
+    },
+    {
+      "exam_name": "MP Primary School Teacher Eligibility Test",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 4
+    },
+    {
+      "exam_name": "Maharashtra Police Recruitment",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 1
+    },
+    {
+      "exam_name": "NEET-PG",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 3
+    },
+    {
+      "exam_name": "Odisha Joint Entrance Examination (OJEE)",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
       "non_photograph_deliverables": 1
     },
     {
@@ -36,6 +282,78 @@
       "reason": "incomplete evidence",
       "detail": "no file size; conflicting: dimensions.mode, file_size.published_maximum",
       "non_photograph_deliverables": 2
+    },
+    {
+      "exam_name": "RRB JE/DMS/CMA",
+      "reason": "live capture only",
+      "detail": "The portal photographs the candidate directly; there is no upload specification and nothing for the platform to deliver.",
+      "non_photograph_deliverables": 1
+    },
+    {
+      "exam_name": "RRB Paramedical Categories",
+      "reason": "live capture only",
+      "detail": "The portal photographs the candidate directly; there is no upload specification and nothing for the platform to deliver.",
+      "non_photograph_deliverables": 1
+    },
+    {
+      "exam_name": "RRB Section Controller",
+      "reason": "live capture only",
+      "detail": "The portal photographs the candidate directly; there is no upload specification and nothing for the platform to deliver.",
+      "non_photograph_deliverables": 1
+    },
+    {
+      "exam_name": "RRB Technician",
+      "reason": "live capture only",
+      "detail": "The portal photographs the candidate directly; there is no upload specification and nothing for the platform to deliver.",
+      "non_photograph_deliverables": 1
+    },
+    {
+      "exam_name": "Rajasthan CET Graduate Level",
+      "reason": "live capture only",
+      "detail": "The portal photographs the candidate directly; there is no upload specification and nothing for the platform to deliver.",
+      "non_photograph_deliverables": 1
+    },
+    {
+      "exam_name": "Rajasthan CET Senior Secondary Level",
+      "reason": "live capture only",
+      "detail": "The portal photographs the candidate directly; there is no upload specification and nothing for the platform to deliver.",
+      "non_photograph_deliverables": 1
+    },
+    {
+      "exam_name": "Rajasthan Eligibility Examination for Teachers (REET)",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 1
+    },
+    {
+      "exam_name": "Rajasthan Grade IV Recruitment",
+      "reason": "live capture only",
+      "detail": "The portal photographs the candidate directly; there is no upload specification and nothing for the platform to deliver.",
+      "non_photograph_deliverables": 1
+    },
+    {
+      "exam_name": "Rajasthan Patwari Recruitment",
+      "reason": "live capture only",
+      "detail": "The portal photographs the candidate directly; there is no upload specification and nothing for the platform to deliver.",
+      "non_photograph_deliverables": 1
+    },
+    {
+      "exam_name": "Rajasthan Police Constable Recruitment",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 1
+    },
+    {
+      "exam_name": "Rajasthan Pre-D.El.Ed Examination (BSTC)",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 2
+    },
+    {
+      "exam_name": "Rajasthan Pre-Teacher Education Test",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 1
     },
     {
       "exam_name": "SSC Combined Graduate Level Examination 2026",
@@ -56,9 +374,93 @@
       "non_photograph_deliverables": 2
     },
     {
+      "exam_name": "SSC Junior Engineer Examination",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 1
+    },
+    {
       "exam_name": "SSC Multi-Tasking Staff and Havaldar Examination 2025",
       "reason": "live capture only",
       "detail": "The portal photographs the candidate directly; there is no upload specification and nothing for the platform to deliver.",
+      "non_photograph_deliverables": 2
+    },
+    {
+      "exam_name": "SSC Selection Post Phase XIII",
+      "reason": "live capture only",
+      "detail": "The portal photographs the candidate directly; there is no upload specification and nothing for the platform to deliver.",
+      "non_photograph_deliverables": 1
+    },
+    {
+      "exam_name": "SSC Stenographer Grade C & D Examination",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 1
+    },
+    {
+      "exam_name": "SSC Sub-Inspector in Delhi Police and CAPFs Examination",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 1
+    },
+    {
+      "exam_name": "TG EAPCET",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 1
+    },
+    {
+      "exam_name": "TG/TS POLYCET",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 1
+    },
+    {
+      "exam_name": "TGPSC Group I Services Examination",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 1
+    },
+    {
+      "exam_name": "TGPSC Group II Services Examination",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 1
+    },
+    {
+      "exam_name": "TGPSC Group III Services Examination",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 1
+    },
+    {
+      "exam_name": "TSPSC Group IV Services",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 1
+    },
+    {
+      "exam_name": "Telangana DSC Teacher Recruitment",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 2
+    },
+    {
+      "exam_name": "Telangana Teacher Eligibility Test (TG TET)",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 1
+    },
+    {
+      "exam_name": "UP B.Ed Joint Entrance Examination",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 1
+    },
+    {
+      "exam_name": "UPPSC Combined State/Upper Subordinate Services Examination (PCS)",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
       "non_photograph_deliverables": 2
     },
     {
@@ -66,6 +468,36 @@
       "reason": "incomplete evidence",
       "detail": "no format",
       "non_photograph_deliverables": 2
+    },
+    {
+      "exam_name": "UPPSC Review Officer / Assistant Review Officer",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 2
+    },
+    {
+      "exam_name": "UPSC Engineering Services Examination",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 2
+    },
+    {
+      "exam_name": "UPSSSC Preliminary Eligibility Test (PET)",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 1
+    },
+    {
+      "exam_name": "Uttar Pradesh Police Constable Recruitment",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 1
+    },
+    {
+      "exam_name": "West Bengal Primary Teacher Eligibility Test",
+      "reason": "incomplete evidence",
+      "detail": "no file size and no format",
+      "non_photograph_deliverables": 1
     }
   ]
 }

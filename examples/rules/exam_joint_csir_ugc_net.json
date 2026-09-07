@@ -1,60 +1,57 @@
 {
   "schema_version": "1.1",
-  "rule_id": "mpsc-general-online-application-photograph-instruction",
+  "rule_id": "joint-csir-ugc-net",
   "rule_version": "1.0.0",
   "status": "verified_with_ambiguity",
   "exam": {
-    "exam_id": "mpsc-general-online-application-photograph-instruction",
-    "exam_name": "MPSC General Online Application Photograph Instruction",
-    "conducting_body": "Maharashtra Public Service Commission",
-    "examination_year": 2026,
-    "application_cycle": "current portal guide",
+    "exam_id": "joint-csir-ugc-net",
+    "exam_name": "Joint CSIR-UGC NET",
+    "conducting_body": "National Testing Agency / CSIR",
+    "examination_year": 2025,
+    "application_cycle": "June 2025 baseline / current family",
     "application_stage": "application",
-    "jurisdiction": "Maharashtra",
-    "category": "state_psc"
+    "jurisdiction": "India",
+    "category": "teaching_research_eligibility"
   },
   "source_evidence": [
     {
       "source_type": "official_pdf",
       "official_source": true,
-      "captured_wording": "3.5 cm x 4.5 cm; 50 KB; .jpg or .jpeg; solid colour background; preferably blue, green or red; no shadows; directly facing the camera",
-      "source_url": "https://mpsconline.gov.in/downloads/Instructions-for-Filling-the-Application-Form.pdf",
-      "document_title": "Instructions for Filling the Application Form",
-      "section_name": "Photograph instructions"
+      "captured_wording": "10 kb to 200 kb; Scanned photograph and signature should be in JPG format.",
+      "source_url": "https://csirnet.nta.ac.in/images/infomration-bulletin-of-csir-june-2025.pdf",
+      "document_title": "Joint CSIR-UGC NET June 2025 Information Bulletin",
+      "section_name": "Upload scanned images"
     }
   ],
   "image_requirements": {
     "dimensions": {
       "mode": "unspecified",
-      "fallback_reason": "No pixel dimensions are published by the conducting body. The output size is chosen per photograph from the crop geometry rather than from a fixed default.",
-      "permitted_pixel_range": "3.5 cm \u00d7 4.5 cm"
+      "fallback_reason": "No pixel dimensions are published by the conducting body. The output size is chosen per photograph from the crop geometry rather than from a fixed default."
     },
     "file_size": {
-      "maximum_bytes": 50000,
+      "maximum_bytes": 200000,
+      "minimum_bytes": 10000,
       "size_unit_as_published": "KB",
-      "published_maximum": 50.0
+      "published_maximum": 200.0,
+      "published_minimum": 10.0
     },
     "formats": {
       "allowed_formats": [
-        "jpg",
-        "jpeg"
+        "jpg"
       ],
-      "preferred_format": "jpeg",
+      "preferred_format": "jpg",
       "preserve_transparency": false,
       "strip_metadata": true,
       "colour_space": "sRGB"
     },
     "background": {
-      "mode": "plain_background",
-      "fallback_colour": "#FFFFFF",
-      "shadows_allowed": false
+      "mode": "unspecified"
     },
     "composition": {
       "crop_profile": "tight_exam_portrait",
       "complete_hair_required": true,
       "complete_chin_required": true,
-      "ears_policy": "unspecified",
-      "frontal_pose": true
+      "ears_policy": "unspecified"
     },
     "appearance": {},
     "filename": {
@@ -75,11 +72,10 @@
       "requirement_status": "mandatory",
       "platform_support": "supported",
       "applicability": "All applicants",
-      "content_instructions": "Uploaded candidate photograph; format: JPG/JPEG; file size: up to 50 KB; background: preferably blue, green or red.",
-      "evidence_status": "Evidence tier as recorded in supplied photograph report",
+      "content_instructions": "JPG; 10\u2013200 KB",
+      "evidence_status": "Official Joint CSIR-UGC NET June 2025 Information Bulletin",
       "rejection_conditions": [
-        "Shadows on the face or background are not accepted.",
-        "Non-frontal or side-facing pose can fail the stated requirement."
+        "In case the photograph or signature is blurred or not visible to identify the candidate then, the application will be rejected."
       ]
     },
     {
@@ -90,12 +86,17 @@
       "requirement_status": "mandatory",
       "platform_support": "supported",
       "applicability": "All applicants",
-      "content_instructions": "JPG/JPEG; maximum 50 KB; 3.5 cm \u00d7 1.5 cm; no minimum published",
-      "evidence_status": "Official MPSC online application instructions",
+      "content_instructions": "JPG; 4\u201330 KB",
+      "evidence_status": "Official Joint CSIR-UGC NET June 2025 Information Bulletin",
+      "rejection_conditions": [
+        "In case the photograph or signature is blurred or not visible to identify the candidate then, the application will be rejected."
+      ],
       "file_spec": {
         "file_size": {
-          "maximum_bytes": 50000,
-          "published_maximum": 50,
+          "maximum_bytes": 30000,
+          "minimum_bytes": 4000,
+          "published_minimum": 4,
+          "published_maximum": 30,
           "size_unit_as_published": "KB"
         },
         "formats": {
@@ -107,18 +108,42 @@
       }
     },
     {
-      "requirement_id": "claim_supporting_certificates",
-      "requirement_name": "Claim-supporting certificates",
+      "requirement_id": "category_certificate",
+      "requirement_name": "Category certificate",
       "requirement_type": "certificate_scan",
       "submission_method": "document_scan_upload",
       "requirement_status": "conditional",
       "platform_support": "supported",
-      "applicability": "Candidates claiming reservation, disability, domicile, age relaxation, experience or a post-specific qualification",
-      "content_instructions": "Upload only the certificate explicitly requested by that examination and category. The exact list is notification-specific and was not fully established in the supplied photograph evidence.",
-      "evidence_status": "Exam-specific gap; active notification required",
+      "applicability": "Where applicable",
+      "content_instructions": "10\u2013300 KB; certificate format not separately established in the captured clause",
+      "evidence_status": "Official Joint CSIR-UGC NET June 2025 Information Bulletin",
       "file_spec": {
         "file_size": {
-          "maximum_bytes": 400000
+          "maximum_bytes": 300000,
+          "minimum_bytes": 10000,
+          "published_minimum": 10,
+          "published_maximum": 300,
+          "size_unit_as_published": "KB"
+        }
+      }
+    },
+    {
+      "requirement_id": "pwd_certificate",
+      "requirement_name": "PwD certificate",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Where applicable",
+      "content_instructions": "10\u2013300 KB; certificate format not separately established in the captured clause",
+      "evidence_status": "Official Joint CSIR-UGC NET June 2025 Information Bulletin",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 300000,
+          "minimum_bytes": 10000,
+          "published_minimum": 10,
+          "published_maximum": 300,
+          "size_unit_as_published": "KB"
         }
       }
     }
@@ -126,9 +151,9 @@
   "provenance": {
     "image_requirements.file_size": {
       "type": "official",
-      "evidence_reference": "Instructions for Filling the Application Form - Photograph instructions (https://mpsconline.gov.in/downloads/Instructions-for-Filling-the-Application-Form.pdf)",
+      "evidence_reference": "Joint CSIR-UGC NET June 2025 Information Bulletin - Upload scanned images (https://csirnet.nta.ac.in/images/infomration-bulletin-of-csir-june-2025.pdf)",
       "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
-      "confidence": 3,
+      "confidence": 5,
       "approved": true
     },
     "image_requirements.dimensions": {
@@ -152,12 +177,6 @@
     "requirements[1].file_spec.formats.allowed_formats": {
       "type": "interim_default",
       "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
-      "confidence": 1,
-      "approved": false
-    },
-    "requirements[2].file_spec.file_size.maximum_bytes": {
-      "type": "interim_default",
-      "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",
       "confidence": 1,
       "approved": false
     }

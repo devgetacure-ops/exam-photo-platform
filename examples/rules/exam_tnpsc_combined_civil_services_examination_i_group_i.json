@@ -1,33 +1,35 @@
 {
   "schema_version": "1.1",
-  "rule_id": "bpsc-current-recruitment-photograph-specification",
+  "rule_id": "tnpsc-combined-civil-services-examination-i-group-i",
   "rule_version": "1.0.0",
-  "status": "provisional",
+  "status": "verified",
   "exam": {
-    "exam_id": "bpsc-current-recruitment-photograph-specification",
-    "exam_name": "BPSC Current Recruitment Photograph Specification",
-    "conducting_body": "Bihar Public Service Commission",
-    "examination_year": 2026,
-    "application_cycle": "current",
+    "exam_id": "tnpsc-combined-civil-services-examination-i-group-i",
+    "exam_name": "TNPSC Combined Civil Services Examination I (Group I)",
+    "conducting_body": "Tamil Nadu Public Service Commission",
+    "examination_year": 2024,
+    "application_cycle": "2024",
     "application_stage": "application",
-    "jurisdiction": "Bihar",
-    "category": "state_psc"
+    "jurisdiction": "Tamil Nadu",
+    "category": "state_psc_recruitment"
   },
   "source_evidence": [
     {
-      "source_type": "secondary_reference",
-      "official_source": false,
-      "captured_wording": "250 x 250; 20 KB; 50 KB; JPG; light background",
-      "source_url": "https://form-mitra.com/bpsc",
-      "document_title": "BPSC photo-resize specification page"
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "3.5 cm (130 pixels); 4.5 cm (170 pixels); 200 DPI; 20 KB\u201350 KB; saved as \u201cPhotograph.jpg\u201d and uploaded",
+      "source_url": "https://tnpsc.gov.in/static_pdf/document/instructions-to-candidates_2025.pdf",
+      "document_title": "TNPSC Instructions to Applicants 2025",
+      "section_name": "Photograph upload"
     }
   ],
   "image_requirements": {
     "dimensions": {
       "mode": "exact",
-      "width_px": 250,
-      "height_px": 250,
-      "aspect_ratio": "1:1"
+      "width_px": 130,
+      "height_px": 170,
+      "aspect_ratio": "13:17",
+      "dpi": 200
     },
     "file_size": {
       "maximum_bytes": 50000,
@@ -46,8 +48,7 @@
       "colour_space": "sRGB"
     },
     "background": {
-      "mode": "plain_light",
-      "fallback_colour": "#FFFFFF"
+      "mode": "unspecified"
     },
     "composition": {
       "crop_profile": "tight_exam_portrait",
@@ -71,11 +72,16 @@
       "requirement_name": "Candidate photograph",
       "requirement_type": "photograph",
       "submission_method": "file_upload",
-      "requirement_status": "mandatory",
+      "requirement_status": "portal_dependent",
       "platform_support": "supported",
-      "applicability": "All applicants",
-      "content_instructions": "Uploaded candidate photograph; format: JPG; file size: 20-50 KB; dimensions: 250 x 250 px.",
-      "evidence_status": "Evidence tier as recorded in supplied photograph report"
+      "applicability": "As required by the active authority application/notification",
+      "content_instructions": "not_found",
+      "evidence_status": "Application asset identified at authority/application-family level; exact current technical specification and, where noted, conditionality were not fully established.",
+      "notes": "This row is intentionally evidence-gated. No numeric value or format has been inferred from secondary sources.",
+      "rejection_conditions": [
+        "Failure to upload clear images of the photograph and signature will result in rejection of online application after due process.",
+        "In case of uploading an inappropriate photograph, the application is liable to be rejected after due process."
+      ]
     },
     {
       "requirement_id": "candidate_signature",
@@ -84,9 +90,13 @@
       "submission_method": "file_upload",
       "requirement_status": "portal_dependent",
       "platform_support": "supported",
-      "applicability": "All applicants where the OTR/application asks for it",
-      "content_instructions": "A separate signature is normally part of the PSC profile/application, but the exact current file specification was not established by the supplied photograph-only evidence. Follow the active portal.",
-      "evidence_status": "Not fully established; not_found for exact specification",
+      "applicability": "As required by the active authority application/notification",
+      "content_instructions": "not_found",
+      "evidence_status": "Application asset identified at authority/application-family level; exact current technical specification and, where noted, conditionality were not fully established.",
+      "notes": "This row is intentionally evidence-gated. No numeric value or format has been inferred from secondary sources.",
+      "rejection_conditions": [
+        "Failure to upload clear images of the photograph and signature will result in rejection of online application after due process."
+      ],
       "file_spec": {
         "file_size": {
           "maximum_bytes": 20000,
@@ -99,43 +109,21 @@
           "preferred_format": "jpg"
         }
       }
-    },
-    {
-      "requirement_id": "claim_supporting_certificates",
-      "requirement_name": "Claim-supporting certificates",
-      "requirement_type": "certificate_scan",
-      "submission_method": "document_scan_upload",
-      "requirement_status": "conditional",
-      "platform_support": "supported",
-      "applicability": "Candidates claiming reservation, disability, domicile, age relaxation, experience or a post-specific qualification",
-      "content_instructions": "Upload only the certificate explicitly requested by that examination and category. The exact list is notification-specific and was not fully established in the supplied photograph evidence.",
-      "evidence_status": "Exam-specific gap; active notification required",
-      "file_spec": {
-        "file_size": {
-          "maximum_bytes": 400000
-        }
-      }
     }
   ],
   "provenance": {
     "image_requirements.file_size": {
-      "type": "inferred",
-      "evidence_reference": "BPSC photo-resize specification page (https://form-mitra.com/bpsc)",
+      "type": "official",
+      "evidence_reference": "TNPSC Instructions to Applicants 2025 - Photograph upload (https://tnpsc.gov.in/static_pdf/document/instructions-to-candidates_2025.pdf)",
       "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
-      "confidence": 2,
-      "approved": false
+      "confidence": 5,
+      "approved": true
     },
     "image_requirements.dimensions": {
-      "type": "inferred",
-      "evidence_reference": "BPSC photo-resize specification page (https://form-mitra.com/bpsc)",
+      "type": "official",
+      "evidence_reference": "TNPSC Instructions to Applicants 2025 - Photograph upload (https://tnpsc.gov.in/static_pdf/document/instructions-to-candidates_2025.pdf)",
       "reasoning": "Pixel dimensions transcribed from the cited source.",
-      "confidence": 2,
-      "approved": false
-    },
-    "image_requirements.formats.preferred_format": {
-      "type": "inferred",
-      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
-      "confidence": 4,
+      "confidence": 5,
       "approved": true
     },
     "image_requirements.composition.crop_profile": {
@@ -143,12 +131,6 @@
       "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
       "confidence": 5,
       "approved": true
-    },
-    "image_requirements": {
-      "type": "inferred",
-      "reasoning": "Values for this examination were located only on secondary sources, not on the conducting body's own material. Recorded so the examination is servable, and held at provisional status so the dependence stays visible until an official source is found.",
-      "confidence": 2,
-      "approved": false
     },
     "requirements[1].file_spec.file_size.maximum_bytes": {
       "type": "interim_default",
@@ -167,16 +149,10 @@
       "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
       "confidence": 1,
       "approved": false
-    },
-    "requirements[2].file_spec.file_size.maximum_bytes": {
-      "type": "interim_default",
-      "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",
-      "confidence": 1,
-      "approved": false
     }
   },
   "verification": {
-    "verification_status": "provisional"
+    "verification_status": "verified"
   },
   "fictional_example": false
 }

@@ -127,12 +127,15 @@
       "requirement_status": "mandatory",
       "platform_support": "supported",
       "applicability": "All applicants",
-      "content_instructions": "Separate scanned signature image in the format and size shown by the active RRB portal. Exact current value was not available in the supplied photo dataset.",
-      "evidence_status": "Official notice requirement; field-level specification not extracted",
+      "content_instructions": "JPEG; 30\u201350 KB",
+      "evidence_status": "Official RRB CEN 08/2024 FAQ",
       "file_spec": {
         "file_size": {
-          "maximum_bytes": 20000,
-          "minimum_bytes": 10000
+          "maximum_bytes": 50000,
+          "minimum_bytes": 30000,
+          "published_minimum": 30,
+          "published_maximum": 50,
+          "size_unit_as_published": "KB"
         },
         "formats": {
           "allowed_formats": [
@@ -160,12 +163,14 @@
       "submission_method": "document_scan_upload",
       "requirement_status": "conditional",
       "platform_support": "supported",
-      "applicability": "SC/ST candidates requesting the free travel facility",
-      "content_instructions": "Upload the prescribed caste certificate where the CEN makes it a condition for the travel pass. This is not required from every candidate.",
-      "evidence_status": "Recent RRB CEN practice; verify active portal",
+      "applicability": "SC/ST candidates seeking free travel pass",
+      "content_instructions": "PDF; less than 500 KB",
+      "evidence_status": "Official RRB CEN 08/2024 FAQ",
       "file_spec": {
         "file_size": {
-          "maximum_bytes": 400000
+          "maximum_bytes": 500000,
+          "published_maximum": 500,
+          "size_unit_as_published": "KB"
         }
       }
     }
@@ -203,27 +208,9 @@
       "confidence": 5,
       "approved": true
     },
-    "requirements[1].file_spec.file_size.maximum_bytes": {
-      "type": "interim_default",
-      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
-      "confidence": 1,
-      "approved": false
-    },
-    "requirements[1].file_spec.file_size.minimum_bytes": {
-      "type": "interim_default",
-      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
-      "confidence": 1,
-      "approved": false
-    },
     "requirements[1].file_spec.formats.allowed_formats": {
       "type": "interim_default",
       "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
-      "confidence": 1,
-      "approved": false
-    },
-    "requirements[3].file_spec.file_size.maximum_bytes": {
-      "type": "interim_default",
-      "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",
       "confidence": 1,
       "approved": false
     }
