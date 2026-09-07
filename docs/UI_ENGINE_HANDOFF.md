@@ -319,3 +319,49 @@ a log.
    declarations are corrected unconditionally, because on paper the correction
    is what makes the mark legible rather than a look applied to a face
    (DEC-050). Do not show the control on those requirements.
+
+## Real progress, and instant toggling
+
+2026-09-07, DEC-075 and DEC-076. Two things the design brief asked for.
+
+### The loading ring can be real (item 13)
+
+Mint a token — `prg_` plus anything URL-safe — send it as a **`progress_token`**
+form field with the upload, and poll **`GET /v1/progress/{token}`** while the
+preparation request is still open.
+
+```json
+{ "fraction": 0.41, "stage": "mask_refinement",
+  "label": "Refining the edges", "finished": false, "failed": false }
+```
+
+`label` is written for a candidate; show it. `fraction` is weighted by measured
+stage cost, so it moves at roughly the rate the work happens — the two model
+inferences are about eight of the ten seconds and carry most of the weight.
+
+Three guarantees worth building on: it **never goes backwards**, it **never
+reaches 1.0 until the work is done**, and `finished` is set on every path
+including failure, so the ring cannot be left spinning. An unknown token is
+**404**, not a zeroed state — that distinction is what stops a typo becoming an
+infinite wait.
+
+**Please do not drive the ring from a timer as well.** If a stage is slow the
+bar should sit still and say what it is doing. That honesty is the feature.
+
+### Toggling the lighting is now instant (item 11)
+
+`POST /v1/jobs/{job_id}/enhancement` with `{"enabled": true|false}`. It returns
+the updated job status. Both variants are made during the one preparation, so
+this is a file swap and a re-rendered preview — **tens of milliseconds, not ten
+seconds.** Toggle freely; it costs nothing and spends no preparation allowance.
+
+**Read `enhancement_switchable` before offering the control.** False means the
+photograph needed no correction, so both variants would be the same image and
+there is nothing to switch to. Pair it with the empty `enhancements_applied`
+and say so: *"your photograph needed no correction."*
+
+A `409` means the same thing arriving late — no alternate exists. The preview
+and the output both change on the switch, so re-read `preview_url` after it.
+
+**Ignore the earlier note in DEC-074 saying a toggle costs a re-preparation.**
+That was true when it was written and is not now.

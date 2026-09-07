@@ -67,6 +67,11 @@ class ProcessingJobRecord(BaseModel):
     # the good case: the photograph needed nothing.
     enhancement_enabled: bool = True
     enhancements_applied: List[str] = Field(default_factory=list)
+    #: DEC-076. The other variant, composed and compressed in the same pass, so
+    #: toggling is a file swap rather than a ten-second re-preparation. `None`
+    #: means there is nothing to toggle to -- either the correction changed
+    #: nothing, or the alternate would not fit the examination's size ceiling.
+    alternate_output_filename: Optional[str] = None
 
     # --- Kit and requirement identity (DEC-055, DEC-058) -------------------
     #

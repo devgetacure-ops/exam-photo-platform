@@ -31,6 +31,7 @@ from exam_photo.api.jobs import (
 )
 from exam_photo.api.orders import OrderRegistry
 from exam_photo.api.payments import ReleaseInstruction
+from exam_photo.api.progress import ProgressRegistry
 from exam_photo.api.protection import UsageRegistry
 from exam_photo.api.razorpay_orders import OrderGateway, gateway_for
 from exam_photo.api.settings import ApiSettings
@@ -154,6 +155,19 @@ def _published_filename(requirement: ExamRequirement) -> Optional[str]:
     return str(exact) if exact else None
 
 
+def _alternate_filename(filename: str) -> str:
+    """The stored name of the other lighting variant (DEC-076).
+
+    Never served to a candidate: the delivered file always carries the
+    examination's own required name, and this is only how the two are told
+    apart on disk while both exist.
+    """
+    stem, _, extension = filename.rpartition(".")
+    if not stem:
+        return f"{filename}__alt"
+    return f"{stem}__alt.{extension}"
+
+
 def _media_type_for(filename: str) -> str:
     """The media type for a produced file, defaulting to an opaque one.
 
@@ -194,6 +208,8 @@ class ApiProcessingService:
         self.orders = OrderRegistry(settings.artifact_root)
         #: Per-kit counters, surviving retention (DEC-073).
         self.usage = UsageRegistry(settings.artifact_root)
+        #: Ephemeral per-preparation progress (DEC-075).
+        self.progress = ProgressRegistry(settings.artifact_root)
         #: Overwritten wholesale in tests, like `store` and `registry`, so no
         #: test ever reaches api.razorpay.com (DEC-070).
         self._order_gateway: Optional[OrderGateway] = None
@@ -884,6 +900,50 @@ class ApiProcessingService:
     def email_sender(self, sender: EmailSender) -> None:
         self._email_sender = sender
 
+    def set_enhancement(
+        self, record: ProcessingJobRecord, enabled: bool
+    ) -> ProcessingJobRecord:
+        """Switch between the two lighting variants, instantly (DEC-076).
+
+        Both were composed and compressed during the one preparation, so this
+        is a swap of two small files and a re-rendered preview -- a few tens of
+        milliseconds against the ten seconds a re-preparation would cost.
+
+        **The contents are exchanged, not the names.** The delivered file has
+        to keep the examination's own required filename (`generate_safe_
+        filename`), and several portals reject an upload on its name alone, so
+        pointing the record at `..__alt.jpg` would have produced a file that
+        was correct in every respect except the one that gets it thrown out.
+
+        Raises `LookupError` when there is nothing to switch to: the correction
+        changed nothing, or the alternate would not fit the size ceiling. The
+        interface should not offer the control then, and being told is better
+        than a silent no-op.
+        """
+        if record.enhancement_enabled == enabled:
+            return record
+        alternate = record.alternate_output_filename
+        served = record.output_filename
+        if not alternate or not served:
+            raise LookupError("this job has no alternate lighting variant")
+
+        try:
+            incoming = self.store.read_file(record.job_id, alternate)
+            outgoing = self.store.read_file(record.job_id, served)
+        except (FileNotFoundError, ValueError) as err:
+            raise LookupError("the alternate variant is no longer on disk") from err
+
+        # Written before the record changes, so a failure here leaves the job
+        # exactly as it was rather than naming a state that is not on disk.
+        self.store.write_file(record.job_id, served, incoming)
+        self.store.write_file(record.job_id, alternate, outgoing)
+
+        record.enhancement_enabled = enabled
+        record.output_byte_size = len(incoming)
+        self.write_preview(record, incoming)
+        self.registry.update_job(record)
+        return record
+
     def record_download(self, record: ProcessingJobRecord) -> None:
         """Note that the candidate actually took the file (DEC-072).
 
@@ -996,6 +1056,7 @@ class ApiProcessingService:
         allow_invalid_output: bool = False,
         quality_mode: str = "balanced",
         enhancement_enabled: bool = True,
+        progress_token: Optional[str] = None,
         save_diagnostic_artifacts: bool = False,
         kit_id: Optional[str] = None,
         exam_id: Optional[str] = None,
@@ -1052,6 +1113,11 @@ class ApiProcessingService:
                 output_dir=job_dir,
                 quality_mode=quality_mode,
                 enhancement_enabled=enhancement_enabled,
+                progress_callback=(
+                    (lambda stage: self.progress.advance(progress_token, stage))
+                    if progress_token
+                    else None
+                ),
             )
 
             # 3. Execute pipeline
@@ -1071,6 +1137,20 @@ class ApiProcessingService:
                     result.encoded_bytes,
                 )
                 artifact_names.append(result.output_filename)
+
+            # DEC-076. The other lighting variant, so the candidate can switch
+            # instantly instead of paying ten seconds to see the difference.
+            if (
+                should_save_output
+                and result.output_filename
+                and result.alternate_encoded_bytes
+            ):
+                alternate_name = _alternate_filename(result.output_filename)
+                self.store.write_file(
+                    job_id, alternate_name, result.alternate_encoded_bytes
+                )
+                artifact_names.append(alternate_name)
+                record.alternate_output_filename = alternate_name
 
             if save_diagnostic_artifacts:
                 artifact_names.extend(
@@ -1598,6 +1678,11 @@ class ApiProcessingService:
 
     def cleanup_expired_jobs(self) -> int:
         """Scan all manifests on disk and clean up expired job artifacts."""
+        # DEC-075: progress files are genuinely ephemeral, so they ride the
+        # existing sweeper rather than needing a retention decision of their
+        # own the way `_orders/` and `_usage/` do.
+        self.progress.sweep()
+
         records = self.registry.scan_manifests()
         deleted_count = 0
 

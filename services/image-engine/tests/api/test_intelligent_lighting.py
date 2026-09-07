@@ -228,3 +228,108 @@ def test_no_luminance_alone_triggers_a_correction(luminance):
     )
 
     assert plan_enhancement(measurements).is_noop
+
+
+# ----------------------------------------------------------------------
+# Switching between the two variants, instantly (DEC-076)
+# ----------------------------------------------------------------------
+
+
+def _prepared_with_both(api, job_id="job_var"):
+    """A finished job holding both lighting variants, as the pipeline leaves it."""
+    from exam_photo.api.contracts import ApiJobStatus
+
+    record = api.registry.create_job(job_id, 1800)
+    record.status = ApiJobStatus.SUCCEEDED
+    record.requirement_type = "photograph"
+    record.output_filename = "UPSC_photograph.jpg"
+    record.output_media_type = "image/jpeg"
+    record.alternate_output_filename = "UPSC_photograph__alt.jpg"
+    record.enhancement_enabled = True
+    record.enhancements_applied = ["Lifted a flat, low-contrast capture"]
+    api.store.write_file(job_id, "UPSC_photograph.jpg", b"ENHANCED-BYTES")
+    api.store.write_file(job_id, "UPSC_photograph__alt.jpg", b"PLAIN-BYTES-XX")
+    api.registry.update_job(record)
+    return record
+
+
+def test_switching_exchanges_the_contents(api):
+    record = _prepared_with_both(api)
+
+    api.set_enhancement(record, False)
+
+    assert api.store.read_file("job_var", "UPSC_photograph.jpg") == b"PLAIN-BYTES-XX"
+    assert (
+        api.store.read_file("job_var", "UPSC_photograph__alt.jpg") == b"ENHANCED-BYTES"
+    )
+
+
+def test_switching_keeps_the_examinations_required_filename(api):
+    """The trap. Several portals reject an upload on its name alone, so a
+    variant switch must never change what the delivered file is called."""
+    record = _prepared_with_both(api)
+
+    api.set_enhancement(record, False)
+
+    assert record.output_filename == "UPSC_photograph.jpg"
+    assert "__alt" not in record.output_filename
+
+
+def test_switching_back_restores_the_original(api):
+    record = _prepared_with_both(api)
+
+    api.set_enhancement(record, False)
+    api.set_enhancement(record, True)
+
+    assert api.store.read_file("job_var", "UPSC_photograph.jpg") == b"ENHANCED-BYTES"
+    assert record.enhancement_enabled is True
+
+
+def test_switching_records_the_new_size(api):
+    record = _prepared_with_both(api)
+
+    api.set_enhancement(record, False)
+
+    assert record.output_byte_size == len(b"PLAIN-BYTES-XX")
+
+
+def test_switching_to_what_is_already_selected_does_nothing(api):
+    record = _prepared_with_both(api)
+
+    api.set_enhancement(record, True)
+
+    assert api.store.read_file("job_var", "UPSC_photograph.jpg") == b"ENHANCED-BYTES"
+
+
+def test_a_job_with_no_alternate_cannot_be_switched(api):
+    """A photograph that needed nothing has one variant, not two."""
+    from exam_photo.api.contracts import ApiJobStatus
+
+    record = api.registry.create_job("job_single", 1800)
+    record.status = ApiJobStatus.SUCCEEDED
+    record.output_filename = "out.jpg"
+    api.store.write_file("job_single", "out.jpg", b"ONLY-ONE")
+    api.registry.update_job(record)
+
+    with pytest.raises(LookupError, match="no alternate"):
+        api.set_enhancement(record, False)
+
+
+def test_a_missing_alternate_file_leaves_the_job_untouched(api):
+    record = _prepared_with_both(api)
+    api.store.delete_job_directory("job_var")
+    api.store.write_file("job_var", "UPSC_photograph.jpg", b"ENHANCED-BYTES")
+
+    with pytest.raises(LookupError):
+        api.set_enhancement(record, False)
+
+    assert record.enhancement_enabled is True
+    assert api.store.read_file("job_var", "UPSC_photograph.jpg") == b"ENHANCED-BYTES"
+
+
+def test_the_alternate_name_is_derived_predictably():
+    from exam_photo.api.service import _alternate_filename
+
+    assert _alternate_filename("UPSC_photo.jpg") == "UPSC_photo__alt.jpg"
+    assert _alternate_filename("scan.pdf") == "scan__alt.pdf"
+    assert _alternate_filename("noextension") == "noextension__alt"

@@ -204,7 +204,7 @@ class PipelineStageReport(BaseModel):
 
 
 class RulePipelineConfig(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="forbid", arbitrary_types_allowed=True)
 
     save_diagnostic_artifacts: bool = False
     allow_invalid_output: bool = False
@@ -220,6 +220,13 @@ class RulePipelineConfig(BaseModel):
     # planner already declines to touch a photograph that needs nothing --
     # a correctly exposed capture comes out of it byte-identical either way.
     enhancement_enabled: bool = True
+
+    # DEC-075. Called with each stage's name as it completes, so a caller can
+    # report real progress. Excluded from serialisation -- a callable has no
+    # place in the report written to disk -- and never allowed to break a
+    # preparation: a courtesy to the interface must not be able to cost a
+    # candidate their photograph.
+    progress_callback: Optional[Any] = Field(default=None, exclude=True)
 
     default_background_colour_hex: str = "#FFFFFF"
     default_maximum_bytes: int | None = None
@@ -353,6 +360,11 @@ class RulePipelineResult(BaseModel):
     enhancements_applied: list[str] = Field(default_factory=list)
 
     encoded_bytes: bytes | None = Field(default=None, exclude=True)
+    #: DEC-076. The same photograph with the lighting correction *not* applied,
+    #: composed and compressed in the same pass. Present only where the
+    #: correction actually changed something and the alternate compressed under
+    #: the same ceiling; `None` means there is nothing to toggle to.
+    alternate_encoded_bytes: bytes | None = Field(default=None, exclude=True)
     refined_alpha_mask: Any = Field(default=None, exclude=True)
 
 
@@ -535,6 +547,13 @@ class RuleOrchestratedPipeline:
                     summary=summary,
                 )
             )
+            if config.progress_callback is not None:
+                try:
+                    config.progress_callback(stage.value)
+                except Exception:  # noqa: BLE001
+                    # DEC-075: progress is a courtesy. Nothing it does may
+                    # stop the photograph being made.
+                    pass
 
         # Stage 1: Rule Validation
         t_stage = time.perf_counter()
@@ -649,6 +668,9 @@ class RuleOrchestratedPipeline:
         face = None
         appearance_report: Optional[DispositionReport] = None
         enhancement_plan: Optional[EnhancementPlan] = None
+        decon_image_plain: Any = None
+        alternate_prepared: Any = None
+        alternate_encoded_bytes: bytes | None = None
         if not failed and norm_result is not None:
             t_stage = time.perf_counter()
             try:
@@ -1431,6 +1453,12 @@ class RuleOrchestratedPipeline:
                 if tone is not None:
                     enhancement_plan = plan_enhancement(tone)
                     if not enhancement_plan.is_noop:
+                        # DEC-076: keep the uncorrected foreground so the other
+                        # variant can be composed in the same pass. Only when
+                        # the correction actually changes something -- for a
+                        # photograph that needed nothing the two are the same
+                        # image and there is nothing to toggle between.
+                        decon_image_plain = decon_image
                         decon_image = apply_enhancement(decon_image, enhancement_plan)
                     if severe_cast_detected(tone) and appearance_report is not None:
                         appearance_report.findings.append(
@@ -1458,6 +1486,20 @@ class RuleOrchestratedPipeline:
                     background_color=rgb_color_tuple,
                     allow_transparent_output=allow_trans,
                 )
+                if decon_image_plain is not None:
+                    # DEC-076. The same geometry, the same mask, the same
+                    # background -- only the foreground's tone differs, so the
+                    # two variants can never disagree about anything a rule
+                    # measures except their byte size. Costs one composite and
+                    # no model inference, which is why toggling can be instant.
+                    alternate_prepared = premultiply_crop_resize_composite(
+                        image=decon_image_plain,
+                        alpha=ref_result.refined_alpha_mask,
+                        crop_box=crop_res.crop_box,
+                        target_size=(target_w, target_h),
+                        background_color=rgb_color_tuple,
+                        allow_transparent_output=allow_trans,
+                    )
                 dur_stage = (time.perf_counter() - t_stage) * 1000.0
 
                 # Validate coverage and clipping using safe_crop_numpy
@@ -1707,6 +1749,20 @@ class RuleOrchestratedPipeline:
                 comp_result = compressor.compress_output(
                     prepared_image, plan.compression_config
                 )
+                if alternate_prepared is not None:
+                    # DEC-076: the same ceiling and the same search, so the
+                    # alternate is a compliant file in its own right rather
+                    # than a preview of one. If it cannot be compressed under
+                    # the ceiling it is dropped and there is simply nothing to
+                    # toggle to -- never served as though it passed.
+                    try:
+                        alt = compressor.compress_output(
+                            alternate_prepared, plan.compression_config
+                        )
+                        if alt.validation.is_valid:
+                            alternate_encoded_bytes = alt.encoded_bytes
+                    except Exception:  # noqa: BLE001
+                        alternate_encoded_bytes = None
                 dur_stage = (time.perf_counter() - t_stage) * 1000.0
 
                 # Validate result
@@ -1966,6 +2022,7 @@ class RuleOrchestratedPipeline:
             encoded_bytes=comp_result.encoded_bytes
             if comp_result is not None
             else None,
+            alternate_encoded_bytes=alternate_encoded_bytes,
             refined_alpha_mask=ref_result.refined_alpha_mask
             if ref_result is not None
             else None,

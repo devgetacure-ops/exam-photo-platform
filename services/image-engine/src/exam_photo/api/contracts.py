@@ -52,6 +52,11 @@ class ProcessImageResponse(BaseModel):
     #: good case and worth saying out loud: the photograph needed nothing.
     enhancement_enabled: bool = True
     enhancements_applied: List[str] = Field(default_factory=list)
+    #: DEC-076. Whether `POST /v1/jobs/{id}/enhancement` can switch this job
+    #: instantly. False means there is nothing to switch to -- the photograph
+    #: needed no correction, so both variants would be the same image -- and
+    #: the control should not be offered.
+    enhancement_switchable: bool = False
 
 
 class JobStatusResponse(BaseModel):
@@ -86,6 +91,11 @@ class JobStatusResponse(BaseModel):
     #: good case and worth saying out loud: the photograph needed nothing.
     enhancement_enabled: bool = True
     enhancements_applied: List[str] = Field(default_factory=list)
+    #: DEC-076. Whether `POST /v1/jobs/{id}/enhancement` can switch this job
+    #: instantly. False means there is nothing to switch to -- the photograph
+    #: needed no correction, so both variants would be the same image -- and
+    #: the control should not be offered.
+    enhancement_switchable: bool = False
 
 
 class JobRetentionResponse(BaseModel):
@@ -140,6 +150,12 @@ class KitOrderResponse(BaseModel):
     currency: str
     #: Publishable. Identifies the account and authorises nothing on its own.
     key_id: str
+
+
+class EnhancementToggleRequest(BaseModel):
+    """Turn the lighting correction on or off for a prepared job (DEC-076)."""
+
+    enabled: bool
 
 
 class EmailDeliveryRequest(BaseModel):
@@ -368,6 +384,11 @@ class PrepareRequirementResponse(BaseModel):
     # telling them rather than hiding.
     enhancement_enabled: bool = True
     enhancements_applied: List[str] = Field(default_factory=list)
+    #: DEC-076. Whether `POST /v1/jobs/{id}/enhancement` can switch this job
+    #: instantly. False means there is nothing to switch to -- the photograph
+    #: needed no correction, so both variants would be the same image -- and
+    #: the control should not be offered.
+    enhancement_switchable: bool = False
 
     #: Everything the pipeline reported rather than raised.
     findings: List[str] = Field(default_factory=list)

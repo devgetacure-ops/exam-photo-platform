@@ -27,6 +27,7 @@ from exam_photo.api.contracts import (
     DocumentPlanResponse,
     EmailDeliveryRequest,
     EmailDeliveryResponse,
+    EnhancementToggleRequest,
     ExamDetailResponse,
     ExamListResponse,
     ExamSummaryResponse,
@@ -56,6 +57,7 @@ from exam_photo.api.payments import (
     verify_and_read,
 )
 from exam_photo.api.pricing import quote_for
+from exam_photo.api.progress import json_safe
 from exam_photo.api.protection import (
     AllowanceExceededError,
     ChallengeFailedError,
@@ -545,6 +547,7 @@ def _preparation_response(
         entitlement=record.entitlement,
         enhancement_enabled=record.enhancement_enabled,
         enhancements_applied=list(record.enhancements_applied),
+        enhancement_switchable=bool(record.alternate_output_filename),
         findings=list(record.findings),
         is_blank=record.is_blank,
         ceiling_was_unpublished=record.ceiling_was_unpublished,
@@ -570,6 +573,7 @@ async def prepare_requirement(
     request: Request = None,  # type: ignore[assignment]  # noqa: B008
     cf_turnstile_response: Optional[str] = Form(default=None),  # noqa: B008
     enhancement_enabled: bool = Form(default=True),  # noqa: B008
+    progress_token: Optional[str] = Form(default=None),  # noqa: B008
 ) -> PrepareRequirementResponse:
     """Prepare one item of one examination.
 
@@ -617,6 +621,10 @@ async def prepare_requirement(
     job_id = service.generate_job_id()
     if kit:
         service.usage.record_preparation(kit)
+    # DEC-075. Opened before the concurrency slot, so a candidate waiting
+    # behind a full queue sees "queued" rather than nothing at all.
+    if progress_token:
+        service.progress.start(progress_token)
 
     # Bounded concurrency, not a per-IP quota (DEC-064). The slot is taken
     # after the support gate and the upload read, so a refused requirement or
@@ -634,6 +642,7 @@ async def prepare_requirement(
                     # offered as a choice: it is what makes a signature legible
                     # (DEC-050), not a look applied to a face.
                     enhancement_enabled=enhancement_enabled,
+                    progress_token=progress_token,
                     kit_id=kit,
                     exam_id=exam_id,
                     requirement=requirement,
@@ -649,7 +658,18 @@ async def prepare_requirement(
                     kit_id=kit,
                 )
     except ServiceBusyError as err:
+        if progress_token:
+            service.progress.finish(progress_token, failed=True)
         raise _busy(err) from err
+    except Exception:
+        if progress_token:
+            service.progress.finish(progress_token, failed=True)
+        raise
+    finally:
+        # Closed on every path, so a poller is never left watching a bar that
+        # will not move again.
+        if progress_token:
+            service.progress.finish(progress_token)
 
     return _preparation_response(record, exam_id, requirement)
 
@@ -863,6 +883,7 @@ def get_job_status(job_id: str) -> JobStatusResponse:
         extendable=service.job_is_extendable(record),
         enhancement_enabled=record.enhancement_enabled,
         enhancements_applied=list(record.enhancements_applied),
+        enhancement_switchable=bool(record.alternate_output_filename),
         rule_compliant=record.rule_compliant,
         visual_quality_acceptable=record.visual_quality_acceptable,
         portrait_quality_report=record.portrait_quality_report,
@@ -1012,6 +1033,24 @@ def extend_job_retention(job_id: str) -> JobRetentionResponse:
         expires_at=record.expires_at,
         extendable=service.job_is_extendable(record),
     )
+
+
+@app.get("/v1/progress/{token}")
+def get_progress(token: str) -> dict[str, object]:
+    """How far a preparation has got (DEC-075).
+
+    Polled alongside the preparation, which is still a blocking request. The
+    client mints the token because the job id does not exist until the work
+    finishes, so it cannot be what identifies work in flight.
+
+    An unknown token is `404` rather than a zeroed state: "I have never heard
+    of this" and "this has not started yet" are different answers, and a
+    client that cannot tell them apart will wait forever on a typo.
+    """
+    state = service.progress.get(token)
+    if state is None:
+        raise HTTPException(status_code=404, detail="No progress for that token")
+    return json_safe(state)
 
 
 @app.get("/v1/kits/{kit_id}/quote", response_model=KitQuoteResponse)
@@ -1203,6 +1242,30 @@ def get_usage_metrics() -> dict[str, object]:
     one script and a thousand candidates describes neither.
     """
     return service.usage.summary()
+
+
+@app.post("/v1/jobs/{job_id}/enhancement", response_model=JobStatusResponse)
+def set_job_enhancement(job_id: str, request: EnhancementToggleRequest) -> Any:
+    """Switch a prepared photograph's lighting variant, instantly (DEC-076).
+
+    Both variants were made during the one preparation, so this costs a file
+    swap and a re-rendered preview rather than another ten seconds of the
+    pipeline. Available before payment, which is the point: the candidate
+    decides against the real result, and what they buy is what they chose.
+    """
+    if not JOB_ID_REGEX.match(job_id):
+        raise HTTPException(status_code=400, detail="Invalid job ID format")
+
+    record = _job_or_expired(job_id)
+    if not record or record.status == ApiJobStatus.DELETED:
+        raise HTTPException(status_code=404, detail="Job not found")
+
+    try:
+        service.set_enhancement(record, request.enabled)
+    except LookupError as err:
+        raise HTTPException(status_code=409, detail=str(err)) from None
+
+    return get_job_status(job_id)
 
 
 @app.post("/v1/payments/razorpay/webhook")
