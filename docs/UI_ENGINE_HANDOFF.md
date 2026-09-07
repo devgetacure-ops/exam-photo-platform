@@ -279,3 +279,43 @@ Two other states worth handling:
 
 Neither is per-IP, and neither ever will be: carrier-grade NAT puts thousands
 of candidates behind one address.
+
+## Intelligent lighting: the toggle, and what to say about it
+
+2026-09-07, DEC-074. The correction itself is not new -- it has been running on
+every photograph since DEC-043, calibrated against the labelled photo set. What
+is new is that the **candidate decides**, and that the service now tells you
+what it did.
+
+**Send `enhancement_enabled`** as a form field on the preparation call. Absent,
+it defaults to `true`.
+
+**Read two fields back**, on both `PrepareRequirementResponse` and
+`JobStatusResponse`:
+
+| Field | Meaning |
+|---|---|
+| `enhancement_enabled` | what the candidate asked for |
+| `enhancements_applied` | what the model decided this photograph needed |
+
+**The interesting case is `enabled: true` with an empty `applied`.** That is not
+a failure and it is not nothing -- it means the photograph was already good and
+we deliberately left it alone. Say so. *"Your photograph needed no correction"*
+is a better moment than silence, and it is the honest version of a feature that
+would otherwise look like it does nothing.
+
+When `applied` is non-empty it holds short human-readable strings, one per
+correction actually made. Show them; they are written for a candidate, not for
+a log.
+
+**Two things to design around:**
+
+1. **Toggling costs a re-preparation** — about ten seconds. The correction
+   happens inside the pipeline and there is no cheaper path. So the toggle
+   belongs where a candidate makes a considered choice, not as something they
+   flick back and forth to compare. If you want a comparison, prepare once each
+   way and show both; just know it is two preparations.
+2. **The toggle is for photographs only.** Signatures, thumb impressions and
+   declarations are corrected unconditionally, because on paper the correction
+   is what makes the mark legible rather than a look applied to a face
+   (DEC-050). Do not show the control on those requirements.

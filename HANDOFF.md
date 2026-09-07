@@ -271,9 +271,12 @@ puts the product's worst failure mode back on the table.
    deciding a claim is **delivery evidence** -- whether the candidate actually
    received the file. `_orders/` is never swept and will need a retention
    decision of its own.
-2. **Delivery.** Download, email, and a `wa.me` share link — the candidate
-   sends it themselves, which needs no WhatsApp Business integration and routes
-   no candidate photograph through Meta.
+2. ~~**Delivery.**~~ **Built (DEC-072).** `POST /v1/kits/{id}/email` sends the
+   paid files so they outlive the thirty-minute window; downloads and sends are
+   recorded, and `GET /v1/orders/{id}/evidence` is what a refund claim is
+   decided against. The address is used and not stored -- only a masked form is
+   kept. `wa.me` is the interface's and needs nothing from the engine. **Refund
+   *processing* is not built**: this decides a claim, it does not move money.
 3. **Multi-page documents** via `planDocument` → arrange → `assembleDocument`.
 4. **The package.** Nothing calls `getKitPackage` yet, so there is no ZIP and
    no checklist at the end. The rail's price button is a placeholder. Note the

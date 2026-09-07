@@ -215,6 +215,12 @@ class RulePipelineConfig(BaseModel):
 
     quality_mode: str = Field(default="balanced", pattern="^(fast|balanced|high)$")
 
+    # DEC-074. Whether the natural enhancement of DEC-043 runs at all. The
+    # candidate decides, before they pay, and the default is on because the
+    # planner already declines to touch a photograph that needs nothing --
+    # a correctly exposed capture comes out of it byte-identical either way.
+    enhancement_enabled: bool = True
+
     default_background_colour_hex: str = "#FFFFFF"
     default_maximum_bytes: int | None = None
 
@@ -1417,7 +1423,9 @@ class RuleOrchestratedPipeline:
                 # adjustment meant for the subject.
                 tone = (
                     measure_face_tone(norm_result.image, [face])
-                    if norm_result is not None and face is not None
+                    if config.enhancement_enabled
+                    and norm_result is not None
+                    and face is not None
                     else None
                 )
                 if tone is not None:

@@ -47,6 +47,11 @@ class ProcessImageResponse(BaseModel):
     matte_quality_report: Optional[dict[str, Any]] = None
     quality_mode: Optional[str] = None
     diagnostic_available: Optional[bool] = None
+    #: DEC-074. The candidate's lighting choice, and what it actually did.
+    #: `enhancement_enabled` true with an empty `enhancements_applied` is the
+    #: good case and worth saying out loud: the photograph needed nothing.
+    enhancement_enabled: bool = True
+    enhancements_applied: List[str] = Field(default_factory=list)
 
 
 class JobStatusResponse(BaseModel):
@@ -65,6 +70,7 @@ class JobStatusResponse(BaseModel):
     preview_url: Optional[str] = None
     preview_watermarked: bool = False
     entitlement: JobEntitlement = JobEntitlement.PREVIEW_ONLY
+
     #: DEC-067. Additive, so nothing breaks while it is unread. Whether
     #: `POST /v1/jobs/{job_id}/extend` would currently buy this job more
     #: time -- false once it has reached its lifetime ceiling.
@@ -75,6 +81,11 @@ class JobStatusResponse(BaseModel):
     matte_quality_report: Optional[dict[str, Any]] = None
     quality_mode: Optional[str] = None
     diagnostic_available: Optional[bool] = None
+    #: DEC-074. The candidate's lighting choice, and what it actually did.
+    #: `enhancement_enabled` true with an empty `enhancements_applied` is the
+    #: good case and worth saying out loud: the photograph needed nothing.
+    enhancement_enabled: bool = True
+    enhancements_applied: List[str] = Field(default_factory=list)
 
 
 class JobRetentionResponse(BaseModel):
@@ -348,6 +359,15 @@ class PrepareRequirementResponse(BaseModel):
     preview_url: Optional[str] = None
     preview_watermarked: bool = False
     entitlement: JobEntitlement = JobEntitlement.PREVIEW_ONLY
+
+    # --- Intelligent lighting (DEC-074) -----------------------------------
+    #
+    # `enhancement_enabled` is what the candidate asked for. `enhancements_
+    # applied` is what the planner decided this photograph actually needed --
+    # empty means it needed nothing, which is the common case and is worth
+    # telling them rather than hiding.
+    enhancement_enabled: bool = True
+    enhancements_applied: List[str] = Field(default_factory=list)
 
     #: Everything the pipeline reported rather than raised.
     findings: List[str] = Field(default_factory=list)

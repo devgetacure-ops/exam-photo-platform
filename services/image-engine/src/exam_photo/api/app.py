@@ -543,6 +543,8 @@ def _preparation_response(
         ),
         preview_watermarked=record.preview_watermarked,
         entitlement=record.entitlement,
+        enhancement_enabled=record.enhancement_enabled,
+        enhancements_applied=list(record.enhancements_applied),
         findings=list(record.findings),
         is_blank=record.is_blank,
         ceiling_was_unpublished=record.ceiling_was_unpublished,
@@ -567,6 +569,7 @@ async def prepare_requirement(
     quality_mode: str = Query(default="balanced"),  # noqa: B008
     request: Request = None,  # type: ignore[assignment]  # noqa: B008
     cf_turnstile_response: Optional[str] = Form(default=None),  # noqa: B008
+    enhancement_enabled: bool = Form(default=True),  # noqa: B008
 ) -> PrepareRequirementResponse:
     """Prepare one item of one examination.
 
@@ -627,6 +630,10 @@ async def prepare_requirement(
                     rule_dict=rule.model_dump(mode="json", exclude_none=True),
                     allow_invalid_output=allow_invalid_output,
                     quality_mode=quality_mode,
+                    # DEC-074. The photograph path only. Ink correction is not
+                    # offered as a choice: it is what makes a signature legible
+                    # (DEC-050), not a look applied to a face.
+                    enhancement_enabled=enhancement_enabled,
                     kit_id=kit,
                     exam_id=exam_id,
                     requirement=requirement,
@@ -854,6 +861,8 @@ def get_job_status(job_id: str) -> JobStatusResponse:
         preview_watermarked=record.preview_watermarked,
         entitlement=record.entitlement,
         extendable=service.job_is_extendable(record),
+        enhancement_enabled=record.enhancement_enabled,
+        enhancements_applied=list(record.enhancements_applied),
         rule_compliant=record.rule_compliant,
         visual_quality_acceptable=record.visual_quality_acceptable,
         portrait_quality_report=record.portrait_quality_report,

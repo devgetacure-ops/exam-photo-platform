@@ -995,6 +995,7 @@ class ApiProcessingService:
         rule_dict: Dict[str, Any],
         allow_invalid_output: bool = False,
         quality_mode: str = "balanced",
+        enhancement_enabled: bool = True,
         save_diagnostic_artifacts: bool = False,
         kit_id: Optional[str] = None,
         exam_id: Optional[str] = None,
@@ -1013,6 +1014,12 @@ class ApiProcessingService:
         record.status = ApiJobStatus.PROCESSING
         record.kit_id = kit_id
         record.exam_id = exam_id
+        # DEC-074. Written here, with the other inputs, rather than with the
+        # outcomes below: the candidate's choice is a fact about the request
+        # and must survive a pipeline failure. Recorded on the success path
+        # only, a failed job would report the default and misrepresent what
+        # they asked for.
+        record.enhancement_enabled = enhancement_enabled
         if requirement is not None:
             record.requirement_id = requirement.requirement_id
             record.requirement_type = requirement.requirement_type.value
@@ -1044,6 +1051,7 @@ class ApiProcessingService:
                 allow_invalid_output=allow_invalid_output,
                 output_dir=job_dir,
                 quality_mode=quality_mode,
+                enhancement_enabled=enhancement_enabled,
             )
 
             # 3. Execute pipeline
@@ -1084,6 +1092,9 @@ class ApiProcessingService:
             record.portrait_quality_report = result.portrait_quality_report
             record.matte_quality_report = result.matte_quality_report
             record.quality_mode = quality_mode
+            # DEC-074: what the planner actually did, which is an outcome and
+            # so belongs here. Empty means the photograph needed nothing.
+            record.enhancements_applied = list(result.enhancements_applied)
             record.diagnostic_available = save_diagnostic_artifacts
             record.output_media_type = (
                 _media_type_for(record.output_filename)

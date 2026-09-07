@@ -62,6 +62,11 @@ class ProcessingJobRecord(BaseModel):
     matte_quality_report: Optional[dict[str, Any]] = None
     quality_mode: Optional[str] = None
     diagnostic_available: Optional[bool] = None
+    # DEC-074. The candidate's choice, and what the planner actually did with
+    # it. An empty `enhancements_applied` with `enhancement_enabled` true is
+    # the good case: the photograph needed nothing.
+    enhancement_enabled: bool = True
+    enhancements_applied: List[str] = Field(default_factory=list)
 
     # --- Kit and requirement identity (DEC-055, DEC-058) -------------------
     #
