@@ -265,7 +265,12 @@ puts the product's worst failure mode back on the table.
    cannot ask to be charged less. Rs 3 / Rs 5 / Rs 8, document work free, and
    the top tier is a ceiling. What is left is the **UI half**: checkout must go
    quote -> order -> poll `entitlement`, and must not compute a price
-   (`docs/UI_ENGINE_HANDOFF.md`). Refunds are not built.
+   (`docs/UI_ENGINE_HANDOFF.md`). The order pins the exact files it was priced
+   from (DEC-071), so a file prepared during checkout stays gated rather than
+   riding along free. **Refunds are not built**, and the missing half of
+   deciding a claim is **delivery evidence** -- whether the candidate actually
+   received the file. `_orders/` is never swept and will need a retention
+   decision of its own.
 2. **Delivery.** Download, email, and a `wa.me` share link — the candidate
    sends it themselves, which needs no WhatsApp Business integration and routes
    no candidate photograph through Meta.

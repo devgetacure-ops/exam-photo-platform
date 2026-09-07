@@ -1006,7 +1006,8 @@ def create_kit_order(kit_id: str) -> KitOrderResponse:
     if not KIT_ID_REGEX.match(kit_id):
         raise HTTPException(status_code=400, detail="Invalid kit ID format")
 
-    quote = quote_for(service.registry.jobs_in_kit(kit_id))
+    records = service.registry.jobs_in_kit(kit_id)
+    quote = quote_for(records)
     if not quote.is_payable:
         # Nothing to charge for: an empty kit, one already paid, or one that
         # holds only document work, which is free. Sending a zero-amount order
@@ -1025,6 +1026,28 @@ def create_kit_order(kit_id: str) -> KitOrderResponse:
         )
     except OrderCreationError as err:
         print(f"razorpay order creation failed for {kit_id}: {err}")
+        raise HTTPException(
+            status_code=503,
+            detail="Payment could not be started. Please try again shortly.",
+        ) from None
+
+    # DEC-071: remember exactly what was priced, so the payment releases that
+    # set and not whatever the kit holds when the webhook arrives. Every live
+    # job is recorded, not only the charged ones -- document work is free
+    # *with* a purchase, so it is delivered by the same payment.
+    try:
+        service.orders.create(
+            order_id=order.order_id,
+            kit_id=kit_id,
+            job_ids=[line.job_id for line in quote.lines],
+            amount_paise=order.amount_paise,
+            currency=order.currency,
+        )
+    except (ValueError, OSError) as err:
+        # The order exists at Razorpay but we could not record it. Refusing is
+        # right: paying against an order we cannot resolve would release
+        # nothing and take the money.
+        print(f"could not record order {order.order_id} for {kit_id}: {err}")
         raise HTTPException(
             status_code=503,
             detail="Payment could not be started. Please try again shortly.",

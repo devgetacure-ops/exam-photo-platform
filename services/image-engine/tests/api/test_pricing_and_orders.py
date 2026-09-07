@@ -376,3 +376,151 @@ def test_a_paid_order_releases_exactly_what_was_quoted(api):
     assert client.get("/v1/jobs/job_a/output").status_code == 200
     # And the kit is now settled: nothing further to charge for.
     assert client.get(f"/v1/kits/{KIT}/quote").json()["is_payable"] is False
+
+
+# ----------------------------------------------------------------------
+# The order is the purchase, not the kit (DEC-071)
+# ----------------------------------------------------------------------
+
+
+def _pay_for(order_id: str, secret: str, kit_id: str = KIT, amount: int = 500):
+    import hashlib
+    import hmac
+
+    body = json.dumps(
+        {
+            "event": "order.paid",
+            "payload": {
+                "order": {
+                    "entity": {
+                        "id": order_id,
+                        "amount": amount,
+                        "currency": "INR",
+                        "notes": {"kit_id": kit_id},
+                    }
+                },
+                "payment": {
+                    "entity": {
+                        "id": "pay_race",
+                        "amount": amount,
+                        "currency": "INR",
+                        "notes": {},
+                    }
+                },
+            },
+        }
+    ).encode()
+    signature = hmac.new(secret.encode(), body, hashlib.sha256).hexdigest()
+    return client.post(
+        "/v1/payments/razorpay/webhook",
+        content=body,
+        headers={"X-Razorpay-Signature": signature},
+    )
+
+
+def test_a_file_prepared_after_the_order_is_not_released_by_it(api):
+    """The race DEC-070 accepted and DEC-071 closed.
+
+    Two files are quoted at Rs 5 and ordered. A third is prepared before the
+    payment lands. The payment must release the two that were paid for and
+    leave the third gated -- otherwise three files go out against a
+    two-file price.
+    """
+    secret = "webhook-secret"
+    api.settings = api.settings.model_copy(update={"razorpay_webhook_secret": secret})
+    _job(api, "job_a", "photograph")
+    _job(api, "job_b", "signature")
+
+    order = client.post(f"/v1/kits/{KIT}/order").json()
+    assert order["amount_paise"] == 500
+
+    # The candidate prepares another file while Checkout is open.
+    _job(api, "job_late", "thumb_impression")
+
+    outcome = _pay_for(order["order_id"], secret).json()
+
+    assert sorted(outcome["released"]) == ["job_a", "job_b"]
+    assert api.registry.get_job("job_late").entitlement == JobEntitlement.PREVIEW_ONLY
+    assert client.get("/v1/jobs/job_late/output").status_code == 402
+
+
+def test_the_late_file_can_still_be_bought_on_its_own(api):
+    """Leaving it gated must not strand it: the next quote prices just that one."""
+    secret = "webhook-secret"
+    api.settings = api.settings.model_copy(update={"razorpay_webhook_secret": secret})
+    _job(api, "job_a", "photograph")
+    _job(api, "job_b", "signature")
+    order = client.post(f"/v1/kits/{KIT}/order").json()
+    _job(api, "job_late", "thumb_impression")
+    _pay_for(order["order_id"], secret)
+
+    quote = client.get(f"/v1/kits/{KIT}/quote").json()
+
+    assert quote["amount_paise"] == 300
+    assert quote["chargeable_count"] == 1
+    assert quote["already_released_count"] == 2
+
+
+def test_free_document_work_is_delivered_by_the_same_payment(api):
+    """Certificates are free *with* a purchase, so the order must carry them."""
+    secret = "webhook-secret"
+    api.settings = api.settings.model_copy(update={"razorpay_webhook_secret": secret})
+    _job(api, "job_photo", "photograph")
+    _job(api, "job_cert", "certificate_scan")
+
+    order = client.post(f"/v1/kits/{KIT}/order").json()
+    outcome = _pay_for(order["order_id"], secret, amount=300).json()
+
+    assert sorted(outcome["released"]) == ["job_cert", "job_photo"]
+
+
+def test_the_order_record_keeps_the_trail_a_refund_needs(api):
+    secret = "webhook-secret"
+    api.settings = api.settings.model_copy(update={"razorpay_webhook_secret": secret})
+    _job(api, "job_a", "photograph")
+    order_id = client.post(f"/v1/kits/{KIT}/order").json()["order_id"]
+
+    before = api.orders.get(order_id)
+    assert before.paid_at is None and before.amount_paise == 300
+
+    _pay_for(order_id, secret, amount=300)
+
+    after = api.orders.get(order_id)
+    assert after.paid_at and after.payment_reference == "pay_race"
+    assert after.job_ids == ["job_a"]
+
+
+def test_the_order_record_outlives_the_files_it_paid_for(api):
+    """Retention erases the photograph; the evidence of payment must remain."""
+    secret = "webhook-secret"
+    api.settings = api.settings.model_copy(update={"razorpay_webhook_secret": secret})
+    _job(api, "job_a", "photograph")
+    order_id = client.post(f"/v1/kits/{KIT}/order").json()["order_id"]
+    _pay_for(order_id, secret, amount=300)
+
+    from datetime import datetime, timedelta, timezone
+
+    record = api.registry.get_job("job_a")
+    record.expires_at = (datetime.now(timezone.utc) - timedelta(minutes=1)).isoformat()
+    api.registry.update_job(record)
+    assert client.get("/v1/jobs/job_a/output").status_code == 404
+
+    assert api.orders.get(order_id).paid_at is not None
+
+
+def test_an_order_we_did_not_create_falls_back_to_the_notes(api):
+    """An operator can raise an order by hand in the Razorpay dashboard."""
+    secret = "webhook-secret"
+    api.settings = api.settings.model_copy(update={"razorpay_webhook_secret": secret})
+    _job(api, "job_a", "photograph")
+
+    outcome = _pay_for("order_neverCreatedHere", secret, amount=300).json()
+
+    assert outcome["released"] == ["job_a"]
+
+
+def test_an_order_id_cannot_walk_out_of_its_directory(api):
+    """The id becomes a filename and arrives in an untrusted payload."""
+    with pytest.raises(ValueError):
+        api.orders.create("../../escape", KIT, ["job_a"], 300, "INR")
+    assert api.orders.get("../../escape") is None

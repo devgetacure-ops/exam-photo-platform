@@ -18,6 +18,7 @@ from exam_photo.api.jobs import (
     ProcessingJobRecord,
     parse_manifest_timestamp,
 )
+from exam_photo.api.orders import OrderRegistry
 from exam_photo.api.payments import ReleaseInstruction
 from exam_photo.api.razorpay_orders import OrderGateway, gateway_for
 from exam_photo.api.settings import ApiSettings
@@ -177,6 +178,8 @@ class ApiProcessingService:
         self.settings = settings
         self.store = LocalArtifactStore(settings.artifact_root)
         self.registry = JobRegistry(settings.artifact_root)
+        #: Orders outlive the files they paid for (DEC-071).
+        self.orders = OrderRegistry(settings.artifact_root)
         #: Overwritten wholesale in tests, like `store` and `registry`, so no
         #: test ever reaches api.razorpay.com (DEC-070).
         self._order_gateway: Optional[OrderGateway] = None
@@ -702,6 +705,27 @@ class ApiProcessingService:
         """
         released: list[str] = []
         unknown: list[str] = []
+
+        # DEC-071. An order we created names the exact jobs it was priced
+        # from, so it -- not the kit -- decides what this payment releases. A
+        # file prepared after the order is simply not in it, which is what
+        # makes the quote and the release the same set by construction rather
+        # than by timing.
+        order = self.orders.get(instruction.order_id or "")
+        if order is not None:
+            self.orders.mark_paid(order.order_id, instruction.payment_id)
+            for job_id in order.job_ids:
+                try:
+                    self.release_job(job_id, payment=instruction)
+                except KeyError:
+                    unknown.append(job_id)
+                else:
+                    released.append(job_id)
+            return {
+                "released": list(dict.fromkeys(released)),
+                "unknown": list(dict.fromkeys(unknown)),
+                "order_id": order.order_id,
+            }
 
         for job_id in instruction.job_ids:
             try:

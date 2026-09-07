@@ -114,12 +114,14 @@ def verify_and_read(
     Raises `WebhookRejectedError` when the request is not a verified webhook at all.
 
     **What this does not check: the amount.** `amount` is carried through for
-    reconciliation, but nothing here knows what the candidate owed, so nothing
-    here can tell a full payment from a rupee. Binding an amount to a job is
-    the job of server-side order creation -- an order the service itself
-    creates, at a price the service computes -- and until that exists this
-    webhook must not be pointed at a live Razorpay account. DEC-069 records
-    this as the companion piece rather than leaving it to be discovered.
+    reconciliation, and checking it here would prove nothing, because nothing
+    in this module knows what the candidate owed. The amount is bound to the
+    purchase elsewhere and earlier: `api/razorpay_orders.py` creates the order
+    server-side at a price `api/pricing.py` computed (DEC-070), and
+    `api/orders.py` records the exact jobs it was priced from (DEC-071).
+    Razorpay guarantees a payment matches its order, so a verified event for
+    an order we created is already proof of our figure by the time it reaches
+    here.
     """
     if not secret:
         # Refusing here rather than reading the payload follows DEC-060: a host

@@ -183,3 +183,47 @@ Document work is free.
 one already paid, or one holding only free document work. `503` means the
 payment provider could not be reached; the message is candidate-safe and
 carries no gateway text.
+
+**One correction to the above (DEC-071).** The order now pins the exact files
+it was priced from, rather than releasing whatever the kit holds when payment
+lands. So a file prepared while Checkout is open stays gated and is priced on
+its own in the next quote -- it is not silently included. Nothing changes in
+how you call the two endpoints; it means the number you showed and the files
+that arrive can no longer disagree.
+
+## Candidate redesign integration — Codex, 7 September 2026
+
+The new UI calls quote -> server order -> Razorpay Checkout -> polls job
+entitlement. No amount is sent to the order endpoint, no browser release exists,
+and a Checkout success callback does not unlock a file. The quote must cover
+only files visible in the review. An order with a changed amount requires a new
+review. Checkout-in-progress disables preparation controls, and pending checkout
+references survive reload in session storage. Files are independently gated by
+server release and authoritative expiry. Retention extension was verified against
+the running API with a fictional signature; deadlines and preview expiry share
+polling state.
+
+Shared-client consolidation request: the additive LiveJob, Quote and Order
+contracts are temporarily declared in `components/exam/kit-checkout.tsx`; neither
+`lib/types.ts` nor `api-client.ts` was edited. Move these into the engine-owned
+shared contract when coordinating the next change. A selected subset of an
+already prepared kit needs server-side order selection; current UI explicitly
+purchases the prepared kit. Selecting which requirements to prepare remains free.
+
+The running API's OpenAPI exposes prepare and extend but not quote/order; the
+UI therefore truthfully shows checkout unavailable. No live payment was made.
+Unit integration tests exercise the server quote, order id, entitlement gate,
+expiry and mismatched review. Provider and webhook live verification remains.
+
+Pending engine contracts: lighting control and adjustment disclosure, real staged
+progress, sourced exam facts, email delivery. Lighting is shown disabled, progress
+is indeterminate, facts are not fabricated, and WhatsApp shares only the public
+exam page. Users may download and attach files themselves; automatic email or
+WhatsApp attachment delivery is not claimed.
+
+Legacy portrait provenance remains a merge check: assets/README.md describes a
+European GAN reference, whereas the current portrait-studio.png depicts a different
+Indian-looking subject. The current brief calls these fictional, but the original
+generation evidence has not been provided. Do not rewrite history automatically.
+The new hero illustration has explicit in-run ImageGen provenance recorded in
+UI_REDESIGN_PLAN_2026_09_07.md and an exact-file gitignore exception.
