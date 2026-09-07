@@ -1,0 +1,87 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "haryana-teacher-eligibility-test",
+  "rule_version": "1.0.0",
+  "status": "provisional",
+  "exam": {
+    "exam_id": "haryana-teacher-eligibility-test",
+    "exam_name": "Haryana Teacher Eligibility Test",
+    "conducting_body": "Board of School Education Haryana",
+    "examination_year": 2026,
+    "application_cycle": "2026",
+    "application_stage": "application",
+    "jurisdiction": "Haryana",
+    "category": "teacher_eligibility",
+    "aliases": []
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_webpage",
+      "official_source": true,
+      "captured_wording": "not_found",
+      "source_url": "https://bseh.org.in/"
+    }
+  ],
+  "requirements": [
+    {
+      "requirement_id": "candidate_photograph",
+      "requirement_name": "Candidate photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "portal_dependent",
+      "platform_support": "not_yet_supported",
+      "applicability": "As required by the active authority application/notification",
+      "content_instructions": "not_found",
+      "evidence_status": "Application asset identified at authority/application-family level; exact current technical specification and, where noted, conditionality were not fully established.",
+      "notes": "This row is intentionally evidence-gated. No numeric value or format has been inferred from secondary sources."
+    },
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate signature",
+      "requirement_type": "signature",
+      "submission_method": "file_upload",
+      "requirement_status": "portal_dependent",
+      "platform_support": "supported",
+      "applicability": "As required by the active authority application/notification",
+      "content_instructions": "not_found",
+      "evidence_status": "Application asset identified at authority/application-family level; exact current technical specification and, where noted, conditionality were not fully established.",
+      "notes": "This row is intentionally evidence-gated. No numeric value or format has been inferred from secondary sources.",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 20000,
+          "minimum_bytes": 10000
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "requirements[1].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[1].file_spec.file_size.minimum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[1].file_spec.formats.allowed_formats": {
+      "type": "interim_default",
+      "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
+      "confidence": 1,
+      "approved": false
+    }
+  },
+  "verification": {
+    "verification_status": "provisional"
+  },
+  "fictional_example": false
+}

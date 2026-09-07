@@ -1,0 +1,68 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "rajasthan-grade-iv-recruitment",
+  "rule_version": "1.0.0",
+  "status": "provisional",
+  "exam": {
+    "exam_id": "rajasthan-grade-iv-recruitment",
+    "exam_name": "Rajasthan Grade IV Recruitment",
+    "conducting_body": "Rajasthan Staff Selection Board",
+    "examination_year": 2025,
+    "application_cycle": "2025",
+    "application_stage": "application",
+    "jurisdiction": "Rajasthan",
+    "category": "state_recruitment",
+    "aliases": []
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "live photo / e-KYC workflow",
+      "source_url": "https://rssb.rajasthan.gov.in/storage/news_item/1725517195.pdf",
+      "document_title": "RSSB OTR live-photo/e-KYC notice",
+      "document_identifier": "SRC-RSSB-OTR",
+      "section_name": "photo.capture_policy"
+    }
+  ],
+  "requirements": [
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate signature",
+      "requirement_type": "signature",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants unless the cited notice states otherwise",
+      "content_instructions": "JPEG; 20–50 KB",
+      "evidence_status": "Official source-qualified rule in supplied FINAL research package",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 50000,
+          "minimum_bytes": 20000,
+          "published_minimum": 20,
+          "published_maximum": 50,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "requirements[0].file_spec.formats.allowed_formats": {
+      "type": "interim_default",
+      "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
+      "confidence": 1,
+      "approved": false
+    }
+  },
+  "verification": {
+    "verification_status": "provisional"
+  },
+  "fictional_example": false
+}

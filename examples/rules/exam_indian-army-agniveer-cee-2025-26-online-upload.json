@@ -1,0 +1,127 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "indian-army-agniveer-cee-2025-26-online-upload",
+  "rule_version": "1.0.0",
+  "status": "provisional",
+  "exam": {
+    "exam_id": "indian-army-agniveer-cee-2025-26-online-upload",
+    "exam_name": "Indian Army Agniveer CEE 2025-26 - online upload",
+    "conducting_body": "Indian Army",
+    "examination_year": 2025,
+    "application_cycle": "2025-26",
+    "application_stage": "application",
+    "jurisdiction": "India",
+    "category": "defence",
+    "aliases": []
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "passport size; white background; clean shaven; not more than three months old",
+      "source_url": "https://www.joinindianarmy.nic.in/writereaddata/Portal/BRAVO_NotificationPDF/AGNIVEER_NOTIFICATION_ARUNACHAL_PRADESH_2025-26.pdf",
+      "document_title": "Agniveer Recruitment Notification 2025-26",
+      "section_name": "Photograph / rally documents"
+    },
+    {
+      "source_type": "secondary_reference",
+      "official_source": false,
+      "captured_wording": "JPG/JPEG",
+      "source_url": "https://testbook.com/indian-army-agniveer/apply-online",
+      "document_title": "Indian Army Agniveer upload specification"
+    }
+  ],
+  "requirements": [
+    {
+      "requirement_id": "candidate_photograph",
+      "requirement_name": "Candidate photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "not_yet_supported",
+      "applicability": "All online applicants",
+      "content_instructions": "Uploaded candidate photograph; format: JPG/JPEG; background: white; recency: within 90 days.",
+      "evidence_status": "Mixed official/secondary evidence"
+    },
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate signature",
+      "requirement_type": "signature",
+      "submission_method": "file_upload",
+      "requirement_status": "portal_dependent",
+      "platform_support": "supported",
+      "applicability": "All applicants where prompted",
+      "content_instructions": "A candidate signature is part of the online application flow, but the exact current file specification was not established in the supplied evidence.",
+      "evidence_status": "Specification not_found; active Join Indian Army portal controls",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 20000,
+          "minimum_bytes": 10000
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    },
+    {
+      "requirement_id": "aadhaar_identity_and_class_x_particulars",
+      "requirement_name": "Aadhaar/identity and Class X particulars",
+      "requirement_type": "identity_document",
+      "submission_method": "external_identity_verification",
+      "requirement_status": "portal_dependent",
+      "platform_support": "guidance_only",
+      "applicability": "All applicants",
+      "content_instructions": "Keep Aadhaar/identity and Class X certificate/marksheet available for exact name, DOB and qualification particulars. The supplied evidence does not conclusively prove a universal file upload for each item.",
+      "evidence_status": "Official portal data requirement; upload mechanism not_found"
+    },
+    {
+      "requirement_id": "category_domicile_education_certificates",
+      "requirement_name": "Category/domicile/education certificates",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Candidates for whom the portal explicitly requests the document",
+      "content_instructions": "Upload only when the active application creates an upload field. Many originals are primarily checked at the rally/document-verification stage.",
+      "evidence_status": "Stage-specific; active portal required",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 400000
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "requirements[1].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[1].file_spec.file_size.minimum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[1].file_spec.formats.allowed_formats": {
+      "type": "interim_default",
+      "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[3].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",
+      "confidence": 1,
+      "approved": false
+    }
+  },
+  "verification": {
+    "verification_status": "provisional"
+  },
+  "fictional_example": false
+}

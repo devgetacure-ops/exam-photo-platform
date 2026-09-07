@@ -1,0 +1,227 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "bpsc-current-recruitment-photograph-specification",
+  "rule_version": "1.0.0",
+  "status": "provisional",
+  "exam": {
+    "exam_id": "bpsc-current-recruitment-photograph-specification",
+    "exam_name": "BPSC Current Recruitment Photograph Specification",
+    "conducting_body": "Bihar Public Service Commission",
+    "examination_year": 2026,
+    "application_cycle": "current",
+    "application_stage": "application",
+    "jurisdiction": "Bihar",
+    "category": "state_psc",
+    "aliases": []
+  },
+  "source_evidence": [
+    {
+      "source_type": "secondary_reference",
+      "official_source": false,
+      "captured_wording": "KB; light background",
+      "source_url": "https://form-mitra.com/bpsc",
+      "document_title": "BPSC photo-resize specification page"
+    },
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "aavedak ko ek web camera ki aavashyakta hogi, jisse ve apna live photo capture karenge -- Krutidev-encoded Hindi: the applicant will need a web camera with which to capture their live photo",
+      "source_url": "https://bpsconline.bihar.gov.in/downloads/Instruction_Online_Application.pdf",
+      "document_title": "BPSC Online Application - Instructions (One Time Registration)",
+      "section_name": "Step 6: Photo and signature"
+    }
+  ],
+  "requirements": [
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate signature",
+      "requirement_type": "signature",
+      "submission_method": "file_upload",
+      "requirement_status": "portal_dependent",
+      "platform_support": "supported",
+      "applicability": "All applicants where the OTR/application asks for it",
+      "content_instructions": "A separate signature is normally part of the PSC profile/application, but the exact current file specification was not established by the supplied photograph-only evidence. Follow the active portal.",
+      "evidence_status": "Not fully established; not_found for exact specification",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 20000,
+          "minimum_bytes": 10000
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    },
+    {
+      "requirement_id": "claim_supporting_certificates",
+      "requirement_name": "Claim-supporting certificates",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Candidates claiming reservation, disability, domicile, age relaxation, experience or a post-specific qualification",
+      "content_instructions": "Upload only the certificate explicitly requested by that examination and category. The exact list is notification-specific and was not fully established in the supplied photograph evidence.",
+      "evidence_status": "Exam-specific gap; active notification required",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 400000
+        }
+      }
+    },
+    {
+      "requirement_id": "english_signature",
+      "requirement_name": "English signature",
+      "requirement_type": "signature",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants",
+      "content_instructions": "maximum 20 KB; width 150–220 px; height 250–320 px; format and minimum not published in the cited manual",
+      "evidence_status": "Current official BPSC user manual",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 20000,
+          "published_maximum": 20,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    },
+    {
+      "requirement_id": "hindi_signature",
+      "requirement_name": "Hindi signature",
+      "requirement_type": "signature",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants",
+      "content_instructions": "maximum 20 KB; width 150–220 px; height 250–320 px; format and minimum not published in the cited manual",
+      "evidence_status": "Current official BPSC user manual",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 20000,
+          "published_maximum": 20,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    },
+    {
+      "requirement_id": "candidate_signature_english",
+      "requirement_name": "Candidate signature (English)",
+      "requirement_type": "signature",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants",
+      "content_instructions": "Not more than 20 kb; width between 150-220 pixels and height between 250-320 pixels",
+      "evidence_status": "Official BPSC online application instructions",
+      "notes": "BPSC requires two signatures, one in English and one in Hindi.",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 20000,
+          "published_maximum": 20,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    },
+    {
+      "requirement_id": "candidate_signature_hindi",
+      "requirement_name": "Candidate signature (Hindi)",
+      "requirement_type": "signature",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants",
+      "content_instructions": "Not more than 20 kb; width between 150-220 pixels and height between 250-320 pixels",
+      "evidence_status": "Official BPSC online application instructions",
+      "notes": "BPSC requires two signatures, one in English and one in Hindi.",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 20000,
+          "published_maximum": 20,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "requirements[0].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[0].file_spec.file_size.minimum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[0].file_spec.formats.allowed_formats": {
+      "type": "interim_default",
+      "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[1].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[2].file_spec.formats.allowed_formats": {
+      "type": "interim_default",
+      "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[3].file_spec.formats.allowed_formats": {
+      "type": "interim_default",
+      "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[4].file_spec.formats.allowed_formats": {
+      "type": "interim_default",
+      "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[5].file_spec.formats.allowed_formats": {
+      "type": "interim_default",
+      "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
+      "confidence": 1,
+      "approved": false
+    }
+  },
+  "verification": {
+    "verification_status": "provisional"
+  },
+  "fictional_example": false
+}

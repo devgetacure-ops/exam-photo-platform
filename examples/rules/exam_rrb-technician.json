@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "rrb-technician",
+  "rule_version": "1.0.0",
+  "status": "provisional",
+  "exam": {
+    "exam_id": "rrb-technician",
+    "exam_name": "RRB Technician",
+    "conducting_body": "Railway Recruitment Boards",
+    "examination_year": 2025,
+    "application_cycle": "CEN 02/2025",
+    "application_stage": "application",
+    "jurisdiction": "India",
+    "category": "railway_recruitment",
+    "aliases": []
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "Position yourself directly in front of the camera and look straight ahead with a neutral expression.; Do not wear a cap, mask, or glasses/spectacles while capturing the photograph.; Candidates are not required to upload a pre-existing photograph while applying. The application module is designed to capture a live photograph of the candidate at the time of filling up the application form.",
+      "source_url": "https://www.rrbcdg.gov.in/uploads/2025/02-TECH/022025-CEN_updated.pdf",
+      "document_title": "CEN 02/2025 Technician Categories — corrected CEN",
+      "section_name": "14.4 Live Photo Capturing"
+    }
+  ],
+  "requirements": [
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate signature",
+      "requirement_type": "signature",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants",
+      "content_instructions": "JPG/JPEG, 30-49 KB; minimum 140 x 60 pixels; minimum 100 DPI",
+      "evidence_status": "Official completion-pass source",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 49000,
+          "minimum_bytes": 30000,
+          "published_minimum": 30,
+          "published_maximum": 49,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "requirements[0].file_spec.formats.allowed_formats": {
+      "type": "interim_default",
+      "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
+      "confidence": 1,
+      "approved": false
+    }
+  },
+  "verification": {
+    "verification_status": "provisional"
+  },
+  "fictional_example": false
+}

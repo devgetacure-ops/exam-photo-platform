@@ -1,0 +1,140 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "mp-patwari-recruitment-examination",
+  "rule_version": "1.0.0",
+  "status": "provisional",
+  "exam": {
+    "exam_id": "mp-patwari-recruitment-examination",
+    "exam_name": "MP Patwari Recruitment Examination",
+    "conducting_body": "Madhya Pradesh Employees Selection Board",
+    "examination_year": 2023,
+    "application_cycle": "2023 high-volume baseline",
+    "application_stage": "application",
+    "jurisdiction": "Madhya Pradesh",
+    "category": "state_recruitment",
+    "aliases": []
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_webpage",
+      "official_source": true,
+      "captured_wording": "Prescribed ESB template; exact cycle-specific file size not established in this pass",
+      "source_url": "https://esb.mp.gov.in/Rulebooks/rule_books_ESB26.htm"
+    }
+  ],
+  "requirements": [
+    {
+      "requirement_id": "combined_colour_photograph_signature_and_handwri",
+      "requirement_name": "Combined colour photograph, signature and handwritten sample/template",
+      "requirement_type": "signature",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Applicants under the ESB online-form workflow",
+      "content_instructions": "Prescribed ESB template; exact cycle-specific file size not established in this pass",
+      "evidence_status": "Official MP ESB rulebook/application workflow",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 20000,
+          "minimum_bytes": 10000
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    },
+    {
+      "requirement_id": "date_of_birth_marksheet_proof",
+      "requirement_name": "Date-of-birth marksheet/proof",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "portal_dependent",
+      "platform_support": "supported",
+      "applicability": "As required by the exam rulebook",
+      "content_instructions": "not_found",
+      "evidence_status": "Official ESB rulebooks require DOB/marksheet support in this application family; exact cycle-specific file limit not established.",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 400000
+        }
+      }
+    },
+    {
+      "requirement_id": "reservation_category_certificate",
+      "requirement_name": "Reservation/category certificate",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Applicants claiming reservation",
+      "content_instructions": "not_found",
+      "evidence_status": "Official ESB application family; exact cycle-specific file limit not established.",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 400000
+        }
+      }
+    },
+    {
+      "requirement_id": "pwd_other_claim_supporting_certificate",
+      "requirement_name": "PwD/other claim-supporting certificate",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Applicants making the applicable claim",
+      "content_instructions": "not_found",
+      "evidence_status": "Official ESB application family; exact cycle-specific file limit not established.",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 400000
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "requirements[0].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[0].file_spec.file_size.minimum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[0].file_spec.formats.allowed_formats": {
+      "type": "interim_default",
+      "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[1].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[2].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[3].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",
+      "confidence": 1,
+      "approved": false
+    }
+  },
+  "verification": {
+    "verification_status": "provisional"
+  },
+  "fictional_example": false
+}

@@ -1,0 +1,168 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "mht-cet-2026",
+  "rule_version": "1.0.0",
+  "status": "provisional",
+  "exam": {
+    "exam_id": "mht-cet-2026",
+    "exam_name": "MHT-CET 2026",
+    "conducting_body": "State Common Entrance Test Cell, Maharashtra",
+    "examination_year": 2026,
+    "application_cycle": "2026",
+    "application_stage": "application",
+    "jurisdiction": "Maharashtra",
+    "category": "entrance",
+    "aliases": [
+      "Maharashtra Common Entrance Test"
+    ]
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "2 x 2 inch; 100 KB; 5 MB; 100 KB to 5 MB; plain light/white background; no shadows; 80%; full head; centered; full face/front; eyes open; avoid glare; religious headwear; neutral expression",
+      "source_url": "https://cetcell.mahacet.org/wp-content/uploads/2023/12/MHT-CET-2026-Information-Brochure-Updated-on-11.04.2026.pdf",
+      "document_title": "MHT-CET 2026 Information Brochure",
+      "section_name": "Photograph specifications"
+    },
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "Background should be plain light colored or white.; Photo should present full head from top of hair to bottom of chin.",
+      "source_url": "https://cetcell.mahacet.org/wp-content/uploads/2023/12/MHT-CET-2026-Information-Brochure-Updated-on-11.04.2026.pdf",
+      "document_title": "Information Brochure MHT-CET 2026 (Technical Education Courses), State Common Entrance Test Cell, Government of Maharashtra",
+      "document_identifier": "MHTCET-2026-IB-TECH-11042026",
+      "section_name": "5. Online Application Form — Important Guidelines for Candidates: Photo Specifications"
+    }
+  ],
+  "requirements": [
+    {
+      "requirement_id": "candidate_photograph",
+      "requirement_name": "Candidate photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "not_yet_supported",
+      "applicability": "All applicants",
+      "content_instructions": "Uploaded candidate photograph; file size: 100-5 mixed: KB minimum; MB maximum; background: light or white.",
+      "evidence_status": "Current official CET Cell instruction",
+      "rejection_conditions": [
+        "Shadows on the face or background are not accepted.",
+        "Non-frontal or side-facing pose can fail the stated requirement.",
+        "Eyes must be visible/open as stated.",
+        "Spectacle glare, dark or coloured glasses can make the photograph unacceptable.",
+        "Caps/hats are restricted; any permitted religious covering must leave required facial features visible."
+      ]
+    },
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate signature",
+      "requirement_type": "signature",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants",
+      "content_instructions": "Separate scanned signature required by the application; exact current file specification was not established in the supplied source set.",
+      "evidence_status": "Current portal requirement; exact specification not_found",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 20000,
+          "minimum_bytes": 10000
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    },
+    {
+      "requirement_id": "disability_certificate",
+      "requirement_name": "Disability certificate",
+      "requirement_type": "certificate_scan",
+      "submission_method": "file_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Candidates who select the scribe and/or extra time facility",
+      "content_instructions": "Valid disability certificate. Uploaded and also carried in original to the examination centre. No file size or format is published.",
+      "evidence_status": "Read in full from the official MHT-CET 2026 Information Brochure, section 9; no file specification stated",
+      "notes": "The brochure requires both upload and physical production of the original at the centre.",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 400000
+        }
+      }
+    },
+    {
+      "requirement_id": "scribe_declaration_form_appendix_3",
+      "requirement_name": "Scribe declaration form (Appendix 3)",
+      "requirement_type": "handwritten_declaration",
+      "submission_method": "file_upload",
+      "requirement_status": "conditional",
+      "platform_support": "not_yet_supported",
+      "applicability": "Candidates with disability using the services of a scribe",
+      "content_instructions": "Prescribed proforma at Appendix 3, naming a primary and an alternate scribe with their highest educational qualifications. Uploaded and carried to the examination centre with the Hall Ticket. No file size or format is published.",
+      "evidence_status": "Read in full from the official MHT-CET 2026 Information Brochure, section 9 and Appendix 3; no file specification stated",
+      "notes": "Details of two scribes are required; the second acts as an alternate."
+    },
+    {
+      "requirement_id": "certificate_of_limitation_in_writing_appendix_1_",
+      "requirement_name": "Certificate of limitation in writing (Appendix 1 / Appendix 2)",
+      "requirement_type": "certificate_scan",
+      "submission_method": "file_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Candidates with less than 40% disability seeking scribe or compensatory time (Appendix 1), and candidates with specified disabilities other than blindness, locomotor (both arms) and cerebral palsy (Appendix 2)",
+      "content_instructions": "Prescribed proforma issued by the Chief Medical Officer / Civil Surgeon / Chief District Medical Officer of a Government healthcare institution. Valid only for CET-2026. No file size or format is published.",
+      "evidence_status": "Read in full from the official MHT-CET 2026 Information Brochure, section 9 and Appendices 1-2; no file specification stated",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 400000
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "requirements[1].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[1].file_spec.file_size.minimum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[1].file_spec.formats.allowed_formats": {
+      "type": "interim_default",
+      "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[2].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[4].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",
+      "confidence": 1,
+      "approved": false
+    }
+  },
+  "verification": {
+    "verification_status": "provisional"
+  },
+  "fictional_example": false,
+  "application_rejection_conditions": [
+    "Incomplete application forms will be summarily rejected.",
+    "Application form sent by Post/Courier will not be entertained and hence be rejected.",
+    "Any inconsistency or mismatch in Aadhaar or APAAR details may lead to delays or rejection of the application.",
+    "Failure of the candidate in entering full and correct information in the online application form and/or suppression of any information would lead to disqualification of the candidate for MHT-CET-2026 or even at later date."
+  ]
+}

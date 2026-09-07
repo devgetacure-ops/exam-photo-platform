@@ -334,7 +334,11 @@ def get_exam(exam_id: str) -> ExamDetailResponse:
         requirement_counts={
             support.value: count for support, count in support_counts(rule).items()
         },
-        image_requirements=rule.image_requirements.model_dump(exclude_none=True),
+        image_requirements=(
+            rule.image_requirements.model_dump(exclude_none=True)
+            if rule.image_requirements is not None
+            else None
+        ),
         provenance={
             path: entry_value.model_dump(exclude_none=True)
             for path, entry_value in rule.provenance.items()

@@ -204,11 +204,13 @@ upload and a requirement, get back a compliant file.
 | Certificate / ID scan | Ink `PAGE` + PDF | Image→PDF, or an existing PDF restructured |
 | Multi-page document | `pdf/document.py` | Add pages, reorder, rotate, omit, repeat |
 
-**Catalogue: 52 examinations, 215 requirements.** 189 supported, 16
+**Catalogue: 132 examinations, 418 requirements.** 314 supported, 29
 guidance-only (live capture and portal declarations — correctly never ours), 3
 partially supported (need a name/date printed on the photograph, which the
-engine cannot render), 7 not yet supported. Grew from 39/155 in DEC-068, which
-folded six research deliveries in additively.
+engine cannot render), 72 not yet supported. 39/155 before DEC-068 folded six
+research deliveries in additively, 52 after it, and 132 once DEC-079 let a
+record exist without a photograph specification. **80 records carry no
+photograph rule** and serve a signature or certificates alone.
 
 **63 interim placeholder values** are in the catalogue, all marked
 `interim_default` in provenance (86 before DEC-068). They are signature and thumb-impression sizes
@@ -511,18 +513,16 @@ defects the reference set could not.
    escape hatch — return a job id and let the client poll `GET /v1/jobs/{id}` —
    is a scale-later decision rather than an urgent one. It stops being
    comfortable if the cold-start warmup above is skipped.
-4. **81 examinations dropped for a photograph reason**, carrying **135
-   non-photograph deliverables** between them -- every one a signature or
-   certificate the platform could prepare and cannot reach. It was 10 and 23
-   before DEC-068 folded in the 2026 research, so **this is now the largest
-   single gap in the product**, and it grows with every research pass that
-   finds an examination without a photograph rule. Fixing it means letting a
-   rule record exist without a photograph specification: `image_requirements`
-   is currently required by both `packages/exam-rules/schema/exam-rule.schema.json`
-   and `models/exam_rule.py`, and the web app reads it when generating exam
-   pages, so it is a **cross-lane change** and needs Codex before it lands.
-   `test_rule_catalogue.py` asserts the 81/135 figures, so the day the change
-   works those numbers move and the test says so.
+4. ~~**81 examinations dropped for a photograph reason.**~~ **Closed
+   (DEC-079).** `image_requirements` is optional now, so an examination whose
+   photograph cannot be encoded is served for its signature and certificates
+   instead of being dropped whole. **The catalogue went from 52 encoded
+   examinations to 132**, supported requirements from 189 to 314, and stranded
+   deliverables from 135 to **one**. All four SSC examinations are served, and
+   BPSC is back with both its signatures. The invariant that replaced the
+   requirement: a record without a photograph specification may *list* a
+   photograph but never offer it as supported, so an uploaded photograph the
+   platform prepares still has exactly one specification.
 5. **Service hardening and privacy — partly done (DEC-064).** An operator token
    now gates `/v1/process`, `/v1/rules/validate`, `/v1/cleanup-expired` and
    `/test`; the candidate surface stays open because a browser cannot hold a

@@ -853,7 +853,15 @@ class ExamRule(BaseModel):
     status: RuleStatus
     exam: ExamIdentity
     source_evidence: List[SourceEvidence] = Field(min_length=1)
-    image_requirements: ImageRequirements
+    # DEC-079. Optional, so an examination the platform can serve *only* for
+    # its signature or certificates can exist. It was required, which meant an
+    # examination whose photograph is captured live -- or whose photograph
+    # evidence is incomplete -- was dropped whole, taking its other
+    # deliverables with it: 81 examinations and 135 deliverables at the last
+    # count. The invariant that replaces it is below: absent here means no
+    # uploaded photograph, so an uploaded photograph still has exactly one
+    # specification and the pipeline never has to choose.
+    image_requirements: Optional[ImageRequirements] = None
     # Optional so every record written before the inventory existed stays valid.
     # Absent means the deliverable research has not been done for this exam --
     # never that the photograph is the only thing the exam asks for.
@@ -974,6 +982,30 @@ class ExamRule(BaseModel):
                     "More than one uploaded photograph requirement, but a rule "
                     "carries only one image_requirements block to specify them "
                     "with."
+                )
+
+            # DEC-079. The inverse, and the whole safety of making the block
+            # optional: a record with no `image_requirements` may not offer a
+            # photograph it would have to *prepare*, because there would be
+            # nothing specifying it and the pipeline would have no rule to
+            # work to.
+            #
+            # It may still *carry* one as unsupported, and that is deliberate.
+            # An examination whose photograph rules we do not hold still asks
+            # the candidate for a photograph, and a record that silently
+            # omitted it would tell them the examination wants none -- a worse
+            # error than admitting we cannot prepare it.
+            servable_photographs = [
+                requirement
+                for requirement in uploaded_photographs
+                if requirement.platform_support
+                in (PlatformSupport.SUPPORTED, PlatformSupport.PARTIALLY_SUPPORTED)
+            ]
+            if self.image_requirements is None and servable_photographs:
+                raise ValueError(
+                    "This rule offers a photograph as supported but carries no "
+                    "image_requirements block to specify it with. Without one "
+                    "the photograph may only be listed as not_yet_supported."
                 )
 
         return self

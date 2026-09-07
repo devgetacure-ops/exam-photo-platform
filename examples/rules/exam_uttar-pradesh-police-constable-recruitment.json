@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "uttar-pradesh-police-constable-recruitment",
+  "rule_version": "1.0.0",
+  "status": "provisional",
+  "exam": {
+    "exam_id": "uttar-pradesh-police-constable-recruitment",
+    "exam_name": "Uttar Pradesh Police Constable Recruitment",
+    "conducting_body": "Uttar Pradesh Police Recruitment and Promotion Board",
+    "examination_year": 2024,
+    "application_cycle": "2024 high-volume baseline",
+    "application_stage": "application",
+    "jurisdiction": "Uttar Pradesh",
+    "category": "police_recruitment",
+    "aliases": []
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_webpage",
+      "official_source": true,
+      "captured_wording": "JPG/JPEG, 30-50 KB; 50 mm x 20 mm or 140 x 60 pixels",
+      "source_url": "https://uppbpb.gov.in/FilesUploaded/Notice/CONSTABLE-VIGYAPTIc7be0cc8-3365-471e-9237-447c528d341a.pdf"
+    }
+  ],
+  "requirements": [
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate signature",
+      "requirement_type": "signature",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants",
+      "content_instructions": "JPG/JPEG, 30-50 KB; 50 mm x 20 mm or 140 x 60 pixels",
+      "evidence_status": "Official completion-pass source",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 50000,
+          "minimum_bytes": 30000,
+          "published_minimum": 30,
+          "published_maximum": 50,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "requirements[0].file_spec.formats.allowed_formats": {
+      "type": "interim_default",
+      "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
+      "confidence": 1,
+      "approved": false
+    }
+  },
+  "verification": {
+    "verification_status": "provisional"
+  },
+  "fictional_example": false
+}

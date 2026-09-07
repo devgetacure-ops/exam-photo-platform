@@ -90,6 +90,12 @@ def _monochrome_accepted(rule: Optional[ExamRule]) -> Optional[bool]:
     """
     if rule is None:
         return None
+    if rule.image_requirements is None:
+        # DEC-079. Unspecified rather than prohibited, which is the same
+        # answer this function already gives for a body that said nothing:
+        # an examination with no uploaded photograph has no opinion about
+        # whether one may be monochrome.
+        return None
     appearance = rule.image_requirements.appearance
     return appearance.monochrome_accepted if appearance is not None else None
 

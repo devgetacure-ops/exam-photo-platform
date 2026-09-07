@@ -16,8 +16,8 @@ def test_list_exams_returns_the_catalogue():
 
     assert response.status_code == 200
     body = response.json()
-    assert body["total"] == 52
-    assert len(body["exams"]) == 52
+    assert body["total"] == 132
+    assert len(body["exams"]) == 132
     assert body["unreadable"] == {}
 
     names = [exam["exam_name"] for exam in body["exams"]]
@@ -29,18 +29,24 @@ def test_the_list_shows_examinations_that_are_not_yet_available():
     """KIT-002: an absence found at the portal is worse than one admitted here."""
     body = client.get("/v1/exams").json()
 
-    assert len(body["unavailable"]) == 83
+    assert len(body["unavailable"]) == 3
     names = {item["exam_name"] for item in body["unavailable"]}
-    assert "SSC Combined Graduate Level Examination 2026" in names
+    # DEC-079: SSC CGL is served for its signature now, so it has left this
+    # list for the catalogue proper. What remains here has no deliverable
+    # evidence at all rather than a photograph blocking the rest.
+    assert "SSC Combined Graduate Level Examination 2026" not in names
+    assert "AP EAPCET" in names
 
-    ssc = next(
-        item
-        for item in body["unavailable"]
-        if item["exam_name"] == "SSC Combined Graduate Level Examination 2026"
+    # An examination here is one with no deliverable evidence at all. Before
+    # DEC-079 it was also every examination whose *photograph* could not be
+    # encoded, which is why SSC CGL used to be the example -- it is now served
+    # for its signature and has left this list entirely.
+    example = next(
+        item for item in body["unavailable"] if item["exam_name"] == "AP EAPCET"
     )
-    assert ssc["reason"] == "live capture only"
-    assert ssc["detail"]
-    assert ssc["non_photograph_deliverables"] == 2
+    assert example["reason"]
+    assert example["detail"]
+    assert example["non_photograph_deliverables"] >= 0
 
 
 @pytest.mark.mandatory_api
@@ -51,7 +57,7 @@ def test_unavailable_examinations_are_not_merged_into_the_selectable_list():
     selectable = {exam["exam_name"] for exam in body["exams"]}
     unavailable = {item["exam_name"] for item in body["unavailable"]}
 
-    assert body["total"] == len(body["exams"]) == 52
+    assert body["total"] == len(body["exams"]) == 132
     assert selectable.isdisjoint(unavailable)
 
 

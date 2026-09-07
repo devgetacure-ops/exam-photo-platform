@@ -1,0 +1,86 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "rrb-paramedical-categories",
+  "rule_version": "1.0.0",
+  "status": "provisional",
+  "exam": {
+    "exam_id": "rrb-paramedical-categories",
+    "exam_name": "RRB Paramedical Categories",
+    "conducting_body": "Railway Recruitment Boards",
+    "examination_year": 2025,
+    "application_cycle": "CEN 03/2025",
+    "application_stage": "application",
+    "jurisdiction": "India",
+    "category": "railway_recruitment",
+    "aliases": []
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "look straight ahead with a neutral expression",
+      "source_url": "https://www.rrbcdg.gov.in/uploads/2025/03-PMED/CEN%2003_2025.pdf",
+      "document_title": "CEN 03/2025 Paramedical",
+      "document_identifier": "SRC-RRB-PMED-2025",
+      "section_name": "photo.pose"
+    },
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "Do not wear a cap, mask, or glasses/spectacles",
+      "source_url": "https://www.rrbcdg.gov.in/uploads/2025/03-PMED/CEN%2003_2025.pdf",
+      "document_title": "CEN 03/2025 Paramedical",
+      "document_identifier": "SRC-RRB-PMED-2025",
+      "section_name": "photo.spectacles_allowed"
+    },
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "application module is designed to capture a live photograph",
+      "source_url": "https://www.rrbcdg.gov.in/uploads/2025/03-PMED/CEN%2003_2025.pdf",
+      "document_title": "CEN 03/2025 Paramedical",
+      "document_identifier": "SRC-RRB-PMED-2025",
+      "section_name": "photo.capture_mode"
+    }
+  ],
+  "requirements": [
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate signature",
+      "requirement_type": "signature",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants unless the cited notice states otherwise",
+      "content_instructions": "Between 30 KB and 49 KB; JPG/JPEG only",
+      "evidence_status": "Official source-qualified rule in supplied FINAL research package",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 49000,
+          "minimum_bytes": 30000,
+          "published_minimum": 30,
+          "published_maximum": 49,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "requirements[0].file_spec.formats.allowed_formats": {
+      "type": "interim_default",
+      "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
+      "confidence": 1,
+      "approved": false
+    }
+  },
+  "verification": {
+    "verification_status": "provisional"
+  },
+  "fictional_example": false
+}

@@ -29,7 +29,7 @@ def test_loads_the_real_catalogue():
     catalogue = load_catalogue(CATALOGUE_ROOT)
 
     assert catalogue.unreadable == {}
-    assert len(catalogue.entries) == 52
+    assert len(catalogue.entries) == 132
     entry = catalogue.get("ibps-crp-customer-service-associates-xv")
     assert entry is not None
     assert entry.rule.exam.exam_name == "IBPS CRP Customer Service Associates-XV"
@@ -123,28 +123,36 @@ def test_unavailable_examinations_are_read_from_the_encoder_sidecar():
     catalogue = load_catalogue(CATALOGUE_ROOT)
 
     names = {item.exam_name for item in catalogue.unavailable}
-    assert len(catalogue.unavailable) == 83
-    assert "SSC Combined Graduate Level Examination 2026" in names
+    assert len(catalogue.unavailable) == 3
+    # SSC CGL used to be the headline entry here, dropped whole because its
+    # portal photographs the candidate. DEC-079 encodes it for its signature
+    # instead, so it is now an *entry* rather than an unavailable examination
+    # -- which is the change working.
+    assert "SSC Combined Graduate Level Examination 2026" not in names
+    assert (
+        "ssc-combined-graduate-level-examination-2026-live-capture" in catalogue.entries
+    )
+    assert "AP EAPCET" in names
     assert all(item.reason for item in catalogue.unavailable)
     assert all(item.detail for item in catalogue.unavailable)
 
     with_deliverables = [
         item for item in catalogue.unavailable if item.non_photograph_deliverables > 0
     ]
-    # DEC-068 grew this sharply: 81 of the 83 unencodable examinations carry
-    # non-photograph deliverables, 135 between them. Every one is a signature
-    # or certificate the platform could prepare and cannot reach, because a
-    # rule record still requires a photograph specification. That is HANDOFF's
-    # open risk 4, and this assertion is the measure of how large it now is.
-    assert len(with_deliverables) == 81
-    assert sum(item.non_photograph_deliverables for item in with_deliverables) == 135
+    # This was 81 examinations and 135 deliverables while a rule record still
+    # required a photograph specification. DEC-079 removed that requirement and
+    # the number collapsed: one deliverable, on one examination, remains out of
+    # reach. Everything else that was blocked by a missing *photograph* rule is
+    # now served for its signature and certificates.
+    assert len(with_deliverables) == 1
+    assert sum(item.non_photograph_deliverables for item in with_deliverables) == 1
 
 
 def test_the_sidecar_is_never_mistaken_for_a_rule_record():
     catalogue = load_catalogue(CATALOGUE_ROOT)
 
     assert "unavailable_examinations.json" not in catalogue.unreadable
-    assert len(catalogue.entries) == 52
+    assert len(catalogue.entries) == 132
 
 
 def test_a_catalogue_without_the_sidecar_still_serves(tmp_path, real_record):
@@ -181,8 +189,8 @@ def test_catalogue_wide_support_totals_match_the_recorded_figures():
         for support, count in support_counts(entry.rule).items():
             totals[support] += count
 
-    assert sum(totals.values()) == 215
-    assert totals[PlatformSupport.SUPPORTED] == 189
-    assert totals[PlatformSupport.GUIDANCE_ONLY] == 16
+    assert sum(totals.values()) == 418
+    assert totals[PlatformSupport.SUPPORTED] == 314
+    assert totals[PlatformSupport.GUIDANCE_ONLY] == 29
     assert totals[PlatformSupport.PARTIALLY_SUPPORTED] == 3
-    assert totals[PlatformSupport.NOT_YET_SUPPORTED] == 7
+    assert totals[PlatformSupport.NOT_YET_SUPPORTED] == 72

@@ -1,0 +1,68 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "ssc-sub-inspector-in-delhi-police-and-capfs-examination",
+  "rule_version": "1.0.0",
+  "status": "provisional",
+  "exam": {
+    "exam_id": "ssc-sub-inspector-in-delhi-police-and-capfs-examination",
+    "exam_name": "SSC Sub-Inspector in Delhi Police and CAPFs Examination",
+    "conducting_body": "Staff Selection Commission",
+    "examination_year": 2024,
+    "application_cycle": "2024",
+    "application_stage": "application",
+    "jurisdiction": "India",
+    "category": "central_recruitment",
+    "aliases": []
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_webpage",
+      "official_source": true,
+      "captured_wording": "Live photograph captured by the application module; pre-existing photograph must not be captured/uploaded",
+      "source_url": "https://ssc.gov.in/"
+    }
+  ],
+  "requirements": [
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate signature",
+      "requirement_type": "signature",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants",
+      "content_instructions": "JPEG; 10–20 KB; about 6.0 cm × 2.0 cm",
+      "evidence_status": "Current SSC examination notice",
+      "rejection_conditions": [
+        "Applications with blurred/miniature Signature will be rejected summarily."
+      ],
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 20000,
+          "minimum_bytes": 10000,
+          "published_minimum": 10,
+          "published_maximum": 20,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "requirements[0].file_spec.formats.allowed_formats": {
+      "type": "interim_default",
+      "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
+      "confidence": 1,
+      "approved": false
+    }
+  },
+  "verification": {
+    "verification_status": "provisional"
+  },
+  "fictional_example": false
+}

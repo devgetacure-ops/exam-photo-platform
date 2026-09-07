@@ -136,6 +136,18 @@ def resolve_rule(
     allow_quality_below_minimum: bool = False,
     allow_oversize_output: bool = False,
 ) -> ResolvedProcessingPlan:
+    # DEC-079. `image_requirements` is optional so an examination can be served
+    # for its signature alone, and everything below this line specifies a
+    # photograph. Refusing here, once and by name, is why the twelve reads
+    # that follow need no guard of their own.
+    if rule.image_requirements is None:
+        raise RuleResolutionError(
+            "PIPELINE_RULE_HAS_NO_PHOTOGRAPH_SPECIFICATION",
+            "This examination carries no photograph specification, so no "
+            "photograph can be prepared for it. Its other deliverables are "
+            "unaffected.",
+        )
+
     # 1. Resolve format compatibility
     pref_format = rule.image_requirements.formats.preferred_format.lower().strip()
     if pref_format not in ("jpeg", "jpg"):

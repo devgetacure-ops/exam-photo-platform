@@ -307,7 +307,9 @@ class ExamDetailResponse(BaseModel):
     requirements: Optional[List[RequirementSummary]] = None
     requirement_counts: dict[str, int] = Field(default_factory=dict)
     #: The photograph specification, carried verbatim from the record.
-    image_requirements: dict[str, Any] = Field(default_factory=dict)
+    #: DEC-079. ``None`` where the examination has no uploaded photograph --
+    #: it is served for its signature or certificates alone.
+    image_requirements: Optional[dict[str, Any]] = None
     #: Per-field provenance, so a caller can tell a published figure from a
     #: platform estimate without a second request (DEC-057).
     provenance: dict[str, Any] = Field(default_factory=dict)

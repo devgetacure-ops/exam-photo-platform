@@ -1,0 +1,89 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "kendriya-vidyalaya-sangathan-direct-recruitment-examination",
+  "rule_version": "1.0.0",
+  "status": "provisional",
+  "exam": {
+    "exam_id": "kendriya-vidyalaya-sangathan-direct-recruitment-examination",
+    "exam_name": "Kendriya Vidyalaya Sangathan Direct Recruitment Examination",
+    "conducting_body": "Kendriya Vidyalaya Sangathan",
+    "examination_year": 2023,
+    "application_cycle": "2022-23 recruitment",
+    "application_stage": "application",
+    "jurisdiction": "India",
+    "category": "teaching_and_non_teaching_recruitment",
+    "aliases": []
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "Scanned image of latest photograph in JPG/JPEG format only, for uploading.",
+      "source_url": "https://www.cbse.gov.in/cbsenew/documents/Detailed_Notification_KVS_NVS_2025_13112025.pdf",
+      "document_title": "Detailed Notification KVS/NVS Recruitment Drive 2025",
+      "section_name": "Documents/files to keep ready"
+    }
+  ],
+  "requirements": [
+    {
+      "requirement_id": "candidate_photograph",
+      "requirement_name": "Candidate photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "not_yet_supported",
+      "applicability": "All applicants",
+      "content_instructions": "JPG/JPEG; numeric maximum not published in the detailed notification",
+      "evidence_status": "Official KVS/NVS detailed notification",
+      "notes": "The authority names the format but the detailed notification does not publish a numeric maximum; do not infer one."
+    },
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate signature",
+      "requirement_type": "signature",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants",
+      "content_instructions": "JPG/JPEG; numeric maximum not published in the detailed notification",
+      "evidence_status": "Official KVS/NVS detailed notification",
+      "notes": "Portal-controlled size; no numeric maximum established from the notification.",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 20000,
+          "minimum_bytes": 10000
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "requirements[1].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[1].file_spec.file_size.minimum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[1].file_spec.formats.allowed_formats": {
+      "type": "interim_default",
+      "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
+      "confidence": 1,
+      "approved": false
+    }
+  },
+  "verification": {
+    "verification_status": "provisional"
+  },
+  "fictional_example": false
+}

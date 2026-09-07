@@ -1,0 +1,130 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "ssc-combined-graduate-level-examination-2026-live-capture",
+  "rule_version": "1.0.0",
+  "status": "provisional",
+  "exam": {
+    "exam_id": "ssc-combined-graduate-level-examination-2026-live-capture",
+    "exam_name": "SSC Combined Graduate Level Examination 2026",
+    "conducting_body": "Staff Selection Commission",
+    "examination_year": 2026,
+    "application_cycle": "2026",
+    "application_stage": "application",
+    "jurisdiction": "India",
+    "category": "central_recruitment",
+    "aliases": []
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "capture a photograph; plain background; good light and plain background; fully inside; look straight ahead; glasses/spectacles; mask",
+      "source_url": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_adv_cgl_2025.pdf",
+      "document_title": "Notice of Combined Graduate Level Examination, 2026",
+      "section_name": "How to Apply / live photograph"
+    }
+  ],
+  "requirements": [
+    {
+      "requirement_id": "one_time_registration_identity_input",
+      "requirement_name": "One-Time Registration identity input",
+      "requirement_type": "identity_document",
+      "submission_method": "external_identity_verification",
+      "requirement_status": "mandatory",
+      "platform_support": "guidance_only",
+      "applicability": "All applicants",
+      "content_instructions": "Mobile number and email verified by OTP. Aadhaar authentication is available; where Aadhaar is not used, an accepted identity number/document route is required. Accepted identity-number alternatives listed by SSC include Voter ID, PAN, Passport, Driving Licence, School/College ID and Employer ID.",
+      "evidence_status": "Current official SSC CGL 2026 notice; family-level portal rule",
+      "notes": "The exact non-Aadhaar document-upload flow should be checked on the active SSC OTR screen."
+    },
+    {
+      "requirement_id": "live_candidate_photograph",
+      "requirement_name": "Live candidate photograph",
+      "requirement_type": "photograph",
+      "submission_method": "official_live_capture",
+      "requirement_status": "mandatory",
+      "platform_support": "guidance_only",
+      "applicability": "All applicants",
+      "content_instructions": "Captured through webcam/mobile/app; a pre-existing photograph must not be photographed. Use good light and plain background; camera at eye level; face fully within the guide; frontal view; no cap, mask or spectacles. Poor-quality, miniature, blurred or side-facing images may be rejected.",
+      "evidence_status": "Current official SSC CGL 2026 notice; SSC portal family rule",
+      "rejection_conditions": [
+        "Non-frontal or side-facing pose can fail the stated requirement.",
+        "Spectacle glare, dark or coloured glasses can make the photograph unacceptable.",
+        "Caps/hats are restricted; any permitted religious covering must leave required facial features visible.",
+        "A face mask/covering is restricted according to the stated policy.",
+        "Capturing a photograph of a pre-existing printed/digital photograph is liable to rejection under the cited SSC notice.",
+        "Poor-quality, miniature, blurred or side-facing live photographs and blurred/miniature signatures are liable to rejection."
+      ]
+    },
+    {
+      "requirement_id": "scanned_candidate_signature",
+      "requirement_name": "Scanned candidate signature",
+      "requirement_type": "signature",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants",
+      "content_instructions": "JPEG/JPG; 10-20 KB. Current CGL notice gives about 6.0 cm x 2.0 cm in one section and 4.0 cm x 2.0 cm in its application annexure; this internal inconsistency is retained as conflicting. Blurred or miniature signatures are liable to rejection. PwD(VH) candidates may use thumb impression where the notice permits.",
+      "evidence_status": "Current official SSC CGL 2026 notice; conflicting dimensions",
+      "rejection_conditions": [
+        "Poor-quality, miniature, blurred or side-facing live photographs and blurred/miniature signatures are liable to rejection.",
+        "The current notice gives different signature widths in two sections; candidates should follow the live portal's validator."
+      ],
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 20000,
+          "minimum_bytes": 10000,
+          "published_minimum": 10.0,
+          "published_maximum": 20.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpeg",
+            "jpg"
+          ],
+          "preferred_format": "jpeg"
+        }
+      }
+    },
+    {
+      "requirement_id": "disability_certificate",
+      "requirement_name": "Disability certificate",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "PwBD/PwD candidates claiming reservation and/or scribe",
+      "content_instructions": "Upload the applicable certificate in the prescribed annexure/form at the time of application. Exact PDF size/format was not found in the extracted notice text.",
+      "evidence_status": "Current official SSC CGL 2026 notice",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 400000
+        }
+      }
+    },
+    {
+      "requirement_id": "online_declaration",
+      "requirement_name": "Online declaration",
+      "requirement_type": "portal_declaration",
+      "submission_method": "typed_or_selected_declaration",
+      "requirement_status": "mandatory",
+      "platform_support": "guidance_only",
+      "applicability": "All applicants",
+      "content_instructions": "Read and accept the declaration after reviewing the application details. Concealment, misrepresentation or misdeclaration can cancel candidature.",
+      "evidence_status": "Current official SSC CGL 2026 notice"
+    }
+  ],
+  "provenance": {
+    "requirements[3].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",
+      "confidence": 1,
+      "approved": false
+    }
+  },
+  "verification": {
+    "verification_status": "provisional"
+  },
+  "fictional_example": false
+}

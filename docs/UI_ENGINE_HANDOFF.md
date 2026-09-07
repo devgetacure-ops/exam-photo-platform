@@ -400,3 +400,41 @@ Three things that follow:
 **No trivia yet** — no pass rates, no history, no candidate numbers. None of
 that is in the evidence and inventing it is the one thing this feature cannot
 survive. It needs its own research pass; tell me if you want that briefed.
+
+## The catalogue is now 132 examinations, and 80 have no photograph
+
+2026-09-07, DEC-079. The largest change to the catalogue since the pivot, and
+it needs a rebuild and a look at the interface.
+
+**52 examinations became 132.** A rule record no longer has to carry a
+photograph specification, so an examination whose photograph we cannot prepare
+— captured live through its portal, or with incomplete evidence — is now served
+for its **signature and certificates** instead of being dropped whole. Stranded
+deliverables went from 135 to one. All four SSC examinations are in. BPSC is
+back with both its English and Hindi signatures.
+
+**`image_requirements` can now be `null`.** `catalogue.server.ts` already
+handles it (`raw.image_requirements ?? {}`), which is why this did not need you
+first — but two pages read it and should be looked at:
+
+- `exam/[examId]/page.tsx` → `liveCaptureStance(exam.image_requirements, …)`
+- `exam/[examId]/rules/page.tsx` → `appearanceGuidance(exam.image_requirements)`
+
+Both degrade to empty rather than throwing. **Empty is correct here** — there
+are no photograph rules to show — but the *rules page* for one of these 80
+examinations will now be mostly blank, and that wants a designed empty state
+rather than a hole.
+
+**Two things worth your judgement, not mine:**
+
+1. **The picker goes from 52 to 132.** Most of the new ones prepare a signature
+   or a certificate and nothing else. That is the product's stated direction and
+   the three-way boundary makes it honest, but it is a change of scale and the
+   search and the list should be looked at against it.
+2. **A photograph now appears as `not_yet_supported` on 72 requirements.** It is
+   listed deliberately — the examination *does* ask for one, and hiding it would
+   tell the candidate it does not — but it is a state the workspace will now show
+   far more often than before. Make sure it reads as "we cannot prepare this
+   yet", not as a failure.
+
+Rebuild before anything else: the site still generates 52 exam pages.

@@ -2,6 +2,18 @@
   "_generated_by": "scripts/generate_exam_facts.py",
   "_note": "Derived from the rule records, never hand-written (DEC-077). Every fact rests on official provenance or on a rejection condition quoted from the authority. Re-running replaces this file, so an edit here is lost.",
   "exams": {
+    "all-india-sainik-schools-entrance-examination": {
+      "exam_id": "all-india-sainik-schools-entrance-examination",
+      "exam_name": "All India Sainik Schools Entrance Examination",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 4 files, not only a photograph — 3 more files besides it.",
+          "source": "https://exams.nta.ac.in/AISSEE/",
+          "requirement_id": null
+        }
+      ]
+    },
     "andhra-pradesh-teacher-eligibility-test": {
       "exam_id": "andhra-pradesh-teacher-eligibility-test",
       "exam_name": "Andhra Pradesh Teacher Eligibility Test",
@@ -16,6 +28,174 @@
           "kind": "format",
           "text": "The only accepted format is JPEG.",
           "source": "https://aptet.apcfss.in/Documents/Information_Bulletin_2024_New.pdf",
+          "requirement_id": null
+        }
+      ]
+    },
+    "ap-mega-dsc-teacher-recruitment": {
+      "exam_id": "ap-mega-dsc-teacher-recruitment",
+      "exam_name": "AP Mega DSC Teacher Recruitment",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 3 files, not only a photograph — 2 more files besides it.",
+          "source": "https://apdsc.apcfss.in/",
+          "requirement_id": null
+        }
+      ]
+    },
+    "ap-polycet": {
+      "exam_id": "ap-polycet",
+      "exam_name": "AP POLYCET",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://polycetap.nic.in/",
+          "requirement_id": null
+        }
+      ]
+    },
+    "appsc-forest-beat-officer-assistant-beat-officer-2025": {
+      "exam_id": "appsc-forest-beat-officer-assistant-beat-officer-2025",
+      "exam_name": "APPSC Forest Beat Officer / Assistant Beat Officer 2025",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 3 files, not only a photograph — 2 more files besides it.",
+          "source": "https://psc.ap.gov.in/Documents/NotificationDocuments/FBO_ABO_Notification_14072025.pdf",
+          "requirement_id": null
+        }
+      ]
+    },
+    "appsc-group-i-services-examination": {
+      "exam_id": "appsc-group-i-services-examination",
+      "exam_name": "APPSC Group I Services Examination",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://psc.ap.gov.in/",
+          "requirement_id": null
+        }
+      ]
+    },
+    "appsc-group-ii-services-examination": {
+      "exam_id": "appsc-group-ii-services-examination",
+      "exam_name": "APPSC Group II Services Examination",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://psc.ap.gov.in/",
+          "requirement_id": null
+        }
+      ]
+    },
+    "assam-direct-recruitment-grade-iii": {
+      "exam_id": "assam-direct-recruitment-grade-iii",
+      "exam_name": "Assam Direct Recruitment Grade III",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://slrcg3.sebaonline.org/",
+          "requirement_id": null
+        }
+      ]
+    },
+    "assam-direct-recruitment-grade-iv": {
+      "exam_id": "assam-direct-recruitment-grade-iv",
+      "exam_name": "Assam Direct Recruitment Grade IV",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://slrcg4.sebaonline.org/",
+          "requirement_id": null
+        }
+      ]
+    },
+    "bihar-b-ed-common-entrance-test": {
+      "exam_id": "bihar-b-ed-common-entrance-test",
+      "exam_name": "Bihar B.Ed Common Entrance Test",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://biharcetbed-lnmu.in/",
+          "requirement_id": null
+        }
+      ]
+    },
+    "bihar-d-el-ed-joint-entrance-examination": {
+      "exam_id": "bihar-d-el-ed-joint-entrance-examination",
+      "exam_name": "Bihar D.El.Ed Joint Entrance Examination",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 3 files, not only a photograph — 2 more files besides it.",
+          "source": "https://bceceboard.bihar.gov.in/pdf_Adv/ADV_DLE25_01.pdf",
+          "requirement_id": null
+        }
+      ]
+    },
+    "bihar-police-constable-recruitment": {
+      "exam_id": "bihar-police-constable-recruitment",
+      "exam_name": "Bihar Police Constable Recruitment",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://csbc.bihar.gov.in/",
+          "requirement_id": null
+        }
+      ]
+    },
+    "bihar-secondary-teacher-eligibility-test": {
+      "exam_id": "bihar-secondary-teacher-eligibility-test",
+      "exam_name": "Bihar Secondary Teacher Eligibility Test",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://secondary.biharboardonline.com/",
+          "requirement_id": null
+        }
+      ]
+    },
+    "bits-admission-test": {
+      "exam_id": "bits-admission-test",
+      "exam_name": "BITS Admission Test",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://www.bitsadmission.com/bitsat/download/BITSAT-2025_brochure.pdf?21012025=",
+          "requirement_id": null
+        }
+      ]
+    },
+    "bpsc-current-recruitment-photograph-specification": {
+      "exam_id": "bpsc-current-recruitment-photograph-specification",
+      "exam_name": "BPSC Current Recruitment Photograph Specification",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 6 files, not only a photograph — 5 more files besides it.",
+          "source": "https://form-mitra.com/bpsc",
+          "requirement_id": null
+        }
+      ]
+    },
+    "bpsc-teacher-recruitment-examination-tre": {
+      "exam_id": "bpsc-teacher-recruitment-examination-tre",
+      "exam_name": "BPSC Teacher Recruitment Examination (TRE)",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 3 files, not only a photograph — 2 more files besides it.",
+          "source": "https://bpsc.bihar.gov.in/wp-content/uploads/BPSC_content/Notices/NB-2025-06-19-02.pdf",
           "requirement_id": null
         }
       ]
@@ -83,6 +263,18 @@
           "text": "Spectacle glare, dark or coloured glasses can make the photograph unacceptable.",
           "source": "https://www.cbse.gov.in/cbsenew/documents/Submission_Registration_Data_Class_IXXI2526_15092025.pdf",
           "requirement_id": "student_photograph"
+        }
+      ]
+    },
+    "cg-vyapam-pre-b-ed-entrance-examination": {
+      "exam_id": "cg-vyapam-pre-b-ed-entrance-examination",
+      "exam_name": "CG Vyapam Pre-B.Ed Entrance Examination",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://vyapam.cgstate.gov.in/",
+          "requirement_id": null
         }
       ]
     },
@@ -224,6 +416,23 @@
         }
       ]
     },
+    "delhi-police-constable-executive": {
+      "exam_id": "delhi-police-constable-executive",
+      "exam_name": "Delhi Police Constable (Executive)",
+      "facts": []
+    },
+    "dsssb-major-recruitment-examination-family": {
+      "exam_id": "dsssb-major-recruitment-examination-family",
+      "exam_name": "DSSSB Major Recruitment Examination Family",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 5 files, not only a photograph — 4 more files besides it.",
+          "source": "https://dsssb.delhi.gov.in/sites/default/files/DSSSB/circulars-orders/gen_inst_1.pdf",
+          "requirement_id": null
+        }
+      ]
+    },
     "gate-2026": {
       "exam_id": "gate-2026",
       "exam_name": "GATE 2026",
@@ -359,6 +568,78 @@
           "text": "If the Applicant's signature on the attendance sheet or Call letter, signed at the time of the examination, does not match the signature uploaded, the applicant will be disqualified.",
           "source": "https://www.gicre.in/images/2024/Detailed_Advertisement_for_Recruitment_of_AMs_in_GIC_Re_2024_-_v3_-_Final.pdf",
           "requirement_id": "candidate_signature"
+        }
+      ]
+    },
+    "gujarat-police-lokrakshak-recruitment": {
+      "exam_id": "gujarat-police-lokrakshak-recruitment",
+      "exam_name": "Gujarat Police Lokrakshak Recruitment",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://ojas.gujarat.gov.in/",
+          "requirement_id": null
+        }
+      ]
+    },
+    "gujarat-police-psi-recruitment": {
+      "exam_id": "gujarat-police-psi-recruitment",
+      "exam_name": "Gujarat Police PSI Recruitment",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://ojas.gujarat.gov.in/",
+          "requirement_id": null
+        }
+      ]
+    },
+    "gujcet": {
+      "exam_id": "gujcet",
+      "exam_name": "GUJCET",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://gujcet.gseb.org/",
+          "requirement_id": null
+        }
+      ]
+    },
+    "haryana-cet-group-c": {
+      "exam_id": "haryana-cet-group-c",
+      "exam_name": "Haryana CET Group C",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 3 files, not only a photograph — 2 more files besides it.",
+          "source": "https://hssc.gov.in/",
+          "requirement_id": null
+        }
+      ]
+    },
+    "haryana-teacher-eligibility-test": {
+      "exam_id": "haryana-teacher-eligibility-test",
+      "exam_name": "Haryana Teacher Eligibility Test",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://bseh.org.in/",
+          "requirement_id": null
+        }
+      ]
+    },
+    "hssc-cet-group-d": {
+      "exam_id": "hssc-cet-group-d",
+      "exam_name": "HSSC CET Group D",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 3 files, not only a photograph — 2 more files besides it.",
+          "source": "https://hssc.gov.in/file/ac1f23cd-9d9c-1328-819e-da8c1fe70055/advertisements",
+          "requirement_id": null
         }
       ]
     },
@@ -722,6 +1003,66 @@
         }
       ]
     },
+    "indian-air-force-agniveervayu-recruitment": {
+      "exam_id": "indian-air-force-agniveervayu-recruitment",
+      "exam_name": "Indian Air Force Agniveervayu Recruitment",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 5 files, not only a photograph — 4 more files besides it.",
+          "source": "https://agnipathvayu.cdac.in/",
+          "requirement_id": null
+        }
+      ]
+    },
+    "indian-army-agniveer-cee-2025-26-online-upload": {
+      "exam_id": "indian-army-agniveer-cee-2025-26-online-upload",
+      "exam_name": "Indian Army Agniveer CEE 2025-26 - online upload",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 4 files, not only a photograph — 3 more files besides it.",
+          "source": "https://www.joinindianarmy.nic.in/writereaddata/Portal/BRAVO_NotificationPDF/AGNIVEER_NOTIFICATION_ARUNACHAL_PRADESH_2025-26.pdf",
+          "requirement_id": null
+        }
+      ]
+    },
+    "indian-army-agniveer-recruitment": {
+      "exam_id": "indian-army-agniveer-recruitment",
+      "exam_name": "Indian Army Agniveer Recruitment",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 3 files, not only a photograph — 2 more files besides it.",
+          "source": "https://joinindianarmy.nic.in/",
+          "requirement_id": null
+        }
+      ]
+    },
+    "jawahar-navodaya-vidyalaya-selection-test-class-vi": {
+      "exam_id": "jawahar-navodaya-vidyalaya-selection-test-class-vi",
+      "exam_name": "Jawahar Navodaya Vidyalaya Selection Test Class VI",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 3 files, not only a photograph — 2 more files besides it.",
+          "source": "https://navodaya.gov.in/",
+          "requirement_id": null
+        }
+      ]
+    },
+    "jee-advanced-2026": {
+      "exam_id": "jee-advanced-2026",
+      "exam_name": "JEE (Advanced) 2026",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 7 files, not only a photograph — 6 more files besides it.",
+          "source": "https://jeeadv.ac.in/documents/IBEnglish_2026_1.pdf",
+          "requirement_id": null
+        }
+      ]
+    },
     "jee-main-2026": {
       "exam_id": "jee-main-2026",
       "exam_name": "JEE (Main) 2026",
@@ -758,6 +1099,42 @@
         }
       ]
     },
+    "jharkhand-police-constable-recruitment": {
+      "exam_id": "jharkhand-police-constable-recruitment",
+      "exam_name": "Jharkhand Police Constable Recruitment",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://jssc.nic.in/",
+          "requirement_id": null
+        }
+      ]
+    },
+    "jkssb-police-constable-recruitment": {
+      "exam_id": "jkssb-police-constable-recruitment",
+      "exam_name": "JKSSB Police Constable Recruitment",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://jkssb.nic.in/Dynamic-jkssb-test/Pages/Applicant/InstructionsCivil.html",
+          "requirement_id": null
+        }
+      ]
+    },
+    "joint-entrance-examination-council-uttar-pradesh-polytechnic-entrance": {
+      "exam_id": "joint-entrance-examination-council-uttar-pradesh-polytechnic-entrance",
+      "exam_name": "Joint Entrance Examination Council Uttar Pradesh Polytechnic Entrance",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://jeecup.admissions.nic.in/document/information-broucher-2025/",
+          "requirement_id": null
+        }
+      ]
+    },
     "joint-csir-ugc-net": {
       "exam_id": "joint-csir-ugc-net",
       "exam_name": "Joint CSIR-UGC NET",
@@ -788,6 +1165,30 @@
         }
       ]
     },
+    "jssc-combined-graduate-level-examination": {
+      "exam_id": "jssc-combined-graduate-level-examination",
+      "exam_name": "JSSC Combined Graduate Level Examination",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://jssc.nic.in/",
+          "requirement_id": null
+        }
+      ]
+    },
+    "karnataka-teacher-eligibility-test": {
+      "exam_id": "karnataka-teacher-eligibility-test",
+      "exam_name": "Karnataka Teacher Eligibility Test",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://sts.karnataka.gov.in/TET/",
+          "requirement_id": null
+        }
+      ]
+    },
     "karnataka-common-entrance-test-2026": {
       "exam_id": "karnataka-common-entrance-test-2026",
       "exam_name": "Karnataka Common Entrance Test 2026",
@@ -814,6 +1215,18 @@
           "kind": "deliverables",
           "text": "This application asks for 4 files, not only a photograph — 3 more files besides it.",
           "source": "https://apply.registernow.in/KPSC/Registration/",
+          "requirement_id": null
+        }
+      ]
+    },
+    "kendriya-vidyalaya-sangathan-direct-recruitment-examination": {
+      "exam_id": "kendriya-vidyalaya-sangathan-direct-recruitment-examination",
+      "exam_name": "Kendriya Vidyalaya Sangathan Direct Recruitment Examination",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://www.cbse.gov.in/cbsenew/documents/Detailed_Notification_KVS_NVS_2025_13112025.pdf",
           "requirement_id": null
         }
       ]
@@ -980,6 +1393,30 @@
         }
       ]
     },
+    "mah-mba-mms-cet": {
+      "exam_id": "mah-mba-mms-cet",
+      "exam_name": "MAH MBA/MMS CET",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://cetcell.mahacet.org/wp-content/uploads/2023/12/MAH-MBA-MMS-CET-2026-Information-Brochure.pdf",
+          "requirement_id": null
+        }
+      ]
+    },
+    "maharashtra-police-recruitment": {
+      "exam_id": "maharashtra-police-recruitment",
+      "exam_name": "Maharashtra Police Recruitment",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://policerecruitment2024.mahait.org/",
+          "requirement_id": null
+        }
+      ]
+    },
     "maharashtra-teacher-eligibility-test-maha-tet": {
       "exam_id": "maharashtra-teacher-eligibility-test-maha-tet",
       "exam_name": "Maharashtra Teacher Eligibility Test (MAHA TET)",
@@ -1025,6 +1462,114 @@
           "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
           "source": "https://www.aima.in/content/testing-and-assessment/mat/mat",
           "requirement_id": null
+        }
+      ]
+    },
+    "mht-cet-2026": {
+      "exam_id": "mht-cet-2026",
+      "exam_name": "MHT-CET 2026",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 5 files, not only a photograph — 4 more files besides it.",
+          "source": "https://cetcell.mahacet.org/wp-content/uploads/2023/12/MHT-CET-2026-Information-Brochure-Updated-on-11.04.2026.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Incomplete application forms will be summarily rejected.",
+          "source": "https://cetcell.mahacet.org/wp-content/uploads/2023/12/MHT-CET-2026-Information-Brochure-Updated-on-11.04.2026.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Application form sent by Post/Courier will not be entertained and hence be rejected.",
+          "source": "https://cetcell.mahacet.org/wp-content/uploads/2023/12/MHT-CET-2026-Information-Brochure-Updated-on-11.04.2026.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Any inconsistency or mismatch in Aadhaar or APAAR details may lead to delays or rejection of the application.",
+          "source": "https://cetcell.mahacet.org/wp-content/uploads/2023/12/MHT-CET-2026-Information-Brochure-Updated-on-11.04.2026.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Failure of the candidate in entering full and correct information in the online application form and/or suppression of any information would lead to disqualification of the candidate for MHT-CET-2026 or even at later date.",
+          "source": "https://cetcell.mahacet.org/wp-content/uploads/2023/12/MHT-CET-2026-Information-Brochure-Updated-on-11.04.2026.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Shadows on the face or background are not accepted.",
+          "source": "https://cetcell.mahacet.org/wp-content/uploads/2023/12/MHT-CET-2026-Information-Brochure-Updated-on-11.04.2026.pdf",
+          "requirement_id": "candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Non-frontal or side-facing pose can fail the stated requirement.",
+          "source": "https://cetcell.mahacet.org/wp-content/uploads/2023/12/MHT-CET-2026-Information-Brochure-Updated-on-11.04.2026.pdf",
+          "requirement_id": "candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Eyes must be visible/open as stated.",
+          "source": "https://cetcell.mahacet.org/wp-content/uploads/2023/12/MHT-CET-2026-Information-Brochure-Updated-on-11.04.2026.pdf",
+          "requirement_id": "candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Spectacle glare, dark or coloured glasses can make the photograph unacceptable.",
+          "source": "https://cetcell.mahacet.org/wp-content/uploads/2023/12/MHT-CET-2026-Information-Brochure-Updated-on-11.04.2026.pdf",
+          "requirement_id": "candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Caps/hats are restricted; any permitted religious covering must leave required facial features visible.",
+          "source": "https://cetcell.mahacet.org/wp-content/uploads/2023/12/MHT-CET-2026-Information-Brochure-Updated-on-11.04.2026.pdf",
+          "requirement_id": "candidate_photograph"
+        }
+      ]
+    },
+    "mp-patwari-recruitment-examination": {
+      "exam_id": "mp-patwari-recruitment-examination",
+      "exam_name": "MP Patwari Recruitment Examination",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 4 files, not only a photograph — 3 more files besides it.",
+          "source": "https://esb.mp.gov.in/Rulebooks/rule_books_ESB26.htm",
+          "requirement_id": null
+        }
+      ]
+    },
+    "mp-police-constable-recruitment-test": {
+      "exam_id": "mp-police-constable-recruitment-test",
+      "exam_name": "MP Police Constable Recruitment Test",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 4 files, not only a photograph — 3 more files besides it.",
+          "source": "https://esb.mp.gov.in/rulebooks/RB_2025/PCRT_2025_Rulebook.pdf",
+          "requirement_id": null
+        }
+      ]
+    },
+    "mp-primary-school-teacher-eligibility-test": {
+      "exam_id": "mp-primary-school-teacher-eligibility-test",
+      "exam_name": "MP Primary School Teacher Eligibility Test",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 4 files, not only a photograph — 3 more files besides it.",
+          "source": "https://esb.mp.gov.in/rulebooks/RB_2025/PSTST_2025_Final_RuleBook.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Missing or unclear photograph-signature-handwriting will make the application invalid.",
+          "source": "https://esb.mp.gov.in/rulebooks/RB_2025/PSTST_2025_Final_RuleBook.pdf",
+          "requirement_id": "combined_colour_photograph_signature_and_handwri"
         }
       ]
     },
@@ -1133,6 +1678,18 @@
           "text": "Signature or handwritten declaration in capital letters is not accepted in the cited banking-family instructions.",
           "source": "https://www.nabard.org/auth/writereaddata/CareerNotices/0502252006Advertisement%20No.06%20dated%2005.02.2025.pdf",
           "requirement_id": "candidate_signature"
+        }
+      ]
+    },
+    "neet-pg": {
+      "exam_id": "neet-pg",
+      "exam_name": "NEET-PG",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 4 files, not only a photograph — 3 more files besides it.",
+          "source": "https://natboard.edu.in/viewnbeexam?exam=neetpg",
+          "requirement_id": null
         }
       ]
     },
@@ -1304,6 +1861,18 @@
         }
       ]
     },
+    "odisha-joint-entrance-examination-ojee": {
+      "exam_id": "odisha-joint-entrance-examination-ojee",
+      "exam_name": "Odisha Joint Entrance Examination (OJEE)",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://ojee.nic.in/document/instructions-for-filling-up-the-application-form-for-ojee-2026/",
+          "requirement_id": null
+        }
+      ]
+    },
     "osssc-combined-recruitment-examination": {
       "exam_id": "osssc-combined-recruitment-examination",
       "exam_name": "OSSSC Combined Recruitment Examination",
@@ -1337,6 +1906,74 @@
           "text": "The photograph and full specimen signature must be clearly identifiable/visible, otherwise the application shall be liable to rejection.",
           "source": "https://www.osssc.gov.in/Docs/CRE-2023-Detail_adv-762.PDF",
           "requirement_id": "candidate_photograph"
+        }
+      ]
+    },
+    "rajasthan-cet-graduate-level": {
+      "exam_id": "rajasthan-cet-graduate-level",
+      "exam_name": "Rajasthan CET Graduate Level",
+      "facts": []
+    },
+    "rajasthan-cet-senior-secondary-level": {
+      "exam_id": "rajasthan-cet-senior-secondary-level",
+      "exam_name": "Rajasthan CET Senior Secondary Level",
+      "facts": []
+    },
+    "rajasthan-eligibility-examination-for-teachers-reet": {
+      "exam_id": "rajasthan-eligibility-examination-for-teachers-reet",
+      "exam_name": "Rajasthan Eligibility Examination for Teachers (REET)",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://rajeduboard.rajasthan.gov.in/reet2024final121224.PDF",
+          "requirement_id": null
+        }
+      ]
+    },
+    "rajasthan-grade-iv-recruitment": {
+      "exam_id": "rajasthan-grade-iv-recruitment",
+      "exam_name": "Rajasthan Grade IV Recruitment",
+      "facts": []
+    },
+    "rajasthan-patwari-recruitment": {
+      "exam_id": "rajasthan-patwari-recruitment",
+      "exam_name": "Rajasthan Patwari Recruitment",
+      "facts": []
+    },
+    "rajasthan-police-constable-recruitment": {
+      "exam_id": "rajasthan-police-constable-recruitment",
+      "exam_name": "Rajasthan Police Constable Recruitment",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://police.rajasthan.gov.in/portal/RecruitmentsResults",
+          "requirement_id": null
+        }
+      ]
+    },
+    "rajasthan-pre-d-el-ed-examination-bstc": {
+      "exam_id": "rajasthan-pre-d-el-ed-examination-bstc",
+      "exam_name": "Rajasthan Pre-D.El.Ed Examination (BSTC)",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 3 files, not only a photograph — 2 more files besides it.",
+          "source": "https://predeledraj2026.com/",
+          "requirement_id": null
+        }
+      ]
+    },
+    "rajasthan-pre-teacher-education-test": {
+      "exam_id": "rajasthan-pre-teacher-education-test",
+      "exam_name": "Rajasthan Pre-Teacher Education Test",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://ptetvmoukota2025.in/",
+          "requirement_id": null
         }
       ]
     },
@@ -1585,6 +2222,38 @@
           "requirement_id": null
         }
       ]
+    },
+    "rpsc-current-online-application-photograph": {
+      "exam_id": "rpsc-current-online-application-photograph",
+      "exam_name": "RPSC Current Online Application Photograph",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 3 files, not only a photograph — 2 more files besides it.",
+          "source": "https://form-mitra.com/rpsc",
+          "requirement_id": null
+        }
+      ]
+    },
+    "rrb-je-dms-cma": {
+      "exam_id": "rrb-je-dms-cma",
+      "exam_name": "RRB JE/DMS/CMA",
+      "facts": []
+    },
+    "rrb-paramedical-categories": {
+      "exam_id": "rrb-paramedical-categories",
+      "exam_name": "RRB Paramedical Categories",
+      "facts": []
+    },
+    "rrb-section-controller": {
+      "exam_id": "rrb-section-controller",
+      "exam_name": "RRB Section Controller",
+      "facts": []
+    },
+    "rrb-technician": {
+      "exam_id": "rrb-technician",
+      "exam_name": "RRB Technician",
+      "facts": []
     },
     "rrb-level-1-posts-cen-08-2024": {
       "exam_id": "rrb-level-1-posts-cen-08-2024",
@@ -1874,6 +2543,353 @@
         }
       ]
     },
+    "ssc-combined-graduate-level-examination-2026-live-capture": {
+      "exam_id": "ssc-combined-graduate-level-examination-2026-live-capture",
+      "exam_name": "SSC Combined Graduate Level Examination 2026",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 5 files, not only a photograph — 4 more files besides it.",
+          "source": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_adv_cgl_2025.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Non-frontal or side-facing pose can fail the stated requirement.",
+          "source": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_adv_cgl_2025.pdf",
+          "requirement_id": "live_candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Spectacle glare, dark or coloured glasses can make the photograph unacceptable.",
+          "source": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_adv_cgl_2025.pdf",
+          "requirement_id": "live_candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Caps/hats are restricted; any permitted religious covering must leave required facial features visible.",
+          "source": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_adv_cgl_2025.pdf",
+          "requirement_id": "live_candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "A face mask/covering is restricted according to the stated policy.",
+          "source": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_adv_cgl_2025.pdf",
+          "requirement_id": "live_candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Capturing a photograph of a pre-existing printed/digital photograph is liable to rejection under the cited SSC notice.",
+          "source": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_adv_cgl_2025.pdf",
+          "requirement_id": "live_candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Poor-quality, miniature, blurred or side-facing live photographs and blurred/miniature signatures are liable to rejection.",
+          "source": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_adv_cgl_2025.pdf",
+          "requirement_id": "live_candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "The current notice gives different signature widths in two sections; candidates should follow the live portal's validator.",
+          "source": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_adv_cgl_2025.pdf",
+          "requirement_id": "scanned_candidate_signature"
+        }
+      ]
+    },
+    "ssc-combined-higher-secondary-10-2-level-examination-2025-live-capture": {
+      "exam_id": "ssc-combined-higher-secondary-10-2-level-examination-2025-live-capture",
+      "exam_name": "SSC Combined Higher Secondary (10+2) Level Examination 2025",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 5 files, not only a photograph — 4 more files besides it.",
+          "source": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_adv_chsl_2025.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Non-frontal or side-facing pose can fail the stated requirement.",
+          "source": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_adv_chsl_2025.pdf",
+          "requirement_id": "live_candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Spectacle glare, dark or coloured glasses can make the photograph unacceptable.",
+          "source": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_adv_chsl_2025.pdf",
+          "requirement_id": "live_candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Caps/hats are restricted; any permitted religious covering must leave required facial features visible.",
+          "source": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_adv_chsl_2025.pdf",
+          "requirement_id": "live_candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "A face mask/covering is restricted according to the stated policy.",
+          "source": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_adv_chsl_2025.pdf",
+          "requirement_id": "live_candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Capturing a photograph of a pre-existing printed/digital photograph is liable to rejection under the cited SSC notice.",
+          "source": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_adv_chsl_2025.pdf",
+          "requirement_id": "live_candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Poor-quality, miniature, blurred or side-facing live photographs and blurred/miniature signatures are liable to rejection.",
+          "source": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_adv_chsl_2025.pdf",
+          "requirement_id": "live_candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "The current notice gives different signature widths in two sections; candidates should follow the live portal's validator.",
+          "source": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_adv_chsl_2025.pdf",
+          "requirement_id": "scanned_candidate_signature"
+        }
+      ]
+    },
+    "ssc-constable-gd-examination-2025-live-capture": {
+      "exam_id": "ssc-constable-gd-examination-2025-live-capture",
+      "exam_name": "SSC Constable (GD) Examination 2025",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 5 files, not only a photograph — 4 more files besides it.",
+          "source": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_CTGD_2024_09_05.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Non-frontal or side-facing pose can fail the stated requirement.",
+          "source": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_CTGD_2024_09_05.pdf",
+          "requirement_id": "live_candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Spectacle glare, dark or coloured glasses can make the photograph unacceptable.",
+          "source": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_CTGD_2024_09_05.pdf",
+          "requirement_id": "live_candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Caps/hats are restricted; any permitted religious covering must leave required facial features visible.",
+          "source": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_CTGD_2024_09_05.pdf",
+          "requirement_id": "live_candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "A face mask/covering is restricted according to the stated policy.",
+          "source": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_CTGD_2024_09_05.pdf",
+          "requirement_id": "live_candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Capturing a photograph of a pre-existing printed/digital photograph is liable to rejection under the cited SSC notice.",
+          "source": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_CTGD_2024_09_05.pdf",
+          "requirement_id": "live_candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Poor-quality, miniature, blurred or side-facing live photographs and blurred/miniature signatures are liable to rejection.",
+          "source": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_CTGD_2024_09_05.pdf",
+          "requirement_id": "live_candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "The current notice gives different signature widths in two sections; candidates should follow the live portal's validator.",
+          "source": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_CTGD_2024_09_05.pdf",
+          "requirement_id": "scanned_candidate_signature"
+        }
+      ]
+    },
+    "ssc-junior-engineer-examination": {
+      "exam_id": "ssc-junior-engineer-examination",
+      "exam_name": "SSC Junior Engineer Examination",
+      "facts": [
+        {
+          "kind": "rejection",
+          "text": "Applications with blurred/miniature Signature will be rejected summarily.",
+          "source": "https://ssc.gov.in/",
+          "requirement_id": "candidate_signature"
+        }
+      ]
+    },
+    "ssc-multi-tasking-staff-and-havaldar-examination-2025-live-capture": {
+      "exam_id": "ssc-multi-tasking-staff-and-havaldar-examination-2025-live-capture",
+      "exam_name": "SSC Multi-Tasking Staff and Havaldar Examination 2025",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 5 files, not only a photograph — 4 more files besides it.",
+          "source": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_adv_mts_2025.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Non-frontal or side-facing pose can fail the stated requirement.",
+          "source": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_adv_mts_2025.pdf",
+          "requirement_id": "live_candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Spectacle glare, dark or coloured glasses can make the photograph unacceptable.",
+          "source": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_adv_mts_2025.pdf",
+          "requirement_id": "live_candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Caps/hats are restricted; any permitted religious covering must leave required facial features visible.",
+          "source": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_adv_mts_2025.pdf",
+          "requirement_id": "live_candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "A face mask/covering is restricted according to the stated policy.",
+          "source": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_adv_mts_2025.pdf",
+          "requirement_id": "live_candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Capturing a photograph of a pre-existing printed/digital photograph is liable to rejection under the cited SSC notice.",
+          "source": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_adv_mts_2025.pdf",
+          "requirement_id": "live_candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Poor-quality, miniature, blurred or side-facing live photographs and blurred/miniature signatures are liable to rejection.",
+          "source": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_adv_mts_2025.pdf",
+          "requirement_id": "live_candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "The current notice gives different signature widths in two sections; candidates should follow the live portal's validator.",
+          "source": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_adv_mts_2025.pdf",
+          "requirement_id": "scanned_candidate_signature"
+        }
+      ]
+    },
+    "ssc-selection-post-phase-xiii": {
+      "exam_id": "ssc-selection-post-phase-xiii",
+      "exam_name": "SSC Selection Post Phase XIII",
+      "facts": []
+    },
+    "ssc-stenographer-grade-c-d-examination": {
+      "exam_id": "ssc-stenographer-grade-c-d-examination",
+      "exam_name": "SSC Stenographer Grade C & D Examination",
+      "facts": [
+        {
+          "kind": "rejection",
+          "text": "Applications with blurred/miniature Signature will be rejected summarily.",
+          "source": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_adv_steno_2025.pdf",
+          "requirement_id": "candidate_signature"
+        }
+      ]
+    },
+    "ssc-sub-inspector-in-delhi-police-and-capfs-examination": {
+      "exam_id": "ssc-sub-inspector-in-delhi-police-and-capfs-examination",
+      "exam_name": "SSC Sub-Inspector in Delhi Police and CAPFs Examination",
+      "facts": [
+        {
+          "kind": "rejection",
+          "text": "Applications with blurred/miniature Signature will be rejected summarily.",
+          "source": "https://ssc.gov.in/",
+          "requirement_id": "candidate_signature"
+        }
+      ]
+    },
+    "telangana-dsc-teacher-recruitment": {
+      "exam_id": "telangana-dsc-teacher-recruitment",
+      "exam_name": "Telangana DSC Teacher Recruitment",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 3 files, not only a photograph — 2 more files besides it.",
+          "source": "https://schooledu.telangana.gov.in/",
+          "requirement_id": null
+        }
+      ]
+    },
+    "telangana-teacher-eligibility-test-tg-tet": {
+      "exam_id": "telangana-teacher-eligibility-test-tg-tet",
+      "exam_name": "Telangana Teacher Eligibility Test (TG TET)",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://tgtet.aptonline.in/",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Applications with no photo and signature / unclear photo and signature / inadequate size photograph will be rejected.",
+          "source": "https://tgtet.aptonline.in/",
+          "requirement_id": "candidate_photograph"
+        }
+      ]
+    },
+    "tg-eapcet": {
+      "exam_id": "tg-eapcet",
+      "exam_name": "TG EAPCET",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://eapcet.tgche.ac.in/",
+          "requirement_id": null
+        }
+      ]
+    },
+    "tg-ts-polycet": {
+      "exam_id": "tg-ts-polycet",
+      "exam_name": "TG/TS POLYCET",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://polycet.sbtet.telangana.gov.in/",
+          "requirement_id": null
+        }
+      ]
+    },
+    "tgpsc-group-i-services-examination": {
+      "exam_id": "tgpsc-group-i-services-examination",
+      "exam_name": "TGPSC Group I Services Examination",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://websitenew.tspsc.gov.in/",
+          "requirement_id": null
+        }
+      ]
+    },
+    "tgpsc-group-ii-services-examination": {
+      "exam_id": "tgpsc-group-ii-services-examination",
+      "exam_name": "TGPSC Group II Services Examination",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://websitenew.tspsc.gov.in/",
+          "requirement_id": null
+        }
+      ]
+    },
+    "tgpsc-group-iii-services-examination": {
+      "exam_id": "tgpsc-group-iii-services-examination",
+      "exam_name": "TGPSC Group III Services Examination",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://websitenew.tspsc.gov.in/",
+          "requirement_id": null
+        }
+      ]
+    },
     "tnpsc-combined-civil-services-examination-i-group-i": {
       "exam_id": "tnpsc-combined-civil-services-examination-i-group-i",
       "exam_name": "TNPSC Combined Civil Services Examination I (Group I)",
@@ -2060,6 +3076,18 @@
         }
       ]
     },
+    "tspsc-group-iv-services": {
+      "exam_id": "tspsc-group-iv-services",
+      "exam_name": "TSPSC Group IV Services",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://websitenew.tspsc.gov.in/",
+          "requirement_id": null
+        }
+      ]
+    },
     "ugc-net-june-2026": {
       "exam_id": "ugc-net-june-2026",
       "exam_name": "UGC-NET June 2026",
@@ -2099,6 +3127,90 @@
           "text": "A face mask/covering is restricted according to the stated policy.",
           "source": "https://cdnbbsr.s3waas.gov.in/s301eee509ee2f68dc6014898c309e86bf/uploads/2026/04/202604301078678748.pdf",
           "requirement_id": "candidate_photograph"
+        }
+      ]
+    },
+    "up-b-ed-joint-entrance-examination": {
+      "exam_id": "up-b-ed-joint-entrance-examination",
+      "exam_name": "UP B.Ed Joint Entrance Examination",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://www.bujhansi.ac.in/upbedjee.html",
+          "requirement_id": null
+        }
+      ]
+    },
+    "uppsc-combined-state-upper-subordinate-services-examination-pcs": {
+      "exam_id": "uppsc-combined-state-upper-subordinate-services-examination-pcs",
+      "exam_name": "UPPSC Combined State/Upper Subordinate Services Examination (PCS)",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 3 files, not only a photograph — 2 more files besides it.",
+          "source": "https://uppsc.up.nic.in/OuterPages/OnlineInstruction_English.html",
+          "requirement_id": null
+        }
+      ]
+    },
+    "uppsc-one-time-registration-photograph": {
+      "exam_id": "uppsc-one-time-registration-photograph",
+      "exam_name": "UPPSC One Time Registration Photograph",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 3 files, not only a photograph — 2 more files besides it.",
+          "source": "https://uppsc.up.nic.in/CMS/OTR_DOC/OTR_PHOTO_INSTRUCTION.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Signature in CAPITAL LETTERS is not permitted.",
+          "source": "https://uppsc.up.nic.in/CMS/OTR_DOC/OTR_PHOTO_INSTRUCTION.pdf",
+          "requirement_id": "candidate_signature"
+        },
+        {
+          "kind": "rejection",
+          "text": "Since the signature is proof of identity, it must be genuine and in full; initials are not sufficient.",
+          "source": "https://uppsc.up.nic.in/CMS/OTR_DOC/OTR_PHOTO_INSTRUCTION.pdf",
+          "requirement_id": "candidate_signature"
+        },
+        {
+          "kind": "rejection",
+          "text": "The signature must be signed only by the applicant and not by any other person.",
+          "source": "https://uppsc.up.nic.in/CMS/OTR_DOC/OTR_PHOTO_INSTRUCTION.pdf",
+          "requirement_id": "candidate_signature"
+        },
+        {
+          "kind": "rejection",
+          "text": "If the Applicant's signature on the answer script does not match the signature on the Hall Ticket at the time of the examination, the applicant will be disqualified.",
+          "source": "https://uppsc.up.nic.in/CMS/OTR_DOC/OTR_PHOTO_INSTRUCTION.pdf",
+          "requirement_id": "candidate_signature"
+        }
+      ]
+    },
+    "uppsc-review-officer-assistant-review-officer": {
+      "exam_id": "uppsc-review-officer-assistant-review-officer",
+      "exam_name": "UPPSC Review Officer / Assistant Review Officer",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 3 files, not only a photograph — 2 more files besides it.",
+          "source": "https://uppsc.up.nic.in/OuterPages/OnlineInstruction_English.html",
+          "requirement_id": null
+        }
+      ]
+    },
+    "upsc-engineering-services-examination": {
+      "exam_id": "upsc-engineering-services-examination",
+      "exam_name": "UPSC Engineering Services Examination",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 3 files, not only a photograph — 2 more files besides it.",
+          "source": "https://www.upsc.gov.in/exams-related-info/exam-notification/archives",
+          "requirement_id": null
         }
       ]
     },
@@ -2390,6 +3502,23 @@
         }
       ]
     },
+    "upsssc-preliminary-eligibility-test-pet": {
+      "exam_id": "upsssc-preliminary-eligibility-test-pet",
+      "exam_name": "UPSSSC Preliminary Eligibility Test (PET)",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://upsssc.gov.in/",
+          "requirement_id": null
+        }
+      ]
+    },
+    "uttar-pradesh-police-constable-recruitment": {
+      "exam_id": "uttar-pradesh-police-constable-recruitment",
+      "exam_name": "Uttar Pradesh Police Constable Recruitment",
+      "facts": []
+    },
     "wbjee-2026": {
       "exam_id": "wbjee-2026",
       "exam_name": "WBJEE 2026",
@@ -2434,6 +3563,18 @@
           "kind": "deliverables",
           "text": "This application asks for 3 files, not only a photograph — 2 more files besides it.",
           "source": "https://wbpsc.gov.in/pdf_file/Guideline.pdf",
+          "requirement_id": null
+        }
+      ]
+    },
+    "west-bengal-primary-teacher-eligibility-test": {
+      "exam_id": "west-bengal-primary-teacher-eligibility-test",
+      "exam_name": "West Bengal Primary Teacher Eligibility Test",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://www.wbbpeonline.com/",
           "requirement_id": null
         }
       ]

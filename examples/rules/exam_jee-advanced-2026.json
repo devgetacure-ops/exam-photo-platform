@@ -1,0 +1,180 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "jee-advanced-2026",
+  "rule_version": "1.0.0",
+  "status": "provisional",
+  "exam": {
+    "exam_id": "jee-advanced-2026",
+    "exam_name": "JEE (Advanced) 2026",
+    "conducting_body": "Joint Admission Board / IIT Roorkee",
+    "examination_year": 2026,
+    "application_cycle": "2026",
+    "application_stage": "application",
+    "jurisdiction": "India",
+    "category": "entrance",
+    "aliases": [
+      "JEE Advanced"
+    ]
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "passport size; attested photograph",
+      "source_url": "https://jeeadv.ac.in/documents/IBEnglish_2026_1.pdf",
+      "document_title": "Information Brochure - JEE (Advanced) 2026",
+      "section_name": "Application / forms"
+    }
+  ],
+  "requirements": [
+    {
+      "requirement_id": "candidate_photograph",
+      "requirement_name": "Candidate photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "not_yet_supported",
+      "applicability": "All applicants",
+      "content_instructions": "A candidate photograph is required in the registration process; exact current file format/size was not found in the supplied photo evidence.",
+      "evidence_status": "Current official JEE Advanced record; specification gap"
+    },
+    {
+      "requirement_id": "class_x_birth_date_proof",
+      "requirement_name": "Class X/birth-date proof",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Candidates whose date of birth requires documentary proof under the portal route",
+      "content_instructions": "Upload the prescribed certificate/testimonial where requested.",
+      "evidence_status": "Current official JEE Advanced brochure",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 400000
+        }
+      }
+    },
+    {
+      "requirement_id": "class_xii_equivalent_certificate_or_testimonial",
+      "requirement_name": "Class XII/equivalent certificate or testimonial",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Candidates required to establish year of first appearance or an eligibility relaxation",
+      "content_instructions": "Upload the competent-authority certificate/testimonial required by the relevant eligibility clause.",
+      "evidence_status": "Current official JEE Advanced brochure",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 400000
+        }
+      }
+    },
+    {
+      "requirement_id": "gen_ews_obc_ncl_sc_st_certificate",
+      "requirement_name": "GEN-EWS/OBC-NCL/SC/ST certificate",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Candidates claiming the corresponding category",
+      "content_instructions": "Use the prescribed JEE Advanced certificate format and validity period.",
+      "evidence_status": "Current official certificate-format page",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 400000
+        }
+      }
+    },
+    {
+      "requirement_id": "pwd_dyslexia_difficulty_in_writing_certificate",
+      "requirement_name": "PwD/dyslexia/difficulty-in-writing certificate",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Candidates claiming disability or writing accommodation",
+      "content_instructions": "Use the applicable prescribed form. Separate forms are published for PwD categories, dyslexia and difficulty in writing.",
+      "evidence_status": "Current official certificate-format page",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 400000
+        }
+      }
+    },
+    {
+      "requirement_id": "scribe_forms",
+      "requirement_name": "Scribe forms",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Candidates using a scribe",
+      "content_instructions": "Upload/submit the prescribed Scribe (Amanuensis) form where required.",
+      "evidence_status": "Current official certificate-format page",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 400000
+        }
+      }
+    },
+    {
+      "requirement_id": "defence_service_certificate_ds",
+      "requirement_name": "Defence Service certificate (DS)",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Candidates claiming the DS category",
+      "content_instructions": "Use the official Form DS.",
+      "evidence_status": "Current official certificate-format page",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 400000
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "requirements[1].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[2].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[3].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[4].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[5].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[6].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",
+      "confidence": 1,
+      "approved": false
+    }
+  },
+  "verification": {
+    "verification_status": "provisional"
+  },
+  "fictional_example": false
+}

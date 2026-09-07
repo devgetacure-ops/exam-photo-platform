@@ -1169,6 +1169,112 @@ _STATUS_BY_TIER = {
 }
 
 
+def build_deliverables_only_rule(
+    record: Record,
+    tier: str,
+    deliverables: Optional[list[dict[str, Any]]] = None,
+    rejection_conditions: Optional[list[str]] = None,
+) -> tuple[Optional[dict[str, Any]], list[str]]:
+    """A record for an examination whose *photograph* cannot be encoded.
+
+    DEC-079. Before this, an examination was dropped whole when its photograph
+    was captured live or its photograph evidence was incomplete -- and it took
+    the signature, the thumb impression and the certificates with it: 81
+    examinations and 135 deliverables at the last count, every one of them
+    something the engine can already prepare.
+
+    The photograph is carried as ``not_yet_supported`` rather than omitted. An
+    examination we cannot serve a photograph for still *asks* the candidate for
+    one, and a record that quietly left it out would tell them the examination
+    wants none, which is worse than admitting the gap.
+    """
+    if not deliverables:
+        return None, []
+
+    rejection_by_type, application_rejections = _route_rejection_conditions(
+        rejection_conditions or []
+    )
+    photograph_status = (
+        "guidance_only" if tier == "live_capture_only" else "not_yet_supported"
+    )
+    inventory, interim_provenance, unencodable = _requirements(
+        deliverables, photograph_status, rejection_by_type
+    )
+    if not inventory:
+        return None, unencodable
+    # Nothing to serve is not a record worth writing: it would appear in the
+    # picker offering the candidate no action at all.
+    if not any(
+        item.get("platform_support") in ("supported", "partially_supported")
+        for item in inventory
+    ):
+        return None, unencodable
+
+    year = record.data.get("examination_year")
+    stage = str(record.data.get("application_stage") or "application")
+    role = str(record.data.get("photo_role") or "")
+    identity = record.name if stage == "application" else f"{record.name} {stage}"
+    if role and role not in ("candidate_photograph",):
+        identity = f"{identity} {role}"
+    rule_id = _slug(identity)
+
+    rule: dict[str, Any] = {
+        "schema_version": "1.1",
+        "rule_id": rule_id,
+        "rule_version": "1.0.0",
+        "status": "provisional",
+        "exam": {
+            "exam_id": rule_id,
+            "exam_name": record.name,
+            "conducting_body": str(record.data.get("conducting_body") or ""),
+            "examination_year": int(year) if year else 0,
+            "application_cycle": str(record.data.get("application_cycle") or ""),
+            "application_stage": stage,
+            "jurisdiction": record.data.get("jurisdiction"),
+            "category": record.data.get("category"),
+            "aliases": list(record.data.get("aliases") or []),
+        },
+        "source_evidence": _source_evidence(record),
+        "requirements": inventory,
+        "provenance": dict(interim_provenance),
+        "verification": {"verification_status": "provisional"},
+        "fictional_example": False,
+    }
+    if application_rejections:
+        rule["application_rejection_conditions"] = application_rejections
+    if not rule["source_evidence"]:
+        # DEC-079. The photograph specification is what has no source here --
+        # that is why this record exists at all -- so falling back to the
+        # deliverables research's own citation is not a lowering of the bar,
+        # it is citing the document that actually established what the
+        # examination asks for.
+        rule["source_evidence"] = _deliverable_source_evidence(deliverables)
+    if not rule["source_evidence"]:
+        return None, unencodable
+    return rule, unencodable
+
+
+def _deliverable_source_evidence(
+    deliverables: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    """Cite the documents the deliverable inventory itself came from."""
+    seen: dict[str, dict[str, Any]] = {}
+    for deliverable in deliverables:
+        url = str(deliverable.get("source_url") or "").strip()
+        if not url.startswith(("http://", "https://")):
+            continue
+        if url in seen:
+            continue
+        wording = str(deliverable.get("specification") or "").strip()
+        seen[url] = {
+            "source_type": "official_webpage",
+            "official_source": True,
+            "captured_wording": wording or str(deliverable.get("name") or ""),
+            "source_url": url,
+        }
+    return list(seen.values())
+
+
 def build_rule(
     record: Record,
     tier: str,
@@ -1356,6 +1462,34 @@ def main() -> int:
                 )
                 if count:
                     unserved_deliverables.append((record.name, count))
+
+        if tier in ("live_capture_only", "incomplete"):
+            # DEC-079. The photograph cannot be encoded, but the signature and
+            # the certificates can. Write a record without an
+            # `image_requirements` block rather than dropping the examination
+            # and its other deliverables with it.
+            partial, partial_unencodable = build_deliverables_only_rule(
+                record,
+                tier,
+                deliverables_by_key.get(stage_key, []),
+                rejections_by_key.get(stage_key, []),
+            )
+            for item in partial_unencodable:
+                unencodable_items.append((record.name, item))
+            if partial is not None:
+                errors = validate_exam_rule(partial)
+                if errors:
+                    rejected.append((record.name, errors))
+                else:
+                    path = args.out / f"{args.prefix}{_slug(partial['rule_id'])}.json"
+                    path.write_text(
+                        json.dumps(partial, indent=2, ensure_ascii=False) + chr(10),
+                        encoding="utf-8",
+                    )
+                    written.append(
+                        (record.name, "deliverables only -- no photograph rule", path)
+                    )
+                    continue
 
         if tier == "live_capture_only":
             skipped.append(

@@ -1,0 +1,85 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "jkssb-police-constable-recruitment",
+  "rule_version": "1.0.0",
+  "status": "provisional",
+  "exam": {
+    "exam_id": "jkssb-police-constable-recruitment",
+    "exam_name": "JKSSB Police Constable Recruitment",
+    "conducting_body": "Jammu & Kashmir Services Selection Board",
+    "examination_year": 2024,
+    "application_cycle": "2024",
+    "application_stage": "application",
+    "jurisdiction": "Jammu and Kashmir",
+    "category": "police_recruitment",
+    "aliases": []
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_webpage",
+      "official_source": true,
+      "captured_wording": "Live face capture using your device camera is mandatory.",
+      "source_url": "https://jkssb.nic.in/Dynamic-jkssb-test/Pages/Applicant/InstructionsCivil.html",
+      "document_title": "JKSSB online application instructions",
+      "section_name": "Upload scanned images / live face capture"
+    }
+  ],
+  "requirements": [
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate signature",
+      "requirement_type": "signature",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "All applicants",
+      "content_instructions": "greater than 10 KB and less than 20 KB; 3.5 cm × 1.5 cm; format not named in captured current clause",
+      "evidence_status": "Current official JKSSB application instructions",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 20000,
+          "minimum_bytes": 10000,
+          "published_minimum": 10,
+          "published_maximum": 20,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    },
+    {
+      "requirement_id": "category_certificate",
+      "requirement_name": "Category certificate",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Applicants claiming an applicable category",
+      "content_instructions": "PDF; maximum 100 KB",
+      "evidence_status": "Current official JKSSB application instructions",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 100000,
+          "published_maximum": 100,
+          "size_unit_as_published": "KB"
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "requirements[0].file_spec.formats.allowed_formats": {
+      "type": "interim_default",
+      "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
+      "confidence": 1,
+      "approved": false
+    }
+  },
+  "verification": {
+    "verification_status": "provisional"
+  },
+  "fictional_example": false
+}

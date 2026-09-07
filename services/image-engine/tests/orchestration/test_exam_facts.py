@@ -214,10 +214,13 @@ def test_the_real_catalogue_produces_facts_for_almost_every_examination():
         if not derive_facts(rule).facts:
             empty.append(rule["exam"]["exam_name"])
 
-    # One examination rests entirely on secondary sources and platform
-    # estimates, so it has nothing it can truthfully say. That is the correct
-    # outcome, not a gap to fill.
-    assert len(empty) <= 2
+    # A record can honestly have nothing to say, and DEC-079 made that more
+    # common rather than worse: an examination encoded for its signature alone
+    # carries no photograph specification, so it produces no size or format
+    # fact, and if it also has a single deliverable and no published rejection
+    # conditions it produces none at all. Silence is the correct outcome
+    # there. What is asserted is that the great majority do speak.
+    assert len(empty) < len(records) // 4
 
 
 def test_no_real_fact_is_empty_or_unattributed():

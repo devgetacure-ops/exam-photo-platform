@@ -1,0 +1,115 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "bpsc-teacher-recruitment-examination-tre",
+  "rule_version": "1.0.0",
+  "status": "provisional",
+  "exam": {
+    "exam_id": "bpsc-teacher-recruitment-examination-tre",
+    "exam_name": "BPSC Teacher Recruitment Examination (TRE)",
+    "conducting_body": "Bihar Public Service Commission",
+    "examination_year": 2026,
+    "application_cycle": "TRE 3 historical scale / TRE 4 current 2026 family",
+    "application_stage": "application",
+    "jurisdiction": "Bihar",
+    "category": "teacher_recruitment",
+    "aliases": []
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_webpage",
+      "official_source": true,
+      "captured_wording": "Webcam live photograph",
+      "source_url": "https://bpsc.bihar.gov.in/wp-content/uploads/BPSC_content/Notices/NB-2025-06-19-02.pdf"
+    }
+  ],
+  "requirements": [
+    {
+      "requirement_id": "english_signature",
+      "requirement_name": "English signature",
+      "requirement_type": "signature",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Applicants using the current BPSC profile/application workflow",
+      "content_instructions": "maximum 20 KB; 150–220×250–320 px; format/minimum not published",
+      "evidence_status": "Current official BPSC application manual",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 20000,
+          "published_maximum": 20,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    },
+    {
+      "requirement_id": "hindi_signature",
+      "requirement_name": "Hindi signature",
+      "requirement_type": "signature",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Applicants using the current BPSC profile/application workflow",
+      "content_instructions": "maximum 20 KB; 150–220×250–320 px; format/minimum not published",
+      "evidence_status": "Current official BPSC application manual",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 20000,
+          "published_maximum": 20,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    },
+    {
+      "requirement_id": "educational_teacher_eligibility_supporting_certi",
+      "requirement_name": "Educational/teacher-eligibility/supporting certificates",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "As required by the TRE notification and candidate claims",
+      "content_instructions": "not_found",
+      "evidence_status": "Recruitment-specific certificate inventory/limits are notification-dependent and not universally published in the current profile manual.",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 400000
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "requirements[0].file_spec.formats.allowed_formats": {
+      "type": "interim_default",
+      "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[1].file_spec.formats.allowed_formats": {
+      "type": "interim_default",
+      "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
+      "confidence": 1,
+      "approved": false
+    },
+    "requirements[2].file_spec.file_size.maximum_bytes": {
+      "type": "interim_default",
+      "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",
+      "confidence": 1,
+      "approved": false
+    }
+  },
+  "verification": {
+    "verification_status": "provisional"
+  },
+  "fictional_example": false
+}
