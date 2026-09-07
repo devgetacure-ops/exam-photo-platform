@@ -101,6 +101,16 @@ class ApiSettings(BaseModel):
     # browser; `key_secret` never leaves the process. Both empty means order
     # creation refuses rather than pretending, so a host without them cannot
     # accidentally fall back to a browser-supplied amount.
+    # DEC-072. SMTP for delivering a paid file by email, so it survives the
+    # thirty-minute window. Empty host or sender means email delivery refuses
+    # rather than reporting a success it did not achieve.
+    smtp_host: str = ""
+    smtp_port: int = 587
+    smtp_username: str = ""
+    smtp_password: str = ""
+    smtp_from_address: str = ""
+    smtp_use_tls: bool = True
+
     razorpay_key_id: str = ""
     razorpay_key_secret: str = ""
 
@@ -250,6 +260,19 @@ def get_settings() -> ApiSettings:
         )
     if "EXAM_PHOTO_OPERATOR_TOKEN" in os.environ:
         kwargs["operator_token"] = os.environ["EXAM_PHOTO_OPERATOR_TOKEN"]
+    for var, field in (
+        ("EXAM_PHOTO_SMTP_HOST", "smtp_host"),
+        ("EXAM_PHOTO_SMTP_USERNAME", "smtp_username"),
+        ("EXAM_PHOTO_SMTP_PASSWORD", "smtp_password"),
+        ("EXAM_PHOTO_SMTP_FROM", "smtp_from_address"),
+    ):
+        if var in os.environ:
+            kwargs[field] = os.environ[var]
+    if "EXAM_PHOTO_SMTP_PORT" in os.environ:
+        kwargs["smtp_port"] = int(os.environ["EXAM_PHOTO_SMTP_PORT"])
+    if "EXAM_PHOTO_SMTP_USE_TLS" in os.environ:
+        val = os.environ["EXAM_PHOTO_SMTP_USE_TLS"].strip().lower()
+        kwargs["smtp_use_tls"] = val in ("1", "true", "yes")
     if "EXAM_PHOTO_RAZORPAY_KEY_ID" in os.environ:
         kwargs["razorpay_key_id"] = os.environ["EXAM_PHOTO_RAZORPAY_KEY_ID"]
     if "EXAM_PHOTO_RAZORPAY_KEY_SECRET" in os.environ:

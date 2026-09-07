@@ -227,3 +227,30 @@ Indian-looking subject. The current brief calls these fictional, but the origina
 generation evidence has not been provided. Do not rewrite history automatically.
 The new hero illustration has explicit in-run ImageGen provenance recorded in
 UI_REDESIGN_PLAN_2026_09_07.md and an exact-file gitignore exception.
+
+## Delivery: download, email, and the WhatsApp link
+
+2026-09-07, DEC-072. The final page's three ways out.
+
+**Download** — `GET /v1/jobs/{id}/output`, unchanged. It now records that the
+file was taken, which is what a refund claim is decided against.
+
+**Email** — `POST /v1/kits/{kit_id}/email` with `{"address": "..."}`, and
+optionally `job_ids` to send a subset. Attaches only released files, states the
+deletion time in the message, and tells the candidate to keep it because the
+attachment outlives our copy. Returns the address **masked** — `c***@gmail.com`
+— which is also all we store, so show that back as confirmation rather than
+echoing what they typed.
+
+`422` means nothing could be sent: a malformed address, nothing released yet,
+or the files already expired. The detail is candidate-safe.
+
+**WhatsApp** — yours entirely, and it needs nothing from the engine. WhatsApp
+carries text, not our files, so a `wa.me` link should carry a short message and
+the download URL. Note the URL stops working at the deadline, so pair it with
+the expiry time in the same message.
+
+**One thing worth putting in the interface.** Offering email *before* the
+countdown becomes urgent is what actually prevents the failure the owner named
+— paying and then not getting the file. A candidate who emails it to themselves
+has already solved expiry.

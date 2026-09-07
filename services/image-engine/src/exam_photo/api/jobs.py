@@ -34,6 +34,16 @@ def parse_manifest_timestamp(stamp: str) -> Optional[datetime]:
     return parsed
 
 
+class EmailAttempt(BaseModel):
+    """One attempt to email this file, and how it went (DEC-072)."""
+
+    at: str
+    #: Masked, never the address itself.
+    masked_address: str
+    succeeded: bool
+    error: Optional[str] = None
+
+
 class ProcessingJobRecord(BaseModel):
     """Schema representing a job's manifest."""
 
@@ -114,6 +124,17 @@ class ProcessingJobRecord(BaseModel):
     payment_amount: Optional[int] = None
     payment_currency: Optional[str] = None
     released_at: Optional[str] = None
+
+    # --- Delivery evidence (DEC-072) ---------------------------------------
+    #
+    # The owner's refund rule is "paid, and not delivered", so what actually
+    # reached the candidate has to be recorded. Note what is *not* here: the
+    # email address. It is personal data with no use after the send, so only a
+    # masked form is kept -- enough to settle "you sent it to the wrong
+    # address" and useless for anything else.
+    download_count: int = 0
+    first_downloaded_at: Optional[str] = None
+    email_attempts: List["EmailAttempt"] = Field(default_factory=list)
 
     def is_expired(self, now: Optional[datetime] = None) -> bool:
         """Whether this job has passed its retention deadline (DEC-066).

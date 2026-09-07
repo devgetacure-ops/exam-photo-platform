@@ -25,6 +25,8 @@ from exam_photo.api.contracts import (
     DocumentAssembleRequest,
     DocumentPageResponse,
     DocumentPlanResponse,
+    EmailDeliveryRequest,
+    EmailDeliveryResponse,
     ExamDetailResponse,
     ExamListResponse,
     ExamSummaryResponse,
@@ -34,6 +36,7 @@ from exam_photo.api.contracts import (
     KitPackageItem,
     KitPackageResponse,
     KitQuoteResponse,
+    OrderEvidenceResponse,
     PreparationOutcome,
     PrepareRequirementResponse,
     ProcessImageResponse,
@@ -45,6 +48,7 @@ from exam_photo.api.contracts import (
     RuleValidationResponse,
     UnavailableExamResponse,
 )
+from exam_photo.api.delivery import EmailRejectedError
 from exam_photo.api.jobs import KIT_ID_REGEX, ProcessingJobRecord
 from exam_photo.api.payments import (
     SIGNATURE_HEADER,
@@ -909,6 +913,9 @@ def get_job_output(job_id: str) -> Response:
         )
 
     output_bytes = service.store.read_file(job_id, record.output_filename)
+    # DEC-072: recorded after the bytes were successfully read, so this counts
+    # files that actually left rather than requests that arrived.
+    service.record_download(record)
     # A deliverable may legitimately be a PDF (DEC-052), so the media type is
     # read from the record rather than assumed to be JPEG as it could be when
     # a photograph was the only thing this service produced.
@@ -1059,6 +1066,80 @@ def create_kit_order(kit_id: str) -> KitOrderResponse:
         amount_paise=order.amount_paise,
         currency=order.currency,
         key_id=order.key_id,
+    )
+
+
+@app.post("/v1/kits/{kit_id}/email", response_model=EmailDeliveryResponse)
+def email_kit(kit_id: str, request: EmailDeliveryRequest) -> EmailDeliveryResponse:
+    """Email a kit's paid files, so they outlive the thirty-minute window.
+
+    Only released files are sent. The address is used and not stored (DEC-072).
+    """
+    if not KIT_ID_REGEX.match(kit_id):
+        raise HTTPException(status_code=400, detail="Invalid kit ID format")
+
+    records = service.registry.jobs_in_kit(kit_id)
+    if request.job_ids:
+        wanted = set(request.job_ids)
+        records = [record for record in records if record.job_id in wanted]
+
+    try:
+        outcome = service.email_jobs(records, request.address)
+    except EmailRejectedError as err:
+        print(f"email delivery failed for {kit_id}: {err}")
+        raise HTTPException(status_code=422, detail=str(err)) from None
+
+    return EmailDeliveryResponse(**outcome)
+
+
+@app.get(
+    "/v1/orders/{order_id}/evidence",
+    response_model=OrderEvidenceResponse,
+    dependencies=[Depends(require_operator)],
+)
+def get_order_evidence(order_id: str) -> OrderEvidenceResponse:
+    """What is known about one order, for deciding a refund (DEC-072).
+
+    Operator-gated: it names a payment and what became of the files, which is
+    nobody's business but the operator's. It establishes our facts and not the
+    candidate's honesty -- a file can be delivered and still not arrive.
+    """
+    order = service.orders.get(order_id)
+    if order is None:
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    jobs = []
+    for job_id in order.job_ids:
+        record = service.registry.get_job(job_id)
+        if record is None:
+            continue
+        jobs.append(
+            {
+                "job_id": record.job_id,
+                "requirement_type": record.requirement_type,
+                "entitlement": record.entitlement.value,
+                "released_at": record.released_at,
+                "download_count": record.download_count,
+                "first_downloaded_at": record.first_downloaded_at,
+                "expires_at": record.expires_at,
+                "email_attempts": [
+                    attempt.model_dump() for attempt in record.email_attempts
+                ],
+            }
+        )
+
+    return OrderEvidenceResponse(
+        order_id=order.order_id,
+        kit_id=order.kit_id,
+        amount_paise=order.amount_paise,
+        currency=order.currency,
+        created_at=order.created_at,
+        paid_at=order.paid_at,
+        payment_reference=order.payment_reference,
+        delivered_at=order.delivered_at,
+        delivery_method=order.delivery_method,
+        job_ids=order.job_ids,
+        jobs=jobs,
     )
 
 

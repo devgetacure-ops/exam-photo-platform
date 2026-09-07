@@ -1,0 +1,346 @@
+"""Getting the file to the candidate, and proving we did (DEC-072).
+
+Two things are pinned here. That a paid file can leave by email, so it
+outlives the thirty-minute window DEC-066 enforces. And that what left is
+recorded, because the product owner's refund rule is *paid, and not
+delivered*, and deciding that needs evidence rather than a conversation.
+
+The privacy property is pinned as hard as the delivery one: **the address is
+used and not stored.**
+"""
+
+import pytest
+from fastapi.testclient import TestClient
+
+from exam_photo.api.app import app
+from exam_photo.api.contracts import ApiJobStatus, JobEntitlement
+from exam_photo.api.delivery import (
+    EmailRejectedError,
+    UnconfiguredEmailSender,
+    mask_address,
+    sender_for,
+    validate_address,
+)
+from exam_photo.api.jobs import JobRegistry
+from exam_photo.api.settings import ApiSettings
+from exam_photo.api.storage import LocalArtifactStore
+
+client = TestClient(app, raise_server_exceptions=False)
+
+KIT = "kit_delivery"
+OPERATOR = "operator-token"
+
+
+class FakeSender:
+    """Records what it was asked to send. Never opens a socket."""
+
+    def __init__(self, fail: bool = False):
+        self.sent: list[dict] = []
+        self.fail = fail
+
+    def send(self, to_address, subject, body, attachments):
+        if self.fail:
+            raise EmailRejectedError("SMTP send failed: connection refused")
+        self.sent.append(
+            {
+                "to": to_address,
+                "subject": subject,
+                "body": body,
+                "filenames": [item.filename for item in attachments],
+                "bytes": sum(len(item.content) for item in attachments),
+            }
+        )
+
+
+@pytest.fixture
+def api(tmp_path):
+    from exam_photo.api.app import service
+
+    original = (
+        service.settings,
+        service.store,
+        service.registry,
+        service.orders,
+        service._email_sender,
+    )
+    service.settings = ApiSettings(
+        artifact_root=tmp_path / "artifacts", operator_token=OPERATOR
+    )
+    service.store = LocalArtifactStore(tmp_path / "artifacts")
+    service.registry = JobRegistry(tmp_path / "artifacts")
+    from exam_photo.api.orders import OrderRegistry
+
+    service.orders = OrderRegistry(tmp_path / "artifacts")
+    service.email_sender = FakeSender()
+    try:
+        yield service
+    finally:
+        (
+            service.settings,
+            service.store,
+            service.registry,
+            service.orders,
+            service._email_sender,
+        ) = original
+
+
+def _job(api, job_id, released=True, kind="photograph"):
+    record = api.registry.create_job(job_id, 1800)
+    record.status = ApiJobStatus.SUCCEEDED
+    record.kit_id = KIT
+    record.exam_id = "ctet-september-2026"
+    record.requirement_type = kind
+    record.output_filename = f"{job_id}.jpg"
+    record.output_media_type = "image/jpeg"
+    if released:
+        record.entitlement = JobEntitlement.RELEASED
+    api.store.write_file(job_id, f"{job_id}.jpg", b"\xff\xd8\xff\xdb-prepared-bytes")
+    api.registry.update_job(record)
+    return record
+
+
+# ----------------------------------------------------------------------
+# The address is used and not stored
+# ----------------------------------------------------------------------
+
+
+def test_the_address_is_never_written_to_the_manifest(api):
+    """DPDP: personal data with no use after the send is not retained."""
+    _job(api, "job_a")
+
+    client.post(f"/v1/kits/{KIT}/email", json={"address": "candidate@example.com"})
+
+    manifest = (api.settings.artifact_root / "job_a" / "job.json").read_text(
+        encoding="utf-8"
+    )
+    assert "candidate@example.com" not in manifest
+    assert "c***@example.com" in manifest
+
+
+def test_masking_keeps_only_what_settles_a_dispute():
+    assert mask_address("dmbonwork@gmail.com") == "d***@gmail.com"
+    assert mask_address("a@b.co") == "a***@b.co"
+    assert mask_address("not-an-address") == "***"
+
+
+def test_a_malformed_address_is_refused_before_any_send(api):
+    _job(api, "job_a")
+
+    response = client.post(f"/v1/kits/{KIT}/email", json={"address": "not-an-email"})
+
+    assert response.status_code == 422
+    assert api.email_sender.sent == []
+
+
+def test_address_validation_rejects_the_obvious_cases():
+    for bad in ("", "  ", "no-at-sign", "a@b", "a@@b.com", "x" * 250 + "@b.com"):
+        with pytest.raises(EmailRejectedError):
+            validate_address(bad)
+    assert validate_address("  ok@example.com  ") == "ok@example.com"
+
+
+# ----------------------------------------------------------------------
+# Only paid files leave
+# ----------------------------------------------------------------------
+
+
+def test_a_paid_file_is_sent(api):
+    _job(api, "job_a")
+
+    body = client.post(
+        f"/v1/kits/{KIT}/email", json={"address": "candidate@example.com"}
+    ).json()
+
+    assert body["sent"] is True
+    assert body["masked_address"] == "c***@example.com"
+    assert api.email_sender.sent[0]["filenames"] == ["job_a.jpg"]
+
+
+def test_an_unpaid_file_is_never_emailed(api):
+    """Emailing the clean file before payment is the purchase gate with a hole."""
+    _job(api, "job_unpaid", released=False)
+
+    response = client.post(
+        f"/v1/kits/{KIT}/email", json={"address": "candidate@example.com"}
+    )
+
+    assert response.status_code == 422
+    assert api.email_sender.sent == []
+
+
+def test_only_the_paid_files_in_a_mixed_kit_are_sent(api):
+    _job(api, "job_paid")
+    _job(api, "job_unpaid", released=False)
+
+    body = client.post(
+        f"/v1/kits/{KIT}/email", json={"address": "candidate@example.com"}
+    ).json()
+
+    assert body["job_ids"] == ["job_paid"]
+
+
+def test_an_expired_file_is_not_emailed(api):
+    from datetime import datetime, timedelta, timezone
+
+    record = _job(api, "job_gone")
+    record.expires_at = (datetime.now(timezone.utc) - timedelta(minutes=1)).isoformat()
+    api.registry.update_job(record)
+
+    assert (
+        client.post(
+            f"/v1/kits/{KIT}/email", json={"address": "candidate@example.com"}
+        ).status_code
+        == 422
+    )
+
+
+def test_the_message_names_the_deadline_so_the_candidate_keeps_the_email(api):
+    _job(api, "job_a")
+
+    client.post(f"/v1/kits/{KIT}/email", json={"address": "candidate@example.com"})
+
+    body = api.email_sender.sent[0]["body"]
+    assert "deleted at" in body
+    assert "save it" in body
+
+
+# ----------------------------------------------------------------------
+# Evidence: what actually reached the candidate
+# ----------------------------------------------------------------------
+
+
+def test_a_download_is_recorded(api):
+    _job(api, "job_a")
+
+    assert client.get("/v1/jobs/job_a/output").status_code == 200
+
+    record = api.registry.get_job("job_a")
+    assert record.download_count == 1
+    assert record.first_downloaded_at
+
+
+def test_repeat_downloads_count_but_the_first_time_is_kept(api):
+    _job(api, "job_a")
+
+    client.get("/v1/jobs/job_a/output")
+    first = api.registry.get_job("job_a").first_downloaded_at
+    client.get("/v1/jobs/job_a/output")
+
+    record = api.registry.get_job("job_a")
+    assert record.download_count == 2
+    assert record.first_downloaded_at == first
+
+
+def test_a_failed_send_is_recorded_as_a_failure(api):
+    """A refund claim after a bounced send must find the bounce."""
+    _job(api, "job_a")
+    api.email_sender = FakeSender(fail=True)
+
+    response = client.post(
+        f"/v1/kits/{KIT}/email", json={"address": "candidate@example.com"}
+    )
+
+    assert response.status_code == 422
+    attempts = api.registry.get_job("job_a").email_attempts
+    assert len(attempts) == 1
+    assert attempts[0].succeeded is False
+    assert "connection refused" in attempts[0].error
+
+
+def test_the_order_records_that_something_reached_the_candidate(api):
+    api.orders.create("order_ABC", KIT, ["job_a"], 300, "INR")
+    _job(api, "job_a")
+
+    client.get("/v1/jobs/job_a/output")
+
+    order = api.orders.get("order_ABC")
+    assert order.delivered_at and order.delivery_method == "download"
+
+
+def test_the_first_delivery_is_the_one_recorded(api):
+    api.orders.create("order_ABC", KIT, ["job_a"], 300, "INR")
+    _job(api, "job_a")
+
+    client.get("/v1/jobs/job_a/output")
+    first = api.orders.get("order_ABC").delivered_at
+    client.post(f"/v1/kits/{KIT}/email", json={"address": "candidate@example.com"})
+
+    order = api.orders.get("order_ABC")
+    assert order.delivered_at == first
+    assert order.delivery_method == "download"
+
+
+def test_delivery_evidence_survives_the_file_it_describes(api):
+    """A claim arrives after thirty minutes. The evidence must still be there."""
+    from datetime import datetime, timedelta, timezone
+
+    api.orders.create("order_ABC", KIT, ["job_a"], 300, "INR")
+    _job(api, "job_a")
+    client.get("/v1/jobs/job_a/output")
+
+    record = api.registry.get_job("job_a")
+    record.expires_at = (datetime.now(timezone.utc) - timedelta(minutes=1)).isoformat()
+    api.registry.update_job(record)
+    assert client.get("/v1/jobs/job_a/output").status_code == 404
+
+    order = api.orders.get("order_ABC")
+    assert order.delivered_at is not None
+
+
+# ----------------------------------------------------------------------
+# The operator's view
+# ----------------------------------------------------------------------
+
+
+def test_the_evidence_endpoint_is_operator_only(api):
+    api.orders.create("order_ABC", KIT, ["job_a"], 300, "INR")
+
+    assert client.get("/v1/orders/order_ABC/evidence").status_code == 401
+
+
+def test_the_evidence_endpoint_answers_the_refund_question(api):
+    api.orders.create("order_ABC", KIT, ["job_a"], 300, "INR")
+    api.orders.mark_paid("order_ABC", "pay_123")
+    _job(api, "job_a")
+    client.get("/v1/jobs/job_a/output")
+
+    body = client.get(
+        "/v1/orders/order_ABC/evidence",
+        headers={"X-Operator-Token": OPERATOR},
+    ).json()
+
+    assert body["paid_at"] and body["payment_reference"] == "pay_123"
+    assert body["delivered_at"] and body["delivery_method"] == "download"
+    assert body["jobs"][0]["download_count"] == 1
+
+
+def test_evidence_for_an_unknown_order_is_404(api):
+    assert (
+        client.get(
+            "/v1/orders/order_nope/evidence",
+            headers={"X-Operator-Token": OPERATOR},
+        ).status_code
+        == 404
+    )
+
+
+# ----------------------------------------------------------------------
+# The sender a host's configuration entitles it to
+# ----------------------------------------------------------------------
+
+
+def test_a_host_without_smtp_refuses_rather_than_pretending():
+    """DEC-060: telling a candidate their file is on the way, and sending
+    nothing, is worse than being plainly switched off."""
+    sender = sender_for("", 587, "", "", "")
+
+    assert isinstance(sender, UnconfiguredEmailSender)
+    with pytest.raises(EmailRejectedError, match="not configured"):
+        sender.send("a@b.com", "s", "b", [])
+
+
+def test_smtp_settings_produce_a_real_sender():
+    from exam_photo.api.delivery import SmtpEmailSender
+
+    sender = sender_for("smtp.example.com", 587, "u", "p", "from@example.com")
+    assert isinstance(sender, SmtpEmailSender)

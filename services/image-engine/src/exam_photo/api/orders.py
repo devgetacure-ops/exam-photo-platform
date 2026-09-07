@@ -44,6 +44,13 @@ class OrderRecord(BaseModel):
     #: Set when a verified payment settled this order (DEC-069).
     paid_at: Optional[str] = None
     payment_reference: Optional[str] = None
+    #: When something covered by this order first reached the candidate, and
+    #: how (DEC-072). This is the other half of deciding a refund: the order
+    #: says money arrived, this says a file left. Deliberately carries no
+    #: address -- an order record is kept long after the files are erased, and
+    #: retaining a candidate's email that long serves nothing.
+    delivered_at: Optional[str] = None
+    delivery_method: Optional[str] = None
 
 
 class OrderRegistry:
@@ -103,6 +110,31 @@ class OrderRegistry:
             return OrderRecord.model_validate_json(path.read_text(encoding="utf-8"))
         except Exception:
             return None
+
+    def mark_delivered(self, job_id: str, method: str) -> None:
+        """Record the first delivery of anything this order covers.
+
+        Finds the order by the job rather than the other way round, because
+        that is the direction the caller knows: a download route holds a job
+        and nothing else. Only the first delivery is recorded -- the question a
+        refund asks is whether the candidate got their file, not how many
+        times.
+        """
+        if not self.root.is_dir():
+            return
+        for path in self.root.glob("order_*.json"):
+            try:
+                record = OrderRecord.model_validate_json(
+                    path.read_text(encoding="utf-8")
+                )
+            except Exception:
+                continue
+            if job_id not in record.job_ids or record.delivered_at is not None:
+                continue
+            record.delivered_at = datetime.now(timezone.utc).isoformat()
+            record.delivery_method = method
+            path.write_text(record.model_dump_json(indent=2), encoding="utf-8")
+            return
 
     def mark_paid(self, order_id: str, payment_reference: Optional[str]) -> None:
         """Record that a verified payment settled this order.

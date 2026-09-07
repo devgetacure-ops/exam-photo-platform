@@ -131,6 +131,47 @@ class KitOrderResponse(BaseModel):
     key_id: str
 
 
+class EmailDeliveryRequest(BaseModel):
+    """Where to send a paid file (DEC-072). The address is not stored."""
+
+    address: str
+    #: Optional. Absent means every released file in the kit.
+    job_ids: Optional[List[str]] = None
+
+
+class EmailDeliveryResponse(BaseModel):
+    sent: bool
+    #: Echoed back masked, so the interface can confirm where it went without
+    #: the service having retained the address.
+    masked_address: str
+    job_ids: List[str] = Field(default_factory=list)
+    filenames: List[str] = Field(default_factory=list)
+
+
+class OrderEvidenceResponse(BaseModel):
+    """What is known about one order, for deciding a refund (DEC-072).
+
+    Operator-only. It answers "was this paid" and "did anything reach the
+    candidate", and deliberately not "is this person telling the truth" --
+    a file can be delivered and still not arrive.
+    """
+
+    order_id: str
+    kit_id: str
+    amount_paise: int
+    currency: str
+    created_at: str
+    paid_at: Optional[str] = None
+    payment_reference: Optional[str] = None
+    delivered_at: Optional[str] = None
+    delivery_method: Optional[str] = None
+    job_ids: List[str] = Field(default_factory=list)
+    #: Per-job detail where the job still exists. Files are erased after
+    #: thirty minutes (DEC-066), so this is usually empty by the time a claim
+    #: arrives -- which is why the order-level fields above are the evidence.
+    jobs: List[dict[str, Any]] = Field(default_factory=list)
+
+
 class RequirementSummary(BaseModel):
     """One requirement as the picker and the kit list need it.
 

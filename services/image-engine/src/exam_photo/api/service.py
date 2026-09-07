@@ -10,10 +10,21 @@ import zipfile
 from contextlib import contextmanager
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from typing import Any, Dict, Iterator, Optional, Tuple
+from typing import Any, Dict, Iterator, List, Optional, Tuple
 
 from exam_photo.api.contracts import ApiJobStatus, JobEntitlement
+from exam_photo.api.delivery import (
+    Attachment,
+    EmailRejectedError,
+    EmailSender,
+    check_attachment_budget,
+    compose,
+    mask_address,
+    sender_for,
+    validate_address,
+)
 from exam_photo.api.jobs import (
+    EmailAttempt,
     JobRegistry,
     ProcessingJobRecord,
     parse_manifest_timestamp,
@@ -183,6 +194,7 @@ class ApiProcessingService:
         #: Overwritten wholesale in tests, like `store` and `registry`, so no
         #: test ever reaches api.razorpay.com (DEC-070).
         self._order_gateway: Optional[OrderGateway] = None
+        self._email_sender: Optional[EmailSender] = None
         self.repo_root = find_repo_root()
 
         # Load existing manifests on startup
@@ -849,6 +861,120 @@ class ApiProcessingService:
             ceiling,
         )
         return current is None or proposed > current
+
+    @property
+    def email_sender(self) -> EmailSender:
+        """The sender this host's SMTP configuration entitles it to (DEC-072)."""
+        if self._email_sender is None:
+            self._email_sender = sender_for(
+                self.settings.smtp_host,
+                self.settings.smtp_port,
+                self.settings.smtp_username,
+                self.settings.smtp_password,
+                self.settings.smtp_from_address,
+                self.settings.smtp_use_tls,
+            )
+        return self._email_sender
+
+    @email_sender.setter
+    def email_sender(self, sender: EmailSender) -> None:
+        self._email_sender = sender
+
+    def record_download(self, record: ProcessingJobRecord) -> None:
+        """Note that the candidate actually took the file (DEC-072).
+
+        Called from the download route, so this counts deliveries rather than
+        intentions. `mark_delivered` on the order is what a refund claim is
+        decided against, and it keeps only the first.
+        """
+        record.download_count += 1
+        if record.first_downloaded_at is None:
+            record.first_downloaded_at = datetime.now(timezone.utc).isoformat()
+        self.registry.update_job(record)
+        self.orders.mark_delivered(record.job_id, "download")
+
+    def email_jobs(
+        self, records: List[ProcessingJobRecord], address: str
+    ) -> Dict[str, Any]:
+        """Email the released files in `records` to `address` (DEC-072).
+
+        Only released files are attached. Emailing a preview would put a
+        watermarked half-resolution copy in a candidate's inbox looking like
+        the thing they bought; emailing a clean file before payment would be
+        the purchase gate with a hole in it.
+
+        The address is validated, used, and **not stored**. What is recorded
+        against each job is a masked form and whether the send succeeded.
+        """
+        address = validate_address(address)
+        masked = mask_address(address)
+
+        deliverable = [
+            record
+            for record in records
+            if record.output_filename
+            and self.output_is_released(record)
+            and not record.is_expired()
+            and record.status != ApiJobStatus.DELETED
+        ]
+        if not deliverable:
+            raise EmailRejectedError("there is nothing released to send")
+
+        attachments = []
+        for record in deliverable:
+            try:
+                content = self.store.read_file(
+                    record.job_id, str(record.output_filename)
+                )
+            except (FileNotFoundError, ValueError):
+                continue
+            attachments.append(
+                Attachment(
+                    filename=str(record.output_filename),
+                    content=content,
+                    media_type=record.output_media_type or "image/jpeg",
+                )
+            )
+        if not attachments:
+            raise EmailRejectedError("the prepared files are no longer on disk")
+        check_attachment_budget(attachments)
+
+        exam_names = list(dict.fromkeys(r.exam_id for r in deliverable if r.exam_id))
+        subject, body = compose(
+            exam_names,
+            [item.filename for item in attachments],
+            deliverable[0].expires_at,
+        )
+
+        sent_at = datetime.now(timezone.utc).isoformat()
+        try:
+            self.email_sender.send(address, subject, body, attachments)
+        except EmailRejectedError as err:
+            for record in deliverable:
+                record.email_attempts.append(
+                    EmailAttempt(
+                        at=sent_at,
+                        masked_address=masked,
+                        succeeded=False,
+                        error=str(err)[:200],
+                    )
+                )
+                self.registry.update_job(record)
+            raise
+
+        for record in deliverable:
+            record.email_attempts.append(
+                EmailAttempt(at=sent_at, masked_address=masked, succeeded=True)
+            )
+            self.registry.update_job(record)
+            self.orders.mark_delivered(record.job_id, "email")
+
+        return {
+            "sent": True,
+            "masked_address": masked,
+            "job_ids": [record.job_id for record in deliverable],
+            "filenames": [item.filename for item in attachments],
+        }
 
     def check_upload_limit(self, size_bytes: int) -> None:
         """Raise an error if the uploaded content size exceeds setting limits."""
