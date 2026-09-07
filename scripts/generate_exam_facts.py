@@ -24,7 +24,10 @@ from typing import Any, Dict, List
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "services" / "image-engine" / "src"))
 
-from exam_photo.orchestration.exam_facts import derive_facts  # noqa: E402
+from exam_photo.orchestration.exam_facts import (  # noqa: E402
+    derive_facts,
+    merge_researched,
+)
 
 #: Deliberately outside the `exam_*` namespace: `encode_exam_rules.py`
 #: deletes every `exam_*.json` before regenerating, so a sidecar named
@@ -36,10 +39,27 @@ SIDECAR_NAME = "candidate_facts.json"
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--rules", type=Path, default=REPO_ROOT / "examples" / "rules")
+    parser.add_argument(
+        "--trivia",
+        type=Path,
+        default=REPO_ROOT / "packages" / "exam-rules" / "research"
+        / "exam_trivia_2026.json",
+        help="Researched trivia to fold in, if it exists (DEC-078).",
+    )
     parser.add_argument("--check", action="store_true",
                         help="Fail if the sidecar is out of date, for CI.")
     args = parser.parse_args()
 
+    trivia: Dict[str, Any] = {}
+    if args.trivia.is_file():
+        try:
+            document = json.loads(args.trivia.read_text(encoding="utf-8"))
+            trivia = document.get("exams") or {}
+            print(f"folding in researched trivia for {len(trivia)} examinations")
+        except json.JSONDecodeError:
+            print(f"  could not read {args.trivia}; ignoring it")
+
+    unmatched = set(trivia)
     payload: Dict[str, Any] = {}
     kinds: Counter = Counter()
     empty: List[str] = []
@@ -53,6 +73,12 @@ def main() -> int:
         facts = derive_facts(rule)
         if not facts.exam_id:
             continue
+        # Research keys by exam id where it knows one and by name otherwise,
+        # because a researcher is given names and not our identifiers.
+        entries = trivia.get(facts.exam_id) or trivia.get(facts.exam_name)
+        unmatched.discard(facts.exam_id)
+        unmatched.discard(facts.exam_name)
+        facts = merge_researched(facts, entries)
         payload[facts.exam_id] = json.loads(facts.model_dump_json())
         for fact in facts.facts:
             kinds[fact.kind] += 1
@@ -88,6 +114,12 @@ def main() -> int:
     print(f"  facts        : {total}")
     for kind, count in kinds.most_common():
         print(f"     {kind:14s} {count}")
+    if unmatched:
+        # Loud, because a trivia entry that matches no examination is research
+        # that was paid for and is not being shown.
+        print(f"  UNMATCHED trivia keys: {len(unmatched)}")
+        for key in sorted(unmatched):
+            print(f"     {key}")
     if empty:
         # Not a failure. An examination whose every value is a platform
         # estimate has nothing it can truthfully say, and saying nothing is

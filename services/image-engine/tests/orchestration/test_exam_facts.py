@@ -243,3 +243,110 @@ def test_the_generated_sidecar_is_up_to_date():
         assert [f["text"] for f in stored[derived.exam_id]["facts"]] == [
             f.text for f in derived.facts
         ]
+
+
+# ----------------------------------------------------------------------
+# Researched trivia, held to the same bar (DEC-078)
+# ----------------------------------------------------------------------
+
+
+def _trivia(**overrides):
+    entry = {
+        "kind": "volume",
+        "text": "Over 2.4 million candidates registered for NEET (UG) 2025.",
+        "source_url": "https://pib.gov.in/PressReleasePage.aspx?PRID=1",
+        "source_title": "PIB release",
+        "official_source": True,
+        "as_of": "2026-09-20",
+        "cycle": "2025",
+    }
+    entry.update(overrides)
+    return entry
+
+
+def _merged(**overrides):
+    from exam_photo.orchestration.exam_facts import merge_researched
+
+    return merge_researched(derive_facts(_rule()), [_trivia(**overrides)])
+
+
+def test_a_properly_sourced_fact_is_folded_in():
+    texts = [f.text for f in _merged().facts]
+
+    assert "Over 2.4 million candidates registered for NEET (UG) 2025." in texts
+
+
+def test_the_source_is_carried_through():
+    from exam_photo.orchestration.exam_facts import merge_researched
+
+    fact = next(
+        f
+        for f in merge_researched(derive_facts(_rule()), [_trivia()]).facts
+        if f.kind == "volume"
+    )
+
+    assert "pib.gov.in" in fact.source
+    assert "PIB release" in fact.source
+
+
+@pytest.mark.parametrize(
+    "broken",
+    [
+        {"source_url": ""},
+        {"official_source": False},
+        {"as_of": ""},
+        {"text": "  "},
+    ],
+)
+def test_an_unsourced_or_undated_fact_is_dropped(broken):
+    """Dropped, not softened. A trivia line with no source is exactly the
+    coaching-site claim this product exists to be better than."""
+    assert "volume" not in {f.kind for f in _merged(**broken).facts}
+
+
+def test_a_time_sensitive_fact_without_its_cycle_is_dropped():
+    """A stale application window shown as current can cost a candidate the
+    examination itself. It is the one fact here with that consequence."""
+    assert "window" not in {f.kind for f in _merged(kind="window", cycle=None).facts}
+
+
+def test_a_time_sensitive_fact_with_its_cycle_is_kept():
+    assert "window" in {f.kind for f in _merged(kind="window", cycle="2025").facts}
+
+
+def test_merging_nothing_changes_nothing():
+    from exam_photo.orchestration.exam_facts import merge_researched
+
+    derived = derive_facts(_rule())
+
+    assert merge_researched(derived, None).facts == derived.facts
+    assert merge_researched(derived, []).facts == derived.facts
+
+
+def test_researched_trivia_never_displaces_a_derived_fact():
+    from exam_photo.orchestration.exam_facts import merge_researched
+
+    derived = derive_facts(_rule())
+    merged = merge_researched(derived, [_trivia()])
+
+    assert [f.text for f in merged.facts][: len(derived.facts)] == [
+        f.text for f in derived.facts
+    ]
+
+
+def test_a_duplicate_of_a_derived_fact_is_not_repeated():
+    from exam_photo.orchestration.exam_facts import merge_researched
+
+    derived = derive_facts(_rule())
+    existing = derived.facts[0].text
+    merged = merge_researched(derived, [_trivia(text=existing)])
+
+    assert [f.text for f in merged.facts].count(existing) == 1
+
+
+def test_a_malformed_entry_does_not_break_the_merge():
+    from exam_photo.orchestration.exam_facts import merge_researched
+
+    merged = merge_researched(derive_facts(_rule()), ["not a dict", None, _trivia()])
+
+    assert "volume" in {f.kind for f in merged.facts}

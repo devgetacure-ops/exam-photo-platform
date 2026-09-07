@@ -21,10 +21,12 @@ sentence about what gets an application thrown out. It is passed through
 verbatim rather than paraphrased into something friendlier, because the
 paraphrase is where the meaning quietly changes.
 
-What this deliberately does **not** produce is trivia -- pass rates, history,
-how many candidates sat it last year. None of that is in the evidence, and
-inventing it is the failure this module exists to avoid. It needs a research
-pass of its own, and `packages/exam-rules/research/` is where it would land.
+Researched trivia -- how many candidates sat it, when the window usually
+opens, what the authority tells people to carry -- is **not** derivable, and
+is not invented here either. `merge_researched` folds in a sourced research
+file when one exists, holding it to the same bar: an official URL, a date it
+was true, and no claim at all where those are missing. Until that research
+lands the function simply has nothing to merge, which is the honest state.
 """
 
 from __future__ import annotations
@@ -258,6 +260,62 @@ def _condition_facts(rule: Dict[str, Any]) -> List[ExamFact]:
                 )
             )
     return facts
+
+
+#: Researched trivia a candidate could act on to their detriment if it were
+#: stale. Deadlines above all: a confidently wrong application window is worse
+#: than no window at all, because a candidate who checks nothing misses the
+#: examination. Anything in this set must carry the cycle it belongs to.
+TIME_SENSITIVE_KINDS = frozenset({"window", "deadline"})
+
+
+def merge_researched(
+    facts: ExamFacts, researched: Optional[List[Dict[str, Any]]]
+) -> ExamFacts:
+    """Fold sourced research into an examination's derived facts (DEC-078).
+
+    Held to the bar the derived ones already meet, and one more besides:
+
+    * an **official** source URL, or the entry is dropped;
+    * an `as_of` date, so a reader knows when it was true;
+    * a `cycle` for anything time-sensitive, because a stale application
+      window shown as current is the one fact here that can cost a candidate
+      the examination itself.
+
+    Dropping rather than degrading is deliberate. A trivia line with no source
+    is exactly the coaching-site claim this product exists to be better than.
+    """
+    if not researched:
+        return facts
+
+    merged = list(facts.facts)
+    seen = {fact.text.strip().lower() for fact in merged}
+
+    for entry in researched:
+        if not isinstance(entry, dict):
+            continue
+        text = str(entry.get("text") or "").strip()
+        url = str(entry.get("source_url") or "").strip()
+        kind = str(entry.get("kind") or "trivia").strip() or "trivia"
+        if not text or not url or not entry.get("official_source"):
+            continue
+        if not entry.get("as_of"):
+            continue
+        if kind in TIME_SENSITIVE_KINDS and not entry.get("cycle"):
+            continue
+        if text.lower() in seen:
+            continue
+        seen.add(text.lower())
+        title = str(entry.get("source_title") or "").strip()
+        merged.append(
+            ExamFact(
+                kind=kind,
+                text=text,
+                source=f"{title} ({url})" if title else url,
+            )
+        )
+
+    return ExamFacts(exam_id=facts.exam_id, exam_name=facts.exam_name, facts=merged)
 
 
 def derive_facts(rule: Dict[str, Any]) -> ExamFacts:
