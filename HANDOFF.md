@@ -412,6 +412,13 @@ State these plainly rather than discovering them again.
 
 ## Rule records are generated, never hand-written
 
+**Regenerate the facts sidecar after every encode**: `python
+scripts/generate_exam_facts.py` rewrites `examples/rules/candidate_facts.json`
+from the records (DEC-077). It is named outside the `exam_*` namespace on
+purpose -- the encoder deletes everything matching that prefix, so a sidecar
+called `exam_facts.json` disappears on the next run with no error. A test
+fails if the sidecar is stale.
+
 `scripts/encode_exam_rules.py` reads the versioned research in
 `packages/exam-rules/research/` and rebuilds the whole catalogue, the gap
 register, and `examples/rules/unavailable_examinations.json` — the

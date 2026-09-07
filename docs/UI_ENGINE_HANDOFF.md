@@ -365,3 +365,38 @@ and the output both change on the switch, so re-read `preview_url` after it.
 
 **Ignore the earlier note in DEC-074 saying a toggle costs a re-preparation.**
 That was true when it was written and is not now.
+
+## Per-examination facts for the carousel
+
+2026-09-07, DEC-077. `GET /v1/exams/{exam_id}` now carries a **`facts`** array,
+and the same data is in `examples/rules/candidate_facts.json` if you would
+rather read it at build time like the catalogue — which you probably would,
+since it is page content and should be in the HTML a crawler sees.
+
+```json
+{ "kind": "file_size", "text": "The photograph has to be between 10 KB and 200 KB.",
+  "source": "Information Bulletin - NEET (UG) 2026 - Upload of photograph (https://…)",
+  "requirement_id": null }
+```
+
+362 facts across 52 examinations. `kind` is one of `file_size`, `format`,
+`dimensions`, `deliverables`, `capture`, `appearance`, `rejection` — group or
+style them however the carousel wants.
+
+**These are derived from the evidence, never written.** A fact only exists
+where the underlying value came from the authority; the 63 values we estimated
+ourselves produce nothing. That is what makes them safe to show as fact.
+
+Three things that follow:
+
+- **`rejection` facts are the authority's exact words.** Do not rewrite them to
+  fit a line length. Truncate with an ellipsis and let it expand, or give them
+  more room — the wording is the value.
+- **`source` is populated on every fact.** Show it, or make it reachable. It is
+  what separates this from the coaching sites.
+- **Two examinations have an empty array**, because everything we hold about
+  them is an estimate. Design the empty state; do not fill it.
+
+**No trivia yet** — no pass rates, no history, no candidate numbers. None of
+that is in the evidence and inventing it is the one thing this feature cannot
+survive. It needs its own research pass; tell me if you want that briefed.

@@ -296,6 +296,11 @@ class ExamDetailResponse(BaseModel):
     rule_id: str
     rule_version: str
     notes: Optional[str] = None
+    #: DEC-077. Things this examination itself says, derived from the record
+    #: and never authored: size and format limits, how many files it wants,
+    #: and its own published rejection conditions quoted verbatim. Empty where
+    #: every value we hold is a platform estimate rather than a published one.
+    facts: List[dict[str, Any]] = Field(default_factory=list)
     #: ``None`` when the deliverable research has not been done for this
     #: examination -- never that the photograph is the only thing it asks for
     #: (DEC-047).

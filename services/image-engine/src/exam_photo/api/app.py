@@ -316,6 +316,7 @@ def get_exam(exam_id: str) -> ExamDetailResponse:
         ]
 
     return ExamDetailResponse(
+        facts=list(service.catalogue.facts.get(exam_id, [])),
         exam_id=entry.exam_id,
         exam_name=rule.exam.exam_name,
         conducting_body=rule.exam.conducting_body,

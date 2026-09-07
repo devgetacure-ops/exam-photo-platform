@@ -1,0 +1,2490 @@
+{
+  "_generated_by": "scripts/generate_exam_facts.py",
+  "_note": "Derived from the rule records, never hand-written (DEC-077). Every fact rests on official provenance or on a rejection condition quoted from the authority. Re-running replaces this file, so an edit here is lost.",
+  "exams": {
+    "andhra-pradesh-teacher-eligibility-test": {
+      "exam_id": "andhra-pradesh-teacher-eligibility-test",
+      "exam_name": "Andhra Pradesh Teacher Eligibility Test",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be no larger than 50 KB.",
+          "source": "APTET 2024 Information Bulletin - Photograph and signature combined scan (https://aptet.apcfss.in/Documents/Information_Bulletin_2024_New.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted format is JPEG.",
+          "source": "https://aptet.apcfss.in/Documents/Information_Bulletin_2024_New.pdf",
+          "requirement_id": null
+        }
+      ]
+    },
+    "bssc-second-inter-level-combined-competitive-examination": {
+      "exam_id": "bssc-second-inter-level-combined-competitive-examination",
+      "exam_name": "BSSC Second Inter-Level Combined Competitive Examination",
+      "facts": [
+        {
+          "kind": "capture",
+          "text": "This examination also photographs you live through its own portal, as well as taking the photograph you upload.",
+          "source": "https://www.onlinebssc.com/25interlevela/awscdn/notice/How_To_Apply_02_23A.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 20 KB and 50 KB.",
+          "source": "How To Apply — Adv. No. 02/23(A) Second Inter Level Combined Competitive Examination - Annexure-A Photograph Image (https://www.onlinebssc.com/25interlevela/awscdn/notice/How_To_Apply_02_23A.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted format is JPG.",
+          "source": "https://www.onlinebssc.com/25interlevela/awscdn/notice/How_To_Apply_02_23A.pdf",
+          "requirement_id": null
+        }
+      ]
+    },
+    "cbse-classes-ix-xi-registration-2025-26": {
+      "exam_id": "cbse-classes-ix-xi-registration-2025-26",
+      "exam_name": "CBSE Classes IX/XI Registration 2025-26",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be no larger than 40 KB.",
+          "source": "Submission of Registration Data for Classes IX/XI, Session 2025-26 - Annexure C - Steps for Scanning and Uploading Photographs (https://www.cbse.gov.in/cbsenew/documents/Submission_Registration_Data_Class_IXXI2526_15092025.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted format is JPG.",
+          "source": "https://www.cbse.gov.in/cbsenew/documents/Submission_Registration_Data_Class_IXXI2526_15092025.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://www.cbse.gov.in/cbsenew/documents/Submission_Registration_Data_Class_IXXI2526_15092025.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Non-frontal or side-facing pose can fail the stated requirement.",
+          "source": "https://www.cbse.gov.in/cbsenew/documents/Submission_Registration_Data_Class_IXXI2526_15092025.pdf",
+          "requirement_id": "student_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Eyes must be visible/open as stated.",
+          "source": "https://www.cbse.gov.in/cbsenew/documents/Submission_Registration_Data_Class_IXXI2526_15092025.pdf",
+          "requirement_id": "student_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Spectacle glare, dark or coloured glasses can make the photograph unacceptable.",
+          "source": "https://www.cbse.gov.in/cbsenew/documents/Submission_Registration_Data_Class_IXXI2526_15092025.pdf",
+          "requirement_id": "student_photograph"
+        }
+      ]
+    },
+    "common-admission-test-2025": {
+      "exam_id": "common-admission-test-2025",
+      "exam_name": "Common Admission Test 2025",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be no larger than 80 KB.",
+          "source": "CAT 2025 Registration Guide - Upload Documents (https://cdn.digialm.com/per/g06/pub/32842/EForms/image/CAT2025/Registration_Guide.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://cdn.digialm.com/per/g06/pub/32842/EForms/image/CAT2025/Registration_Guide.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "dimensions",
+          "text": "The photograph must be exactly 1200 by 1200 pixels.",
+          "source": "CAT 2025 Registration Guide - Upload Documents (https://cdn.digialm.com/per/g06/pub/32842/EForms/image/CAT2025/Registration_Guide.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 4 files, not only a photograph — 3 more files besides it.",
+          "source": "https://cdn.digialm.com/per/g06/pub/32842/EForms/image/CAT2025/Registration_Guide.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Non-frontal or side-facing pose can fail the stated requirement.",
+          "source": "https://cdn.digialm.com/per/g06/pub/32842/EForms/image/CAT2025/Registration_Guide.pdf",
+          "requirement_id": "candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Eyes must be visible/open as stated.",
+          "source": "https://cdn.digialm.com/per/g06/pub/32842/EForms/image/CAT2025/Registration_Guide.pdf",
+          "requirement_id": "candidate_photograph"
+        }
+      ]
+    },
+    "ctet-september-2026": {
+      "exam_id": "ctet-september-2026",
+      "exam_name": "CTET September 2026",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 10 KB and 100 KB.",
+          "source": "Information Bulletin - CTET September 2026 - Online Uploading of Scanned Images (https://cdnbbsr.s3waas.gov.in/s3443dec3062d0286986e21dc0631734c9/uploads/2026/05/202605111250310617.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://cdnbbsr.s3waas.gov.in/s3443dec3062d0286986e21dc0631734c9/uploads/2026/05/202605111250310617.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 3 files, not only a photograph — 2 more files besides it.",
+          "source": "https://cdnbbsr.s3waas.gov.in/s3443dec3062d0286986e21dc0631734c9/uploads/2026/05/202605111250310617.pdf",
+          "requirement_id": null
+        }
+      ]
+    },
+    "cuet-pg-2026": {
+      "exam_id": "cuet-pg-2026",
+      "exam_name": "CUET (PG) 2026",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 10 KB and 200 KB.",
+          "source": "Information Bulletin - CUET (PG) 2026 - Application Procedure (https://cdnbbsr.s3waas.gov.in/s388a839f2f6f1427879fc33ee4acf4f66/uploads/2025/12/202512161583029269.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://cdnbbsr.s3waas.gov.in/s388a839f2f6f1427879fc33ee4acf4f66/uploads/2025/12/202512161583029269.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 5 files, not only a photograph — 4 more files besides it.",
+          "source": "https://cdnbbsr.s3waas.gov.in/s388a839f2f6f1427879fc33ee4acf4f66/uploads/2025/12/202512161583029269.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "appearance",
+          "text": "A black and white photograph is accepted, not only colour.",
+          "source": "https://cdnbbsr.s3waas.gov.in/s388a839f2f6f1427879fc33ee4acf4f66/uploads/2025/12/202512161583029269.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "A face mask/covering is restricted according to the stated policy.",
+          "source": "https://cdnbbsr.s3waas.gov.in/s388a839f2f6f1427879fc33ee4acf4f66/uploads/2025/12/202512161583029269.pdf",
+          "requirement_id": "candidate_photograph"
+        }
+      ]
+    },
+    "cuet-ug-2026": {
+      "exam_id": "cuet-ug-2026",
+      "exam_name": "CUET (UG) 2026",
+      "facts": [
+        {
+          "kind": "capture",
+          "text": "This examination also photographs you live through its own portal, as well as taking the photograph you upload.",
+          "source": "https://cdnbbsr.s3waas.gov.in/s3d1a21da7bca4abff8b0b61b87597de73/uploads/2026/01/202601031633478370.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 10 KB and 200 KB.",
+          "source": "Information Bulletin - CUET (UG) 2026 - Application Procedure (https://cdnbbsr.s3waas.gov.in/s3d1a21da7bca4abff8b0b61b87597de73/uploads/2026/01/202601031633478370.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://cdnbbsr.s3waas.gov.in/s3d1a21da7bca4abff8b0b61b87597de73/uploads/2026/01/202601031633478370.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 7 files, not only a photograph — 6 more files besides it.",
+          "source": "https://cdnbbsr.s3waas.gov.in/s3d1a21da7bca4abff8b0b61b87597de73/uploads/2026/01/202601031633478370.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "A face mask/covering is restricted according to the stated policy.",
+          "source": "https://cdnbbsr.s3waas.gov.in/s3d1a21da7bca4abff8b0b61b87597de73/uploads/2026/01/202601031633478370.pdf",
+          "requirement_id": "candidate_photograph"
+        }
+      ]
+    },
+    "gate-2026": {
+      "exam_id": "gate-2026",
+      "exam_name": "GATE 2026",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 5 KB and 600 KB.",
+          "source": "GATE 2026 Information Brochure - 6.7 Photograph and Signature Requirements (https://gate2026.iitg.ac.in/doc/IB/GATE2026-IB-28092025.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPEG, JPG.",
+          "source": "https://gate2026.iitg.ac.in/doc/IB/GATE2026-IB-28092025.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 7 files, not only a photograph — 6 more files besides it.",
+          "source": "https://gate2026.iitg.ac.in/doc/IB/GATE2026-IB-28092025.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Non-frontal or side-facing pose can fail the stated requirement.",
+          "source": "https://gate2026.iitg.ac.in/doc/IB/GATE2026-IB-28092025.pdf",
+          "requirement_id": "candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Eyes must be visible/open as stated.",
+          "source": "https://gate2026.iitg.ac.in/doc/IB/GATE2026-IB-28092025.pdf",
+          "requirement_id": "candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Spectacle glare, dark or coloured glasses can make the photograph unacceptable.",
+          "source": "https://gate2026.iitg.ac.in/doc/IB/GATE2026-IB-28092025.pdf",
+          "requirement_id": "candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Caps/hats are restricted; any permitted religious covering must leave required facial features visible.",
+          "source": "https://gate2026.iitg.ac.in/doc/IB/GATE2026-IB-28092025.pdf",
+          "requirement_id": "candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "A face mask/covering is restricted according to the stated policy.",
+          "source": "https://gate2026.iitg.ac.in/doc/IB/GATE2026-IB-28092025.pdf",
+          "requirement_id": "candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Photographs outside the stated size, aspect ratio, pose, background and visibility rules can lead to rejection without fee refund.",
+          "source": "https://gate2026.iitg.ac.in/doc/IB/GATE2026-IB-28092025.pdf",
+          "requirement_id": "candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "A signature that does not match at the examination can lead to disqualification.",
+          "source": "https://gate2026.iitg.ac.in/doc/IB/GATE2026-IB-28092025.pdf",
+          "requirement_id": "candidate_signature"
+        },
+        {
+          "kind": "rejection",
+          "text": "Unreadable documents may delay processing and may lead to rejection.",
+          "source": "https://gate2026.iitg.ac.in/doc/IB/GATE2026-IB-28092025.pdf",
+          "requirement_id": "valid_photo_identity_document"
+        },
+        {
+          "kind": "rejection",
+          "text": "Uploading unreadable documents may lead to delays in processing the application and may lead to rejection of candidature.",
+          "source": "https://gate2026.iitg.ac.in/doc/IB/GATE2026-IB-28092025.pdf",
+          "requirement_id": "valid_photo_identity_document"
+        }
+      ]
+    },
+    "gic-assistant-manager-2024-25": {
+      "exam_id": "gic-assistant-manager-2024-25",
+      "exam_name": "GIC Assistant Manager 2024-25",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 20 KB and 50 KB.",
+          "source": "Detailed Advertisement for Recruitment of Assistant Managers in GIC Re 2024 - Guidelines for scanning and upload of documents (https://www.gicre.in/images/2024/Detailed_Advertisement_for_Recruitment_of_AMs_in_GIC_Re_2024_-_v3_-_Final.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://www.gicre.in/images/2024/Detailed_Advertisement_for_Recruitment_of_AMs_in_GIC_Re_2024_-_v3_-_Final.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "dimensions",
+          "text": "The photograph must be exactly 200 by 230 pixels.",
+          "source": "Detailed Advertisement for Recruitment of Assistant Managers in GIC Re 2024 - Guidelines for scanning and upload of documents (https://www.gicre.in/images/2024/Detailed_Advertisement_for_Recruitment_of_AMs_in_GIC_Re_2024_-_v3_-_Final.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 4 files, not only a photograph — 3 more files besides it.",
+          "source": "https://www.gicre.in/images/2024/Detailed_Advertisement_for_Recruitment_of_AMs_in_GIC_Re_2024_-_v3_-_Final.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "The online application is not registered unless all mandatory image fields are uploaded.",
+          "source": "https://www.gicre.in/images/2024/Detailed_Advertisement_for_Recruitment_of_AMs_in_GIC_Re_2024_-_v3_-_Final.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Unclear photograph, signature, thumb impression or declaration can lead to rejection.",
+          "source": "https://www.gicre.in/images/2024/Detailed_Advertisement_for_Recruitment_of_AMs_in_GIC_Re_2024_-_v3_-_Final.pdf",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Signature or handwritten declaration in capital letters is not accepted in the cited banking-family instructions.",
+          "source": "https://www.gicre.in/images/2024/Detailed_Advertisement_for_Recruitment_of_AMs_in_GIC_Re_2024_-_v3_-_Final.pdf",
+          "requirement_id": "candidate_signature"
+        },
+        {
+          "kind": "rejection",
+          "text": "Signature / Hand written declaration in CAPITAL LETTERS shall NOT be accepted.",
+          "source": "https://www.gicre.in/images/2024/Detailed_Advertisement_for_Recruitment_of_AMs_in_GIC_Re_2024_-_v3_-_Final.pdf",
+          "requirement_id": "candidate_signature"
+        },
+        {
+          "kind": "rejection",
+          "text": "If the Applicant's signature on the attendance sheet or Call letter, signed at the time of the examination, does not match the signature uploaded, the applicant will be disqualified.",
+          "source": "https://www.gicre.in/images/2024/Detailed_Advertisement_for_Recruitment_of_AMs_in_GIC_Re_2024_-_v3_-_Final.pdf",
+          "requirement_id": "candidate_signature"
+        }
+      ]
+    },
+    "ibps-crp-customer-service-associates-xv": {
+      "exam_id": "ibps-crp-customer-service-associates-xv",
+      "exam_name": "IBPS CRP Customer Service Associates-XV",
+      "facts": [
+        {
+          "kind": "capture",
+          "text": "This examination also photographs you live through its own portal, as well as taking the photograph you upload.",
+          "source": "https://www.ibps.in/wp-content/uploads/DetailedNotification_CRP_CSA_XV_Final_for_Website.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 20 KB and 50 KB.",
+          "source": "Detailed Notification CRP Customer Service Associates-XV - Guidelines for scanning and upload of documents (https://www.ibps.in/wp-content/uploads/DetailedNotification_CRP_CSA_XV_Final_for_Website.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://www.ibps.in/wp-content/uploads/DetailedNotification_CRP_CSA_XV_Final_for_Website.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 6 files, not only a photograph — 5 more files besides it.",
+          "source": "https://www.ibps.in/wp-content/uploads/DetailedNotification_CRP_CSA_XV_Final_for_Website.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "The online application is not registered unless all mandatory image fields are uploaded.",
+          "source": "https://www.ibps.in/wp-content/uploads/DetailedNotification_CRP_CSA_XV_Final_for_Website.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Shadows on the face or background are not accepted.",
+          "source": "https://www.ibps.in/wp-content/uploads/DetailedNotification_CRP_CSA_XV_Final_for_Website.pdf",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Non-frontal or side-facing pose can fail the stated requirement.",
+          "source": "https://www.ibps.in/wp-content/uploads/DetailedNotification_CRP_CSA_XV_Final_for_Website.pdf",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Eyes must be visible/open as stated.",
+          "source": "https://www.ibps.in/wp-content/uploads/DetailedNotification_CRP_CSA_XV_Final_for_Website.pdf",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Spectacle glare, dark or coloured glasses can make the photograph unacceptable.",
+          "source": "https://www.ibps.in/wp-content/uploads/DetailedNotification_CRP_CSA_XV_Final_for_Website.pdf",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Caps/hats are restricted; any permitted religious covering must leave required facial features visible.",
+          "source": "https://www.ibps.in/wp-content/uploads/DetailedNotification_CRP_CSA_XV_Final_for_Website.pdf",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Unclear photograph, signature, thumb impression or declaration can lead to rejection.",
+          "source": "https://www.ibps.in/wp-content/uploads/DetailedNotification_CRP_CSA_XV_Final_for_Website.pdf",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Signature or handwritten declaration in capital letters is not accepted in the cited banking-family instructions.",
+          "source": "https://www.ibps.in/wp-content/uploads/DetailedNotification_CRP_CSA_XV_Final_for_Website.pdf",
+          "requirement_id": "candidate_signature"
+        }
+      ]
+    },
+    "ibps-crp-po-mt-xvi": {
+      "exam_id": "ibps-crp-po-mt-xvi",
+      "exam_name": "IBPS CRP PO/MT-XVI",
+      "facts": [
+        {
+          "kind": "capture",
+          "text": "This examination also photographs you live through its own portal, as well as taking the photograph you upload.",
+          "source": "https://www.ibps.in/wp-content/uploads/Detailed-Notification_CRP-PO-XVI_Final_V1_30.06.2026.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 20 KB and 50 KB.",
+          "source": "Detailed Notification CRP PO/MT-XVI - Guidelines for scanning and upload of documents (https://www.ibps.in/wp-content/uploads/Detailed-Notification_CRP-PO-XVI_Final_V1_30.06.2026.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://www.ibps.in/wp-content/uploads/Detailed-Notification_CRP-PO-XVI_Final_V1_30.06.2026.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 6 files, not only a photograph — 5 more files besides it.",
+          "source": "https://www.ibps.in/wp-content/uploads/Detailed-Notification_CRP-PO-XVI_Final_V1_30.06.2026.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "The online application is not registered unless all mandatory image fields are uploaded.",
+          "source": "https://www.ibps.in/wp-content/uploads/Detailed-Notification_CRP-PO-XVI_Final_V1_30.06.2026.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Shadows on the face or background are not accepted.",
+          "source": "https://www.ibps.in/wp-content/uploads/Detailed-Notification_CRP-PO-XVI_Final_V1_30.06.2026.pdf",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Non-frontal or side-facing pose can fail the stated requirement.",
+          "source": "https://www.ibps.in/wp-content/uploads/Detailed-Notification_CRP-PO-XVI_Final_V1_30.06.2026.pdf",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Eyes must be visible/open as stated.",
+          "source": "https://www.ibps.in/wp-content/uploads/Detailed-Notification_CRP-PO-XVI_Final_V1_30.06.2026.pdf",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Spectacle glare, dark or coloured glasses can make the photograph unacceptable.",
+          "source": "https://www.ibps.in/wp-content/uploads/Detailed-Notification_CRP-PO-XVI_Final_V1_30.06.2026.pdf",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Caps/hats are restricted; any permitted religious covering must leave required facial features visible.",
+          "source": "https://www.ibps.in/wp-content/uploads/Detailed-Notification_CRP-PO-XVI_Final_V1_30.06.2026.pdf",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Unclear photograph, signature, thumb impression or declaration can lead to rejection.",
+          "source": "https://www.ibps.in/wp-content/uploads/Detailed-Notification_CRP-PO-XVI_Final_V1_30.06.2026.pdf",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Signature or handwritten declaration in capital letters is not accepted in the cited banking-family instructions.",
+          "source": "https://www.ibps.in/wp-content/uploads/Detailed-Notification_CRP-PO-XVI_Final_V1_30.06.2026.pdf",
+          "requirement_id": "candidate_signature"
+        }
+      ]
+    },
+    "ibps-crp-regional-rural-banks-xiv": {
+      "exam_id": "ibps-crp-regional-rural-banks-xiv",
+      "exam_name": "IBPS CRP Regional Rural Banks-XIV",
+      "facts": [
+        {
+          "kind": "capture",
+          "text": "This examination also photographs you live through its own portal, as well as taking the photograph you upload.",
+          "source": "https://www.ibps.in/wp-content/uploads/CRP-RRBs-XIV_Final_AD-19.9.25.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 20 KB and 50 KB.",
+          "source": "CRP Regional Rural Banks-XIV - Guidelines for scanning and upload of documents (https://www.ibps.in/wp-content/uploads/CRP-RRBs-XIV_Final_AD-19.9.25.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://www.ibps.in/wp-content/uploads/CRP-RRBs-XIV_Final_AD-19.9.25.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 6 files, not only a photograph — 5 more files besides it.",
+          "source": "https://www.ibps.in/wp-content/uploads/CRP-RRBs-XIV_Final_AD-19.9.25.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "The online application is not registered unless all mandatory image fields are uploaded.",
+          "source": "https://www.ibps.in/wp-content/uploads/CRP-RRBs-XIV_Final_AD-19.9.25.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Shadows on the face or background are not accepted.",
+          "source": "https://www.ibps.in/wp-content/uploads/CRP-RRBs-XIV_Final_AD-19.9.25.pdf",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Non-frontal or side-facing pose can fail the stated requirement.",
+          "source": "https://www.ibps.in/wp-content/uploads/CRP-RRBs-XIV_Final_AD-19.9.25.pdf",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Eyes must be visible/open as stated.",
+          "source": "https://www.ibps.in/wp-content/uploads/CRP-RRBs-XIV_Final_AD-19.9.25.pdf",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Spectacle glare, dark or coloured glasses can make the photograph unacceptable.",
+          "source": "https://www.ibps.in/wp-content/uploads/CRP-RRBs-XIV_Final_AD-19.9.25.pdf",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Caps/hats are restricted; any permitted religious covering must leave required facial features visible.",
+          "source": "https://www.ibps.in/wp-content/uploads/CRP-RRBs-XIV_Final_AD-19.9.25.pdf",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Unclear photograph, signature, thumb impression or declaration can lead to rejection.",
+          "source": "https://www.ibps.in/wp-content/uploads/CRP-RRBs-XIV_Final_AD-19.9.25.pdf",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Signature or handwritten declaration in capital letters is not accepted in the cited banking-family instructions.",
+          "source": "https://www.ibps.in/wp-content/uploads/CRP-RRBs-XIV_Final_AD-19.9.25.pdf",
+          "requirement_id": "candidate_signature"
+        }
+      ]
+    },
+    "ibps-crp-specialist-officers-xvi": {
+      "exam_id": "ibps-crp-specialist-officers-xvi",
+      "exam_name": "IBPS CRP Specialist Officers-XVI",
+      "facts": [
+        {
+          "kind": "capture",
+          "text": "This examination also photographs you live through its own portal, as well as taking the photograph you upload.",
+          "source": "https://www.ibps.in/wp-content/uploads/Detailed-Notification-CRP-SPL-XVI_Final_V1_30.06.2026.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 20 KB and 50 KB.",
+          "source": "Detailed Notification CRP Specialist Officers-XVI - Guidelines for scanning and upload of documents (https://www.ibps.in/wp-content/uploads/Detailed-Notification-CRP-SPL-XVI_Final_V1_30.06.2026.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://www.ibps.in/wp-content/uploads/Detailed-Notification-CRP-SPL-XVI_Final_V1_30.06.2026.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 6 files, not only a photograph — 5 more files besides it.",
+          "source": "https://www.ibps.in/wp-content/uploads/Detailed-Notification-CRP-SPL-XVI_Final_V1_30.06.2026.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "The online application is not registered unless all mandatory image fields are uploaded.",
+          "source": "https://www.ibps.in/wp-content/uploads/Detailed-Notification-CRP-SPL-XVI_Final_V1_30.06.2026.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Shadows on the face or background are not accepted.",
+          "source": "https://www.ibps.in/wp-content/uploads/Detailed-Notification-CRP-SPL-XVI_Final_V1_30.06.2026.pdf",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Non-frontal or side-facing pose can fail the stated requirement.",
+          "source": "https://www.ibps.in/wp-content/uploads/Detailed-Notification-CRP-SPL-XVI_Final_V1_30.06.2026.pdf",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Eyes must be visible/open as stated.",
+          "source": "https://www.ibps.in/wp-content/uploads/Detailed-Notification-CRP-SPL-XVI_Final_V1_30.06.2026.pdf",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Spectacle glare, dark or coloured glasses can make the photograph unacceptable.",
+          "source": "https://www.ibps.in/wp-content/uploads/Detailed-Notification-CRP-SPL-XVI_Final_V1_30.06.2026.pdf",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Caps/hats are restricted; any permitted religious covering must leave required facial features visible.",
+          "source": "https://www.ibps.in/wp-content/uploads/Detailed-Notification-CRP-SPL-XVI_Final_V1_30.06.2026.pdf",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Unclear photograph, signature, thumb impression or declaration can lead to rejection.",
+          "source": "https://www.ibps.in/wp-content/uploads/Detailed-Notification-CRP-SPL-XVI_Final_V1_30.06.2026.pdf",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Signature or handwritten declaration in capital letters is not accepted in the cited banking-family instructions.",
+          "source": "https://www.ibps.in/wp-content/uploads/Detailed-Notification-CRP-SPL-XVI_Final_V1_30.06.2026.pdf",
+          "requirement_id": "candidate_signature"
+        }
+      ]
+    },
+    "icai-examination-portal-photograph-current-portal-scope": {
+      "exam_id": "icai-examination-portal-photograph-current-portal-scope",
+      "exam_name": "ICAI Examination Portal Photograph (current portal scope)",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be no larger than 50 KB.",
+          "source": "Image Resize - ICAI examination portal (https://pqc.icaiexam.icai.org/INTT/Home/ImageResize)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted format is JPEG.",
+          "source": "https://pqc.icaiexam.icai.org/INTT/Home/ImageResize",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 3 files, not only a photograph — 2 more files besides it.",
+          "source": "https://pqc.icaiexam.icai.org/INTT/Home/ImageResize",
+          "requirement_id": null
+        }
+      ]
+    },
+    "icsi-student-registration-examination-account-photograph": {
+      "exam_id": "icsi-student-registration-examination-account-photograph",
+      "exam_name": "ICSI Student Registration / Examination Account Photograph",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be no larger than 50 KB.",
+          "source": "ICSI Registration Instructions (https://smash.icsi.edu/Scripts/Registration/Instructions.aspx?ID=R2)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG, PNG.",
+          "source": "https://smash.icsi.edu/Scripts/Registration/Instructions.aspx?ID=R2",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 7 files, not only a photograph — 6 more files besides it.",
+          "source": "https://smash.icsi.edu/Scripts/Registration/Instructions.aspx?ID=R2",
+          "requirement_id": null
+        }
+      ]
+    },
+    "jee-main-2026": {
+      "exam_id": "jee-main-2026",
+      "exam_name": "JEE (Main) 2026",
+      "facts": [
+        {
+          "kind": "capture",
+          "text": "This examination also photographs you live through its own portal, as well as taking the photograph you upload.",
+          "source": "https://cdnbbsr.s3waas.gov.in/s3f8e59f4b2fe7c5705bf878bbd494ccdf/uploads/2025/11/202511021649722475.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 10 KB and 200 KB.",
+          "source": "Information Bulletin - JEE (Main) 2026 - Application Procedure (https://cdnbbsr.s3waas.gov.in/s3f8e59f4b2fe7c5705bf878bbd494ccdf/uploads/2025/11/202511021649722475.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://cdnbbsr.s3waas.gov.in/s3f8e59f4b2fe7c5705bf878bbd494ccdf/uploads/2025/11/202511021649722475.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 6 files, not only a photograph — 5 more files besides it.",
+          "source": "https://cdnbbsr.s3waas.gov.in/s3f8e59f4b2fe7c5705bf878bbd494ccdf/uploads/2025/11/202511021649722475.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "A face mask/covering is restricted according to the stated policy.",
+          "source": "https://cdnbbsr.s3waas.gov.in/s3f8e59f4b2fe7c5705bf878bbd494ccdf/uploads/2025/11/202511021649722475.pdf",
+          "requirement_id": "candidate_photograph"
+        }
+      ]
+    },
+    "joint-csir-ugc-net": {
+      "exam_id": "joint-csir-ugc-net",
+      "exam_name": "Joint CSIR-UGC NET",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 10 KB and 200 KB.",
+          "source": "Joint CSIR-UGC NET June 2025 Information Bulletin - Upload scanned images (https://csirnet.nta.ac.in/images/infomration-bulletin-of-csir-june-2025.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted format is JPG.",
+          "source": "https://csirnet.nta.ac.in/images/infomration-bulletin-of-csir-june-2025.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 4 files, not only a photograph — 3 more files besides it.",
+          "source": "https://csirnet.nta.ac.in/images/infomration-bulletin-of-csir-june-2025.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "In case the photograph or signature is blurred or not visible to identify the candidate then, the application will be rejected.",
+          "source": "https://csirnet.nta.ac.in/images/infomration-bulletin-of-csir-june-2025.pdf",
+          "requirement_id": "candidate_photograph"
+        }
+      ]
+    },
+    "karnataka-common-entrance-test-2026": {
+      "exam_id": "karnataka-common-entrance-test-2026",
+      "exam_name": "Karnataka Common Entrance Test 2026",
+      "facts": [
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 4 files, not only a photograph — 3 more files besides it.",
+          "source": "https://engineering.careers360.com/articles/kcet-photo-signature-size-guidelines",
+          "requirement_id": null
+        }
+      ]
+    },
+    "karnataka-psc-current-recruitment-portal-photograph": {
+      "exam_id": "karnataka-psc-current-recruitment-portal-photograph",
+      "exam_name": "Karnataka PSC Current Recruitment Portal Photograph",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be no larger than 200 KB.",
+          "source": "KPSC current registration portal - Photograph (https://apply.registernow.in/KPSC/Registration/)",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 4 files, not only a photograph — 3 more files besides it.",
+          "source": "https://apply.registernow.in/KPSC/Registration/",
+          "requirement_id": null
+        }
+      ]
+    },
+    "kerala-engineering-architecture-medical-entrance-examination": {
+      "exam_id": "kerala-engineering-architecture-medical-entrance-examination",
+      "exam_name": "Kerala Engineering Architecture Medical Entrance Examination",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 15 KB and 100 KB.",
+          "source": "KEAM 2026 How to Upload - Photograph Specifications (https://cee.kerala.gov.in/keamonline2026/pdf/howtoupload.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://cee.kerala.gov.in/keamonline2026/pdf/howtoupload.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "dimensions",
+          "text": "The photograph must be exactly 150 by 200 pixels.",
+          "source": "KEAM 2026 How to Upload - Photograph Specifications (https://cee.kerala.gov.in/keamonline2026/pdf/howtoupload.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 8 files, not only a photograph — 7 more files besides it.",
+          "source": "https://cee.kerala.gov.in/keamonline2026/pdf/howtoupload.pdf",
+          "requirement_id": null
+        }
+      ]
+    },
+    "kerala-psc-one-time-registration-photograph": {
+      "exam_id": "kerala-psc-one-time-registration-photograph",
+      "exam_name": "Kerala PSC One Time Registration Photograph",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be no larger than 30 KB.",
+          "source": "Kerala PSC FAQ / One Time Registration - Photograph upload FAQ (https://psc.kerala.gov.in/kpsc/faq.php)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted format is JPG.",
+          "source": "https://psc.kerala.gov.in/kpsc/faq.php",
+          "requirement_id": null
+        },
+        {
+          "kind": "dimensions",
+          "text": "The photograph must be exactly 150 by 200 pixels.",
+          "source": "Kerala PSC FAQ / One Time Registration - Photograph upload FAQ (https://psc.kerala.gov.in/kpsc/faq.php)",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 3 files, not only a photograph — 2 more files besides it.",
+          "source": "https://psc.kerala.gov.in/kpsc/faq.php",
+          "requirement_id": null
+        },
+        {
+          "kind": "appearance",
+          "text": "This examination requires candidate_name, photograph_date printed on the photograph itself. We cannot add that, so you will need to.",
+          "source": "https://psc.kerala.gov.in/kpsc/faq.php",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Non-frontal or side-facing pose can fail the stated requirement.",
+          "source": "https://psc.kerala.gov.in/kpsc/faq.php",
+          "requirement_id": "candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Eyes must be visible/open as stated.",
+          "source": "https://psc.kerala.gov.in/kpsc/faq.php",
+          "requirement_id": "candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Caps/hats are restricted; any permitted religious covering must leave required facial features visible.",
+          "source": "https://psc.kerala.gov.in/kpsc/faq.php",
+          "requirement_id": "candidate_photograph"
+        }
+      ]
+    },
+    "lic-assistant-administrative-officers-generalist-2025": {
+      "exam_id": "lic-assistant-administrative-officers-generalist-2025",
+      "exam_name": "LIC Assistant Administrative Officers (Generalist) 2025",
+      "facts": [
+        {
+          "kind": "capture",
+          "text": "This examination also photographs you live through its own portal, as well as taking the photograph you upload.",
+          "source": "https://www.licindia.in/documents/d/guest/aao-generalist-notification-2025-final",
+          "requirement_id": null
+        },
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 20 KB and 50 KB.",
+          "source": "AAO Generalist Notification 2025 - Guidelines for scanning and upload (https://www.licindia.in/documents/d/guest/aao-generalist-notification-2025-final)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://www.licindia.in/documents/d/guest/aao-generalist-notification-2025-final",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 4 files, not only a photograph — 3 more files besides it.",
+          "source": "https://www.licindia.in/documents/d/guest/aao-generalist-notification-2025-final",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "The online application is not registered unless all mandatory image fields are uploaded.",
+          "source": "https://www.licindia.in/documents/d/guest/aao-generalist-notification-2025-final",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Shadows on the face or background are not accepted.",
+          "source": "https://www.licindia.in/documents/d/guest/aao-generalist-notification-2025-final",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Non-frontal or side-facing pose can fail the stated requirement.",
+          "source": "https://www.licindia.in/documents/d/guest/aao-generalist-notification-2025-final",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Eyes must be visible/open as stated.",
+          "source": "https://www.licindia.in/documents/d/guest/aao-generalist-notification-2025-final",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Spectacle glare, dark or coloured glasses can make the photograph unacceptable.",
+          "source": "https://www.licindia.in/documents/d/guest/aao-generalist-notification-2025-final",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Caps/hats are restricted; any permitted religious covering must leave required facial features visible.",
+          "source": "https://www.licindia.in/documents/d/guest/aao-generalist-notification-2025-final",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Unclear photograph, signature, thumb impression or declaration can lead to rejection.",
+          "source": "https://www.licindia.in/documents/d/guest/aao-generalist-notification-2025-final",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Signature or handwritten declaration in capital letters is not accepted in the cited banking-family instructions.",
+          "source": "https://www.licindia.in/documents/d/guest/aao-generalist-notification-2025-final",
+          "requirement_id": "candidate_signature"
+        }
+      ]
+    },
+    "maharashtra-teacher-eligibility-test-maha-tet": {
+      "exam_id": "maharashtra-teacher-eligibility-test-maha-tet",
+      "exam_name": "Maharashtra Teacher Eligibility Test (MAHA TET)",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 17 KB and 51 KB.",
+          "source": "MAHA TET application instructions - Document upload (https://www.mahatet.in/Images/ImportantDocuments/Instructions.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted format is JPG.",
+          "source": "https://www.mahatet.in/Images/ImportantDocuments/Instructions.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 8 files, not only a photograph — 7 more files besides it.",
+          "source": "https://www.mahatet.in/Images/ImportantDocuments/Instructions.pdf",
+          "requirement_id": null
+        }
+      ]
+    },
+    "management-aptitude-test-2026": {
+      "exam_id": "management-aptitude-test-2026",
+      "exam_name": "Management Aptitude Test 2026",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 10 KB and 50 KB.",
+          "source": "Management Aptitude Test - current application page (https://www.aima.in/content/testing-and-assessment/mat/mat)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://www.aima.in/content/testing-and-assessment/mat/mat",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://www.aima.in/content/testing-and-assessment/mat/mat",
+          "requirement_id": null
+        }
+      ]
+    },
+    "mpsc-general-online-application-photograph-instruction": {
+      "exam_id": "mpsc-general-online-application-photograph-instruction",
+      "exam_name": "MPSC General Online Application Photograph Instruction",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be no larger than 50 KB.",
+          "source": "Instructions for Filling the Application Form - Photograph instructions (https://mpsconline.gov.in/downloads/Instructions-for-Filling-the-Application-Form.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://mpsconline.gov.in/downloads/Instructions-for-Filling-the-Application-Form.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 3 files, not only a photograph — 2 more files besides it.",
+          "source": "https://mpsconline.gov.in/downloads/Instructions-for-Filling-the-Application-Form.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Shadows on the face or background are not accepted.",
+          "source": "https://mpsconline.gov.in/downloads/Instructions-for-Filling-the-Application-Form.pdf",
+          "requirement_id": "candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Non-frontal or side-facing pose can fail the stated requirement.",
+          "source": "https://mpsconline.gov.in/downloads/Instructions-for-Filling-the-Application-Form.pdf",
+          "requirement_id": "candidate_photograph"
+        }
+      ]
+    },
+    "nabard-grade-a-2025": {
+      "exam_id": "nabard-grade-a-2025",
+      "exam_name": "NABARD Grade A 2025",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 20 KB and 50 KB.",
+          "source": "Recruitment to Grade A, 2025 - Advertisement - Guidelines for scanning and upload (https://www.nabard.org/auth/writereaddata/CareerNotices/0502252006Advertisement%20No.06%20dated%2005.02.2025.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://www.nabard.org/auth/writereaddata/CareerNotices/0502252006Advertisement%20No.06%20dated%2005.02.2025.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 4 files, not only a photograph — 3 more files besides it.",
+          "source": "https://www.nabard.org/auth/writereaddata/CareerNotices/0502252006Advertisement%20No.06%20dated%2005.02.2025.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "The online application is not registered unless all mandatory image fields are uploaded.",
+          "source": "https://www.nabard.org/auth/writereaddata/CareerNotices/0502252006Advertisement%20No.06%20dated%2005.02.2025.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Shadows on the face or background are not accepted.",
+          "source": "https://www.nabard.org/auth/writereaddata/CareerNotices/0502252006Advertisement%20No.06%20dated%2005.02.2025.pdf",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Non-frontal or side-facing pose can fail the stated requirement.",
+          "source": "https://www.nabard.org/auth/writereaddata/CareerNotices/0502252006Advertisement%20No.06%20dated%2005.02.2025.pdf",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Eyes must be visible/open as stated.",
+          "source": "https://www.nabard.org/auth/writereaddata/CareerNotices/0502252006Advertisement%20No.06%20dated%2005.02.2025.pdf",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Spectacle glare, dark or coloured glasses can make the photograph unacceptable.",
+          "source": "https://www.nabard.org/auth/writereaddata/CareerNotices/0502252006Advertisement%20No.06%20dated%2005.02.2025.pdf",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Caps/hats are restricted; any permitted religious covering must leave required facial features visible.",
+          "source": "https://www.nabard.org/auth/writereaddata/CareerNotices/0502252006Advertisement%20No.06%20dated%2005.02.2025.pdf",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Unclear photograph, signature, thumb impression or declaration can lead to rejection.",
+          "source": "https://www.nabard.org/auth/writereaddata/CareerNotices/0502252006Advertisement%20No.06%20dated%2005.02.2025.pdf",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Signature or handwritten declaration in capital letters is not accepted in the cited banking-family instructions.",
+          "source": "https://www.nabard.org/auth/writereaddata/CareerNotices/0502252006Advertisement%20No.06%20dated%2005.02.2025.pdf",
+          "requirement_id": "candidate_signature"
+        }
+      ]
+    },
+    "neet-ug-2026": {
+      "exam_id": "neet-ug-2026",
+      "exam_name": "NEET (UG) 2026",
+      "facts": [
+        {
+          "kind": "capture",
+          "text": "This examination also photographs you live through its own portal, as well as taking the photograph you upload.",
+          "source": "https://cdnbbsr.s3waas.gov.in/s37bc1ec1d9c3426357e69acd5bf320061/uploads/2026/02/202602231394640855.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 10 KB and 200 KB.",
+          "source": "Information Bulletin - NEET (UG) 2026 - Upload of photograph (https://cdnbbsr.s3waas.gov.in/s37bc1ec1d9c3426357e69acd5bf320061/uploads/2026/02/202602231394640855.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://cdnbbsr.s3waas.gov.in/s37bc1ec1d9c3426357e69acd5bf320061/uploads/2026/02/202602231394640855.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 18 files, not only a photograph — 17 more files besides it.",
+          "source": "https://cdnbbsr.s3waas.gov.in/s37bc1ec1d9c3426357e69acd5bf320061/uploads/2026/02/202602231394640855.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "appearance",
+          "text": "A black and white photograph is accepted, not only colour.",
+          "source": "https://cdnbbsr.s3waas.gov.in/s37bc1ec1d9c3426357e69acd5bf320061/uploads/2026/02/202602231394640855.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Incomplete applications and applications not in accordance with instructions are liable to be rejected without any further intimation.",
+          "source": "https://cdnbbsr.s3waas.gov.in/s37bc1ec1d9c3426357e69acd5bf320061/uploads/2026/02/202602231394640855.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Spectacle glare, dark or coloured glasses can make the photograph unacceptable.",
+          "source": "https://cdnbbsr.s3waas.gov.in/s37bc1ec1d9c3426357e69acd5bf320061/uploads/2026/02/202602231394640855.pdf",
+          "requirement_id": "candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "A face mask/covering is restricted according to the stated policy.",
+          "source": "https://cdnbbsr.s3waas.gov.in/s37bc1ec1d9c3426357e69acd5bf320061/uploads/2026/02/202602231394640855.pdf",
+          "requirement_id": "candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Application without photographs shall be rejected.",
+          "source": "https://cdnbbsr.s3waas.gov.in/s37bc1ec1d9c3426357e69acd5bf320061/uploads/2026/02/202602231394640855.pdf",
+          "requirement_id": "candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Applications not complying with these instructions or with unclear photographs are liable to be rejected.",
+          "source": "https://cdnbbsr.s3waas.gov.in/s37bc1ec1d9c3426357e69acd5bf320061/uploads/2026/02/202602231394640855.pdf",
+          "requirement_id": "candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Polaroid and Computer-generated photos are not acceptable.",
+          "source": "https://cdnbbsr.s3waas.gov.in/s37bc1ec1d9c3426357e69acd5bf320061/uploads/2026/02/202602231394640855.pdf",
+          "requirement_id": "candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "if the photographs uploaded are found to be fabricated i.e. de-shaped or seem to be hand-made or computer made, the application of the candidate will be rejected",
+          "source": "https://cdnbbsr.s3waas.gov.in/s37bc1ec1d9c3426357e69acd5bf320061/uploads/2026/02/202602231394640855.pdf",
+          "requirement_id": "candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "In case someone else's photographs have been uploaded, the candidature shall be cancelled",
+          "source": "https://cdnbbsr.s3waas.gov.in/s37bc1ec1d9c3426357e69acd5bf320061/uploads/2026/02/202602231394640855.pdf",
+          "requirement_id": "candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "The NTA will reject the application forms with no signature.",
+          "source": "https://cdnbbsr.s3waas.gov.in/s37bc1ec1d9c3426357e69acd5bf320061/uploads/2026/02/202602231394640855.pdf",
+          "requirement_id": "candidate_signature"
+        },
+        {
+          "kind": "rejection",
+          "text": "unclear Left and Right hand fingers and thumb Impressions in Online Application Forms will also be rejected.",
+          "source": "https://cdnbbsr.s3waas.gov.in/s37bc1ec1d9c3426357e69acd5bf320061/uploads/2026/02/202602231394640855.pdf",
+          "requirement_id": "left_and_right_hand_fingers_and_thumb_impression"
+        }
+      ]
+    },
+    "niacl-administrative-officers-2025": {
+      "exam_id": "niacl-administrative-officers-2025",
+      "exam_name": "NIACL Administrative Officers 2025",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 20 KB and 50 KB.",
+          "source": "Recruitment of Administrative Officers 2025 - Guidelines for scanning and upload (https://www.newindia.co.in/assets/docs/recruitment/RECRUITMENT%20OF%20ADMINISTRATIVE%20OFFICERS%202025/RECRUITMENT%20OF%20_5_50%20ADMINISTRATIVE%20OFFICERS%20%28GENERALISTS%20%26%20SPECIALISTS%29%20%28SCALE-I%29%20202_5.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://www.newindia.co.in/assets/docs/recruitment/RECRUITMENT%20OF%20ADMINISTRATIVE%20OFFICERS%202025/RECRUITMENT%20OF%20_5_50%20ADMINISTRATIVE%20OFFICERS%20%28GENERALISTS%20%26%20SPECIALISTS%29%20%28SCALE-I%29%20202_5.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 4 files, not only a photograph — 3 more files besides it.",
+          "source": "https://www.newindia.co.in/assets/docs/recruitment/RECRUITMENT%20OF%20ADMINISTRATIVE%20OFFICERS%202025/RECRUITMENT%20OF%20_5_50%20ADMINISTRATIVE%20OFFICERS%20%28GENERALISTS%20%26%20SPECIALISTS%29%20%28SCALE-I%29%20202_5.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "The online application is not registered unless all mandatory image fields are uploaded.",
+          "source": "https://www.newindia.co.in/assets/docs/recruitment/RECRUITMENT%20OF%20ADMINISTRATIVE%20OFFICERS%202025/RECRUITMENT%20OF%20_5_50%20ADMINISTRATIVE%20OFFICERS%20%28GENERALISTS%20%26%20SPECIALISTS%29%20%28SCALE-I%29%20202_5.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Shadows on the face or background are not accepted.",
+          "source": "https://www.newindia.co.in/assets/docs/recruitment/RECRUITMENT%20OF%20ADMINISTRATIVE%20OFFICERS%202025/RECRUITMENT%20OF%20_5_50%20ADMINISTRATIVE%20OFFICERS%20%28GENERALISTS%20%26%20SPECIALISTS%29%20%28SCALE-I%29%20202_5.pdf",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Non-frontal or side-facing pose can fail the stated requirement.",
+          "source": "https://www.newindia.co.in/assets/docs/recruitment/RECRUITMENT%20OF%20ADMINISTRATIVE%20OFFICERS%202025/RECRUITMENT%20OF%20_5_50%20ADMINISTRATIVE%20OFFICERS%20%28GENERALISTS%20%26%20SPECIALISTS%29%20%28SCALE-I%29%20202_5.pdf",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Eyes must be visible/open as stated.",
+          "source": "https://www.newindia.co.in/assets/docs/recruitment/RECRUITMENT%20OF%20ADMINISTRATIVE%20OFFICERS%202025/RECRUITMENT%20OF%20_5_50%20ADMINISTRATIVE%20OFFICERS%20%28GENERALISTS%20%26%20SPECIALISTS%29%20%28SCALE-I%29%20202_5.pdf",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Spectacle glare, dark or coloured glasses can make the photograph unacceptable.",
+          "source": "https://www.newindia.co.in/assets/docs/recruitment/RECRUITMENT%20OF%20ADMINISTRATIVE%20OFFICERS%202025/RECRUITMENT%20OF%20_5_50%20ADMINISTRATIVE%20OFFICERS%20%28GENERALISTS%20%26%20SPECIALISTS%29%20%28SCALE-I%29%20202_5.pdf",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Caps/hats are restricted; any permitted religious covering must leave required facial features visible.",
+          "source": "https://www.newindia.co.in/assets/docs/recruitment/RECRUITMENT%20OF%20ADMINISTRATIVE%20OFFICERS%202025/RECRUITMENT%20OF%20_5_50%20ADMINISTRATIVE%20OFFICERS%20%28GENERALISTS%20%26%20SPECIALISTS%29%20%28SCALE-I%29%20202_5.pdf",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Unclear photograph, signature, thumb impression or declaration can lead to rejection.",
+          "source": "https://www.newindia.co.in/assets/docs/recruitment/RECRUITMENT%20OF%20ADMINISTRATIVE%20OFFICERS%202025/RECRUITMENT%20OF%20_5_50%20ADMINISTRATIVE%20OFFICERS%20%28GENERALISTS%20%26%20SPECIALISTS%29%20%28SCALE-I%29%20202_5.pdf",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Signature or handwritten declaration in capital letters is not accepted in the cited banking-family instructions.",
+          "source": "https://www.newindia.co.in/assets/docs/recruitment/RECRUITMENT%20OF%20ADMINISTRATIVE%20OFFICERS%202025/RECRUITMENT%20OF%20_5_50%20ADMINISTRATIVE%20OFFICERS%20%28GENERALISTS%20%26%20SPECIALISTS%29%20%28SCALE-I%29%20202_5.pdf",
+          "requirement_id": "candidate_signature"
+        }
+      ]
+    },
+    "osssc-combined-recruitment-examination": {
+      "exam_id": "osssc-combined-recruitment-examination",
+      "exam_name": "OSSSC Combined Recruitment Examination",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 20 KB and 100 KB.",
+          "source": "OSSSC CRE-2023 Detailed Advertisement - Pre-requisites for Registration/Re-registration and Online Application (https://www.osssc.gov.in/Docs/CRE-2023-Detail_adv-762.PDF)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG, PNG.",
+          "source": "https://www.osssc.gov.in/Docs/CRE-2023-Detail_adv-762.PDF",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://www.osssc.gov.in/Docs/CRE-2023-Detail_adv-762.PDF",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Incomplete applications shall be summarily rejected.",
+          "source": "https://www.osssc.gov.in/Docs/CRE-2023-Detail_adv-762.PDF",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "The photograph and full specimen signature must be clearly identifiable/visible, otherwise the application shall be liable to rejection.",
+          "source": "https://www.osssc.gov.in/Docs/CRE-2023-Detail_adv-762.PDF",
+          "requirement_id": "candidate_photograph"
+        }
+      ]
+    },
+    "rbi-assistant-panel-year-2025": {
+      "exam_id": "rbi-assistant-panel-year-2025",
+      "exam_name": "RBI Assistant - Panel Year 2025",
+      "facts": [
+        {
+          "kind": "capture",
+          "text": "This examination also photographs you live through its own portal, as well as taking the photograph you upload.",
+          "source": "https://opportunities.rbi.org.in/scripts/bs_viewcontent.aspx?Id=4912",
+          "requirement_id": null
+        },
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 20 KB and 50 KB.",
+          "source": "Recruitment for the Post of Assistant - Panel Year 2025 - Paragraph 9.6 / upload instructions (https://opportunities.rbi.org.in/scripts/bs_viewcontent.aspx?Id=4912)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://opportunities.rbi.org.in/scripts/bs_viewcontent.aspx?Id=4912",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 5 files, not only a photograph — 4 more files besides it.",
+          "source": "https://opportunities.rbi.org.in/scripts/bs_viewcontent.aspx?Id=4912",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "The online application is not registered unless all mandatory image fields are uploaded.",
+          "source": "https://opportunities.rbi.org.in/scripts/bs_viewcontent.aspx?Id=4912",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Shadows on the face or background are not accepted.",
+          "source": "https://opportunities.rbi.org.in/scripts/bs_viewcontent.aspx?Id=4912",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Non-frontal or side-facing pose can fail the stated requirement.",
+          "source": "https://opportunities.rbi.org.in/scripts/bs_viewcontent.aspx?Id=4912",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Eyes must be visible/open as stated.",
+          "source": "https://opportunities.rbi.org.in/scripts/bs_viewcontent.aspx?Id=4912",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Spectacle glare, dark or coloured glasses can make the photograph unacceptable.",
+          "source": "https://opportunities.rbi.org.in/scripts/bs_viewcontent.aspx?Id=4912",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Caps/hats are restricted; any permitted religious covering must leave required facial features visible.",
+          "source": "https://opportunities.rbi.org.in/scripts/bs_viewcontent.aspx?Id=4912",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Unclear photograph, signature, thumb impression or declaration can lead to rejection.",
+          "source": "https://opportunities.rbi.org.in/scripts/bs_viewcontent.aspx?Id=4912",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Signature or handwritten declaration in capital letters is not accepted in the cited banking-family instructions.",
+          "source": "https://opportunities.rbi.org.in/scripts/bs_viewcontent.aspx?Id=4912",
+          "requirement_id": "candidate_signature"
+        }
+      ]
+    },
+    "rbi-assistant-panel-year-2025-live-photograph-live-capture": {
+      "exam_id": "rbi-assistant-panel-year-2025-live-photograph-live-capture",
+      "exam_name": "RBI Assistant - Panel Year 2025 (live photograph)",
+      "facts": [
+        {
+          "kind": "capture",
+          "text": "This examination also photographs you live through its own portal, as well as taking the photograph you upload.",
+          "source": "https://opportunities.rbi.org.in/scripts/bs_viewcontent.aspx?Id=4912",
+          "requirement_id": null
+        },
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 20 KB and 50 KB.",
+          "source": "Recruitment for the Post of Assistant - Panel Year 2025 - Paragraph 9.6 / upload instructions (https://opportunities.rbi.org.in/scripts/bs_viewcontent.aspx?Id=4912)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://opportunities.rbi.org.in/scripts/bs_viewcontent.aspx?Id=4912",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 5 files, not only a photograph — 4 more files besides it.",
+          "source": "https://opportunities.rbi.org.in/scripts/bs_viewcontent.aspx?Id=4912",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "The online application is not registered unless all mandatory image fields are uploaded.",
+          "source": "https://opportunities.rbi.org.in/scripts/bs_viewcontent.aspx?Id=4912",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Unclear photograph, signature, thumb impression or declaration can lead to rejection.",
+          "source": "https://opportunities.rbi.org.in/scripts/bs_viewcontent.aspx?Id=4912",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Signature or handwritten declaration in capital letters is not accepted in the cited banking-family instructions.",
+          "source": "https://opportunities.rbi.org.in/scripts/bs_viewcontent.aspx?Id=4912",
+          "requirement_id": "candidate_signature"
+        }
+      ]
+    },
+    "rbi-officers-in-grade-b-2026-prior-cycle-official-fallback": {
+      "exam_id": "rbi-officers-in-grade-b-2026-prior-cycle-official-fallback",
+      "exam_name": "RBI Officers in Grade B 2026 - prior-cycle official fallback",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 20 KB and 50 KB.",
+          "source": "Officers in Grade B - official prior-cycle upload instructions - Guidelines for scanning and upload (https://opportunities.rbi.org.in/Scripts/bs_viewcontent.aspx?Id=2836)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://opportunities.rbi.org.in/Scripts/bs_viewcontent.aspx?Id=2836",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 4 files, not only a photograph — 3 more files besides it.",
+          "source": "https://opportunities.rbi.org.in/Scripts/bs_viewcontent.aspx?Id=2836",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "The online application is not registered unless all mandatory image fields are uploaded.",
+          "source": "https://opportunities.rbi.org.in/Scripts/bs_viewcontent.aspx?Id=2836",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Shadows on the face or background are not accepted.",
+          "source": "https://opportunities.rbi.org.in/Scripts/bs_viewcontent.aspx?Id=2836",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Non-frontal or side-facing pose can fail the stated requirement.",
+          "source": "https://opportunities.rbi.org.in/Scripts/bs_viewcontent.aspx?Id=2836",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Eyes must be visible/open as stated.",
+          "source": "https://opportunities.rbi.org.in/Scripts/bs_viewcontent.aspx?Id=2836",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Spectacle glare, dark or coloured glasses can make the photograph unacceptable.",
+          "source": "https://opportunities.rbi.org.in/Scripts/bs_viewcontent.aspx?Id=2836",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Caps/hats are restricted; any permitted religious covering must leave required facial features visible.",
+          "source": "https://opportunities.rbi.org.in/Scripts/bs_viewcontent.aspx?Id=2836",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Unclear photograph, signature, thumb impression or declaration can lead to rejection.",
+          "source": "https://opportunities.rbi.org.in/Scripts/bs_viewcontent.aspx?Id=2836",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Signature or handwritten declaration in capital letters is not accepted in the cited banking-family instructions.",
+          "source": "https://opportunities.rbi.org.in/Scripts/bs_viewcontent.aspx?Id=2836",
+          "requirement_id": "candidate_signature"
+        }
+      ]
+    },
+    "rpf-constable": {
+      "exam_id": "rpf-constable",
+      "exam_name": "RPF Constable",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 30 KB and 70 KB.",
+          "source": "FAQ CEN RPF 02/2024 Constable - Q.43-Q.44 (https://www.rrbcdg.gov.in/uploads/2024/RPF02-CONS/FAQ%20RPF%2002-2024%20Const.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted format is JPEG.",
+          "source": "https://www.rrbcdg.gov.in/uploads/2024/RPF02-CONS/FAQ%20RPF%2002-2024%20Const.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://www.rrbcdg.gov.in/uploads/2024/RPF02-CONS/FAQ%20RPF%2002-2024%20Const.pdf",
+          "requirement_id": null
+        }
+      ]
+    },
+    "rpf-sub-inspector": {
+      "exam_id": "rpf-sub-inspector",
+      "exam_name": "RPF Sub-Inspector",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 30 KB and 70 KB.",
+          "source": "FAQ CEN RPF 01/2024 Sub-Inspector - Q.43-Q.44 (https://www.rrbcdg.gov.in/uploads/2024/RPF01-SI/FAQ%20RPF%2001-2024%20SI.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted format is JPEG.",
+          "source": "https://www.rrbcdg.gov.in/uploads/2024/RPF01-SI/FAQ%20RPF%2001-2024%20SI.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://www.rrbcdg.gov.in/uploads/2024/RPF01-SI/FAQ%20RPF%2001-2024%20SI.pdf",
+          "requirement_id": null
+        }
+      ]
+    },
+    "rrb-level-1-posts-cen-08-2024": {
+      "exam_id": "rrb-level-1-posts-cen-08-2024",
+      "exam_name": "RRB Level-1 Posts - CEN 08/2024",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 50 KB and 100 KB.",
+          "source": "CEN No. 08/2024 - Level 1 Posts - Mandatory scanned documents (https://wcr.indianrailways.gov.in/uploads/files/1771596254046-CEN_%2008_2024_English.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted format is JPEG.",
+          "source": "https://wcr.indianrailways.gov.in/uploads/files/1771596254046-CEN_%2008_2024_English.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "dimensions",
+          "text": "The photograph must be exactly 240 by 320 pixels.",
+          "source": "CEN No. 08/2024 - Level 1 Posts - Mandatory scanned documents (https://wcr.indianrailways.gov.in/uploads/files/1771596254046-CEN_%2008_2024_English.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 4 files, not only a photograph — 3 more files besides it.",
+          "source": "https://wcr.indianrailways.gov.in/uploads/files/1771596254046-CEN_%2008_2024_English.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Non-frontal or side-facing pose can fail the stated requirement.",
+          "source": "https://wcr.indianrailways.gov.in/uploads/files/1771596254046-CEN_%2008_2024_English.pdf",
+          "requirement_id": "candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Eyes must be visible/open as stated.",
+          "source": "https://wcr.indianrailways.gov.in/uploads/files/1771596254046-CEN_%2008_2024_English.pdf",
+          "requirement_id": "candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Spectacle glare, dark or coloured glasses can make the photograph unacceptable.",
+          "source": "https://wcr.indianrailways.gov.in/uploads/files/1771596254046-CEN_%2008_2024_English.pdf",
+          "requirement_id": "candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Caps/hats are restricted; any permitted religious covering must leave required facial features visible.",
+          "source": "https://wcr.indianrailways.gov.in/uploads/files/1771596254046-CEN_%2008_2024_English.pdf",
+          "requirement_id": "candidate_photograph"
+        }
+      ]
+    },
+    "rrb-ministerial-and-isolated-categories": {
+      "exam_id": "rrb-ministerial-and-isolated-categories",
+      "exam_name": "RRB Ministerial and Isolated Categories",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 40 KB and 70 KB.",
+          "source": "CEN 07/2024 Ministerial and Isolated Categories - Mandatory scanned documents (https://www.rrbcdg.gov.in/uploads/2024/07-M%26I/2024-07%20-%20CEN%20Min%20%26%20Iso.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted format is JPEG.",
+          "source": "https://www.rrbcdg.gov.in/uploads/2024/07-M%26I/2024-07%20-%20CEN%20Min%20%26%20Iso.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://www.rrbcdg.gov.in/uploads/2024/07-M%26I/2024-07%20-%20CEN%20Min%20%26%20Iso.pdf",
+          "requirement_id": null
+        }
+      ]
+    },
+    "rrb-ntpc-graduate-cen-05-2024": {
+      "exam_id": "rrb-ntpc-graduate-cen-05-2024",
+      "exam_name": "RRB NTPC Graduate - CEN 05/2024",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 20 KB and 50 KB.",
+          "source": "CEN 05/2024 - NTPC Graduate - Mandatory scanned documents (https://rrbsecunderabad.gov.in/wp-content/uploads/2024/09/CEN-05-2024-NTPC-Graduate_ENG.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted format is JPEG.",
+          "source": "https://rrbsecunderabad.gov.in/wp-content/uploads/2024/09/CEN-05-2024-NTPC-Graduate_ENG.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "dimensions",
+          "text": "The photograph must be exactly 240 by 320 pixels.",
+          "source": "CEN 05/2024 - NTPC Graduate - Mandatory scanned documents (https://rrbsecunderabad.gov.in/wp-content/uploads/2024/09/CEN-05-2024-NTPC-Graduate_ENG.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 4 files, not only a photograph — 3 more files besides it.",
+          "source": "https://rrbsecunderabad.gov.in/wp-content/uploads/2024/09/CEN-05-2024-NTPC-Graduate_ENG.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Non-frontal or side-facing pose can fail the stated requirement.",
+          "source": "https://rrbsecunderabad.gov.in/wp-content/uploads/2024/09/CEN-05-2024-NTPC-Graduate_ENG.pdf",
+          "requirement_id": "candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Eyes must be visible/open as stated.",
+          "source": "https://rrbsecunderabad.gov.in/wp-content/uploads/2024/09/CEN-05-2024-NTPC-Graduate_ENG.pdf",
+          "requirement_id": "candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Spectacle glare, dark or coloured glasses can make the photograph unacceptable.",
+          "source": "https://rrbsecunderabad.gov.in/wp-content/uploads/2024/09/CEN-05-2024-NTPC-Graduate_ENG.pdf",
+          "requirement_id": "candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Caps/hats are restricted; any permitted religious covering must leave required facial features visible.",
+          "source": "https://rrbsecunderabad.gov.in/wp-content/uploads/2024/09/CEN-05-2024-NTPC-Graduate_ENG.pdf",
+          "requirement_id": "candidate_photograph"
+        }
+      ]
+    },
+    "sbi-junior-associates-2025": {
+      "exam_id": "sbi-junior-associates-2025",
+      "exam_name": "SBI Junior Associates 2025",
+      "facts": [
+        {
+          "kind": "capture",
+          "text": "This examination also photographs you live through its own portal, as well as taking the photograph you upload.",
+          "source": "https://sbi.co.in/documents/77530/52947104/JA%2B2025%2B-Detailed%2BAdvt.pdf/8f7ff18f-1972-21c8-9212-5a8cf85a7099?t=1754398573326",
+          "requirement_id": null
+        },
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 20 KB and 50 KB.",
+          "source": "Recruitment of Junior Associates - Detailed Advertisement 2025 - Guidelines for scanning and upload (https://sbi.co.in/documents/77530/52947104/JA%2B2025%2B-Detailed%2BAdvt.pdf/8f7ff18f-1972-21c8-9212-5a8cf85a7099?t=1754398573326)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://sbi.co.in/documents/77530/52947104/JA%2B2025%2B-Detailed%2BAdvt.pdf/8f7ff18f-1972-21c8-9212-5a8cf85a7099?t=1754398573326",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 4 files, not only a photograph — 3 more files besides it.",
+          "source": "https://sbi.co.in/documents/77530/52947104/JA%2B2025%2B-Detailed%2BAdvt.pdf/8f7ff18f-1972-21c8-9212-5a8cf85a7099?t=1754398573326",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "The online application is not registered unless all mandatory image fields are uploaded.",
+          "source": "https://sbi.co.in/documents/77530/52947104/JA%2B2025%2B-Detailed%2BAdvt.pdf/8f7ff18f-1972-21c8-9212-5a8cf85a7099?t=1754398573326",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Shadows on the face or background are not accepted.",
+          "source": "https://sbi.co.in/documents/77530/52947104/JA%2B2025%2B-Detailed%2BAdvt.pdf/8f7ff18f-1972-21c8-9212-5a8cf85a7099?t=1754398573326",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Non-frontal or side-facing pose can fail the stated requirement.",
+          "source": "https://sbi.co.in/documents/77530/52947104/JA%2B2025%2B-Detailed%2BAdvt.pdf/8f7ff18f-1972-21c8-9212-5a8cf85a7099?t=1754398573326",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Eyes must be visible/open as stated.",
+          "source": "https://sbi.co.in/documents/77530/52947104/JA%2B2025%2B-Detailed%2BAdvt.pdf/8f7ff18f-1972-21c8-9212-5a8cf85a7099?t=1754398573326",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Spectacle glare, dark or coloured glasses can make the photograph unacceptable.",
+          "source": "https://sbi.co.in/documents/77530/52947104/JA%2B2025%2B-Detailed%2BAdvt.pdf/8f7ff18f-1972-21c8-9212-5a8cf85a7099?t=1754398573326",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Caps/hats are restricted; any permitted religious covering must leave required facial features visible.",
+          "source": "https://sbi.co.in/documents/77530/52947104/JA%2B2025%2B-Detailed%2BAdvt.pdf/8f7ff18f-1972-21c8-9212-5a8cf85a7099?t=1754398573326",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Unclear photograph, signature, thumb impression or declaration can lead to rejection.",
+          "source": "https://sbi.co.in/documents/77530/52947104/JA%2B2025%2B-Detailed%2BAdvt.pdf/8f7ff18f-1972-21c8-9212-5a8cf85a7099?t=1754398573326",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Signature or handwritten declaration in capital letters is not accepted in the cited banking-family instructions.",
+          "source": "https://sbi.co.in/documents/77530/52947104/JA%2B2025%2B-Detailed%2BAdvt.pdf/8f7ff18f-1972-21c8-9212-5a8cf85a7099?t=1754398573326",
+          "requirement_id": "candidate_signature"
+        }
+      ]
+    },
+    "sbi-probationary-officers-2025": {
+      "exam_id": "sbi-probationary-officers-2025",
+      "exam_name": "SBI Probationary Officers 2025",
+      "facts": [
+        {
+          "kind": "capture",
+          "text": "This examination also photographs you live through its own portal, as well as taking the photograph you upload.",
+          "source": "https://sbi.co.in/documents/77530/52947104/1_Detailed_Adv.2025_23.06.2025.pdf/54ca0942-3de1-afc4-45e8-f679fc552e7b?t=1750741324277",
+          "requirement_id": null
+        },
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 20 KB and 50 KB.",
+          "source": "Recruitment of Probationary Officers - Detailed Advertisement 2025 - Guidelines for scanning and upload (https://sbi.co.in/documents/77530/52947104/1_Detailed_Adv.2025_23.06.2025.pdf/54ca0942-3de1-afc4-45e8-f679fc552e7b?t=1750741324277)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://sbi.co.in/documents/77530/52947104/1_Detailed_Adv.2025_23.06.2025.pdf/54ca0942-3de1-afc4-45e8-f679fc552e7b?t=1750741324277",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 4 files, not only a photograph — 3 more files besides it.",
+          "source": "https://sbi.co.in/documents/77530/52947104/1_Detailed_Adv.2025_23.06.2025.pdf/54ca0942-3de1-afc4-45e8-f679fc552e7b?t=1750741324277",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "The online application is not registered unless all mandatory image fields are uploaded.",
+          "source": "https://sbi.co.in/documents/77530/52947104/1_Detailed_Adv.2025_23.06.2025.pdf/54ca0942-3de1-afc4-45e8-f679fc552e7b?t=1750741324277",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Shadows on the face or background are not accepted.",
+          "source": "https://sbi.co.in/documents/77530/52947104/1_Detailed_Adv.2025_23.06.2025.pdf/54ca0942-3de1-afc4-45e8-f679fc552e7b?t=1750741324277",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Non-frontal or side-facing pose can fail the stated requirement.",
+          "source": "https://sbi.co.in/documents/77530/52947104/1_Detailed_Adv.2025_23.06.2025.pdf/54ca0942-3de1-afc4-45e8-f679fc552e7b?t=1750741324277",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Eyes must be visible/open as stated.",
+          "source": "https://sbi.co.in/documents/77530/52947104/1_Detailed_Adv.2025_23.06.2025.pdf/54ca0942-3de1-afc4-45e8-f679fc552e7b?t=1750741324277",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Spectacle glare, dark or coloured glasses can make the photograph unacceptable.",
+          "source": "https://sbi.co.in/documents/77530/52947104/1_Detailed_Adv.2025_23.06.2025.pdf/54ca0942-3de1-afc4-45e8-f679fc552e7b?t=1750741324277",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Caps/hats are restricted; any permitted religious covering must leave required facial features visible.",
+          "source": "https://sbi.co.in/documents/77530/52947104/1_Detailed_Adv.2025_23.06.2025.pdf/54ca0942-3de1-afc4-45e8-f679fc552e7b?t=1750741324277",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Unclear photograph, signature, thumb impression or declaration can lead to rejection.",
+          "source": "https://sbi.co.in/documents/77530/52947104/1_Detailed_Adv.2025_23.06.2025.pdf/54ca0942-3de1-afc4-45e8-f679fc552e7b?t=1750741324277",
+          "requirement_id": "recent_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Signature or handwritten declaration in capital letters is not accepted in the cited banking-family instructions.",
+          "source": "https://sbi.co.in/documents/77530/52947104/1_Detailed_Adv.2025_23.06.2025.pdf/54ca0942-3de1-afc4-45e8-f679fc552e7b?t=1750741324277",
+          "requirement_id": "candidate_signature"
+        }
+      ]
+    },
+    "tnpsc-combined-civil-services-examination-i-group-i": {
+      "exam_id": "tnpsc-combined-civil-services-examination-i-group-i",
+      "exam_name": "TNPSC Combined Civil Services Examination I (Group I)",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 20 KB and 50 KB.",
+          "source": "TNPSC Instructions to Applicants 2025 - Photograph upload (https://tnpsc.gov.in/static_pdf/document/instructions-to-candidates_2025.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted format is JPG.",
+          "source": "https://tnpsc.gov.in/static_pdf/document/instructions-to-candidates_2025.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "dimensions",
+          "text": "The photograph must be exactly 130 by 170 pixels.",
+          "source": "TNPSC Instructions to Applicants 2025 - Photograph upload (https://tnpsc.gov.in/static_pdf/document/instructions-to-candidates_2025.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://tnpsc.gov.in/static_pdf/document/instructions-to-candidates_2025.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Failure to upload clear images of the photograph and signature will result in rejection of online application after due process.",
+          "source": "https://tnpsc.gov.in/static_pdf/document/instructions-to-candidates_2025.pdf",
+          "requirement_id": "candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "In case of uploading an inappropriate photograph, the application is liable to be rejected after due process.",
+          "source": "https://tnpsc.gov.in/static_pdf/document/instructions-to-candidates_2025.pdf",
+          "requirement_id": "candidate_photograph"
+        }
+      ]
+    },
+    "tnpsc-combined-civil-services-examination-ii-group-ii-iia": {
+      "exam_id": "tnpsc-combined-civil-services-examination-ii-group-ii-iia",
+      "exam_name": "TNPSC Combined Civil Services Examination II (Group II/IIA)",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 20 KB and 50 KB.",
+          "source": "TNPSC Instructions to Applicants 2025 - Photograph upload (https://tnpsc.gov.in/static_pdf/document/instructions-to-candidates_2025.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted format is JPG.",
+          "source": "https://tnpsc.gov.in/static_pdf/document/instructions-to-candidates_2025.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "dimensions",
+          "text": "The photograph must be exactly 130 by 170 pixels.",
+          "source": "TNPSC Instructions to Applicants 2025 - Photograph upload (https://tnpsc.gov.in/static_pdf/document/instructions-to-candidates_2025.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://tnpsc.gov.in/static_pdf/document/instructions-to-candidates_2025.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Failure to upload clear images of the photograph and signature will result in rejection of online application after due process.",
+          "source": "https://tnpsc.gov.in/static_pdf/document/instructions-to-candidates_2025.pdf",
+          "requirement_id": "candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "In case of uploading an inappropriate photograph, the application is liable to be rejected after due process.",
+          "source": "https://tnpsc.gov.in/static_pdf/document/instructions-to-candidates_2025.pdf",
+          "requirement_id": "candidate_photograph"
+        }
+      ]
+    },
+    "tnpsc-combined-civil-services-examination-iv-group-iv-services": {
+      "exam_id": "tnpsc-combined-civil-services-examination-iv-group-iv-services",
+      "exam_name": "TNPSC Combined Civil Services Examination IV (Group IV Services)",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 20 KB and 50 KB.",
+          "source": "TNPSC Instructions to Applicants 2025 - Photograph upload (https://tnpsc.gov.in/static_pdf/document/instructions-to-candidates_2025.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted format is JPG.",
+          "source": "https://tnpsc.gov.in/static_pdf/document/instructions-to-candidates_2025.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "dimensions",
+          "text": "The photograph must be exactly 130 by 170 pixels.",
+          "source": "TNPSC Instructions to Applicants 2025 - Photograph upload (https://tnpsc.gov.in/static_pdf/document/instructions-to-candidates_2025.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://tnpsc.gov.in/static_pdf/document/instructions-to-candidates_2025.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "appearance",
+          "text": "This examination requires candidate_name, photograph_date printed on the photograph itself. We cannot add that, so you will need to.",
+          "source": "https://tnpsc.gov.in/static_pdf/document/instructions-to-candidates_2025.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Failure to upload clear images of the photograph and signature will result in rejection of online application after due process.",
+          "source": "https://tnpsc.gov.in/static_pdf/document/instructions-to-candidates_2025.pdf",
+          "requirement_id": "candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "In case of uploading an inappropriate photograph, the application is liable to be rejected after due process.",
+          "source": "https://tnpsc.gov.in/static_pdf/document/instructions-to-candidates_2025.pdf",
+          "requirement_id": "candidate_photograph"
+        }
+      ]
+    },
+    "tnpsc-combined-technical-services-examination-2025": {
+      "exam_id": "tnpsc-combined-technical-services-examination-2025",
+      "exam_name": "TNPSC Combined Technical Services Examination 2025",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 20 KB and 50 KB.",
+          "source": "Instructions to Candidates / Combined Technical Services 2025 - Photograph upload instructions (https://www.tnpsc.gov.in/static_pdf/document/instructions-to-candiates.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted format is JPG.",
+          "source": "https://www.tnpsc.gov.in/static_pdf/document/instructions-to-candiates.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "dimensions",
+          "text": "The photograph must be exactly 130 by 170 pixels.",
+          "source": "Instructions to Candidates / Combined Technical Services 2025 - Photograph upload instructions (https://www.tnpsc.gov.in/static_pdf/document/instructions-to-candiates.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 3 files, not only a photograph — 2 more files besides it.",
+          "source": "https://www.tnpsc.gov.in/static_pdf/document/instructions-to-candiates.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "appearance",
+          "text": "This examination requires candidate_name, photograph_date printed on the photograph itself. We cannot add that, so you will need to.",
+          "source": "https://www.tnpsc.gov.in/static_pdf/document/instructions-to-candiates.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Non-frontal or side-facing pose can fail the stated requirement.",
+          "source": "https://www.tnpsc.gov.in/static_pdf/document/instructions-to-candiates.pdf",
+          "requirement_id": "candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Failure to upload clear images of the photograph and signature will result in rejection of online application after due process.",
+          "source": "https://www.tnpsc.gov.in/static_pdf/document/instructions-to-candiates.pdf",
+          "requirement_id": "candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "In case of uploading an inappropriate photograph, the application is liable to be rejected after due process.",
+          "source": "https://www.tnpsc.gov.in/static_pdf/document/instructions-to-candiates.pdf",
+          "requirement_id": "candidate_photograph"
+        }
+      ]
+    },
+    "ugc-net-june-2026": {
+      "exam_id": "ugc-net-june-2026",
+      "exam_name": "UGC-NET June 2026",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 10 KB and 200 KB.",
+          "source": "Information Bulletin - UGC-NET June 2026 - Photograph provisions (https://cdnbbsr.s3waas.gov.in/s301eee509ee2f68dc6014898c309e86bf/uploads/2026/04/202604301078678748.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://cdnbbsr.s3waas.gov.in/s301eee509ee2f68dc6014898c309e86bf/uploads/2026/04/202604301078678748.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 4 files, not only a photograph — 3 more files besides it.",
+          "source": "https://cdnbbsr.s3waas.gov.in/s301eee509ee2f68dc6014898c309e86bf/uploads/2026/04/202604301078678748.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "appearance",
+          "text": "A black and white photograph is accepted, not only colour.",
+          "source": "https://cdnbbsr.s3waas.gov.in/s301eee509ee2f68dc6014898c309e86bf/uploads/2026/04/202604301078678748.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Spectacle glare, dark or coloured glasses can make the photograph unacceptable.",
+          "source": "https://cdnbbsr.s3waas.gov.in/s301eee509ee2f68dc6014898c309e86bf/uploads/2026/04/202604301078678748.pdf",
+          "requirement_id": "candidate_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "A face mask/covering is restricted according to the stated policy.",
+          "source": "https://cdnbbsr.s3waas.gov.in/s301eee509ee2f68dc6014898c309e86bf/uploads/2026/04/202604301078678748.pdf",
+          "requirement_id": "candidate_photograph"
+        }
+      ]
+    },
+    "upsc-capf-assistant-commandants-examination-2026": {
+      "exam_id": "upsc-capf-assistant-commandants-examination-2026",
+      "exam_name": "UPSC CAPF (Assistant Commandants) Examination 2026",
+      "facts": [
+        {
+          "kind": "capture",
+          "text": "This examination also photographs you live through its own portal, as well as taking the photograph you upload.",
+          "source": "https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 20 KB and 200 KB.",
+          "source": "Instructions for Uploading Photo and Signature - Upload of Latest Passport Size Photograph / Capture of Live Photograph (https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted format is JPG.",
+          "source": "https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 4 files, not only a photograph — 3 more files besides it.",
+          "source": "https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Shadows on the face or background are not accepted.",
+          "source": "https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf",
+          "requirement_id": "latest_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Non-frontal or side-facing pose can fail the stated requirement.",
+          "source": "https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf",
+          "requirement_id": "latest_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Eyes must be visible/open as stated.",
+          "source": "https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf",
+          "requirement_id": "latest_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Spectacle glare, dark or coloured glasses can make the photograph unacceptable.",
+          "source": "https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf",
+          "requirement_id": "latest_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Face coverage below 75%, blurred image, misaligned face, face too close/out of frame, or ear lobes not visible are explicit UPSC rejection examples.",
+          "source": "https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf",
+          "requirement_id": "latest_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "A live-photo mismatch with the uploaded passport photograph prevents the candidate from proceeding.",
+          "source": "https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf",
+          "requirement_id": "latest_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "A signature image that is not exactly three vertically arranged signatures, is blurred/dark, incorrectly oriented, or outside the published file specification is rejected.",
+          "source": "https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf",
+          "requirement_id": "triple_signature_image"
+        }
+      ]
+    },
+    "upsc-civil-services-examination-2026": {
+      "exam_id": "upsc-civil-services-examination-2026",
+      "exam_name": "UPSC Civil Services Examination 2026",
+      "facts": [
+        {
+          "kind": "capture",
+          "text": "This examination also photographs you live through its own portal, as well as taking the photograph you upload.",
+          "source": "https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 20 KB and 200 KB.",
+          "source": "Instructions for Uploading Photo and Signature - Upload of Latest Passport Size Photograph / Capture of Live Photograph (https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted format is JPG.",
+          "source": "https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 4 files, not only a photograph — 3 more files besides it.",
+          "source": "https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Shadows on the face or background are not accepted.",
+          "source": "https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf",
+          "requirement_id": "latest_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Non-frontal or side-facing pose can fail the stated requirement.",
+          "source": "https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf",
+          "requirement_id": "latest_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Eyes must be visible/open as stated.",
+          "source": "https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf",
+          "requirement_id": "latest_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Spectacle glare, dark or coloured glasses can make the photograph unacceptable.",
+          "source": "https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf",
+          "requirement_id": "latest_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Face coverage below 75%, blurred image, misaligned face, face too close/out of frame, or ear lobes not visible are explicit UPSC rejection examples.",
+          "source": "https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf",
+          "requirement_id": "latest_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "A live-photo mismatch with the uploaded passport photograph prevents the candidate from proceeding.",
+          "source": "https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf",
+          "requirement_id": "latest_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "A signature image that is not exactly three vertically arranged signatures, is blurred/dark, incorrectly oriented, or outside the published file specification is rejected.",
+          "source": "https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf",
+          "requirement_id": "triple_signature_image"
+        }
+      ]
+    },
+    "upsc-combined-defence-services-examination-ii-2026": {
+      "exam_id": "upsc-combined-defence-services-examination-ii-2026",
+      "exam_name": "UPSC Combined Defence Services Examination (II) 2026",
+      "facts": [
+        {
+          "kind": "capture",
+          "text": "This examination also photographs you live through its own portal, as well as taking the photograph you upload.",
+          "source": "https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 20 KB and 200 KB.",
+          "source": "Instructions for Uploading Photo and Signature - Upload of Latest Passport Size Photograph / Capture of Live Photograph (https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted format is JPG.",
+          "source": "https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 4 files, not only a photograph — 3 more files besides it.",
+          "source": "https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Shadows on the face or background are not accepted.",
+          "source": "https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf",
+          "requirement_id": "latest_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Non-frontal or side-facing pose can fail the stated requirement.",
+          "source": "https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf",
+          "requirement_id": "latest_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Eyes must be visible/open as stated.",
+          "source": "https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf",
+          "requirement_id": "latest_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Spectacle glare, dark or coloured glasses can make the photograph unacceptable.",
+          "source": "https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf",
+          "requirement_id": "latest_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Face coverage below 75%, blurred image, misaligned face, face too close/out of frame, or ear lobes not visible are explicit UPSC rejection examples.",
+          "source": "https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf",
+          "requirement_id": "latest_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "A live-photo mismatch with the uploaded passport photograph prevents the candidate from proceeding.",
+          "source": "https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf",
+          "requirement_id": "latest_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "A signature image that is not exactly three vertically arranged signatures, is blurred/dark, incorrectly oriented, or outside the published file specification is rejected.",
+          "source": "https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf",
+          "requirement_id": "triple_signature_image"
+        }
+      ]
+    },
+    "upsc-nda-na-examination-ii-2026": {
+      "exam_id": "upsc-nda-na-examination-ii-2026",
+      "exam_name": "UPSC NDA & NA Examination (II) 2026",
+      "facts": [
+        {
+          "kind": "capture",
+          "text": "This examination also photographs you live through its own portal, as well as taking the photograph you upload.",
+          "source": "https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 20 KB and 200 KB.",
+          "source": "Instructions for Uploading Photo and Signature - Upload of Latest Passport Size Photograph / Capture of Live Photograph (https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted format is JPG.",
+          "source": "https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 4 files, not only a photograph — 3 more files besides it.",
+          "source": "https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Shadows on the face or background are not accepted.",
+          "source": "https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf",
+          "requirement_id": "latest_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Non-frontal or side-facing pose can fail the stated requirement.",
+          "source": "https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf",
+          "requirement_id": "latest_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Eyes must be visible/open as stated.",
+          "source": "https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf",
+          "requirement_id": "latest_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Spectacle glare, dark or coloured glasses can make the photograph unacceptable.",
+          "source": "https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf",
+          "requirement_id": "latest_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "Face coverage below 75%, blurred image, misaligned face, face too close/out of frame, or ear lobes not visible are explicit UPSC rejection examples.",
+          "source": "https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf",
+          "requirement_id": "latest_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "A live-photo mismatch with the uploaded passport photograph prevents the candidate from proceeding.",
+          "source": "https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf",
+          "requirement_id": "latest_passport_size_photograph"
+        },
+        {
+          "kind": "rejection",
+          "text": "A signature image that is not exactly three vertically arranged signatures, is blurred/dark, incorrectly oriented, or outside the published file specification is rejected.",
+          "source": "https://upsconline.nic.in/ngrp/assets/PDF/instruction-photo-signature-upload-upsc.pdf",
+          "requirement_id": "triple_signature_image"
+        }
+      ]
+    },
+    "wbjee-2026": {
+      "exam_id": "wbjee-2026",
+      "exam_name": "WBJEE 2026",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 10 KB and 200 KB.",
+          "source": "INFORMATION BULLETIN-WBJEE-2026 - Uploading of images (https://cdnbbsr.s3waas.gov.in/s3d2a27e83d429f0dcae6b937cf440aeb1/uploads/2026/03/202603101506582412.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://cdnbbsr.s3waas.gov.in/s3d2a27e83d429f0dcae6b937cf440aeb1/uploads/2026/03/202603101506582412.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://cdnbbsr.s3waas.gov.in/s3d2a27e83d429f0dcae6b937cf440aeb1/uploads/2026/03/202603101506582412.pdf",
+          "requirement_id": null
+        }
+      ]
+    },
+    "wbpsc-wbcs-current-online-application-photograph": {
+      "exam_id": "wbpsc-wbcs-current-online-application-photograph",
+      "exam_name": "WBPSC / WBCS Current Online Application Photograph",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be no larger than 100 KB.",
+          "source": "Guidelines for filling up the Online Application Form - How to Upload image file of my scanned photograph and signature (https://wbpsc.gov.in/pdf_file/Guideline.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted format is JPEG.",
+          "source": "https://wbpsc.gov.in/pdf_file/Guideline.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 3 files, not only a photograph — 2 more files besides it.",
+          "source": "https://wbpsc.gov.in/pdf_file/Guideline.pdf",
+          "requirement_id": null
+        }
+      ]
+    },
+    "west-bengal-school-service-commission-slst-assistant-teacher-recruitment": {
+      "exam_id": "west-bengal-school-service-commission-slst-assistant-teacher-recruitment",
+      "exam_name": "West Bengal School Service Commission SLST Assistant Teacher Recruitment",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 30 KB and 60 KB.",
+          "source": "WBSSC Assistant Teacher Recruitment Application Guide - Photo Requirements (https://www.westbengalssc.com/otr/howToApply/)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted format is JPG.",
+          "source": "https://www.westbengalssc.com/otr/howToApply/",
+          "requirement_id": null
+        }
+      ]
+    },
+    "xavier-aptitude-test": {
+      "exam_id": "xavier-aptitude-test",
+      "exam_name": "Xavier Aptitude Test",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 20 KB and 50 KB.",
+          "source": "XAT 2025 Bulletin - Photograph image (https://xatonline.in/assets/pdf/XAT-Bulletin-2025.pdf)",
+          "requirement_id": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://xatonline.in/assets/pdf/XAT-Bulletin-2025.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 2 files, not only a photograph — 1 more file besides it.",
+          "source": "https://xatonline.in/assets/pdf/XAT-Bulletin-2025.pdf",
+          "requirement_id": null
+        },
+        {
+          "kind": "rejection",
+          "text": "Any mismatch between the uploaded signature and the signature at the examination may result in disqualification.",
+          "source": "https://xatonline.in/assets/pdf/XAT-Bulletin-2025.pdf",
+          "requirement_id": "candidate_signature"
+        }
+      ]
+    }
+  }
+}
