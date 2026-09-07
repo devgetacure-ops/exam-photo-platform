@@ -56,6 +56,11 @@ from exam_photo.api.payments import (
     verify_and_read,
 )
 from exam_photo.api.pricing import quote_for
+from exam_photo.api.protection import (
+    AllowanceExceededError,
+    ChallengeFailedError,
+    verify_turnstile,
+)
 from exam_photo.api.razorpay_orders import OrderCreationError, order_notes
 from exam_photo.api.service import (
     ApiProcessingService,
@@ -560,6 +565,8 @@ async def prepare_requirement(
     kit_id: Optional[str] = Form(default=None),  # noqa: B008
     allow_invalid_output: bool = Query(default=False),  # noqa: B008
     quality_mode: str = Query(default="balanced"),  # noqa: B008
+    request: Request = None,  # type: ignore[assignment]  # noqa: B008
+    cf_turnstile_response: Optional[str] = Form(default=None),  # noqa: B008
 ) -> PrepareRequirementResponse:
     """Prepare one item of one examination.
 
@@ -574,8 +581,39 @@ async def prepare_requirement(
     _gate_or_409(exam_id, requirement)
     kit = _validated_kit_id(kit_id)
 
+    # DEC-073, before the upload is read: a challenge that is going to fail
+    # should not first cost us the bytes.
+    try:
+        verify_turnstile(
+            cf_turnstile_response or "",
+            service.settings.turnstile_secret,
+            request.client.host if request and request.client else None,
+        )
+    except ChallengeFailedError as err:
+        print(f"turnstile rejected a preparation: {err}")
+        raise HTTPException(
+            status_code=403,
+            detail="Could not verify this request came from a browser.",
+        ) from None
+
+    if kit:
+        try:
+            service.usage.check_allowance(
+                kit, service.settings.free_preparation_allowance
+            )
+        except AllowanceExceededError as err:
+            raise HTTPException(
+                status_code=429,
+                detail=(
+                    f"This session has prepared {err.used} files without a "
+                    "purchase. Buy the ones you need and you can carry on."
+                ),
+            ) from None
+
     upload = await _read_upload(file)
     job_id = service.generate_job_id()
+    if kit:
+        service.usage.record_preparation(kit)
 
     # Bounded concurrency, not a per-IP quota (DEC-064). The slot is taken
     # after the support gate and the upload read, so a refused requirement or
@@ -1141,6 +1179,21 @@ def get_order_evidence(order_id: str) -> OrderEvidenceResponse:
         job_ids=order.job_ids,
         jobs=jobs,
     )
+
+
+@app.get(
+    "/v1/metrics/usage",
+    dependencies=[Depends(require_operator)],
+)
+def get_usage_metrics() -> dict[str, object]:
+    """Preparations and conversion, per kit (DEC-073).
+
+    Operator-gated, and the point of it: the free-preparation allowance should
+    be set from what candidates actually do, not from a guess. Reports a
+    distribution rather than a mean, because the mean of a population holding
+    one script and a thousand candidates describes neither.
+    """
+    return service.usage.summary()
 
 
 @app.post("/v1/payments/razorpay/webhook")

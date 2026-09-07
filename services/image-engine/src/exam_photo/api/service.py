@@ -31,6 +31,7 @@ from exam_photo.api.jobs import (
 )
 from exam_photo.api.orders import OrderRegistry
 from exam_photo.api.payments import ReleaseInstruction
+from exam_photo.api.protection import UsageRegistry
 from exam_photo.api.razorpay_orders import OrderGateway, gateway_for
 from exam_photo.api.settings import ApiSettings
 from exam_photo.api.storage import LocalArtifactStore
@@ -191,6 +192,8 @@ class ApiProcessingService:
         self.registry = JobRegistry(settings.artifact_root)
         #: Orders outlive the files they paid for (DEC-071).
         self.orders = OrderRegistry(settings.artifact_root)
+        #: Per-kit counters, surviving retention (DEC-073).
+        self.usage = UsageRegistry(settings.artifact_root)
         #: Overwritten wholesale in tests, like `store` and `registry`, so no
         #: test ever reaches api.razorpay.com (DEC-070).
         self._order_gateway: Optional[OrderGateway] = None
@@ -726,6 +729,7 @@ class ApiProcessingService:
         order = self.orders.get(instruction.order_id or "")
         if order is not None:
             self.orders.mark_paid(order.order_id, instruction.payment_id)
+            self.usage.record_purchase(order.kit_id)
             for job_id in order.job_ids:
                 try:
                     self.release_job(job_id, payment=instruction)

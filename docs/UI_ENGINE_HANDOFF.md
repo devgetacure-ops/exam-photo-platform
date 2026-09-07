@@ -254,3 +254,28 @@ the expiry time in the same message.
 countdown becomes urgent is what actually prevents the failure the owner named
 — paying and then not getting the file. A candidate who emails it to themselves
 has already solved expiry.
+
+## One field to add to the upload, before Turnstile is switched on
+
+2026-09-07, DEC-073. The prepare endpoint now accepts a
+**`cf_turnstile_response`** form field. While `EXAM_PHOTO_TURNSTILE_SECRET` is
+unset nothing changes and the field is ignored. **The moment a secret is
+configured, a preparation without the token is refused with 403** -- so the
+widget and the field need to be in place before that switch is flipped, not
+after.
+
+Cloudflare Turnstile, invisible mode: render the widget, and post the token it
+produces alongside the file. It is the one control that actually stops a script
+running hundreds of images through the pipeline.
+
+Two other states worth handling:
+
+- **429 on prepare** means a free-preparation allowance is configured and this
+  session has spent it. The message says buying lets them carry on, which is
+  true -- a purchase clears the allowance. This is off by default and will stay
+  off until the usage metrics say what a normal candidate does.
+- **403 on prepare** is the challenge failing. It is not a candidate error;
+  offer a retry rather than an explanation.
+
+Neither is per-IP, and neither ever will be: carrier-grade NAT puts thousands
+of candidates behind one address.

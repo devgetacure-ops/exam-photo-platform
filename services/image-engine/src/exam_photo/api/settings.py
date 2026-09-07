@@ -104,6 +104,17 @@ class ApiSettings(BaseModel):
     # DEC-072. SMTP for delivering a paid file by email, so it survives the
     # thirty-minute window. Empty host or sender means email delivery refuses
     # rather than reporting a success it did not achieve.
+    # DEC-073. Free preparations a kit may make before it must buy something.
+    # 0 disables the check, which is the default: the counters are there to
+    # say what a real candidate does, and a limit set before that is a guess
+    # that costs sales when it is set too low.
+    free_preparation_allowance: int = 0
+
+    # Cloudflare Turnstile. Empty means no challenge, and unlike the payment
+    # secrets this fails *open* -- an unchallenged preparation costs some CPU,
+    # while refusing every candidate over a misconfiguration costs the product.
+    turnstile_secret: str = ""
+
     smtp_host: str = ""
     smtp_port: int = 587
     smtp_username: str = ""
@@ -260,6 +271,12 @@ def get_settings() -> ApiSettings:
         )
     if "EXAM_PHOTO_OPERATOR_TOKEN" in os.environ:
         kwargs["operator_token"] = os.environ["EXAM_PHOTO_OPERATOR_TOKEN"]
+    if "EXAM_PHOTO_FREE_PREPARATION_ALLOWANCE" in os.environ:
+        kwargs["free_preparation_allowance"] = int(
+            os.environ["EXAM_PHOTO_FREE_PREPARATION_ALLOWANCE"]
+        )
+    if "EXAM_PHOTO_TURNSTILE_SECRET" in os.environ:
+        kwargs["turnstile_secret"] = os.environ["EXAM_PHOTO_TURNSTILE_SECRET"]
     for var, field in (
         ("EXAM_PHOTO_SMTP_HOST", "smtp_host"),
         ("EXAM_PHOTO_SMTP_USERNAME", "smtp_username"),
