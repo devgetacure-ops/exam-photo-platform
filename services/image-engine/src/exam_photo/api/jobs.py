@@ -103,6 +103,18 @@ class ProcessingJobRecord(BaseModel):
     preview_width: Optional[int] = None
     preview_height: Optional[int] = None
 
+    # --- Payment reconciliation (DEC-069) -----------------------------------
+    #
+    # Written when a verified Razorpay webhook releases this job. They exist so
+    # a release can be traced back to the payment that caused it -- a release
+    # with no payment reference is the thing an audit needs to be able to spot.
+    # The amount is recorded and deliberately not *checked*: nothing in the
+    # engine yet knows what the candidate owed. See DEC-069.
+    payment_reference: Optional[str] = None
+    payment_amount: Optional[int] = None
+    payment_currency: Optional[str] = None
+    released_at: Optional[str] = None
+
     def is_expired(self, now: Optional[datetime] = None) -> bool:
         """Whether this job has passed its retention deadline (DEC-066).
 

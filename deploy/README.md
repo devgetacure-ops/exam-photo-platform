@@ -128,6 +128,11 @@ serving container has no use for torch.
       you ask us to keep it" -- not a flat thirty.
 - [ ] `EXAM_PHOTO_PURCHASE_GATE_ENABLED` **not** set to false. False serves
       clean files to anyone holding a job id.
+- [ ] **`EXAM_PHOTO_RAZORPAY_WEBHOOK_SECRET` set, and server-side order
+      creation built first.** The webhook verifies Razorpay's signature but
+      cannot yet tell a full payment from a rupee, because nothing in the
+      engine knows the price. Confirm with
+      `curl -s localhost/ready | grep payments`. See DEC-069.
 - [ ] Backups, if artifacts matter to you. They are meant to expire, so
       probably not — but decide it rather than discover it.
 

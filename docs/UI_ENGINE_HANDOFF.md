@@ -104,3 +104,42 @@ DEC-066 existed to close, and would be worse for being introduced knowingly.
 
 **Extension does not release.** An extended job still answers 402 until it is
 paid for; retention and payment are separate gates and stay separate.
+
+## Payment is wired on the engine side — and it needs one thing from the order
+
+2026-09-07, DEC-069. `POST /v1/payments/razorpay/webhook` exists and releases
+files. Razorpay's signature is verified over the raw body before anything else
+runs, and only `payment.captured` and `order.paid` release anything.
+
+**The one thing the interface must get right**, because a verified payment that
+gets it wrong takes the candidate's money and delivers nothing:
+
+> The Razorpay order must carry **`job_id`** or **`kit_id`** in its `notes`.
+
+- `notes: {"kit_id": "kit_abc"}` releases every live job in that kit — the
+  bundle case.
+- `notes: {"job_id": "job_xyz"}` releases one file. A comma-separated list of
+  ids works too.
+- Notes are read from the order first, then the payment, so either carries them.
+
+A verified payment naming neither is answered `{"status": "no_targets"}` and
+logged loudly, but nothing is released and the candidate has paid for a file
+they will not receive. There is no way for the engine to recover that case: it
+cannot guess which files a payment was for.
+
+Two additive things you can use, no `types.ts` change needed to keep working:
+
+- **`JobStatusResponse.entitlement`** flips to `"released"` once payment lands,
+  so a poll after checkout is how the UI learns the download is now available.
+- **`GET /ready`** reports `payments: configured | not_configured`.
+
+**Do not build a "pay" button that calls anything else.** There is still no
+HTTP route that releases a job directly, on purpose (DEC-063). The webhook is
+the only path, and it runs server-to-server after Razorpay has the money.
+
+**Before this goes live, one piece is missing and it is not yours.** The
+webhook cannot yet tell a full payment from a rupee, because the engine does
+not know your prices — so orders must be created **server-side** at a price
+the service computes, rather than in the browser. Tell me your pricing model
+and I will build that endpoint; until it exists this must stay on Razorpay
+test keys.

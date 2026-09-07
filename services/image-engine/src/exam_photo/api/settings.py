@@ -89,6 +89,13 @@ class ApiSettings(BaseModel):
     #: tab.
     operator_token: str = ""
 
+    # DEC-069. The Razorpay webhook's shared secret. Empty means the webhook
+    # route refuses every request rather than accepting unsigned ones: the
+    # whole reason DEC-063 declined to write a release route is that an
+    # unauthenticated one reads as protection and is none, and a secret that
+    # defaults to "accept anything" would reintroduce exactly that.
+    razorpay_webhook_secret: str = ""
+
     #: How many files one document request may carry.  `max_upload_bytes`
     #: bounds each file and nothing bounded the count, so a single request
     #: could hand the service an unlimited number of 5 MB uploads to hold in
@@ -235,6 +242,10 @@ def get_settings() -> ApiSettings:
         )
     if "EXAM_PHOTO_OPERATOR_TOKEN" in os.environ:
         kwargs["operator_token"] = os.environ["EXAM_PHOTO_OPERATOR_TOKEN"]
+    if "EXAM_PHOTO_RAZORPAY_WEBHOOK_SECRET" in os.environ:
+        kwargs["razorpay_webhook_secret"] = os.environ[
+            "EXAM_PHOTO_RAZORPAY_WEBHOOK_SECRET"
+        ]
     if "EXAM_PHOTO_MAX_DOCUMENT_FILES" in os.environ:
         kwargs["max_document_files"] = int(os.environ["EXAM_PHOTO_MAX_DOCUMENT_FILES"])
     if "EXAM_PHOTO_MAX_CONCURRENT_PREPARATIONS" in os.environ:

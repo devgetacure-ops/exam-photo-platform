@@ -43,6 +43,11 @@ from exam_photo.api.contracts import (
     UnavailableExamResponse,
 )
 from exam_photo.api.jobs import KIT_ID_REGEX, ProcessingJobRecord
+from exam_photo.api.payments import (
+    SIGNATURE_HEADER,
+    WebhookRejectedError,
+    verify_and_read,
+)
 from exam_photo.api.service import (
     ApiProcessingService,
     RequirementNotFoundError,
@@ -948,6 +953,58 @@ def extend_job_retention(job_id: str) -> JobRetentionResponse:
         expires_at=record.expires_at,
         extendable=service.job_is_extendable(record),
     )
+
+
+@app.post("/v1/payments/razorpay/webhook")
+async def razorpay_webhook(request: Request) -> JSONResponse:
+    """Release the files a verified Razorpay payment paid for (DEC-069).
+
+    This is the caller DEC-063 anticipated when it left `release_job` with
+    nothing calling it. What makes it acceptable where a plain release route
+    was not is that the shared-secret signature is checked over the **raw
+    request body, before the payload is parsed at all** -- so an unsigned
+    request never reaches any code that reads what it is asking for.
+
+    Deliberately not behind the operator token. Razorpay cannot send one, and
+    the signature is a stronger proof of origin than a bearer token would be.
+    """
+    body = await request.body()
+    signature = request.headers.get(SIGNATURE_HEADER, "")
+
+    try:
+        instruction = verify_and_read(
+            body, signature, service.settings.razorpay_webhook_secret
+        )
+    except WebhookRejectedError as err:
+        # 400 with nothing that would help a forger narrow down which check
+        # failed. The reason goes to the operator's log, not to the caller.
+        print(f"razorpay webhook rejected: {err.reason}")
+        raise HTTPException(status_code=400, detail="Webhook rejected") from None
+
+    if instruction is None:
+        # A real event this service does not act on. Acknowledged, because
+        # Razorpay retries anything it is not told arrived.
+        return JSONResponse({"status": "ignored"})
+
+    if instruction.names_nothing:
+        # Signed by Razorpay, so the money moved, but the order carried no
+        # job or kit in its notes and nothing can be released. Acknowledged
+        # rather than refused -- retrying will not add the notes -- and
+        # logged loudly, because it means an order was created without them
+        # and a candidate has paid for something they will not receive.
+        print(
+            "razorpay webhook named no job or kit: "
+            f"payment={instruction.payment_id} order={instruction.order_id}"
+        )
+        return JSONResponse({"status": "no_targets"})
+
+    outcome = service.apply_release_instruction(instruction)
+    if outcome["unknown"]:
+        print(
+            f"razorpay webhook could not release {outcome['unknown']} "
+            f"for payment={instruction.payment_id}"
+        )
+    return JSONResponse({"status": "released", **outcome})
 
 
 @app.delete("/v1/jobs/{job_id}")

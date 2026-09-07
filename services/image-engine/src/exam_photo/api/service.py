@@ -18,6 +18,7 @@ from exam_photo.api.jobs import (
     ProcessingJobRecord,
     parse_manifest_timestamp,
 )
+from exam_photo.api.payments import ReleaseInstruction
 from exam_photo.api.settings import ApiSettings
 from exam_photo.api.storage import LocalArtifactStore
 from exam_photo.models.exam_rule import (
@@ -533,6 +534,15 @@ class ApiProcessingService:
             "operator_surface": (
                 "authenticated" if self.settings.operator_token else "unauthenticated"
             ),
+            # DEC-069. With the gate on and no webhook secret, every prepared
+            # file answers 402 and nothing can ever release one -- a deployment
+            # that looks healthy and cannot take money. This is the one place
+            # that state is visible.
+            "payments": (
+                "configured"
+                if self.settings.razorpay_webhook_secret
+                else "not_configured"
+            ),
         }
 
     def start_background_workers(self) -> None:
@@ -638,23 +648,82 @@ class ApiProcessingService:
             return True
         return record.entitlement == JobEntitlement.RELEASED
 
-    def release_job(self, job_id: str) -> ProcessingJobRecord:
+    def release_job(
+        self, job_id: str, payment: Optional[ReleaseInstruction] = None
+    ) -> ProcessingJobRecord:
         """Release one job's clean output, once it has been paid for.
 
         This is the seam a payment confirmation calls, and it is deliberately
         reachable only from inside the process. There is no HTTP route that
         releases a job: an unauthenticated one would not be a weaker gate than
         none but a worse one, because it reads as protection to anyone
-        scanning the route list. When Razorpay lands, its verified webhook --
-        signature checked against the shared secret before anything else --
-        is what should call this.
+        scanning the route list. Razorpay's verified webhook is what calls it
+        (DEC-069) -- signature checked against the shared secret before the
+        payload is even parsed.
+
+        `payment` is the reconciliation trail: a release with no payment
+        reference is what an audit needs to be able to notice.
         """
         record = self.registry.get_job(job_id)
         if record is None or record.status == ApiJobStatus.DELETED:
             raise KeyError(job_id)
+        if self.expire_job_if_due(record):
+            # DEC-066: the artifacts are gone. Marking an erased job released
+            # would leave a manifest claiming an entitlement to nothing.
+            raise KeyError(job_id)
         record.entitlement = JobEntitlement.RELEASED
+        if payment is not None:
+            record.payment_reference = payment.payment_id or payment.order_id
+            record.payment_amount = payment.amount
+            record.payment_currency = payment.currency
+        record.released_at = datetime.now(timezone.utc).isoformat()
         self.registry.update_job(record)
         return record
+
+    def apply_release_instruction(
+        self, instruction: ReleaseInstruction
+    ) -> Dict[str, Any]:
+        """Release everything a verified webhook names (DEC-069).
+
+        Idempotent by construction: releasing an already-released job sets the
+        same entitlement again. That matters because Razorpay retries any
+        webhook it was not told was received, so this method is guaranteed to
+        be called more than once for some payments.
+
+        A job the instruction names but that cannot be found -- expired,
+        deleted, never existed -- is reported as unknown rather than raised
+        on. One bad identifier in a bundle must not stop the rest of the
+        candidate's files being released, and the whole point of a payment
+        webhook is that the money has already moved.
+        """
+        released: list[str] = []
+        unknown: list[str] = []
+
+        for job_id in instruction.job_ids:
+            try:
+                self.release_job(job_id, payment=instruction)
+            except KeyError:
+                unknown.append(job_id)
+            else:
+                released.append(job_id)
+
+        for kit_id in instruction.kit_ids:
+            records = self.registry.jobs_in_kit(kit_id)
+            if not records:
+                unknown.append(kit_id)
+                continue
+            for record in records:
+                try:
+                    self.release_job(record.job_id, payment=instruction)
+                except KeyError:
+                    unknown.append(record.job_id)
+                else:
+                    released.append(record.job_id)
+
+        return {
+            "released": list(dict.fromkeys(released)),
+            "unknown": list(dict.fromkeys(unknown)),
+        }
 
     def expire_job_if_due(self, record: ProcessingJobRecord) -> bool:
         """Erase a job whose retention deadline has passed, on the way to it.

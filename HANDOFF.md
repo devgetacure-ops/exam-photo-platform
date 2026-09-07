@@ -102,12 +102,16 @@ see *[Two agents, one repository](#two-agents-one-repository)*.
 modified app/component files and the four new components are uncommitted in the
 tree. Check `git status` before assuming anything is clean.
 
-**The engine is deployable and cannot yet take money.** The watermarked preview
-and purchase gate are built (DEC-063), the service warms itself, sweeps expired
-artifacts and gates its operator surface (DEC-064), and `deploy/` holds a
-working Dockerfile, compose file and reverse proxy (DEC-065). What is missing is
-**Razorpay** -- `release_job` is the seam and nothing calls it, so every clean
-file answers 402 -- and **delivery**, and the **2026 research refresh**.
+**The engine can take money on test keys, and must not yet be pointed at a
+live Razorpay account.** The watermarked preview and purchase gate are built
+(DEC-063), the service warms itself, sweeps expired artifacts and gates its
+operator surface (DEC-064), `deploy/` holds a working Dockerfile, compose file
+and reverse proxy (DEC-065), retention is a real 30-minute promise (DEC-066)
+with a candidate-requested extension (DEC-067), and **the Razorpay webhook now
+calls `release_job`** (DEC-069). What is missing is **server-side order
+creation** -- without it the webhook cannot tell a full payment from a rupee,
+because nothing in the engine knows the prices -- and **delivery**, and the
+rest of the **2026 research refresh**.
 
 **None of those need Docker.** Deployment work is done to the point where the
 next useful step happens on a real VPS, not here.
@@ -253,16 +257,18 @@ puts the product's worst failure mode back on the table.
 
 ### Not built, in order
 
-1. **Payment.** Razorpay, decided. The ordering is already right: preparation
-   happens first and the candidate decides against the real result. **The
-   engine side is waiting for exactly one call.** `ApiProcessingService.
-   release_job(job_id)` moves a job from `preview_only` to `released`, and
-   until something calls it nothing in the candidate path can download a clean
-   file — `/v1/jobs/{id}/output` and `/v1/kits/{id}/package/download` both
-   answer 402 (DEC-063). There is deliberately **no HTTP route** that releases
-   a job, because an unauthenticated one reads as protection and is none. The
-   Razorpay webhook, with its signature verified against the shared secret
-   before anything else, is what should call it.
+1. ~~**Payment.**~~ **The webhook is built (DEC-069).**
+   `POST /v1/payments/razorpay/webhook` verifies Razorpay's HMAC signature over
+   the raw body before parsing it, and releases the jobs the order's `notes`
+   name -- `job_id` for one file, `kit_id` for a bundle. Two things are still
+   open. **Server-side order creation**, which is the blocker on live keys: the
+   webhook proves Razorpay sent the event but not that the candidate paid the
+   asking price, because the engine does not know the prices. An order created
+   at a price the service computes turns Razorpay's own order/payment guarantee
+   into a guarantee about our amount. And the **UI half**: the order must carry
+   `job_id` or `kit_id` in its notes, or a verified payment releases nothing and
+   the candidate has paid for a file they never receive
+   (`docs/UI_ENGINE_HANDOFF.md`).
 2. **Delivery.** Download, email, and a `wa.me` share link — the candidate
    sends it themselves, which needs no WhatsApp Business integration and routes
    no candidate photograph through Meta.
