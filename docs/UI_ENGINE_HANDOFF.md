@@ -143,3 +143,43 @@ not know your prices — so orders must be created **server-side** at a price
 the service computes, rather than in the browser. Tell me your pricing model
 and I will build that endpoint; until it exists this must stay on Razorpay
 test keys.
+
+## Pricing and checkout: two endpoints, and one rule
+
+2026-09-07, DEC-070. The prices are settled and the engine computes them.
+
+**`GET /v1/kits/{kit_id}/quote`** — read-only, creates nothing, safe to call on
+every render. Returns the amount in **paise**, the struck-through figure, and a
+line per deliverable saying whether it is charged and why:
+
+```json
+{ "amount_paise": 500, "list_amount_paise": 800, "currency": "INR",
+  "chargeable_count": 2, "included_free_count": 3, "is_payable": true,
+  "lines": [ { "job_id": "job_x", "requirement_type": "photograph",
+               "chargeable": true, "reason": "charged" } ] }
+```
+
+Reasons you will see: `charged`, `document_work_is_free`, `already_released`,
+`nothing_prepared`, `expired`. **Show `document_work_is_free`** — a candidate
+being told their certificates cost nothing is a better moment than a total on
+its own.
+
+**`POST /v1/kits/{kit_id}/order`** — creates the Razorpay order and returns
+`order_id`, `amount_paise`, `currency` and `key_id`. Hand those to Checkout.
+
+**The rule: the browser never decides the price.** The order route takes no
+amount at all — not one it validates, one it does not accept. So build checkout
+as: quote to display → order to pay → poll `GET /v1/jobs/{id}` until
+`entitlement` is `"released"`. Do not compute Rs 3 / Rs 5 / Rs 8 in the front
+end even for display; call the quote, so the number shown and the number
+charged cannot drift apart.
+
+The ladder, for your copy: **Rs 3** one deliverable (from Rs 4), **Rs 5** two
+(from Rs 8), **Rs 8** three or more (from Rs 10) — the top tier is a ceiling,
+so "everything your examination asks for, eight rupees" is literally true.
+Document work is free.
+
+`409` from the order route means there is nothing to pay for — an empty kit,
+one already paid, or one holding only free document work. `503` means the
+payment provider could not be reached; the message is candidate-safe and
+carries no gateway text.

@@ -96,6 +96,14 @@ class ApiSettings(BaseModel):
     # defaults to "accept anything" would reintroduce exactly that.
     razorpay_webhook_secret: str = ""
 
+    # DEC-070. The API credentials used to create orders server-side, at a
+    # price the service computes. `key_id` is publishable and reaches the
+    # browser; `key_secret` never leaves the process. Both empty means order
+    # creation refuses rather than pretending, so a host without them cannot
+    # accidentally fall back to a browser-supplied amount.
+    razorpay_key_id: str = ""
+    razorpay_key_secret: str = ""
+
     #: How many files one document request may carry.  `max_upload_bytes`
     #: bounds each file and nothing bounded the count, so a single request
     #: could hand the service an unlimited number of 5 MB uploads to hold in
@@ -242,6 +250,10 @@ def get_settings() -> ApiSettings:
         )
     if "EXAM_PHOTO_OPERATOR_TOKEN" in os.environ:
         kwargs["operator_token"] = os.environ["EXAM_PHOTO_OPERATOR_TOKEN"]
+    if "EXAM_PHOTO_RAZORPAY_KEY_ID" in os.environ:
+        kwargs["razorpay_key_id"] = os.environ["EXAM_PHOTO_RAZORPAY_KEY_ID"]
+    if "EXAM_PHOTO_RAZORPAY_KEY_SECRET" in os.environ:
+        kwargs["razorpay_key_secret"] = os.environ["EXAM_PHOTO_RAZORPAY_KEY_SECRET"]
     if "EXAM_PHOTO_RAZORPAY_WEBHOOK_SECRET" in os.environ:
         kwargs["razorpay_webhook_secret"] = os.environ[
             "EXAM_PHOTO_RAZORPAY_WEBHOOK_SECRET"

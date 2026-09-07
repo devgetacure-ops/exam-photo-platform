@@ -19,6 +19,7 @@ from exam_photo.api.jobs import (
     parse_manifest_timestamp,
 )
 from exam_photo.api.payments import ReleaseInstruction
+from exam_photo.api.razorpay_orders import OrderGateway, gateway_for
 from exam_photo.api.settings import ApiSettings
 from exam_photo.api.storage import LocalArtifactStore
 from exam_photo.models.exam_rule import (
@@ -176,6 +177,9 @@ class ApiProcessingService:
         self.settings = settings
         self.store = LocalArtifactStore(settings.artifact_root)
         self.registry = JobRegistry(settings.artifact_root)
+        #: Overwritten wholesale in tests, like `store` and `registry`, so no
+        #: test ever reaches api.razorpay.com (DEC-070).
+        self._order_gateway: Optional[OrderGateway] = None
         self.repo_root = find_repo_root()
 
         # Load existing manifests on startup
@@ -724,6 +728,24 @@ class ApiProcessingService:
             "released": list(dict.fromkeys(released)),
             "unknown": list(dict.fromkeys(unknown)),
         }
+
+    @property
+    def order_gateway(self) -> OrderGateway:
+        """The gateway this host's credentials entitle it to (DEC-070).
+
+        Built on first use from the current settings, so a test that swaps
+        `settings` gets a gateway matching them, and a host with no keys gets
+        one that refuses rather than one that pretends.
+        """
+        if self._order_gateway is None:
+            self._order_gateway = gateway_for(
+                self.settings.razorpay_key_id, self.settings.razorpay_key_secret
+            )
+        return self._order_gateway
+
+    @order_gateway.setter
+    def order_gateway(self, gateway: OrderGateway) -> None:
+        self._order_gateway = gateway
 
     def expire_job_if_due(self, record: ProcessingJobRecord) -> bool:
         """Erase a job whose retention deadline has passed, on the way to it.

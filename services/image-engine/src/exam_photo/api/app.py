@@ -30,11 +30,14 @@ from exam_photo.api.contracts import (
     ExamSummaryResponse,
     JobRetentionResponse,
     JobStatusResponse,
+    KitOrderResponse,
     KitPackageItem,
     KitPackageResponse,
+    KitQuoteResponse,
     PreparationOutcome,
     PrepareRequirementResponse,
     ProcessImageResponse,
+    QuoteLineResponse,
     RequirementNotServedResponse,
     RequirementSummary,
     RuleValidationErrorResponse,
@@ -48,6 +51,8 @@ from exam_photo.api.payments import (
     WebhookRejectedError,
     verify_and_read,
 )
+from exam_photo.api.pricing import quote_for
+from exam_photo.api.razorpay_orders import OrderCreationError, order_notes
 from exam_photo.api.service import (
     ApiProcessingService,
     RequirementNotFoundError,
@@ -952,6 +957,85 @@ def extend_job_retention(job_id: str) -> JobRetentionResponse:
         job_id=record.job_id,
         expires_at=record.expires_at,
         extendable=service.job_is_extendable(record),
+    )
+
+
+@app.get("/v1/kits/{kit_id}/quote", response_model=KitQuoteResponse)
+def get_kit_quote(kit_id: str) -> KitQuoteResponse:
+    """What this kit costs, itemised (DEC-070).
+
+    Read-only and safe to call on every render: it creates no order and
+    reserves nothing, so the interface can show a price without committing the
+    candidate to anything.
+    """
+    if not KIT_ID_REGEX.match(kit_id):
+        raise HTTPException(status_code=400, detail="Invalid kit ID format")
+
+    quote = quote_for(service.registry.jobs_in_kit(kit_id))
+    return KitQuoteResponse(
+        kit_id=kit_id,
+        amount_paise=quote.amount_paise,
+        list_amount_paise=quote.list_amount_paise,
+        currency=quote.currency,
+        chargeable_count=quote.chargeable_count,
+        included_free_count=quote.included_free_count,
+        already_released_count=quote.already_released_count,
+        is_payable=quote.is_payable,
+        lines=[
+            QuoteLineResponse(
+                job_id=line.job_id,
+                requirement_id=line.requirement_id,
+                requirement_type=line.requirement_type,
+                chargeable=line.chargeable,
+                reason=line.reason,
+            )
+            for line in quote.lines
+        ],
+    )
+
+
+@app.post("/v1/kits/{kit_id}/order", response_model=KitOrderResponse)
+def create_kit_order(kit_id: str) -> KitOrderResponse:
+    """Create a Razorpay order for this kit, at a price we computed (DEC-070).
+
+    This is what makes DEC-069's webhook safe on live keys. The amount comes
+    from the jobs on disk, never from the caller, so a browser cannot ask to
+    be charged less; and the order carries the kit in its `notes`, which is
+    the only link between paying and receiving.
+    """
+    if not KIT_ID_REGEX.match(kit_id):
+        raise HTTPException(status_code=400, detail="Invalid kit ID format")
+
+    quote = quote_for(service.registry.jobs_in_kit(kit_id))
+    if not quote.is_payable:
+        # Nothing to charge for: an empty kit, one already paid, or one that
+        # holds only document work, which is free. Sending a zero-amount order
+        # to a payment gateway would be asking it to take nothing.
+        raise HTTPException(
+            status_code=409,
+            detail="There is nothing to pay for in this kit.",
+        )
+
+    try:
+        order = service.order_gateway.create_order(
+            amount_paise=quote.amount_paise,
+            currency=quote.currency,
+            notes=order_notes(kit_id),
+            receipt=f"kit-{kit_id}",
+        )
+    except OrderCreationError as err:
+        print(f"razorpay order creation failed for {kit_id}: {err}")
+        raise HTTPException(
+            status_code=503,
+            detail="Payment could not be started. Please try again shortly.",
+        ) from None
+
+    return KitOrderResponse(
+        kit_id=kit_id,
+        order_id=order.order_id,
+        amount_paise=order.amount_paise,
+        currency=order.currency,
+        key_id=order.key_id,
     )
 
 

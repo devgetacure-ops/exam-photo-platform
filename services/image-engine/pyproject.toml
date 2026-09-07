@@ -29,6 +29,10 @@ dependencies = [
     "fastapi>=0.100.0",
     "uvicorn>=0.20.0",
     "python-multipart>=0.0.6",
+    # Declared because DEC-070 calls Razorpay's Orders API at runtime. It was
+    # already present transitively via the FastAPI test client, which is not
+    # the same as being a dependency: a serving image installs no test extras.
+    "httpx>=0.27.0",
     # PDF reading and structural rewriting. pypdf is pure Python and BSD
     # licensed; PyMuPDF is faster and can rasterise, but it is AGPL, which is
     # not compatible with shipping this as a commercial service.

@@ -91,6 +91,46 @@ class JobRetentionResponse(BaseModel):
     extendable: bool
 
 
+class QuoteLineResponse(BaseModel):
+    """One deliverable in a quote, charged or not, with the reason (DEC-070)."""
+
+    job_id: str
+    requirement_id: Optional[str] = None
+    requirement_type: Optional[str] = None
+    chargeable: bool
+    reason: str
+
+
+class KitQuoteResponse(BaseModel):
+    """What a kit costs, itemised.
+
+    Amounts are in paise, as Razorpay counts them, so no float ever touches a
+    price. ``list_amount_paise`` is the struck-through figure to show beside
+    the real one.
+    """
+
+    kit_id: str
+    amount_paise: int
+    list_amount_paise: int
+    currency: str
+    chargeable_count: int
+    included_free_count: int
+    already_released_count: int
+    is_payable: bool
+    lines: List[QuoteLineResponse] = Field(default_factory=list)
+
+
+class KitOrderResponse(BaseModel):
+    """A Razorpay order created server-side, as Checkout needs it (DEC-070)."""
+
+    kit_id: str
+    order_id: str
+    amount_paise: int
+    currency: str
+    #: Publishable. Identifies the account and authorises nothing on its own.
+    key_id: str
+
+
 class RequirementSummary(BaseModel):
     """One requirement as the picker and the kit list need it.
 
