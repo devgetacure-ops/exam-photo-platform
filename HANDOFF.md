@@ -115,47 +115,73 @@ the **2026 research refresh**.
 **None of those need Docker.** Deployment work is done to the point where the
 next useful step happens on a real VPS, not here.
 
-## Two agents, one repository
+## One agent now, both lanes
 
-Design and engine are split. **Do not cross the line without saying so.**
+**The two-lane split is retired.** Codex owned UI/UX and this lane owned the
+engine from DEC-055 until 2026-09-07; the product owner has consolidated both
+into one agent. There is no coordination protocol left to follow, no
+`types.ts` change that is "a request to the other side", and no reason to
+stage commits by path any more.
 
-| Owner | Files |
-|---|---|
-| **Codex** — UI/UX | `apps/web/src/app/**`, `apps/web/src/components/**`, `globals.css`, everything visual |
-| **This lane** — engine | `services/image-engine/**`, `scripts/**`, `packages/exam-rules/**`, `examples/rules/**`, `deploy/**` |
-| **Shared contract** | `apps/web/src/lib/types.ts`, `apps/web/src/lib/api-client.ts` |
+What that costs, and it is worth naming: **this work no longer has an
+independent reviewer.** Three defects in the 2026-09-07 session were the kind
+a second agent catches -- a derived fact that contradicted the fact printed
+beside it, a variant swap that would have delivered `..__alt.jpg` to a portal
+that rejects on filename, and a generated sidecar named inside the `exam_*`
+namespace the encoder deletes. Each was caught by a test, but only because
+the test was written adversarially. **Write the negative test first.** It is
+now the only thing standing where the second reader used to.
 
-**One tree is the problem, not one branch.** Both lanes currently work in the
-same checkout, so they cannot be on different branches and every `git status`
-mixes them. `git worktree` fixes it and this repo already uses worktrees:
+### What Codex left behind, assessed honestly
 
-```bash
-git worktree add ../exam-photo-ui -b feat/ui
-```
+Its process discipline was good and is worth continuing rather than
+replacing. `docs/UI_REDESIGN_QA_2026_09_07.md` records what was and was not
+checked, refuses to claim an audit it did not run, and -- the hardest
+instruction in the brief -- **found no reliable disqualification statistic and
+said so**, citing a specific official notice instead of inventing a number.
+It also found that the committed portrait's provenance text describes an older
+European GAN asset while the image actually shipping is of an Indian-looking
+person. That is a sharper finding than the one this lane recorded, and it is
+still open.
 
-Codex then works in `../exam-photo-ui` on `feat/ui`; the engine lane keeps this
-directory. **Give the new worktree to the UI lane, not the engine lane** --
-`model-assets/` is gitignored and 2.5 GB, so a second worktree starts without
-it, and the UI is the half that does not need it.
+The copywriting is good and should mostly survive: *"You prepare for the exam.
+We'll prepare the files."*, *"A surprising number of open tabs."*
 
-The file sets are disjoint, so merges are clean **except in three documents both
-lanes append to**: `HANDOFF.md`, `docs/08_DECISION_LOG.md` and
-`docs/07_REQUIREMENTS_TRACEABILITY.md`. Expect an end-of-file conflict in those
-on every merge; the resolution is always "keep both sides".
+**Where it fell short of the brief, in one sentence:** its own plan says
+*"Evolve the existing Clear Companion direction"*, and it did -- producing a
+clean, competent, conservative SaaS layout where the brief asked for something
+immersive and visually striking. Lots of white space, plain cards, almost no
+motion, one illustration. Tasteful and safe. Not the thing that makes somebody
+stay and explore.
 
-The shared files describe what the API returns, so an edit there is a request
-to the other side rather than a local change. Codex used them that way to ask
-for `preview_url` and `preview_watermarked` on `PrepareRequirementResponse`,
-and **the engine now serves both** under exactly those names (DEC-063), so
-`types.ts` needs no change for them.
+### The design instruction that governs the next session
 
-**Open in the other direction**, and additive, so nothing breaks while it is
-unread: the engine's `PrepareRequirementResponse` and `JobStatusResponse` also
-carry `entitlement` (`"preview_only" | "released"`), and `KitPackageResponse`
-carries `awaiting_release: number` with `awaiting_release: boolean` per item.
-Those are what a payment interface needs in order to say *why* a download is
-unavailable rather than only that it is. Declaring them in `types.ts` is Codex's
-call, not the engine's.
+The owner's style list -- Bauhaus, neumorphism, glassmorphism, neobrutalism,
+claymorphism, aurora, retro-futurism, minimalism, and more -- **is internally
+contradictory**. Neubrutalism and neumorphism are opposites; minimalism and
+synthwave cannot coexist. Anything implementing all of it produces noise.
+
+That is very likely why the previous attempt retreated to safe: given a list
+that cannot be satisfied, committing to nothing is the defensible move.
+
+**So the first deliverable of the UI work is not code.** It is a written
+recommendation naming the two or three directions to commit to, why, and why
+the rest are refused -- approved by the owner before anything is built. The
+owner has agreed to that sequencing explicitly.
+
+### Current UI state, verified 2026-09-07
+
+Built, and it works: landing story, comparison slider, pricing, FAQ, footer,
+theme toggle, exam workspace with the three-way boundary intact, rules pages,
+server-priced checkout with entitlement polling, retention countdown and
+extension, delivery. 92 Vitest tests pass, production build passes, no
+horizontal overflow at seven widths.
+
+**Two things are stale in it right now.** It generates 52 exam pages and the
+catalogue holds **132** (DEC-079), and its QA notes record the lighting
+toggle, staged progress, exam facts and email delivery as "absent" -- all four
+shipped in the same session (DEC-072..077). A rebuild against the current
+engine is the first practical step.
 
 What this file is: the state a new session cannot reconstruct from the diff.
 Not a session note — keep it current rather than appending to it. It has drifted
@@ -167,7 +193,7 @@ Read alongside:
 | File | What it carries |
 |---|---|
 | `AGENTS.md` | The binding operating contract |
-| `docs/08_DECISION_LOG.md` | DEC-029..065. **Living** — amend an entry when implementation moves; never bend implementation to fit a stale one |
+| `docs/08_DECISION_LOG.md` | DEC-029..079. **Living** — amend an entry when implementation moves; never bend implementation to fit a stale one |
 | `HANDOFF-INVARIANTS.md` | How composition work is done here: the invariant sweep, the ratchet, the planner/validator defect class |
 | `docs/EXAM_RULE_GAP_REGISTER.md` | Generated. Which examinations are encoded, which are not, and why |
 
@@ -219,15 +245,16 @@ real per-exam research lands, `type == interim_default` finds every one.
 
 ## Where to start: the web app
 
-**The read half of the product is built.** A candidate can find their
-examination and see everything it asks for. What is missing is the half that
-takes money and produces files.
+**The whole candidate path is built and works locally.** Find the
+examination, upload, watch it prepare, review a watermarked preview, pay
+against a server-computed price, download or email the result. What is missing
+is not a feature but a *level*: see "One agent now, both lanes" above.
 
 Two architectural facts a new session must not re-derive:
 
 **The catalogue is read at BUILD time, not over the API.** `lib/catalogue.server.ts`
 reads `examples/rules/` from disk and every exam page is statically generated —
-39 of them. This is deliberate (WEB-003): the pricing strategy makes SEO the
+**132 of them** since DEC-079, plus 132 rules pages. This is deliberate (WEB-003): the pricing strategy makes SEO the
 primary channel, and a page whose content arrives by client-side `fetch` is an
 empty document to a crawler. It also means search and specifications work with
 the processing service switched off. `api-client.ts` is for *preparing* files,
@@ -244,58 +271,53 @@ puts the product's worst failure mode back on the table.
 | Piece | Where |
 |---|---|
 | Design tokens, both themes | `src/app/globals.css` — semantic colours are deliberately not the accent |
-| Landing page — the search **is** the page | `src/app/page.tsx`, `components/exam-search.tsx` — one screen, focused on arrival |
-| Exam workspace, 39 static pages | `src/app/exam/[examId]/page.tsx` + `components/exam/kit-workspace.tsx` — fixed file list left, one file's detail right |
-| Rules & sources, 39 more pages | `src/app/exam/[examId]/rules/page.tsx` — reference split off the workspace |
+| Landing page, problem story, comparison slider, pricing, FAQ, footer | `src/app/page.tsx`, `app/journey.css`, `components/site-footer.tsx`, `components/file-comparison.tsx` |
+| Checkout, entitlement polling, retention countdown, extension, delivery | `components/exam/kit-checkout.tsx`, `live-job-state.ts` |
+| Theme toggle, shared header/footer | `components/theme-toggle.tsx`, `site-header.tsx`, `site-footer.tsx` |
+| Exam workspace, 132 static pages | `src/app/exam/[examId]/page.tsx` + `components/exam/kit-workspace.tsx` — fixed file list left, one file's detail right |
+| Rules & sources, 132 more pages | `src/app/exam/[examId]/rules/page.tsx` — reference split off the workspace |
 | Real accepted/rejected examples | `scripts/generate_guidance_examples.py` → `public/examples/` |
 | Specification rendering | `lib/spec-format.ts` — published figures over our byte conversion; `est.` marks a value we chose |
 | Photograph rules per exam | `lib/appearance-rules.ts` — spectacles, headwear, expression, imprint, from the record only |
-| Honest citation | `components/exam/source-note.tsx` — 7 of 39 exams have no official source |
+| Honest citation | `components/exam/source-note.tsx` — some exams have no official source and say so |
 | Published rejection conditions | `scripts/encode_exam_rules.py` routes them (DEC-059); shown per requirement, attributed to the exam |
 | Upload and preparation | `components/exam/requirement-upload.tsx` — client island, records the job against the kit |
 | Three outcome states | `components/exam/outcome-result.tsx` — clean / with-findings / blocked |
 | The watermarked preview and the purchase gate | Engine: `src/exam_photo/preview/`, `api/app.py` (`/v1/jobs/{id}/preview`, 402 on `/output`). UI already wired by Codex |
 
-### Not built, in order
+### What is actually left, in order
 
-1. ~~**Payment.**~~ **Built (DEC-069, DEC-070).**
-   `POST /v1/payments/razorpay/webhook` verifies Razorpay's HMAC signature over
-   the raw body before parsing it, and releases the jobs the order's `notes`
-   name -- `job_id` for one file, `kit_id` for a bundle. `GET /v1/kits/{id}/quote`
-   prices a kit and `POST /v1/kits/{id}/order` creates the Razorpay order at
-   that amount; **the order route accepts no amount at all**, so a browser
-   cannot ask to be charged less. Rs 3 / Rs 5 / Rs 8, document work free, and
-   the top tier is a ceiling. What is left is the **UI half**: checkout must go
-   quote -> order -> poll `entitlement`, and must not compute a price
-   (`docs/UI_ENGINE_HANDOFF.md`). The order pins the exact files it was priced
-   from (DEC-071), so a file prepared during checkout stays gated rather than
-   riding along free. **Refunds are not built**, and the missing half of
-   deciding a claim is **delivery evidence** -- whether the candidate actually
-   received the file. `_orders/` is never swept and will need a retention
-   decision of its own.
-2. ~~**Delivery.**~~ **Built (DEC-072).** `POST /v1/kits/{id}/email` sends the
-   paid files so they outlive the thirty-minute window; downloads and sends are
-   recorded, and `GET /v1/orders/{id}/evidence` is what a refund claim is
-   decided against. The address is used and not stored -- only a masked form is
-   kept. `wa.me` is the interface's and needs nothing from the engine. **Refund
-   *processing* is not built**: this decides a claim, it does not move money.
-3. **Multi-page documents** via `planDocument` → arrange → `assembleDocument`.
-4. **The package.** Nothing calls `getKitPackage` yet, so there is no ZIP and
-   no checklist at the end. The rail's price button is a placeholder. Note the
-   download is now gated: the checklist stays readable, the archive does not.
-5. **Mobile.** Explicitly out of scope as a responsive pass — the product owner
-   wants a separate design for it, not a reflow of this one. The workspace is
-   built for desktop and its two-pane grid assumes that.
-6. **A preview for a PDF deliverable.** A certificate assembled as a PDF gets
-   no preview — `preview_watermarked` is `false` and `preview_url` is null,
-   which is honest — but it is still gated, so a candidate currently buys a
-   certificate scan unseen. Rendering a page needs a rasteriser this repository
-   deliberately does not carry (PyMuPDF is AGPL). DEC-052 does not forbid one
-   for a *preview*; that rule governs the delivered file.
+The engine side of the 2026-09-07 brief is complete. What follows is
+UI/UX and operations.
 
-`upload-card.tsx`, `result-preview.tsx`, `validation-report.tsx` and
-`processing-status.tsx` still survive from the pre-pivot flow, now unused by
-the candidate path. Fold in what is useful or delete them.
+1. **Rebuild, then raise the level.** The site generates 52 exam pages against
+   a 132-examination catalogue, and its own notes call four shipped engine
+   features absent. Rebuild first so the assessment is of the real thing. Then
+   the design work: a written direction the owner approves, and only then code.
+2. **Design the empty state for 80 examinations.** DEC-079 encodes records with
+   **no photograph specification** -- served for a signature or certificates
+   alone. Their *rules* page has almost nothing to show. It degrades to empty
+   rather than breaking, which is correct and looks like a hole.
+3. **`not_yet_supported` is now on 72 requirements**, up from a handful. It is
+   listed deliberately -- the examination does ask for a photograph and hiding
+   it would say otherwise -- but the workspace shows that state far more often
+   now and it must read as "we cannot prepare this yet", never as a failure.
+4. **The four candidate-facing pages Razorpay onboarding requires**: terms,
+   privacy, refund/cancellation, contact. These gate the payment account, not
+   the launch, so they are earlier than they look.
+5. **Multi-page documents** via `planDocument` -> arrange -> `assembleDocument`.
+   The engine pair exists; the arranging interface does not.
+6. **Mobile as a separate design**, per the owner -- not a reflow.
+7. **A preview for a PDF deliverable.** `preview_watermarked` is false and
+   `preview_url` null, honestly, so a candidate currently buys a certificate
+   scan unseen. Rendering a page needs a rasteriser this repository
+   deliberately does not carry (PyMuPDF is AGPL). DEC-052 governs the
+   *delivered* file, not a preview, so this is allowed -- it is a dependency
+   decision, not a rule change.
+8. **Refund processing.** DEC-072 makes a claim *decidable* -- paid, delivered,
+   when, by which route -- but nothing issues money. Razorpay refunds are a
+   separate integration, and the policy question in DEC-067 is still the
+   owner's: what happens when someone pays and their file expires.
 
 ### Running it locally
 
