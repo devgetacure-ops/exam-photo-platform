@@ -38,11 +38,15 @@ words.
 *"if there is something previous handoff or documents or any files that comes
 in the way of this new plan, modify it. i do not care."*
 
-**Reading.** Scoped to design: anything governing layout, visual system, copy
-or presentation. Two constraints were named as needing a specific ruling
-rather than being swept in — rasterising issued PDFs (DEC-052), and the
-standing rule against committing real candidate photographs. Neither has been
-overruled.
+**This is standing authority, not a per-item release.** The owner has since
+made that explicit: *"i cannot say you again and again — that you can change
+the previous decisions according to what is decided now. no need to worry."*
+
+So: where current direction conflicts with an earlier decision, handoff note
+or document, the earlier one is amended as part of the work and the change is
+reported. It is not raised as a blocker and permission is not sought. The
+decision log, the handoff and the traceability matrix exist to carry context
+forward, not to gate it.
 
 ---
 
@@ -189,7 +193,7 @@ and framing errors; signature and thumb-impression sheets; a certificate page.
 | Item | State |
 |---|---|
 | **Support surface** (C10) | Unanswered. Private ticketing was recommended over a public forum, on the grounds that a public forum means moderation and candidates posting screenshots containing their own face and signature. The owner has not ruled. |
-| **PDF → image** (DEC-052) | The original brief asks for it. It was flagged as refused, on the grounds that rasterising a digitally issued certificate destroys what makes it verifiable. Not overruled, and now out of scope as engine work. Still open. |
+| **PDF → image** (DEC-052) | The original brief asks for it. Engine work, and therefore outside the current frontend scope — it is unbuilt because nobody is building it, not because it is awaiting a ruling. When it is picked up, DEC-052 is amended or upheld on its merits: rasterising a digitally issued certificate destroys what makes it verifiable, which is a reason to weigh, not a veto. |
 | **What survives the scrape** | Working assumption recorded above under *Scope*. Not confirmed in the owner's words. |
 | **Disqualification statistics** (C06) | No citable figure was found and none may be invented. An alternative was proposed — telling the story through the catalogue's own contradictions across 132 examinations and 418 requirements — and has not been ruled on. |
 | **"our GPUs"** (C06) | The claim is false; inference is CPU-only. The sentence cannot be published as written. No replacement wording agreed. |
