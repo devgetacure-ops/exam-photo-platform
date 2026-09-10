@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
+import { loadExamFacts } from "../../../lib/exam-facts.server";
+import { ExamFacts } from "../../../components/exam/exam-facts";
 import { notFound } from "next/navigation";
 
 import { loadExam, loadExams } from "../../../lib/catalogue.server";
 import { liveCaptureStance } from "../../../lib/appearance-rules";
 import { SiteHeader } from "../../../components/site-header";
+import { SiteFooter } from "../../../components/site-footer";
 import { KitWorkspace } from "../../../components/exam/kit-workspace";
 
 /**
@@ -20,67 +23,80 @@ import { KitWorkspace } from "../../../components/exam/kit-workspace";
  */
 
 export async function generateStaticParams() {
-  const exams = await loadExams();
-  return exams.map((exam) => ({ examId: exam.exam_id }));
+    const exams = await loadExams();
+    return exams.map((exam) => ({ examId: exam.exam_id }));
 }
 
 export async function generateMetadata({
-  params,
+    params,
 }: {
-  params: Promise<{ examId: string }>;
+    params: Promise<{ examId: string }>;
 }): Promise<Metadata> {
-  const { examId } = await params;
-  const exam = await loadExam(examId);
-  if (!exam) return { title: "Examination not found" };
+    const { examId } = await params;
+    const exam = await loadExam(examId);
+    if (!exam) return { title: "Examination not found" };
 
-  return {
-    title: `${exam.exam_name} — photo, signature and document upload rules`,
-    description: `Every file ${exam.exam_name} asks you to upload, with its exact size, dimensions and format. Prepared automatically to ${exam.conducting_body}'s published specification.`,
-    alternates: { canonical: `/exam/${exam.exam_id}` },
-  };
+    return {
+        title: `${exam.exam_name} — photo, signature and document upload rules`,
+        description: `Every file ${exam.exam_name} asks you to upload, with its exact size, dimensions and format. Prepared automatically to ${exam.conducting_body}'s published specification.`,
+        alternates: { canonical: `/exam/${exam.exam_id}` },
+    };
 }
 
 export default async function ExamPage({
-  params,
+    params,
 }: {
-  params: Promise<{ examId: string }>;
+    params: Promise<{ examId: string }>;
 }) {
-  const { examId } = await params;
-  const exam = await loadExam(examId);
-  if (!exam) notFound();
+    const { examId } = await params;
+    const exam = await loadExam(examId);
+    if (!exam) notFound();
 
-  const requirements = exam.requirements ?? [];
-  const preparesPhotograph = requirements.some(
-    (requirement) =>
-      requirement.requirement_type === "photograph" &&
-      (requirement.platform_support === "supported" ||
-        requirement.platform_support === "partially_supported")
-  );
-  const liveCapture = liveCaptureStance(exam.image_requirements, preparesPhotograph);
+    const requirements = exam.requirements ?? [];
+    const preparesPhotograph = requirements.some(
+        (requirement) =>
+            requirement.requirement_type === "photograph" &&
+            (requirement.platform_support === "supported" ||
+                requirement.platform_support === "partially_supported"),
+    );
+    const liveCapture = liveCaptureStance(
+        exam.image_requirements,
+        preparesPhotograph,
+    );
 
-  return (
-    <main className="exam-page"><SiteHeader mobileTitle={`${exam.exam_name} upload kit`}/>
+    return (
+        <main className="exam-page" id="main-content">
+            <SiteHeader mobileTitle={`${exam.exam_name} upload kit`} />
 
-      {/*
+            {/*
         Live capture is the one thing that must be said before the candidate
         starts, because it changes what they have to do rather than how they do
         it — and "the exam takes a photo too" is the opposite of "so skip the
         upload" on the 16 exams that want both.
       */}
-      {liveCapture === "additional" && (
-        <details className="live-capture-note">
-          <summary>Centre photograph also required</summary>
-          <p>This exam also photographs you at the centre. That is in addition to the photo you upload here, not instead of it.</p>
-        </details>
-      )}
-      {liveCapture === "instead" && (
-        <details className="live-capture-note">
-          <summary>The exam takes this photograph</summary>
-          <p>This exam photographs you itself, so there is no photo to upload.</p>
-        </details>
-      )}
+            {liveCapture === "additional" && (
+                <details className="live-capture-note">
+                    <summary>Centre photograph also required</summary>
+                    <p>
+                        This exam also photographs you at the centre. That is in
+                        addition to the photo you upload here, not instead of
+                        it.
+                    </p>
+                </details>
+            )}
+            {liveCapture === "instead" && (
+                <details className="live-capture-note">
+                    <summary>The exam takes this photograph</summary>
+                    <p>
+                        This exam photographs you itself, so there is no photo
+                        to upload.
+                    </p>
+                </details>
+            )}
 
-      <KitWorkspace exam={exam} />
-    </main>
-  );
+            <KitWorkspace exam={exam} />
+            <div className="facts-wrap"><ExamFacts facts={await loadExamFacts(examId)} examName={exam.exam_name} /></div>
+            <SiteFooter />
+        </main>
+    );
 }

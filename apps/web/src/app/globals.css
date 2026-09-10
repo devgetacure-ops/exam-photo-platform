@@ -1276,3 +1276,5 @@ p {
         scroll-behavior: auto !important;
     }
 }
+
+/* Candidate journey styles are loaded from the root layout after the base system. */

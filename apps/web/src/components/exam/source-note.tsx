@@ -128,14 +128,14 @@ export function SourceNote({
         </p>
       )}
 
-      <p className="mt-5 text-sm">
+      <div className="mt-5 text-sm">
         <ReportIssue examName={exam.exam_name} ruleId={exam.rule_id}/>{" "}
         <span className="text-muted">
           Tell us and we will re-check it against the notification. Rules change
           between cycles and we would rather hear it from you than have you find
           out at the portal.
         </span>
-      </p>
+      </div>
     </section>
   );
 }

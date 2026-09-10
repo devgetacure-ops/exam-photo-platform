@@ -1,0 +1,28 @@
+import { PolicyPage } from "../../components/policy-page";
+export const metadata = { title: "Payment and refund help · UploadReady" };
+export default function Refunds() {
+    return (
+        <PolicyPage
+            title="Paid, but something went wrong?"
+            intro="Start with the payment and delivery record. We’ll help you report what happened."
+            sections={[
+                {
+                    title: "Payment still confirming",
+                    text: "Refresh the kit in the same browser. Your files are released after server confirmation, which may arrive after checkout closes. Do not pay again while the outcome is uncertain.",
+                },
+                {
+                    title: "Paid and not delivered",
+                    text: "Raise a private support request with your order reference and what happened. Requests concerning payment received without file delivery are reviewed case by case against payment and delivery evidence.",
+                },
+                {
+                    title: "What the review can establish",
+                    text: "The service records file download and email-send events to help investigate delivery. Reporting a problem does not itself issue a refund. A refund is confirmed only after the payment provider processes it; this page does not promise an automatic refund or a processing deadline.",
+                },
+                {
+                    title: "Expiry and exam outcomes",
+                    text: "Download promptly or use email while files are available. Deleted files cannot be recovered. Preparation does not guarantee acceptance by an examination authority. Explain the particular issue in your request so it can be reviewed.",
+                },
+            ]}
+        />
+    );
+}

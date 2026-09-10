@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useRef, useState, useId } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { SearchEntry } from "../lib/types";
 
@@ -233,7 +234,7 @@ export function ExamSearch({ exams, unavailable, autoFocus = false }: Props) {
           {!hasResults && (
             <p className="px-4 py-6 text-sm text-ink-soft">
               Nothing matches <span className="font-medium text-ink">“{query}”</span>.
-              We cover 39 examinations so far — if yours is missing,{" "}
+              We cover {exams.length} examinations so far — if yours is missing,{" "}
               try its full name or a different abbreviation.
             </p>
           )}
@@ -319,6 +320,7 @@ export function ExamSearch({ exams, unavailable, autoFocus = false }: Props) {
           )}
         </div>
       )}
+      <div className="search-followup"><Link href="/exams">Browse all {exams.length} exams ↗</Link>{query.trim() && <Link href={`/exam-request?exam=${encodeURIComponent(query)}`}>Can’t find yours? Request it ↗</Link>}</div>
     </div>
   );
 }

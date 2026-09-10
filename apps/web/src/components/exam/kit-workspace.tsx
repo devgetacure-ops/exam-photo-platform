@@ -1,19 +1,68 @@
 "use client";
-import { useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import type { ExamDetail } from "../../lib/types";
 import { RequirementPanel } from "./requirement-panel";
 import { useKit } from "./use-kit";
 import { ReportIssue } from "./report-issue";
+import { KitCheckout } from "./kit-checkout";
 
 export function KitWorkspace({ exam }: { exam: ExamDetail }) {
-    const requirements = exam.requirements ?? [];
+    const requirements = useMemo(
+        () => exam.requirements ?? [],
+        [exam.requirements],
+    );
     const { entries } = useKit(exam.exam_id);
     const [selectedId, setSelectedId] = useState(
-        requirements[0]?.requirement_id ?? "",
+        requirements.find((r) =>
+            ["supported", "partially_supported"].includes(r.platform_support),
+        )?.requirement_id ??
+            requirements[0]?.requirement_id ??
+            "",
     );
-    const [purchase, setPurchase] = useState("kit");
-    const [notice, setNotice] = useState("");
+    const [included, setIncluded] = useState<string[]>(
+        requirements
+            .filter(
+                (r) =>
+                    ["supported", "partially_supported"].includes(
+                        r.platform_support,
+                    ) && r.requirement_status === "mandatory",
+            )
+            .map((r) => r.requirement_id),
+    );
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            try {
+                const raw = localStorage.getItem(
+                    `uploadready:selection:${exam.exam_id}`,
+                );
+                if (raw) {
+                    const ids: unknown = JSON.parse(raw);
+                    if (Array.isArray(ids))
+                        setIncluded(
+                            ids.filter(
+                                (id): id is string =>
+                                    typeof id === "string" &&
+                                    requirements.some(
+                                        (r) =>
+                                            r.requirement_id === id &&
+                                            [
+                                                "supported",
+                                                "partially_supported",
+                                            ].includes(r.platform_support),
+                                    ),
+                            ),
+                        );
+                }
+            } catch {
+                /* Optional preference. */
+            }
+        }, 0);
+        return () => clearTimeout(timer);
+    }, [exam.exam_id, requirements]);
+    const [preparing, setPreparing] = useState(false);
+    const [checkoutBusy, setCheckoutBusy] = useState(false);
+
     const ours = requirements.filter((r) =>
         ["supported", "partially_supported"].includes(r.platform_support),
     );
@@ -23,7 +72,10 @@ export function KitWorkspace({ exam }: { exam: ExamDetail }) {
         ),
     ).length;
     const selected = requirements.find((r) => r.requirement_id === selectedId);
-    const selectedIndex = Math.max(0, requirements.findIndex((r) => r.requirement_id === selectedId));
+    const selectedIndex = Math.max(
+        0,
+        requirements.findIndex((r) => r.requirement_id === selectedId),
+    );
     return (
         <div className="exam-workspace">
             <div className="workspace-intro">
@@ -34,16 +86,106 @@ export function KitWorkspace({ exam }: { exam: ExamDetail }) {
                     help prepare. One less thing to worry about.
                 </p>
             </div>
+            <fieldset
+                className="kit-selection"
+                disabled={checkoutBusy || preparing}
+            >
+                <legend>Your kit, your choice.</legend>
+                <p>
+                    Required files we can prepare are selected. Uncheck what you
+                    don’t need; add conditional items only if they apply to you.
+                    Your review includes only selected prepared files.
+                </p>
+                <div>
+                    {ours.map((r) => (
+                        <label key={r.requirement_id}>
+                            <input
+                                type="checkbox"
+                                checked={included.includes(r.requirement_id)}
+                                onChange={(event) => {
+                                    const next = event.target.checked
+                                        ? [...included, r.requirement_id]
+                                        : included.filter(
+                                              (id) => id !== r.requirement_id,
+                                          );
+                                    setIncluded(next);
+                                    try {
+                                        localStorage.setItem(
+                                            `uploadready:selection:${exam.exam_id}`,
+                                            JSON.stringify(next),
+                                        );
+                                    } catch {
+                                        /* Optional. */
+                                    }
+                                }}
+                            />
+                            <span>
+                                {r.requirement_name}
+                                {r.requirement_status !== "mandatory" && (
+                                    <small>
+                                        {r.applicability ||
+                                            r.requirement_status}
+                                    </small>
+                                )}
+                            </span>
+                        </label>
+                    ))}
+                </div>
+            </fieldset>
             <div className="mobile-kit-picker">
                 <p>
-                    {selected?.requirement_name} · {selectedIndex + 1} of {requirements.length}
+                    {selected?.requirement_name} · {selectedIndex + 1} of{" "}
+                    {requirements.length}
                 </p>
                 <span>
                     {ready} of {ours.length} prepared
                 </span>
-                <div className="mobile-progress" aria-label={`Requirement ${selectedIndex + 1} of ${requirements.length}`}>
-                    {requirements.map((requirement, index) => <button type="button" key={requirement.requirement_id} data-active={index === selectedIndex} onClick={() => setSelectedId(requirement.requirement_id)} aria-label={`Open ${requirement.requirement_name}`} />)}
-                </div>
+                <label
+                    className="mobile-requirement-label"
+                    htmlFor="mobile-requirement"
+                >
+                    Choose a requirement
+                </label>
+                <select
+                    id="mobile-requirement"
+                    value={selectedId}
+                    onChange={(event) => setSelectedId(event.target.value)}
+                >
+                    <optgroup label="We prepare these">
+                        {ours.map((r) => (
+                            <option
+                                key={r.requirement_id}
+                                value={r.requirement_id}
+                            >
+                                {r.requirement_name}
+                                {r.platform_support === "partially_supported"
+                                    ? " — partly supported"
+                                    : ""}
+                            </option>
+                        ))}
+                    </optgroup>
+                    <optgroup label="You do these yourself">
+                        {requirements
+                            .filter((r) => !ours.includes(r))
+                            .map((r) => (
+                                <option
+                                    key={r.requirement_id}
+                                    value={r.requirement_id}
+                                >
+                                    {r.requirement_name}
+                                </option>
+                            ))}
+                    </optgroup>
+                </select>
+                <p
+                    className={`mobile-support-group ${selected && !ours.includes(selected) ? "self-label" : ""}`}
+                >
+                    {selected && !ours.includes(selected)
+                        ? "You do this yourself"
+                        : selected?.platform_support === "partially_supported"
+                          ? "We prepare part of this · further steps needed"
+                          : "We prepare this file"}
+                </p>
             </div>
             <div className="workspace-grid">
                 <aside className="kit-rail">
@@ -54,45 +196,73 @@ export function KitWorkspace({ exam }: { exam: ExamDetail }) {
                         </span>
                     </p>
                     <nav aria-label="Required files">
-                        {requirements.map((r, i) => {
+                        {[
+                            ...ours,
+                            ...requirements.filter((r) => !ours.includes(r)),
+                        ].map((r) => {
                             const entry = entries[r.requirement_id];
                             const served = [
                                 "supported",
                                 "partially_supported",
                             ].includes(r.platform_support);
                             const state =
-                                entry?.outcome === "prepared"
+                                entry?.outcome === "prepared" &&
+                                r.platform_support !== "partially_supported"
                                     ? "Prepared"
                                     : entry?.outcome ===
                                         "prepared_with_findings"
                                       ? "Check findings"
-                                      : entry
-                                        ? "Try again"
-                                        : served
-                                          ? "Not added yet"
-                                          : r.platform_support ===
-                                              "not_yet_supported"
-                                            ? "Not available yet"
-                                            : "You complete this";
+                                      : entry &&
+                                          r.platform_support ===
+                                              "partially_supported"
+                                        ? "Further steps needed"
+                                        : entry
+                                          ? "Try again"
+                                          : served
+                                            ? "Not added yet"
+                                            : r.platform_support ===
+                                                "not_yet_supported"
+                                              ? "Not available yet"
+                                              : "You complete this";
                             return (
-                                <button
-                                    key={r.requirement_id}
-                                    className="kit-step"
-                                    aria-current={
-                                        selectedId === r.requirement_id
-                                            ? "step"
-                                            : undefined
-                                    }
-                                    onClick={() =>
-                                        setSelectedId(r.requirement_id)
-                                    }
-                                >
-                                    <span className="step-number">{i + 1}</span>
-                                    <span>
-                                        <strong>{r.requirement_name}</strong>
-                                        <small>{state}</small>
-                                    </span>
-                                </button>
+                                <Fragment key={r.requirement_id}>
+                                    {r === ours[0] && (
+                                        <p className="rail-group-label">
+                                            We prepare these
+                                        </p>
+                                    )}
+                                    {r ===
+                                        requirements.find(
+                                            (item) => !ours.includes(item),
+                                        ) && (
+                                        <p className="rail-group-label self-label">
+                                            You do these yourself
+                                        </p>
+                                    )}
+                                    <button
+                                        key={r.requirement_id}
+                                        className="kit-step"
+                                        data-self={!served}
+                                        aria-current={
+                                            selectedId === r.requirement_id
+                                                ? "step"
+                                                : undefined
+                                        }
+                                        onClick={() =>
+                                            setSelectedId(r.requirement_id)
+                                        }
+                                    >
+                                        <span className="step-number">
+                                            {served ? "+" : "↗"}
+                                        </span>
+                                        <span>
+                                            <strong>
+                                                {r.requirement_name}
+                                            </strong>
+                                            <small>{state}</small>
+                                        </span>
+                                    </button>
+                                </Fragment>
                             );
                         })}
                     </nav>
@@ -108,75 +278,47 @@ export function KitWorkspace({ exam }: { exam: ExamDetail }) {
                         <Link href="/">Change exam</Link>
                     </div>
                 </aside>
-                <div className="workspace-panels">
+                <fieldset
+                    className="workspace-panels"
+                    disabled={checkoutBusy || preparing}
+                >
                     {requirements.map((r, i) => (
                         <div
                             key={r.requirement_id}
                             hidden={selectedId !== r.requirement_id}
                         >
-                            <RequirementPanel
-                                requirement={r}
-                                index={i}
-                                exam={exam}
-                            />
+                            {!included.includes(r.requirement_id) &&
+                                ours.includes(r) && (
+                                    <p className="inline-notice">
+                                        This file is not selected. Add it to
+                                        your kit above to prepare and purchase
+                                        it.
+                                    </p>
+                                )}
+                            <fieldset
+                                disabled={
+                                    ours.includes(r) &&
+                                    !included.includes(r.requirement_id)
+                                }
+                            >
+                                <RequirementPanel
+                                    requirement={r}
+                                    index={i}
+                                    exam={exam}
+                                    onWorking={setPreparing}
+                                />
+                            </fieldset>
                         </div>
                     ))}
-                </div>
-            </div>
-            <footer className="kit-price-bar">
-                <div>
-                    <strong>Choose what you need.</strong>
-                    <p>Review the result before paying.</p>
-                </div>
-                <fieldset aria-label="Purchase option">
-                    <label>
-                        <input
-                            type="radio"
-                            name="purchase"
-                            value="file"
-                            checked={purchase === "file"}
-                            onChange={() => setPurchase("file")}
-                        />
-                        <span>
-                            One file<strong>₹4</strong>
-                        </span>
-                    </label>
-                    {ours.length > 1 && (
-                        <label>
-                            <input
-                                type="radio"
-                                name="purchase"
-                                value="kit"
-                                checked={purchase === "kit"}
-                                onChange={() => setPurchase("kit")}
-                            />
-                            <span>
-                                Whole kit{" "}
-                                <small>{ours.length} supported files</small>
-                                <strong>₹8</strong>
-                            </span>
-                        </label>
-                    )}
                 </fieldset>
-                <button
-                    className="primary-button"
-                    disabled={!ready}
-                    onClick={() =>
-                        setNotice(
-                            "Your files can be prepared, but checkout is not available yet. Nothing has been charged.",
-                        )
-                    }
-                >
-                    {ready
-                        ? `Review ${purchase === "kit" ? "kit" : "file"}`
-                        : "Add a file to begin"}
-                </button>
-                {notice && (
-                    <p role="status" className="purchase-notice">
-                        {notice}
-                    </p>
-                )}
-            </footer>
+            </div>
+            <KitCheckout
+                exam={exam}
+                entries={entries}
+                onBusy={setCheckoutBusy}
+                preparationBusy={preparing}
+                selectedRequirements={included}
+            />
         </div>
     );
 }

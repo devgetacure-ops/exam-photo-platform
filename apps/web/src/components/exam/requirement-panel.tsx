@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { ExamDetail, RequirementSummary } from "../../lib/types";
 import { requirementSpecRows, photographSpecRows } from "../../lib/spec-format";
 import { appearanceGuidance } from "../../lib/appearance-rules";
+import { DocumentWorkspace } from "./document-workspace";
 import { RequirementUpload } from "./requirement-upload";
 import { VisualGuide } from "./visual-guide";
 import { ReportIssue } from "./report-issue";
@@ -11,10 +12,12 @@ export function RequirementPanel({
     requirement,
     index,
     exam,
+    onWorking,
 }: {
     requirement: RequirementSummary;
     index: number;
     exam: ExamDetail;
+    onWorking?: (value: boolean) => void;
 }) {
     const supported = ["supported", "partially_supported"].includes(
         requirement.platform_support,
@@ -32,9 +35,17 @@ export function RequirementPanel({
             <header className="requirement-heading">
                 <p className="eyebrow">{requirement.requirement_name}</p>
                 <h2>
-                    {photo ? "A good photo." : "One more file."}
+                    {!supported
+                        ? "A step to complete"
+                        : photo
+                          ? "A good photo."
+                          : "One more file."}
                     <br />
-                    {photo ? "A simpler application." : "Taken care of."}
+                    {!supported
+                        ? "with your exam authority."
+                        : photo
+                          ? "A simpler application."
+                          : "Taken care of."}
                 </h2>
                 <p>
                     {supported
@@ -55,8 +66,18 @@ export function RequirementPanel({
                             : "You complete this yourself"}
                     </h3>
                     <p>
-                        {requirement.content_instructions ||
-                            requirement.notes ||
+                        {(requirement.content_instructions &&
+                        !/^(not_found|unknown|none)$/i.test(
+                            requirement.content_instructions,
+                        )
+                            ? requirement.content_instructions
+                            : null) ||
+                            (requirement.notes &&
+                            !/^(not_found|unknown|none)$/i.test(
+                                requirement.notes,
+                            )
+                                ? requirement.notes
+                                : null) ||
                             "Complete this requirement through the exam’s official instructions."}
                     </p>
                     <Link
@@ -116,13 +137,34 @@ export function RequirementPanel({
                                 </p>
                             </div>
                         )}
-                        <RequirementUpload
-                            examId={exam.exam_id}
-                            examName={exam.exam_name}
-                            requirementId={requirement.requirement_id}
-                            requirementName={requirement.requirement_name}
-                            requirementType={requirement.requirement_type}
-                        />
+                        {["certificate_scan", "identity_document"].includes(
+                            requirement.requirement_type,
+                        ) ? (
+                            <DocumentWorkspace
+                                onWorking={onWorking}
+                                examId={exam.exam_id}
+                                examName={exam.exam_name}
+                                requirementId={requirement.requirement_id}
+                                requirementName={requirement.requirement_name}
+                                partiallySupported={
+                                    requirement.platform_support ===
+                                    "partially_supported"
+                                }
+                            />
+                        ) : (
+                            <RequirementUpload
+                                onWorking={onWorking}
+                                examId={exam.exam_id}
+                                examName={exam.exam_name}
+                                requirementId={requirement.requirement_id}
+                                requirementName={requirement.requirement_name}
+                                requirementType={requirement.requirement_type}
+                                partiallySupported={
+                                    requirement.platform_support ===
+                                    "partially_supported"
+                                }
+                            />
+                        )}
                         <div className="requirement-reference">
                             {guidance.length > 0 && (
                                 <details>

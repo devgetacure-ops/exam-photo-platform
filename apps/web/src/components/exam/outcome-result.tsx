@@ -1,8 +1,12 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 import { getApiBaseUrl } from "../../lib/api-client";
 import type { PrepareRequirementResponse } from "../../lib/types";
 import { formatBytes } from "../../lib/spec-format";
+import { FileComparison } from "../file-comparison";
+import { useLiveJob } from "./live-job-state";
 
 /**
  * What came back, in three states rather than two (WEB-002, DEC-056).
@@ -19,9 +23,11 @@ import { formatBytes } from "../../lib/spec-format";
  */
 
 interface Props {
-  result: PrepareRequirementResponse;
-  requirementName: string;
-  onReplace: () => void;
+    result: PrepareRequirementResponse;
+    requirementName: string;
+    onReplace: () => void;
+    sourceUrl?: string | null;
+    partiallySupported?: boolean;
 }
 
 /**
@@ -45,185 +51,277 @@ interface Props {
  * something.
  */
 const ROUTINE_NOTES: Record<string, string> = {
-  INPUT_METADATA_REMOVED: "Removed the hidden data your camera saved in the file.",
-  INPUT_COLOUR_MODE_CONVERTED: "Converted the colour mode for the exam's format.",
-  INPUT_ICC_PROFILE_INVALID: "Replaced a broken colour profile.",
-  INPUT_ORIENTATION_METADATA_INVALID: "Corrected the image's rotation.",
-  INPUT_EXTENSION_MISMATCH: "The file extension did not match its actual format.",
+    INPUT_METADATA_REMOVED:
+        "Removed the hidden data your camera saved in the file.",
+    INPUT_COLOUR_MODE_CONVERTED:
+        "Converted the colour mode for the exam's format.",
+    INPUT_ICC_PROFILE_INVALID: "Replaced a broken colour profile.",
+    INPUT_ORIENTATION_METADATA_INVALID: "Corrected the image's rotation.",
+    INPUT_EXTENSION_MISMATCH:
+        "The file extension did not match its actual format.",
 };
 
 function isRoutine(finding: string): boolean {
-  return finding in ROUTINE_NOTES;
+    return finding in ROUTINE_NOTES;
 }
 
 /** Engine issue codes, said the way a person would say them. */
 const ISSUE_TEXT: Record<string, string> = {
-  NO_FACE_DETECTED: "We could not find a face in this photo.",
-  MULTIPLE_FACES: "There is more than one face in this photo.",
-  FACE_TOO_SMALL: "The face is too small in the frame — move closer.",
-  IMAGE_TOO_BLURRY: "The photo is too blurry to use.",
-  IMAGE_TOO_DARK: "The photo is too dark.",
-  IMAGE_TOO_BRIGHT: "The photo is too bright.",
-  EYES_CLOSED: "The eyes look closed.",
+    NO_FACE_DETECTED: "We could not find a face in this photo.",
+    MULTIPLE_FACES: "There is more than one face in this photo.",
+    FACE_TOO_SMALL: "The face is too small in the frame — move closer.",
+    IMAGE_TOO_BLURRY: "The photo is too blurry to use.",
+    IMAGE_TOO_DARK: "The photo is too dark.",
+    IMAGE_TOO_BRIGHT: "The photo is too bright.",
+    EYES_CLOSED: "The eyes look closed.",
 };
 
 function humanIssue(code: string): string {
-  return ISSUE_TEXT[code] ?? code.toLowerCase().replace(/_/g, " ");
+    return ISSUE_TEXT[code] ?? code.toLowerCase().replace(/_/g, " ");
 }
 
-export function OutcomeResult({ result, requirementName, onReplace }: Props) {
-  const blocked = result.outcome === "blocked" || result.outcome === "not_produced";
+export function OutcomeResult({
+    result,
+    requirementName,
+    onReplace,
+    sourceUrl,
+    partiallySupported = false,
+}: Props) {
+    const live = useLiveJob(result.job_id);
+    const [now, setNow] = useState(0);
+    useEffect(() => {
+        const timer = setInterval(() => setNow(Date.now()), 1000);
+        return () => clearInterval(timer);
+    }, []);
+    const blocked =
+        result.outcome === "blocked" || result.outcome === "not_produced";
 
-  const substantive = result.findings.filter((finding) => !isRoutine(finding));
-  const routine = result.findings.filter(isRoutine);
-  const expiry = result.expires_at ? new Date(result.expires_at) : null;
-  // The API's outcome is authoritative about whether a file was produced; what
-  // counts as worth the candidate's attention is a presentation judgement, and
-  // routine normalisation is not it.
-  const hasFindings =
-    result.outcome === "prepared_with_findings" && substantive.length > 0;
-
-  if (blocked) {
-    return (
-      <div className="mt-4 rounded-lg border border-blocked-soft bg-blocked-soft/40 p-4">
-        <p className="font-medium text-blocked">We could not prepare this one</p>
-        <ul className="mt-2 space-y-1">
-          {(result.issue_codes.length > 0
-            ? result.issue_codes.map(humanIssue)
-            : result.findings
-          ).map((line) => (
-            <li key={line} className="text-sm leading-relaxed text-ink-soft">
-              {line}
-            </li>
-          ))}
-        </ul>
-        <p className="mt-3 text-sm text-ink-soft">
-          Nothing has been charged. Try a different photo and we will have
-          another go.
-        </p>
-        <button
-          type="button"
-          onClick={onReplace}
-          className="mt-3 rounded-md border border-line-strong px-3 py-1.5 text-sm font-medium hover:border-accent hover:text-accent"
-        >
-          Try another file
-        </button>
-      </div>
+    const substantive = result.findings.filter(
+        (finding) => !isRoutine(finding),
     );
-  }
+    const routine = result.findings.filter(isRoutine);
+    const deadline = live?.expires_at ?? result.expires_at;
+    const expiry = deadline ? new Date(deadline) : null;
+    const expired =
+        live?.status.toLowerCase() === "deleted" ||
+        (expiry && expiry.getTime() <= now);
+    // The API's outcome is authoritative about whether a file was produced; what
+    // counts as worth the candidate's attention is a presentation judgement, and
+    // routine normalisation is not it.
+    const hasFindings =
+        partiallySupported ||
+        result.is_valid === false ||
+        (result.outcome === "prepared_with_findings" && substantive.length > 0);
 
-  return (
-    <div
-      className={`mt-4 rounded-lg border p-4 ${
-        hasFindings
-          ? "border-caveat-soft bg-caveat-soft/40"
-          : "border-ready-soft bg-ready-soft/50"
-      }`}
-    >
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <p className={`font-medium ${hasFindings ? "text-caveat" : "text-ready"}`}>
-            {hasFindings ? "Ready — with something to check" : "Ready"}
-          </p>
-          <p className="spec mt-1 text-xs text-ink-soft">
-            {[
-              result.width && result.height
-                ? `${result.width} × ${result.height} px`
-                : null,
-              result.byte_size ? formatBytes(result.byte_size) : null,
-              result.output_filename,
-            ]
-              .filter(Boolean)
-              .join(" · ")}
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={onReplace}
-          className="label rounded border border-line-strong px-2 py-1 hover:border-accent hover:text-accent"
+    if (expired)
+        return (
+            <div className="retention-note">
+                <strong>This file has expired.</strong>
+                <p>
+                    The preview and download are no longer available. Prepare it
+                    again to start a new retention window.
+                </p>
+                <button className="secondary-button" onClick={onReplace}>
+                    Prepare again
+                </button>
+            </div>
+        );
+
+    if (blocked) {
+        return (
+            <div className="mt-4 rounded-lg border border-blocked-soft bg-blocked-soft/40 p-4">
+                <p className="font-medium text-blocked">
+                    We could not prepare this one
+                </p>
+                <ul className="mt-2 space-y-1">
+                    {(result.issue_codes.length > 0
+                        ? result.issue_codes.map(humanIssue)
+                        : result.findings
+                    ).map((line) => (
+                        <li
+                            key={line}
+                            className="text-sm leading-relaxed text-ink-soft"
+                        >
+                            {line}
+                        </li>
+                    ))}
+                </ul>
+                <p className="mt-3 text-sm text-ink-soft">
+                    Nothing has been charged. Try a different photo and we will
+                    have another go.
+                </p>
+                <button
+                    type="button"
+                    onClick={onReplace}
+                    className="mt-3 rounded-md border border-line-strong px-3 py-1.5 text-sm font-medium hover:border-accent hover:text-accent"
+                >
+                    Try another file
+                </button>
+            </div>
+        );
+    }
+
+    return (
+        <div
+            className={`mt-4 rounded-lg border p-4 ${
+                hasFindings
+                    ? "border-caveat-soft bg-caveat-soft/40"
+                    : "border-ready-soft bg-ready-soft/50"
+            }`}
         >
-          Replace
-        </button>
-      </div>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                    <p
+                        className={`font-medium ${hasFindings ? "text-caveat" : "text-ready"}`}
+                    >
+                        {partiallySupported
+                            ? "Partly prepared — further steps needed"
+                            : hasFindings
+                              ? "Ready — with something to check"
+                              : "Ready"}
+                    </p>
+                    <p className="spec mt-1 text-xs text-ink-soft">
+                        {[
+                            result.width && result.height
+                                ? `${result.width} × ${result.height} px`
+                                : null,
+                            result.byte_size
+                                ? formatBytes(result.byte_size)
+                                : null,
+                            result.output_filename,
+                        ]
+                            .filter(Boolean)
+                            .join(" · ")}
+                    </p>
+                </div>
+                <button
+                    type="button"
+                    onClick={onReplace}
+                    className="label rounded border border-line-strong px-2 py-1 hover:border-accent hover:text-accent"
+                >
+                    Replace
+                </button>
+            </div>
 
-      {/*
+            {/*
         The preview is watermarked and served at reduced resolution by the
         service; the clean file is what the candidate buys. That is the
         protection that actually works — blocking right-click stops nobody and
         would make a page selling precision feel cheap.
       */}
-      {result.preview_url && result.preview_watermarked === true && (
-        <figure className="mt-3">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={new URL(result.preview_url, getApiBaseUrl()).toString()}
-            onContextMenu={(event) => event.preventDefault()}
-            draggable={false}
-            alt={`Prepared ${requirementName}`}
-            className="max-h-64 rounded border border-line bg-surface object-contain"
-          />
-          <figcaption className="mt-1.5 text-xs text-muted">
-            Preview — watermarked until you buy it.
-          </figcaption>
-        </figure>
-      )}
+            {sourceUrl &&
+            result.preview_url &&
+            result.preview_watermarked === true ? (
+                <FileComparison
+                    before={sourceUrl}
+                    after={new URL(
+                        result.preview_url,
+                        getApiBaseUrl(),
+                    ).toString()}
+                />
+            ) : (
+                result.preview_url &&
+                result.preview_watermarked === true && (
+                    <figure className="mt-3">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                            src={new URL(
+                                result.preview_url,
+                                getApiBaseUrl(),
+                            ).toString()}
+                            onContextMenu={(event) => event.preventDefault()}
+                            draggable={false}
+                            alt={`Prepared ${requirementName}`}
+                            className="max-h-64 rounded border border-line bg-surface object-contain"
+                        />
+                        <figcaption className="mt-1.5 text-xs text-muted">
+                            Preview — watermarked until you buy it.
+                        </figcaption>
+                    </figure>
+                )
+            )}
 
-      {result.output_url && !(result.preview_url && result.preview_watermarked === true) && (
-        <p className="mt-3 text-sm text-ink-soft">Your file was prepared. A protected preview is not available yet.</p>
-      )}
+            {result.output_url &&
+                !(
+                    result.preview_url && result.preview_watermarked === true
+                ) && (
+                    <p className="mt-3 text-sm text-ink-soft">
+                        {result.output_media_type === "application/pdf"
+                            ? "PDF prepared. A visual preview is not available: review the file details and findings before purchasing."
+                            : "Your file was prepared. A protected preview is not available yet."}
+                    </p>
+                )}
 
-      {expiry && !Number.isNaN(expiry.getTime()) && (
-        <p className="mt-3 text-xs text-muted">
-          Scheduled for deletion at <time dateTime={result.expires_at ?? undefined} suppressHydrationWarning>{expiry.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</time>.
-        </p>
-      )}
+            {expiry && !Number.isNaN(expiry.getTime()) && (
+                <p className="mt-3 text-xs text-muted">
+                    Scheduled for deletion at{" "}
+                    <time
+                        dateTime={deadline ?? undefined}
+                        suppressHydrationWarning
+                    >
+                        {expiry.toLocaleTimeString([], {
+                            hour: "numeric",
+                            minute: "2-digit",
+                        })}
+                    </time>
+                    . Extension options are in your kit below.
+                </p>
+            )}
 
-      {hasFindings && (
-        <div className="mt-3">
-          <p className="label text-caveat">Worth checking before you submit</p>
-          <ul className="mt-1.5 space-y-1.5">
-            {substantive.map((finding) => (
-              <li key={finding} className="text-sm leading-relaxed text-ink-soft">
-                {finding}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+            {hasFindings && (
+                <div className="mt-3">
+                    <p className="label text-caveat">
+                        Worth checking before you submit
+                    </p>
+                    <ul className="mt-1.5 space-y-1.5">
+                        {substantive.map((finding) => (
+                            <li
+                                key={finding}
+                                className="text-sm leading-relaxed text-ink-soft"
+                            >
+                                {finding}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
 
-      {routine.length > 0 && (
-        <details className="mt-3">
-          <summary className="label cursor-pointer hover:text-ink">
-            What we changed ({routine.length})
-          </summary>
-          <ul className="mt-2 space-y-1">
-            {routine.map((finding) => (
-              <li key={finding} className="text-sm text-muted">
-                {ROUTINE_NOTES[finding]}
-              </li>
-            ))}
-          </ul>
-        </details>
-      )}
+            {routine.length > 0 && (
+                <details className="mt-3">
+                    <summary className="label cursor-pointer hover:text-ink">
+                        What we changed ({routine.length})
+                    </summary>
+                    <ul className="mt-2 space-y-1">
+                        {routine.map((finding) => (
+                            <li key={finding} className="text-sm text-muted">
+                                {ROUTINE_NOTES[finding]}
+                            </li>
+                        ))}
+                    </ul>
+                </details>
+            )}
 
-      {/*
+            {/*
         A file that exists but that the platform could not fully verify is not
         a clean pass, and DEC-056 forbids collapsing that into one. Said in the
         candidate's terms, next to the file rather than in a report they will
         not open.
       */}
-      {result.is_valid === false && result.issue_codes.length > 0 && (
-        <div className="mt-3">
-          <p className="label text-caveat">What we noticed</p>
-          <ul className="mt-1.5 space-y-1.5">
-            {result.issue_codes.map((code) => (
-              <li key={code} className="text-sm leading-relaxed text-ink-soft">
-                {humanIssue(code)}
-              </li>
-            ))}
-          </ul>
+            {result.is_valid === false && result.issue_codes.length > 0 && (
+                <div className="mt-3">
+                    <p className="label text-caveat">What we noticed</p>
+                    <ul className="mt-1.5 space-y-1.5">
+                        {result.issue_codes.map((code) => (
+                            <li
+                                key={code}
+                                className="text-sm leading-relaxed text-ink-soft"
+                            >
+                                {humanIssue(code)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
         </div>
-      )}
-    </div>
-  );
+    );
 }

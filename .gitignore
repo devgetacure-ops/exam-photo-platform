@@ -111,3 +111,6 @@ private_metadata_export.json
 /.tmp/
 /services/image-engine/.tmp/
 /.venv-local/
+
+# Private local candidate-request queue
+/apps/web/.data/
