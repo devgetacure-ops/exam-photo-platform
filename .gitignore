@@ -114,3 +114,15 @@ private_metadata_export.json
 
 # Private local candidate-request queue
 /apps/web/.data/
+
+# Agent design tooling — installed per machine, never committed.
+# 15 MB windows-x64 binaries duplicated across three harness dirs, and
+# platform-specific, so they are useless to CI or a non-Windows collaborator.
+# skills-lock.json pins the versions; docs/DESIGN_TOOLING.md has the commands.
+/.agents/
+/.claude/skills/
+/.claude/agents/
+/.github/skills/
+/.github/agents/
+/.github/hooks/
+/.codex/
