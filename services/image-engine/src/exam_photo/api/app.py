@@ -5,7 +5,7 @@ import re
 import secrets
 from contextlib import asynccontextmanager
 from pathlib import Path
-from typing import Any, AsyncIterator, List, Optional
+from typing import Annotated, Any, AsyncIterator, List, Optional
 
 from fastapi import (
     Depends,
@@ -880,6 +880,7 @@ def get_job_status(job_id: str) -> JobStatusResponse:
         is_valid=record.is_valid,
         issue_codes=record.issue_codes,
         output_filename=record.output_filename,
+        byte_size=record.output_byte_size,
         report_url=report_url,
         output_url=output_url,
         preview_url=preview_url,
@@ -1058,8 +1059,28 @@ def get_progress(token: str) -> dict[str, object]:
     return json_safe(state)
 
 
+def _selected_kit_records(
+    kit_id: str, job_ids: Optional[List[str]]
+) -> List[ProcessingJobRecord]:
+    """Price only reviewed files, refusing stale or foreign selections."""
+    records = service.registry.jobs_in_kit(kit_id)
+    if job_ids is None:
+        return records
+    if len(job_ids) > 100 or len(set(job_ids)) != len(job_ids):
+        raise HTTPException(status_code=422, detail="Invalid file selection.")
+    wanted = set(job_ids)
+    available = {record.job_id for record in records}
+    if not wanted.issubset(available):
+        raise HTTPException(
+            status_code=409, detail="Your selected files changed. Refresh the review."
+        )
+    return [record for record in records if record.job_id in wanted]
+
+
 @app.get("/v1/kits/{kit_id}/quote", response_model=KitQuoteResponse)
-def get_kit_quote(kit_id: str) -> KitQuoteResponse:
+def get_kit_quote(
+    kit_id: str, job_ids: Annotated[Optional[List[str]], Query()] = None
+) -> KitQuoteResponse:
     """What this kit costs, itemised (DEC-070).
 
     Read-only and safe to call on every render: it creates no order and
@@ -1069,7 +1090,7 @@ def get_kit_quote(kit_id: str) -> KitQuoteResponse:
     if not KIT_ID_REGEX.match(kit_id):
         raise HTTPException(status_code=400, detail="Invalid kit ID format")
 
-    quote = quote_for(service.registry.jobs_in_kit(kit_id))
+    quote = quote_for(_selected_kit_records(kit_id, job_ids))
     return KitQuoteResponse(
         kit_id=kit_id,
         amount_paise=quote.amount_paise,
@@ -1093,7 +1114,9 @@ def get_kit_quote(kit_id: str) -> KitQuoteResponse:
 
 
 @app.post("/v1/kits/{kit_id}/order", response_model=KitOrderResponse)
-def create_kit_order(kit_id: str) -> KitOrderResponse:
+def create_kit_order(
+    kit_id: str, job_ids: Annotated[Optional[List[str]], Query()] = None
+) -> KitOrderResponse:
     """Create a Razorpay order for this kit, at a price we computed (DEC-070).
 
     This is what makes DEC-069's webhook safe on live keys. The amount comes
@@ -1104,7 +1127,7 @@ def create_kit_order(kit_id: str) -> KitOrderResponse:
     if not KIT_ID_REGEX.match(kit_id):
         raise HTTPException(status_code=400, detail="Invalid kit ID format")
 
-    records = service.registry.jobs_in_kit(kit_id)
+    records = _selected_kit_records(kit_id, job_ids)
     quote = quote_for(records)
     if not quote.is_payable:
         # Nothing to charge for: an empty kit, one already paid, or one that

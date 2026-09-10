@@ -70,6 +70,7 @@ class JobStatusResponse(BaseModel):
     is_valid: Optional[bool] = None
     issue_codes: Optional[List[str]] = None
     output_filename: Optional[str] = None
+    byte_size: Optional[int] = None
     report_url: Optional[str] = None
     output_url: Optional[str] = None
     preview_url: Optional[str] = None

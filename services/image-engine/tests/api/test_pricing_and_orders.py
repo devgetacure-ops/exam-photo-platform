@@ -524,3 +524,33 @@ def test_an_order_id_cannot_walk_out_of_its_directory(api):
     with pytest.raises(ValueError):
         api.orders.create("../../escape", KIT, ["job_a"], 300, "INR")
     assert api.orders.get("../../escape") is None
+
+
+def test_selected_subset_prices_and_pins_only_reviewed_files(api):
+    _job(api, "job_selected", "photograph")
+    _job(api, "job_unselected", "signature")
+    params = [("job_ids", "job_selected")]
+    quote = client.get(f"/v1/kits/{KIT}/quote", params=params)
+    assert quote.status_code == 200
+    assert quote.json()["amount_paise"] == 300
+    assert [line["job_id"] for line in quote.json()["lines"]] == ["job_selected"]
+    order = client.post(f"/v1/kits/{KIT}/order", params=params)
+    assert order.status_code == 200
+    assert order.json()["amount_paise"] == 300
+    assert api.orders.get(order.json()["order_id"]).job_ids == ["job_selected"]
+
+
+def test_selection_cannot_name_a_different_kits_file(api):
+    _job(api, "job_here", "photograph")
+    _job(api, "job_elsewhere", "signature", kit_id="kit_other")
+    params = [("job_ids", "job_elsewhere")]
+    assert client.get(f"/v1/kits/{KIT}/quote", params=params).status_code == 409
+    assert client.post(f"/v1/kits/{KIT}/order", params=params).status_code == 409
+    assert not api.order_gateway.calls
+
+
+def test_duplicate_selection_is_refused_without_creating_an_order(api):
+    _job(api, "job_here", "photograph")
+    params = [("job_ids", "job_here"), ("job_ids", "job_here")]
+    assert client.post(f"/v1/kits/{KIT}/order", params=params).status_code == 422
+    assert not api.order_gateway.calls
