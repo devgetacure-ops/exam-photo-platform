@@ -4,7 +4,7 @@ This document supplements STRUCTURED_DIRECTION.md. Its recommendations are propo
 
 ## Project compatibility and evidence
 
-The product is the Indian Exam-Photo Compliance Platform. Apply the supplied design contract's quality, accessibility, reuse and verification requirements, but do not import getAcure healthcare copy, pharmacy scope, logo or healthcare branding into this exam product. The exact exam-product brand, logo and font direction must be established from its own assets and approved art direction.
+The product is the Indian Exam-Photo Compliance Platform. Apply the supplied design contract's quality, accessibility, reuse and verification requirements only; the contract came from an unrelated product and none of its copy, scope, logo or branding belongs here. The brand is settled as **examuploadkit** (2026-09-10) and its logo, assets and font direction are created for this product alone.
 
 Reviewed current repository references: docs/00_PRODUCT_DECISIONS.md, 01_MVP_SCOPE.md, 02_TECHNICAL_ARCHITECTURE.md, 03_EXAM_RULE_SCHEMA.md, 04_IMAGE_PIPELINE_SPEC.md, 05_PRIVACY_SECURITY.md, 06_QA_STRATEGY.md, 07_REQUIREMENTS_TRACEABILITY.md, 08_DECISION_LOG.md, 09_DEVELOPMENT_ROADMAP.md, UI_ENGINE_HANDOFF.md and UI_REDESIGN_BRIEF_FOR_CODEX.md; current api-client.ts and engine api/pricing.py. Historical documents contain superseded statements. Read later decisions alongside older specifications, and verify the running API before integration. This documentation pass did not verify live providers or run application tests.
 
@@ -84,7 +84,7 @@ Document processing needs bounded input count, page count, decoded pixels and me
 | C08 | Email/WhatsApp entered before payment should ensure delivery | Define consent, temporary contact retention, automatic send trigger, retries, deduplication and expiry interaction. Existing email API is a send action, not proof of automatic post-payment delivery. wa.me text/link sharing does not send attachments automatically. Authenticated expiring links need an explicit secure handoff design. |
 | C09 | Paid but expired/undelivered | Set recovery/refund handling for payment near expiry, late webhook, partial delivery and provider failure. Existing refund assessment is not refund execution; never show refunded until verified. |
 | C10 | Support/redressal/request forum | Recommend private ticket workflow initially; decide whether public discussion is actually required before adding moderation and public data exposure. |
-| C11 | Broad aesthetic exploration conflicts with generic getAcure rules | Keep every reference; choose an exam-specific coherent visual system explicitly. Do not copy healthcare restrictions as exam product features. |
+| C11 | Broad aesthetic exploration conflicts with the borrowed generic quality contract | **Closed 2026-09-10.** Keep every reference; choose an exam-specific coherent visual system explicitly. Constraints from the unrelated source product are not features of this one. |
 
 These choices are documented for the next implementation stage. They do not require interrupting this documentation task or changing production behavior now.
 

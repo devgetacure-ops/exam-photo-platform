@@ -11,8 +11,9 @@ Evolve the existing Clear Companion direction: Instrument Sans, cobalt actions,
 navy typography, white/pale-blue surfaces, deliberate paper illustration and
 restrained motion. Mobile gets a compact task selector and vertically composed
 review; desktop gets a persistent requirement rail and generous review area.
-The product is UploadReady, not getAcure: apply the supplied quality contract
-without importing healthcare claims or an unrelated logo.
+Apply the supplied quality contract only; it came from an unrelated product,
+and none of its claims or branding belong here. (The brand is now
+**examuploadkit**, settled 2026-09-10.)
 
 - Linear live homepage and [interface refresh](https://linear.app/now/behind-the-latest-design-refresh): predictable action placement, reduced visual noise, product demonstrations. Observed live in browser 7 September.
 - [Stripe Payments](https://stripe.com/in/payments): aligned editorial grid, visible product explanation and progressive detail. Observed live in browser 7 September.

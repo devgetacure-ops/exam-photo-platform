@@ -126,3 +126,6 @@ private_metadata_export.json
 /.github/agents/
 /.github/hooks/
 /.codex/
+
+# impeccable per-machine overrides
+/.impeccable/config.local.json
