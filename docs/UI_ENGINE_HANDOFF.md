@@ -438,3 +438,11 @@ rather than a hole.
    yet", not as a failure.
 
 Rebuild before anything else: the site still generates 52 exam pages.
+
+## Candidate integration update — 10 September 2026
+
+The web build now generates all 132 exam and 132 rules pages. The candidate UI consumes lighting state/switching, progress tokens, source-backed facts, document planning/assembly and consented post-release email delivery. Preparation forwards enhancement_enabled, progress_token and an optional configured challenge token.
+
+GET kit quote and POST kit order accept optional repeated job_ids query parameters. The server validates selected IDs belong to that kit and calculates pricing; omission retains whole-kit semantics. The web client submits no price and checks quote coverage against selected files. JobStatusResponse adds optional byte_size for variant metadata. Full-kit ZIP remains limited to complete kit selection. UI locks preparation against checkout locally; cross-device order/variant atomicity remains a launch gate.
+
+See ui-direction-2026-09-10/IMPLEMENTATION_STATUS.md for verification and unresolved provider, retention, policy and research gates.

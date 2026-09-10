@@ -1,0 +1,9 @@
+{
+  "source_bytes": 13141,
+  "sha256": "66ba783b014319e1250196a7414c6e42377423ee4587b6d0fe24da793951970a",
+  "original_byte_identical": true,
+  "source_block_count": 47,
+  "structured_block_count": 47,
+  "all_blocks_exact_and_in_original_order": true,
+  "verification_scope": "Document preservation only; application tests and live provider checks not run."
+}

@@ -923,3 +923,29 @@ and what it measured -- so entries are amended in place rather than deleted.
 - **Consequences**: **The catalogue goes from 52 encoded examinations to 132**, requirements from 215 to 418, and supported requirements from 189 to 314. Stranded deliverables fall from 135 to **one**. All four SSC examinations are served -- their scanned signature and disability certificate -- which was the case that named this risk. BPSC returns with both its English and Hindi signatures, recovering what DEC-068's withdrawal of its photograph had cost. **80 of the 132 records carry no photograph specification**, so `ExamDetailResponse.image_requirements` is now nullable; the web app already tolerated it (`raw.image_requirements ?? {}` in `catalogue.server.ts`), which is why this did not need the UI lane first. **This is a large product-visible change**: the picker goes from 52 examinations to 132, and most of the new ones can only prepare a signature or a certificate. That is the product's stated direction and the boundary is carried three ways, but it is a change of scale the interface should be looked at against. The web app must be rebuilt: 132 exam pages, not 52.
 - **Affected Modules**: `packages/exam-rules/schema/exam-rule.schema.json`, `services/image-engine/src/exam_photo/models/exam_rule.py`, `orchestration/rule_resolver.py`, `orchestration/rule_pipeline.py`, `api/app.py`, `api/contracts.py`, `scripts/encode_exam_rules.py`, `examples/rules/`, `tests/orchestration/test_rule_catalogue.py`, `tests/api/test_exam_catalogue.py`.
 - **Approval Owner**: Product Owner
+
+
+### UI-BRIEF-2026-09-10: Preserve the complete direction and separate technical interpretation
+- **Date**: 2026-09-10
+- **Status**: Documentation recorded; technical recommendations proposed, unresolved product choices not approved.
+- **Request**: Structure the supplied UI/UX direction without changing or omitting a word, and add project-compatible technical detail.
+- **Result**: `docs/ui-direction-2026-09-10/STRUCTURED_DIRECTION.md` indexes all 47 unchanged source blocks; `ORIGINAL_VERBATIM.txt` is a byte-identical attachment copy. `TECHNICAL_COMPANION.md` covers route/state architecture, contracts, quality gates and C01–C11 compatibility questions. `PRESERVATION_REPORT.json` verifies preservation.
+- **Boundary**: No application behavior changed. Recommendations do not supersede approved decisions or approve conflicting pricing, support, retention or delivery policy. Current source statements and later engine handoffs must be reconciled before dependent implementation.
+
+
+### UI-BUILD-2026-09-10: Implement the preserved candidate direction
+- **Status**: Implementation authorized by the product owner's request to build it; open commercial policies remain unresolved.
+- **Direction**: Centered exam-search hero; editorial composition, existing Instrument Sans with a stronger display scale, meaningful application-file illustrations, light/dark themes and purposeful micro-interactions. Preserve every source statement in the original brief. The old proposed direction is reference material, not a new approval gate.
+- **Compatibility**: Keep existing server-authoritative pricing and artifact release until the owner settles the document-only policy. Default selectable mandatory supported requirements; keep conditional/external items explicit. Use additive journey contracts without rewriting engine-owned shared clients.
+- **Scope**: Candidate pages, catalogue discovery, rules, progress, lighting, email, missing-exam/support routes and state coverage. Live payments and provider delivery require separate runtime evidence.
+
+
+### UI-SELECT-2026-09-10: Selection follows the reviewed inventory
+- **Status**: Implemented for the owner's individual-file selection requirement.
+- **Decision**: Add optional repeated `job_ids` query parameters to quote/order. Omission preserves the original whole-kit API; supplied IDs must all belong to the kit and must not repeat. Prices remain entirely server-derived, and the existing order registry pins only the selected IDs. The browser cannot supply an amount.
+- **Validation**: Tests cover one-of-two pricing/order pinning, foreign-kit refusal and duplicate refusal. Existing payment suites remain required.
+- **Limits**: Kit ZIP continues to cover the whole kit and is withheld when unselected prepared files remain gated; individual selected downloads/email remain available. Cross-device order/variant locking remains a production review item.
+
+### UI-REQUEST-2026-09-10 — Provisional request operations
+
+Recommendation implemented locally: require explicitly configured persistent request storage in production; issue a receipt only after a successful write. Use a provisional 30-day expiry and purge expired records on writes. This is not a finalized legal retention policy. Scheduled idle purge, operations ownership and approved public contact/retention details remain required before launch. No outgoing notifications are sent by this implementation.
