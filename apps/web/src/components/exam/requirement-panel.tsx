@@ -22,6 +22,12 @@ export function RequirementPanel({
     const supported = ["supported", "partially_supported"].includes(
         requirement.platform_support,
     );
+    // partially_supported means a file comes out that still needs something we
+    // cannot do — printing a name onto a photograph, for TNPSC and Kerala PSC.
+    // The panel said so further down while the heading above it promised "a
+    // simpler application" and "we'll handle the formatting", which is this
+    // state reading as success. It gets its own heading.
+    const partial = requirement.platform_support === "partially_supported";
     const photo = requirement.requirement_type === "photograph";
     const rows = photo
         ? photographSpecRows(exam)
@@ -37,20 +43,26 @@ export function RequirementPanel({
                 <h2>
                     {!supported
                         ? "A step to complete"
-                        : photo
-                          ? "A good photo."
-                          : "One more file."}
+                        : partial
+                          ? "Most of it, done."
+                          : photo
+                            ? "A good photo."
+                            : "One more file."}
                     <br />
                     {!supported
                         ? "with your exam authority."
-                        : photo
-                          ? "A simpler application."
-                          : "Taken care of."}
+                        : partial
+                          ? "One step stays yours."
+                          : photo
+                            ? "A simpler application."
+                            : "Taken care of."}
                 </h2>
                 <p>
-                    {supported
-                        ? "Start with a clear upload. We’ll handle the sizing and formatting."
-                        : "This requirement needs your attention outside this workspace."}
+                    {!supported
+                        ? "This requirement needs your attention outside this workspace."
+                        : partial
+                          ? "We’ll size and format it. There is one thing this exam asks for that we cannot add — it is named below, and you will need to do it before you upload."
+                          : "Start with a clear upload. We’ll handle the sizing and formatting."}
                 </p>
             </header>
             {requirement.requirement_status === "conditional" && (
