@@ -65,6 +65,7 @@ const SPECS = [
 
 const FREE_TOOLS = [
     "Image to PDF",
+    "PDF to image",
     "Merge PDFs",
     "Reorder pages",
     "Remove pages",

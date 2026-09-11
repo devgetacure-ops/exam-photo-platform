@@ -1953,3 +1953,274 @@
         display: none;
     }
 }
+
+/* ---- PDF to image ------------------------------------------------------ */
+
+/* Four page actions now (up, down, rotate, remove); the cards need the room. */
+.euk-doc-pages {
+    grid-template-columns: repeat(auto-fill, minmax(176px, 1fr));
+}
+
+.euk-doc-page-art {
+    transition: rotate 220ms cubic-bezier(0.2, 0.7, 0.1, 1);
+}
+
+.euk-pdfimg-wrap {
+    border: var(--rule-thin) solid var(--ink);
+    background: var(--paper);
+}
+
+.euk-pdfimg-wrap > summary {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 14px 44px 14px 16px;
+    position: relative;
+    list-style: none;
+    cursor: pointer;
+}
+
+.euk-pdfimg-wrap > summary::-webkit-details-marker {
+    display: none;
+}
+
+.euk-pdfimg-wrap > summary::after {
+    content: "+";
+    position: absolute;
+    top: 10px;
+    right: 16px;
+    font-family: var(--font-shoulders), "Arial Narrow", sans-serif;
+    font-size: 26px;
+    color: var(--ink-55);
+}
+
+.euk-pdfimg-wrap[open] > summary::after {
+    content: "−";
+}
+
+.euk-pdfimg-wrap[open] > summary {
+    border-bottom: 2px solid var(--hairline);
+}
+
+.euk-pdfimg-title {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.euk-pdfimg-sub {
+    font-size: 13px;
+    color: var(--ok-line);
+    font-weight: 600;
+}
+
+/* Capped at a reading measure: across a wide panel it ran to ~98 characters. */
+.euk .euk-pdfimg-caution {
+    margin: 14px 16px 0;
+    border: var(--rule-thin) dashed var(--partial-line);
+    background: var(--partial-fill);
+    padding: 10px 12px;
+    font-size: 14px;
+    line-height: 1.5;
+    max-width: 72ch;
+}
+
+.euk-pdfimg {
+    padding: 14px 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.euk-pdfimg-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 24px;
+}
+
+.euk-seg {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0;
+}
+
+.euk-seg legend {
+    width: 100%;
+    margin-bottom: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-70);
+}
+
+.euk-seg label {
+    position: relative;
+    cursor: pointer;
+}
+
+.euk-seg input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    margin: 0;
+    cursor: pointer;
+}
+
+.euk-seg label span {
+    display: inline-block;
+    border: var(--rule-thin) solid var(--ink);
+    margin-left: -2px;
+    padding: 7px 12px 6px;
+    font-size: 14px;
+    font-weight: 600;
+    background: var(--paper);
+    transition: background-color 140ms ease;
+}
+
+.euk-seg label:first-of-type span {
+    margin-left: 0;
+}
+
+.euk-seg input:checked + span {
+    background: var(--ink);
+    color: var(--paper);
+}
+
+.euk-seg input:focus-visible + span {
+    outline: 3px solid var(--signal);
+    outline-offset: 2px;
+    position: relative;
+}
+
+.euk .euk-pdfimg-hint,
+.euk .euk-pdfimg-status {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ink-55);
+}
+
+.euk .euk-pdfimg-status {
+    font-weight: 600;
+    color: var(--ink-70);
+}
+
+.euk-pdfimg-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 20px;
+}
+
+.euk-pdfimg-actions .quiet-link {
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.euk-pdfimg-pages {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 14px;
+}
+
+.euk .euk-pdfimg-page {
+    max-width: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    animation: euk-pdfimg-in 260ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes euk-pdfimg-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.euk-pdfimg-thumb {
+    border: var(--rule-thin) solid var(--ink);
+    background: var(--paper-2);
+    aspect-ratio: 3 / 4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.euk-pdfimg-thumb img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    background: #ffffff;
+}
+
+.euk .euk-pdfimg-meta {
+    font-size: 12px;
+    color: var(--ink-55);
+    font-variant-numeric: tabular-nums;
+}
+
+.euk-pdfimg-failure {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.euk-pdfimg-lock {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-self: stretch;
+    max-width: 520px;
+}
+
+.euk-pdfimg-lock-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 4px;
+}
+
+/* 17px keeps iOS from zooming the page when the field takes focus. */
+.euk .euk-pdfimg-lock input[type="password"] {
+    flex: 1 1 200px;
+    min-width: 0;
+    border: var(--rule) solid var(--ink);
+    background: var(--paper);
+    color: var(--ink);
+    padding: 11px 13px;
+    font-size: 17px;
+}
+
+.euk .euk-pdfimg-lock input[type="password"]:focus-visible {
+    outline: none;
+    border-color: var(--signal-deep);
+    box-shadow: 5px 5px 0 var(--signal);
+}
+
+.euk-pdfimg-page .primary-button {
+    text-align: center;
+    padding: 9px 12px;
+    font-size: 14px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .euk-doc-page-art,
+    .euk-seg label span {
+        transition: none;
+    }
+    .euk .euk-pdfimg-page {
+        animation: none;
+    }
+}

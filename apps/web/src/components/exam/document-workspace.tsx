@@ -11,6 +11,7 @@ import { useKit } from "./use-kit";
 import { OutcomeResult } from "./outcome-result";
 import { PreparationLoader } from "./preparation-loader";
 import { Tick } from "./specimen-sheet";
+import { PdfToImage } from "./pdf-to-image";
 
 /**
  * Documents: the page work candidates otherwise do in three free tools, done
@@ -21,11 +22,19 @@ import { Tick } from "./specimen-sheet";
  * has a keyboard-reachable button, and the original order is one tap away.
  */
 
-const TOOLS = ["Image to PDF", "Merge files", "Reorder pages", "Remove pages"];
+const TOOLS = [
+    "Image to PDF",
+    "Merge files",
+    "Reorder pages",
+    "Rotate pages",
+    "Remove pages",
+    "PDF to image",
+];
 
-function PageDrawing() {
+/** Turned to the page's rotation, so the card shows what the PDF will. */
+function PageDrawing({ rotation = 0 }: { rotation?: number }) {
     return (
-        <svg className="euk-doc-page-art" viewBox="0 0 60 72" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <svg className="euk-doc-page-art" style={{ rotate: `${rotation}deg` }} viewBox="0 0 60 72" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M8 4 H 40 L 52 16 V 68 H 8 Z" />
             <path d="M40 4 V 16 H 52" />
             <path d="M16 30 H 44 M16 40 H 44 M16 50 H 34" />
@@ -180,7 +189,7 @@ export function DocumentWorkspace({
                                 key={`${page.source_index}-${page.page_index}-${index}`}
                                 className="euk-doc-page"
                             >
-                                <PageDrawing />
+                                <PageDrawing rotation={page.rotation} />
                                 <strong>
                                     {names[page.source_index] ??
                                         `Source ${page.source_index + 1}`}
@@ -188,6 +197,7 @@ export function DocumentWorkspace({
                                 <span>
                                     Page {page.page_index + 1}, placed {index + 1} of{" "}
                                     {pages.length}
+                                    {page.rotation ? `, turned ${page.rotation}°` : ""}
                                 </span>
                                 <div className="euk-doc-actions">
                                     <button
@@ -205,6 +215,21 @@ export function DocumentWorkspace({
                                         onClick={() => move(index, index + 1)}
                                     >
                                         ↓
+                                    </button>
+                                    <button
+                                        type="button"
+                                        aria-label={`Rotate page ${index + 1} clockwise`}
+                                        onClick={() =>
+                                            setPages((value) =>
+                                                value.map((item, i) =>
+                                                    i === index
+                                                        ? { ...item, rotation: (item.rotation + 90) % 360 }
+                                                        : item,
+                                                ),
+                                            )
+                                        }
+                                    >
+                                        ↻
                                     </button>
                                     <button
                                         type="button"
@@ -264,6 +289,22 @@ export function DocumentWorkspace({
                     {error}
                 </p>
             )}
+
+            <details className="euk-pdfimg-wrap">
+                <summary>
+                    <span className="euk-pdfimg-title">Need a page as an image?</span>
+                    <span className="euk-pdfimg-sub">
+                        PDF to image, free with your kit. Your PDF never leaves
+                        this browser.
+                    </span>
+                </summary>
+                <p className="euk-pdfimg-caution">
+                    An image of a digitally issued certificate can’t be verified
+                    the way the PDF can. Use this only when the portal asks for
+                    an image.
+                </p>
+                <PdfToImage />
+            </details>
         </div>
     );
 }
