@@ -52,7 +52,7 @@ export default async function Home() {
 
                 {/* hero */}
                 <section className="px-5 pt-8 md:px-12 md:pt-13">
-                    <div className="flex flex-col gap-10 md:flex-row md:items-start md:gap-10">
+                    <div className="euk-wrap flex flex-col gap-10 md:flex-row md:items-start md:gap-10">
                         <div className="flex shrink-0 flex-col gap-4 md:w-[520px] md:gap-[22px]">
                             <h1 className="euk-display text-[52px] md:text-[78px]">
                                 You prepare
@@ -97,7 +97,7 @@ export default async function Home() {
 
                 {/* the primary action */}
                 <section className="px-5 pb-11 pt-7 md:px-12 md:pb-12">
-                    <div className="euk-block euk-block--drop euk-lift">
+                    <div className="euk-wrap euk-block euk-block--drop euk-lift">
                         <ExamSearch exams={exams} unavailable={unavailable} />
                     </div>
                 </section>
@@ -107,7 +107,7 @@ export default async function Home() {
                     className="euk-invert px-5 py-9 md:px-12 md:py-12"
                     id="how"
                 >
-                    <div className="flex flex-col gap-6 md:flex-row md:items-start md:gap-11">
+                    <div className="euk-wrap flex flex-col gap-6 md:flex-row md:items-start md:gap-11">
                         <div className="md:w-[470px] md:shrink-0">
                             <h2 className="euk-display text-[42px] md:text-[58px]">
                                 Six tabs.
@@ -160,6 +160,7 @@ export default async function Home() {
 
                 {/* the variance strip — the one gridded surface */}
                 <section className="euk-gridded px-5 py-9 md:px-12 md:py-11">
+                  <div className="euk-wrap">
                     <div className="flex flex-col gap-2 pb-6 md:flex-row md:items-end md:justify-between">
                         <div>
                             <h2 className="euk-display text-[36px] md:text-[44px] md:leading-[0.92]">
@@ -185,9 +186,22 @@ export default async function Home() {
                                 className="flex shrink-0 flex-col items-center gap-1.5"
                             >
                                 <div
-                                    className="border-2 border-[var(--ink)] bg-white"
+                                    className="flex items-end justify-center border-2 border-[var(--ink)] bg-white"
                                     style={{ width: s.w, height: s.h }}
-                                />
+                                >
+                                    {/* A silhouette, so the frame reads as a
+                                        photograph at that shape rather than as
+                                        an image that failed to load. */}
+                                    <svg
+                                        viewBox="0 0 40 48"
+                                        className="h-[78%] w-auto"
+                                        aria-hidden="true"
+                                        fill="var(--ink-40)"
+                                    >
+                                        <ellipse cx="20" cy="15" rx="9" ry="11" />
+                                        <path d="M20 28 C 9 28, 3 38, 2 48 L 38 48 C 37 38, 31 28, 20 28 Z" />
+                                    </svg>
+                                </div>
                                 <span className="euk-label text-[10px]">
                                     {s.label}
                                 </span>
@@ -210,10 +224,12 @@ export default async function Home() {
                             </span>
                         </div>
                     </div>
+                  </div>
                 </section>
 
                 {/* the boundary, as the form's own two parts */}
                 <section className="px-5 py-9 md:px-12 md:py-12">
+                  <div className="euk-wrap">
                     <h2 className="euk-display pb-6 text-[36px] md:text-[44px] md:leading-[0.92]">
                         What we do.
                         <br />
@@ -330,6 +346,7 @@ export default async function Home() {
                         Four states, never a boolean — and never red, because
                         &ldquo;not yet&rdquo; is not a failure.
                     </Note>
+                  </div>
                 </section>
 
                 {/* pricing */}
@@ -337,6 +354,7 @@ export default async function Home() {
                     className="border-t-[3px] border-[var(--ink)] bg-[var(--paper-2)] px-5 py-9 md:px-12 md:py-12"
                     id="pricing"
                 >
+                  <div className="euk-wrap">
                     <h2 className="euk-display pb-6 text-[36px] md:text-[44px] md:leading-[0.92]">
                         Three rupees.
                         <br />
@@ -377,6 +395,7 @@ export default async function Home() {
                         FILES ARE DELETED WITHIN 30 MINUTES — OR WITHIN AN HOUR,
                         IF YOU ASK US TO KEEP THEM.
                     </p>
+                  </div>
                 </section>
             </main>
             <SiteFooter />

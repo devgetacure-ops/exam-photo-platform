@@ -76,12 +76,12 @@ export function KitWorkspace({ exam }: { exam: ExamDetail }) {
         <div className="euk-sheet">
             <header className="euk-sheet-head">
                 <div className="min-w-0">
-                    <p className="euk-label text-[10px] text-[var(--ink-55)]">
-                        {exam.conducting_body}
-                    </p>
-                    <h1 className="euk-display pt-1 text-[30px] md:text-[44px]">
+                    <h1 className="euk-display text-[30px] md:text-[44px]">
                         {exam.exam_name}
                     </h1>
+                    <p className="pt-2 text-[13px] text-[var(--ink-55)]">
+                        Set by {exam.conducting_body}
+                    </p>
                 </div>
                 <p className="euk-label shrink-0 border-2 border-[var(--ink)] px-3 py-2 text-[10px]">
                     {ready}/{ours.length} prepared

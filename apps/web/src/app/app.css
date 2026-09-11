@@ -22,7 +22,7 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.09em;
-    font-size: 10px;
+    font-size: 11px;
     color: var(--ink-55);
     font-variant-numeric: tabular-nums;
 }
@@ -48,8 +48,8 @@
 }
 
 .euk .primary-button {
-    background: var(--signal);
-    color: var(--signal-ink);
+    background: var(--signal-deep);
+    color: #ffffff;
     box-shadow: var(--drop-sm) var(--drop-sm) 0 var(--ink);
 }
 
@@ -206,6 +206,19 @@
     padding-bottom: 8px;
 }
 
+/* On a phone the guidance column stacks first, so the candidate scrolled past
+   three photographs and their captions before reaching the specification and
+   the upload — the two things they came for. Below the grid breakpoint the
+   order is reversed; guidance is reference and reads after. */
+@media (max-width: 899px) {
+    .euk .requirement-content > :first-child {
+        order: 2;
+    }
+    .euk .requirement-content > :nth-child(2) {
+        order: 1;
+    }
+}
+
 @media (min-width: 900px) {
     .euk .requirement-content {
         /* The upload column leads. Guidance is reference material and sits
@@ -245,7 +258,7 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    font-size: 10px;
+    font-size: 11px;
     color: var(--signal-deep);
     background: none;
     border: 0;
@@ -269,7 +282,7 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    font-size: 10px;
+    font-size: 11px;
     color: var(--ink-55);
 }
 
@@ -277,7 +290,7 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.09em;
-    font-size: 10px;
+    font-size: 11px;
     color: var(--ink);
     padding-top: 20px;
 }
@@ -531,7 +544,7 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    font-size: 10px;
+    font-size: 11px;
     background: var(--ink);
     color: var(--paper);
     padding: 4px 8px;
@@ -654,7 +667,7 @@
 /* ---- exam facts ------------------------------------------------------ */
 
 .euk .facts-wrap {
-    max-width: 1160px;
+    max-width: 1240px;
     margin: 0 auto;
     padding: 0 20px 48px;
 }
@@ -863,4 +876,38 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
+}
+
+
+/* ---- legibility floors ---------------------------------------------- */
+
+/* Body copy was running to 237 characters a line at desktop width. The eye
+   loses its place tracking back to the start of the next line past about 80. */
+.euk p,
+.euk li {
+    max-width: 74ch;
+}
+
+.euk .euk-part-name,
+.euk .checkout-file p,
+.euk .spec-list p {
+    max-width: none;
+}
+
+/* 11px is the floor for anything functional. Only non-interactive legal
+   smallprint sits below it. */
+.euk .euk-label,
+.euk .euk-part-state,
+.euk .euk-part-head,
+.euk .example-caption,
+.euk .example-good,
+.euk .avoid-heading,
+.euk .elapsed {
+    font-size: 11px;
+}
+
+/* A bordered block with text hard against its edge reads as broken. */
+.euk .euk-sheet-head {
+    padding-left: 0;
+    padding-right: 0;
 }

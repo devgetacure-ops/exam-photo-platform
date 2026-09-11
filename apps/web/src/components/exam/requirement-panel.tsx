@@ -39,7 +39,6 @@ export function RequirementPanel({
             aria-label={requirement.requirement_name}
         >
             <header className="requirement-heading">
-                <p className="eyebrow">{requirement.requirement_name}</p>
                 <h2>
                     {!supported
                         ? "A step to complete"

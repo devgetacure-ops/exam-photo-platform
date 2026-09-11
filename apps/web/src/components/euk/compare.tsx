@@ -134,9 +134,11 @@ export function Compare({
                     aria-valuenow={Math.round(pct)}
                     aria-valuetext={`${Math.round(pct)}% of the uploaded photograph shown`}
                     onKeyDown={onKeyDown}
-                    className="absolute top-1/2 flex h-11 w-11 items-center justify-center border-[3px] border-[var(--ink)] bg-[var(--signal)]"
+                    className="absolute top-1/2 flex h-11 w-11 items-center justify-center border-[3px] border-[var(--ink)] bg-[var(--signal-deep)]"
                     style={{
-                        left: `${pct}%`,
+                        // Clamped so the handle never hangs half-off the frame
+                        // at 0 or 100, which read as a rendering fault.
+                        left: `calc(${pct}% + ${(50 - pct) * 0.46}px)`,
                         transform: "translate(-50%, -50%)",
                         cursor: "ew-resize",
                     }}

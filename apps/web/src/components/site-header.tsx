@@ -10,7 +10,7 @@ import { Wordmark } from "./euk/wordmark";
 export function SiteHeader({ mobileTitle }: { mobileTitle?: string }) {
     return (
         <header className="euk border-b-[3px] border-[var(--ink)] bg-[var(--paper)]">
-            <div className="flex items-center justify-between gap-4 px-5 py-4 md:px-12">
+            <div className="euk-wrap flex items-center justify-between gap-4 px-5 py-4 md:px-12">
                 <div className="flex min-w-0 items-center gap-4">
                     <Link href="/" aria-label="examuploadkit home">
                         <Wordmark />
@@ -37,9 +37,13 @@ export function SiteHeader({ mobileTitle }: { mobileTitle?: string }) {
                             </Link>
                         </>
                     )}
+                    {/* The lockup is 250px and cannot shrink; at 390 the chip
+                        and the toggle together pushed past the edge and drew
+                        over the last two cells. The directory is reachable from
+                        the exam title row and the footer. */}
                     <Link
                         href="/exams"
-                        className="border-2 border-[var(--ink)] px-2 py-1.5 md:px-3"
+                        className="hidden border-2 border-[var(--ink)] px-2 py-1.5 sm:inline md:px-3"
                     >
                         Exams
                     </Link>
@@ -48,7 +52,7 @@ export function SiteHeader({ mobileTitle }: { mobileTitle?: string }) {
             </div>
 
             {mobileTitle && (
-                <p className="euk-label truncate border-t-2 border-[var(--hairline)] px-5 py-2 text-[10px] text-[var(--ink-55)] sm:hidden">
+                <p className="euk-wrap euk-label truncate border-t-2 border-[var(--hairline)] px-5 py-2 text-[11px] text-[var(--ink-55)] sm:hidden">
                     {mobileTitle}
                 </p>
             )}

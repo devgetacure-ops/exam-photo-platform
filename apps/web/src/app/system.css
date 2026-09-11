@@ -107,6 +107,22 @@
     --signal-deep: #c1370e;
 }
 
+/* The page container.
+ *
+ * Nothing was bounded. At 1920 the landing page ran body copy to a 1184px
+ * measure with a 38px gutter, the footer opened a 540px void between the
+ * wordmark and its links, and /exams was centred on a different width again —
+ * three container behaviours on three pages, which is what made the site feel
+ * like it was assembled rather than designed.
+ *
+ * Bands stay full-bleed; their contents sit inside this.
+ */
+.euk-wrap {
+    max-width: 1240px;
+    margin-inline: auto;
+    width: 100%;
+}
+
 /* ---- type ---------------------------------------------------------- */
 
 .euk-display {
@@ -123,6 +139,7 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.09em;
+    font-size: 11px;
     font-variant-numeric: tabular-nums;
 }
 

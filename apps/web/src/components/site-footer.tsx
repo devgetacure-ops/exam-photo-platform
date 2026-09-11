@@ -36,6 +36,7 @@ export function SiteFooter() {
     return (
         <footer className="euk">
             <div className="euk-invert px-5 py-10 md:px-12 md:py-14">
+                <div className="euk-wrap">
                 <h2 className="euk-display text-[42px] md:text-[62px]">
                     A little less admin.
                     <br />
@@ -47,10 +48,11 @@ export function SiteFooter() {
                 >
                     Find your examination
                 </Link>
+                </div>
             </div>
 
             <div className="border-t-[3px] border-[var(--ink)] bg-[var(--paper)] px-5 py-9 md:px-12 md:py-11">
-                <div className="flex flex-col gap-9 md:flex-row md:justify-between md:gap-12">
+                <div className="euk-wrap flex flex-col gap-9 md:flex-row md:justify-between md:gap-12">
                     <div className="flex flex-col gap-4">
                         <Link href="/" aria-label="examuploadkit home">
                             <Wordmark />
@@ -85,7 +87,7 @@ export function SiteFooter() {
                     </div>
                 </div>
 
-                <p className="euk-label mt-9 border-t-2 border-[var(--hairline)] pt-5 text-[10px] leading-relaxed text-[var(--ink-55)]">
+                <p className="euk-wrap euk-label mt-9 border-t-2 border-[var(--hairline)] pt-5 text-[11px] leading-relaxed text-[var(--ink-55)]">
                     Files are deleted within 30 minutes — or within an hour, if
                     you ask us to keep them.
                 </p>
