@@ -29,10 +29,19 @@
 
 /* The letter bar: every letter a pressable tile. It stays under the header on a
    desktop so a long scroll never loses the way back to another letter. */
+/* Side padding outside the container, matching the headline above; inside it,
+   the bar and the index started 48px to the right of the title. */
 .euk-az {
     border-top: var(--rule) solid var(--ink);
     border-bottom: var(--rule) solid var(--ink);
     background: var(--paper);
+    padding: 12px 20px;
+}
+
+@media (min-width: 768px) {
+    .euk-az {
+        padding: 12px 48px;
+    }
 }
 
 @media (min-width: 900px) {
@@ -47,13 +56,6 @@
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
-    padding: 12px 20px;
-}
-
-@media (min-width: 768px) {
-    .euk-az-row {
-        padding: 12px 48px;
-    }
 }
 
 .euk-az a {

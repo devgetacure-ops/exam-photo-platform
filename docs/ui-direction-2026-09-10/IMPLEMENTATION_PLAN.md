@@ -42,7 +42,7 @@ policies rebuilt and verified.
 | Editorial, not AI-slop; copy that connects | landing | done — slopmonster 5/5 |
 | Doodles, graphics, illustrations, drawings | inline SVG, drawn in the system's ink | done — each drawing is a file the product prepares |
 | Animations, micro-animations, interactivity | `Reveal`, stroke draw-on, the comparison | done — reveal, stroke draw-on, the comparison, hover ticks |
-| The story of the problem crores of students face | problem section | done |
+| The story of the problem crores of students face | problem section | done — with the brief's point 5 as a ledger of what a free tool calls "ready" and leaves out: sizing, the file limit and the name; face coverage; flagging a bad photograph; the prompt it expects you to write |
 | Rs 3 against years of preparation | why / pricing | done |
 | Footer that is not industry-standard | the back of the form: declaration, signature, date, enclosures | done — the back of the form |
 
@@ -59,7 +59,7 @@ policies rebuilt and verified.
 
 | Requirement | Surface | State |
 |---|---|---|
-| Every piece of exam information, well structured | `exam/[examId]` | done — hero (who sets it, what it asks for, the files we prepare, live capture), the kit and its price, one panel per file; source citations stay on `/rules` |
+| Every piece of exam information, well structured | `exam/[examId]` | done — hero (who sets it, what it asks for, the files we prepare, live capture), the kit and its price, one panel per file; source citations on `/rules`, rebuilt in the same language (file cards with all five support states kept distinct, appearance verdicts, sources stated as strongly as the record allows) |
 | Every component justifies its use, position and existence | exam page | building — the checkout panel under the kit is still the previous design, rebuilt with the purchase flow |
 | Rules shown with visual references — what to do and what not to | requirement panel | done — a drawn specimen sheet per file; every "don't" is either ruled out by this examination's record or something the engine checks every upload for |
 | Research how exams present visual examples and adapt that style | requirement panel | done — SSC's captioned sheet of photographs not acceptable, and the banking notices' capitals rule set beside the signature, adapted as drawings rather than photographs of strangers |

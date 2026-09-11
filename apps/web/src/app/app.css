@@ -15,24 +15,6 @@
 
 /* ---- shared primitives --------------------------------------------- */
 
-.euk .label,
-.euk .spec {
-    font-family: var(--font-anek), ui-sans-serif, system-ui, sans-serif;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.09em;
-    font-size: 11px;
-    color: var(--ink-55);
-    font-variant-numeric: tabular-nums;
-}
-
-.euk .spec {
-    text-transform: none;
-    letter-spacing: 0.02em;
-    font-size: 13px;
-    color: var(--ink);
-}
-
 .euk .primary-button,
 .euk .secondary-button {
     display: inline-block;
@@ -142,41 +124,6 @@
     clip-path: inset(50%);
 }
 
-.euk .spec-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    margin: 18px 0;
-}
-
-.euk .spec-list > div,
-.euk .spec-list > li {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 16px;
-    border-bottom: 1px solid var(--hairline);
-    padding: 9px 0;
-    font-size: 14px;
-    font-variant-numeric: tabular-nums;
-}
-
-.euk .spec-list > div > :first-child,
-.euk .spec-list > li > :first-child {
-    color: var(--ink-55);
-}
-
-.euk .spec-list > div > :last-child,
-.euk .spec-list > li > :last-child {
-    font-weight: 600;
-    text-align: right;
-}
-
-.euk .spec-list > div:last-child,
-.euk .spec-list > li:last-child {
-    border-bottom: 0;
-}
-
 .euk .comparison-actions {
     display: flex;
     flex-wrap: wrap;
@@ -239,36 +186,6 @@
     padding: 4px 8px;
 }
 
-/* ---- rules page -------------------------------------------------- */
-
-.euk .rule-sheet {
-    border: var(--rule-thin) solid var(--ink);
-    padding: 20px;
-    margin-bottom: 18px;
-}
-
-.euk .rule-sheet h2 {
-    font-family: var(--font-shoulders), "Arial Narrow", sans-serif;
-    font-weight: 900;
-    font-size: 24px;
-    text-transform: uppercase;
-    line-height: 0.95;
-}
-
-.euk input[type="text"],
-.euk input[type="email"],
-.euk input[type="search"],
-.euk textarea,
-.euk select {
-    border: var(--rule-thin) solid var(--ink);
-    background: var(--paper);
-    color: var(--ink);
-    padding: 12px 14px;
-    font: inherit;
-    font-size: 15px;
-    width: 100%;
-}
-
 /* ---- theme toggle ---------------------------------------------------- */
 
 .euk .theme-toggle,
@@ -296,10 +213,6 @@
 .euk p,
 .euk li {
     max-width: 74ch;
-}
-
-.euk .spec-list p {
-    max-width: none;
 }
 
 /* 11px is the floor for anything functional. Only non-interactive legal

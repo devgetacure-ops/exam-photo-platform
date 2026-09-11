@@ -936,3 +936,55 @@
     font-size: 14px;
     color: var(--ink-55);
 }
+
+/* ---- the problem: what "ready" leaves out ----------------------------- */
+
+.euk-ledger {
+    border-top: var(--rule) solid var(--ink);
+}
+
+.euk-ledger-title {
+    padding: 14px 0 4px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+}
+
+.euk-ledger ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.euk .euk-ledger li {
+    display: grid;
+    grid-template-columns: minmax(130px, 0.7fr) minmax(0, 1.3fr);
+    gap: 4px 20px;
+    padding: 13px 0;
+    border-bottom: 2px solid var(--hairline);
+    max-width: none;
+}
+
+@media (max-width: 559px) {
+    .euk .euk-ledger li {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+/* The claim, struck through: what the tool says, set against what it did. */
+.euk-ledger-claim {
+    font-family: var(--font-shoulders), "Arial Narrow", sans-serif;
+    font-weight: 900;
+    font-size: 20px;
+    line-height: 1.05;
+    text-transform: uppercase;
+    text-decoration: line-through;
+    text-decoration-color: var(--signal);
+    text-decoration-thickness: 3px;
+}
+
+.euk .euk-ledger-truth {
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink-70);
+}

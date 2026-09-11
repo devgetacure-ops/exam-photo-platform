@@ -343,6 +343,45 @@ export default async function Home() {
                                     problem, and it is the only thing we do.
                                 </p>
                             </Reveal>
+                            <Reveal delay={160} className="euk-ledger">
+                                <h3 className="euk-ledger-title">
+                                    What &ldquo;ready&rdquo; usually leaves out
+                                </h3>
+                                <ul>
+                                    <li>
+                                        <span className="euk-ledger-claim">Background removed</span>
+                                        <span className="euk-ledger-truth">
+                                            A free AI tool does that part. It
+                                            won&rsquo;t resize the photo, get it
+                                            under the file limit, or name it the
+                                            way the portal wants.
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <span className="euk-ledger-claim">Cropped</span>
+                                        <span className="euk-ledger-truth">
+                                            With no idea how much of the frame
+                                            your face is meant to fill.
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <span className="euk-ledger-claim">Ready to upload</span>
+                                        <span className="euk-ledger-truth">
+                                            Nothing checked whether it&rsquo;s
+                                            blurred or too dark. We flag that
+                                            before you pay.
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <span className="euk-ledger-claim">Just ask an AI</span>
+                                        <span className="euk-ledger-truth">
+                                            Then write a prompt precise enough to
+                                            get every one of these right, and
+                                            check its work yourself.
+                                        </span>
+                                    </li>
+                                </ul>
+                            </Reveal>
                         </div>
                     </div>
                 </section>

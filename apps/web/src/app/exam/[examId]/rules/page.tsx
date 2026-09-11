@@ -10,17 +10,17 @@ import { GuidanceList } from "../../../../components/exam/guidance-list";
 import { SourceNote } from "../../../../components/exam/source-note";
 import { SiteHeader } from "../../../../components/site-header";
 import { SiteFooter } from "../../../../components/site-footer";
+import { ArrowDrawing } from "../../../../components/euk/doodles";
 
 /**
- * The reference half of an examination: its photograph rules, where they came
- * from, and what applies to the application as a whole.
+ * The reference half of an examination: every file's published rules, the
+ * photograph's appearance rules, and where each came from.
  *
  * Split off the workspace deliberately. This is material a candidate reads
  * once, or comes back to after a portal rejects something — not while they are
- * uploading. Keeping it inline is what made the exam page six screens long.
- *
- * It also has its own SEO job: "CAT photo rules", "IBPS signature size" are
- * reference queries, and this is the page that answers them.
+ * uploading. It also has its own search job: "CAT photo rules" and "IBPS
+ * signature size" are reference queries, and this is the page that answers
+ * them, so everything here is server-rendered text.
  */
 
 export async function generateStaticParams() {
@@ -52,78 +52,88 @@ export default async function RulesPage({
     const exam = await loadExam(examId);
     if (!exam) notFound();
 
+    const requirements = exam.requirements ?? [];
     const guidance = appearanceGuidance(exam.image_requirements);
-    const estimates = (exam.requirements ?? []).flatMap((r, i) => r.requirement_type === "photograph" ? photographSpecRows(exam) : requirementSpecRows(r, i, exam.provenance)).filter((r) => r.estimated).length;
+    const hasPhotograph = requirements.some(
+        (r) => r.requirement_type === "photograph",
+    );
+    const estimates = requirements
+        .flatMap((r, i) =>
+            r.requirement_type === "photograph"
+                ? photographSpecRows(exam)
+                : requirementSpecRows(r, i, exam.provenance),
+        )
+        .filter((row) => row.estimated).length;
 
     return (
-        <main className="euk min-h-dvh" id="main-content">
-            <SiteHeader mobileTitle="Rules and sources" />
-            <nav
-                aria-label="Rules navigation"
-                className="flex flex-wrap items-center justify-between gap-4 border-b border-line px-6 py-3"
-            >
-                <div className="flex items-baseline gap-3">
-                    <Link
-                        href={`/exam/${exam.exam_id}`}
-                        className="text-sm font-medium hover:text-accent"
-                    >
-                        {exam.exam_name}
+        <main className="euk euk-rules" id="main-content">
+            <SiteHeader mobileTitle={`${exam.exam_name} rules`} />
+
+            <section className="euk-rules-top">
+                <div className="euk-wrap">
+                    <Link href={`/exam/${exam.exam_id}`} className="euk-rules-back">
+                        <span aria-hidden="true">←</span> {exam.exam_name}
                     </Link>
-                    <span className="text-xs text-muted">Rules</span>
-                </div>
-                <Link
-                    href={`/exam/${exam.exam_id}`}
-                    className="text-sm text-accent hover:underline"
-                >
-                    ← Back to your files
-                </Link>
-            </nav>
-
-            <div className="mx-auto max-w-3xl px-6 py-10">
-                <h1 className="text-2xl font-semibold">
-                    What {exam.conducting_body} asks for
-                </h1>
-                <p className="mt-2 text-ink-soft">
-                    Their published rules for {exam.exam_name}. Where they used
-                    particular wording, it is quoted.
-                </p>
-
-                <RequirementRules exam={exam} />
-                {guidance.length > 0 ? (
-                    <GuidanceList items={guidance} />
-                ) : (
-                    <p className="mt-6 rounded-lg border border-line bg-sunk p-4 text-sm text-ink-soft">
-                        This exam has not published rules about spectacles,
-                        headwear or expression — or we have not found them. We
-                        have not invented any.
+                    <h1 className="euk-display euk-rules-title">
+                        {exam.exam_name}
+                        <br />
+                        <span className="euk-mark">The upload rules, as published.</span>
+                    </h1>
+                    <p className="euk-lede">
+                        Set by {exam.conducting_body}. Every file the notice asks
+                        for, its size and format, what gets it rejected, and where
+                        each rule came from. Where the notice used particular
+                        wording, it is quoted.
                     </p>
+                    <Link className="primary-button euk-rules-cta" href={`/exam/${exam.exam_id}`}>
+                        Prepare these files
+                        <ArrowDrawing className="euk-rules-cta-arrow" />
+                    </Link>
+                </div>
+            </section>
+
+            <div className="euk-rules-body">
+            <div className="euk-wrap euk-rules-stack">
+                <section aria-labelledby="rules-files">
+                    <h2 id="rules-files" className="euk-display euk-rules-h2">
+                        The files
+                    </h2>
+                    <RequirementRules exam={exam} />
+                </section>
+
+                {hasPhotograph && (
+                    <section aria-labelledby="rules-appearance">
+                        <h2 id="rules-appearance" className="euk-display euk-rules-h2">
+                            How you should look in the photograph
+                        </h2>
+                        {guidance.length > 0 ? (
+                            <GuidanceList items={guidance} />
+                        ) : (
+                            <p className="euk-rules-empty">
+                                This examination hasn&rsquo;t published rules
+                                about spectacles, headwear or expression, or we
+                                haven&rsquo;t found them. We haven&rsquo;t
+                                invented any.
+                            </p>
+                        )}
+                    </section>
                 )}
 
                 {exam.application_rejection_conditions.length > 0 && (
-                    <section className="mt-10 rounded-xl border border-caveat-soft bg-caveat-soft/40 p-5">
-                        <h2 className="font-semibold text-caveat">
+                    <section className="euk-app-rejects" aria-labelledby="rules-application">
+                        <h2 id="rules-application" className="euk-display">
                             About the application itself
                         </h2>
-                        <ul className="mt-3 space-y-2">
-                            {exam.application_rejection_conditions.map(
-                                (condition) => (
-                                    <li
-                                        key={condition}
-                                        className="flex gap-2 text-sm leading-relaxed text-ink-soft"
-                                    >
-                                        <span
-                                            aria-hidden="true"
-                                            className="mt-2 size-1 shrink-0 rounded-full bg-caveat"
-                                        />
-                                        <span>{condition}</span>
-                                    </li>
-                                ),
-                            )}
+                        <ul>
+                            {exam.application_rejection_conditions.map((condition) => (
+                                <li key={condition}>{condition}</li>
+                            ))}
                         </ul>
                     </section>
                 )}
 
                 <SourceNote exam={exam} estimates={estimates} />
+            </div>
             </div>
             <SiteFooter />
         </main>

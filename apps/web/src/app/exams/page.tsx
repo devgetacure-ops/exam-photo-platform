@@ -78,7 +78,8 @@ export default async function ExamsPage() {
                     </div>
                 </nav>
 
-                <div className="euk-wrap euk-directory-index">
+                <div className="euk-directory-index">
+                <div className="euk-wrap">
                     {letters.map((letter) => (
                         <section
                             key={letter}
@@ -125,6 +126,7 @@ export default async function ExamsPage() {
                             <ArrowDrawing className="euk-dir-invite-arrow" />
                         </Link>
                     </div>
+                </div>
                 </div>
             </main>
             <SiteFooter />

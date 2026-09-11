@@ -1,47 +1,65 @@
-import type { ExamDetail } from "../../lib/types";
+import type { ExamDetail, PlatformSupport } from "../../lib/types";
 import { photographSpecRows, requirementSpecRows } from "../../lib/spec-format";
+import { FileTypeDrawing } from "../euk/doodles";
+
+/**
+ * Every file's published rules, one card each.
+ *
+ * The support state is carried in words and in its own colour, and all five
+ * stay distinct (DEC-056): colour is one of the three boundary signals, and a
+ * page that drew "we can't prepare this yet" in the same tone as "we prepare
+ * this" would be saying something false.
+ */
+
+const LABELS: Record<PlatformSupport, string> = {
+    supported: "We prepare this file",
+    partially_supported: "We prepare part of this · further steps needed",
+    guidance_only: "Follow the official instructions",
+    physical_stage: "Complete at the physical stage",
+    not_yet_supported: "We cannot prepare this file yet",
+};
+
+const MEANINGLESS = /^(not_found|unknown|none)$/i;
+
+function meaningful(value?: string | null): string | null {
+    return value && !MEANINGLESS.test(value.trim()) ? value : null;
+}
 
 export function RequirementRules({ exam }: { exam: ExamDetail }) {
     return (
-        <div className="requirement-rules">
+        <ul className="euk-rule-list">
             {exam.requirements?.map((requirement, index) => {
                 const rows =
                     requirement.requirement_type === "photograph"
                         ? photographSpecRows(exam)
-                        : requirementSpecRows(
-                              requirement,
-                              index,
-                              exam.provenance,
-                          );
-                const labels = {
-                    supported: "We prepare this file",
-                    partially_supported:
-                        "We prepare part of this · further steps needed",
-                    guidance_only: "Follow the official instructions",
-                    physical_stage: "Complete at the physical stage",
-                    not_yet_supported: "We cannot prepare this file yet",
-                };
+                        : requirementSpecRows(requirement, index, exam.provenance);
+                const instructions = meaningful(requirement.content_instructions);
+                const applies = meaningful(requirement.applicability);
                 return (
-                    <section
-                        key={requirement.requirement_id}
-                        className="rule-sheet"
-                    >
-                        <h2>{requirement.requirement_name}</h2>
-                        {/* The state is carried by the class as well as the
-                            words: colour is one of the three boundary signals
-                            and it cannot render four states as one. */}
-                        <p
-                            className={`rule-support rule-support--${requirement.platform_support.replace(/_/g, "-")}`}
-                        >
-                            {labels[requirement.platform_support]}
-                        </p>
-                        {requirement.applicability && (
-                            <p>Applies when: {requirement.applicability}</p>
+                    <li key={requirement.requirement_id} className="euk-rule-card">
+                        <div className="euk-rule-head">
+                            <FileTypeDrawing
+                                type={requirement.requirement_type}
+                                className="euk-rule-icon"
+                            />
+                            <div className="min-w-0">
+                                <h3 className="euk-rule-name">{requirement.requirement_name}</h3>
+                                <p
+                                    className={`euk-rule-state euk-rule-state--${requirement.platform_support.replace(/_/g, "-")}`}
+                                >
+                                    {LABELS[requirement.platform_support]}
+                                </p>
+                            </div>
+                        </div>
+                        {applies && (
+                            <p className="euk-rule-when">
+                                <strong>Applies when:</strong> {applies}
+                            </p>
                         )}
                         {rows.length > 0 && (
-                            <dl className="spec-list">
+                            <dl className="euk-measure">
                                 {rows.map((row) => (
-                                    <div key={row.term}>
+                                    <div key={row.term} className="euk-measure-cell">
                                         <dt>{row.term}</dt>
                                         <dd>
                                             {row.value}
@@ -56,34 +74,28 @@ export function RequirementRules({ exam }: { exam: ExamDetail }) {
                                 ))}
                             </dl>
                         )}
-                        {requirement.content_instructions &&
-                            !/^(not_found|unknown|none)$/i.test(
-                                requirement.content_instructions,
-                            ) && <p>{requirement.content_instructions}</p>}
-                        {requirement.submission_method ===
-                            "official_live_capture" && (
-                            <p>
-                                The official portal takes this photograph.
-                                Prepare the other supported files here.
+                        {instructions && <p className="euk-rule-text">{instructions}</p>}
+                        {requirement.submission_method === "official_live_capture" && (
+                            <p className="euk-rule-text">
+                                The official portal takes this photograph. Prepare
+                                the other supported files here.
                             </p>
                         )}
                         {requirement.rejection_conditions.length > 0 && (
-                            <details>
-                                <summary>
-                                    Published rejection conditions
-                                </summary>
+                            <div className="euk-rule-rejects">
+                                <p className="euk-rule-rejects-title">
+                                    Published reasons for rejection
+                                </p>
                                 <ul>
-                                    {requirement.rejection_conditions.map(
-                                        (text) => (
-                                            <li key={text}>{text}</li>
-                                        ),
-                                    )}
+                                    {requirement.rejection_conditions.map((text) => (
+                                        <li key={text}>{text}</li>
+                                    ))}
                                 </ul>
-                            </details>
+                            </div>
                         )}
-                    </section>
+                    </li>
                 );
             })}
-        </div>
+        </ul>
     );
 }

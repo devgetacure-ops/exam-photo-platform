@@ -13,6 +13,7 @@ import "./exam.css";
 import "./checkout.css";
 import "./states.css";
 import "./directory.css";
+import "./rules.css";
 
 /**
  * Three families. Each carries a different register and none of them is a
