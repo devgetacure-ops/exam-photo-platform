@@ -1,5 +1,5 @@
 import { PolicyPage } from "../../components/policy-page";
-export const metadata = { title: "Service terms · UploadReady" };
+export const metadata = { title: "Service terms · examuploadkit" };
 export default function Terms() {
     return (
         <PolicyPage

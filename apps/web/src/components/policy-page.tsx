@@ -14,7 +14,7 @@ export function PolicyPage({
     return (
         <>
             <SiteHeader />
-            <main className="content-page policy-page" id="main-content">
+            <main className="euk content-page policy-page" id="main-content">
                 <div className="content-intro">
                     <h1>{title}</h1>
                     <p>{intro}</p>

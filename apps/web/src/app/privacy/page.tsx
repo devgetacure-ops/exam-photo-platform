@@ -1,5 +1,5 @@
 import { PolicyPage } from "../../components/policy-page";
-export const metadata = { title: "Privacy · UploadReady" };
+export const metadata = { title: "Privacy · examuploadkit" };
 export default function Privacy() {
     return (
         <PolicyPage

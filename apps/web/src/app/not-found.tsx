@@ -5,7 +5,7 @@ export default function NotFound() {
     return (
         <>
             <SiteHeader />
-            <main className="content-page state-page" id="main-content">
+            <main className="euk content-page state-page" id="main-content">
                 <div className="paper-symbol" aria-hidden="true">
                     ↪
                 </div>

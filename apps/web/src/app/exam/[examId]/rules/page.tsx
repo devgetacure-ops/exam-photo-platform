@@ -56,7 +56,7 @@ export default async function RulesPage({
     const estimates = (exam.requirements ?? []).flatMap((r, i) => r.requirement_type === "photograph" ? photographSpecRows(exam) : requirementSpecRows(r, i, exam.provenance)).filter((r) => r.estimated).length;
 
     return (
-        <main className="min-h-dvh" id="main-content">
+        <main className="euk min-h-dvh" id="main-content">
             <SiteHeader mobileTitle="Rules and sources" />
             <nav
                 aria-label="Rules navigation"

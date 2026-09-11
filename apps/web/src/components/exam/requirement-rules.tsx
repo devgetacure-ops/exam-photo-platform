@@ -27,7 +27,12 @@ export function RequirementRules({ exam }: { exam: ExamDetail }) {
                         className="rule-sheet"
                     >
                         <h2>{requirement.requirement_name}</h2>
-                        <p className="rule-support">
+                        {/* The state is carried by the class as well as the
+                            words: colour is one of the three boundary signals
+                            and it cannot render four states as one. */}
+                        <p
+                            className={`rule-support rule-support--${requirement.platform_support.replace(/_/g, "-")}`}
+                        >
                             {labels[requirement.platform_support]}
                         </p>
                         {requirement.applicability && (

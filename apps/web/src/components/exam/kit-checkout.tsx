@@ -306,7 +306,7 @@ export function KitCheckout({
                 order_id: order.order_id,
                 amount: order.amount_paise,
                 currency: order.currency,
-                name: "UploadReady",
+                name: "examuploadkit",
                 description: exam.exam_name,
                 handler: () => {
                     setPending(true);
@@ -636,7 +636,7 @@ export function KitCheckout({
                     )}
                     <a
                         className="secondary-button"
-                        href={`https://wa.me/?text=${encodeURIComponent(`I'm preparing my ${exam.exam_name} application with UploadReady. ${typeof window !== "undefined" ? window.location.origin : ""}/exam/${exam.exam_id}`)}`}
+                        href={`https://wa.me/?text=${encodeURIComponent(`I'm preparing my ${exam.exam_name} application with examuploadkit. ${typeof window !== "undefined" ? window.location.origin : ""}/exam/${exam.exam_id}`)}`}
                         target="_blank"
                         rel="noreferrer"
                     >

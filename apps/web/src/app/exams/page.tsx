@@ -5,7 +5,7 @@ import { SiteHeader } from "../../components/site-header";
 import { SiteFooter } from "../../components/site-footer";
 
 export const metadata = {
-    title: "Find your exam · UploadReady",
+    title: "Find your exam · examuploadkit",
     description:
         "Browse exam upload requirements, signatures, photographs and documents with their sources.",
 };
@@ -14,7 +14,7 @@ export default async function ExamsPage() {
     return (
         <>
             <SiteHeader />
-            <main className="content-page" id="main-content">
+            <main className="euk content-page" id="main-content">
                 <div className="content-intro">
                     <h1>
                         Your exam.

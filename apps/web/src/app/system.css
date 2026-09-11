@@ -368,3 +368,34 @@
     background: var(--partial-fill);
     color: var(--ink);
 }
+
+
+/* Four states, four renderings. Before this they all inherited the accent, so
+   "we prepare this file" and "we cannot prepare this file yet" were the same
+   colour — two opposite meanings with one signal. Pre-existing, and exactly
+   the collapse the boundary rules forbid. */
+.euk .rule-support {
+    font-weight: 600;
+    display: inline-block;
+    border-left: var(--rule) solid currentColor;
+    padding-left: 10px;
+}
+
+.euk .rule-support--supported {
+    color: var(--ok-line);
+}
+
+.euk .rule-support--partially-supported {
+    color: var(--partial-line);
+}
+
+.euk .rule-support--guidance-only {
+    color: var(--guide-line);
+}
+
+/* Neutral, never red: "we cannot prepare this yet" is a gap in our coverage,
+   not a fault in the candidate's file. */
+.euk .rule-support--not-yet-supported {
+    color: var(--ink-55);
+    border-left-style: dashed;
+}

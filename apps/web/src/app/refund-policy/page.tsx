@@ -1,5 +1,5 @@
 import { PolicyPage } from "../../components/policy-page";
-export const metadata = { title: "Payment and refund help · UploadReady" };
+export const metadata = { title: "Payment and refund help · examuploadkit" };
 export default function Refunds() {
     return (
         <PolicyPage

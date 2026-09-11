@@ -2,7 +2,7 @@ import { SiteHeader } from "../../components/site-header";
 import { SiteFooter } from "../../components/site-footer";
 import { RequestForm } from "../../components/request-form";
 
-export const metadata = { title: "A little help · UploadReady" };
+export const metadata = { title: "A little help · examuploadkit" };
 export default async function SupportPage({
     searchParams,
 }: {
@@ -12,7 +12,7 @@ export default async function SupportPage({
     return (
         <>
             <SiteHeader />
-            <main className="content-page request-page" id="main-content">
+            <main className="euk content-page request-page" id="main-content">
                 <div className="content-intro">
                     <div className="paper-symbol" aria-hidden="true">
                         ↳
