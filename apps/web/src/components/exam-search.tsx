@@ -170,12 +170,12 @@ export function ExamSearch({ exams, unavailable, autoFocus = false }: Props) {
   return (
     <div className="w-full">
       <div
-        className="group flex items-center gap-3 rounded-xl border border-line-strong bg-surface
+        className="group flex items-center gap-3 border-[3px] border-[var(--ink)] bg-[var(--paper)]
                    px-5 py-4 shadow-card transition-colors
                    focus-within:border-accent focus-within:ring-4 focus-within:ring-accent-soft"
       >
         <svg
-          className="size-5 shrink-0 text-muted"
+          className="size-5 shrink-0 text-[var(--ink)]"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -205,7 +205,7 @@ export function ExamSearch({ exams, unavailable, autoFocus = false }: Props) {
           role="combobox"
           autoComplete="off"
           spellCheck={false}
-          className="w-full bg-transparent text-lg text-ink outline-none
+          className="w-full bg-transparent text-lg text-[var(--ink)] outline-none
                      placeholder:text-muted
                      [&::-webkit-search-cancel-button]:appearance-none"
         />
@@ -229,7 +229,7 @@ export function ExamSearch({ exams, unavailable, autoFocus = false }: Props) {
           id={listId}
           role="listbox"
           aria-label="Matching examinations"
-          className="mt-2 overflow-hidden rounded-xl border border-line bg-surface shadow-float"
+          className="mt-2 overflow-hidden border-[3px] border-[var(--ink)] bg-[var(--paper)] shadow-[7px_7px_0_var(--ink)]"
         >
           {!hasResults && (
             <p className="px-4 py-6 text-sm text-ink-soft">
@@ -248,7 +248,7 @@ export function ExamSearch({ exams, unavailable, autoFocus = false }: Props) {
               aria-selected={index === active}
               onMouseEnter={() => setActive(index)}
               onClick={() => go(row.entry)}
-              className={`flex w-full items-center gap-3 border-b border-line px-4 py-3
+              className={`flex w-full items-center gap-3 border-b-2 border-[var(--hairline)] px-4 py-3
                           text-left last:border-b-0 ${
                             index === active ? "bg-accent-soft" : "hover:bg-sunk"
                           }`}
@@ -293,12 +293,12 @@ export function ExamSearch({ exams, unavailable, autoFocus = false }: Props) {
             implying we can do something we cannot.
           */}
           {blocked.length > 0 && (
-            <div className="border-t border-line bg-sunk">
+            <div className="border-t-2 border-[var(--ink)] bg-[var(--paper-2)]">
               <p className="label px-4 pt-3 pb-1.5">Not yet available</p>
               {blocked.map((row) => (
                 <div
                   key={row.entry.name}
-                  className="border-b border-line px-4 py-3 last:border-b-0"
+                  className="border-b-2 border-[var(--hairline)] px-4 py-3 last:border-b-0"
                 >
                   <p className="text-sm font-medium text-ink-soft">{row.entry.name}</p>
                   <p className="mt-0.5 text-xs text-muted">

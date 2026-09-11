@@ -1,0 +1,238 @@
+/*
+ * examuploadkit — the visual system.
+ *
+ * Replaces the previous world rather than extending it. Everything here is
+ * flat: hard borders, solid offset shadows, no radius, no blur, no gradient.
+ * That is a performance decision as much as a visual one — the candidate is on
+ * a mid-range Android over mobile data, and every rule below paints in one
+ * compositing pass.
+ *
+ * Scoped under .euk while the other surfaces are still on the old stylesheets.
+ * When they are converted this scope comes off and globals/journey/editorial
+ * are deleted.
+ */
+
+.euk {
+    /* ground and ink */
+    --paper: #faf9f6;
+    --paper-2: #f2f0ea;
+    --ink: #111110;
+    --ink-70: #3a3833;
+    --ink-55: #55524b;
+    --ink-40: #8a867d;
+    --hairline: #dedacf;
+
+    /* one signal colour, and nothing else carries meaning by hue alone */
+    --signal: #f04e23;
+    --signal-ink: #ffffff;
+    --signal-deep: #c1370e;
+
+    /* support states — four, never collapsed to a boolean */
+    --ok-line: #165c33;
+    --ok-fill: #d9efe0;
+    --partial-line: #7a4a08;
+    --partial-fill: #fbe7bc;
+    --guide-line: #234673;
+    --guide-fill: #dce6f4;
+    --notyet-line: #55524b;
+    --notyet-fill: #f2f0ea;
+
+    /* structure */
+    --rule: 3px;
+    --rule-thin: 2px;
+    --drop: 7px;
+    --drop-sm: 5px;
+
+    color: var(--ink);
+    background: var(--paper);
+    font-family: var(--font-anek), ui-sans-serif, system-ui, sans-serif;
+}
+
+.euk[data-theme="dark"],
+[data-theme="dark"] .euk {
+    --paper: #12100e;
+    --paper-2: #1b1815;
+    --ink: #f2efe8;
+    --ink-70: #bdb6a8;
+    --ink-55: #a09a8e;
+    --ink-40: #7e776b;
+    --hairline: #3a352e;
+
+    --signal: #ff6a3d;
+    --signal-ink: #12100e;
+    --signal-deep: #ff8a66;
+
+    --ok-line: #6fd193;
+    --ok-fill: #12291c;
+    --partial-line: #e8b45c;
+    --partial-fill: #2d2314;
+    --guide-line: #8fb4e0;
+    --guide-fill: #16202c;
+    --notyet-line: #7e776b;
+    --notyet-fill: #1b1815;
+}
+
+/* The inverted band. Flips the tokens locally rather than hardcoding a second
+   palette, so the four state colours and the signal keep their meanings and
+   dark theme inverts it the other way for free. */
+.euk-invert {
+    --paper: #12100e;
+    --paper-2: #1b1815;
+    --ink: #f2efe8;
+    --ink-70: #bdb6a8;
+    --ink-55: #a09a8e;
+    --ink-40: #7e776b;
+    --hairline: #3a352e;
+    --signal: #ff6a3d;
+    --signal-ink: #12100e;
+    --signal-deep: #ff8a66;
+    background: var(--paper);
+    color: var(--ink);
+}
+
+[data-theme="dark"] .euk-invert {
+    --paper: #faf9f6;
+    --paper-2: #f2f0ea;
+    --ink: #111110;
+    --ink-70: #3a3833;
+    --ink-55: #55524b;
+    --ink-40: #8a867d;
+    --hairline: #dedacf;
+    --signal: #f04e23;
+    --signal-ink: #ffffff;
+    --signal-deep: #c1370e;
+}
+
+/* ---- type ---------------------------------------------------------- */
+
+.euk-display {
+    font-family: var(--font-shoulders), "Arial Narrow", sans-serif;
+    font-weight: 900;
+    line-height: 0.84;
+    letter-spacing: 0.005em;
+    text-transform: uppercase;
+    margin: 0;
+}
+
+.euk-mono {
+    font-family: var(--font-courier), ui-monospace, monospace;
+    letter-spacing: 0.04em;
+}
+
+.euk-aside {
+    font-family: var(--font-petrona), Georgia, serif;
+    font-style: italic;
+    line-height: 1.35;
+    margin: 0;
+}
+
+/* ---- the wordmark: thirteen connected cells ------------------------- */
+
+.euk-lock {
+    display: inline-flex;
+    border: var(--rule-thin) solid var(--ink);
+    background: var(--paper);
+}
+
+.euk-cell {
+    box-sizing: border-box;
+    width: var(--cell-w, 26px);
+    height: var(--cell-h, 30px);
+    border-right: 1px solid var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-shoulders), "Arial Narrow", sans-serif;
+    font-weight: 900;
+    font-size: var(--cell-t, 19px);
+    line-height: 1;
+    color: var(--ink);
+}
+
+.euk-cell:last-child {
+    border-right: 0;
+}
+
+/* Compact cells on every phone width, not just below 390. At 390 the 26px
+   construction measures 354px and the page padding takes it past the viewport,
+   which is where the first build overflowed horizontally. */
+@media (max-width: 767px) {
+    .euk-lock {
+        --cell-w: 19px;
+        --cell-h: 26px;
+        --cell-t: 15px;
+    }
+}
+
+/* ---- blocks --------------------------------------------------------- */
+
+.euk-block {
+    border: var(--rule) solid var(--ink);
+    background: var(--paper);
+}
+
+.euk-block--drop {
+    box-shadow: var(--drop) var(--drop) 0 var(--ink);
+}
+
+.euk-block--signal {
+    box-shadow: var(--drop) var(--drop) 0 var(--signal);
+}
+
+.euk-block--dashed {
+    border-style: dashed;
+    border-color: var(--ink-40);
+    background: var(--paper-2);
+}
+
+.euk-mark {
+    background: var(--signal);
+    color: var(--signal-ink);
+    padding: 0 0.22em;
+    display: inline-block;
+}
+
+/* the one surface that carries the grid */
+.euk-gridded {
+    background-color: var(--paper-2);
+    background-image:
+        repeating-linear-gradient(to right, color-mix(in srgb, var(--ink) 5.5%, transparent) 0 1px, transparent 1px 40px),
+        repeating-linear-gradient(to bottom, color-mix(in srgb, var(--ink) 5.5%, transparent) 0 1px, transparent 1px 40px);
+    border-top: var(--rule) solid var(--ink);
+    border-bottom: var(--rule) solid var(--ink);
+}
+
+/* ---- motion: transform and opacity only ----------------------------- */
+
+.euk-lift {
+    transition:
+        transform 140ms cubic-bezier(0.2, 0, 0.1, 1),
+        box-shadow 140ms cubic-bezier(0.2, 0, 0.1, 1);
+}
+
+.euk-lift:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: calc(var(--drop) + 2px) calc(var(--drop) + 2px) 0 var(--ink);
+}
+
+.euk-lift:active {
+    transform: translate(2px, 2px);
+    box-shadow: var(--drop-sm) var(--drop-sm) 0 var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .euk-lift {
+        transition: none;
+    }
+    .euk-lift:hover,
+    .euk-lift:active {
+        transform: none;
+    }
+}
+
+/* ---- focus: visible against both themes and never removed ----------- */
+
+.euk :focus-visible {
+    outline: var(--rule) solid var(--signal);
+    outline-offset: 2px;
+}
