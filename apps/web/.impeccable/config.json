@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "side-tab",
+        "value": "*",
+        "files": [
+          "src/app/request.css"
+        ],
+        "createdAt": "2026-09-11T15:55:25.637Z",
+        "reason": "Claude (agent) triage: same finding as the existing apps/web/src/app/request.css ignore, reported under a path relative to apps/web. L366 is .euk-slip-submit[aria-disabled]::after, a 4px sending-progress bar along the foot of the submit button, not a side accent border on a card"
+      }
+    ]
+  }
+}
