@@ -239,74 +239,7 @@
     padding: 4px 8px;
 }
 
-/* ---- content, policy, request and state pages ------------------------ */
-
-.euk.content-page,
-.euk .content-page {
-    max-width: 880px;
-    margin: 0 auto;
-    padding: 36px 20px 80px;
-}
-
-@media (min-width: 768px) {
-    .euk.content-page,
-    .euk .content-page {
-        padding: 48px 48px 104px;
-    }
-}
-
-.euk .content-intro {
-    border-bottom: var(--rule) solid var(--ink);
-    padding-bottom: 26px;
-    margin-bottom: 32px;
-}
-
-.euk .content-intro h1 {
-    font-family: var(--font-shoulders), "Arial Narrow", sans-serif;
-    font-weight: 900;
-    font-size: 42px;
-    line-height: 0.88;
-    text-transform: uppercase;
-}
-
-@media (min-width: 768px) {
-    .euk .content-intro h1 {
-        font-size: 60px;
-    }
-}
-
-.euk .content-intro h1 span {
-    color: var(--signal);
-}
-
-.euk .content-intro > p {
-    font-size: 16px;
-    line-height: 1.65;
-    color: var(--ink-70);
-    max-width: 62ch;
-    padding-top: 16px;
-}
-
-.euk.policy-page h2,
-.euk .policy-page h2 {
-    font-family: var(--font-shoulders), "Arial Narrow", sans-serif;
-    font-weight: 900;
-    font-size: 26px;
-    text-transform: uppercase;
-    border-bottom: var(--rule-thin) solid var(--ink);
-    padding-bottom: 8px;
-    margin: 34px 0 14px;
-}
-
-.euk.policy-page p,
-.euk .policy-page p,
-.euk.policy-page li,
-.euk .policy-page li {
-    font-size: 15px;
-    line-height: 1.7;
-    color: var(--ink-70);
-    max-width: 70ch;
-}
+/* ---- rules page -------------------------------------------------- */
 
 .euk .rule-sheet {
     border: var(--rule-thin) solid var(--ink);
@@ -334,41 +267,6 @@
     font: inherit;
     font-size: 15px;
     width: 100%;
-}
-
-.euk .support-invitation {
-    border: var(--rule) solid var(--ink);
-    background: var(--paper-2);
-    padding: 24px;
-    margin-top: 44px;
-}
-
-.euk .support-invitation h2 {
-    font-family: var(--font-shoulders), "Arial Narrow", sans-serif;
-    font-weight: 900;
-    font-size: 28px;
-    text-transform: uppercase;
-}
-
-.euk .support-invitation p {
-    font-size: 15px;
-    line-height: 1.6;
-    color: var(--ink-70);
-    padding: 10px 0 16px;
-    max-width: 60ch;
-}
-
-.euk.state-page,
-.euk .state-page {
-    text-align: center;
-}
-
-.euk .paper-symbol {
-    font-family: var(--font-shoulders), "Arial Narrow", sans-serif;
-    font-weight: 900;
-    font-size: 92px;
-    line-height: 1;
-    color: var(--signal);
 }
 
 /* ---- theme toggle ---------------------------------------------------- */

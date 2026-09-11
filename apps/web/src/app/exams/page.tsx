@@ -3,11 +3,13 @@ import { loadSearchIndex } from "../../lib/catalogue.server";
 import { ExamSearch } from "../../components/exam-search";
 import { SiteHeader } from "../../components/site-header";
 import { SiteFooter } from "../../components/site-footer";
+import { ArrowDrawing } from "../../components/euk/doodles";
 
 export const metadata = {
     title: "Find your exam · examuploadkit",
     description:
-        "Browse exam upload requirements, signatures, photographs and documents with their sources.",
+        "Every examination we prepare upload files for, A to Z, with the photographs, signatures and documents each one asks for.",
+    alternates: { canonical: "/exams" },
 };
 
 /**
@@ -19,9 +21,10 @@ export const metadata = {
  * single examination. That is harder to scan than the flat list it replaced.
  *
  * A–Z with a jump bar is the pattern that holds at this size and keeps holding
- * at five hundred. It is also entirely server-rendered anchors, so it works
- * with JavaScript off and gives the crawler 132 real links from one page —
- * which is the reason these pages are generated at build time at all.
+ * at five hundred. It is set like the index at the back of a book: the letter
+ * large in the margin, the entries beside it. Entirely server-rendered anchors,
+ * so it works with JavaScript off and gives the crawler every examination as
+ * a real link from one page.
  */
 function initial(name: string): string {
     const first = name.trim().charAt(0).toUpperCase();
@@ -43,83 +46,85 @@ export default async function ExamsPage() {
     return (
         <>
             <SiteHeader />
-            <main className="euk content-page" id="main-content">
-                <div className="content-intro">
-                    <h1>
-                        Your exam.
-                        <br />
-                        <span>Your starting point.</span>
-                    </h1>
-                    <p>
-                        All {exams.length} examinations. Each one separates the
-                        files we prepare from the steps you complete with your
-                        exam authority.
-                    </p>
-                    <ExamSearch
-                        exams={exams}
-                        unavailable={unavailable}
-                        showBrowseLink={false}
-                    />
-                </div>
+            <main className="euk euk-directory" id="main-content">
+                <section className="euk-directory-top">
+                    <div className="euk-wrap">
+                        <h1 className="euk-display euk-directory-title">
+                            Your examination,
+                            <br />
+                            <span className="euk-mark">and every file it asks for.</span>
+                        </h1>
+                        <p className="euk-lede">
+                            {exams.length} examinations, A to Z. Each one opens on
+                            the files we prepare and the steps you take yourself.
+                        </p>
+                        <div className="euk-directory-search">
+                            <ExamSearch
+                                exams={exams}
+                                unavailable={unavailable}
+                                showBrowseLink={false}
+                            />
+                        </div>
+                    </div>
+                </section>
 
-                <nav
-                    aria-label="Jump to a letter"
-                    className="flex flex-wrap gap-1.5 border-y-[3px] border-[var(--ink)] py-4"
-                >
-                    {letters.map((letter) => (
-                        <Link
-                            key={letter}
-                            href={`#letter-${letter}`}
-                            className="euk-label euk-lift flex h-9 w-9 items-center justify-center border-2 border-[var(--ink)] text-[12px]"
-                        >
-                            {letter}
-                        </Link>
-                    ))}
+                <nav aria-label="Jump to a letter" className="euk-az">
+                    <div className="euk-wrap euk-az-row">
+                        {letters.map((letter) => (
+                            <Link key={letter} href={`#letter-${letter}`}>
+                                {letter}
+                            </Link>
+                        ))}
+                    </div>
                 </nav>
 
-                {letters.map((letter) => (
-                    <section key={letter} id={`letter-${letter}`}>
-                        <h2 className="euk-display sticky top-0 z-10 border-b-[3px] border-[var(--ink)] bg-[var(--paper)] py-3 text-[34px]">
-                            {letter}
-                        </h2>
-                        <ul className="grid gap-0 md:grid-cols-2 md:gap-x-10">
-                            {groups.get(letter)!.map((exam) => (
-                                <li
-                                    key={exam.id}
-                                    className="border-b-2 border-[var(--hairline)]"
-                                >
-                                    <Link
-                                        href={`/exam/${exam.id}`}
-                                        className="group flex items-baseline justify-between gap-4 py-3"
-                                    >
-                                        <span className="min-w-0">
-                                            <span className="block text-[15px] font-medium leading-snug group-hover:underline group-hover:decoration-[var(--signal)] group-hover:underline-offset-4">
-                                                {exam.name}
+                <div className="euk-wrap euk-directory-index">
+                    {letters.map((letter) => (
+                        <section
+                            key={letter}
+                            id={`letter-${letter}`}
+                            className="euk-letter"
+                            aria-labelledby={`letter-${letter}-title`}
+                        >
+                            <h2 id={`letter-${letter}-title`} className="euk-display euk-letter-mark">
+                                {letter}
+                            </h2>
+                            <ul className="euk-letter-list">
+                                {groups.get(letter)!.map((exam) => (
+                                    <li key={exam.id}>
+                                        <Link href={`/exam/${exam.id}`} className="euk-dir-item">
+                                            <span className="min-w-0">
+                                                <span className="euk-dir-name">{exam.name}</span>
+                                                <span className="euk-dir-meta">
+                                                    {exam.body}
+                                                    {exam.year ? ` · ${exam.year}` : ""}
+                                                </span>
                                             </span>
-                                            <span className="euk-label block pt-1 text-[10px] text-[var(--ink-55)]">
-                                                {exam.body}
-                                                {exam.year ? ` · ${exam.year}` : ""}
+                                            <span className="euk-dir-count">
+                                                {exam.prepares === 0
+                                                    ? "Guidance only"
+                                                    : `${exam.prepares} file${exam.prepares === 1 ? "" : "s"}`}
                                             </span>
-                                        </span>
-                                        <span className="euk-label shrink-0 text-[10px] text-[var(--signal-deep)]">
-                                            {exam.prepares} we prepare
-                                        </span>
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
-                    </section>
-                ))}
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        </section>
+                    ))}
 
-                <div className="support-invitation">
-                    <h2>Not on the list?</h2>
-                    <p>
-                        Tell us which exam you need. We&rsquo;ll record it for
-                        research.
-                    </p>
-                    <Link className="secondary-button" href="/exam-request">
-                        Request an exam ↗
-                    </Link>
+                    <div className="euk-dir-invite">
+                        <div className="min-w-0">
+                            <h2 className="euk-display">Not on the list?</h2>
+                            <p>
+                                Tell us which examination you need. It goes on our
+                                list, and we write to you when it&rsquo;s ready.
+                            </p>
+                        </div>
+                        <Link className="primary-button euk-dir-invite-link" href="/exam-request">
+                            Ask us to add it
+                            <ArrowDrawing className="euk-dir-invite-arrow" />
+                        </Link>
+                    </div>
                 </div>
             </main>
             <SiteFooter />

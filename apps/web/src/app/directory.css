@@ -1,0 +1,243 @@
+/*
+ * examuploadkit — the examination directory.
+ *
+ * Set like the index at the back of a book: a search at the top for the
+ * candidate who knows their examination's name, a letter bar for the one who
+ * doesn't, and each letter large in the margin beside its entries.
+ */
+
+.euk-directory-top {
+    padding: 40px 20px 36px;
+}
+
+@media (min-width: 768px) {
+    .euk-directory-top {
+        padding: 80px 48px 56px;
+    }
+}
+
+.euk-directory-title {
+    font-size: clamp(42px, 5.8vw, 84px);
+    line-height: 0.88;
+    text-wrap: balance;
+}
+
+.euk-directory-search {
+    margin-top: 32px;
+    max-width: 780px;
+}
+
+/* The letter bar: every letter a pressable tile. It stays under the header on a
+   desktop so a long scroll never loses the way back to another letter. */
+.euk-az {
+    border-top: var(--rule) solid var(--ink);
+    border-bottom: var(--rule) solid var(--ink);
+    background: var(--paper);
+}
+
+@media (min-width: 900px) {
+    .euk-az {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+    }
+}
+
+.euk-az-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 12px 20px;
+}
+
+@media (min-width: 768px) {
+    .euk-az-row {
+        padding: 12px 48px;
+    }
+}
+
+.euk-az a {
+    width: 38px;
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: var(--rule-thin) solid var(--ink);
+    background: var(--paper);
+    font-family: var(--font-shoulders), "Arial Narrow", sans-serif;
+    font-weight: 900;
+    font-size: 19px;
+    color: var(--ink);
+    transition:
+        transform 120ms cubic-bezier(0.2, 0, 0.1, 1),
+        background-color 120ms ease;
+}
+
+.euk-az a:hover,
+.euk-az a:focus-visible {
+    background: var(--ink);
+    color: var(--paper);
+}
+
+.euk-az a:active {
+    transform: translateY(2px);
+}
+
+.euk-directory-index {
+    padding: 24px 20px 96px;
+}
+
+@media (min-width: 768px) {
+    .euk-directory-index {
+        padding: 40px 48px 128px;
+    }
+}
+
+.euk-letter {
+    display: grid;
+    border-bottom: var(--rule) solid var(--ink);
+    padding: 22px 0 26px;
+    scroll-margin-top: 80px;
+}
+
+@media (min-width: 900px) {
+    .euk-letter {
+        grid-template-columns: 140px minmax(0, 1fr);
+        column-gap: 32px;
+        padding: 30px 0 34px;
+    }
+}
+
+.euk-letter-mark {
+    font-size: clamp(56px, 7vw, 96px);
+    line-height: 0.85;
+    color: var(--ink);
+}
+
+@media (min-width: 900px) {
+    .euk-letter-mark {
+        position: sticky;
+        top: 76px;
+        align-self: start;
+    }
+}
+
+@media (max-width: 899px) {
+    .euk-letter-mark {
+        padding-bottom: 8px;
+        border-bottom: var(--rule-thin) solid var(--ink);
+    }
+}
+
+.euk-letter-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+}
+
+@media (min-width: 768px) {
+    .euk-letter-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        column-gap: 40px;
+    }
+}
+
+.euk .euk-letter-list li {
+    max-width: none;
+    border-bottom: 2px solid var(--hairline);
+}
+
+.euk-dir-item {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 13px 0;
+    color: var(--ink);
+}
+
+.euk-dir-name {
+    display: block;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.35;
+}
+
+.euk-dir-item:hover .euk-dir-name,
+.euk-dir-item:focus-visible .euk-dir-name {
+    text-decoration: underline;
+    text-decoration-color: var(--signal-deep);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+}
+
+.euk-dir-meta {
+    display: block;
+    margin-top: 3px;
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--ink-55);
+}
+
+.euk-dir-count {
+    flex-shrink: 0;
+    border: 2px solid var(--ink);
+    padding: 3px 8px 2px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+    transition: background-color 140ms ease;
+}
+
+.euk-dir-item:hover .euk-dir-count {
+    background: var(--signal-soft);
+}
+
+.euk-dir-invite {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px 32px;
+    margin-top: 48px;
+    border: var(--rule) dashed var(--ink-40);
+    padding: 24px 24px 26px;
+}
+
+.euk-dir-invite h2 {
+    font-size: clamp(30px, 3.2vw, 44px);
+    line-height: 0.9;
+}
+
+.euk .euk-dir-invite p {
+    margin-top: 8px;
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--ink-70);
+}
+
+.euk .euk-dir-invite-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.euk-dir-invite-arrow {
+    width: 34px;
+    height: auto;
+    transition: translate 160ms cubic-bezier(0.2, 0, 0.1, 1);
+}
+
+.euk-dir-invite-link:hover .euk-dir-invite-arrow {
+    translate: 4px 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .euk-az a,
+    .euk-dir-count,
+    .euk-dir-invite-arrow {
+        transition: none;
+    }
+}

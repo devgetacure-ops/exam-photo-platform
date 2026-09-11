@@ -1,0 +1,171 @@
+/*
+ * examuploadkit — pages for when something didn't go to plan.
+ *
+ * Not found, a failed render, a failed root. One drawing each, drawn on once;
+ * the headline in the site's display type with the highlighter on its second
+ * line; and the way out set directly under it.
+ */
+
+.euk-state {
+    background: var(--paper);
+    color: var(--ink);
+    padding: 48px 20px 88px;
+}
+
+@media (min-width: 768px) {
+    .euk-state {
+        padding: 96px 48px 128px;
+    }
+}
+
+.euk-state-grid {
+    display: grid;
+    gap: 28px 64px;
+}
+
+@media (min-width: 900px) {
+    .euk-state-grid {
+        grid-template-columns: minmax(200px, 300px) minmax(0, 1fr);
+        align-items: center;
+    }
+}
+
+.euk-state-art {
+    width: 100%;
+    max-width: 260px;
+    color: var(--ink);
+}
+
+@media (max-width: 899px) {
+    .euk-state-art {
+        max-width: 170px;
+    }
+}
+
+.euk-state-svg {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.euk-state-stroke {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+    animation: euk-state-draw 900ms cubic-bezier(0.65, 0, 0.35, 1) both;
+}
+
+.euk-state-stroke:nth-child(2) {
+    animation-delay: 120ms;
+}
+
+.euk-state-stroke:nth-child(3) {
+    animation-delay: 240ms;
+}
+
+.euk-state-stroke:nth-child(4) {
+    animation-delay: 380ms;
+}
+
+.euk-state-stroke:nth-child(5) {
+    animation-delay: 520ms;
+}
+
+@keyframes euk-state-draw {
+    from {
+        stroke-dashoffset: 1;
+    }
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+/* The missing page is drawn dashed. A dash pattern can't also carry the
+   draw-on, so it fades in instead. */
+.euk-state-dash {
+    stroke: var(--ink-40);
+    stroke-dasharray: 0.02 0.018;
+    animation: euk-state-fade 500ms ease-out 380ms both;
+}
+
+@keyframes euk-state-fade {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.euk-state-accent {
+    stroke: var(--signal-deep);
+}
+
+/* Capped at 64 so each line holds one row beside the drawing; at 80 the
+   highlighted second line wrapped into a slab. */
+.euk-state-title {
+    font-size: clamp(38px, 4.6vw, 64px);
+    line-height: 0.88;
+    text-wrap: balance;
+    animation: euk-state-rise 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes euk-state-rise {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.euk .euk-state-lede {
+    margin-top: 20px;
+    font-size: clamp(16px, 1.5vw, 19px);
+    line-height: 1.6;
+    color: var(--ink-70);
+    max-width: 52ch;
+}
+
+.euk-state-search {
+    margin-top: 30px;
+    max-width: 640px;
+}
+
+.euk .euk-state-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 26px;
+    margin-top: 8px;
+    font-size: 15px;
+    max-width: none;
+}
+
+.euk-state-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px 24px;
+    margin-top: 30px;
+}
+
+.euk .euk-state-ref {
+    margin-top: 24px;
+    font-size: 13px;
+    color: var(--ink-55);
+}
+
+.euk-state-ref span {
+    font-variant-numeric: tabular-nums;
+    color: var(--ink-70);
+    overflow-wrap: anywhere;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .euk-state-stroke,
+    .euk-state-dash,
+    .euk-state-title {
+        animation: none;
+    }
+}
