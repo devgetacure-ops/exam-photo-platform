@@ -1,10 +1,10 @@
 import path from "node:path";
 import { saveRequest, validateRequest } from "../../../lib/request-store";
+import { isSameOrigin } from "../../../lib/request-origin";
 
 export const runtime = "nodejs";
 export async function POST(request: Request) {
-    const origin = request.headers.get("origin");
-    if (!origin || origin !== new URL(request.url).origin)
+    if (!isSameOrigin(request.headers, process.env.NEXT_PUBLIC_SITE_URL))
         return Response.json(
             { error: "Please submit from this website." },
             { status: 403 },

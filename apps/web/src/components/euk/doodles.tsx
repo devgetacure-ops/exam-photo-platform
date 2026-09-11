@@ -122,6 +122,52 @@ export function ArrowDrawing({ className }: { className?: string }) {
     );
 }
 
+/** A request joining a list: two entries ticked, the new one not yet. */
+export function ListDrawing({ className }: { className?: string }) {
+    return (
+        <Drawing viewBox="0 0 110 130" className={className}>
+            <S d="M14 18 H96 V124 H14 Z" />
+            <S d="M40 10 H70 V26 H40 Z" />
+            <S d="M26 44 H38 V56 H26 Z" />
+            <S d="M29 50 L32 53 L36 47" />
+            <S d="M48 50 H84" />
+            <S d="M26 68 H38 V80 H26 Z" />
+            <S d="M29 74 L32 77 L36 71" />
+            <S d="M48 74 H80" />
+            <S accent d="M26 92 H38 V104 H26 Z" />
+            <S accent d="M48 98 H78" />
+        </Drawing>
+    );
+}
+
+/** An examination's published notice, being read for its upload rules. */
+export function NoticeDrawing({ className }: { className?: string }) {
+    return (
+        <Drawing viewBox="0 0 112 128" className={className}>
+            <S d="M10 8 H74 L92 26 V122 H10 Z" />
+            <S d="M74 8 V26 H92" />
+            <S d="M22 42 H78" />
+            <S d="M22 56 H70" />
+            <S d="M22 70 H52" />
+            <S accent d="M58 88 A 18 18 0 1 0 94 88 A 18 18 0 1 0 58 88" />
+            <S accent d="M89 101 L106 118" />
+        </Drawing>
+    );
+}
+
+/** The one email a request earns. */
+export function EnvelopeDrawing({ className }: { className?: string }) {
+    return (
+        <Drawing viewBox="0 0 130 96" className={className}>
+            <S d="M8 14 H122 V88 H8 Z" />
+            <S d="M8 14 L65 56 L122 14" />
+            <S d="M8 88 L50 46" />
+            <S d="M122 88 L80 46" />
+            <S accent d="M58 56 A 7 7 0 1 0 72 56 A 7 7 0 1 0 58 56" />
+        </Drawing>
+    );
+}
+
 /** A signature that writes itself on the footer's declaration line. */
 export function SignatureStroke({ className }: { className?: string }) {
     return (

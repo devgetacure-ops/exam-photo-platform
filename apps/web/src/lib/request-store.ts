@@ -68,7 +68,7 @@ export async function saveRequest(value: CandidateRequest, directory: string) {
         .update(JSON.stringify({ ...value, day }))
         .digest("hex");
     const filename = path.join(directory, `${digest}.json`);
-    const reference = `UR-${randomUUID().slice(0, 8).toUpperCase()}`;
+    const reference = `EUK-${randomUUID().slice(0, 8).toUpperCase()}`;
     try {
         const handle = await open(filename, "wx", 0o600);
         try {

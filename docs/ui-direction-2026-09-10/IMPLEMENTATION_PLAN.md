@@ -8,7 +8,8 @@ resolution, and run through the detector.
 
 States: **todo** · **building** · **done** · **blocked** (with the reason).
 
-**Last updated 11 September 2026** — landing page and footer rebuilt and verified.
+**Last updated 11 September 2026** — landing page and footer rebuilt and verified;
+missing-examination page and request form rebuilt and verified.
 
 ## Standards that apply everywhere
 
@@ -29,8 +30,8 @@ States: **todo** · **building** · **done** · **blocked** (with the reason).
 | Centre-aligned hero | `app/page.tsx` | done |
 | Big search bar in the hero | `ExamSearch` | done |
 | Bold heading that tells the whole story | hero | done |
-| Search any exam; if absent, a dedicated page saying we are working on it | `/exam-request` | todo |
-| That page takes the exam name and an email to notify | `request-form` | todo |
+| Search any exam; if absent, a dedicated page saying we are working on it | `/exam-request` | done — an empty search hands over to it (link, and Enter); the page answers three ways: already here under that name, already on the list with the catalogue's own reason, or not here yet. What happens after you ask is told with no promised date |
+| That page takes the exam name and an email to notify | `request-form` | done — exam name carried from the search, email, optional notice link; designed sending, error (fields kept, focus moved to the message) and receipt (reference, copy, stamp) states. Submissions had been refused 403 whenever the server's own host differed from the address bar; the origin check now compares the host the browser addressed |
 | Scroll reveals, in order: what we do | landing | done |
 | — how we do it | landing | done |
 | — what problem we solve | landing | done |

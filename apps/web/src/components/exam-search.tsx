@@ -4,13 +4,14 @@ import { useMemo, useRef, useState, useId } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { SearchEntry } from "../lib/types";
+import { rankEntries } from "../lib/search-rank";
 
 /**
  * The picker. A candidate arrives knowing one thing — the name of their
  * examination — so search is the whole interaction: no categories, no browse
  * tree, no filters.
  *
- * The whole index is in memory (39 records and their aliases, a few KB), so
+ * The whole index is in memory (every record and its aliases, a few KB), so
  * matching costs no round trip and results appear as fast as the candidate can
  * type. That is the difference between a search box that feels like a product
  * and one that feels like a form.
@@ -23,105 +24,6 @@ interface Props {
   autoFocus?: boolean;
   /** Off on /exams itself, where offering to browse the page you are on reads careless. */
   showBrowseLink?: boolean;
-}
-
-/** A match, plus how good it was, so exact and prefix hits outrank substrings. */
-interface Ranked {
-  entry: SearchEntry;
-  score: number;
-  /** The alias that matched, when it was not the name. Shown so the candidate
-   *  sees *why* a row came back for "CAT". */
-  via: string | null;
-}
-
-function normalise(value: string): string {
-  return value.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
-}
-
-/**
- * The same string with every separator removed.
- *
- * Examination names are written inconsistently in the wild -- "MHT-CET" and
- * "MHT CET", "R.B.I." and "RBI", "CUET-UG" and "CUET UG" -- and a candidate
- * types whichever they saw. Comparing the compact forms as well as the spaced
- * ones makes all of those spellings find the same exam.
- */
-function compact(value: string): string {
-  return value.toLowerCase().replace(/[^a-z0-9]/g, "");
-}
-
-function escapeForRegExp(value: string): string {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-
-/**
- * How well one haystack answers the query, 0 for not at all.
- *
- * Ranked rather than boolean so an exact or leading match outranks a substring
- * buried mid-string: typing "gate" should surface GATE, not every examination
- * whose description happens to contain "postgraduate".
- */
-function rateOne(haystack: string, q: string): number {
-  if (!haystack || !q) return 0;
-  if (haystack === q) return 100;
-  if (haystack.startsWith(q)) return 80;
-  if (new RegExp(`\\b${escapeForRegExp(q)}`).test(haystack)) return 60;
-  if (haystack.includes(q)) return 30;
-  return 0;
-}
-
-/** Best score across the spaced and compact spellings of both sides. */
-function rate(raw: string, query: string): number {
-  const words = normalise(raw).split(" ");
-  const tokens = normalise(query).split(" ");
-  let position = -1;
-  const orderedMatch = tokens.length > 1 && tokens.every(token => {
-    position = words.findIndex((word, index) => index > position && word.startsWith(token));
-    return position >= 0;
-  });
-  return Math.max(
-    rateOne(normalise(raw), normalise(query)),
-    rateOne(compact(raw), compact(query)),
-    orderedMatch ? 45 : 0
-  );
-}
-
-/**
- * Score one entry against the query.
- *
- * Abbreviations and full forms both have to work, and in this catalogue the
- * abbreviation usually lives in `aliases` ("CAT 2025") while the full form is
- * the name ("Common Admission Test 2025"). Both are searched, and a hit on
- * either is a hit.
- */
-function score(entry: SearchEntry, query: string): Ranked | null {
-  if (!normalise(query)) return null;
-
-  let best = rate(entry.name, query);
-  let via: string | null = null;
-
-  for (const alias of entry.aliases) {
-    const aliasScore = rate(alias, query);
-    // The bonus applies only to an alias that actually matched. Adding it
-    // unconditionally would give every examination a non-zero score for every
-    // query, turning a search for "ssc" into a list of everything.
-    if (aliasScore > 0 && aliasScore + 5 > best) {
-      best = aliasScore + 5;
-      via = alias;
-    }
-  }
-
-  // The conducting body is searchable but weighted down: "Reserve Bank of
-  // India" should find RBI Assistant, without every IIM exam ranking on
-  // "Institutes".
-  const bodyScore = rate(entry.body, query) * 0.5;
-  if (bodyScore > best) {
-    best = bodyScore;
-    via = entry.body;
-  }
-
-  if (best <= 0) return null;
-  return { entry, score: best, via };
 }
 
 export function ExamSearch({
@@ -137,15 +39,11 @@ export function ExamSearch({
   const listId = useId();
 
   const { available, blocked } = useMemo(() => {
-    if (!query.trim()) return { available: [], blocked: [] as Ranked[] };
-
-    const rank = (rows: SearchEntry[]) =>
-      rows
-        .map((entry) => score(entry, query))
-        .filter((row): row is Ranked => row !== null)
-        .sort((a, b) => b.score - a.score || a.entry.name.localeCompare(b.entry.name));
-
-    return { available: rank(exams).slice(0, 7), blocked: rank(unavailable).slice(0, 4) };
+    if (!query.trim()) return { available: [], blocked: [] };
+    return {
+      available: rankEntries(exams, query).slice(0, 7),
+      blocked: rankEntries(unavailable, query).slice(0, 4),
+    };
   }, [query, exams, unavailable]);
 
   // Only selectable rows take part in keyboard navigation. An unavailable
@@ -153,6 +51,7 @@ export function ExamSearch({
   // Enter would imply it leads somewhere (DEC-056).
   const navigable = available;
   const hasResults = available.length > 0 || blocked.length > 0;
+  const requestHref = `/exam-request?exam=${encodeURIComponent(query.trim())}`;
 
   const go = (entry: SearchEntry) => router.push(`/exam/${entry.id}`);
 
@@ -168,6 +67,10 @@ export function ExamSearch({
       if (chosen) {
         event.preventDefault();
         go(chosen.entry);
+      } else if (query.trim() && !hasResults) {
+        // Nothing to select, so Enter does the one useful thing left.
+        event.preventDefault();
+        router.push(requestHref);
       }
     } else if (event.key === "Escape") {
       setQuery("");
@@ -178,8 +81,8 @@ export function ExamSearch({
     <div className="w-full">
       <div
         className="group flex items-center gap-3 border-[3px] border-[var(--ink)] bg-[var(--paper)]
-                   px-5 py-4 shadow-card transition-colors
-                   focus-within:border-[var(--signal)]"
+                   px-5 py-4 shadow-[5px_5px_0_var(--ink)] transition-colors
+                   focus-within:border-[var(--signal-deep)]"
       >
         <svg
           className="size-5 shrink-0 text-[var(--ink)]"
@@ -203,7 +106,7 @@ export function ExamSearch({
           }}
           onKeyDown={onKeyDown}
           autoFocus={autoFocus}
-          placeholder="Search your exam — SSC, CAT, IBPS PO, NEET…"
+          placeholder="Search your exam: SSC, CAT, IBPS PO, NEET…"
           aria-label="Search for your examination"
           aria-autocomplete="list"
           aria-controls={listId}
@@ -213,7 +116,7 @@ export function ExamSearch({
           autoComplete="off"
           spellCheck={false}
           className="w-full bg-transparent text-lg text-[var(--ink)] outline-none
-                     placeholder:text-muted
+                     placeholder:text-[var(--ink-55)]
                      [&::-webkit-search-cancel-button]:appearance-none"
         />
         {query && (
@@ -223,7 +126,7 @@ export function ExamSearch({
               setQuery("");
               inputRef.current?.focus();
             }}
-            className="label shrink-0 rounded px-1.5 py-1 hover:text-ink"
+            className="euk-label shrink-0 px-1.5 py-1 text-[11px] text-[var(--ink-55)] hover:text-[var(--ink)]"
             aria-label="Clear search"
           >
             Clear
@@ -238,12 +141,22 @@ export function ExamSearch({
           aria-label="Matching examinations"
           className="mt-2 overflow-hidden border-[3px] border-[var(--ink)] bg-[var(--paper)] shadow-[7px_7px_0_var(--ink)]"
         >
+          {/*
+            An empty result is where a candidate decides we do not have their
+            examination, so it hands them the next step rather than a shrug.
+          */}
           {!hasResults && (
-            <p className="px-4 py-6 text-sm text-ink-soft">
-              Nothing matches <span className="font-medium text-ink">“{query}”</span>.
-              We cover {exams.length} examinations so far — if yours is missing,{" "}
-              try its full name or a different abbreviation.
-            </p>
+            <div className="px-4 py-5">
+              <p className="text-[15px] leading-relaxed text-[var(--ink-70)]">
+                Nothing matches{" "}
+                <span className="font-semibold text-[var(--ink)]">“{query.trim()}”</span>.
+                Try its full name or its short form. If it still isn&rsquo;t
+                here, we don&rsquo;t prepare it yet.
+              </p>
+              <Link href={requestHref} className="euk-link mt-3 inline-block text-[15px]">
+                Ask us to add it
+              </Link>
+            </div>
           )}
 
           {available.map((row, index) => (
@@ -261,24 +174,24 @@ export function ExamSearch({
                           }`}
             >
               <span className="min-w-0 flex-1">
-                <span className="block truncate font-medium text-ink">
+                <span className="block truncate font-medium text-[var(--ink)]">
                   {row.entry.name}
                 </span>
-                <span className="mt-0.5 block truncate text-xs text-muted">
+                <span className="mt-0.5 block truncate text-xs text-[var(--ink-55)]">
                   {row.entry.body}
                   {row.via && (
                     <>
                       {" · also "}
-                      <span className="text-ink-soft">{row.via}</span>
+                      <span className="text-[var(--ink-70)]">{row.via}</span>
                     </>
                   )}
                 </span>
               </span>
-              <span className="spec shrink-0 text-xs text-ink-soft">
+              <span className="euk-figures shrink-0 text-xs text-[var(--ink-70)]">
                 {row.entry.prepares} file{row.entry.prepares === 1 ? "" : "s"}
               </span>
               <svg
-                className="size-4 shrink-0 text-muted"
+                className="size-4 shrink-0 text-[var(--ink-55)]"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -301,14 +214,14 @@ export function ExamSearch({
           */}
           {blocked.length > 0 && (
             <div className="border-t-2 border-[var(--ink)] bg-[var(--paper-2)]">
-              <p className="label px-4 pt-3 pb-1.5">Not yet available</p>
+              <p className="euk-label px-4 pt-3 pb-1.5 text-[11px]">Not yet available</p>
               {blocked.map((row) => (
                 <div
                   key={row.entry.name}
                   className="border-b-2 border-[var(--hairline)] px-4 py-3 last:border-b-0"
                 >
-                  <p className="text-sm font-medium text-ink-soft">{row.entry.name}</p>
-                  <p className="mt-0.5 text-xs text-muted">
+                  <p className="text-sm font-medium text-[var(--ink-70)]">{row.entry.name}</p>
+                  <p className="mt-0.5 text-xs text-[var(--ink-55)]">
                     {row.entry.unavailable?.reason === "live capture only"
                       ? "The portal photographs you directly, so there is no photo for us to prepare."
                       : "We have not confirmed this exam's published specification yet."}
@@ -327,7 +240,10 @@ export function ExamSearch({
           )}
         </div>
       )}
-      <div className="euk-label flex flex-wrap gap-4 px-4 py-3 text-[10px] [&_a]:text-[var(--ink-55)] [&_a]:underline [&_a]:underline-offset-4 [&_a:hover]:text-[var(--signal-deep)]">{showBrowseLink && <Link href="/exams">Browse all {exams.length} exams ↗</Link>}{query.trim() && <Link href={`/exam-request?exam=${encodeURIComponent(query)}`}>Can’t find yours? Request it ↗</Link>}</div>
+      <div className="euk-label flex flex-wrap gap-4 px-4 py-3 text-[11px] [&_a]:text-[var(--ink-55)] [&_a]:underline [&_a]:underline-offset-4 [&_a:hover]:text-[var(--signal-deep)]">
+        {showBrowseLink && <Link href="/exams">Browse all {exams.length} exams ↗</Link>}
+        {query.trim() && hasResults && <Link href={requestHref}>Not the one? Ask us to add it ↗</Link>}
+      </div>
     </div>
   );
 }

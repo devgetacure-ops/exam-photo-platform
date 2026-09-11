@@ -1,0 +1,622 @@
+/*
+ * examuploadkit — requests.
+ *
+ * The missing-examination page, and the request slip it shares with support.
+ * The slip is the one form on the site a candidate fills in for us rather than
+ * for their examination, so it is drawn in the same language as the form they
+ * are applying with: a titled bar, heavy ruled fields, a stamp when it's filed.
+ */
+
+/* ---- the page ------------------------------------------------------- */
+
+.euk-request-top {
+    padding: 36px 20px 72px;
+}
+
+@media (min-width: 768px) {
+    .euk-request-top {
+        padding: 80px 48px 112px;
+    }
+}
+
+/* A phone reads it top to bottom: what happened, the form, then a second
+   search. A desktop keeps the form beside the explanation and in view while
+   the candidate reads. */
+.euk-request-grid {
+    display: grid;
+    gap: 44px;
+    grid-template-areas:
+        "copy"
+        "slip"
+        "search";
+}
+
+@media (min-width: 1000px) {
+    .euk-request-grid {
+        grid-template-columns: minmax(0, 1fr) minmax(400px, 470px);
+        grid-template-areas:
+            "copy slip"
+            "search slip";
+        grid-template-rows: auto 1fr;
+        column-gap: 80px;
+        row-gap: 56px;
+    }
+}
+
+.euk-request-copy {
+    grid-area: copy;
+    min-width: 0;
+}
+
+.euk-request-slip {
+    grid-area: slip;
+    min-width: 0;
+}
+
+@media (min-width: 1000px) {
+    .euk-request-slip {
+        align-self: start;
+        position: sticky;
+        top: 28px;
+    }
+}
+
+.euk-request-search {
+    grid-area: search;
+    min-width: 0;
+    align-self: start;
+}
+
+.euk-request-search > p {
+    font-size: 15px;
+    color: var(--ink-70);
+    margin-bottom: 14px;
+}
+
+/* What they searched, set as the search box it came from, with the answer
+   stamped beside it. */
+.euk-asked {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 16px;
+    margin-bottom: 30px;
+    max-width: none;
+}
+
+.euk-asked-query {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    max-width: 100%;
+    border: var(--rule) solid var(--ink);
+    background: var(--paper);
+    padding: 10px 16px;
+    font-size: 17px;
+    font-weight: 500;
+}
+
+.euk-asked-query svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+.euk-asked-query > span {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.euk-asked-stamp {
+    border: 3px solid var(--signal-deep);
+    color: var(--signal-deep);
+    padding: 6px 10px 4px;
+    font-family: var(--font-shoulders), "Arial Narrow", sans-serif;
+    font-weight: 900;
+    font-size: 17px;
+    line-height: 1;
+    text-transform: uppercase;
+    rotate: -4deg;
+}
+
+/* Capped at 72 so the desktop headline holds two lines in its column; at 88
+   it broke into four and the highlight became a slab. */
+.euk-request-title {
+    font-size: clamp(44px, 5vw, 72px);
+    line-height: 0.86;
+    text-wrap: balance;
+}
+
+.euk-asked-stamp--ok {
+    border-color: var(--ok-line);
+    color: var(--ok-line);
+}
+
+.euk .euk-request-open {
+    margin-top: 30px;
+}
+
+.euk .euk-request-else {
+    margin-top: 22px;
+    font-size: 15px;
+    color: var(--ink-70);
+}
+
+.euk-request-name {
+    color: var(--ink);
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.euk-nearby {
+    margin-top: 36px;
+    border-top: var(--rule) solid var(--ink);
+    padding-top: 18px;
+}
+
+.euk-nearby-title {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.euk-nearby ul {
+    list-style: none;
+    margin: 10px 0 0;
+    padding: 0;
+}
+
+.euk-nearby a {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 13px 0;
+    border-bottom: 2px solid var(--hairline);
+    color: var(--ink);
+}
+
+.euk-nearby-name {
+    display: block;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.euk-nearby-meta {
+    display: block;
+    margin-top: 2px;
+    font-size: 13px;
+    color: var(--ink-55);
+}
+
+.euk-nearby-arrow {
+    width: 40px;
+    height: auto;
+    flex-shrink: 0;
+    margin-left: auto;
+    color: var(--signal-deep);
+    transition: translate 160ms cubic-bezier(0.2, 0, 0.1, 1);
+}
+
+.euk-nearby a:hover .euk-nearby-name,
+.euk-nearby a:focus-visible .euk-nearby-name {
+    text-decoration: underline;
+    text-decoration-color: var(--signal-deep);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+}
+
+.euk-nearby a:hover .euk-nearby-arrow {
+    translate: 5px 0;
+}
+
+.euk-listed {
+    margin-top: 26px;
+    border: var(--rule-thin) dashed var(--partial-line);
+    background: var(--partial-fill);
+    padding: 16px 18px;
+}
+
+.euk-listed p {
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink);
+}
+
+.euk-listed p + p {
+    margin-top: 6px;
+}
+
+.euk-listed-name {
+    font-weight: 600;
+}
+
+/* ---- the slip ------------------------------------------------------- */
+
+.euk-slip {
+    position: relative;
+    border: var(--rule) solid var(--ink);
+    background: var(--paper);
+    box-shadow: 10px 10px 0 var(--ink);
+}
+
+@media (max-width: 639px) {
+    .euk-slip {
+        box-shadow: 6px 6px 0 var(--ink);
+    }
+}
+
+.euk-slip-bar {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 10px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    max-width: none;
+}
+
+.euk-slip-body {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    padding: 24px 20px 26px;
+}
+
+@media (min-width: 640px) {
+    .euk-slip-body {
+        padding: 28px 28px 30px;
+    }
+}
+
+.euk-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.euk-field-label {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+}
+
+.euk .euk-field-hint {
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--ink-55);
+    max-width: none;
+}
+
+/* 17px, because an iPhone zooms the whole page into any field set smaller
+   than 16, and a zoomed form on deadline day is a form abandoned. */
+.euk .euk-slip input[type="text"],
+.euk .euk-slip input[type="email"],
+.euk .euk-slip textarea {
+    border: var(--rule) solid var(--ink);
+    background: var(--paper);
+    color: var(--ink);
+    padding: 13px 14px;
+    font-size: 17px;
+    line-height: 1.4;
+    transition:
+        border-color 140ms ease,
+        box-shadow 140ms ease;
+}
+
+.euk .euk-slip textarea {
+    resize: vertical;
+    min-height: 60px;
+}
+
+.euk .euk-slip input::placeholder,
+.euk .euk-slip textarea::placeholder {
+    color: var(--ink-55);
+}
+
+.euk .euk-slip input[type="text"]:focus-visible,
+.euk .euk-slip input[type="email"]:focus-visible,
+.euk .euk-slip textarea:focus-visible {
+    outline: none;
+    border-color: var(--signal-deep);
+    box-shadow: 5px 5px 0 var(--signal);
+}
+
+/* Only after the candidate has touched a field, never on an untouched form. */
+.euk .euk-slip input:user-invalid,
+.euk .euk-slip textarea:user-invalid {
+    border-style: dashed;
+    border-color: var(--signal-deep);
+}
+
+.euk-consent {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--ink-70);
+    cursor: pointer;
+}
+
+.euk-consent input {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    accent-color: var(--signal-deep);
+    cursor: pointer;
+}
+
+.euk .euk-slip-submit {
+    position: relative;
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    padding: 15px 22px;
+    font-size: 17px;
+    text-align: center;
+}
+
+/* While it sends, a bar runs along the button's foot. The button stays at
+   full strength rather than greying out, so it doesn't look like it failed. */
+.euk .euk-slip-submit[aria-disabled="true"] {
+    cursor: progress;
+}
+
+.euk .euk-slip-submit[aria-disabled="true"]::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 4px;
+    background: var(--signal-ink);
+    transform-origin: left;
+    animation: euk-sending 1100ms cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+@keyframes euk-sending {
+    0% {
+        transform: scaleX(0);
+        opacity: 1;
+    }
+    70% {
+        transform: scaleX(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scaleX(1);
+        opacity: 0;
+    }
+}
+
+.euk-slip-error {
+    display: grid;
+    grid-template-columns: 22px minmax(0, 1fr);
+    gap: 4px 12px;
+    border: var(--rule-thin) dashed var(--signal-deep);
+    background: var(--signal-soft);
+    padding: 14px 16px;
+    outline: none;
+}
+
+.euk-slip-error svg {
+    grid-row: span 2;
+    width: 22px;
+    height: 22px;
+    margin-top: 1px;
+    color: var(--signal-deep);
+}
+
+.euk-slip-error p {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--ink-70);
+}
+
+.euk .euk-slip-error .euk-slip-error-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ink);
+}
+
+/* ---- the receipt ---------------------------------------------------- */
+
+.euk-slip-stamp {
+    align-self: flex-start;
+    border: 3px solid var(--ok-line);
+    color: var(--ok-line);
+    padding: 7px 12px 5px;
+    font-family: var(--font-shoulders), "Arial Narrow", sans-serif;
+    font-weight: 900;
+    font-size: 22px;
+    line-height: 0.95;
+    text-transform: uppercase;
+    rotate: -6deg;
+    animation: euk-stamp-in 520ms cubic-bezier(0.3, 1.5, 0.5, 1) 120ms both;
+}
+
+@keyframes euk-stamp-in {
+    from {
+        opacity: 0;
+        scale: 1.9;
+    }
+    to {
+        opacity: 1;
+        scale: 1;
+    }
+}
+
+.euk-receipt-title {
+    font-size: clamp(38px, 4.2vw, 52px);
+    line-height: 0.88;
+    outline: none;
+}
+
+.euk-receipt {
+    margin: 0;
+    border-top: var(--rule-thin) solid var(--ink);
+}
+
+.euk-receipt > div {
+    display: grid;
+    grid-template-columns: 104px minmax(0, 1fr);
+    gap: 12px;
+    padding: 11px 0;
+    border-bottom: 2px solid var(--hairline);
+}
+
+.euk-receipt dt {
+    font-size: 13px;
+    color: var(--ink-55);
+    padding-top: 3px;
+}
+
+.euk-receipt dd {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.euk-receipt .euk-receipt-ref {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 14px;
+}
+
+.euk-receipt-ref > span {
+    font-family: var(--font-shoulders), "Arial Narrow", sans-serif;
+    font-weight: 900;
+    font-size: 26px;
+    line-height: 1;
+    letter-spacing: 0.04em;
+    font-variant-numeric: tabular-nums;
+}
+
+.euk-receipt-copy {
+    border: var(--rule-thin) solid var(--ink);
+    padding: 4px 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.euk-receipt-copy:hover {
+    background: var(--paper-2);
+}
+
+.euk .euk-slip-note {
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink-70);
+}
+
+.euk-slip-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px 22px;
+}
+
+.euk-slip-actions .quiet-link {
+    font-size: 15px;
+    cursor: pointer;
+}
+
+/* ---- after you ask -------------------------------------------------- */
+
+.euk-after {
+    list-style: none;
+    margin: 52px 0 0;
+    padding: 0;
+    display: grid;
+}
+
+@media (min-width: 900px) {
+    .euk-after {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 64px;
+    }
+}
+
+.euk-after-step {
+    position: relative;
+    border-top: var(--rule) solid var(--ink);
+    padding: 24px 0 30px;
+}
+
+/* On a phone the drawing sits beside its heading, so three steps don't cost
+   three screens of scroll. */
+.euk-after-head {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+@media (min-width: 900px) {
+    .euk-after-head {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 22px;
+    }
+}
+
+.euk-after-drawing {
+    width: 54px;
+    height: 62px;
+    flex-shrink: 0;
+    color: var(--ink);
+}
+
+@media (min-width: 900px) {
+    .euk-after-drawing {
+        width: 76px;
+        height: 86px;
+    }
+}
+
+.euk-after-step h3 {
+    font-family: var(--font-shoulders), "Arial Narrow", sans-serif;
+    font-weight: 900;
+    font-size: clamp(26px, 2.4vw, 32px);
+    line-height: 0.94;
+    text-transform: uppercase;
+}
+
+.euk-after-step p {
+    margin-top: 14px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink-70);
+    max-width: 44ch;
+}
+
+.euk-after-arrow {
+    display: none;
+}
+
+@media (min-width: 900px) {
+    .euk-after-arrow {
+        display: block;
+        position: absolute;
+        top: 52px;
+        right: -56px;
+        width: 46px;
+        height: auto;
+        color: var(--signal-deep);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .euk-slip-stamp,
+    .euk .euk-slip-submit[aria-disabled="true"]::after {
+        animation: none;
+    }
+    .euk-nearby-arrow,
+    .euk .euk-slip input,
+    .euk .euk-slip textarea {
+        transition: none;
+    }
+}
