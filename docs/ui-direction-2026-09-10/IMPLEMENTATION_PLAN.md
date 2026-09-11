@@ -9,7 +9,8 @@ resolution, and run through the detector.
 States: **todo** · **building** · **done** · **blocked** (with the reason).
 
 **Last updated 11 September 2026** — landing page and footer rebuilt and verified;
-missing-examination page and request form rebuilt and verified.
+missing-examination page and request form rebuilt and verified; support and the three
+policies rebuilt and verified.
 
 ## Standards that apply everywhere
 
@@ -49,10 +50,10 @@ missing-examination page and request form rebuilt and verified.
 
 | Requirement | Surface | State |
 |---|---|---|
-| Privacy policy | `/privacy` | done — needs business facts |
-| Terms and conditions | `/terms` | done — needs business facts |
-| Refund policy | `/refund-policy` | done — needs business facts |
-| Support, redressal and request forum for queries, issues, grievances | `/support` | todo — built as a private ticket flow; a public forum needs moderation and exposes candidates' own faces and signatures in posts |
+| Privacy policy | `/privacy` | done — redesigned: the three policies a strip apart, sections listed and kept in view on desktop, 17px text at a 66ch measure, ends on a way to ask. Needs business facts |
+| Terms and conditions | `/terms` | done — as privacy. Needs business facts |
+| Refund policy | `/refund-policy` | done — as privacy; asks for the payment reference a candidate can actually find, since no screen shows our order id. Needs business facts |
+| Support, redressal and request forum for queries, issues, grievances | `/support` | done — every known problem answered in public (payment confirming, failed payment, double charge, deleted files, rejected file, rules that don't match a notice, missing email, missing examination, deletion), a private request with a reference for a case of one's own, and a grievance route. See OWNER_DECISIONS C10. Needs a named grievance officer from the owner |
 
 ## Exam page
 

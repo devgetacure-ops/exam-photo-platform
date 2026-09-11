@@ -1,0 +1,162 @@
+/*
+ * examuploadkit — privacy, terms and refunds.
+ *
+ * Built for finding one answer: the policies a strip apart, sections listed
+ * and kept in view on a desktop, text at a reading size and measure.
+ */
+
+.euk-policy-top {
+    padding: 36px 20px 40px;
+    border-bottom: var(--rule) solid var(--ink);
+}
+
+@media (min-width: 768px) {
+    .euk-policy-top {
+        padding: 72px 48px 60px;
+    }
+}
+
+.euk-policy-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 30px;
+}
+
+.euk-policy-tabs a {
+    border: var(--rule-thin) solid var(--ink);
+    padding: 7px 14px 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    transition: background-color 140ms ease;
+}
+
+.euk-policy-tabs a:hover {
+    background: var(--paper-2);
+}
+
+.euk-policy-tabs a[aria-current="page"] {
+    background: var(--ink);
+    color: var(--paper);
+}
+
+.euk-policy-title {
+    font-size: clamp(40px, 5vw, 72px);
+    line-height: 0.88;
+    text-wrap: balance;
+    max-width: 18ch;
+}
+
+.euk-policy-main {
+    padding: 8px 20px 88px;
+}
+
+@media (min-width: 768px) {
+    .euk-policy-main {
+        padding: 24px 48px 120px;
+    }
+}
+
+.euk-policy-grid {
+    display: grid;
+}
+
+@media (min-width: 1000px) {
+    .euk-policy-grid {
+        grid-template-columns: 240px minmax(0, 1fr);
+        column-gap: 88px;
+        align-items: start;
+    }
+}
+
+/* A phone has three to five short sections and a strip to the other two
+   policies; a list of links above them would be a screen of scroll to reach
+   the first answer. */
+.euk-policy-toc {
+    display: none;
+}
+
+@media (min-width: 1000px) {
+    .euk-policy-toc {
+        display: block;
+        position: sticky;
+        top: 28px;
+        padding-top: 32px;
+    }
+}
+
+.euk-policy-toc-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-55);
+}
+
+.euk-policy-toc ul {
+    list-style: none;
+    margin: 12px 0 0;
+    padding: 2px 0 2px 16px;
+    border-left: var(--rule) solid var(--ink);
+}
+
+.euk-policy-toc a {
+    display: block;
+    padding: 7px 0;
+    font-size: 15px;
+    line-height: 1.35;
+    color: var(--ink-70);
+}
+
+.euk-policy-toc a:hover,
+.euk-policy-toc a:focus-visible {
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--signal-deep);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+}
+
+.euk-policy-section {
+    padding: 30px 0;
+    border-bottom: 2px solid var(--hairline);
+    scroll-margin-top: 20px;
+}
+
+.euk-policy-section h2 {
+    font-family: var(--font-shoulders), "Arial Narrow", sans-serif;
+    font-weight: 900;
+    font-size: clamp(24px, 2.4vw, 32px);
+    line-height: 0.95;
+    text-transform: uppercase;
+}
+
+.euk-policy-section p {
+    margin-top: 14px;
+    font-size: 17px;
+    line-height: 1.7;
+    color: var(--ink-70);
+    max-width: 66ch;
+}
+
+.euk-policy-close {
+    margin-top: 44px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px 24px;
+    border: var(--rule) solid var(--ink);
+    padding: 22px 24px;
+    box-shadow: var(--drop-sm) var(--drop-sm) 0 var(--ink);
+}
+
+.euk-policy-close p {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .euk-policy-tabs a {
+        transition: none;
+    }
+}

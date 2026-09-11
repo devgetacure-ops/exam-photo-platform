@@ -8,6 +8,7 @@ import "./system.css";
 import "./app.css";
 import "./story.css";
 import "./request.css";
+import "./policy.css";
 
 /**
  * Three families. Each carries a different register and none of them is a

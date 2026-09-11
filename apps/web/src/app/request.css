@@ -609,6 +609,185 @@
     }
 }
 
+/* ---- support -------------------------------------------------------- */
+
+/* The slip and the copy carry named grid areas from the request page, so this
+   grid must name them too. Without the names the browser invented implicit
+   tracks and the copy column collapsed to 0px — one word per line. */
+.euk-support-grid {
+    display: grid;
+    gap: 56px;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+        "copy"
+        "slip";
+}
+
+@media (min-width: 1000px) {
+    .euk-support-grid {
+        grid-template-columns: minmax(0, 1fr) minmax(400px, 470px);
+        grid-template-areas: "copy slip";
+        column-gap: 80px;
+        align-items: start;
+    }
+    .euk-support-grid .euk-request-slip {
+        position: sticky;
+        top: 28px;
+    }
+}
+
+.euk .euk-support-note {
+    margin-top: 24px;
+}
+
+/* A phone puts the answers first, which is where most candidates find their
+   way out; the one who already knows they need to write gets a way past them.
+   A desktop has the form in view already. */
+.euk-jump {
+    display: inline-block;
+    margin-top: 16px;
+    font-size: 15px;
+}
+
+@media (min-width: 1000px) {
+    .euk-jump {
+        display: none;
+    }
+}
+
+#write {
+    scroll-margin-top: 20px;
+}
+
+.euk-answers {
+    margin-top: 48px;
+}
+
+.euk-answers-title {
+    font-family: var(--font-shoulders), "Arial Narrow", sans-serif;
+    font-weight: 900;
+    font-size: 26px;
+    line-height: 0.95;
+    text-transform: uppercase;
+    padding-bottom: 12px;
+    border-bottom: var(--rule) solid var(--ink);
+}
+
+.euk-answer {
+    border-bottom: 2px solid var(--hairline);
+}
+
+.euk-answer summary {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    padding: 17px 0;
+    list-style: none;
+    cursor: pointer;
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.euk-answer summary::-webkit-details-marker {
+    display: none;
+}
+
+.euk-answer summary:hover > span,
+.euk-answer summary:focus-visible > span {
+    text-decoration: underline;
+    text-decoration-color: var(--signal-deep);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+}
+
+.euk-answer-mark {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    margin-left: auto;
+    margin-top: 1px;
+}
+
+.euk-answer-v {
+    transform-box: fill-box;
+    transform-origin: center;
+    transition: transform 200ms cubic-bezier(0.2, 0, 0.1, 1);
+}
+
+.euk-answer[open] .euk-answer-v {
+    transform: scaleY(0);
+}
+
+.euk-answer[open] .euk-answer-mark {
+    color: var(--signal-deep);
+}
+
+.euk-answer-body {
+    padding: 0 40px 22px 0;
+}
+
+.euk-answer-body p {
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--ink-70);
+}
+
+.euk-answer-body p + p {
+    margin-top: 10px;
+}
+
+.euk-answer-body strong {
+    color: var(--ink);
+}
+
+/* An answer settles in rather than snapping. Opacity and transform only:
+   animating the height would re-lay-out every answer below it on each frame. */
+.euk-answer[open] .euk-answer-body {
+    animation: euk-answer-in 240ms cubic-bezier(0.2, 0.7, 0.1, 1);
+}
+
+@keyframes euk-answer-in {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.euk-escalate {
+    margin-top: 52px;
+    border: var(--rule) solid var(--ink);
+    background: var(--paper-2);
+    padding: 22px 22px 24px;
+}
+
+.euk-escalate h2 {
+    font-size: 24px;
+    line-height: 0.95;
+}
+
+.euk-escalate p {
+    margin-top: 10px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink-70);
+}
+
+.euk-support-slip-title {
+    font-size: clamp(34px, 3.4vw, 44px);
+    line-height: 0.9;
+}
+
+.euk .euk-support-slip-note {
+    margin: 10px 0 22px;
+    font-size: 15px;
+    color: var(--ink-70);
+}
+
 @media (prefers-reduced-motion: reduce) {
     .euk-slip-stamp,
     .euk .euk-slip-submit[aria-disabled="true"]::after {
@@ -616,7 +795,11 @@
     }
     .euk-nearby-arrow,
     .euk .euk-slip input,
-    .euk .euk-slip textarea {
+    .euk .euk-slip textarea,
+    .euk-answer-v {
         transition: none;
+    }
+    .euk-answer[open] .euk-answer-body {
+        animation: none;
     }
 }

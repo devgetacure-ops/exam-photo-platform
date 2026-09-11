@@ -1,6 +1,26 @@
 import Link from "next/link";
 import { SiteHeader } from "./site-header";
 import { SiteFooter } from "./site-footer";
+import { PolicyTabs } from "./policy-tabs";
+
+/**
+ * Privacy, terms and refunds.
+ *
+ * These are read by a candidate with a specific worry — what happens to my
+ * photograph, will I get my money back — so the page is built for finding one
+ * answer rather than reading top to bottom: the three policies are one strip
+ * apart, every section is linked from a list that stays in view on a desktop,
+ * and the text runs at a reading size and measure. It ends on a way to ask,
+ * because a policy that doesn't answer the question should hand over to
+ * someone who can.
+ */
+
+function slug(title: string): string {
+    return title
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "");
+}
 
 export function PolicyPage({
     title,
@@ -14,20 +34,51 @@ export function PolicyPage({
     return (
         <>
             <SiteHeader />
-            <main className="euk content-page policy-page" id="main-content">
-                <div className="content-intro">
-                    <h1>{title}</h1>
-                    <p>{intro}</p>
+            <main className="euk euk-policy" id="main-content">
+                <div className="euk-policy-top">
+                    <div className="euk-wrap">
+                        <PolicyTabs />
+                        <h1 className="euk-display euk-policy-title">{title}</h1>
+                        <p className="euk-lede">{intro}</p>
+                    </div>
                 </div>
-                {sections.map((section) => (
-                    <section key={section.title}>
-                        <h2>{section.title}</h2>
-                        <p>{section.text}</p>
-                    </section>
-                ))}
-                <Link className="secondary-button" href="/support">
-                    Ask a question ↗
-                </Link>
+
+                <div className="euk-policy-main">
+                    <div className="euk-wrap euk-policy-grid">
+                        <nav className="euk-policy-toc" aria-label="On this page">
+                            <p className="euk-policy-toc-title">On this page</p>
+                            <ul>
+                                {sections.map((section) => (
+                                    <li key={section.title}>
+                                        <a href={`#${slug(section.title)}`}>
+                                            {section.title}
+                                        </a>
+                                    </li>
+                                ))}
+                            </ul>
+                        </nav>
+
+                        <div className="min-w-0">
+                            {sections.map((section) => (
+                                <section
+                                    key={section.title}
+                                    id={slug(section.title)}
+                                    className="euk-policy-section"
+                                >
+                                    <h2>{section.title}</h2>
+                                    <p>{section.text}</p>
+                                </section>
+                            ))}
+
+                            <div className="euk-policy-close">
+                                <p>Not covered here, or not clear enough?</p>
+                                <Link className="primary-button" href="/support">
+                                    Ask us
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </main>
             <SiteFooter />
         </>

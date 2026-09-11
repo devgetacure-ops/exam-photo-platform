@@ -12,7 +12,7 @@ export default function Refunds() {
                 },
                 {
                     title: "Paid and not delivered",
-                    text: "Raise a private support request with your order reference and what happened. Requests concerning payment received without file delivery are reviewed case by case against payment and delivery evidence.",
+                    text: "Raise a private support request with your payment reference, the UPI reference or payment ID shown in your payment app, and what happened. Requests concerning payment received without file delivery are reviewed case by case against payment and delivery evidence.",
                 },
                 {
                     title: "What the review can establish",

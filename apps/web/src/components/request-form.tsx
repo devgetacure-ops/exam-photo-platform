@@ -50,13 +50,18 @@ const COPY = {
     },
     support: {
         bar: "A message to support",
-        examLabel: "Examination or order reference",
-        examHint: "Optional. Either one helps us find what went wrong.",
-        examPlaceholder: "For example, SSC CGL 2026",
+        // No screen shows a candidate our order id, so asking for it would ask
+        // for something they cannot find. Their payment app does show a UPI
+        // reference or a payment ID.
+        examLabel: "Examination, and your payment reference if you paid",
+        examHint:
+            "Optional. The UPI reference or payment ID from your payment app finds an order fastest.",
+        examPlaceholder: "Examination name, payment reference",
         messageLabel: "What happened",
         messageHint:
-            "Please don’t include photographs, passwords, Aadhaar numbers or card details.",
-        messagePlaceholder: "Tell us what you expected and what you saw instead.",
+            "The exact words of any error help. Please don’t include passwords, Aadhaar numbers or card details.",
+        messagePlaceholder:
+            "What you did, what you expected, and what you saw instead.",
         consent:
             "Use these details to look into my request and reply to me, and delete them after 30 days.",
         submit: "Send it",

@@ -12,7 +12,7 @@ export default function Terms() {
                 },
                 {
                     title: "Review before payment",
-                    text: "Check the selected examination and cycle, official instructions, prepared previews, file details, findings and remaining steps. Platform estimates are labeled. PDF previews are not currently available. You must have permission to upload and process the files you provide.",
+                    text: "Before you pay, make sure the examination and its cycle are the ones you are applying for, and look at each prepared preview against your official instructions. Where we estimated a value rather than read it from a notice, the page says so. PDF previews are not currently available. You must have permission to upload and process the files you provide.",
                 },
                 {
                     title: "Price and release",
