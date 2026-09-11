@@ -8,6 +8,7 @@ import {
     type PrepareRequirementResponse,
 } from "../lib/types";
 import * as api from "../lib/api-client";
+import * as pdfjs from "../lib/pdfjs";
 import { getKit } from "../lib/kit-state";
 
 vi.mock("../lib/api-client", async () => {
@@ -15,7 +16,13 @@ vi.mock("../lib/api-client", async () => {
     return { ...actual, prepareRequirement: vi.fn() };
 });
 
+vi.mock("../lib/pdfjs", async () => {
+    const actual = await vi.importActual<typeof pdfjs>("../lib/pdfjs");
+    return { ...actual, isPasswordLocked: vi.fn(async () => false) };
+});
+
 const prepareRequirement = vi.mocked(api.prepareRequirement);
+const isPasswordLocked = vi.mocked(pdfjs.isPasswordLocked);
 
 function prepared(
     overrides: Partial<PrepareRequirementResponse> = {},
@@ -105,6 +112,31 @@ describe("preparing one requirement", () => {
     test("it says the file is seen before payment", () => {
         renderUpload();
         expect(screen.getByText(/before you pay/i)).toBeTruthy();
+    });
+
+    test("a password-protected PDF is turned away before it is uploaded", async () => {
+        isPasswordLocked.mockResolvedValueOnce(true);
+        render(
+            <RequirementUpload
+                examId="example"
+                examName="Example exam"
+                requirementId="marksheet"
+                requirementName="Class 10 marksheet"
+                requirementType="certificate_scan"
+            />,
+        );
+        fireEvent.change(screen.getByLabelText("Upload for Class 10 marksheet"), {
+            target: {
+                files: [new File(["%PDF-1.7"], "marksheet.pdf", { type: "application/pdf" })],
+            },
+        });
+
+        expect(
+            await screen.findByText(
+                "marksheet.pdf is password-protected, so we can’t open it. Upload a copy of the PDF without a password.",
+            ),
+        ).toBeTruthy();
+        expect(prepareRequirement).not.toHaveBeenCalled();
     });
 
     test("a clean result reports Ready", async () => {

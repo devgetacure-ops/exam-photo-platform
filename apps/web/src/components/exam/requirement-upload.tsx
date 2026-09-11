@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { prepareRequirement } from "../../lib/api-client";
 import { validateImageFile } from "../../lib/file-validation";
+import { isPasswordLocked, lockedPdfMessage } from "../../lib/pdfjs";
 import { startKit } from "../../lib/kit-state";
 import { useKit } from "./use-kit";
 import {
@@ -176,6 +177,13 @@ export function RequirementUpload({
                     setMessage(check.error ?? "That file will not work.");
                     return;
                 }
+            }
+
+            // A locked PDF is turned away before it is uploaded (DEC-052).
+            if (await isPasswordLocked(file)) {
+                setPhase("error");
+                setMessage(lockedPdfMessage([file.name]));
+                return;
             }
 
             if (sourceRef.current) URL.revokeObjectURL(sourceRef.current);

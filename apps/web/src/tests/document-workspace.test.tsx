@@ -4,14 +4,21 @@ import "@testing-library/jest-dom/vitest";
 
 import { DocumentWorkspace } from "../components/exam/document-workspace";
 import * as api from "../lib/api-client";
+import * as pdfjs from "../lib/pdfjs";
 
 vi.mock("../lib/api-client", async () => {
     const actual = await vi.importActual<typeof api>("../lib/api-client");
     return { ...actual, planDocument: vi.fn(), assembleDocument: vi.fn() };
 });
 
+vi.mock("../lib/pdfjs", async () => {
+    const actual = await vi.importActual<typeof pdfjs>("../lib/pdfjs");
+    return { ...actual, isPasswordLocked: vi.fn(async () => false) };
+});
+
 const planDocument = vi.mocked(api.planDocument);
 const assembleDocument = vi.mocked(api.assembleDocument);
+const isPasswordLocked = vi.mocked(pdfjs.isPasswordLocked);
 
 function renderWorkspace() {
     return render(
@@ -89,5 +96,46 @@ describe("arranging a document", () => {
         expect(
             screen.getByText(/can’t be verified the way the PDF can/),
         ).toBeInTheDocument();
+    });
+
+    test("a password-protected PDF is turned away before anything is uploaded", async () => {
+        isPasswordLocked.mockResolvedValueOnce(false).mockResolvedValueOnce(true);
+        renderWorkspace();
+        fireEvent.change(screen.getByLabelText(/source files for class 10 certificate/i), {
+            target: {
+                files: [
+                    new File(["%PDF-1.7"], "marks.pdf", { type: "application/pdf" }),
+                    new File(["%PDF-1.7"], "aadhaar.pdf", { type: "application/pdf" }),
+                ],
+            },
+        });
+
+        expect(await screen.findByRole("alert")).toHaveTextContent(
+            "aadhaar.pdf is password-protected, so we can’t open it. Upload a copy of the PDF without a password.",
+        );
+        expect(planDocument).not.toHaveBeenCalled();
+    });
+
+    test("a file the engine couldn't read is named once", async () => {
+        planDocument.mockResolvedValue({
+            job_id: "job_doc",
+            exam_id: "exam",
+            requirement_id: "certificate",
+            pages: [{ source_index: 1, page_index: 0, origin: "document_scan", rotation: 0 }],
+            unreadable: { 0: "marks.pdf: the PDF is damaged." },
+        });
+        renderWorkspace();
+        fireEvent.change(screen.getByLabelText(/source files for class 10 certificate/i), {
+            target: {
+                files: [
+                    new File(["%PDF-1.7"], "marks.pdf", { type: "application/pdf" }),
+                    new File(["x"], "scan.jpg", { type: "image/jpeg" }),
+                ],
+            },
+        });
+
+        const warning = await screen.findByRole("alert");
+        expect(warning).toHaveTextContent("marks.pdf: the PDF is damaged.");
+        expect(warning.textContent).not.toContain("marks.pdf: marks.pdf");
     });
 });

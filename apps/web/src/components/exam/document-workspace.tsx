@@ -1,6 +1,7 @@
 "use client";
 import { useRef, useState } from "react";
 import { assembleDocument, planDocument } from "../../lib/api-client";
+import { isPasswordLocked, lockedPdfMessage } from "../../lib/pdfjs";
 import { startKit } from "../../lib/kit-state";
 import type {
     DocumentPage,
@@ -140,6 +141,16 @@ export function DocumentWorkspace({
                         onWorking?.(true);
                         setError("");
                         try {
+                            // A locked PDF is turned away here, before anything
+                            // is uploaded, with the files named (DEC-052).
+                            const lockedFlags = await Promise.all(files.map(isPasswordLocked));
+                            const locked = files
+                                .filter((_, index) => lockedFlags[index])
+                                .map((file) => file.name);
+                            if (locked.length) {
+                                setError(lockedPdfMessage(locked));
+                                return;
+                            }
                             const kit = startKit(examId, examName);
                             const next = await planDocument({
                                 examId,
@@ -152,7 +163,7 @@ export function DocumentWorkspace({
                             setNames(files.map((file) => file.name));
                         } catch {
                             setError(
-                                "We couldn’t read these files. Check that they are readable images or unprotected PDFs, then try again.",
+                                "We couldn’t read these files. Check that they are images or PDFs without a password, then try again.",
                             );
                         } finally {
                             setBusy(false);
@@ -169,12 +180,18 @@ export function DocumentWorkspace({
                             <strong>Some files could not be read.</strong>
                             <ul>
                                 {Object.entries(plan.unreadable).map(
-                                    ([index, reason]) => (
-                                        <li key={index}>
-                                            {names[Number(index)] ?? "Source file"}:{" "}
-                                            {reason}
-                                        </li>
-                                    ),
+                                    ([index, reason]) => {
+                                        const name = names[Number(index)] ?? "Source file";
+                                        // The engine's reason already starts with the file's name.
+                                        const detail = reason.startsWith(`${name}: `)
+                                            ? reason.slice(name.length + 2)
+                                            : reason;
+                                        return (
+                                            <li key={index}>
+                                                {name}: {detail}
+                                            </li>
+                                        );
+                                    },
                                 )}
                             </ul>
                             <p>

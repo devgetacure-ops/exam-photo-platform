@@ -11,8 +11,8 @@ vi.mock("pdfjs-dist", () => ({
     getDocument,
 }));
 
-function passwordError(code: 1 | 2) {
-    return Object.assign(new Error("password"), { name: "PasswordException", code });
+function failure(name: string) {
+    return Object.assign(new Error(name), { name });
 }
 
 /** A document whose pages draw, except each page in `failOnce` fails the first time. */
@@ -68,44 +68,20 @@ describe("PDF to image, when it doesn't go right the first time", () => {
         vi.restoreAllMocks();
     });
 
-    test("a locked PDF asks for its password and opens with it", async () => {
-        const { doc } = fakeDocument(1);
-        getDocument
-            .mockImplementationOnce(refuses(passwordError(1)))
-            .mockImplementationOnce(opens(doc));
+    test("a password-protected PDF is turned away, and no password is asked for", async () => {
+        getDocument.mockImplementationOnce(refuses(failure("PasswordException")));
         render(<PdfToImage />);
         choosePdf();
 
         expect(await screen.findByRole("alert")).toHaveTextContent(
-            "This PDF is locked with a password.",
+            "e-aadhaar.pdf is password-protected, so we can’t open it. Upload a copy of the PDF without a password.",
         );
-        const field = screen.getByLabelText("Password for this PDF");
-        await waitFor(() => expect(field).toHaveFocus());
-
-        fireEvent.change(field, { target: { value: "ABCD1999" } });
-        fireEvent.click(screen.getByRole("button", { name: "Open the PDF" }));
-
-        expect(await screen.findByRole("link", { name: "Download page 1" })).toBeInTheDocument();
-        expect(getDocument.mock.calls[1][0].password).toBe("ABCD1999");
-        expect(screen.queryByLabelText("Password for this PDF")).toBeNull();
-    });
-
-    test("a wrong password says so and keeps the field", async () => {
-        getDocument
-            .mockImplementationOnce(refuses(passwordError(1)))
-            .mockImplementationOnce(refuses(passwordError(2)));
-        render(<PdfToImage />);
-        choosePdf();
-
-        const field = await screen.findByLabelText("Password for this PDF");
-        fireEvent.change(field, { target: { value: "abcd1999" } });
-        fireEvent.click(screen.getByRole("button", { name: "Open the PDF" }));
-
-        expect(await screen.findByRole("alert")).toHaveTextContent(/didn’t open it/);
-        expect(screen.getByLabelText("Password for this PDF")).toHaveAttribute(
-            "aria-invalid",
-            "true",
+        expect(screen.queryByLabelText(/password/i)).toBeNull();
+        expect(screen.queryByRole("button", { name: /Try again/ })).toBeNull();
+        await waitFor(() =>
+            expect(screen.getByRole("button", { name: "Choose another PDF" })).toHaveFocus(),
         );
+        expect(getDocument.mock.calls[0][0]).not.toHaveProperty("password");
     });
 
     test("a page that fails keeps the pages before it, and the retry starts from that page", async () => {
@@ -144,7 +120,7 @@ describe("PDF to image, when it doesn't go right the first time", () => {
     test("a converter that didn't load offers to try again", async () => {
         const { doc } = fakeDocument(1);
         getDocument
-            .mockImplementationOnce(refuses(Object.assign(new Error("worker"), { name: "UnknownErrorException" })))
+            .mockImplementationOnce(refuses(failure("UnknownErrorException")))
             .mockImplementationOnce(opens(doc));
         render(<PdfToImage />);
         choosePdf();
@@ -155,9 +131,7 @@ describe("PDF to image, when it doesn't go right the first time", () => {
     });
 
     test("a damaged file is not offered a retry that can't work", async () => {
-        getDocument.mockImplementationOnce(
-            refuses(Object.assign(new Error("bad"), { name: "InvalidPDFException" })),
-        );
+        getDocument.mockImplementationOnce(refuses(failure("InvalidPDFException")));
         render(<PdfToImage />);
         choosePdf();
 

@@ -2177,38 +2177,6 @@
     gap: 12px;
 }
 
-.euk-pdfimg-lock {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    align-self: stretch;
-    max-width: 520px;
-}
-
-.euk-pdfimg-lock-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 4px;
-}
-
-/* 17px keeps iOS from zooming the page when the field takes focus. */
-.euk .euk-pdfimg-lock input[type="password"] {
-    flex: 1 1 200px;
-    min-width: 0;
-    border: var(--rule) solid var(--ink);
-    background: var(--paper);
-    color: var(--ink);
-    padding: 11px 13px;
-    font-size: 17px;
-}
-
-.euk .euk-pdfimg-lock input[type="password"]:focus-visible {
-    outline: none;
-    border-color: var(--signal-deep);
-    box-shadow: 5px 5px 0 var(--signal);
-}
-
 .euk-pdfimg-page .primary-button {
     text-align: center;
     padding: 9px 12px;

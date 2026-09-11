@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { PDFDocumentProxy } from "pdfjs-dist";
 import { formatBytes } from "../../lib/spec-format";
+import { loadPdfjs, lockedPdfMessage } from "../../lib/pdfjs";
 import {
     DPI_CHOICES,
     MAX_PDF_BYTES,
@@ -17,19 +18,20 @@ import {
  * PDF to image, in the candidate's own browser.
  *
  * For the portal that wants a JPEG of a page the candidate holds as a PDF.
- * pdf.js (Apache-2.0) draws each page onto a canvas at the resolution they
- * choose, over a white ground so a JPEG has no black transparency, and the
- * canvas is saved as an image they download. Nothing is uploaded: the PDF
- * never leaves the page, which is also why this costs us nothing to offer.
+ * pdf.js draws each page onto a canvas at the resolution they choose, over a
+ * white ground so a JPEG has no black transparency, and the canvas is saved
+ * as an image they download. Nothing is uploaded: the PDF never leaves the
+ * page, which is also why this costs us nothing to offer.
  *
- * pdf.js is loaded only when a PDF is chosen, so no other page pays for it.
  * The engine still never does this on its own (DEC-052); this is the
  * candidate's decision about their own document.
  *
- * Each way this can fail gets the retry that fits it. A locked PDF (every
- * e-Aadhaar is one) asks for its password. A page that can't be drawn keeps
- * the pages before it and tries again from that page. A converter that didn't
- * load tries again. A file that can never work is not offered a retry at all.
+ * Each way this can fail gets the next step that fits it. A page that can't
+ * be drawn keeps the pages before it and tries again from that page. A
+ * converter that didn't load tries again. A password-protected PDF is turned
+ * away with a direction to choose a copy without a password; the tool never
+ * asks for one, because a password step is friction a candidate shouldn't
+ * meet. A file that can never work is not offered a retry at all.
  */
 
 interface RenderedPage {
@@ -51,22 +53,10 @@ type Failure =
     | { kind: "too-large"; bytes: number }
     | { kind: "unreadable" }
     | { kind: "load" }
-    | { kind: "locked" }
-    | { kind: "wrong-password" }
+    | { kind: "locked"; name: string }
     | { kind: "page"; page: number };
 
 type Status = "idle" | "working" | "done" | "failed";
-
-async function loadPdfjs() {
-    const pdfjs = await import("pdfjs-dist");
-    if (!pdfjs.GlobalWorkerOptions.workerSrc) {
-        pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-            "pdfjs-dist/build/pdf.worker.min.mjs",
-            import.meta.url,
-        ).toString();
-    }
-    return pdfjs;
-}
 
 async function drawPage(
     doc: PDFDocumentProxy,
@@ -125,9 +115,7 @@ function failureText(failure: Failure, pagesKept: number): string {
         case "load":
             return "The converter didn’t finish loading. Check your connection, then try again.";
         case "locked":
-            return "This PDF is locked with a password.";
-        case "wrong-password":
-            return "That password didn’t open it. Passwords here are case-sensitive.";
+            return lockedPdfMessage([failure.name]);
         case "page":
             return [
                 `Page ${failure.page} couldn’t be drawn.`,
@@ -150,15 +138,10 @@ export function PdfToImage() {
     const [note, setNote] = useState("");
     const [sourceName, setSourceName] = useState("");
     const [lastFile, setLastFile] = useState<File | null>(null);
-    const [password, setPassword] = useState("");
     const input = useRef<HTMLInputElement>(null);
     const chooseButton = useRef<HTMLButtonElement>(null);
     const retryButton = useRef<HTMLButtonElement>(null);
-    const passwordInput = useRef<HTMLInputElement>(null);
     const urls = useRef<string[]>([]);
-    // The password that opened this file, so a retry from a later page
-    // doesn't ask for it again. Never stored beyond this component.
-    const unlock = useRef<string | undefined>(undefined);
 
     const release = () => {
         urls.current.forEach((url) => URL.revokeObjectURL(url));
@@ -170,7 +153,7 @@ export function PdfToImage() {
     // drops focus to the page. Put it back where the next step is.
     useEffect(() => {
         if (status !== "failed") return;
-        (passwordInput.current ?? retryButton.current ?? chooseButton.current)?.focus();
+        (retryButton.current ?? chooseButton.current)?.focus();
     }, [status, failure]);
 
     function fail(next: Failure) {
@@ -178,7 +161,7 @@ export function PdfToImage() {
         setStatus("failed");
     }
 
-    async function convert(file: File, from = 1, filePassword = unlock.current) {
+    async function convert(file: File, from = 1) {
         if (!isPdfFile(file)) return fail({ kind: "not-pdf" });
         if (file.size > MAX_PDF_BYTES) return fail({ kind: "too-large", bytes: file.size });
 
@@ -209,21 +192,16 @@ export function PdfToImage() {
             return fail({ kind: "unreadable" });
         }
 
-        const task = pdfjs.getDocument({ data, password: filePassword });
+        const task = pdfjs.getDocument({ data });
         let doc: PDFDocumentProxy;
         try {
             doc = await task.promise;
         } catch (error) {
             void task.destroy();
-            const { name, code } = (error ?? {}) as { name?: string; code?: number };
-            if (name === "PasswordException") {
-                // pdf.js: 1 is "needs a password", 2 is "wrong password".
-                return fail({ kind: code === 2 ? "wrong-password" : "locked" });
-            }
+            const name = (error as { name?: string } | null)?.name;
+            if (name === "PasswordException") return fail({ kind: "locked", name: file.name });
             return fail({ kind: name === "InvalidPDFException" ? "unreadable" : "load" });
         }
-        unlock.current = filePassword;
-        setPassword("");
 
         const count = doc.numPages;
         const total = Math.min(count, MAX_PDF_PAGES);
@@ -250,7 +228,6 @@ export function PdfToImage() {
 
     const working = status === "working";
     const sameSettings = rendered?.format === format && rendered?.dpi === dpi;
-    const locked = failure?.kind === "locked" || failure?.kind === "wrong-password";
 
     let retry: { label: string; from: number } | null = null;
     if (status === "failed" && failure?.kind === "load") {
@@ -332,10 +309,8 @@ export function PdfToImage() {
                         const file = event.target.files?.[0];
                         event.target.value = "";
                         if (!file) return;
-                        unlock.current = undefined;
-                        setPassword("");
                         setLastFile(file);
-                        void convert(file, 1, undefined);
+                        void convert(file);
                     }}
                 />
             </div>
@@ -362,43 +337,6 @@ export function PdfToImage() {
                         >
                             {retry.label}
                         </button>
-                    )}
-                    {locked && lastFile && (
-                        <form
-                            className="euk-pdfimg-lock"
-                            onSubmit={(event) => {
-                                event.preventDefault();
-                                if (!password) {
-                                    passwordInput.current?.focus();
-                                    return;
-                                }
-                                void convert(lastFile, 1, password);
-                            }}
-                        >
-                            <label htmlFor="pdfimg-password" className="euk-field-label">
-                                Password for this PDF
-                            </label>
-                            <p id="pdfimg-password-hint" className="euk-field-hint">
-                                It stays in this browser, like the PDF. An e-Aadhaar’s
-                                password is the first four letters of your name in
-                                capitals, then your year of birth.
-                            </p>
-                            <div className="euk-pdfimg-lock-row">
-                                <input
-                                    ref={passwordInput}
-                                    id="pdfimg-password"
-                                    type="password"
-                                    autoComplete="off"
-                                    value={password}
-                                    onChange={(event) => setPassword(event.target.value)}
-                                    aria-describedby="pdfimg-password-hint"
-                                    aria-invalid={failure.kind === "wrong-password"}
-                                />
-                                <button type="submit" className="primary-button">
-                                    Open the PDF
-                                </button>
-                            </div>
-                        </form>
                     )}
                 </div>
             )}
