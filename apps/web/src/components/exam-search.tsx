@@ -21,6 +21,8 @@ interface Props {
   unavailable: SearchEntry[];
   /** Focus on mount — on the landing page the search *is* the page. */
   autoFocus?: boolean;
+  /** Off on /exams itself, where offering to browse the page you are on reads careless. */
+  showBrowseLink?: boolean;
 }
 
 /** A match, plus how good it was, so exact and prefix hits outrank substrings. */
@@ -122,7 +124,12 @@ function score(entry: SearchEntry, query: string): Ranked | null {
   return { entry, score: best, via };
 }
 
-export function ExamSearch({ exams, unavailable, autoFocus = false }: Props) {
+export function ExamSearch({
+  exams,
+  unavailable,
+  autoFocus = false,
+  showBrowseLink = true,
+}: Props) {
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
@@ -320,7 +327,7 @@ export function ExamSearch({ exams, unavailable, autoFocus = false }: Props) {
           )}
         </div>
       )}
-      <div className="euk-label flex flex-wrap gap-4 px-4 py-3 text-[10px] [&_a]:text-[var(--ink-55)] [&_a]:underline [&_a]:underline-offset-4 [&_a:hover]:text-[var(--signal-deep)]"><Link href="/exams">Browse all {exams.length} exams ↗</Link>{query.trim() && <Link href={`/exam-request?exam=${encodeURIComponent(query)}`}>Can’t find yours? Request it ↗</Link>}</div>
+      <div className="euk-label flex flex-wrap gap-4 px-4 py-3 text-[10px] [&_a]:text-[var(--ink-55)] [&_a]:underline [&_a]:underline-offset-4 [&_a:hover]:text-[var(--signal-deep)]">{showBrowseLink && <Link href="/exams">Browse all {exams.length} exams ↗</Link>}{query.trim() && <Link href={`/exam-request?exam=${encodeURIComponent(query)}`}>Can’t find yours? Request it ↗</Link>}</div>
     </div>
   );
 }
