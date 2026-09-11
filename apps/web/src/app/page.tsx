@@ -1,10 +1,58 @@
+import Link from "next/link";
 import { ExamSearch } from "../components/exam-search";
 import { SiteFooter } from "../components/site-footer";
 import { SiteHeader } from "../components/site-header";
 import { Note } from "../components/euk/note";
 import { Compare } from "../components/euk/compare";
+import { Reveal } from "../components/euk/reveal";
+import {
+    ArrowDrawing,
+    CertificateDrawing,
+    DeclarationDrawing,
+    PhotoDrawing,
+    SignatureDrawing,
+    ThumbDrawing,
+} from "../components/euk/doodles";
 import { loadSearchIndex } from "../lib/catalogue.server";
 import { readImageFacts, formatBytes } from "../lib/image-facts.server";
+
+/**
+ * The landing page, in the order the brief sets: the hero, then what we do,
+ * how we do it, the problem, why we built it, pricing, and our story.
+ *
+ * Everything below the hero reveals as it scrolls in. The hero does not: it is
+ * the largest contentful paint on a slow phone, and holding it back for an
+ * animation would cost the one metric that decides whether a candidate stays.
+ */
+const SSC_NOTICE = "https://ssc.nic.in/SSCFileServer/PortalManagement/UploadedFiles/notice_rhqladakh_23052022.pdf";
+
+const KIT = [
+    {
+        name: "Photograph",
+        Drawing: PhotoDrawing,
+        body: "Cropped to your examination's frame, with the background replaced and the file compressed under the limit and named the way the portal expects. Your face is left alone: no reshaping, no whitening.",
+    },
+    {
+        name: "Signature",
+        Drawing: SignatureDrawing,
+        body: "The page cleared around your strokes and the ink made firm. Never stretched, because a stretched signature is no longer yours.",
+    },
+    {
+        name: "Thumb impression",
+        Drawing: ThumbDrawing,
+        body: "Lighting evened out and cropped close, but never masked, so every ridge the authority needs to see survives.",
+    },
+    {
+        name: "Declaration",
+        Drawing: DeclarationDrawing,
+        body: "We straighten your handwritten sheet so it reads clearly. The page stays whole and is never cropped down to the writing.",
+    },
+    {
+        name: "Certificates and ID",
+        Drawing: CertificateDrawing,
+        body: "A scan turned into a clean PDF, or an existing PDF put in order: pages added, removed, rearranged or merged.",
+    },
+];
 
 const TOOL_TABS = ["resize", "remove bg", "compress", "convert", "rename"];
 
@@ -13,6 +61,43 @@ const SPECS = [
     { w: 100, h: 100, label: "1200×1200" },
     { w: 75, h: 100, label: "150×200" },
     { w: 100, h: 78, label: "413×319" },
+];
+
+const FREE_TOOLS = [
+    "Image to PDF",
+    "Merge PDFs",
+    "Reorder pages",
+    "Remove pages",
+    "Rotate pages",
+    "Compress to the size limit",
+];
+
+const ELSEWHERE = [
+    "a background remover",
+    "a resizer",
+    "a compressor",
+    "a format converter",
+    "a renamer",
+    "a PDF merger",
+];
+
+const PRINCIPLES = [
+    {
+        title: "It never changes your face.",
+        body: "Exposure and contrast, yes. Whitening or reshaping, never. The photograph on your admit card has to be the person who walks into the exam hall.",
+    },
+    {
+        title: "It never guesses a rule.",
+        body: "Where an examination didn't publish a number, the value we use is marked est., so you know exactly which figures to check against your notification.",
+    },
+    {
+        title: "It never pretends.",
+        body: "Some files we can't prepare. The portal might photograph you itself, or want your name printed on the image. When that happens the page says so, and there's no upload button pretending otherwise.",
+    },
+    {
+        title: "It forgets you.",
+        body: "No account and nothing to sign up for. Your files are deleted within 30 minutes, or within an hour if you ask us to keep them.",
+    },
 ];
 
 export default async function Home() {
@@ -45,357 +130,449 @@ export default async function Home() {
               ]
             : [];
 
+    const steps = [
+        {
+            whose: "Yours",
+            title: "Find your examination",
+            body: `Search by its name or its short form, like SSC CGL or IBPS PO. ${exams.length} examinations are on file, each with the rules it published.`,
+        },
+        {
+            whose: "Yours",
+            title: "Keep what you need",
+            body: "The full kit is already ticked. Untick anything your form doesn't ask for, and the price changes as you do.",
+        },
+        {
+            whose: "Ours",
+            title: "We prepare it",
+            body: "Each file is made to your examination's own specification, and you watch it happen stage by stage.",
+        },
+        {
+            whose: "Yours",
+            title: "Check before you pay",
+            body: "A watermarked preview of the real result, with a plain note of anything worth a second look.",
+        },
+        {
+            whose: "Yours",
+            title: "Pay and keep",
+            body: "Download them, or have them emailed to you. Deleted within 30 minutes, or within an hour if you ask.",
+        },
+    ];
+
     return (
         <div className="euk">
             <SiteHeader />
             <main id="main-content">
+                {/* ---- hero ------------------------------------------------ */}
+                <section className="euk-hero">
+                    <div className="euk-wrap">
+                        <h1 className="euk-display euk-hero-title">
+                            You prepare for the exam.
+                            <br />
+                            We&rsquo;ll prepare{" "}
+                            <span className="euk-mark">the files.</span>
+                        </h1>
+                        <p className="euk-hero-sub">
+                            Your photograph, signature, thumb impression, declaration and certificates. Each one made to the rules your examination published.
+                        </p>
+                        <div className="euk-hero-search">
+                            <ExamSearch exams={exams} unavailable={unavailable} />
+                        </div>
+                        <p className="euk-hero-facts">
+                            <span>No account</span>
+                            <span>From ₹3, PDF work free</span>
+                            <Link href="/exam-request">
+                                Not on the list? Tell us which one
+                            </Link>
+                        </p>
+                    </div>
+                </section>
 
-                {/* hero */}
-                <section className="px-5 pt-8 md:px-12 md:pt-13">
-                    <div className="euk-wrap flex flex-col gap-10 md:flex-row md:items-start md:gap-10">
-                        <div className="flex shrink-0 flex-col gap-4 md:w-[520px] md:gap-[22px]">
-                            <h1 className="euk-display text-[52px] md:text-[78px]">
-                                You prepare
+                {/* ---- what we do ------------------------------------------ */}
+                <section className="euk-section" id="what">
+                    <div className="euk-wrap">
+                        <Reveal>
+                            <h2 className="euk-display euk-h2">
+                                Everything the form
                                 <br />
-                                for the exam.
-                                <br />
-                                We&rsquo;ll prepare
-                                <br />
-                                <span className="euk-mark">the files.</span>
-                            </h1>
-                            <p className="text-[17px] font-medium leading-snug md:text-[19px]">
-                                The photo. The signature. The right size, format
-                                and filename.
+                                asks you to attach.
+                            </h2>
+                            <p className="euk-lede">
+                                An application is rarely one photograph. It&rsquo;s a photograph and a signature, often a thumb impression, sometimes a handwritten declaration, and a stack of certificates. Every one has its own pixel size and file limit, and we prepare all of them.
                             </p>
-                            <p className="max-w-[420px] text-[15px] leading-relaxed text-[var(--ink-70)] md:text-base">
-                                One place that already knows what your
-                                examination asks for &mdash; and prepares every
-                                file to its own published rules.
-                            </p>
-                            <Note className="max-w-[420px] text-[15px]">
-                                Drag the photograph. Five things were wrong with
-                                it; watch them go one at a time.
-                            </Note>
+                        </Reveal>
+
+                        <div className="euk-kit-grid">
+                            {KIT.map(({ name, Drawing, body }, i) => (
+                                <Reveal
+                                    key={name}
+                                    delay={i * 90}
+                                    className="euk-kit-card"
+                                >
+                                    <Drawing className="euk-kit-drawing" />
+                                    <h3>{name}</h3>
+                                    <p>{body}</p>
+                                </Reveal>
+                            ))}
                         </div>
 
-                        <div className="w-full max-w-[340px] grow md:max-w-[400px]">
-                            <Compare
-                                beforeSrc="/examples/hero-before.jpg"
-                                afterSrc="/examples/hero-after.jpg"
-                                width={before?.width ?? 240}
-                                height={before?.height ?? 320}
-                                alt="The same photograph before and after preparation"
-                                checks={checks}
-                                placeholder={
-                                    before?.width === after?.width &&
-                                    before?.height === after?.height
-                                }
-                            />
+                        <div className="euk-demo">
+                            <Reveal className="euk-demo-copy">
+                                <h3 className="euk-display">
+                                    Drag it.
+                                    <br />
+                                    Five things get fixed.
+                                </h3>
+                                <p>
+                                    This is the comparison you see after you
+                                    upload: what you gave us on one side, what
+                                    came back on the other. Drag the line across
+                                    and each problem is checked off as it goes.
+                                </p>
+                                <Note className="text-[15px]">
+                                    The sizes and file names in that list are
+                                    measured from the two files themselves.
+                                </Note>
+                            </Reveal>
+                            <Reveal delay={120} className="euk-demo-frame">
+                                <span className="euk-stamp" aria-hidden="true">
+                                    Prepared to the
+                                    <br />
+                                    published rules
+                                </span>
+                                <Compare
+                                    beforeSrc="/examples/hero-before.jpg"
+                                    afterSrc="/examples/hero-after.jpg"
+                                    width={before?.width ?? 240}
+                                    height={before?.height ?? 320}
+                                    alt="The same photograph before and after preparation"
+                                    checks={checks}
+                                    placeholder={
+                                        before?.width === after?.width &&
+                                        before?.height === after?.height
+                                    }
+                                />
+                            </Reveal>
                         </div>
                     </div>
                 </section>
 
-                {/* the primary action */}
-                <section className="px-5 pb-11 pt-7 md:px-12 md:pb-12">
-                    <div className="euk-wrap euk-block euk-block--drop euk-lift">
-                        <ExamSearch exams={exams} unavailable={unavailable} />
+                {/* ---- how we do it ---------------------------------------- */}
+                <section className="euk-section euk-section--alt" id="how">
+                    <div className="euk-wrap">
+                        <Reveal>
+                            <h2 className="euk-display euk-h2">
+                                You choose. We prepare.
+                                <br />
+                                You keep.
+                            </h2>
+                            <p className="euk-lede">
+                                No account and nothing to install. You won&rsquo;t need to know what a kilobyte is.
+                            </p>
+                        </Reveal>
+                        <ol className="euk-steps">
+                            {steps.map((step, i) => (
+                                <li
+                                    key={step.title}
+                                    className={`euk-step ${step.whose === "Ours" ? "euk-step--ours" : ""}`}
+                                >
+                                    <Reveal delay={i * 110}>
+                                        {i < steps.length - 1 && (
+                                            <ArrowDrawing className="euk-step-arrow" />
+                                        )}
+                                        <h3>
+                                            {step.title}{" "}
+                                            <span className="euk-whose">
+                                                {step.whose}
+                                            </span>
+                                        </h3>
+                                        <p>{step.body}</p>
+                                    </Reveal>
+                                </li>
+                            ))}
+                        </ol>
                     </div>
                 </section>
 
-                {/* the problem — the band inverts against the page */}
-                <section
-                    className="euk-invert px-5 py-9 md:px-12 md:py-12"
-                    id="how"
-                >
-                    <div className="euk-wrap flex flex-col gap-6 md:flex-row md:items-start md:gap-11">
-                        <div className="md:w-[470px] md:shrink-0">
-                            <h2 className="euk-display text-[42px] md:text-[58px]">
-                                Six tabs.
+                {/* ---- the problem ----------------------------------------- */}
+                <section className="euk-invert euk-section" id="problem">
+                    <div className="euk-wrap euk-problem">
+                        <Reveal className="euk-problem-head">
+                            <h2 className="euk-display euk-h2">
+                                Six tabs. Four tools.
                                 <br />
-                                Four tools.
-                                <br />
-                                And the photo is
-                                <br />
+                                And the photo is{" "}
                                 <span className="euk-mark">still wrong.</span>
                             </h2>
-                            <p className="pt-4 text-[17px] font-medium leading-snug text-[var(--ink-70)] md:text-[19px]">
+                            <p className="euk-lede">
                                 It was never your photograph. It was the
                                 specification.
                             </p>
-                        </div>
-                        <div className="flex grow flex-col gap-5">
-                            <div>
-                                <div className="flex items-end gap-1 overflow-x-auto">
-                                    {TOOL_TABS.map((t) => (
+                        </Reveal>
+                        <div className="euk-problem-body">
+                            <Reveal className="euk-tabs">
+                                <div className="euk-tabs-row">
+                                    {TOOL_TABS.map((t, i) => (
                                         <span
                                             key={t}
-                                            className="euk-label shrink-0 border-2 border-b-0 border-[var(--paper)] bg-[var(--paper-2)] px-2.5 py-1.5 text-[10px] text-[var(--ink-70)] md:text-[11px]"
+                                            className="euk-tab"
+                                            style={{
+                                                transitionDelay: `${i * 90 + 200}ms`,
+                                            }}
                                         >
                                             {t}
                                         </span>
                                     ))}
-                                    <span className="euk-label shrink-0 border-2 border-b-0 border-[var(--paper)] bg-[var(--signal)] px-2.5 py-1.5 text-[10px] font-bold text-[var(--signal-ink)] md:text-[11px]">
-                                        STILL WRONG
+                                    <span
+                                        className="euk-tab euk-tab--wrong"
+                                        style={{ transitionDelay: "720ms" }}
+                                    >
+                                        still wrong
                                     </span>
                                 </div>
-                                <div className="h-[3px] bg-[var(--paper)]" />
-                            </div>
-                            <p className="text-[15px] leading-relaxed text-[var(--ink-70)] md:text-base">
-                                Resize on one site. Remove the background on
-                                another. Compress somewhere else, convert the
-                                format, rename it yourself &mdash; then find the
-                                background was never actually removed, and start
-                                again.
-                            </p>
-                            <p className="text-[15px] leading-relaxed text-[var(--ink)] md:text-base">
-                                None of those tools ever read your
-                                examination&rsquo;s rules. That is the whole
-                                problem, and it is the only thing we do &mdash;
-                                and the PDF work those other tabs were for
-                                comes free with it.
-                            </p>
+                                <div className="euk-tabs-rail" />
+                            </Reveal>
+                            <Reveal delay={100}>
+                                <p>
+                                    Every year, crores of applications reach an
+                                    upload screen like the one you&rsquo;re
+                                    about to meet. So the routine goes: resize on one site, remove the background on another, compress somewhere else, convert the format and rename it yourself. Then you find the background was never actually removed, and you start again.
+                                </p>
+                                <p className="euk-problem-turn">
+                                    None of those tools has ever read your
+                                    examination&rsquo;s rules. That is the whole
+                                    problem, and it is the only thing we do.
+                                </p>
+                            </Reveal>
                         </div>
                     </div>
                 </section>
 
-                {/* the variance strip — the one gridded surface */}
-                <section className="euk-gridded px-5 py-9 md:px-12 md:py-11">
-                  <div className="euk-wrap">
-                    <div className="flex flex-col gap-2 pb-6 md:flex-row md:items-end md:justify-between">
-                        <div>
-                            <h2 className="euk-display text-[36px] md:text-[44px] md:leading-[0.92]">
-                                One face.
-                                <br />
-                                Six examinations.
-                            </h2>
-                            <p className="pt-2 text-[15px] leading-relaxed text-[var(--ink-70)] md:text-base">
-                                No preset fits all six. Each one is read from
-                                what that exam actually published.
+                <section className="euk-gridded px-5 py-12 md:px-12 md:py-16">
+                    <div className="euk-wrap">
+                        <Reveal className="flex flex-col gap-2 pb-7 md:flex-row md:items-end md:justify-between">
+                            <div>
+                                <h2 className="euk-display text-[38px] md:text-[52px] md:leading-[0.9]">
+                                    One face.
+                                    <br />
+                                    Six examinations.
+                                </h2>
+                                <p className="pt-3 text-[16px] leading-relaxed text-[var(--ink-70)]">
+                                    No preset fits all six. Each one is read from
+                                    what that examination actually published.
+                                </p>
+                            </div>
+                            <p className="text-[14px] leading-relaxed text-[var(--ink-55)] md:text-right">
+                                418 requirements across {exams.length}{" "}
+                                examinations
                             </p>
-                        </div>
-                        <p className="euk-label text-[11px] leading-relaxed text-[var(--ink-55)] md:text-right">
-                            418 REQUIREMENTS
-                            <br className="hidden md:inline" /> ACROSS{" "}
-                            {exams.length} EXAMS
-                        </p>
-                    </div>
-                    <div className="flex items-end gap-3 overflow-x-auto md:gap-4">
-                        {SPECS.map((s) => (
-                            <div
-                                key={s.label}
-                                className="flex shrink-0 flex-col items-center gap-1.5"
-                            >
+                        </Reveal>
+                        <Reveal delay={120} className="flex items-end gap-3 overflow-x-auto pb-2 md:gap-5">
+                            {SPECS.map((s) => (
                                 <div
-                                    className="flex items-end justify-center border-2 border-[var(--ink)] bg-white"
-                                    style={{ width: s.w, height: s.h }}
+                                    key={s.label}
+                                    className="flex shrink-0 flex-col items-center gap-2"
                                 >
-                                    {/* A silhouette, so the frame reads as a
-                                        photograph at that shape rather than as
-                                        an image that failed to load. */}
-                                    <svg
-                                        viewBox="0 0 40 48"
-                                        className="h-[78%] w-auto"
-                                        aria-hidden="true"
-                                        fill="var(--ink-40)"
+                                    <div
+                                        className="flex items-end justify-center border-2 border-[var(--ink)] bg-white"
+                                        style={{ width: s.w, height: s.h }}
                                     >
-                                        <ellipse cx="20" cy="15" rx="9" ry="11" />
-                                        <path d="M20 28 C 9 28, 3 38, 2 48 L 38 48 C 37 38, 31 28, 20 28 Z" />
-                                    </svg>
+                                        <svg
+                                            viewBox="0 0 40 48"
+                                            className="h-[78%] w-auto"
+                                            aria-hidden="true"
+                                            fill="var(--ink-40)"
+                                        >
+                                            <ellipse cx="20" cy="15" rx="9" ry="11" />
+                                            <path d="M20 28 C 9 28, 3 38, 2 48 L 38 48 C 37 38, 31 28, 20 28 Z" />
+                                        </svg>
+                                    </div>
+                                    <span className="euk-figures text-[12px]">
+                                        {s.label}
+                                    </span>
                                 </div>
-                                <span className="euk-label text-[10px]">
-                                    {s.label}
+                            ))}
+                            <div className="flex shrink-0 flex-col items-center gap-2">
+                                <div className="relative h-[92px] w-[78px] border-2 border-[var(--signal-deep)] bg-white">
+                                    <div className="absolute inset-x-0 bottom-0 flex h-[24px] items-center justify-center border-t-2 border-dashed border-[var(--signal-deep)] bg-[var(--signal-soft)] text-[11px] font-semibold text-[var(--signal-deep)]">
+                                        name + date
+                                    </div>
+                                </div>
+                                <span className="text-[12px] text-[var(--signal-deep)]">
+                                    TNPSC
                                 </span>
                             </div>
-                        ))}
-                        <div className="flex shrink-0 flex-col items-center gap-1.5">
-                            <div className="relative h-[92px] w-[78px] border-2 border-[var(--signal)] bg-white">
-                                <div className="euk-label absolute inset-x-0 bottom-0 flex h-[22px] items-center justify-center border-t-2 border-dashed border-[var(--signal)] bg-[#fde7e0] text-[10px] text-[var(--signal-deep)]">
-                                    NAME + DATE
-                                </div>
+                            <div className="flex shrink-0 flex-col items-center gap-2">
+                                <div className="h-[78px] w-[78px] border-2 border-dashed border-[var(--notyet-line)] bg-[var(--notyet-fill)]" />
+                                <span className="text-[12px] text-[var(--ink-55)]">
+                                    Taken live
+                                </span>
                             </div>
-                            <span className="euk-label text-[10px] text-[var(--signal-deep)]">
-                                TNPSC
-                            </span>
-                        </div>
-                        <div className="flex shrink-0 flex-col items-center gap-1.5">
-                            <div className="h-[78px] w-[78px] border-2 border-dashed border-[var(--notyet-line)] bg-[var(--notyet-fill)]" />
-                            <span className="euk-label text-[10px] text-[var(--ink-55)]">
-                                NOT YET
-                            </span>
-                        </div>
+                        </Reveal>
                     </div>
-                  </div>
                 </section>
 
-                {/* the boundary, as the form's own two parts */}
-                <section className="px-5 py-9 md:px-12 md:py-12">
-                  <div className="euk-wrap">
-                    <h2 className="euk-display pb-6 text-[36px] md:text-[44px] md:leading-[0.92]">
-                        What we do.
-                        <br />
-                        What stays yours.
-                    </h2>
-                    <div className="flex flex-col gap-5 md:flex-row md:gap-[18px]">
-                        <div className="euk-block euk-block--drop grow">
-                            <p className="euk-label bg-[var(--ink)] px-3.5 py-2 text-[10px] text-[var(--paper)] md:text-[11px]">
-                                PART A — WE PREPARE THESE
+                {/* ---- why we built it ------------------------------------- */}
+                <section className="euk-section" id="why">
+                    <div className="euk-wrap euk-why">
+                        <Reveal className="euk-scale" >
+                            <span className="euk-scale-big euk-scale-big--small">
+                                ₹3
+                            </span>
+                            <span className="euk-scale-small">against</span>
+                            <span className="euk-scale-big">
+                                the years you prepared
+                            </span>
+                        </Reveal>
+                        <Reveal delay={120} className="euk-why-copy">
+                            <h2 className="euk-display euk-h2">
+                                The smallest part of your application
+                                <br />
+                                shouldn&rsquo;t cost you the biggest.
+                            </h2>
+                            <p>
+                                An application is where months, often years, of
+                                preparation meet a form. And the form is strict in ways that have nothing to do with how well you know the syllabus, like a file size in kilobytes or a name printed under the photograph.
                             </p>
-                            <div className="p-3.5">
-                                {[
-                                    "Candidate photograph",
-                                    "Signature",
-                                    "Thumb impression",
-                                ].map((item, i, arr) => (
-                                    <div
-                                        key={item}
-                                        className={`flex items-center justify-between ${i < arr.length - 1 ? "mb-2.5 border-b-2 border-[var(--hairline)] pb-2.5" : ""}`}
-                                    >
-                                        <span className="text-[15px]">
-                                            {item}
-                                        </span>
-                                        <span className="euk-label border-2 border-[var(--ink)] bg-[var(--signal)] px-3 py-2 text-[11px] font-bold text-[var(--signal-ink)]">
-                                            ATTACH
-                                        </span>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                        <div className="euk-block euk-block--dashed grow">
-                            <p className="euk-label bg-[var(--ink-40)] px-3.5 py-2 text-[10px] text-[var(--paper)] md:text-[11px]">
-                                PART B — YOU COMPLETE THESE
+                            <p>
+                                Examinations do turn applications away over
+                                this. SSC&rsquo;s 2022 notice for its Ladakh
+                                selection posts lists unclear photographs and
+                                illegible signatures among its grounds for
+                                rejection.
                             </p>
-                            <div className="p-3.5">
-                                <div className="mb-2.5 border-b-2 border-[var(--hairline)] pb-2.5">
-                                    <p className="text-[15px] text-[var(--ink-70)]">
-                                        Live photo capture
-                                    </p>
-                                    <p className="text-[13px] text-[var(--ink-55)]">
-                                        The portal takes this through your
-                                        webcam
-                                    </p>
-                                </div>
-                                <div className="mb-2.5 border-b-2 border-[var(--hairline)] pb-2.5">
-                                    <p className="text-[15px] text-[var(--ink-70)]">
-                                        Declaration text
-                                    </p>
-                                    <p className="text-[13px] text-[var(--ink-55)]">
-                                        Typed into the form, not uploaded
-                                    </p>
-                                </div>
-                                <p className="euk-label text-[11px] italic text-[var(--ink-55)]">
-                                    No attach box appears in Part B — on
-                                    purpose.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* four states, never a boolean */}
-                    <div className="grid grid-cols-2 gap-2.5 pt-6 md:grid-cols-4">
-                        {[
-                            {
-                                k: "READY TO PREPARE",
-                                d: "We have the specification.",
-                                line: "--ok-line",
-                                fill: "--ok-fill",
-                                dashed: false,
-                            },
-                            {
-                                k: "ONE STEP IS YOURS",
-                                d: "Never shown as done.",
-                                line: "--partial-line",
-                                fill: "--partial-fill",
-                                dashed: false,
-                            },
-                            {
-                                k: "GUIDANCE ONLY",
-                                d: "The portal captures this.",
-                                line: "--guide-line",
-                                fill: "--guide-fill",
-                                dashed: false,
-                            },
-                            {
-                                k: "CANNOT PREPARE YET",
-                                d: "Not a failure.",
-                                line: "--notyet-line",
-                                fill: "--notyet-fill",
-                                dashed: true,
-                            },
-                        ].map((s) => (
-                            <div
-                                key={s.k}
-                                className={`border-[3px] p-3 ${s.dashed ? "border-dashed" : ""}`}
-                                style={{
-                                    borderColor: `var(${s.dashed ? s.line : "--ink"})`,
-                                    background: `var(${s.fill})`,
-                                }}
-                            >
-                                <p
-                                    className="euk-label pb-1 text-[10px] font-bold md:text-[10px]"
-                                    style={{ color: `var(${s.line})` }}
+                            <p>
+                                <a
+                                    href={SSC_NOTICE}
+                                    className="euk-link"
+                                    target="_blank"
+                                    rel="noreferrer"
                                 >
-                                    {s.k}
-                                </p>
-                                <p className="text-[12px] leading-snug text-[var(--ink-70)]">
-                                    {s.d}
-                                </p>
-                            </div>
-                        ))}
+                                    Read the notice
+                                </a>
+                            </p>
+                        </Reveal>
                     </div>
-                    <Note className="pt-4 text-[15px] md:text-base">
-                        Four states, never a boolean — and never red, because
-                        &ldquo;not yet&rdquo; is not a failure.
-                    </Note>
-                  </div>
                 </section>
 
-                {/* pricing */}
-                <section
-                    className="border-t-[3px] border-[var(--ink)] bg-[var(--paper-2)] px-5 py-9 md:px-12 md:py-12"
-                    id="pricing"
-                >
-                  <div className="euk-wrap">
-                    <h2 className="euk-display pb-6 text-[36px] md:text-[44px] md:leading-[0.92]">
-                        Three rupees.
-                        <br />
-                        One less thing to fix.
-                    </h2>
-                    <div className="grid gap-4 md:grid-cols-3 md:gap-[18px]">
-                        {[
-                            { n: "₹3", was: "₹4", t: "One file", d: "One chargeable image — photograph, signature or thumb impression." },
-                            { n: "₹5", was: "₹8", t: "Two files", d: "Two chargeable images, such as your photograph and signature." },
-                            { n: "₹8", was: "₹10", t: "Everything", d: "Three or more. The price stops here, whatever the exam asks for." },
-                        ].map((p) => (
-                            <div key={p.n} className="euk-block euk-block--drop p-4">
-                                <p className="euk-label pb-2 text-[10px] text-[var(--ink-55)]">
-                                    {p.t.toUpperCase()}
+                {/* ---- pricing --------------------------------------------- */}
+                <section className="euk-section euk-section--alt" id="pricing">
+                    <div className="euk-wrap">
+                        <Reveal>
+                            <h2 className="euk-display euk-h2">
+                                The whole kit is ₹8.
+                                <br />
+                                However many files your exam asks for.
+                            </h2>
+                            <p className="euk-lede">
+                                Most forms ask for more than two. Prepare them
+                                together and every file costs less.
+                            </p>
+                        </Reveal>
+
+                        <div className="euk-price-grid">
+                            <Reveal className="euk-invert euk-price euk-price--kit">
+                                <p className="euk-price-name">The whole kit</p>
+                                <p className="euk-price-row">
+                                    <span className="euk-price-figure">₹8</span>
+                                    <span className="euk-price-was">₹10</span>
                                 </p>
-                                <p className="flex items-baseline gap-2">
-                                    <span className="euk-display text-[46px]">
-                                        {p.n}
-                                    </span>
-                                    <span className="euk-label text-[13px] text-[var(--ink-40)] line-through">
-                                        {p.was}
-                                    </span>
+                                <p className="euk-price-body">
+                                    Three files or more. The price stops at ₹8,
+                                    whatever your examination asks for.
                                 </p>
-                                <p className="pt-2 text-[14px] leading-relaxed text-[var(--ink-70)]">
-                                    {p.d}
+                                <Link href="/exams" className="primary-button">
+                                    Find your examination
+                                </Link>
+                            </Reveal>
+                            <Reveal delay={90} className="euk-price">
+                                <p className="euk-price-name">Two files</p>
+                                <p className="euk-price-row">
+                                    <span className="euk-price-figure">₹5</span>
+                                    <span className="euk-price-was">₹8</span>
                                 </p>
-                            </div>
-                        ))}
+                                <p className="euk-price-body">
+                                    Two files, such as your photograph and your
+                                    signature.
+                                </p>
+                            </Reveal>
+                            <Reveal delay={180} className="euk-price">
+                                <p className="euk-price-name">One file</p>
+                                <p className="euk-price-row">
+                                    <span className="euk-price-figure">₹3</span>
+                                    <span className="euk-price-was">₹4</span>
+                                </p>
+                                <p className="euk-price-body">
+                                    Any single file, such as your photograph.
+                                </p>
+                            </Reveal>
+                        </div>
+
+                        <div className="euk-value">
+                            <Reveal className="euk-free">
+                                <h3>Free with any prepared file</h3>
+                                <ul className="euk-chips">
+                                    {FREE_TOOLS.map((tool) => (
+                                        <li key={tool} className="euk-chip">
+                                            {tool}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </Reveal>
+                            <Reveal delay={120} className="euk-elsewhere">
+                                <h3>Or, somewhere else</h3>
+                                <ul className="euk-chips">
+                                    {ELSEWHERE.map((tool) => (
+                                        <li
+                                            key={tool}
+                                            className="euk-chip euk-chip--gone"
+                                        >
+                                            {tool}
+                                        </li>
+                                    ))}
+                                </ul>
+                                <p>
+                                    Six tabs, and not one of them has read your
+                                    examination&rsquo;s rules.
+                                </p>
+                            </Reveal>
+                        </div>
+
+                        <p className="euk-retention">
+                            Files are deleted within 30 minutes, or within an
+                            hour if you ask us to keep them. Payment doesn&rsquo;t
+                            extend that, so download them when they&rsquo;re
+                            ready.
+                        </p>
                     </div>
-                    <Note className="pt-5 text-[15px] md:text-base">
-                        Everything the other sites charge for, or make you open
-                        a fourth tab for — merging PDFs, reordering or removing
-                        pages, turning an image into a document, getting a file
-                        under a size limit — is free here with any prepared
-                        file.
-                    </Note>
-                    <p className="euk-label pt-3 text-[11px] leading-relaxed text-[var(--ink-55)]">
-                        FILES ARE DELETED WITHIN 30 MINUTES — OR WITHIN AN HOUR,
-                        IF YOU ASK US TO KEEP THEM.
-                    </p>
-                  </div>
+                </section>
+
+                {/* ---- our story ------------------------------------------- */}
+                <section className="euk-section" id="story">
+                    <div className="euk-wrap">
+                        <Reveal>
+                            <h2 className="euk-display euk-h2">
+                                Why it&rsquo;s built
+                                <br />
+                                the way it is.
+                            </h2>
+                            <p className="euk-lede">
+                                A handful of decisions shape everything here, and
+                                none of them was the easy option.
+                            </p>
+                        </Reveal>
+                        <div className="euk-principles">
+                            {PRINCIPLES.map((p, i) => (
+                                <Reveal
+                                    key={p.title}
+                                    delay={i * 90}
+                                    className="euk-principle"
+                                >
+                                    <h3 className="euk-display">{p.title}</h3>
+                                    <p>{p.body}</p>
+                                </Reveal>
+                            ))}
+                        </div>
+                    </div>
                 </section>
             </main>
             <SiteFooter />

@@ -22,7 +22,7 @@ export function SiteHeader({ mobileTitle }: { mobileTitle?: string }) {
                     )}
                 </div>
 
-                <nav className="euk-label flex items-center gap-4 text-[10px] md:gap-6 md:text-[11px]">
+                <nav className="euk-label flex items-center gap-4 text-[11px] md:gap-6">
                     {mobileTitle ? (
                         <Link href="/exams" className="hidden sm:inline">
                             Change exam

@@ -21,7 +21,7 @@
     --ink: #111110;
     --ink-70: #3a3833;
     --ink-55: #55524b;
-    --ink-40: #8a867d;
+    --ink-40: #6b675d;
     --hairline: #dedacf;
 
     /* one signal colour, and nothing else carries meaning by hue alone */
@@ -228,11 +228,19 @@
     background: var(--paper-2);
 }
 
+/* The highlighter block stays inline-block. As a plain inline it painted the
+   font's whole content area, which in Big Shoulders is taller than the 0.86
+   line-height the display type sets, so the orange block covered the bottom
+   of the line above — measured on the phone hero. An inline-block's background
+   is its own box and cannot spill. Long phrases still wrap, inside the block. */
 .euk-mark {
     background: var(--signal);
     color: var(--signal-ink);
     padding: 0 0.22em;
     display: inline-block;
+    /* A hair of air above the block, so when a headline wraps and the mark
+       starts its own line it doesn't butt against the caps above it. */
+    margin-top: 0.07em;
 }
 
 /* the one surface that carries the grid */

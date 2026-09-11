@@ -6,6 +6,7 @@ import {
 } from "next/font/google";
 import "./system.css";
 import "./app.css";
+import "./story.css";
 
 /**
  * Three families. Each carries a different register and none of them is a
@@ -27,10 +28,15 @@ import "./app.css";
  *
  * Petrona italic — asides only, three or four on a page. The one warm voice.
  */
+// No metric overrides exist for Big Shoulders, so Next cannot generate a
+// size-adjusted fallback and warns at build. A condensed system face is the
+// closest shape a phone already has while the webfont loads.
 const shoulders = Big_Shoulders({
     variable: "--font-shoulders",
     subsets: ["latin"],
     display: "swap",
+    adjustFontFallback: false,
+    fallback: ["Arial Narrow", "Roboto Condensed", "sans-serif-condensed", "sans-serif"],
 });
 
 const anek = Anek_Latin({

@@ -159,10 +159,10 @@ export function Compare({
                     </svg>
                 </div>
 
-                <span className="euk-label pointer-events-none absolute left-2 top-2 bg-[var(--ink)] px-2 py-1 text-[10px] text-[var(--paper)]">
+                <span className="euk-label pointer-events-none absolute left-2 top-2 bg-[var(--ink)] px-2 py-1 text-[11px] text-[var(--paper)]">
                     {beforeLabel}
                 </span>
-                <span className="euk-label pointer-events-none absolute right-2 top-2 bg-[var(--signal)] px-2 py-1 text-[10px] text-[var(--signal-ink)]">
+                <span className="euk-label pointer-events-none absolute right-2 top-2 bg-[var(--signal)] px-2 py-1 text-[11px] text-[var(--signal-ink)]">
                     {afterLabel}
                 </span>
             </div>
@@ -177,10 +177,10 @@ export function Compare({
                         return (
                             <li
                                 key={c.label}
-                                className="flex items-center gap-3 border-b-2 border-[var(--hairline)] py-2 last:border-b-0"
+                                className="flex items-start gap-3 border-b-2 border-[var(--hairline)] py-2 last:border-b-0"
                             >
                                 <span
-                                    className={`flex h-5 w-5 shrink-0 items-center justify-center border-2 ${done ? "border-[var(--ink)] bg-[var(--signal)]" : "border-[var(--ink-40)]"}`}
+                                    className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center border-2 ${done ? "border-[var(--ink)] bg-[var(--signal)]" : "border-[var(--ink-40)]"}`}
                                     aria-hidden="true"
                                 >
                                     {done ? (
@@ -193,10 +193,10 @@ export function Compare({
                                         </svg>
                                     )}
                                 </span>
-                                <span className="euk-label w-[86px] shrink-0 text-[10px] text-[var(--ink-55)]">
+                                <span className="euk-label w-[86px] shrink-0 pt-1 text-[11px] text-[var(--ink-55)]">
                                     {c.label}
                                 </span>
-                                <span className="euk-figures min-w-0 flex-1 truncate text-[13px]">
+                                <span className="euk-figures min-w-0 flex-1 text-[13px] leading-snug [overflow-wrap:anywhere]">
                                     <span className={done ? "text-[var(--ink-40)] line-through" : "text-[var(--ink-70)]"}>
                                         {c.before}
                                     </span>
@@ -211,12 +211,12 @@ export function Compare({
                         );
                     })}
                 </ol>
-                <p className="euk-label pt-3 text-[10px] text-[var(--ink-40)]">
+                <p className="pt-3 text-[13px] text-[var(--ink-55)]">
                     Drag the handle, or use the arrow keys
                 </p>
                 {placeholder && (
-                    <p className="euk-label mt-3 border-2 border-dashed border-[var(--notyet-line)] bg-[var(--notyet-fill)] px-3 py-2 text-[10px] leading-relaxed text-[var(--ink-55)]">
-                        Placeholder pair — both files are the same image, so the
+                    <p className="mt-3 border-2 border-dashed border-[var(--notyet-line)] bg-[var(--notyet-fill)] px-3 py-2 text-[13px] leading-relaxed text-[var(--ink-55)]">
+                        Placeholder pair. Both files are the same image, so the
                         figures above describe no real change. Replace
                         hero-before.jpg and hero-after.jpg and this reads true.
                     </p>
