@@ -7,6 +7,32 @@ export interface ExamFact {
     source: string;
 }
 
+/**
+ * Worth knowing: the examination's own facts, one at a time, pinned beside
+ * its name.
+ *
+ * Every line is the source's wording, never paraphrased, with the source one
+ * tap away. It does not play by itself unless asked, because a sentence that
+ * changes while it is being read is a sentence nobody finishes.
+ */
+const KIND: Record<string, string> = {
+    rejection: "What gets applications rejected",
+    deliverables: "What it asks for",
+    file_size: "File size",
+    format: "Format",
+    dimensions: "Dimensions",
+    capture: "On the portal",
+    appearance: "Appearance",
+};
+
+function Arrow({ back = false }: { back?: boolean }) {
+    return (
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d={back ? "M12.5 4 L 6.5 10 L 12.5 16" : "M7.5 4 L 13.5 10 L 7.5 16"} />
+        </svg>
+    );
+}
+
 export function ExamFacts({
     facts,
     examName,
@@ -36,8 +62,8 @@ export function ExamFacts({
     const url = fact.source.match(/https?:\/\/[^\s)]+/)?.[0];
     return (
         <aside
-            className="exam-facts"
-            aria-label={`Useful details for ${examName}`}
+            className="euk-tip"
+            aria-label={`Worth knowing about ${examName}`}
             onMouseEnter={() => setHovering(true)}
             onMouseLeave={() => setHovering(false)}
             onFocusCapture={() => setHovering(true)}
@@ -46,52 +72,56 @@ export function ExamFacts({
                     setHovering(false);
             }}
         >
-            <div className="facts-heading">
-                <h2>Worth knowing before you upload.</h2>
-                <span>From this exam’s sources</span>
-            </div>
+            <svg className="euk-tip-pin" viewBox="0 0 30 38" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true">
+                <circle cx="15" cy="11" r="8" fill="currentColor" />
+                <path d="M15 19 V 36" />
+            </svg>
+            <h2 className="euk-tip-title">Worth knowing</h2>
             <div
                 aria-live={playing ? "off" : "polite"}
                 aria-atomic="true"
-                className="fact-body"
+                className="euk-tip-body"
             >
-                <p>{fact.text}</p>
+                <p className="euk-tip-kind">{KIND[fact.kind] ?? "From the notice"}</p>
+                <p key={index} className="euk-tip-text">
+                    {fact.text}
+                </p>
             </div>
-            <div className="facts-footer">
-                <details>
-                    <summary>Read the source</summary>
-                    <p>{fact.source}</p>
-                    {url && (
-                        <a href={url} target="_blank" rel="noreferrer">
-                            Open source ↗
-                        </a>
-                    )}
-                </details>
+            <div className="euk-tip-foot">
+                {url ? (
+                    <a className="euk-tip-source" href={url} target="_blank" rel="noreferrer">
+                        Read it in the source ↗
+                    </a>
+                ) : (
+                    <details className="euk-tip-source-details">
+                        <summary>Where this comes from</summary>
+                        <p>{fact.source}</p>
+                    </details>
+                )}
                 {facts.length > 1 && (
-                    <div className="fact-controls">
+                    <div className="euk-tip-controls">
                         <button
                             type="button"
                             aria-label="Previous exam fact"
                             onClick={() =>
-                                setIndex(
-                                    (index + facts.length - 1) % facts.length,
-                                )
+                                setIndex((index + facts.length - 1) % facts.length)
                             }
                         >
-                            ←
+                            <Arrow back />
                         </button>
-                        <span>
-                            {index + 1} / {facts.length}
+                        <span className="euk-tip-count">
+                            {index + 1} of {facts.length}
                         </span>
                         <button
                             type="button"
                             aria-label="Next exam fact"
                             onClick={() => setIndex((index + 1) % facts.length)}
                         >
-                            →
+                            <Arrow />
                         </button>
                         <button
                             type="button"
+                            className="euk-tip-play"
                             aria-pressed={playing}
                             onClick={() => setPlaying(!playing)}
                         >

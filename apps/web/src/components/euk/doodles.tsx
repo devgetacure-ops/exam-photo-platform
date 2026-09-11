@@ -122,6 +122,29 @@ export function ArrowDrawing({ className }: { className?: string }) {
     );
 }
 
+/** The drawing for a kind of file, wherever a file is listed. */
+export function FileTypeDrawing({
+    type,
+    className,
+}: {
+    type: string;
+    className?: string;
+}) {
+    switch (type) {
+        case "photograph":
+            return <PhotoDrawing className={className} />;
+        case "signature":
+            return <SignatureDrawing className={className} />;
+        case "thumb_impression":
+            return <ThumbDrawing className={className} />;
+        case "handwritten_declaration":
+        case "portal_declaration":
+            return <DeclarationDrawing className={className} />;
+        default:
+            return <CertificateDrawing className={className} />;
+    }
+}
+
 /** A request joining a list: two entries ticked, the new one not yet. */
 export function ListDrawing({ className }: { className?: string }) {
     return (

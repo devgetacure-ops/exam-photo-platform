@@ -7,6 +7,7 @@ import type { PrepareRequirementResponse } from "../../lib/types";
 import { formatBytes } from "../../lib/spec-format";
 import { FileComparison } from "../file-comparison";
 import { useLiveJob } from "./live-job-state";
+import { Cross, Tick } from "./specimen-sheet";
 
 /**
  * What came back, in three states rather than two (WEB-002, DEC-056).
@@ -19,7 +20,7 @@ import { useLiveJob } from "./live-job-state";
  * precisely how a candidate submits a file they should have looked at.
  *
  * Hence: clean, prepared-with-findings, and blocked, each with its own colour,
- * its own words, and its own next action.
+ * its own mark, its own words, and its own next action.
  */
 
 interface Props {
@@ -65,7 +66,13 @@ function isRoutine(finding: string): boolean {
     return finding in ROUTINE_NOTES;
 }
 
-/** Engine issue codes, said the way a person would say them. */
+/**
+ * Engine issue codes, said the way a person would say them.
+ *
+ * The engine reports its suitability checks as `SUITABILITY_*`. The earlier
+ * table only knew an older vocabulary, so a blocked photograph read as
+ * "suitability no face" to the candidate.
+ */
 const ISSUE_TEXT: Record<string, string> = {
     NO_FACE_DETECTED: "We could not find a face in this photo.",
     MULTIPLE_FACES: "There is more than one face in this photo.",
@@ -74,10 +81,39 @@ const ISSUE_TEXT: Record<string, string> = {
     IMAGE_TOO_DARK: "The photo is too dark.",
     IMAGE_TOO_BRIGHT: "The photo is too bright.",
     EYES_CLOSED: "The eyes look closed.",
+    SUITABILITY_NO_FACE: "We could not find a face in this photo.",
+    SUITABILITY_MULTIPLE_FACES: "There is more than one face in this photo.",
+    SUITABILITY_FACE_REGION_TOO_SMALL:
+        "The face is too small in the frame. Use a photo taken closer.",
+    SUITABILITY_RESOLUTION_TOO_LOW:
+        "The photo is too small to prepare. Use the original from the camera, not a screenshot or a forwarded copy.",
+    SUITABILITY_BLUR_SEVERE: "The photo is too blurry to use.",
+    SUITABILITY_BLUR_WARNING: "The photo is slightly blurred.",
+    SUITABILITY_UNDEREXPOSED_SEVERE: "The photo is too dark.",
+    SUITABILITY_UNDEREXPOSED_WARNING: "The photo is a little dark.",
+    SUITABILITY_OVEREXPOSED_SEVERE: "The photo is too bright.",
+    SUITABILITY_OVEREXPOSED_WARNING: "The photo is a little bright.",
+    SUITABILITY_POSE_EXTREME: "The face is turned too far from the camera.",
+    SUITABILITY_POSE_WARNING: "The face is turned slightly from the camera.",
+    SUITABILITY_HEAD_TOP_CLIPPED: "The top of the head is cut off.",
+    SUITABILITY_HEAD_SIDE_CLIPPED: "The side of the head is cut off.",
+    SUITABILITY_CHIN_CLIPPED: "The chin is cut off.",
+    SUITABILITY_EYES_NOT_VISIBLE: "The eyes are not clearly visible.",
+    SUITABILITY_FACE_OCCLUDED: "Something is covering part of the face.",
 };
 
 function humanIssue(code: string): string {
-    return ISSUE_TEXT[code] ?? code.toLowerCase().replace(/_/g, " ");
+    if (ISSUE_TEXT[code]) return ISSUE_TEXT[code];
+    const words = code.replace(/^SUITABILITY_/, "").toLowerCase().replace(/_/g, " ");
+    return words.charAt(0).toUpperCase() + words.slice(1);
+}
+
+function Caution() {
+    return (
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" aria-hidden="true">
+            <path d="M10 4 V 11 M10 15.5 V 15.6" />
+        </svg>
+    );
 }
 
 export function OutcomeResult({
@@ -112,12 +148,13 @@ export function OutcomeResult({
         partiallySupported ||
         result.is_valid === false ||
         (result.outcome === "prepared_with_findings" && substantive.length > 0);
+    const photo = result.requirement_type === "photograph";
 
     if (expired)
         return (
-            <div className="retention-note">
-                <strong>This file has expired.</strong>
-                <p>
+            <div className="euk-outcome euk-outcome--expired">
+                <p className="euk-outcome-title">This file has expired.</p>
+                <p className="euk-outcome-text">
                     The preview and download are no longer available. Prepare it
                     again to start a new retention window.
                 </p>
@@ -129,32 +166,28 @@ export function OutcomeResult({
 
     if (blocked) {
         return (
-            <div className="mt-4 rounded-lg border border-blocked-soft bg-blocked-soft/40 p-4">
-                <p className="font-medium text-blocked">
-                    We could not prepare this one
-                </p>
-                <ul className="mt-2 space-y-1">
+            <div className="euk-outcome euk-outcome--blocked">
+                <div className="euk-outcome-head">
+                    <span className="euk-outcome-mark" aria-hidden="true">
+                        <Cross />
+                    </span>
+                    <p className="euk-outcome-title">We could not prepare this one</p>
+                </div>
+                <ul>
                     {(result.issue_codes.length > 0
                         ? result.issue_codes.map(humanIssue)
                         : result.findings
                     ).map((line) => (
-                        <li
-                            key={line}
-                            className="text-sm leading-relaxed text-ink-soft"
-                        >
-                            {line}
-                        </li>
+                        <li key={line}>{line}</li>
                     ))}
                 </ul>
-                <p className="mt-3 text-sm text-ink-soft">
-                    Nothing has been charged. Try a different photo and we will
-                    have another go.
+                <p className="euk-outcome-text">
+                    Nothing has been charged.{" "}
+                    {photo
+                        ? "Try a different photo and we will have another go."
+                        : "Try a different file and we will have another go."}
                 </p>
-                <button
-                    type="button"
-                    onClick={onReplace}
-                    className="mt-3 rounded-md border border-line-strong px-3 py-1.5 text-sm font-medium hover:border-accent hover:text-accent"
-                >
+                <button type="button" className="secondary-button" onClick={onReplace}>
                     Try another file
                 </button>
             </div>
@@ -163,89 +196,67 @@ export function OutcomeResult({
 
     return (
         <div
-            className={`mt-4 rounded-lg border p-4 ${
-                hasFindings
-                    ? "border-caveat-soft bg-caveat-soft/40"
-                    : "border-ready-soft bg-ready-soft/50"
-            }`}
+            className={`euk-outcome ${hasFindings ? "euk-outcome--findings" : "euk-outcome--ready"}`}
         >
-            <div className="flex flex-wrap items-start justify-between gap-3">
-                <div>
-                    <p
-                        className={`font-medium ${hasFindings ? "text-caveat" : "text-ready"}`}
-                    >
+            <div className="euk-outcome-head">
+                <span className="euk-outcome-mark" aria-hidden="true">
+                    {hasFindings ? <Caution /> : <Tick />}
+                </span>
+                <div className="min-w-0">
+                    <p className="euk-outcome-title">
                         {partiallySupported
                             ? "Partly prepared — further steps needed"
                             : hasFindings
                               ? "Ready — with something to check"
                               : "Ready"}
                     </p>
-                    <p className="spec mt-1 text-xs text-ink-soft">
+                    <p className="euk-outcome-spec">
                         {[
                             result.width && result.height
                                 ? `${result.width} × ${result.height} px`
                                 : null,
-                            result.byte_size
-                                ? formatBytes(result.byte_size)
-                                : null,
+                            result.byte_size ? formatBytes(result.byte_size) : null,
                             result.output_filename,
                         ]
                             .filter(Boolean)
                             .join(" · ")}
                     </p>
                 </div>
-                <button
-                    type="button"
-                    onClick={onReplace}
-                    className="label rounded border border-line-strong px-2 py-1 hover:border-accent hover:text-accent"
-                >
+                <button type="button" onClick={onReplace} className="euk-outcome-replace">
                     Replace
                 </button>
             </div>
 
             {/*
-        The preview is watermarked and served at reduced resolution by the
-        service; the clean file is what the candidate buys. That is the
-        protection that actually works — blocking right-click stops nobody and
-        would make a page selling precision feel cheap.
-      */}
-            {sourceUrl &&
-            result.preview_url &&
-            result.preview_watermarked === true ? (
+                The preview is watermarked and served at reduced resolution by
+                the service; the clean file is what the candidate buys. That is
+                the protection that actually works — blocking right-click stops
+                nobody and would make a page selling precision feel cheap.
+            */}
+            {sourceUrl && result.preview_url && result.preview_watermarked === true ? (
                 <FileComparison
                     before={sourceUrl}
-                    after={new URL(
-                        result.preview_url,
-                        getApiBaseUrl(),
-                    ).toString()}
+                    after={new URL(result.preview_url, getApiBaseUrl()).toString()}
                 />
             ) : (
                 result.preview_url &&
                 result.preview_watermarked === true && (
-                    <figure className="mt-3">
+                    <figure className="euk-outcome-preview">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
-                            src={new URL(
-                                result.preview_url,
-                                getApiBaseUrl(),
-                            ).toString()}
+                            src={new URL(result.preview_url, getApiBaseUrl()).toString()}
                             onContextMenu={(event) => event.preventDefault()}
                             draggable={false}
                             alt={`Prepared ${requirementName}`}
-                            className="max-h-64 rounded border border-line bg-surface object-contain"
                         />
-                        <figcaption className="mt-1.5 text-xs text-muted">
-                            Preview — watermarked until you buy it.
-                        </figcaption>
+                        <figcaption>Preview — watermarked until you buy it.</figcaption>
                     </figure>
                 )
             )}
 
             {result.output_url &&
-                !(
-                    result.preview_url && result.preview_watermarked === true
-                ) && (
-                    <p className="mt-3 text-sm text-ink-soft">
+                !(result.preview_url && result.preview_watermarked === true) && (
+                    <p className="euk-outcome-text">
                         {result.output_media_type === "application/pdf"
                             ? "PDF prepared. A visual preview is not available: review the file details and findings before purchasing."
                             : "Your file was prepared. A protected preview is not available yet."}
@@ -253,12 +264,9 @@ export function OutcomeResult({
                 )}
 
             {expiry && !Number.isNaN(expiry.getTime()) && (
-                <p className="mt-3 text-xs text-muted">
+                <p className="euk-outcome-expiry">
                     Scheduled for deletion at{" "}
-                    <time
-                        dateTime={deadline ?? undefined}
-                        suppressHydrationWarning
-                    >
+                    <time dateTime={deadline ?? undefined} suppressHydrationWarning>
                         {expiry.toLocaleTimeString([], {
                             hour: "numeric",
                             minute: "2-digit",
@@ -268,56 +276,40 @@ export function OutcomeResult({
                 </p>
             )}
 
-            {hasFindings && (
-                <div className="mt-3">
-                    <p className="label text-caveat">
-                        Worth checking before you submit
-                    </p>
-                    <ul className="mt-1.5 space-y-1.5">
+            {hasFindings && substantive.length > 0 && (
+                <div className="euk-outcome-block">
+                    <p className="euk-outcome-sub">Worth checking before you submit</p>
+                    <ul>
                         {substantive.map((finding) => (
-                            <li
-                                key={finding}
-                                className="text-sm leading-relaxed text-ink-soft"
-                            >
-                                {finding}
-                            </li>
+                            <li key={finding}>{finding}</li>
                         ))}
                     </ul>
                 </div>
             )}
 
             {routine.length > 0 && (
-                <details className="mt-3">
-                    <summary className="label cursor-pointer hover:text-ink">
-                        What we changed ({routine.length})
-                    </summary>
-                    <ul className="mt-2 space-y-1">
+                <details className="euk-outcome-changes">
+                    <summary>What we changed ({routine.length})</summary>
+                    <ul>
                         {routine.map((finding) => (
-                            <li key={finding} className="text-sm text-muted">
-                                {ROUTINE_NOTES[finding]}
-                            </li>
+                            <li key={finding}>{ROUTINE_NOTES[finding]}</li>
                         ))}
                     </ul>
                 </details>
             )}
 
             {/*
-        A file that exists but that the platform could not fully verify is not
-        a clean pass, and DEC-056 forbids collapsing that into one. Said in the
-        candidate's terms, next to the file rather than in a report they will
-        not open.
-      */}
+                A file that exists but that the platform could not fully verify
+                is not a clean pass, and DEC-056 forbids collapsing that into
+                one. Said in the candidate's terms, next to the file rather than
+                in a report they will not open.
+            */}
             {result.is_valid === false && result.issue_codes.length > 0 && (
-                <div className="mt-3">
-                    <p className="label text-caveat">What we noticed</p>
-                    <ul className="mt-1.5 space-y-1.5">
+                <div className="euk-outcome-block">
+                    <p className="euk-outcome-sub">What we noticed</p>
+                    <ul>
                         {result.issue_codes.map((code) => (
-                            <li
-                                key={code}
-                                className="text-sm leading-relaxed text-ink-soft"
-                            >
-                                {humanIssue(code)}
-                            </li>
+                            <li key={code}>{humanIssue(code)}</li>
                         ))}
                     </ul>
                 </div>

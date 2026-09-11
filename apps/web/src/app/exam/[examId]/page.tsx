@@ -1,25 +1,22 @@
 import type { Metadata } from "next";
-import { loadExamFacts } from "../../../lib/exam-facts.server";
-import { ExamFacts } from "../../../components/exam/exam-facts";
 import { notFound } from "next/navigation";
 
+import { loadExamFacts } from "../../../lib/exam-facts.server";
 import { loadExam, loadExams } from "../../../lib/catalogue.server";
 import { liveCaptureStance } from "../../../lib/appearance-rules";
 import { SiteHeader } from "../../../components/site-header";
 import { SiteFooter } from "../../../components/site-footer";
+import { ExamHero } from "../../../components/exam/exam-hero";
 import { KitWorkspace } from "../../../components/exam/kit-workspace";
 
 /**
- * One examination, as a workspace.
+ * One examination: what it asks for, the kit that answers it, and each file
+ * prepared to its own rules.
  *
- * The page itself is a thin shell: identity at the top, the file list and the
- * selected file below it. The reference material an earlier version printed
- * inline — every appearance rule, every source citation, the pricing pitch —
- * now lives one level down, on `/exam/[examId]/rules`, because a candidate here
- * has come to produce files rather than to read.
- *
- * Still statically generated per examination: these are the pages the
- * acquisition strategy rests on, so they must be real HTML to a crawler.
+ * Statically generated per examination: these are the pages the acquisition
+ * strategy rests on, so they must be real HTML to a crawler. The reference
+ * material (every source citation, application-level rejection conditions)
+ * stays on `/exam/[examId]/rules`.
  */
 
 export async function generateStaticParams() {
@@ -63,39 +60,13 @@ export default async function ExamPage({
         exam.image_requirements,
         preparesPhotograph,
     );
+    const facts = await loadExamFacts(examId);
 
     return (
         <main className="euk exam-page" id="main-content">
             <SiteHeader mobileTitle={`${exam.exam_name} upload kit`} />
-
-            {/*
-        Live capture is the one thing that must be said before the candidate
-        starts, because it changes what they have to do rather than how they do
-        it — and "the exam takes a photo too" is the opposite of "so skip the
-        upload" on the 16 exams that want both.
-      */}
-            {liveCapture === "additional" && (
-                <details className="live-capture-note">
-                    <summary>Centre photograph also required</summary>
-                    <p>
-                        This exam also photographs you at the centre. That is in
-                        addition to the photo you upload here, not instead of
-                        it.
-                    </p>
-                </details>
-            )}
-            {liveCapture === "instead" && (
-                <details className="live-capture-note">
-                    <summary>The exam takes this photograph</summary>
-                    <p>
-                        This exam photographs you itself, so there is no photo
-                        to upload.
-                    </p>
-                </details>
-            )}
-
+            <ExamHero exam={exam} facts={facts} liveCapture={liveCapture} />
             <KitWorkspace exam={exam} />
-            <div className="facts-wrap"><ExamFacts facts={await loadExamFacts(examId)} examName={exam.exam_name} /></div>
             <SiteFooter />
         </main>
     );

@@ -15,6 +15,7 @@ import { PreparationChallenge } from "./preparation-challenge";
 import { useLiveJob } from "./live-job-state";
 import { switchLighting, type PreparedFile } from "../../lib/journey-client";
 import { PreparationLoader } from "./preparation-loader";
+import { FileTypeDrawing } from "../euk/doodles";
 
 /**
  * Preparing one requirement.
@@ -76,6 +77,37 @@ function candidateError(error: unknown): string {
     return "We couldn’t prepare that file. Please try again.";
 }
 
+function LightingSwitch({
+    title,
+    checked,
+    disabled,
+    label,
+    onChange,
+}: {
+    title: string;
+    checked: boolean;
+    disabled?: boolean;
+    label?: string;
+    onChange: (checked: boolean) => void;
+}) {
+    return (
+        <label className="euk-switch">
+            <span className="euk-switch-title">{title}</span>
+            <input
+                type="checkbox"
+                role="switch"
+                checked={checked}
+                disabled={disabled}
+                aria-label={label}
+                onChange={(event) => onChange(event.target.checked)}
+            />
+            <span className="euk-switch-track" aria-hidden="true">
+                <span className="euk-switch-thumb" />
+            </span>
+        </label>
+    );
+}
+
 export function RequirementUpload({
     examId,
     examName,
@@ -106,6 +138,10 @@ export function RequirementUpload({
     );
     const inputRef = useRef<HTMLInputElement>(null);
     const { record, forget } = useKit(examId);
+    const documents = ["certificate_scan", "identity_document"].includes(
+        requirementType,
+    );
+    const photo = requirementType === "photograph";
 
     const submit = useCallback(
         async (file: File) => {
@@ -211,23 +247,18 @@ export function RequirementUpload({
             <PreparationLoader
                 sourceUrl={sourceUrl}
                 progressToken={progressToken}
+                requirementType={requirementType}
             />
         );
     }
 
     if (phase === "refused" && refusal) {
         return (
-            <div className="mt-4 rounded-lg border border-self-line bg-self-soft p-4">
-                <p className="font-medium text-self">
-                    We do not prepare this one
-                </p>
-                <p className="mt-1.5 text-sm leading-relaxed text-ink-soft">
-                    {refusal.detail}
-                </p>
+            <div className="euk-refusal">
+                <p className="euk-refusal-title">We do not prepare this one</p>
+                <p>{refusal.detail}</p>
                 {refusal.content_instructions && (
-                    <p className="mt-2 text-sm text-ink-soft">
-                        {refusal.content_instructions}
-                    </p>
+                    <p>{refusal.content_instructions}</p>
                 )}
             </div>
         );
@@ -236,69 +267,64 @@ export function RequirementUpload({
     if (phase === "done" && result) {
         return (
             <>
-                {requirementType === "photograph" &&
-                    result.enhancement_enabled !== undefined && (
-                        <div className="lighting-control">
-                            <label>
-                                Intelligent lighting
-                                <input
-                                    type="checkbox"
-                                    role="switch"
-                                    checked={result.enhancement_enabled}
-                                    disabled={
-                                        switching ||
-                                        !result.enhancement_switchable ||
-                                        live?.entitlement === "released"
-                                    }
-                                    onChange={async (event) => {
-                                        const enabled = event.target.checked;
-                                        setSwitching(true);
-                                        onWorking?.(true);
-                                        setMessage(null);
-                                        try {
-                                            const variant =
-                                                await switchLighting(
-                                                    result.job_id,
-                                                    enabled,
-                                                );
-                                            const preview = variant.preview_url
-                                                ? `${variant.preview_url}${variant.preview_url.includes("?") ? "&" : "?"}variant=${Date.now()}`
-                                                : null;
-                                            const next = {
-                                                ...result,
-                                                ...variant,
-                                                preview_url: preview,
-                                            };
-                                            setResult(next);
-                                            record(next, examName);
-                                            setEnhancementEnabled(enabled);
-                                        } catch (error) {
-                                            setMessage(
-                                                error instanceof Error
-                                                    ? error.message
-                                                    : "Could not switch lighting.",
-                                            );
-                                        } finally {
-                                            setSwitching(false);
-                                            onWorking?.(false);
-                                        }
-                                    }}
-                                />
-                            </label>
-                            <p role="status">
-                                {switching
-                                    ? "Updating your preview…"
-                                    : !result.enhancement_enabled
-                                      ? "Original lighting preserved."
-                                      : result.enhancements_applied?.length
-                                        ? result.enhancements_applied.join(
-                                              " · ",
-                                          )
-                                        : "Your photograph needed no correction."}
+                {photo && result.enhancement_enabled !== undefined && (
+                    <div className="euk-lighting">
+                        <LightingSwitch
+                            title="Intelligent lighting"
+                            checked={result.enhancement_enabled}
+                            disabled={
+                                switching ||
+                                !result.enhancement_switchable ||
+                                live?.entitlement === "released"
+                            }
+                            onChange={async (enabled) => {
+                                setSwitching(true);
+                                onWorking?.(true);
+                                setMessage(null);
+                                try {
+                                    const variant = await switchLighting(
+                                        result.job_id,
+                                        enabled,
+                                    );
+                                    const preview = variant.preview_url
+                                        ? `${variant.preview_url}${variant.preview_url.includes("?") ? "&" : "?"}variant=${Date.now()}`
+                                        : null;
+                                    const next = {
+                                        ...result,
+                                        ...variant,
+                                        preview_url: preview,
+                                    };
+                                    setResult(next);
+                                    record(next, examName);
+                                    setEnhancementEnabled(enabled);
+                                } catch (error) {
+                                    setMessage(
+                                        error instanceof Error
+                                            ? error.message
+                                            : "Could not switch lighting.",
+                                    );
+                                } finally {
+                                    setSwitching(false);
+                                    onWorking?.(false);
+                                }
+                            }}
+                        />
+                        <p role="status">
+                            {switching
+                                ? "Updating your preview…"
+                                : !result.enhancement_enabled
+                                  ? "Original lighting preserved."
+                                  : result.enhancements_applied?.length
+                                    ? result.enhancements_applied.join(" · ")
+                                    : "Your photograph needed no correction."}
+                        </p>
+                        {message && (
+                            <p role="alert" className="euk-lighting-error">
+                                {message}
                             </p>
-                            {message && <p role="alert">{message}</p>}
-                        </div>
-                    )}
+                        )}
+                    </div>
+                )}
                 <OutcomeResult
                     result={result}
                     requirementName={requirementName}
@@ -319,7 +345,7 @@ export function RequirementUpload({
     }
 
     return (
-        <div className="requirement-upload-root mt-4">
+        <div className="euk-upload">
             {challengeKey && (
                 <PreparationChallenge
                     siteKey={challengeKey}
@@ -327,44 +353,32 @@ export function RequirementUpload({
                 />
             )}
             <div
+                className="euk-drop"
+                data-dragging={dragging}
+                data-type={requirementType}
                 onDragOver={(event) => {
                     event.preventDefault();
                     setDragging(true);
                 }}
                 onDragLeave={() => setDragging(false)}
                 onDrop={onDrop}
-                className={`rounded-lg border border-dashed p-5 text-center transition-colors ${
-                    dragging
-                        ? "border-accent bg-accent-soft"
-                        : "border-line-strong bg-sunk"
-                }`}
             >
+                <FileTypeDrawing type={requirementType} className="euk-drop-art" />
                 <button
                     type="button"
                     onClick={() => inputRef.current?.click()}
-                    className="primary-button upload-button"
+                    className="primary-button euk-drop-button"
                 >
                     {PROMPT[requirementType] ?? "Add your file"}
                 </button>
-                <p className="mt-1 text-sm text-muted">
-                    or drop it here — JPEG, PNG, WebP
-                    {["certificate_scan", "identity_document"].includes(
-                        requirementType,
-                    )
-                        ? " or PDF"
-                        : ""}
-                    , up to 5&nbsp;MB
+                <p className="euk-drop-hint">
+                    or drop it here: JPEG, PNG, WebP{documents ? " or PDF" : ""},
+                    up to 5&nbsp;MB
                 </p>
                 <input
                     ref={inputRef}
                     type="file"
-                    accept={
-                        ["certificate_scan", "identity_document"].includes(
-                            requirementType,
-                        )
-                            ? ACCEPT
-                            : "image/jpeg,image/png,image/webp"
-                    }
+                    accept={documents ? ACCEPT : "image/jpeg,image/png,image/webp"}
                     className="sr-only"
                     aria-label={`Upload for ${requirementName}`}
                     onChange={(event) => {
@@ -377,47 +391,31 @@ export function RequirementUpload({
             </div>
 
             {phase === "error" && message && (
-                <p
-                    className="mt-2 flex items-start gap-2 text-sm text-blocked"
-                    role="alert"
-                >
-                    <svg
-                        className="mt-0.5 size-4 shrink-0"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        aria-hidden="true"
-                    >
-                        <circle cx="12" cy="12" r="9" />
-                        <path d="M12 8v5M12 16h.01" />
+                <p className="euk-upload-error" role="alert">
+                    <svg viewBox="0 0 22 22" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true">
+                        <rect x="1.5" y="1.5" width="19" height="19" />
+                        <path d="M7 7 L 15 15 M15 7 L 7 15" />
                     </svg>
                     <span>{message}</span>
                 </p>
             )}
 
-            {requirementType === "photograph" && (
-                <div className="lighting-control">
-                    <label>
-                        Intelligent lighting adjustment{" "}
-                        <input
-                            type="checkbox"
-                            role="switch"
-                            checked={enhancementEnabled}
-                            onChange={(event) =>
-                                setEnhancementEnabled(event.target.checked)
-                            }
-                            aria-label="Intelligent lighting adjustment"
-                        />
-                    </label>
+            {photo && (
+                <div className="euk-lighting">
+                    <LightingSwitch
+                        title="Intelligent lighting adjustment"
+                        label="Intelligent lighting adjustment"
+                        checked={enhancementEnabled}
+                        onChange={setEnhancementEnabled}
+                    />
                     <p>
-                        Adjust exposure and color only when your photograph
-                        needs it. Review the changes before you pay. No
+                        Adjusts exposure and colour only when your photograph
+                        needs it, and you review the change before paying. No
                         whitening, reshaping or beauty filters.
                     </p>
                 </div>
             )}
-            <p className="mt-2 text-xs text-muted">
+            <p className="euk-upload-note">
                 No account needed. Review the result before you pay.
             </p>
         </div>

@@ -18,6 +18,8 @@ export interface PreparationProgress {
     stage: string;
     finished: boolean;
     failed: boolean;
+    /** Engine stage names already done, in order (DEC-075). */
+    completed_stages?: string[];
 }
 export interface EmailReceipt {
     sent: boolean;

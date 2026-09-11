@@ -59,20 +59,20 @@ policies rebuilt and verified.
 
 | Requirement | Surface | State |
 |---|---|---|
-| Every piece of exam information, well structured | `exam/[examId]` | building |
-| Every component justifies its use, position and existence | exam page | building |
-| Rules shown with visual references — what to do and what not to | requirement panel | todo |
-| Research how exams present visual examples and adapt that style | requirement panel | todo |
-| Photo, signature, documents: each curated for itself, one shared language | per-type panels | todo |
-| Full kit price vs single-file price, shown | kit list | todo |
-| Push the kit at each step; advertise its benefits | kit list, panel, review | todo |
+| Every piece of exam information, well structured | `exam/[examId]` | done — hero (who sets it, what it asks for, the files we prepare, live capture), the kit and its price, one panel per file; source citations stay on `/rules` |
+| Every component justifies its use, position and existence | exam page | building — the checkout panel under the kit is still the previous design, rebuilt with the purchase flow |
+| Rules shown with visual references — what to do and what not to | requirement panel | done — a drawn specimen sheet per file; every "don't" is either ruled out by this examination's record or something the engine checks every upload for |
+| Research how exams present visual examples and adapt that style | requirement panel | done — SSC's captioned sheet of photographs not acceptable, and the banking notices' capitals rule set beside the signature, adapted as drawings rather than photographs of strangers |
+| Photo, signature, documents: each curated for itself, one shared language | per-type panels | done — one frame (name, what we do, measurements, upload, specimens), with each file's own intro, specimens and drop zone |
+| Full kit price vs single-file price, shown | kit list | done — the price moves on the server's ladder as files are ticked, with the struck price and what the whole kit costs |
+| Push the kit at each step; advertise its benefits | kit list, panel, review | building — "Add the other N for ₹X more" on the price card, a price bar on phones, "Add it to the kit" on an unticked file; the review step comes with the purchase flow |
 | One photo plus PDFs is Rs 3 (from Rs 4) | quote | done — server-computed |
-| Show the value: without us, they collect these across several sites | exam page | todo |
-| PDF to image, image to PDF, rearrange, remove, merge — shown as free | document tools | todo — PDF to image needs a browser-side rasteriser, see note |
+| Show the value: without us, they collect these across several sites | exam page | done — the separate tools this application's files would need, read from its own record |
+| PDF to image, image to PDF, rearrange, remove, merge — shown as free | document tools | building — image to PDF, merge, reorder and remove are shown free with the kit; PDF to image still needs the browser-side rasteriser, see note |
 | Attention to minute detail | everywhere | building |
-| Visual interaction while a process runs | preparation | todo |
+| Visual interaction while a process runs | preparation | done — the candidate's own photograph sharpens and regains its colour with the engine's real progress, the frame's edge fills, and the steps tick as the engine reports them (DEC-075); honest when progress can't be read |
 | Kit pre-selected; the candidate unchecks; price follows | kit list | done |
-| Exam tips and facts: special, attention-getting, not the main subject, the centre of interest | exam page | todo |
+| Exam tips and facts: special, attention-getting, not the main subject, the centre of interest | exam page | done — pinned beside the title in the hero, each fact in the source's wording with the source a tap away; plays only when asked |
 
 ## Purchase flow
 

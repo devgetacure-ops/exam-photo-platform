@@ -160,163 +160,6 @@
     clip-path: inset(50%);
 }
 
-/* ---- requirement panel --------------------------------------------- */
-
-.euk .requirement-panel {
-    border: var(--rule-thin) solid var(--ink);
-    background: var(--paper);
-    padding: 0 20px 24px;
-}
-
-.euk .requirement-heading {
-    width: 100%;
-    transform: none;
-    border-bottom: var(--rule) solid var(--ink);
-    padding: 20px 0 14px;
-    margin-bottom: 22px;
-}
-
-.euk .requirement-heading .eyebrow {
-    display: none;
-}
-
-.euk .requirement-heading h2 {
-    font-family: var(--font-shoulders), "Arial Narrow", sans-serif;
-    font-weight: 900;
-    font-size: 34px;
-    line-height: 0.9;
-    letter-spacing: 0.005em;
-    text-transform: uppercase;
-}
-
-@media (min-width: 768px) {
-    .euk .requirement-heading h2 {
-        font-size: 42px;
-    }
-}
-
-.euk .requirement-heading > p:last-child {
-    font-size: 14px;
-    line-height: 1.6;
-    color: var(--ink-70);
-    margin-top: 12px;
-    max-width: 62ch;
-}
-
-.euk .requirement-content {
-    display: grid;
-    gap: 32px;
-    padding-bottom: 8px;
-}
-
-/* On a phone the guidance column stacks first, so the candidate scrolled past
-   three photographs and their captions before reaching the specification and
-   the upload — the two things they came for. Below the grid breakpoint the
-   order is reversed; guidance is reference and reads after. */
-@media (max-width: 899px) {
-    .euk .requirement-content > :first-child {
-        order: 2;
-    }
-    .euk .requirement-content > :nth-child(2) {
-        order: 1;
-    }
-}
-
-@media (min-width: 900px) {
-    .euk .requirement-content {
-        /* The upload column leads. Guidance is reference material and sits
-           narrower than the thing the candidate came to do. */
-        grid-template-columns: minmax(240px, 0.8fr) minmax(320px, 1fr);
-        gap: 44px;
-        align-items: start;
-    }
-}
-
-/* The guidance photograph is a reference, not the subject of the page. It was
-   running full-column and pushing the specification and the upload below the
-   fold, which inverted what the candidate is here to do. */
-.euk .guide-image {
-    border: var(--rule-thin) solid var(--ink);
-    background: var(--paper-2);
-    display: block;
-    width: 100%;
-    max-width: 260px;
-    aspect-ratio: 3 / 4;
-    object-fit: cover;
-    height: auto;
-}
-
-.euk .example-disclaimer,
-.euk .example-caution {
-    font-size: 12px;
-    color: var(--ink-55);
-    line-height: 1.5;
-}
-
-/* .example-good is the caption's label, not the photograph. It was grouped
-   with .guide-image, which gave a text span a border and a 3:4 box and drew
-   an empty frame above the image. */
-.euk .example-good,
-.euk .example-caution {
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    font-size: 11px;
-    color: var(--signal-deep);
-    background: none;
-    border: 0;
-    padding: 0;
-    cursor: inherit;
-}
-
-.euk .example-caution {
-    color: var(--ink-55);
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    cursor: pointer;
-}
-
-.euk .example-caption {
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
-    max-width: 260px;
-    padding-top: 8px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    font-size: 11px;
-    color: var(--ink-55);
-}
-
-.euk .avoid-heading {
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.09em;
-    font-size: 11px;
-    color: var(--ink);
-    padding-top: 20px;
-}
-
-.euk .example-thumbnails {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-    max-width: 260px;
-    padding-top: 10px;
-}
-
-/* Both rejects at one size: a gallery where the wrong examples differ in
-   scale invites the reader to attribute the difference to the crop rather
-   than to the mistake being shown. */
-.euk .example-thumbnails img {
-    border: var(--rule-thin) dashed var(--ink-40);
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    object-fit: cover;
-    display: block;
-}
-
 .euk .spec-list {
     display: flex;
     flex-direction: column;
@@ -352,151 +195,13 @@
     border-bottom: 0;
 }
 
-.euk .essential-checks {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 18px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    font-size: 14px;
-    line-height: 1.5;
-}
-
-.euk .essential-checks li {
-    padding-left: 18px;
-    position: relative;
-}
-
-.euk .essential-checks li::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0.55em;
-    width: 8px;
-    height: 2px;
-    background: var(--signal);
-}
-
-.euk .requirement-actions,
-.euk .source-actions,
 .euk .comparison-actions,
-.euk .document-actions,
 .euk .file-actions {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 14px;
     padding-top: 14px;
-}
-
-.euk .requirement-reference,
-.euk .self-guidance,
-.euk .guidance-rule,
-.euk .preparation-source {
-    font-size: 13px;
-    line-height: 1.6;
-    color: var(--ink-70);
-}
-
-.euk .requirement-panel details {
-    border-top: 1px solid var(--hairline);
-    padding: 12px 0;
-}
-
-.euk .requirement-panel details summary {
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 14px;
-}
-
-.euk .lighting-control {
-    border: var(--rule-thin) solid var(--ink);
-    background: var(--paper);
-    padding: 14px 16px;
-    margin-top: 16px;
-}
-
-.euk .lighting-control label {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 14px;
-    font-weight: 600;
-    font-size: 15px;
-}
-
-.euk .lighting-control input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
-    accent-color: var(--signal);
-}
-
-.euk .lighting-control p {
-    font-size: 13px;
-    line-height: 1.55;
-    color: var(--ink-70);
-    padding-top: 8px;
-}
-
-/* ---- preparation ---------------------------------------------------- */
-
-.euk .preparation-loader {
-    border: var(--rule-thin) solid var(--ink);
-    background: var(--paper-2);
-    padding: 18px;
-}
-
-.euk .loader-heading {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-weight: 600;
-    font-size: 15px;
-}
-
-.euk .live-progress {
-    height: 10px;
-    border: var(--rule-thin) solid var(--ink);
-    background: var(--paper);
-    margin: 14px 0 8px;
-    overflow: hidden;
-}
-
-.euk .live-progress > * {
-    display: block;
-    height: 100%;
-    background: var(--signal);
-}
-
-.euk .elapsed {
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    font-weight: 600;
-    color: var(--ink-55);
-    font-variant-numeric: tabular-nums;
-}
-
-.euk .progress-spinner {
-    width: 20px;
-    height: 20px;
-    border: 3px solid var(--hairline);
-    border-top-color: var(--signal);
-    flex-shrink: 0;
-    animation: euk-spin 900ms linear infinite;
-}
-
-@keyframes euk-spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .euk .progress-spinner {
-        animation-duration: 2.4s;
-    }
 }
 
 /* ---- before/after comparison ---------------------------------------- */
@@ -551,27 +256,6 @@
     background: var(--ink);
     color: var(--paper);
     padding: 4px 8px;
-}
-
-/* ---- documents ------------------------------------------------------- */
-
-.euk .document-workspace {
-    border: var(--rule-thin) solid var(--ink);
-    padding: 16px;
-    margin-top: 18px;
-}
-
-.euk .document-pages {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 12px;
-    padding-top: 12px;
-}
-
-.euk .document-pages > * {
-    border: var(--rule-thin) solid var(--ink);
-    padding: 10px;
-    font-size: 12px;
 }
 
 /* ---- checkout -------------------------------------------------------- */
@@ -665,56 +349,6 @@
     border-style: dashed;
     border-color: var(--signal);
     background: var(--signal-soft);
-}
-
-/* ---- exam facts ------------------------------------------------------ */
-
-.euk .facts-wrap {
-    max-width: 1240px;
-    margin: 0 auto;
-    padding: 0 20px 48px;
-}
-
-@media (min-width: 768px) {
-    .euk .facts-wrap {
-        padding: 0 48px 64px;
-    }
-}
-
-.euk .exam-facts {
-    border-top: var(--rule) solid var(--ink);
-    padding-top: 22px;
-}
-
-.euk .facts-heading {
-    font-family: var(--font-shoulders), "Arial Narrow", sans-serif;
-    font-weight: 900;
-    font-size: 26px;
-    text-transform: uppercase;
-}
-
-.euk .fact-body {
-    font-size: 16px;
-    line-height: 1.6;
-    padding: 14px 0;
-    min-height: 5.2em;
-}
-
-.euk .fact-controls,
-.euk .facts-footer {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 14px;
-    font-size: 13px;
-    color: var(--ink-55);
-}
-
-.euk .fact-controls button {
-    border: var(--rule-thin) solid var(--ink);
-    padding: 6px 12px;
-    font-weight: 600;
-    cursor: pointer;
 }
 
 /* ---- content, policy, request and state pages ------------------------ */
@@ -891,7 +525,6 @@
     max-width: 74ch;
 }
 
-.euk .euk-part-name,
 .euk .checkout-file p,
 .euk .spec-list p {
     max-width: none;
@@ -899,21 +532,10 @@
 
 /* 11px is the floor for anything functional. Only non-interactive legal
    smallprint sits below it. */
-.euk .euk-label,
-.euk .euk-part-state,
-.euk .euk-part-head,
-.euk .example-caption,
-.euk .example-good,
-.euk .avoid-heading,
-.euk .elapsed {
+.euk .euk-label {
     font-size: 11px;
 }
 
-/* A bordered block with text hard against its edge reads as broken. */
-.euk .euk-sheet-head {
-    padding-left: 0;
-    padding-right: 0;
-}
 
 
 /* The search group draws the box; the field inside it must not draw a second

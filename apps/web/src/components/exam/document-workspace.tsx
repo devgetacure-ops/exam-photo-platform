@@ -10,6 +10,28 @@ import type {
 import { useKit } from "./use-kit";
 import { OutcomeResult } from "./outcome-result";
 import { PreparationLoader } from "./preparation-loader";
+import { Tick } from "./specimen-sheet";
+
+/**
+ * Documents: the page work candidates otherwise do in three free tools, done
+ * here in one place and included with the kit.
+ *
+ * Bring any mix of photos and PDFs; every page is laid out as a card to put in
+ * order or leave out, and one file is prepared from what remains. Each move
+ * has a keyboard-reachable button, and the original order is one tap away.
+ */
+
+const TOOLS = ["Image to PDF", "Merge files", "Reorder pages", "Remove pages"];
+
+function PageDrawing() {
+    return (
+        <svg className="euk-doc-page-art" viewBox="0 0 60 72" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M8 4 H 40 L 52 16 V 68 H 8 Z" />
+            <path d="M40 4 V 16 H 52" />
+            <path d="M16 30 H 44 M16 40 H 44 M16 50 H 34" />
+        </svg>
+    );
+}
 
 export function DocumentWorkspace({
     examId,
@@ -36,7 +58,7 @@ export function DocumentWorkspace({
     const [error, setError] = useState("");
     const input = useRef<HTMLInputElement>(null);
     const { record, forget } = useKit(examId);
-    if (busy) return <PreparationLoader />;
+    if (busy) return <PreparationLoader requirementType="certificate_scan" />;
     if (result)
         return (
             <OutcomeResult
@@ -51,152 +73,145 @@ export function DocumentWorkspace({
                 }}
             />
         );
+
+    const move = (from: number, to: number) =>
+        setPages((value) => {
+            const next = [...value];
+            [next[from], next[to]] = [next[to], next[from]];
+            return next;
+        });
+
     return (
-        <div className="document-workspace">
-            <p>
-                Bring images or PDFs together. Arrange the pages, leave out what
-                you don’t need, then prepare one document for this requirement.
-            </p>
-            <button
-                className="primary-button"
-                type="button"
-                onClick={() => input.current?.click()}
-            >
-                {plan ? "Choose different source files" : "Add images or PDFs"}
-            </button>
-            <input
-                className="sr-only"
-                ref={input}
-                aria-label={`Source files for ${requirementName}`}
-                type="file"
-                multiple
-                accept="image/jpeg,image/png,image/webp,application/pdf"
-                onChange={async (event) => {
-                    const files = Array.from(event.target.files ?? []);
-                    event.target.value = "";
-                    if (!files.length) return;
-                    if (
-                        files.length > 10 ||
-                        files.some((file) => file.size > 5 * 1024 * 1024)
-                    ) {
-                        setError(
-                            "Choose up to 10 files, each no larger than 5 MB.",
-                        );
-                        return;
-                    }
-                    setBusy(true);
-                    onWorking?.(true);
-                    setError("");
-                    try {
-                        const kit = startKit(examId, examName);
-                        const next = await planDocument({
-                            examId,
-                            requirementId,
-                            files,
-                            kitId: kit.kitId,
-                        });
-                        setPlan(next);
-                        setPages(next.pages);
-                        setNames(files.map((file) => file.name));
-                    } catch {
-                        setError(
-                            "We couldn’t read these files. Check that they are readable images or unprotected PDFs, then try again.",
-                        );
-                    } finally {
-                        setBusy(false);
-                        onWorking?.(false);
-                    }
-                }}
-            />
-            <p className="fine-copy">
-                Up to 10 sources, 5 MB each. Page order is shown below; rendered
-                PDF previews are not available.
-            </p>
+        <div className="euk-doc">
+            <div className="euk-doc-toolbar">
+                <ul className="euk-doc-tools" aria-label="Included free with your kit">
+                    {TOOLS.map((tool) => (
+                        <li key={tool}>
+                            <Tick />
+                            {tool}
+                        </li>
+                    ))}
+                </ul>
+                <p className="euk-doc-free">Free with your kit</p>
+            </div>
+
+            <div className="euk-drop" data-type="document">
+                <button
+                    className="primary-button euk-drop-button"
+                    type="button"
+                    onClick={() => input.current?.click()}
+                >
+                    {plan ? "Choose different source files" : "Add images or PDFs"}
+                </button>
+                <p className="euk-drop-hint">
+                    Up to 10 files, 5&nbsp;MB each. PDF pages are listed in
+                    order, without a picture of each page yet.
+                </p>
+                <input
+                    className="sr-only"
+                    ref={input}
+                    aria-label={`Source files for ${requirementName}`}
+                    type="file"
+                    multiple
+                    accept="image/jpeg,image/png,image/webp,application/pdf"
+                    onChange={async (event) => {
+                        const files = Array.from(event.target.files ?? []);
+                        event.target.value = "";
+                        if (!files.length) return;
+                        if (
+                            files.length > 10 ||
+                            files.some((file) => file.size > 5 * 1024 * 1024)
+                        ) {
+                            setError(
+                                "Choose up to 10 files, each no larger than 5 MB.",
+                            );
+                            return;
+                        }
+                        setBusy(true);
+                        onWorking?.(true);
+                        setError("");
+                        try {
+                            const kit = startKit(examId, examName);
+                            const next = await planDocument({
+                                examId,
+                                requirementId,
+                                files,
+                                kitId: kit.kitId,
+                            });
+                            setPlan(next);
+                            setPages(next.pages);
+                            setNames(files.map((file) => file.name));
+                        } catch {
+                            setError(
+                                "We couldn’t read these files. Check that they are readable images or unprotected PDFs, then try again.",
+                            );
+                        } finally {
+                            setBusy(false);
+                            onWorking?.(false);
+                        }
+                    }}
+                />
+            </div>
+
             {plan && (
                 <>
                     {Object.keys(plan.unreadable).length > 0 && (
-                        <div className="inline-notice" role="alert">
-                            <strong>Some sources could not be read.</strong>
+                        <div className="euk-doc-warn" role="alert">
+                            <strong>Some files could not be read.</strong>
                             <ul>
                                 {Object.entries(plan.unreadable).map(
                                     ([index, reason]) => (
                                         <li key={index}>
-                                            {names[Number(index)] ??
-                                                "Source file"}
-                                            : {reason}
+                                            {names[Number(index)] ?? "Source file"}:{" "}
+                                            {reason}
                                         </li>
                                     ),
                                 )}
                             </ul>
                             <p>
-                                These sources are not included. Replace them
-                                before continuing if they are required.
+                                They are left out. Replace them before continuing
+                                if they are required.
                             </p>
                         </div>
                     )}
-                    <ol className="document-pages">
+                    <ol className="euk-doc-pages">
                         {pages.map((page, index) => (
                             <li
                                 key={`${page.source_index}-${page.page_index}-${index}`}
+                                className="euk-doc-page"
                             >
-                                <div>
-                                    <strong>
-                                        {names[page.source_index] ??
-                                            `Source ${page.source_index + 1}`}
-                                    </strong>
-                                    <span>
-                                        Page {page.page_index + 1} · position{" "}
-                                        {index + 1}
-                                    </span>
-                                </div>
-                                <div className="document-actions">
+                                <PageDrawing />
+                                <strong>
+                                    {names[page.source_index] ??
+                                        `Source ${page.source_index + 1}`}
+                                </strong>
+                                <span>
+                                    Page {page.page_index + 1}, placed {index + 1} of{" "}
+                                    {pages.length}
+                                </span>
+                                <div className="euk-doc-actions">
                                     <button
                                         type="button"
-                                        className="secondary-button"
                                         aria-label={`Move page ${index + 1} up`}
                                         disabled={index === 0}
-                                        onClick={() =>
-                                            setPages((value) => {
-                                                const next = [...value];
-                                                [next[index - 1], next[index]] =
-                                                    [
-                                                        next[index],
-                                                        next[index - 1],
-                                                    ];
-                                                return next;
-                                            })
-                                        }
+                                        onClick={() => move(index, index - 1)}
                                     >
                                         ↑
                                     </button>
                                     <button
                                         type="button"
-                                        className="secondary-button"
                                         aria-label={`Move page ${index + 1} down`}
                                         disabled={index === pages.length - 1}
-                                        onClick={() =>
-                                            setPages((value) => {
-                                                const next = [...value];
-                                                [next[index], next[index + 1]] =
-                                                    [
-                                                        next[index + 1],
-                                                        next[index],
-                                                    ];
-                                                return next;
-                                            })
-                                        }
+                                        onClick={() => move(index, index + 1)}
                                     >
                                         ↓
                                     </button>
                                     <button
                                         type="button"
-                                        className="secondary-button"
                                         aria-label={`Remove page ${index + 1}`}
                                         onClick={() =>
                                             setPages((value) =>
-                                                value.filter(
-                                                    (_, i) => i !== index,
-                                                ),
+                                                value.filter((_, i) => i !== index),
                                             )
                                         }
                                     >
@@ -206,14 +221,7 @@ export function DocumentWorkspace({
                             </li>
                         ))}
                     </ol>
-                    <div className="file-actions">
-                        <button
-                            className="secondary-button"
-                            type="button"
-                            onClick={() => setPages(plan.pages)}
-                        >
-                            Restore original order and pages
-                        </button>
+                    <div className="euk-doc-bar">
                         <button
                             type="button"
                             className="primary-button"
@@ -239,14 +247,20 @@ export function DocumentWorkspace({
                                 }
                             }}
                         >
-                            Prepare {pages.length} page
-                            {pages.length === 1 ? "" : "s"} ↗
+                            Prepare {pages.length} page{pages.length === 1 ? "" : "s"}
+                        </button>
+                        <button
+                            className="quiet-link euk-doc-restore"
+                            type="button"
+                            onClick={() => setPages(plan.pages)}
+                        >
+                            Restore the original order
                         </button>
                     </div>
                 </>
             )}
             {error && (
-                <p role="alert" className="inline-notice">
+                <p role="alert" className="euk-upload-error">
                     {error}
                 </p>
             )}

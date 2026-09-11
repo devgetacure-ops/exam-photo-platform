@@ -9,6 +9,7 @@ import "./app.css";
 import "./story.css";
 import "./request.css";
 import "./policy.css";
+import "./exam.css";
 
 /**
  * Three families. Each carries a different register and none of them is a
