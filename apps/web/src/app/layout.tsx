@@ -4,10 +4,8 @@ import {
     Anek_Latin,
     Petrona,
 } from "next/font/google";
-import "./globals.css";
-import "./journey.css";
-import "./editorial.css";
 import "./system.css";
+import "./app.css";
 
 /**
  * Three families. Each carries a different register and none of them is a

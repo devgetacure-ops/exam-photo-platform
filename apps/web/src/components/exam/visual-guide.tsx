@@ -91,28 +91,34 @@ export function VisualGuide({ type }: { type: string }) {
                     className="example-thumbnails"
                     aria-label="Choose a guidance example"
                 >
-                    {examples.map((item, i) => (
-                        <button
-                            key={item.src}
-                            type="button"
-                            aria-pressed={i === index}
-                            onClick={() => setIndex(i)}
-                        >
-                            <Image
-                                width={120}
-                                height={90}
-                                src={item.src}
-                                alt=""
-                            />
-                            <span>
-                                {i === 0
-                                    ? photo
-                                        ? "Good lighting"
-                                        : "Full signature"
-                                    : item.title}
-                            </span>
-                        </button>
-                    ))}
+                    {/* Only the rejects appear under "Avoid these". The good
+                        example was rendering here too, so a thumbnail reading
+                        "Good lighting" sat under a heading telling the reader
+                        to avoid it. The caption's "Back to the good example"
+                        button is how you return to it. */}
+                    {examples
+                        .map((item, i) => ({ item, i }))
+                        .filter(({ item }) => (photo ? !item.good : true))
+                        .map(({ item, i }) => (
+                            <button
+                                key={item.src}
+                                type="button"
+                                aria-pressed={i === index}
+                                onClick={() => setIndex(i)}
+                            >
+                                <Image
+                                    width={120}
+                                    height={90}
+                                    src={item.src}
+                                    alt=""
+                                />
+                                <span>
+                                    {i === 0 && !photo
+                                        ? "Full signature"
+                                        : item.title}
+                                </span>
+                            </button>
+                        ))}
                 </div>
             )}
             <p className="example-disclaimer">
