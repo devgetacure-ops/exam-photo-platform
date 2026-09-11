@@ -1199,10 +1199,10 @@
     --color-self-line: var(--self-line);
 
     --font-sans:
-        var(--font-instrument), ui-sans-serif, system-ui, -apple-system,
+        var(--font-anek), ui-sans-serif, system-ui, -apple-system,
         "Segoe UI", Roboto, sans-serif;
     --font-mono:
-        var(--font-plex-mono), ui-monospace, "SF Mono", Menlo, monospace;
+        var(--font-anek), ui-monospace, "SF Mono", Menlo, monospace;
 
     --shadow-card: var(--shadow-md);
     --shadow-float: var(--shadow-lg);

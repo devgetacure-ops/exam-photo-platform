@@ -1,7 +1,7 @@
-import Link from "next/link";
 import { ExamSearch } from "../components/exam-search";
 import { SiteFooter } from "../components/site-footer";
-import { Wordmark } from "../components/euk/wordmark";
+import { SiteHeader } from "../components/site-header";
+import { Note } from "../components/euk/note";
 import { loadSearchIndex } from "../lib/catalogue.server";
 
 /**
@@ -40,26 +40,8 @@ export default async function Home() {
 
     return (
         <div className="euk">
+            <SiteHeader />
             <main id="main-content">
-                <header className="flex items-center justify-between border-b-[3px] border-[var(--ink)] px-5 py-4 md:px-12">
-                    <Link href="/" aria-label="examuploadkit home">
-                        <Wordmark />
-                    </Link>
-                    <nav className="euk-mono flex items-center gap-4 text-[11px] md:gap-7 md:text-xs">
-                        <Link href="/#how" className="hidden sm:inline">
-                            HOW IT WORKS
-                        </Link>
-                        <Link href="/#pricing" className="hidden sm:inline">
-                            PRICING
-                        </Link>
-                        <Link
-                            href="/exams"
-                            className="border-2 border-[var(--ink)] px-2 py-1 md:px-3"
-                        >
-                            {exams.length} EXAMS
-                        </Link>
-                    </nav>
-                </header>
 
                 {/* hero */}
                 <section className="px-5 pt-8 md:px-12 md:pt-13">
@@ -74,7 +56,7 @@ export default async function Home() {
                                 <br />
                                 <span className="euk-mark">the files.</span>
                             </h1>
-                            <p className="euk-aside text-[18px] text-[var(--ink-70)] md:text-[21px]">
+                            <p className="text-[17px] font-medium leading-snug md:text-[19px]">
                                 The photo. The signature. The right size, format
                                 and filename.
                             </p>
@@ -93,7 +75,7 @@ export default async function Home() {
                                 <div className="md:hidden">
                                     <Specimen w={106} h={122} prepared={false} />
                                 </div>
-                                <p className="euk-mono pt-1.5 text-[8px] text-[var(--ink-55)] md:text-[9px]">
+                                <p className="euk-label pt-1.5 text-[10px] text-[var(--ink-55)] md:text-[10px]">
                                     AS UPLOADED
                                 </p>
                             </div>
@@ -105,10 +87,10 @@ export default async function Home() {
                                     <Specimen w={140} h={161} prepared />
                                 </div>
                                 <div className="flex items-baseline justify-between pt-1.5 md:pt-2">
-                                    <span className="euk-mono text-[8px] md:text-[9px]">
+                                    <span className="euk-label text-[10px] md:text-[10px]">
                                         200×230 · 48 KB
                                     </span>
-                                    <span className="euk-mono text-[8px] text-[var(--signal-deep)] md:text-[9px]">
+                                    <span className="euk-label text-[10px] text-[var(--signal-deep)] md:text-[10px]">
                                         PREPARED
                                     </span>
                                 </div>
@@ -140,7 +122,7 @@ export default async function Home() {
                                 <br />
                                 <span className="euk-mark">still wrong.</span>
                             </h2>
-                            <p className="euk-aside pt-4 text-[17px] text-[var(--ink-70)] md:text-[20px]">
+                            <p className="pt-4 text-[17px] font-medium leading-snug text-[var(--ink-70)] md:text-[19px]">
                                 It was never your photograph. It was the
                                 specification.
                             </p>
@@ -151,12 +133,12 @@ export default async function Home() {
                                     {TOOL_TABS.map((t) => (
                                         <span
                                             key={t}
-                                            className="euk-mono shrink-0 border-2 border-b-0 border-[var(--paper)] bg-[var(--paper-2)] px-2.5 py-1.5 text-[10px] text-[var(--ink-70)] md:text-[11px]"
+                                            className="euk-label shrink-0 border-2 border-b-0 border-[var(--paper)] bg-[var(--paper-2)] px-2.5 py-1.5 text-[10px] text-[var(--ink-70)] md:text-[11px]"
                                         >
                                             {t}
                                         </span>
                                     ))}
-                                    <span className="euk-mono shrink-0 border-2 border-b-0 border-[var(--paper)] bg-[var(--signal)] px-2.5 py-1.5 text-[10px] font-bold text-[var(--signal-ink)] md:text-[11px]">
+                                    <span className="euk-label shrink-0 border-2 border-b-0 border-[var(--paper)] bg-[var(--signal)] px-2.5 py-1.5 text-[10px] font-bold text-[var(--signal-ink)] md:text-[11px]">
                                         STILL WRONG
                                     </span>
                                 </div>
@@ -172,7 +154,9 @@ export default async function Home() {
                             <p className="text-[15px] leading-relaxed text-[var(--ink)] md:text-base">
                                 None of those tools ever read your
                                 examination&rsquo;s rules. That is the whole
-                                problem, and it is the only thing we do.
+                                problem, and it is the only thing we do &mdash;
+                                and the PDF work those other tabs were for
+                                comes free with it.
                             </p>
                         </div>
                     </div>
@@ -187,12 +171,12 @@ export default async function Home() {
                                 <br />
                                 Six examinations.
                             </h2>
-                            <p className="euk-aside pt-2 text-base text-[var(--ink-70)] md:text-[18px]">
+                            <p className="pt-2 text-[15px] leading-relaxed text-[var(--ink-70)] md:text-base">
                                 No preset fits all six. Each one is read from
                                 what that exam actually published.
                             </p>
                         </div>
-                        <p className="euk-mono text-[11px] leading-relaxed text-[var(--ink-55)] md:text-right">
+                        <p className="euk-label text-[11px] leading-relaxed text-[var(--ink-55)] md:text-right">
                             418 REQUIREMENTS
                             <br className="hidden md:inline" /> ACROSS{" "}
                             {exams.length} EXAMS
@@ -208,24 +192,24 @@ export default async function Home() {
                                     className="border-2 border-[var(--ink)] bg-white"
                                     style={{ width: s.w, height: s.h }}
                                 />
-                                <span className="euk-mono text-[9px]">
+                                <span className="euk-label text-[10px]">
                                     {s.label}
                                 </span>
                             </div>
                         ))}
                         <div className="flex shrink-0 flex-col items-center gap-1.5">
                             <div className="relative h-[92px] w-[78px] border-2 border-[var(--signal)] bg-white">
-                                <div className="euk-mono absolute inset-x-0 bottom-0 flex h-[22px] items-center justify-center border-t-2 border-dashed border-[var(--signal)] bg-[#fde7e0] text-[7px] text-[var(--signal-deep)]">
+                                <div className="euk-label absolute inset-x-0 bottom-0 flex h-[22px] items-center justify-center border-t-2 border-dashed border-[var(--signal)] bg-[#fde7e0] text-[10px] text-[var(--signal-deep)]">
                                     NAME + DATE
                                 </div>
                             </div>
-                            <span className="euk-mono text-[9px] text-[var(--signal-deep)]">
+                            <span className="euk-label text-[10px] text-[var(--signal-deep)]">
                                 TNPSC
                             </span>
                         </div>
                         <div className="flex shrink-0 flex-col items-center gap-1.5">
                             <div className="h-[78px] w-[78px] border-2 border-dashed border-[var(--notyet-line)] bg-[var(--notyet-fill)]" />
-                            <span className="euk-mono text-[9px] text-[var(--ink-55)]">
+                            <span className="euk-label text-[10px] text-[var(--ink-55)]">
                                 NOT YET
                             </span>
                         </div>
@@ -241,7 +225,7 @@ export default async function Home() {
                     </h2>
                     <div className="flex flex-col gap-5 md:flex-row md:gap-[18px]">
                         <div className="euk-block euk-block--drop grow">
-                            <p className="euk-mono bg-[var(--ink)] px-3.5 py-2 text-[10px] text-[var(--paper)] md:text-[11px]">
+                            <p className="euk-label bg-[var(--ink)] px-3.5 py-2 text-[10px] text-[var(--paper)] md:text-[11px]">
                                 PART A — WE PREPARE THESE
                             </p>
                             <div className="p-3.5">
@@ -257,7 +241,7 @@ export default async function Home() {
                                         <span className="text-[15px]">
                                             {item}
                                         </span>
-                                        <span className="euk-mono border-2 border-[var(--ink)] bg-[var(--signal)] px-3 py-2 text-[11px] font-bold text-[var(--signal-ink)]">
+                                        <span className="euk-label border-2 border-[var(--ink)] bg-[var(--signal)] px-3 py-2 text-[11px] font-bold text-[var(--signal-ink)]">
                                             ATTACH
                                         </span>
                                     </div>
@@ -265,7 +249,7 @@ export default async function Home() {
                             </div>
                         </div>
                         <div className="euk-block euk-block--dashed grow">
-                            <p className="euk-mono bg-[var(--ink-40)] px-3.5 py-2 text-[10px] text-[var(--paper)] md:text-[11px]">
+                            <p className="euk-label bg-[var(--ink-40)] px-3.5 py-2 text-[10px] text-[var(--paper)] md:text-[11px]">
                                 PART B — YOU COMPLETE THESE
                             </p>
                             <div className="p-3.5">
@@ -286,7 +270,7 @@ export default async function Home() {
                                         Typed into the form, not uploaded
                                     </p>
                                 </div>
-                                <p className="euk-mono text-[11px] italic text-[var(--ink-55)]">
+                                <p className="euk-label text-[11px] italic text-[var(--ink-55)]">
                                     No attach box appears in Part B — on
                                     purpose.
                                 </p>
@@ -335,7 +319,7 @@ export default async function Home() {
                                 }}
                             >
                                 <p
-                                    className="euk-mono pb-1 text-[9px] font-bold md:text-[10px]"
+                                    className="euk-label pb-1 text-[10px] font-bold md:text-[10px]"
                                     style={{ color: `var(${s.line})` }}
                                 >
                                     {s.k}
@@ -346,9 +330,10 @@ export default async function Home() {
                             </div>
                         ))}
                     </div>
-                    <p className="euk-aside pt-4 text-base text-[var(--ink-70)]">
-                        Four states, never a boolean.
-                    </p>
+                    <Note className="pt-4 text-[15px] md:text-base">
+                        Four states, never a boolean — and never red, because
+                        &ldquo;not yet&rdquo; is not a failure.
+                    </Note>
                 </section>
 
                 {/* pricing */}
@@ -368,14 +353,14 @@ export default async function Home() {
                             { n: "₹8", was: "₹10", t: "Everything", d: "Three or more. The price stops here, whatever the exam asks for." },
                         ].map((p) => (
                             <div key={p.n} className="euk-block euk-block--drop p-4">
-                                <p className="euk-mono pb-2 text-[10px] text-[var(--ink-55)]">
+                                <p className="euk-label pb-2 text-[10px] text-[var(--ink-55)]">
                                     {p.t.toUpperCase()}
                                 </p>
                                 <p className="flex items-baseline gap-2">
                                     <span className="euk-display text-[46px]">
                                         {p.n}
                                     </span>
-                                    <span className="euk-mono text-[13px] text-[var(--ink-40)] line-through">
+                                    <span className="euk-label text-[13px] text-[var(--ink-40)] line-through">
                                         {p.was}
                                     </span>
                                 </p>
@@ -385,11 +370,14 @@ export default async function Home() {
                             </div>
                         ))}
                     </div>
-                    <p className="euk-aside pt-5 text-base text-[var(--ink-70)]">
-                        PDF work — merging, reordering, converting an image to a
-                        document — is included free with any prepared image.
-                    </p>
-                    <p className="euk-mono pt-3 text-[11px] leading-relaxed text-[var(--ink-55)]">
+                    <Note className="pt-5 text-[15px] md:text-base">
+                        Everything the other sites charge for, or make you open
+                        a fourth tab for — merging PDFs, reordering or removing
+                        pages, turning an image into a document, getting a file
+                        under a size limit — is free here with any prepared
+                        file.
+                    </Note>
+                    <p className="euk-label pt-3 text-[11px] leading-relaxed text-[var(--ink-55)]">
                         FILES ARE DELETED WITHIN 30 MINUTES — OR WITHIN AN HOUR,
                         IF YOU ASK US TO KEEP THEM.
                     </p>

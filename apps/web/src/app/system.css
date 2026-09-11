@@ -114,16 +114,38 @@
     margin: 0;
 }
 
-.euk-mono {
-    font-family: var(--font-courier), ui-monospace, monospace;
-    letter-spacing: 0.04em;
+.euk-label {
+    font-family: var(--font-anek), ui-sans-serif, system-ui, sans-serif;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    font-variant-numeric: tabular-nums;
 }
 
-.euk-aside {
+/* Specifications compare by eye, so figures line up in columns. */
+.euk-figures {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+}
+
+/* The italic earns its place only when it is pointing at something. It is
+   never a standfirst, a pull quote, or a second body voice — it is the hand in
+   the margin, and it always arrives with its arrow. Two or three per page. */
+.euk-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
     font-family: var(--font-petrona), Georgia, serif;
     font-style: italic;
     line-height: 1.35;
+    color: var(--ink-70);
     margin: 0;
+}
+
+.euk-note svg {
+    flex-shrink: 0;
+    margin-top: 0.35em;
+    color: var(--signal-deep);
 }
 
 /* ---- the wordmark: thirteen connected cells ------------------------- */

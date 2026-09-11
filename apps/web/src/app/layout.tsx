@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import {
     Big_Shoulders,
-    Courier_Prime,
     Anek_Latin,
     Petrona,
 } from "next/font/google";
@@ -11,18 +10,18 @@ import "./editorial.css";
 import "./system.css";
 
 /**
- * Four families, which is one more than this would normally allow, so it is a
- * decision rather than an accident. Each carries a different register and none
- * of them is a default: the previous setting ran Instrument Sans and IBM Plex,
+ * Three families. Each carries a different register and none of them is a
+ * default: the previous setting ran Instrument Sans and IBM Plex,
  * both of which read as the face a generator reaches for.
  *
  * Big Shoulders Display — condensed and industrial, for display and the
  * wordmark. Its narrowness is what lets a four-line headline hold a 452px
  * column at 88px.
  *
- * Courier Prime — the form's own register. Labels, measurements, part numbers.
- * It is doing the job a typewriter did on the document this interface is built
- * from.
+ * The form's technical register — labels, measurements, part numbers — is set
+ * in Anek uppercase and tracked rather than a monospace. A light typewriter
+ * face is the least legible thing on a page at the 10px these labels run at,
+ * which is the whole reason the register existed.
  *
  * Anek Latin — body and interface. Chosen for what comes later: its siblings
  * cover Devanagari, Bangla, Odia, Gurmukhi, Gujarati, Tamil, Telugu, Kannada
@@ -34,14 +33,6 @@ const shoulders = Big_Shoulders({
     variable: "--font-shoulders",
     subsets: ["latin"],
     display: "swap",
-});
-
-const courier = Courier_Prime({
-    variable: "--font-courier",
-    subsets: ["latin"],
-    display: "swap",
-    weight: ["400", "700"],
-    style: ["normal", "italic"],
 });
 
 const anek = Anek_Latin({
@@ -83,7 +74,7 @@ export default function RootLayout({
             suppressHydrationWarning
             lang="en"
             data-theme="light"
-            className={`${shoulders.variable} ${courier.variable} ${anek.variable} ${petrona.variable} h-full antialiased`}
+            className={`${shoulders.variable} ${anek.variable} ${petrona.variable} h-full antialiased`}
         >
             <head>
                 <script

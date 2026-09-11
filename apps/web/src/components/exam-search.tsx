@@ -172,7 +172,7 @@ export function ExamSearch({ exams, unavailable, autoFocus = false }: Props) {
       <div
         className="group flex items-center gap-3 border-[3px] border-[var(--ink)] bg-[var(--paper)]
                    px-5 py-4 shadow-card transition-colors
-                   focus-within:border-accent focus-within:ring-4 focus-within:ring-accent-soft"
+                   focus-within:border-[var(--signal)]"
       >
         <svg
           className="size-5 shrink-0 text-[var(--ink)]"
@@ -250,7 +250,7 @@ export function ExamSearch({ exams, unavailable, autoFocus = false }: Props) {
               onClick={() => go(row.entry)}
               className={`flex w-full items-center gap-3 border-b-2 border-[var(--hairline)] px-4 py-3
                           text-left last:border-b-0 ${
-                            index === active ? "bg-accent-soft" : "hover:bg-sunk"
+                            index === active ? "bg-[var(--partial-fill)]" : "hover:bg-[var(--paper-2)]"
                           }`}
             >
               <span className="min-w-0 flex-1">
@@ -320,7 +320,7 @@ export function ExamSearch({ exams, unavailable, autoFocus = false }: Props) {
           )}
         </div>
       )}
-      <div className="search-followup"><Link href="/exams">Browse all {exams.length} exams ↗</Link>{query.trim() && <Link href={`/exam-request?exam=${encodeURIComponent(query)}`}>Can’t find yours? Request it ↗</Link>}</div>
+      <div className="euk-label flex flex-wrap gap-4 px-4 py-3 text-[10px] [&_a]:text-[var(--ink-55)] [&_a]:underline [&_a]:underline-offset-4 [&_a:hover]:text-[var(--signal-deep)]"><Link href="/exams">Browse all {exams.length} exams ↗</Link>{query.trim() && <Link href={`/exam-request?exam=${encodeURIComponent(query)}`}>Can’t find yours? Request it ↗</Link>}</div>
     </div>
   );
 }
