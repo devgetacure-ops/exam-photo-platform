@@ -16,6 +16,7 @@ import {
 } from "../../lib/kit-pricing";
 import { photographSpecRows, requirementSpecRows } from "../../lib/spec-format";
 import { toolsReplaced } from "../../lib/value-tools";
+import type { ExamFact } from "./exam-facts";
 
 /**
  * The kit: every file this application asks for, what it costs, and the file
@@ -84,7 +85,13 @@ function yoursPhrase(requirement: RequirementSummary): string {
     }
 }
 
-export function KitWorkspace({ exam }: { exam: ExamDetail }) {
+export function KitWorkspace({
+    exam,
+    facts = [],
+}: {
+    exam: ExamDetail;
+    facts?: ExamFact[];
+}) {
     const requirements = useMemo(
         () => exam.requirements ?? [],
         [exam.requirements],
@@ -450,6 +457,7 @@ export function KitWorkspace({ exam }: { exam: ExamDetail }) {
                     onBusy={setCheckoutBusy}
                     preparationBusy={preparing}
                     selectedRequirements={included}
+                    facts={facts}
                 />
             </div>
 

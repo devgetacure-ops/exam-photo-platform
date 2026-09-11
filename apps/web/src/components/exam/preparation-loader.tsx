@@ -115,19 +115,26 @@ export function PreparationLoader({
         <div className="euk-prep" data-indeterminate={indeterminate}>
             <div className="euk-prep-frame">
                 {sourceUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                        className="euk-prep-source"
-                        src={sourceUrl}
-                        alt="Your original upload while preparation is in progress"
-                        style={
-                            indeterminate
-                                ? undefined
-                                : {
-                                      filter: `blur(${((1 - fraction) * 9).toFixed(1)}px) grayscale(${(1 - fraction).toFixed(2)})`,
-                                  }
-                        }
-                    />
+                    // Two layers, not one animated filter: the blurred grey copy
+                    // is rasterised once and only its opacity changes as work
+                    // completes, which stays on the compositor. Transitioning
+                    // `filter: blur()` repainted the image every frame.
+                    <>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                            className="euk-prep-source"
+                            src={sourceUrl}
+                            alt="Your original upload while preparation is in progress"
+                        />
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                            className="euk-prep-source euk-prep-veil"
+                            src={sourceUrl}
+                            alt=""
+                            aria-hidden="true"
+                            style={indeterminate ? undefined : { opacity: 1 - fraction }}
+                        />
+                    </>
                 ) : (
                     <FileTypeDrawing
                         type={requirementType ?? "certificate_scan"}

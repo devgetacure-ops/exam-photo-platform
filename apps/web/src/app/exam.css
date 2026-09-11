@@ -1477,12 +1477,12 @@
     width: calc(100% - 18px);
     height: calc(100% - 18px);
     object-fit: cover;
-    filter: blur(9px) grayscale(1);
-    transition: filter 700ms ease;
 }
 
-.euk-prep[data-indeterminate="true"] .euk-prep-source {
-    filter: blur(7px) grayscale(0.7);
+.euk-prep-veil {
+    filter: blur(9px) grayscale(1);
+    opacity: 1;
+    transition: opacity 700ms ease;
 }
 
 .euk-prep-art {
@@ -1939,7 +1939,7 @@
     .euk-drop-art,
     .euk-switch-track,
     .euk-switch-thumb,
-    .euk-prep-source,
+    .euk-prep-veil,
     .euk-prep-ring rect,
     .euk-prep-box path {
         transition: none;

@@ -78,10 +78,10 @@ policies rebuilt and verified.
 
 | Requirement | Surface | State |
 |---|---|---|
-| Review before ordering: all details, email, WhatsApp, deletion warning | review | todo |
-| Payment sequence: creative, playful, animated, with exam tips during it | checkout | todo — built around Razorpay's sheet, which is theirs, and over the real verification wait |
-| Success: creative, animated, warm, good wishes, downloads, expiry warning, the details | success | todo |
-| Designed error states with visuals and copy that make them feel handled | errors, failed payment, other issues | todo |
+| Review before ordering: all details, email, WhatsApp, deletion warning | review | done — every file with its state and findings, a live deletion clock that turns urgent under five minutes, email delivery that can be set up before paying and sends on release, the server's quote with the struck price and free documents, and the acknowledgement. WhatsApp is stated honestly: it carries a reminder link, not files |
+| Payment sequence: creative, playful, animated, with exam tips during it | checkout | done — while Razorpay's window is open and while payment confirms, a rubber stamp presses PAID onto the form, with this examination's facts rotating beside it and a Pause for both. Nothing is released until the server confirms |
+| Success: creative, animated, warm, good wishes, downloads, expiry warning, the details | success | done — an admit card settles, ALL THE BEST is stamped on it and a tick writes itself; "We've prepared the files. Now it's your exam." Then the clock, downloads and the ZIP, email, a WhatsApp reminder, and the receipt (examination, files, amount, order reference) |
+| Designed error states with visuals and copy that make them feel handled | errors, failed payment, other issues | building — failed payment, quote unavailable, expired files, email failure and a quote that no longer matches the review each have their own state; the site's not-found and error pages are next |
 
 ## Notes that change what gets built
 

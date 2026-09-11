@@ -66,7 +66,7 @@ export default async function ExamPage({
         <main className="euk exam-page" id="main-content">
             <SiteHeader mobileTitle={`${exam.exam_name} upload kit`} />
             <ExamHero exam={exam} facts={facts} liveCapture={liveCapture} />
-            <KitWorkspace exam={exam} />
+            <KitWorkspace exam={exam} facts={facts} />
             <SiteFooter />
         </main>
     );

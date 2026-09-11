@@ -46,6 +46,8 @@ let released = false;
 let failQuote = false;
 let hiddenFile = false;
 let checkoutHandler: (() => void) | undefined;
+let failedHandler: (() => void) | undefined;
+let failOnOpen = false;
 let opened: Record<string, unknown> | undefined;
 const requests: { url: string; options?: RequestInit }[] = [];
 const fetchMock = vi.fn(async (url: URL | string, options?: RequestInit) => {
@@ -95,6 +97,8 @@ beforeEach(() => {
     released = false;
     failQuote = false;
     hiddenFile = false;
+    failOnOpen = false;
+    failedHandler = undefined;
     requests.length = 0;
     opened = undefined;
     sessionStorage.clear();
@@ -105,9 +109,12 @@ beforeEach(() => {
             checkoutHandler = options.handler as () => void;
         }
         open() {
-            checkoutHandler?.();
+            if (failOnOpen) failedHandler?.();
+            else checkoutHandler?.();
         }
-        on() {}
+        on(event: string, callback: () => void) {
+            if (event === "payment.failed") failedHandler = callback;
+        }
     } as unknown as typeof window.Razorpay;
 });
 afterEach(() => {
@@ -209,6 +216,24 @@ describe("payment and retention boundaries", () => {
         fireEvent.click(screen.getByRole("button", { name: "Refresh status" }));
         await screen.findByRole("link", { name: "Download file" });
         expect(requests.some((r) => r.url.includes("/release"))).toBe(false);
+    });
+    it("a failed payment gets its own state, releases nothing, and leads back to review", async () => {
+        failOnOpen = true;
+        show();
+        const pay = await screen.findByRole("button", { name: "Pay ₹5" });
+        fireEvent.click(
+            screen.getByRole("checkbox", { name: /I have reviewed/ }),
+        );
+        await waitFor(() => expect(pay).toBeEnabled());
+        fireEvent.click(pay);
+        await screen.findByText(/payment didn’t go through/i);
+        expect(
+            screen.queryByRole("link", { name: "Download file" }),
+        ).not.toBeInTheDocument();
+        fireEvent.click(
+            screen.getByRole("button", { name: "Review and try again" }),
+        );
+        await screen.findByRole("button", { name: "Pay ₹5" });
     });
     it("fails closed when the quote cannot be fetched", async () => {
         failQuote = true;
