@@ -65,7 +65,7 @@ export default async function ExamPage({
     );
 
     return (
-        <main className="exam-page" id="main-content">
+        <main className="euk exam-page" id="main-content">
             <SiteHeader mobileTitle={`${exam.exam_name} upload kit`} />
 
             {/*
