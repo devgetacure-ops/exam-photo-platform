@@ -25,7 +25,7 @@ import io
 from dataclasses import dataclass
 
 from PIL import Image
-from pypdf import PdfReader, PdfWriter
+from pypdf import PasswordType, PdfReader, PdfWriter
 
 from exam_photo.pdf.inspection import PdfInspection, inspect_pdf
 
@@ -75,8 +75,8 @@ def prepare_existing_pdf(
 
     if inspection.is_encrypted:
         findings.append(
-            "The PDF is password protected. It cannot be prepared or, in most "
-            "cases, uploaded. Save an unprotected copy and try again."
+            "The PDF is password-protected, so it can't be opened or prepared. "
+            "Upload a copy of the PDF without a password."
         )
         return PdfPreparationResult(
             content=data,
@@ -191,8 +191,10 @@ def _rewrite(
     """Write the document out again, stripped and optionally re-encoded."""
     reader = PdfReader(io.BytesIO(data), strict=False)
     if reader.is_encrypted:
+        # A wrong password comes back as NOT_DECRYPTED rather than an error.
         try:
-            reader.decrypt("")
+            if reader.decrypt("") == PasswordType.NOT_DECRYPTED:
+                return data
         except Exception:
             return data
 

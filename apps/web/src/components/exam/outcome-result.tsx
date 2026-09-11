@@ -100,6 +100,8 @@ const ISSUE_TEXT: Record<string, string> = {
     SUITABILITY_CHIN_CLIPPED: "The chin is cut off.",
     SUITABILITY_EYES_NOT_VISIBLE: "The eyes are not clearly visible.",
     SUITABILITY_FACE_OCCLUDED: "Something is covering part of the face.",
+    PDF_PASSWORD_PROTECTED:
+        "This PDF is password-protected, so we can’t open it. Upload a copy of the PDF without a password.",
 };
 
 function humanIssue(code: string): string {

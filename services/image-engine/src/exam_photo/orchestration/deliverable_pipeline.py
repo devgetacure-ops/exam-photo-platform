@@ -357,6 +357,17 @@ def prepare_deliverable(
     )
 
 
+class PasswordProtectedPdfError(ValueError):
+    """The upload is a PDF that cannot be opened without a password.
+
+    Raised rather than reported as a finding. A locked PDF cannot be
+    restructured, so the only file this could hand back is the candidate's
+    own, unchanged and still unusable -- which the kit would then list, and
+    price, as a prepared deliverable. The product never asks for the password
+    (DEC-052 amendment): the candidate is told to upload a copy without one.
+    """
+
+
 def _prepare_uploaded_pdf(
     data: bytes,
     requirement_type: RequirementType,
@@ -371,8 +382,13 @@ def _prepare_uploaded_pdf(
     answer is that this cannot convert it -- rasterising a digitally issued
     certificate would turn verifiable text into a picture of text, and doing so
     silently is worse than saying no.
+
+    A PDF locked only against printing or copying opens with an empty password
+    and is prepared as usual; one that needs a real password is refused.
     """
     result = prepare_existing_pdf(data, maximum_bytes=ceiling)
+    if result.inspection.is_encrypted:
+        raise PasswordProtectedPdfError("the PDF cannot be opened without a password")
     findings = list(result.findings)
     if file_spec is not None and not _wants_pdf(file_spec):
         findings.append(

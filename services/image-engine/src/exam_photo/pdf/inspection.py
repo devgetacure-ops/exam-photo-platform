@@ -16,7 +16,7 @@ import io
 from dataclasses import dataclass
 from enum import Enum
 
-from pypdf import PdfReader
+from pypdf import PasswordType, PdfReader
 from pypdf.errors import PdfReadError
 
 from exam_photo.input.errors import ImageInspectionError, InputErrorCode
@@ -78,9 +78,13 @@ def inspect_pdf(data: bytes) -> PdfInspection:
             # An empty user password is common on "protected" documents and
             # costs nothing to try. A real password is the candidate's to
             # supply, and the platform does not attempt to get past one.
+            #
+            # pypdf reports a wrong password by returning NOT_DECRYPTED, not by
+            # raising, so the result has to be read. Treating "no exception" as
+            # "decrypted" sent every locked PDF on to read its pages, where it
+            # failed as an undecodable upload instead of being named as locked.
             try:
-                reader.decrypt("")
-                encrypted = False
+                encrypted = reader.decrypt("") == PasswordType.NOT_DECRYPTED
             except Exception:
                 encrypted = True
         pages = list(reader.pages) if not encrypted else []

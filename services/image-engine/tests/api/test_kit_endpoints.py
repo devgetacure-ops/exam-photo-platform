@@ -259,6 +259,56 @@ def test_a_photograph_requirement_dispatches_to_the_photograph_pipeline(
 
 
 # ----------------------------------------------------------------------
+# Password-protected PDFs (DEC-052 amendment)
+# ----------------------------------------------------------------------
+
+
+def _locked_pdf() -> bytes:
+    """A blank one-page PDF that needs a password to open."""
+    from pypdf import PdfWriter
+
+    writer = PdfWriter()
+    writer.add_blank_page(width=595, height=842)
+    writer.encrypt(
+        user_password="ABCD1999", owner_password="owner-only", algorithm="RC4-128"
+    )
+    buffer = io.BytesIO()
+    writer.write(buffer)
+    return buffer.getvalue()
+
+
+@pytest.mark.mandatory_api
+def test_a_locked_pdf_is_not_produced_and_leaves_no_file_to_price(api):
+    response = client.post(
+        f"/v1/exams/{DOC_EXAM}/requirements/{DOC_REQUIREMENT}/prepare",
+        files={"file": ("aadhaar.pdf", _locked_pdf(), "application/pdf")},
+    )
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["outcome"] == "not_produced"
+    assert body["issue_codes"] == ["PDF_PASSWORD_PROTECTED"]
+    assert "without a password" in body["findings"][0]
+    assert body["output_filename"] is None
+    assert body["output_url"] is None
+    # The quote prices only a job with an output file, so this one never is.
+    record = api.registry.get_job(body["job_id"])
+    assert record is not None and not record.output_filename
+
+
+@pytest.mark.mandatory_api
+def test_the_arranger_names_a_locked_pdf_and_says_what_to_upload(api):
+    body = _plan_document(
+        api, [("marks.jpg", _page_photo()), ("aadhaar.pdf", _locked_pdf())]
+    ).json()
+
+    assert len(body["pages"]) == 1
+    reason = body["unreadable"]["1"]
+    assert reason.startswith("aadhaar.pdf: the PDF is password-protected")
+    assert "without a password" in reason
+
+
+# ----------------------------------------------------------------------
 # Multi-page documents (DEC-053)
 # ----------------------------------------------------------------------
 

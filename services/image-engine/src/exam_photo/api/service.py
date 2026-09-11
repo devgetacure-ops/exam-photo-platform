@@ -43,6 +43,7 @@ from exam_photo.models.exam_rule import (
 )
 from exam_photo.orchestration.deliverable_pipeline import (
     DeliverableResult,
+    PasswordProtectedPdfError,
     prepare_deliverable,
 )
 from exam_photo.orchestration.filename_generation import (
@@ -1298,6 +1299,22 @@ class ApiProcessingService:
                 requirement.requirement_type,
                 file_spec=requirement.file_spec,
             )
+        except PasswordProtectedPdfError:
+            # Its own code, so the candidate is told what to upload instead
+            # rather than that the file is undecodable. No output is written,
+            # so the quote classes the job `nothing_prepared` and never prices
+            # it (DEC-052 amendment).
+            record.status = ApiJobStatus.FAILED
+            record.is_valid = False
+            record.outcome = "not_produced"
+            record.issue_codes = ["PDF_PASSWORD_PROTECTED"]
+            record.findings = [
+                "The PDF is password-protected, so it can't be opened. Upload a "
+                "copy of the PDF without a password."
+            ]
+            record.artifact_names = artifact_names
+            self.registry.update_job(record)
+            return record
         except Exception:
             # DEC-041 permits a hard failure only where no truthful output is
             # possible -- an undecodable upload is exactly that case.

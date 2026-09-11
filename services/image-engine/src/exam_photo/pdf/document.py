@@ -29,7 +29,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 
 from PIL import Image
-from pypdf import PdfReader, PdfWriter
+from pypdf import PasswordType, PdfReader, PdfWriter
 
 from exam_photo.pdf.assembly import _DEFAULT_DPI, _QUALITY_LADDER, _SCALE_LADDER
 from exam_photo.pdf.inspection import PdfPageKind, inspect_pdf
@@ -106,8 +106,8 @@ def plan_document(sources: list[tuple[bytes, str]]) -> DocumentPlan:
                 continue
             if inspection.is_encrypted:
                 unreadable[index] = (
-                    f"{name}: the PDF is password protected. Save an "
-                    "unprotected copy and upload that."
+                    f"{name}: the PDF is password-protected, so it can't be "
+                    "opened. Upload a copy of the PDF without a password."
                 )
                 continue
             for page_index, kind in enumerate(inspection.page_kinds):
@@ -169,8 +169,10 @@ def _build(
             if reader is None:
                 reader = PdfReader(io.BytesIO(data), strict=False)
                 if reader.is_encrypted:
+                    # A wrong password comes back as NOT_DECRYPTED, not an error.
                     try:
-                        reader.decrypt("")
+                        if reader.decrypt("") == PasswordType.NOT_DECRYPTED:
+                            continue
                     except Exception:
                         continue
                 readers[ref.source_index] = reader

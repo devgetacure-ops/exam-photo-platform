@@ -139,6 +139,34 @@ describe("preparing one requirement", () => {
         expect(prepareRequirement).not.toHaveBeenCalled();
     });
 
+    test("a PDF the engine refuses for its password says what to upload instead", () => {
+        render(
+            <OutcomeResult
+                result={prepared({
+                    requirement_type: "certificate_scan",
+                    status: "FAILED",
+                    outcome: "not_produced",
+                    is_valid: false,
+                    issue_codes: ["PDF_PASSWORD_PROTECTED"],
+                    findings: [
+                        "The PDF is password-protected, so it can't be opened. Upload a copy of the PDF without a password.",
+                    ],
+                    output_filename: undefined,
+                    byte_size: undefined,
+                })}
+                requirementName="Class 10 marksheet"
+                onReplace={() => {}}
+            />,
+        );
+
+        expect(
+            screen.getByText(
+                "This PDF is password-protected, so we can’t open it. Upload a copy of the PDF without a password.",
+            ),
+        ).toBeTruthy();
+        expect(screen.getByText(/Nothing has been charged/)).toBeTruthy();
+    });
+
     test("a clean result reports Ready", async () => {
         prepareRequirement.mockResolvedValue(prepared());
         renderUpload();
