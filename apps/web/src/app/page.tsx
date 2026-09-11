@@ -2,29 +2,9 @@ import { ExamSearch } from "../components/exam-search";
 import { SiteFooter } from "../components/site-footer";
 import { SiteHeader } from "../components/site-header";
 import { Note } from "../components/euk/note";
+import { Compare } from "../components/euk/compare";
 import { loadSearchIndex } from "../lib/catalogue.server";
-
-/**
- * The specimen is drawn, not photographed, and deliberately so: a real
- * candidate's face may never ship here, and a stock portrait pretending to be
- * an engine result would be the one claim this page cannot make. The silhouette
- * reads as a placeholder because it is one.
- */
-function Specimen({ w, h, prepared }: { w: number; h: number; prepared: boolean }) {
-    const cx = w / 2;
-    const headR = w * 0.24;
-    return (
-        <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} className="block" aria-hidden="true">
-            <rect width={w} height={h} fill={prepared ? "#ffffff" : "#b8b4ac"} />
-            <g fill={prepared ? "#111110" : "#6e6a62"}>
-                <ellipse cx={cx} cy={h * 0.41} rx={headR} ry={headR * 1.22} />
-                <path
-                    d={`M${cx} ${h * 0.69} C ${cx - w * 0.28} ${h * 0.69}, ${cx - w * 0.4} ${h * 0.83}, ${cx - w * 0.43} ${h} L ${cx + w * 0.43} ${h} C ${cx + w * 0.4} ${h * 0.83}, ${cx + w * 0.28} ${h * 0.69}, ${cx} ${h * 0.69} Z`}
-                />
-            </g>
-        </svg>
-    );
-}
+import { readImageFacts, formatBytes } from "../lib/image-facts.server";
 
 const TOOL_TABS = ["resize", "remove bg", "compress", "convert", "rename"];
 
@@ -37,6 +17,33 @@ const SPECS = [
 
 export default async function Home() {
     const { exams, unavailable } = await loadSearchIndex();
+
+    // Measured from the files themselves, so the page cannot claim a number
+    // the asset does not have. Swap either photograph and this updates.
+    const before = readImageFacts("/examples/hero-before.jpg");
+    const after = readImageFacts("/examples/hero-after.jpg");
+    const checks =
+        before && after
+            ? [
+                  {
+                      label: "Background",
+                      before: "Whatever was behind you",
+                      after: "Plain, even, the shade they ask for",
+                  },
+                  {
+                      label: "Dimensions",
+                      before: `${before.width} × ${before.height}`,
+                      after: `${after.width} × ${after.height}`,
+                  },
+                  {
+                      label: "File size",
+                      before: formatBytes(before.bytes),
+                      after: formatBytes(after.bytes),
+                  },
+                  { label: "Format", before: before.format, after: after.format },
+                  { label: "File name", before: before.name, after: after.name },
+              ]
+            : [];
 
     return (
         <div className="euk">
@@ -65,36 +72,25 @@ export default async function Home() {
                                 examination asks for &mdash; and prepares every
                                 file to its own published rules.
                             </p>
+                            <Note className="max-w-[420px] text-[15px]">
+                                Drag the photograph. Five things were wrong with
+                                it; watch them go one at a time.
+                            </Note>
                         </div>
 
-                        <div className="relative h-[252px] grow md:h-[372px]">
-                            <div className="euk-block absolute left-0 top-10 -rotate-[4deg] p-2 pb-1.5 shadow-[5px_5px_0_var(--ink)] md:top-11 md:p-2.5 md:pb-2 md:shadow-[7px_7px_0_var(--ink)]">
-                                <div className="hidden md:block">
-                                    <Specimen w={150} h={172} prepared={false} />
-                                </div>
-                                <div className="md:hidden">
-                                    <Specimen w={106} h={122} prepared={false} />
-                                </div>
-                                <p className="euk-label pt-1.5 text-[10px] text-[var(--ink-55)] md:text-[10px]">
-                                    AS UPLOADED
-                                </p>
-                            </div>
-                            <div className="euk-block euk-block--signal absolute right-0 top-0 rotate-[2.5deg] p-2.5 pb-2 md:right-1.5 md:p-3 md:pb-2.5">
-                                <div className="hidden md:block">
-                                    <Specimen w={186} h={214} prepared />
-                                </div>
-                                <div className="md:hidden">
-                                    <Specimen w={140} h={161} prepared />
-                                </div>
-                                <div className="flex items-baseline justify-between pt-1.5 md:pt-2">
-                                    <span className="euk-label text-[10px] md:text-[10px]">
-                                        200×230 · 48 KB
-                                    </span>
-                                    <span className="euk-label text-[10px] text-[var(--signal-deep)] md:text-[10px]">
-                                        PREPARED
-                                    </span>
-                                </div>
-                            </div>
+                        <div className="w-full max-w-[340px] grow md:max-w-[400px]">
+                            <Compare
+                                beforeSrc="/examples/hero-before.jpg"
+                                afterSrc="/examples/hero-after.jpg"
+                                width={before?.width ?? 240}
+                                height={before?.height ?? 320}
+                                alt="The same photograph before and after preparation"
+                                checks={checks}
+                                placeholder={
+                                    before?.width === after?.width &&
+                                    before?.height === after?.height
+                                }
+                            />
                         </div>
                     </div>
                 </section>
