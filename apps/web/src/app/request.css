@@ -433,7 +433,7 @@
     line-height: 0.95;
     text-transform: uppercase;
     rotate: -6deg;
-    animation: euk-stamp-in 520ms cubic-bezier(0.3, 1.5, 0.5, 1) 120ms both;
+    animation: euk-stamp-in 480ms cubic-bezier(0.16, 1, 0.3, 1) 120ms both;
 }
 
 @keyframes euk-stamp-in {

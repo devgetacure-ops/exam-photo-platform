@@ -1,3 +1,18 @@
 {
-  "buildPath": "code"
+  "buildPath": "code",
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "side-tab",
+        "value": "*",
+        "files": [
+          "apps/web/src/app/request.css"
+        ],
+        "createdAt": "2026-09-11T11:02:33.283Z",
+        "reason": "Claude (agent) triage: the flagged rule (.euk-slip-submit[aria-disabled]::after) is a 4px sending-progress bar along the foot of the submit button, not a side accent border on a card"
+      }
+    ]
+  }
 }
