@@ -14,6 +14,7 @@ import "./checkout.css";
 import "./states.css";
 import "./directory.css";
 import "./rules.css";
+import "./pdf.css";
 
 /**
  * Three families. Each carries a different register and none of them is a

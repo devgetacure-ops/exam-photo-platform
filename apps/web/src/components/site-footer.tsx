@@ -26,6 +26,7 @@ const ENCLOSURES: {
         links: [
             { href: "/exams", label: "All examinations" },
             { href: "/#how", label: "How it works" },
+            { href: "/pdf", label: "Free PDF tools" },
             { href: "/#pricing", label: "Pricing" },
             { href: "/exam-request", label: "Request an examination" },
         ],

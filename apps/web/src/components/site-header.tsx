@@ -32,6 +32,9 @@ export function SiteHeader({ mobileTitle }: { mobileTitle?: string }) {
                             <Link href="/#how" className="hidden sm:inline">
                                 How it works
                             </Link>
+                            <Link href="/pdf" className="hidden md:inline">
+                                PDF tools
+                            </Link>
                             <Link href="/#pricing" className="hidden sm:inline">
                                 Pricing
                             </Link>

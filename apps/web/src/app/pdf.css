@@ -1,0 +1,129 @@
+/*
+ * examuploadkit — the PDF page.
+ *
+ * The one page a candidate can use before paying for anything, so the
+ * converter sits high and in its own block rather than behind a disclosure.
+ * Everything else is the same flat system as the rest of the site: side
+ * padding outside the container, 3px rules, one signal colour.
+ */
+
+.euk-pdfpage-top {
+    padding: 40px 20px 36px;
+}
+
+@media (min-width: 768px) {
+    .euk-pdfpage-top {
+        padding: 80px 48px 56px;
+    }
+}
+
+.euk-pdfpage-title {
+    font-size: clamp(40px, 5.6vw, 78px);
+    line-height: 0.88;
+    text-wrap: balance;
+}
+
+.euk-pdfpage-tool {
+    margin-top: 32px;
+    border: var(--rule) solid var(--ink);
+    background: var(--paper);
+    box-shadow: var(--drop) var(--drop) 0 var(--ink);
+    padding-bottom: 6px;
+}
+
+.euk .euk-pdfpage-tool .euk-pdfimg-caution {
+    margin: 16px 16px 0;
+}
+
+/* ---- the jobs ---------------------------------------------------------- */
+
+.euk-pdfpage-jobs {
+    list-style: none;
+    margin: 32px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(264px, 1fr));
+}
+
+.euk .euk-pdfpage-job {
+    max-width: none;
+    border: var(--rule-thin) solid var(--ink);
+    background: var(--paper);
+    padding: 18px 18px 20px;
+}
+
+.euk-pdfpage-job-mark {
+    display: inline-flex;
+    width: 22px;
+    height: 22px;
+    color: var(--ok-line);
+}
+
+.euk-pdfpage-job-mark svg {
+    width: 100%;
+    height: 100%;
+}
+
+.euk-pdfpage-job h3 {
+    margin-top: 10px;
+    font-size: 19px;
+    line-height: 1.2;
+}
+
+.euk .euk-pdfpage-job p {
+    margin-top: 8px;
+    max-width: none;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink-70);
+}
+
+/* ---- what it doesn't do ------------------------------------------------ */
+
+.euk-pdfpage-limits {
+    list-style: none;
+    margin: 28px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+}
+
+.euk .euk-pdfpage-limits li {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    max-width: 74ch;
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--ink-70);
+}
+
+.euk-pdfpage-limits svg {
+    width: 20px;
+    height: 20px;
+    flex: none;
+    margin-top: 3px;
+    color: var(--notyet-line);
+}
+
+.euk-pdfpage-cta {
+    margin-top: 44px;
+    border: var(--rule) solid var(--ink);
+    background: var(--signal-soft);
+    box-shadow: var(--drop) var(--drop) 0 var(--ink);
+    padding: 24px 22px 26px;
+}
+
+.euk-pdfpage-cta h3 {
+    font-size: clamp(22px, 2.6vw, 30px);
+    line-height: 1.1;
+}
+
+.euk .euk-pdfpage-cta p {
+    margin: 10px 0 18px;
+    max-width: 62ch;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ink-70);
+}

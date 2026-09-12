@@ -668,10 +668,20 @@
     font-weight: 600;
 }
 
+.euk-free > p,
 .euk-elsewhere > p {
     font-size: 15px;
     color: var(--ink-70);
     margin-top: 14px;
+}
+
+.euk-free > p a {
+    font-weight: 600;
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--signal-deep);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
 }
 
 .euk-chips {

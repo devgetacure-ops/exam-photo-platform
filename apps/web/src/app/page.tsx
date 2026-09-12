@@ -71,6 +71,7 @@ const FREE_TOOLS = [
     "Remove pages",
     "Rotate pages",
     "Compress to the size limit",
+    "Named as the portal asks",
 ];
 
 const ELSEWHERE = [
@@ -549,7 +550,7 @@ export default async function Home() {
 
                         <div className="euk-value">
                             <Reveal className="euk-free">
-                                <h3>Free with any prepared file</h3>
+                                <h3>Every PDF job, free with any prepared file</h3>
                                 <ul className="euk-chips">
                                     {FREE_TOOLS.map((tool) => (
                                         <li key={tool} className="euk-chip">
@@ -557,6 +558,12 @@ export default async function Home() {
                                         </li>
                                     ))}
                                 </ul>
+                                <p>
+                                    Turning a PDF page into an image runs inside
+                                    your own browser, so that one is free for
+                                    anybody, kit or no kit.{" "}
+                                    <Link href="/pdf">See the PDF work</Link>
+                                </p>
                             </Reveal>
                             <Reveal delay={120} className="euk-elsewhere">
                                 <h3>Or, somewhere else</h3>
