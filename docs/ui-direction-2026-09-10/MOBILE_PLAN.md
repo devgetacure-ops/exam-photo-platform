@@ -103,7 +103,7 @@ top, because a wall of legal text on a phone is unreadable and unread.
 | 1 | **Shipped.** App bar, action bar, sheets, the four-step flow, the phone exam file list | `components/m/`, `app/mobile.css`, `app/exam/[examId]/prepare` |
 | 2 | **Shipped.** The phone bar and its menu on every page with the site header; the short home; search as a full-screen screen with recents; `/about` for the long argument; the short footer | `m/phone-bar.tsx`, `m/search-screen.tsx`, `m/home.tsx`, `components/home-story.tsx`, `app/about/`, DEC-081 |
 | 3 | **Shipped.** The PDF work as rows, with the converter on its own screen and the rest in sheets; support's answers searchable; each policy collapsed with a search; one bottom-bar action per page | `m/pdf-home.tsx`, `m/pdf-tool.tsx`, `app/pdf/to-image/`, `m/answer-search.tsx`, `m/policy-phone.tsx`, DEC-083 |
-| 4 | Not started. Install prompt, a pass on real mid-range hardware | `app/manifest.ts` and the icons exist |
+| 4 | **Install prompt shipped** (asked once after a useful moment, a card above the bottom bar, Share steps on an iPhone, "Install the app" in the menu). **The pass on a real mid-range Android is outstanding**: it needs the owner's phone | `lib/install.ts`, `m/install-card.tsx`, DEC-084 |
 
 **Where the build departs from this plan, and why.** "CSS inverts" was not done. The
 desktop build was signed off after this plan was written, and inverting every

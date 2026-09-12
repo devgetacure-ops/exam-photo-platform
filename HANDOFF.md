@@ -345,8 +345,10 @@ design. What follows is UI/UX and operations.
    the phone bar and menu on every page, the short home, search as its own
    screen, `/about` for the long argument, a short footer, the PDF work with
    the converter on its own screen, searchable support, and collapsed
-   searchable policies. Phase 4 (the install prompt, and a pass on a real
-   mid-range Android) is next.
+   searchable policies, and the install prompt (DEC-084): asked once after a
+   useful moment, never on arrival. **What is left is a pass on a real
+   mid-range Android**, which needs the owner's phone on the same network as
+   the dev server, at `http://<machine-ip>:3100`.
 2. **Design the empty state for 80 examinations.** DEC-079 encodes records with
    **no photograph specification** -- served for a signature or certificates
    alone. Their *rules* page has almost nothing to show. It degrades to empty

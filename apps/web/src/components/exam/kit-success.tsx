@@ -1,4 +1,8 @@
-import type { RefObject } from "react";
+"use client";
+
+import { useEffect, type RefObject } from "react";
+
+import { markInstallMoment } from "../../lib/install";
 
 /**
  * The moment the files are the candidate's.
@@ -20,6 +24,12 @@ export function KitSuccess({
     examName: string;
     titleRef: RefObject<HTMLHeadingElement | null>;
 }) {
+    // The files are the candidate's: the strongest moment there is to offer
+    // the site a place on the home screen.
+    useEffect(() => {
+        markInstallMoment();
+    }, []);
+
     return (
         <div className="euk-done">
             <div className="euk-done-art" aria-hidden="true">

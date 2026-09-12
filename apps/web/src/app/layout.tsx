@@ -16,6 +16,8 @@ import "./directory.css";
 import "./rules.css";
 import "./pdf.css";
 import "./mobile.css";
+import { InstallCard } from "../components/m/install-card";
+import { INSTALL_LISTENER_SCRIPT } from "../lib/install";
 
 /**
  * Three families. Each carries a different register and none of them is a
@@ -105,12 +107,16 @@ export default function RootLayout({
                         __html: "try{var t=localStorage.getItem('uploadready:theme');document.documentElement.dataset.theme=t==='dark'?'dark':'light'}catch(e){}",
                     }}
                 />
+                {/* Before any bundle, because the browser's install event can
+                    arrive before React does (lib/install.ts). */}
+                <script dangerouslySetInnerHTML={{ __html: INSTALL_LISTENER_SCRIPT }} />
             </head>
             <body className="min-h-full flex flex-col bg-paper text-ink">
                 <a className="skip-link" href="#main-content">
                     Skip to content
                 </a>
                 {children}
+                <InstallCard />
             </body>
         </html>
     );

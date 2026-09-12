@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import type { PDFDocumentProxy } from "pdfjs-dist";
 import { formatBytes } from "../../lib/spec-format";
 import { loadPdfjs, lockedPdfMessage } from "../../lib/pdfjs";
+import { markInstallMoment } from "../../lib/install";
 import {
     DPI_CHOICES,
     MAX_PDF_BYTES,
@@ -231,6 +232,7 @@ export function PdfToImage({
 
         await task.destroy();
         setStatus("done");
+        markInstallMoment();
         if (count > MAX_PDF_PAGES) {
             setNote(`Converted the first ${MAX_PDF_PAGES} of ${count} pages.`);
         }

@@ -5,6 +5,7 @@ import { useState } from "react";
 
 import { Wordmark } from "../euk/wordmark";
 import { ThemeToggle } from "../theme-toggle";
+import { InstallMenuItem } from "./install-card";
 import { PhoneSearch, openPhoneSearch } from "./search-screen";
 import { Sheet } from "./sheet";
 
@@ -99,6 +100,7 @@ export function PhoneBar() {
                         </div>
                     ))}
                 </nav>
+                <InstallMenuItem />
                 <div className="euk-mmenu-foot">
                     <span>Appearance</span>
                     <ThemeToggle />

@@ -51,6 +51,10 @@ for (const run of plan) {
     for (const step of run.steps) {
         if (step.url) { await send("Page.navigate", { url: step.url }); await sleep(step.settle ?? 2500); }
         if (step.wait) await sleep(step.wait);
+        if (step.cdp) {
+            const r = await send(step.cdp, step.params ?? {});
+            console.log(JSON.stringify({ w: run.width, label: step.label ?? step.cdp, r: r.result ?? r.error }));
+        }
         if (step.click) console.log(JSON.stringify({ w: run.width, click: step.click, r: await evaluate(`(() => { const el = document.querySelector(${JSON.stringify(step.click)}); if (!el) return 'missing'; el.click(); return 'ok'; })()`) }));
         if (step.eval) console.log(JSON.stringify({ w: run.width, label: step.label, r: await evaluate(step.eval) }));
         if (step.shot) {

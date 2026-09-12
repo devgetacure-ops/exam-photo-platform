@@ -3,6 +3,7 @@
 import { useCallback, useSyncExternalStore } from "react";
 
 import { getKit, recordPreparation, forgetRequirement, type KitEntry } from "../../lib/kit-state";
+import { markInstallMoment } from "../../lib/install";
 import type { PrepareRequirementResponse } from "../../lib/types";
 
 /**
@@ -65,6 +66,11 @@ export function useKit(examId: string) {
       // A new object identity is what tells `useSyncExternalStore` to re-render.
       cache.set(examId, { ...kit.requirements });
       listeners.forEach((notify) => notify());
+      // A file that came back prepared is the moment the site has earned an
+      // invitation to the home screen. A refusal is not.
+      if (response.outcome === "prepared" || response.outcome === "prepared_with_findings") {
+        markInstallMoment();
+      }
     },
     [examId]
   );
