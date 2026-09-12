@@ -454,9 +454,11 @@
     clip-path: inset(0 calc((100 - var(--wipe)) * 1%) 0 0);
 }
 
+/* The outgoing prepared file sits on top and dissolves, which covers the
+   partition's jump back to the upload for the next example. */
 .euk-wipe-prev {
-    z-index: 0;
-    animation: euk-wipe-out 360ms linear forwards;
+    z-index: 3;
+    animation: euk-wipe-out 420ms ease-out forwards;
 }
 
 @keyframes euk-wipe-out {

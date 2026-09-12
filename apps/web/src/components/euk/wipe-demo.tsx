@@ -13,9 +13,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
  *
  * The motion rules, in one place:
  *
- * - Both frames sweep the same way at the same time. Out of phase, one
- *   travelled left while the other travelled right, which reads as two
- *   arguments rather than one demonstration.
+ * - The sweep runs one way only, from the upload to the prepared file, and
+ *   both frames run it together. Travelling back the other way said
+ *   "prepared becomes your phone photograph", which is the story backwards.
+ * - It rests on the prepared file at the end of each run, long enough to be
+ *   read, then dissolves into the next example and starts again.
  * - Each frame is its own in every other way: taking the handle of one holds
  *   only that one, and it picks itself up three seconds after the last touch.
  * - At the end of each sweep a frame moves to its next example, so everything
@@ -42,10 +44,12 @@ export interface WipeCheck {
     after: string;
 }
 
-/** One sweep, out and back. */
-const PERIOD_MS = 7500;
-const LOW = 4;
-const HIGH = 96;
+/** One example: the sweep across, then a rest on the prepared file. */
+const PERIOD_MS = 7000;
+const SWEEP_SHARE = 0.72;
+/** The partition's travel. It starts on the upload and ends on the result. */
+const FROM = 96;
+const TO = 4;
 const START = 50;
 /** How long after the last touch a frame picks itself up again. */
 const RESUME_AFTER_MS = 3000;
@@ -83,8 +87,13 @@ function WipeSet({ title, pairs, checks, width, height, allowed }: SetProps) {
             pctRef.current = pct;
             frameRef.current?.style.setProperty("--wipe", pct.toFixed(2));
             sliderRef.current?.setAttribute("aria-valuenow", String(Math.round(pct)));
+            // Counted from the prepared side, which is the side that grows:
+            // a check is ticked once the prepared file has covered the place
+            // it sits. Counting from the upload had all four ticked while the
+            // frame still showed the phone photograph.
+            const covered = 100 - pct;
             const crossed = checks.filter(
-                (_, i) => pct >= ((i + 1) / (checks.length + 1)) * 100,
+                (_, i) => covered >= ((i + 1) / (checks.length + 1)) * 100,
             ).length;
             if (crossed !== passedRef.current) {
                 passedRef.current = crossed;
@@ -124,22 +133,23 @@ function WipeSet({ title, pairs, checks, width, height, allowed }: SetProps) {
             if (!started) {
                 // Pick the sweep up where the handle rests, so starting it
                 // never throws the partition across the frame.
-                const norm = Math.min(
+                const travelled = Math.min(
                     1,
-                    Math.max(0, (pctRef.current - LOW) / (HIGH - LOW)),
+                    Math.max(0, (FROM - pctRef.current) / (FROM - TO)),
                 );
-                const from = Math.acos(1 - 2 * norm) / Math.PI;
-                origin = now - (from / 2) * PERIOD_MS;
+                const done = Math.acos(1 - 2 * travelled) / Math.PI;
+                origin = now - done * SWEEP_SHARE * PERIOD_MS;
                 lastCycle = 0;
                 started = true;
             }
             const elapsed = (now - origin) / PERIOD_MS;
             const t = elapsed % 1;
-            const triangle = t < 0.5 ? t * 2 : (1 - t) * 2;
-            const eased = 0.5 - 0.5 * Math.cos(Math.PI * triangle);
-            apply(LOW + eased * (HIGH - LOW));
-            // On to the next example once a whole sweep has run, which lands
-            // at the far end where the prepared file fills the frame. Counted
+            // Across, then a rest on the result. One direction: the upload
+            // becomes the prepared file, never the other way about.
+            const travel = Math.min(1, t / SWEEP_SHARE);
+            const eased = 0.5 - 0.5 * Math.cos(Math.PI * travel);
+            apply(FROM - eased * (FROM - TO));
+            // On to the next example once a whole run has played. Counted
             // rather than watched for: a dropped frame can step clean over a
             // narrow window, and on a slow phone that means a frame that
             // quietly stops changing example.
@@ -157,7 +167,7 @@ function WipeSet({ title, pairs, checks, width, height, allowed }: SetProps) {
 
     useEffect(() => {
         if (previous === null) return;
-        const timer = setTimeout(() => setPrevious(null), 360);
+        const timer = setTimeout(() => setPrevious(null), 420);
         return () => clearTimeout(timer);
     }, [previous]);
 

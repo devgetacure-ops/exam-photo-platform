@@ -48,10 +48,22 @@ photograph box, and beneath it a signature strip of the same width. Side by
 side, a tall portrait against a short landscape left the row ragged along the
 bottom and the two comparisons arguing with each other.
 
-Both frames sweep the same way at the same time. Each is otherwise its own:
-dragging one holds only that one, and it picks itself up three seconds after
-the last touch. Each moves to its next example after every sweep, so all seven
-pairs are seen without anybody clicking. One control pauses and plays both.
+The sweep runs one way only: it starts on the upload, travels across to the
+prepared file, rests there long enough to be read, then dissolves into the next
+example and starts again. Running it out and back said "the prepared file
+becomes your phone photograph" for half of every cycle, which is the story
+backwards. The checks tick from the prepared side for the same reason — they
+count what has been fixed, not what is still wrong.
+
+Both frames run it together. Each is otherwise its own: dragging one holds only
+that one, and it picks itself up three seconds after the last touch. Each moves
+to its next example after every run, so all seven pairs are seen without
+anybody clicking. One control pauses and plays both.
+
+The motion cannot be verified from a headless screenshot: virtual time does not
+drive `requestAnimationFrame` there, so every capture shows the frame at rest.
+`src/tests/wipe-demo.test.tsx` steps the clock by hand instead, and that is
+what holds these rules.
 
 ## If they are replaced
 

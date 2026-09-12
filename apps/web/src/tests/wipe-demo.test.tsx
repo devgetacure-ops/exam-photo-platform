@@ -142,6 +142,52 @@ describe("the before-and-after band", () => {
         expect(wipeOf(container, 0)).not.toBeCloseTo(first, 1);
     });
 
+    test("the partition only travels from the upload towards the prepared file", () => {
+        const { container } = renderBand();
+        step(0);
+
+        let previousWipe = wipeOf(container, 0);
+        let previousShown = showing(container, 0);
+        let restarts = 0;
+        let closest = previousWipe;
+
+        for (let now = 200; now <= 14000; now += 200) {
+            step(now);
+            const wipe = wipeOf(container, 0);
+            const shown = showing(container, 0);
+            if (wipe > previousWipe + 0.5) {
+                // The only jump back is the start of the next example.
+                restarts += 1;
+                expect(shown).not.toBe(previousShown);
+                expect(wipe).toBeGreaterThan(90);
+            }
+            closest = Math.min(closest, wipe);
+            previousWipe = wipe;
+            previousShown = shown;
+        }
+
+        expect(restarts).toBeGreaterThanOrEqual(1);
+        // Each run arrives at the prepared file and rests there before the
+        // next example begins.
+        expect(closest).toBeLessThan(10);
+    });
+
+    test("checks tick as the prepared file takes over, not as the upload does", () => {
+        const { container } = renderBand();
+        const ticked = () =>
+            container
+                .querySelectorAll(".euk-wipe")[0]
+                .querySelectorAll('[data-done="true"]').length;
+
+        // Hard over to the upload: nothing has been fixed yet.
+        grab(container, 0, 396);
+        expect(ticked()).toBe(0);
+
+        // Hard over to the prepared file: everything has.
+        grab(container, 0, 4);
+        expect(ticked()).toBe(checks.length);
+    });
+
     test("a drag holds that frame, and leaves the other one running", () => {
         const { container } = renderBand();
         step(0);
