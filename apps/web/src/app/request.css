@@ -334,6 +334,13 @@
     cursor: pointer;
 }
 
+/* The label is the tap target for its tick box; a thumb's height on a phone. */
+@media (max-width: 899px) {
+    .euk-consent {
+        min-height: 44px;
+    }
+}
+
 .euk .euk-slip-submit {
     position: relative;
     display: block;
@@ -611,18 +618,19 @@
     margin-top: 24px;
 }
 
-/* A phone puts the answers first, which is where most candidates find their
-   way out; the one who already knows they need to write gets a way past them.
-   A desktop has the form in view already. */
+/* A narrow desktop puts the answers first, which is where most candidates
+   find their way out; the one who already knows they need to write gets a way
+   past them. A wide desktop has the form in view already, and a phone has
+   "Write to us" in its bottom bar. */
 .euk-jump {
-    display: inline-block;
+    display: none;
     margin-top: 16px;
     font-size: 15px;
 }
 
-@media (min-width: 1000px) {
+@media (min-width: 900px) and (max-width: 999px) {
     .euk-jump {
-        display: none;
+        display: inline-block;
     }
 }
 
@@ -751,6 +759,15 @@
 .euk-support-slip-title {
     font-size: clamp(34px, 3.4vw, 44px);
     line-height: 0.9;
+}
+
+/* The support headlines break where a desktop measure wants them; at phone
+   width that strands "WE" on a line of its own. A phone lets them wrap. */
+@media (max-width: 767px) {
+    .euk-support .euk-request-title br,
+    .euk-support-slip-title br {
+        display: none;
+    }
 }
 
 .euk .euk-support-slip-note {

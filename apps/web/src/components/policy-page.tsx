@@ -2,6 +2,8 @@ import Link from "next/link";
 import { SiteHeader } from "./site-header";
 import { SiteFooter } from "./site-footer";
 import { PolicyTabs } from "./policy-tabs";
+import { ActionBar } from "./m/action-bar";
+import { PhonePolicy } from "./m/policy-phone";
 
 /**
  * Privacy, terms and refunds.
@@ -44,6 +46,9 @@ export function PolicyPage({
                 </div>
 
                 <div className="euk-policy-main">
+                    {/* A phone reads the same sections collapsed, with a
+                        search; the grid below steps aside for it. */}
+                    <PhonePolicy sections={sections} />
                     <div className="euk-wrap euk-policy-grid">
                         <nav className="euk-policy-toc" aria-label="On this page">
                             <p className="euk-policy-toc-title">On this page</p>
@@ -81,6 +86,20 @@ export function PolicyPage({
                 </div>
             </main>
             <SiteFooter />
+            <div className="euk euk-m-only">
+                <ActionBar
+                    note={
+                        <>
+                            <strong>Not covered?</strong>
+                            Ask, privately
+                        </>
+                    }
+                >
+                    <Link href="/support" className="primary-button">
+                        Ask us
+                    </Link>
+                </ActionBar>
+            </div>
         </>
     );
 }

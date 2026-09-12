@@ -4,6 +4,10 @@ import { SiteFooter } from "../../components/site-footer";
 import { Reveal } from "../../components/euk/reveal";
 import { PdfToImage } from "../../components/exam/pdf-to-image";
 import { Tick, Cross } from "../../components/exam/specimen-sheet";
+import { PdfAction, PhonePdf } from "../../components/m/pdf-home";
+// Shared with the phone's arrangement, so the two never describe different
+// work; imported under the names this page has always used.
+import { PDF_JOBS as JOBS, PDF_LIMITS as LIMITS } from "../../lib/pdf-work";
 
 export const metadata = {
     title: "PDF work for exam forms · examuploadkit",
@@ -22,45 +26,14 @@ export const metadata = {
  * page is useful before anybody has paid for anything.
  */
 
-const JOBS = [
-    {
-        title: "Photographs into one PDF",
-        body: "The form wants a PDF and you have three photographs of a marksheet. They go in, in the order you set, as one file.",
-    },
-    {
-        title: "Several files into one",
-        body: "A portal that accepts one attachment, and a certificate that reached you as four separate scans.",
-    },
-    {
-        title: "Pages in the order you want",
-        body: "Front and back photographed the wrong way round, or a blank page this form never asked for. Move them, drop them, keep what's left.",
-    },
-    {
-        title: "A sideways page turned upright",
-        body: "You photographed it the long way round, so it uploads on its side. Turn it a quarter at a time.",
-    },
-    {
-        title: "Under the size limit",
-        body: "Forms cap the file at 200 KB, 500 KB, sometimes 1 MB. A scan is compressed down to whatever yours asks for.",
-    },
-    {
-        title: "Named the way the portal expects",
-        body: "Some portals refuse a file for its name alone. Yours comes back named to the rule your examination published.",
-    },
-];
-
-const LIMITS = [
-    "We don't read text out of a scan. There is no OCR here.",
-    "We don't remove a PDF's password. A locked file is turned away, with a note to upload a copy that has none.",
-    "We don't change what is written inside a PDF.",
-    "We don't convert Word or Excel files.",
-];
-
 export default function PdfPage() {
     return (
         <>
             <SiteHeader />
             <main className="euk euk-pdfpage" id="main-content">
+                {/* A phone's own arrangement: the converter as one row that
+                    opens its own screen, the rest as rows that open a sheet. */}
+                <PhonePdf />
                 <section className="euk-pdfpage-top">
                     <div className="euk-wrap euk-pdfpage-head">
                         <div>
@@ -216,6 +189,7 @@ export default function PdfPage() {
                 </section>
             </main>
             <SiteFooter />
+            <PdfAction />
         </>
     );
 }

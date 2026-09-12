@@ -155,6 +155,21 @@
     font-weight: 600;
 }
 
+/* A phone reads a policy as collapsed sections with a search
+   (components/m/policy-phone.tsx); the desktop arrangement steps aside, and
+   the tabs to the other two policies grow to a thumb's size. */
+@media (max-width: 899px) {
+    .euk-policy-grid {
+        display: none;
+    }
+
+    .euk-policy-tabs a {
+        display: inline-flex;
+        align-items: center;
+        min-height: 44px;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .euk-policy-tabs a {
         transition: none;

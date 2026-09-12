@@ -1330,3 +1330,359 @@
     min-height: 44px;
     padding: 0 14px;
 }
+
+/* ---- the PDF work, on a phone ------------------------------------------ */
+
+@media (max-width: 899px) {
+    /* The desktop sections; the phone's list is components/m/pdf-home.tsx. */
+    .euk-pdfpage > :not(.euk-mpdf) {
+        display: none;
+    }
+}
+
+.euk-mpdf {
+    padding: 26px 16px 8px;
+}
+
+.euk-mpdf-title {
+    font-size: clamp(38px, 11vw, 52px);
+    line-height: 0.9;
+    text-wrap: balance;
+}
+
+.euk .euk-mpdf-lede {
+    margin-top: 12px;
+    max-width: none;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--ink-70);
+}
+
+.euk .euk-mpdf-label {
+    margin-top: 28px;
+    max-width: none;
+    font-family: var(--font-shoulders), "Arial Narrow", sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-55);
+}
+
+/* The one tool anybody can use right now, set as the page's one action. */
+.euk-mpdf-tool {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-height: 76px;
+    margin-top: 10px;
+    padding: 14px 16px;
+    border: var(--rule) solid var(--ink);
+    background: var(--paper);
+    color: var(--ink);
+    box-shadow: 6px 6px 0 var(--ink);
+    transition:
+        transform 120ms cubic-bezier(0.2, 0, 0.1, 1),
+        box-shadow 120ms cubic-bezier(0.2, 0, 0.1, 1);
+}
+
+.euk-mpdf-tool:active {
+    transform: translate(3px, 3px);
+    box-shadow: 3px 3px 0 var(--ink);
+}
+
+.euk-mpdf-tool > span {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+
+.euk-mpdf-tool strong {
+    font-size: 17px;
+}
+
+.euk-mpdf-tool span span {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ok-line);
+}
+
+.euk-mpdf-jobs {
+    list-style: none;
+    margin: 8px 0 0;
+    padding: 0;
+    border-top: var(--rule-thin) solid var(--hairline);
+}
+
+.euk-mpdf-job {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    min-height: 52px;
+    padding: 12px 2px;
+    border: 0;
+    border-bottom: var(--rule-thin) solid var(--hairline);
+    background: none;
+    color: var(--ink);
+    font-size: 16px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.euk-mpdf-job:active {
+    background: var(--paper-2);
+}
+
+.euk-mpdf-job svg,
+.euk-mpdf-tool svg {
+    flex: none;
+    color: var(--ink-40);
+}
+
+.euk-mpdf-limits {
+    display: flex;
+    align-items: center;
+    min-height: 48px;
+    margin-top: 14px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--ink);
+    font-size: 15px;
+    text-decoration: underline;
+    text-decoration-color: var(--signal-deep);
+    text-underline-offset: 4px;
+    cursor: pointer;
+}
+
+.euk .euk-mpdf-note {
+    margin-top: 16px;
+    max-width: none;
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--ink-55);
+}
+
+.euk .euk-mpdf-sheet p {
+    max-width: none;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink-70);
+}
+
+.euk .euk-mpdf-sheet p + p {
+    margin-top: 10px;
+}
+
+.euk .euk-mpdf-sheet .primary-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    margin-top: 18px;
+}
+
+.euk-mpdf-sheet ul {
+    list-style: none;
+    margin: 0 0 14px;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+}
+
+.euk .euk-mpdf-sheet li {
+    max-width: none;
+    padding-left: 12px;
+    border-left: var(--rule) solid var(--notyet-line);
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--ink-70);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .euk-mpdf-tool {
+        transition: none;
+    }
+
+    .euk-mpdf-tool:active {
+        transform: none;
+    }
+}
+
+/* ---- PDF page to image, as its own screen ------------------------------- */
+
+.euk-mpdftool .euk-pdfimg-caution {
+    margin: 16px 0 0;
+}
+
+[data-layout="picker-first"] {
+    padding: 18px 0 0;
+}
+
+.euk .euk-pdfimg-pick {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 56px;
+    font-size: 17px;
+}
+
+.euk-pdfimg-settings {
+    border: var(--rule-thin) solid var(--ink);
+    background: var(--paper-2);
+}
+
+.euk-pdfimg-settings > summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 48px;
+    padding: 0 14px;
+    list-style: none;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.euk-pdfimg-settings > summary::-webkit-details-marker {
+    display: none;
+}
+
+.euk-pdfimg-change {
+    font-size: 13px;
+    color: var(--ink-70);
+    text-decoration: underline;
+    text-decoration-color: var(--signal-deep);
+    text-underline-offset: 3px;
+}
+
+.euk-pdfimg-settings[open] > summary {
+    border-bottom: var(--rule-thin) solid var(--hairline);
+}
+
+.euk-pdfimg-settings > div {
+    display: grid;
+    gap: 12px;
+    padding: 14px;
+}
+
+/* Each option a thumb's width and height. */
+.euk-pdfimg-settings label span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 16px;
+}
+
+/* ---- search boxes on support and the policies --------------------------- */
+
+.euk-mfilter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 52px;
+    padding: 0 12px;
+    border: var(--rule) solid var(--ink);
+    background: var(--paper);
+    color: var(--ink);
+}
+
+.euk-mfilter:focus-within {
+    border-color: var(--signal-deep);
+    box-shadow: 4px 4px 0 var(--signal);
+}
+
+.euk .euk-mfilter input {
+    flex: 1;
+    min-width: 0;
+    padding: 12px 0;
+    border: 0;
+    background: transparent;
+    font-size: 17px;
+    color: var(--ink);
+}
+
+.euk .euk-mfilter input::placeholder {
+    color: var(--ink-55);
+}
+
+.euk-manswers {
+    margin-top: 24px;
+}
+
+.euk .euk-manswers-none,
+.euk .euk-mpolicy-none {
+    margin-top: 14px;
+    max-width: none;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink-70);
+}
+
+.euk-manswers-none a,
+.euk-mpolicy-none a {
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--signal-deep);
+    text-underline-offset: 3px;
+}
+
+/* ---- a policy, on a phone ----------------------------------------------- */
+
+.euk-mpolicy {
+    padding-top: 22px;
+}
+
+.euk-mpolicy-list {
+    margin-top: 18px;
+    border-top: var(--rule) solid var(--ink);
+}
+
+.euk-mpolicy-item {
+    border-bottom: var(--rule-thin) solid var(--hairline);
+}
+
+.euk-mpolicy-item > summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    min-height: 60px;
+    padding: 12px 0;
+    list-style: none;
+    font-family: var(--font-shoulders), "Arial Narrow", sans-serif;
+    font-size: 22px;
+    font-weight: 900;
+    line-height: 1;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.euk-mpolicy-item > summary::-webkit-details-marker {
+    display: none;
+}
+
+.euk-mpolicy-item > summary::after {
+    content: "+";
+    flex: none;
+    font-size: 28px;
+    color: var(--ink-55);
+}
+
+.euk-mpolicy-item[open] > summary::after {
+    content: "−";
+    color: var(--signal-deep);
+}
+
+.euk .euk-mpolicy-item p {
+    max-width: none;
+    padding-bottom: 18px;
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--ink-70);
+}

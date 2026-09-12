@@ -127,7 +127,17 @@ function failureText(failure: Failure, pagesKept: number): string {
     }
 }
 
-export function PdfToImage() {
+export function PdfToImage({
+    pickerFirst = false,
+}: {
+    /**
+     * The phone's own screen for this tool: the file picker first, as the
+     * screen's primary action, and the format and resolution folded under it
+     * at the settings most portals want. The default keeps the settings above
+     * the picker, which is how the desktop page sets it.
+     */
+    pickerFirst?: boolean;
+} = {}) {
     const [format, setFormat] = useState<ImageFormat>("jpeg");
     const [dpi, setDpi] = useState<number>(150);
     const [status, setStatus] = useState<Status>("idle");
@@ -241,8 +251,8 @@ export function PdfToImage() {
     }
     const retryFrom = retry?.from ?? 1;
 
-    return (
-        <div className="euk-pdfimg" aria-busy={working}>
+    const settings = (
+        <>
             <div className="euk-pdfimg-controls">
                 <fieldset className="euk-seg" disabled={working}>
                     <legend>Save as</legend>
@@ -279,12 +289,22 @@ export function PdfToImage() {
                 150 dpi reads clearly and keeps the file small. Most portals ask
                 for JPEG.
             </p>
+        </>
+    );
+
+    return (
+        <div
+            className="euk-pdfimg"
+            aria-busy={working}
+            data-layout={pickerFirst ? "picker-first" : undefined}
+        >
+            {!pickerFirst && settings}
 
             <div className="euk-pdfimg-actions">
                 <button
                     ref={chooseButton}
                     type="button"
-                    className="secondary-button"
+                    className={pickerFirst ? "primary-button euk-pdfimg-pick" : "secondary-button"}
                     disabled={working}
                     onClick={() => input.current?.click()}
                 >
@@ -314,6 +334,18 @@ export function PdfToImage() {
                     }}
                 />
             </div>
+
+            {pickerFirst && (
+                <details className="euk-pdfimg-settings">
+                    <summary>
+                        <span>
+                            {format === "jpeg" ? "JPEG" : "PNG"}, {dpi} dpi
+                        </span>
+                        <span className="euk-pdfimg-change">Change</span>
+                    </summary>
+                    <div>{settings}</div>
+                </details>
+            )}
 
             {working && (
                 <p className="euk-pdfimg-status" role="status">

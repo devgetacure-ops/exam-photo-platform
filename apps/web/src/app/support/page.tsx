@@ -5,6 +5,8 @@ import { SiteHeader } from "../../components/site-header";
 import { SiteFooter } from "../../components/site-footer";
 import { RequestForm } from "../../components/request-form";
 import { Note } from "../../components/euk/note";
+import { ActionBar } from "../../components/m/action-bar";
+import { AnswerSearch } from "../../components/m/answer-search";
 
 export const metadata: Metadata = {
     title: "Support and grievances · examuploadkit",
@@ -220,7 +222,7 @@ export default async function SupportPage({
                     <div className="euk-wrap euk-support-grid">
                         <div className="euk-request-copy">
                             <h1 className="euk-display euk-request-title">
-                                Something went wrong?
+                                Something went wrong?{" "}
                                 <br />
                                 We{" "}
                                 <span className="euk-mark">planned for it.</span>
@@ -240,6 +242,7 @@ export default async function SupportPage({
                             <a href="#write" className="euk-link euk-jump">
                                 Or write to us now
                             </a>
+                            <AnswerSearch scope=".euk-support" />
 
                             {GROUPS.map((group) => (
                                 <section
@@ -282,7 +285,7 @@ export default async function SupportPage({
 
                         <div id="write" className="euk-request-slip">
                             <h2 className="euk-display euk-support-slip-title">
-                                Not here?
+                                Not here?{" "}
                                 <br />
                                 Write to us.
                             </h2>
@@ -295,6 +298,22 @@ export default async function SupportPage({
                 </section>
             </main>
             <SiteFooter />
+            {/* A phone's one action here. Last in the document, so its spacer
+                is the end of it. */}
+            <div className="euk euk-m-only">
+                <ActionBar
+                    note={
+                        <>
+                            <strong>Private</strong>
+                            Replies by email
+                        </>
+                    }
+                >
+                    <a href="#write" className="primary-button">
+                        Write to us
+                    </a>
+                </ActionBar>
+            </div>
         </>
     );
 }

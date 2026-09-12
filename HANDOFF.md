@@ -318,7 +318,7 @@ puts the product's worst failure mode back on the table.
 | Checkout, entitlement polling, retention countdown, extension, delivery | `components/exam/kit-checkout.tsx`, `live-job-state.ts` |
 | The sticky bar, its search and the predictive list | `components/site-header.tsx`, `header-search.tsx`, `exam-results.tsx`, `lib/use-exam-picker.ts`, `app/search-index.json/route.ts` |
 | The PDF page and the in-browser converter | `src/app/pdf/page.tsx`, `app/pdf.css`, `components/exam/pdf-to-image.tsx`, `lib/pdfjs.ts` |
-| The phone build — phases 1 and 2 | `components/m/` (bar, menu, full-screen search, home, flow, file list), `components/home-story.tsx`, `app/about/`, `app/mobile.css`, `app/manifest.ts` |
+| The phone build — phases 1 to 3 | `components/m/` (bar, menu, full-screen search, home, flow, file list, PDF work, converter screen, support search, policies), `components/home-story.tsx`, `app/about/`, `app/pdf/to-image/`, `app/mobile.css`, `app/manifest.ts` |
 | Exam workspace, 132 static pages | `src/app/exam/[examId]/page.tsx` + `components/exam/kit-workspace.tsx` — fixed file list left, one file's detail right |
 | Rules & sources, 132 more pages | `src/app/exam/[examId]/rules/page.tsx` — reference split off the workspace |
 | Real accepted/rejected examples | `scripts/generate_guidance_examples.py` → `public/examples/` |
@@ -341,10 +341,12 @@ design. What follows is UI/UX and operations.
    `docs/ui-direction-2026-09-10/MOBILE_PLAN.md` holds the plan and the owner's
    four answers (a four-step flow with a sticky bar; an action-only bottom bar
    plus a subtle top bar; a short home with the rest behind a link; include the
-   PWA install). **Phases 1 and 2 have shipped** (DEC-081): the flow, the
-   phone bar and menu on every page, the short home, search as its own
-   screen, `/about` for the long argument, and a short footer. Phase 3 (PDF
-   tools, support, policies) and phase 4 (install, real hardware) are next.
+   PWA install). **Phases 1 to 3 have shipped** (DEC-081, DEC-083): the flow,
+   the phone bar and menu on every page, the short home, search as its own
+   screen, `/about` for the long argument, a short footer, the PDF work with
+   the converter on its own screen, searchable support, and collapsed
+   searchable policies. Phase 4 (the install prompt, and a pass on a real
+   mid-range Android) is next.
 2. **Design the empty state for 80 examinations.** DEC-079 encodes records with
    **no photograph specification** -- served for a signature or certificates
    alone. Their *rules* page has almost nothing to show. It degrades to empty
