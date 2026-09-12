@@ -209,6 +209,19 @@ preview dev server is up**: it writes into the same `.next` and the dev server
 then serves a stale stylesheet silently, which reads exactly like a CSS bug in
 the code you just wrote. Clear `.next` and restart if it happens.
 
+**A phone layout can only be proven on a real phone viewport, and neither
+browser here gives one.** The Browser pane's viewport emulation reports
+`innerWidth` at the pane's own width, so fixed elements measure wrong and
+scrolled screenshots break up; headless Chrome on Windows will not make a
+window narrower than about 500px, so a `--window-size=360` screenshot is
+silently a 500px layout, cropped. `apps/web/scripts/phone-check.mjs` drives
+Playwright's `chrome-headless-shell` over the DevTools protocol with true
+mobile emulation — navigate, click, evaluate, screenshot — and needs no
+package. The thing to measure on every phone screen is that `innerWidth`
+equals `clientWidth`: when they differ, something overflows, the browser has
+widened its layout viewport to fit it, and every fixed bar has stretched off
+screen with it. Three of those were found on 13 September (DEC-081).
+
 **Port 3000 is occupied on the owner's machine by a different project.** The
 `web-lan` launch entry binds it and is then shadowed; `web-3100` in
 `.claude/launch.json` is the one that actually serves this app.
@@ -305,7 +318,7 @@ puts the product's worst failure mode back on the table.
 | Checkout, entitlement polling, retention countdown, extension, delivery | `components/exam/kit-checkout.tsx`, `live-job-state.ts` |
 | The sticky bar, its search and the predictive list | `components/site-header.tsx`, `header-search.tsx`, `exam-results.tsx`, `lib/use-exam-picker.ts`, `app/search-index.json/route.ts` |
 | The PDF page and the in-browser converter | `src/app/pdf/page.tsx`, `app/pdf.css`, `components/exam/pdf-to-image.tsx`, `lib/pdfjs.ts` |
-| The phone shell, flow and install — phase 1 only | `components/m/`, `app/mobile.css`, `app/manifest.ts` |
+| The phone build — phases 1 and 2 | `components/m/` (bar, menu, full-screen search, home, flow, file list), `components/home-story.tsx`, `app/about/`, `app/mobile.css`, `app/manifest.ts` |
 | Exam workspace, 132 static pages | `src/app/exam/[examId]/page.tsx` + `components/exam/kit-workspace.tsx` — fixed file list left, one file's detail right |
 | Rules & sources, 132 more pages | `src/app/exam/[examId]/rules/page.tsx` — reference split off the workspace |
 | Real accepted/rejected examples | `scripts/generate_guidance_examples.py` → `public/examples/` |
@@ -328,10 +341,10 @@ design. What follows is UI/UX and operations.
    `docs/ui-direction-2026-09-10/MOBILE_PLAN.md` holds the plan and the owner's
    four answers (a four-step flow with a sticky bar; an action-only bottom bar
    plus a subtle top bar; a short home with the rest behind a link; include the
-   PWA install). Phase 1 shipped -- `components/m/` has the app bar, action
-   bar, sheet, prepare flow and file list, `app/mobile.css`, `app/manifest.ts`
-   and icons -- and phases 2-4 are unstarted. **It is parked, not abandoned**;
-   the owner stopped it to finish the desktop view.
+   PWA install). **Phases 1 and 2 have shipped** (DEC-081): the flow, the
+   phone bar and menu on every page, the short home, search as its own
+   screen, `/about` for the long argument, and a short footer. Phase 3 (PDF
+   tools, support, policies) and phase 4 (install, real hardware) are next.
 2. **Design the empty state for 80 examinations.** DEC-079 encodes records with
    **no photograph specification** -- served for a signature or certificates
    alone. Their *rules* page has almost nothing to show. It degrades to empty

@@ -458,6 +458,42 @@
     background: var(--signal);
 }
 
+/* A 22 x 10 mark is a pointer's target, not a thumb's. On a phone the button
+   itself is the 44px box and the mark is drawn in its middle. An invisible hit
+   area around the small button was tried first and did not work: the frame
+   below it sits on top, so the lower half of every target belonged to the
+   frame's drag instead. */
+@media (max-width: 899px) {
+    .euk-wipe-dots {
+        gap: 0;
+    }
+
+    .euk-wipe-dot,
+    .euk-wipe-dot[aria-pressed="true"] {
+        position: relative;
+        width: 44px;
+        height: 44px;
+        border: 0;
+        background: none;
+    }
+
+    .euk-wipe-dot::after {
+        content: "";
+        position: absolute;
+        top: 17px;
+        left: 11px;
+        box-sizing: border-box;
+        width: 22px;
+        height: 10px;
+        border: var(--rule-thin) solid var(--ink);
+        background: var(--paper);
+    }
+
+    .euk-wipe-dot[aria-pressed="true"]::after {
+        background: var(--signal);
+    }
+}
+
 .euk-wipe-frame {
     --wipe: 50;
     position: relative;
@@ -729,8 +765,12 @@
 
 /* ---- the problem ----------------------------------------------------- */
 
+/* One column that may shrink. Left `auto`, the column took the tab strip's
+   min-content width (542px) and widened a 360px phone's layout viewport to
+   match, so the whole page scrolled sideways and a fixed bar ran off screen. */
 .euk-problem {
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: 40px;
 }
 
@@ -944,8 +984,11 @@
 
 /* ---- why ------------------------------------------------------------- */
 
+/* A shrinkable column, for the same reason as the problem section: `auto`
+   took the scale's min-content width and widened a phone's layout viewport. */
 .euk-why {
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: 44px;
 }
 
@@ -2119,4 +2162,67 @@
     .euk-vow-sweep {
         opacity: 0;
     }
+}
+
+/* ---- the footer, on a phone ------------------------------------------ */
+
+/* The declaration band is a screen and a half of scroll on a phone, at the
+   point a candidate is looking for a link. Below 900px the footer is the
+   links, one sentence, and the deletion promise. */
+.euk-mfoot {
+    display: none;
+}
+
+@media (max-width: 899px) {
+    .euk-foot-desk {
+        display: none;
+    }
+
+    .euk-mfoot {
+        display: block;
+        padding: 24px 16px calc(28px + env(safe-area-inset-bottom));
+        border-top: var(--rule) solid var(--ink);
+        background: var(--paper-2);
+    }
+}
+
+.euk-mfoot-group + .euk-mfoot-group {
+    margin-top: 16px;
+}
+
+.euk .euk-mfoot-title {
+    max-width: none;
+    font-family: var(--font-shoulders), "Arial Narrow", sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-55);
+}
+
+.euk-mfoot ul {
+    list-style: none;
+    margin: 2px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 14px;
+}
+
+.euk-mfoot a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    font-size: 15px;
+    line-height: 1.25;
+    color: var(--ink);
+}
+
+.euk .euk-mfoot-line {
+    max-width: none;
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: var(--rule-thin) solid var(--hairline);
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--ink-55);
 }

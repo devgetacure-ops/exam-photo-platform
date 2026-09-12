@@ -33,13 +33,27 @@ export interface ExamPicker {
     onKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
+export interface PickerOptions {
+    /** Told which examination was chosen, before navigating to it. */
+    onPick?: (entry: SearchEntry) => void;
+    /**
+     * Replace the current history entry instead of pushing a new one. The
+     * phone search pushes an entry of its own when it opens, and leaving by
+     * pushing past it would make back return to a search already closed.
+     */
+    replace?: boolean;
+}
+
 export function useExamPicker(
     exams: SearchEntry[],
     unavailable: SearchEntry[],
     /** Called when the candidate picks a row or gives up — the bar closes on it. */
     onLeave?: () => void,
+    options: PickerOptions = {},
 ): ExamPicker {
     const router = useRouter();
+    const navigate = (href: string) =>
+        options.replace ? router.replace(href) : router.push(href);
     const [query, setQuery] = useState("");
     const [active, setActive] = useState(0);
     const listId = useId();
@@ -61,7 +75,8 @@ export function useExamPicker(
 
     const go = (entry: SearchEntry) => {
         onLeave?.();
-        router.push(`/exam/${entry.id}`);
+        options.onPick?.(entry);
+        navigate(`/exam/${entry.id}`);
     };
 
     const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -80,7 +95,7 @@ export function useExamPicker(
                 // Nothing to select, so Enter does the one useful thing left.
                 event.preventDefault();
                 onLeave?.();
-                router.push(requestHref);
+                navigate(requestHref);
             }
         } else if (event.key === "Escape") {
             setQuery("");

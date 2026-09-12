@@ -96,6 +96,23 @@ top, because a wall of legal text on a phone is unreadable and unread.
 | 3 | PDF tools, support, policies | Volume surfaces, lower risk |
 | 4 | Manifest and install, plus a pass on a real mid-range Android | Needs the rest to exist |
 
+## Where it stands, 13 September 2026
+
+| Phase | State | Where |
+|---|---|---|
+| 1 | **Shipped.** App bar, action bar, sheets, the four-step flow, the phone exam file list | `components/m/`, `app/mobile.css`, `app/exam/[examId]/prepare` |
+| 2 | **Shipped.** The phone bar and its menu on every page with the site header; the short home; search as a full-screen screen with recents; `/about` for the long argument; the short footer | `m/phone-bar.tsx`, `m/search-screen.tsx`, `m/home.tsx`, `components/home-story.tsx`, `app/about/`, DEC-081 |
+| 3 | Not started. PDF tools, support, the policies | — |
+| 4 | Not started. Install prompt, a pass on real mid-range hardware | `app/manifest.ts` and the icons exist |
+
+**Where the build departs from this plan, and why.** "CSS inverts" was not done. The
+desktop build was signed off after this plan was written, and inverting every
+stylesheet is a rewrite of that signed-off CSS. The phone build is additive
+instead: its own components and rules, switched at 900px, with the desktop
+markup verified unchanged (DEC-081). The top bar on the pages outside the flow
+keeps a search button and a menu in its right corner; nothing that completes a
+task lives there, which is what "nothing important in the top corners" was for.
+
 ## How it will be checked
 
 - Every screen looked at at **360, 390 and 430px**, not one "mobile" width.

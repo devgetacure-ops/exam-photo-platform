@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ThemeToggle } from "./theme-toggle";
 import { Wordmark } from "./euk/wordmark";
 import { HeaderSearch } from "./header-search";
+import { PhoneBar } from "./m/phone-bar";
 
 /**
  * One header for every route, and it stays.
@@ -32,6 +33,9 @@ export function SiteHeader({
 
     return (
         <header className="euk euk-top">
+            {/* Below 900px the bar is the phone's own, not this row folded
+                down; see components/m/phone-bar.tsx. */}
+            <PhoneBar />
             <div className="euk-top-row">
                 <Link
                     href="/"

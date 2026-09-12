@@ -694,3 +694,639 @@
     text-decoration-color: var(--signal-deep);
     text-underline-offset: 3px;
 }
+
+/* ---- the home, on a phone ---------------------------------------------- */
+
+@media (max-width: 899px) {
+    /* The desktop hero and the long argument. The argument is at /about. */
+    .euk-home #main-content > :not(.euk-mhome) {
+        display: none;
+    }
+}
+
+.euk-mhome {
+    padding: 26px 16px 8px;
+}
+
+.euk-mhome-title {
+    font-size: clamp(44px, 13vw, 60px);
+    line-height: 0.88;
+    text-wrap: balance;
+}
+
+.euk .euk-mhome-sub {
+    margin-top: 14px;
+    max-width: 34ch;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--ink-70);
+}
+
+/* Looks like the field, opens the search screen. A real field here would
+   raise the keyboard under a screen about to be replaced. */
+.euk-mhome-find {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    min-height: 64px;
+    margin-top: 22px;
+    padding: 10px 16px;
+    border: var(--rule) solid var(--ink);
+    background: var(--paper);
+    color: var(--ink);
+    text-align: left;
+    box-shadow: 6px 6px 0 var(--ink);
+    cursor: pointer;
+    transition:
+        transform 120ms cubic-bezier(0.2, 0, 0.1, 1),
+        box-shadow 120ms cubic-bezier(0.2, 0, 0.1, 1);
+}
+
+.euk-mhome-find:active {
+    transform: translate(3px, 3px);
+    box-shadow: 3px 3px 0 var(--ink);
+}
+
+.euk-mhome-find > span {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.euk-mhome-find strong {
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.euk-mhome-find span span {
+    font-size: 13px;
+    color: var(--ink-55);
+}
+
+/* Three facts in joined boxes, the way a form joins the boxes you write in. */
+.euk-mhome-facts {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin: 28px 0 0;
+    padding: 0;
+    border: var(--rule-thin) solid var(--ink);
+}
+
+.euk .euk-mhome-facts li {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+    max-width: none;
+    padding: 10px 10px 11px;
+}
+
+.euk-mhome-facts li + li {
+    border-left: var(--rule-thin) solid var(--ink);
+}
+
+.euk-mhome-facts strong {
+    font-family: var(--font-shoulders), "Arial Narrow", sans-serif;
+    font-size: 30px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.euk-mhome-facts span {
+    font-size: 12px;
+    line-height: 1.3;
+    color: var(--ink-70);
+}
+
+.euk-mhome-block {
+    margin-top: 30px;
+}
+
+.euk .euk-mhome-label {
+    max-width: none;
+    font-family: var(--font-shoulders), "Arial Narrow", sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-55);
+}
+
+/* Both strips run to the screen's edges and scroll inside themselves; the
+   page never scrolls sideways. */
+.euk-mhome-jumps,
+.euk-mhome-pairs {
+    list-style: none;
+    display: flex;
+    margin: 12px -16px 0;
+    padding: 0 16px 10px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-padding-inline: 16px;
+    scrollbar-width: none;
+}
+
+.euk-mhome-jumps::-webkit-scrollbar,
+.euk-mhome-pairs::-webkit-scrollbar {
+    display: none;
+}
+
+/* A flex scroller drops its end padding in some engines; this keeps it. */
+.euk-mhome-jumps::after,
+.euk-mhome-pairs::after {
+    content: "";
+    flex: none;
+    width: 4px;
+}
+
+/* Positioned, so it is the containing block of the chips' screen-reader
+   labels. Unpositioned, those absolutely placed spans escaped the strip's
+   clipping and widened a 360px page's layout viewport to 1440px, which took
+   the fixed action bar's button off the right of the screen. */
+.euk-mhome-jumps {
+    position: relative;
+    gap: 8px;
+    scroll-snap-type: x proximity;
+}
+
+.euk-mhome-jumps li {
+    flex: none;
+    scroll-snap-align: start;
+}
+
+.euk-mhome-jumps a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 8px 14px;
+    border: var(--rule-thin) solid var(--ink);
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 15px;
+    font-weight: 600;
+    white-space: nowrap;
+    box-shadow: 3px 3px 0 var(--ink);
+}
+
+.euk-mhome-jumps a:active {
+    background: var(--signal-soft);
+}
+
+.euk-mhome-bandhead {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.euk .euk-mhome-swipe {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    max-width: none;
+    font-family: var(--font-shoulders), "Arial Narrow", sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-55);
+}
+
+.euk-mhome-pairs {
+    align-items: flex-start;
+    gap: 12px;
+    scroll-snap-type: x mandatory;
+}
+
+/* Most of a screen wide, so the next card's edge shows and the gesture needs
+   no explaining. */
+.euk-mhome-pair {
+    flex: none;
+    width: calc(100% - 56px);
+    scroll-snap-align: start;
+}
+
+.euk-mhome-pair figure {
+    margin: 0;
+    padding: 8px;
+    border: var(--rule-thin) solid var(--ink);
+    background: var(--paper);
+}
+
+.euk-mhome-frames {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.euk-mhome-frames > div {
+    position: relative;
+}
+
+.euk-mhome-frames img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--hairline);
+}
+
+.euk-mhome-frames span {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    padding: 3px 6px 2px;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: var(--font-shoulders), "Arial Narrow", sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.euk-mhome-frames > div:last-child span {
+    background: var(--signal-deep);
+    color: var(--signal-ink);
+}
+
+.euk-mhome-pair figcaption {
+    margin-top: 8px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.euk .euk-mhome-note {
+    max-width: none;
+    margin-top: 6px;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--ink-55);
+}
+
+.euk-mhome-more {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-height: 72px;
+    margin-top: 30px;
+    padding: 14px 16px;
+    border: var(--rule) solid var(--ink);
+    background: var(--paper-2);
+    color: var(--ink);
+}
+
+.euk-mhome-more:active {
+    background: var(--signal-soft);
+}
+
+.euk-mhome-more > span {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+
+.euk-mhome-more strong {
+    font-size: 16px;
+    line-height: 1.25;
+}
+
+.euk-mhome-more span span {
+    font-size: 13px;
+    color: var(--ink-55);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .euk-mhome-find {
+        transition: none;
+    }
+
+    .euk-mhome-find:active {
+        transform: none;
+    }
+}
+
+/* ---- /about: the long argument, one link from the phone home ---------- */
+
+.euk-about-top {
+    padding: 34px 20px 0;
+}
+
+@media (min-width: 768px) {
+    .euk-about-top {
+        padding: 96px 48px 0;
+    }
+}
+
+.euk-about-title {
+    max-width: 18ch;
+    font-size: clamp(38px, 6.4vw, 92px);
+    line-height: 0.9;
+    text-wrap: balance;
+}
+
+.euk-about-top + .euk-section {
+    padding-top: 36px;
+}
+
+/* The headlines carry breaks set for a desktop measure. At phone width they
+   strand a single word on a line of its own ("FORM"), so a phone lets the
+   headline wrap where it falls. */
+@media (max-width: 767px) {
+    .euk-about h2 br {
+        display: none;
+    }
+}
+
+@media (min-width: 768px) {
+    .euk-about-top + .euk-section {
+        padding-top: 72px;
+    }
+}
+
+/* ---- search, as a screen ----------------------------------------------- */
+
+.euk-msearch {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    max-width: none;
+    height: 100vh;
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: var(--paper);
+    color: var(--ink);
+    overflow: hidden;
+}
+
+.euk-msearch[open] {
+    display: flex;
+    flex-direction: column;
+    animation: euk-msearch-in 200ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Both ends written, as for the sheet: an implicit end state parks the
+   screen at its first frame anywhere the animation never ticks. */
+@keyframes euk-msearch-in {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.euk-msearch::backdrop {
+    background: var(--paper);
+}
+
+.euk-msearch-head {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 4px;
+    padding: calc(8px + env(safe-area-inset-top)) 14px 12px 4px;
+    border-bottom: var(--rule) solid var(--ink);
+}
+
+.euk-msearch-back {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    background: none;
+    color: var(--ink);
+    cursor: pointer;
+}
+
+.euk-msearch-field {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    min-height: 50px;
+    padding: 0 4px 0 12px;
+    border: var(--rule) solid var(--signal-deep);
+    background: var(--paper);
+    box-shadow: 4px 4px 0 var(--signal);
+}
+
+/* 18px: past the 16px below which iOS zooms the page on focus. */
+.euk .euk-msearch-input {
+    width: 100%;
+    min-width: 0;
+    padding: 10px 0;
+    border: 0;
+    background: transparent;
+    font-size: 18px;
+    color: var(--ink);
+}
+
+.euk .euk-msearch-input::placeholder {
+    color: var(--ink-55);
+}
+
+/* The Clear control does this job, once. */
+.euk-msearch-input::-webkit-search-cancel-button {
+    display: none;
+}
+
+.euk-msearch-clear {
+    flex: none;
+    min-height: 44px;
+    padding: 0 8px;
+    border: 0;
+    background: none;
+    font-family: var(--font-shoulders), "Arial Narrow", sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-55);
+    cursor: pointer;
+}
+
+.euk-msearch-body {
+    flex: 1;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 20px 16px calc(24px + env(safe-area-inset-bottom));
+    -webkit-overflow-scrolling: touch;
+}
+
+.euk-msearch-body section + section {
+    margin-top: 26px;
+}
+
+.euk .euk-msearch-label {
+    margin-bottom: 8px;
+    font-family: var(--font-shoulders), "Arial Narrow", sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-55);
+}
+
+.euk-msearch-recent {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: var(--rule-thin) solid var(--hairline);
+}
+
+.euk-msearch-recent a {
+    display: flex;
+    align-items: center;
+    min-height: 52px;
+    padding: 10px 2px;
+    border-bottom: var(--rule-thin) solid var(--hairline);
+    color: var(--ink);
+    font-size: 16px;
+    line-height: 1.3;
+}
+
+.euk-msearch-chips {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 8px;
+    margin: 0;
+    padding: 0;
+}
+
+.euk-msearch-chips a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 8px 14px;
+    border: var(--rule-thin) solid var(--ink);
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 15px;
+    font-weight: 600;
+    box-shadow: 3px 3px 0 var(--ink);
+}
+
+.euk-msearch-chips a:active {
+    background: var(--signal-soft);
+}
+
+/* The results list the desktop hangs from its bar, set for a thumb: taller
+   rows, and a long examination name allowed to wrap instead of being cut
+   down to its first twenty characters. */
+.euk-msearch-results {
+    box-shadow: 4px 4px 0 var(--ink);
+}
+
+.euk-msearch-results [role="option"] {
+    min-height: 60px;
+    padding-block: 12px;
+}
+
+.euk-msearch-results [role="option"] > span > span {
+    white-space: normal;
+    overflow: visible;
+}
+
+.euk-msearch-results [role="option"] > span > span:first-child {
+    font-size: 16px;
+    line-height: 1.3;
+}
+
+.euk-msearch-results [role="option"] > span > span + span {
+    margin-top: 3px;
+    font-size: 13px;
+}
+
+.euk .euk-msearch-wait {
+    max-width: none;
+    padding: 6px 0;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--ink-55);
+}
+
+.euk-msearch-foot {
+    display: grid;
+    margin-top: 28px;
+    padding-top: 6px;
+    border-top: var(--rule-thin) solid var(--hairline);
+}
+
+.euk-msearch-foot a {
+    display: flex;
+    align-items: center;
+    min-height: 48px;
+    font-size: 15px;
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--signal-deep);
+    text-underline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .euk-msearch[open] {
+        animation: none;
+    }
+}
+
+/* ---- the menu ---------------------------------------------------------- */
+
+.euk-mmenu-group + .euk-mmenu-group {
+    margin-top: 18px;
+}
+
+.euk .euk-mmenu-title {
+    max-width: none;
+    font-family: var(--font-shoulders), "Arial Narrow", sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-55);
+}
+
+.euk-mmenu ul {
+    list-style: none;
+    margin: 2px 0 0;
+    padding: 0;
+}
+
+.euk-mmenu a {
+    display: flex;
+    align-items: center;
+    min-height: 48px;
+    border-bottom: var(--rule-thin) solid var(--hairline);
+    font-size: 17px;
+    color: var(--ink);
+}
+
+.euk-mmenu a:active {
+    background: var(--paper-2);
+}
+
+.euk-mmenu-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 20px;
+    padding-top: 14px;
+    border-top: var(--rule) solid var(--ink);
+    font-size: 14px;
+    color: var(--ink-70);
+}
+
+.euk-mmenu-foot .theme-toggle {
+    min-height: 44px;
+    padding: 0 14px;
+}

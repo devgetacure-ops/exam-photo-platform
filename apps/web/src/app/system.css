@@ -27,7 +27,8 @@
     --bar: 56px;
 }
 
-@media (min-width: 640px) {
+/* 900px, where the phone's own bar hands over to the desktop row. */
+@media (min-width: 900px) {
     :root {
         --bar: 69px;
     }
@@ -802,4 +803,69 @@ button:hover .euk-chevron {
     font-size: 12px;
     line-height: 1.5;
     color: var(--ink-55);
+}
+
+/* ---- the phone's bar -------------------------------------------------- */
+
+/*
+ * Below 900px the bar is the phone's own (components/m/phone-bar.tsx): the
+ * wordmark, search and a menu, inside the same sticky header. The desktop row
+ * does not fold down into it; at 360px that row clipped its theme control off
+ * the right edge of the screen.
+ *
+ * 53px of row and the 3px rule under it are the 56px that --bar says, so
+ * nothing sticky or anchor-scrolled needs a second number.
+ */
+.euk-mtop {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    min-height: 53px;
+    padding: 0 6px 0 16px;
+}
+
+.euk-mtop-mark {
+    display: flex;
+    flex: 0 1 auto;
+    min-width: 0;
+    min-height: 44px;
+    margin-right: auto;
+    align-items: center;
+}
+
+/* Chrome, not the hero: the lockup is set small enough to leave the two
+   44px controls their room at 360px. Same thirteen cells. */
+.euk-mtop-mark .euk-lock {
+    --cell-w: 15px;
+    --cell-h: 22px;
+    --cell-t: 12px;
+}
+
+.euk-mtop-btn {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    background: none;
+    color: var(--ink);
+    cursor: pointer;
+}
+
+.euk-mtop-btn:active {
+    background: var(--paper-2);
+}
+
+@media (min-width: 900px) {
+    .euk-mtop {
+        display: none;
+    }
+}
+
+@media (max-width: 899px) {
+    .euk-top-row {
+        display: none;
+    }
 }

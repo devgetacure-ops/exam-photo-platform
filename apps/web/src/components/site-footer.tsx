@@ -68,7 +68,7 @@ function Tick() {
 export function SiteFooter() {
     return (
         <footer className="euk euk-foot">
-            <div className="euk-invert px-5 py-14 md:px-12 md:py-20">
+            <div className="euk-foot-desk euk-invert px-5 py-14 md:px-12 md:py-20">
                 <div className="euk-wrap">
                     <Reveal className="euk-light euk-declaration">
                         <p className="euk-declaration-bar">Declaration</p>
@@ -108,7 +108,7 @@ export function SiteFooter() {
                 </div>
             </div>
 
-            <div className="bg-[var(--paper)] px-5 py-12 md:px-12 md:py-14">
+            <div className="euk-foot-desk bg-[var(--paper)] px-5 py-12 md:px-12 md:py-14">
                 <div className="euk-wrap euk-enclosures">
                     <div className="flex flex-col gap-4">
                         <Link href="/" aria-label="examuploadkit home">
@@ -139,6 +139,35 @@ export function SiteFooter() {
                 </div>
 
                 <p className="euk-wrap euk-foot-last">
+                    Files are deleted within 30 minutes, or within an hour if you
+                    ask us to keep them.
+                </p>
+            </div>
+
+            {/* The phone's footer. The declaration band above is a page's worth
+                of scroll on a phone, at the point a candidate is looking for a
+                link, so a phone gets the links, the one sentence about
+                acceptance, and the deletion promise. */}
+            <div className="euk-mfoot">
+                <nav aria-label="Site">
+                    {ENCLOSURES.map((group) => (
+                        <div key={group.group} className="euk-mfoot-group">
+                            <p className="euk-mfoot-title">{group.group}</p>
+                            <ul>
+                                {group.links.map((link) => (
+                                    <li key={link.href}>
+                                        <Link href={link.href.replace(/^\/#/, "/about#")}>
+                                            {link.label}
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    ))}
+                </nav>
+                <p className="euk-mfoot-line">
+                    Every file prepared to the rules your examination published.
+                    Acceptance is always the authority&rsquo;s decision, never ours.
                     Files are deleted within 30 minutes, or within an hour if you
                     ask us to keep them.
                 </p>

@@ -73,8 +73,10 @@ export default async function ExamPage({
             <ExamHero exam={exam} facts={facts} liveCapture={liveCapture} />
             <ExamFiles exam={exam} facts={facts} />
             <KitWorkspace exam={exam} facts={facts} />
-            <PrepareCta exam={exam} />
             <SiteFooter />
+            {/* After the footer, so the bar's spacer is the last thing in the
+                document and the footer's end is never under the fixed bar. */}
+            <PrepareCta exam={exam} />
         </main>
     );
 }
