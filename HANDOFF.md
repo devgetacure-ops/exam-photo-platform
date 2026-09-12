@@ -86,11 +86,13 @@ into the delivered photograph. Do not take it to hit a latency number.
 
 # Platform State
 
-**Last updated: 2026-09-06.** Branch `feat/upload-kit-ui`, merged up to date
+**Last updated: 2026-09-12.** Branch `feat/upload-kit-ui`, merged up to date
 with `main` (which carries the ONNX matting backend, DEC-054). The kit API is
-built (DEC-055..058), and so is the read half of the web app: a candidate can
-search 39 examinations and see everything each one asks for, on statically
-generated pages.
+built (DEC-055..058) and the whole candidate path works: a candidate searches
+**132 examinations**, sees everything each one asks for on statically generated
+pages, prepares files, reviews them watermarked, pays a server-computed price
+and downloads. The desktop design is built to the owner's direction; the phone
+build is not, and is the next piece of work.
 
 **Both lanes share one working tree**, at `C:/Projects/exam-photo-platform` on
 `feat/upload-kit-ui`. That is why `git status` always shows the other lane's
@@ -154,34 +156,62 @@ immersive and visually striking. Lots of white space, plain cards, almost no
 motion, one illustration. Tasteful and safe. Not the thing that makes somebody
 stay and explore.
 
-### The design instruction that governs the next session
+### The design direction, settled
 
-The owner's style list -- Bauhaus, neumorphism, glassmorphism, neobrutalism,
-claymorphism, aurora, retro-futurism, minimalism, and more -- **is internally
-contradictory**. Neubrutalism and neumorphism are opposites; minimalism and
-synthwave cannot coexist. Anything implementing all of it produces noise.
+The owner's original style list -- Bauhaus, neumorphism, glassmorphism,
+neobrutalism, claymorphism, aurora, retro-futurism, minimalism -- was
+internally contradictory, and the agreed sequencing was a written
+recommendation before any code. **That happened, it was approved, and it is
+built.** What shipped is one committed direction, and a new session should
+extend it rather than reopen the question:
 
-That is very likely why the previous attempt retreated to safe: given a list
-that cannot be satisfied, committing to nothing is the defensible move.
+**Flat by contract.** Hard borders, solid offset shadows, no radius, no blur,
+no gradient. One signal colour (`--signal`), and nothing carries meaning by
+hue alone. A drawn, editorial world -- inline SVG line drawings in the ink,
+stroke-only, that are made to carry information rather than decorate: a
+drawing that says nothing does not ship. Motion is transform and opacity only,
+gated on `prefers-reduced-motion`, with a pause control wherever something
+moves by itself.
 
-**So the first deliverable of the UI work is not code.** It is a written
-recommendation naming the two or three directions to commit to, why, and why
-the rest are refused -- approved by the owner before anything is built. The
-owner has agreed to that sequencing explicitly.
+The tokens live on `.euk` in `src/app/system.css`; `.euk-invert` flips them for
+a dark band and `.euk-light` back again inside one. **Nothing invents a
+colour.** The stylesheets are global, so one class name has one owner --
+`src/tests/stylesheet-namespace.test.ts` fails the build if a name is defined
+in two sheets without a stated reason, after three collisions in one session
+shipped a line drawing as a solid orange block.
 
-### Current UI state, verified 2026-09-07
+### Current UI state, verified 2026-09-12
 
-Built, and it works: landing story, comparison slider, pricing, FAQ, footer,
-theme toggle, exam workspace with the three-way boundary intact, rules pages,
-server-priced checkout with entitlement polling, retention countdown and
-extension, delivery. 92 Vitest tests pass, production build passes, no
-horizontal overflow at seven widths.
+**Desktop is built and the owner has signed off on two rounds of notes.** The
+landing page (hero search, eighteen examination shortcuts, the kit, a steps
+track, a self-dragging before/after band for a photograph and a signature, a
+drawn browser window, a measured sheet of six frames, four principles that
+perform their own refusal, pricing, the story), the examination workspace with
+the three-way boundary intact, rules pages, the PDF page at `/pdf`, checkout,
+delivery, policies and every error state. **416 static pages**, 169 Vitest
+tests, production build clean.
 
-**Two things are stale in it right now.** It generates 52 exam pages and the
-catalogue holds **132** (DEC-079), and its QA notes record the lighting
-toggle, staged progress, exam facts and email delivery as "absent" -- all four
-shipped in the same session (DEC-072..077). A rebuild against the current
-engine is the first practical step.
+**The bar is sticky, full-bleed, and carries the search.** On the landing page
+and the directory it appears only once the page's own search scrolls away; on
+an examination page it is there from the start wearing that exam's name. It is
+a real field -- type in it, the predictive list drops out of it -- fed by
+`/search-index.json`, a statically built route fetched on first focus rather
+than embedded in 415 documents. One height token, `--bar`, is the only number
+anything positions against; five sticky blocks and the anchor scroll-padding
+all read it.
+
+**Verification that is worth repeating rather than re-deriving.** Headless
+virtual time does not drive `requestAnimationFrame`, and the Browser pane does
+not paint while it is hidden -- so a screenshot proves layout and nothing else.
+Motion is proven by stepping a stubbed clock in a test, or by reading
+`getAnimations()` and seeking it. And **never run `npm run build` while the
+preview dev server is up**: it writes into the same `.next` and the dev server
+then serves a stale stylesheet silently, which reads exactly like a CSS bug in
+the code you just wrote. Clear `.next` and restart if it happens.
+
+**Port 3000 is occupied on the owner's machine by a different project.** The
+`web-lan` launch entry binds it and is then shadowed; `web-3100` in
+`.claude/launch.json` is the one that actually serves this app.
 
 What this file is: the state a new session cannot reconstruct from the diff.
 Not a session note — keep it current rather than appending to it. It has drifted
@@ -270,10 +300,12 @@ puts the product's worst failure mode back on the table.
 
 | Piece | Where |
 |---|---|
-| Design tokens, both themes | `src/app/globals.css` — semantic colours are deliberately not the accent |
-| Landing page, problem story, comparison slider, pricing, FAQ, footer | `src/app/page.tsx`, `app/journey.css`, `components/site-footer.tsx`, `components/file-comparison.tsx` |
+| Design tokens, both themes | `src/app/system.css` — one signal colour; `globals.css`/`journey.css`/`editorial.css` are gone |
+| Landing page, problem story, before/after band, pricing, story, footer | `src/app/page.tsx`, `app/story.css`, `components/euk/wipe-demo.tsx`, `components/site-footer.tsx` |
 | Checkout, entitlement polling, retention countdown, extension, delivery | `components/exam/kit-checkout.tsx`, `live-job-state.ts` |
-| Theme toggle, shared header/footer | `components/theme-toggle.tsx`, `site-header.tsx`, `site-footer.tsx` |
+| The sticky bar, its search and the predictive list | `components/site-header.tsx`, `header-search.tsx`, `exam-results.tsx`, `lib/use-exam-picker.ts`, `app/search-index.json/route.ts` |
+| The PDF page and the in-browser converter | `src/app/pdf/page.tsx`, `app/pdf.css`, `components/exam/pdf-to-image.tsx`, `lib/pdfjs.ts` |
+| The phone shell, flow and install — phase 1 only | `components/m/`, `app/mobile.css`, `app/manifest.ts` |
 | Exam workspace, 132 static pages | `src/app/exam/[examId]/page.tsx` + `components/exam/kit-workspace.tsx` — fixed file list left, one file's detail right |
 | Rules & sources, 132 more pages | `src/app/exam/[examId]/rules/page.tsx` — reference split off the workspace |
 | Real accepted/rejected examples | `scripts/generate_guidance_examples.py` → `public/examples/` |
@@ -287,13 +319,19 @@ puts the product's worst failure mode back on the table.
 
 ### What is actually left, in order
 
-The engine side of the 2026-09-07 brief is complete. What follows is
-UI/UX and operations.
+The engine side of the 2026-09-07 brief is complete, and so is the desktop
+design. What follows is UI/UX and operations.
 
-1. **Rebuild, then raise the level.** The site generates 52 exam pages against
-   a 132-examination catalogue, and its own notes call four shipped engine
-   features absent. Rebuild first so the assessment is of the real thing. Then
-   the design work: a written direction the owner approves, and only then code.
+1. **The phone build, as its own design.** This is the next session's work and
+   the owner has been explicit about it twice: more than 70% of candidates will
+   arrive on a phone, and a reflowed desktop page is not what was asked for.
+   `docs/ui-direction-2026-09-10/MOBILE_PLAN.md` holds the plan and the owner's
+   four answers (a four-step flow with a sticky bar; an action-only bottom bar
+   plus a subtle top bar; a short home with the rest behind a link; include the
+   PWA install). Phase 1 shipped -- `components/m/` has the app bar, action
+   bar, sheet, prepare flow and file list, `app/mobile.css`, `app/manifest.ts`
+   and icons -- and phases 2-4 are unstarted. **It is parked, not abandoned**;
+   the owner stopped it to finish the desktop view.
 2. **Design the empty state for 80 examinations.** DEC-079 encodes records with
    **no photograph specification** -- served for a signature or certificates
    alone. Their *rules* page has almost nothing to show. It degrades to empty
@@ -307,7 +345,6 @@ UI/UX and operations.
    the launch, so they are earlier than they look.
 5. **Multi-page documents** via `planDocument` -> arrange -> `assembleDocument`.
    The engine pair exists; the arranging interface does not.
-6. **Mobile as a separate design**, per the owner -- not a reflow.
 7. **A preview for a PDF deliverable.** `preview_watermarked` is false and
    `preview_url` null, honestly, so a candidate currently buys a certificate
    scan unseen. Rendering a page needs a rasteriser this repository

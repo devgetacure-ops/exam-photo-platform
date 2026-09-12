@@ -142,3 +142,23 @@ gradient over a background colour, and the detector's analytic path cannot
 composite the two — it reports 1.6:1 for text measured at 10.2:1 from the rendered
 pixels. The eight low-contrast findings on that section are all this, and three of
 them predate this work.
+
+## The owner's second round of desktop notes — 12 September 2026
+
+Same drill: screenshots one at a time, ingest all of them before acting.
+
+| The note | What was done |
+|---|---|
+| The rectangle inside the search bar is still there | It always was. The Tailwind utility meant to suppress the focus ring could never win: utilities are layered CSS and unlayered CSS beats a layer whatever the specificity says, so the site's own `:focus-visible` rule kept drawing. The exemption is written where that rule lives, named, and the frame carries focus alone |
+| The bar's search acts like a button that opens another search | It is a field now. Type in the bar, the predictive list drops out of the bar. The picker's behaviour moved into one hook and one results component so the page's search and the bar's cannot drift apart |
+| Enlarge the bar's search, with good spacing | It takes the middle of the bar with clear air either side — 125px → 434px at 1024. The lockup wears smaller cells in the bar, and the three text links stand down below 1280px where the search is worth more than a jump to a section of the same page |
+| The scroll choreography crops "Six tabs" | The bar and that headline were both made sticky in the same session with two unreconciled numbers, so the headline pinned behind the bar. One measured token, `--bar`, is now the only number: the anchor scroll-padding and all five sticky blocks read it. Four of the five had the same fault and nobody had reported them yet |
+| Move the shortcuts down, and add more exams | Eighteen, every id checked against the catalogue, wrapping to two even rows of nine, starting 133px clear of the search |
+| Large negative space beside the before/after band | The representational-examples note sits beside the frames instead of below them, which fills the empty column and takes a screen's worth of height out of the section |
+| Large negative space on the PDF page | The head is two columns: headline and lede left, the two ways in — free in your browser, free with a prepared file — right, stated at the top instead of discovered two sections down. The earlier attempt at this seam wrote `.euk-section:first-of-type`, which asks for an element that is both `.euk-section` and the first `<section>` sibling; the first one is the head, which carries no such class, so the rule had matched nothing at all. The converter now opens above the fold |
+
+**And the thing that came out of it.** Searching "CGL" returned nothing, in
+every search on the site, because 117 of the 135 research records carried no
+aliases. 337 short forms were added to the research sidecar and encoded into
+the catalogue by the usual run; every one is tested to bring back its own
+examination. DEC-080.
