@@ -14,11 +14,27 @@
  * are deleted.
  */
 
-/* The bar stays on screen, so an anchor that lands at the very top of the
-   viewport lands underneath it. One rule here beats a scroll-margin on every
-   target, and it keeps up with the bar's real height. */
+/*
+ * How tall the bar is, in one place.
+ *
+ * The bar stays on screen, so everything that positions itself against the top
+ * of the viewport has to clear it: anchor jumps, and anything sticky. Two
+ * hand-written numbers drifted apart once already — the problem section pinned
+ * its headline 40px from the top, which is *behind* a 69px bar, and shaved the
+ * first line off it. There is one number now, and it is measured, not guessed.
+ */
+:root {
+    --bar: 56px;
+}
+
+@media (min-width: 640px) {
+    :root {
+        --bar: 69px;
+    }
+}
+
 html {
-    scroll-padding-top: 78px;
+    scroll-padding-top: calc(var(--bar) + 12px);
 }
 
 .euk {
@@ -314,6 +330,24 @@ button:hover .euk-chevron {
     outline-offset: 2px;
 }
 
+/*
+ * Except inside a frame that already shows focus itself.
+ *
+ * The search fields sit in a bordered frame that turns signal-coloured and
+ * drops a signal shadow the moment the field inside has focus. The ring then
+ * draws a second rectangle inside the first, which is a box in a box. Focus
+ * stays plainly visible — it is the frame — so this is an exemption, not a
+ * removal.
+ *
+ * It has to be written here rather than as a utility on the input: Tailwind's
+ * utilities are layered and unlayered CSS beats a layer whatever the
+ * specificity says, so `focus-visible:outline-none` on the element lost to the
+ * rule above and the ring kept drawing.
+ */
+.euk .euk-searchfield:focus-visible {
+    outline: none;
+}
+
 
 
 
@@ -339,19 +373,45 @@ button:hover .euk-chevron {
 .euk-top-row {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 16px;
     padding: 11px 18px;
 }
 
 @media (min-width: 768px) {
     .euk-top-row {
-        gap: 24px;
+        gap: 32px;
         padding: 12px 28px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .euk-top-row {
+        gap: 44px;
     }
 }
 
 .euk-top-mark {
     flex: none;
+}
+
+/* The lockup is chrome here, not the hero, and at full size it took a third of
+   a 1024px bar away from the search. Only the cell metrics change — the
+   construction is the same thirteen cells, which is the whole point of building
+   it in CSS rather than as a second element. */
+@media (min-width: 768px) {
+    .euk-top-mark .euk-lock {
+        --cell-w: 22px;
+        --cell-h: 26px;
+        --cell-t: 16px;
+    }
+}
+
+@media (min-width: 1440px) {
+    .euk-top-mark .euk-lock {
+        --cell-w: 26px;
+        --cell-h: 30px;
+        --cell-t: 19px;
+    }
 }
 
 .euk-top-mid {
@@ -371,7 +431,21 @@ button:hover .euk-chevron {
 
 @media (min-width: 768px) {
     .euk-top-nav {
-        gap: 22px;
+        gap: 20px;
+    }
+}
+
+/* The three text links are the first thing to go when the bar is tight: the
+   search matters more than a shortcut to a section of the same page, and
+   Exams and the theme toggle are the two things that actually do something
+   here. They come back the moment there is room for all of it. */
+.euk-top-link {
+    display: none;
+}
+
+@media (min-width: 1280px) {
+    .euk-top-link {
+        display: inline;
     }
 }
 
@@ -398,10 +472,20 @@ button:hover .euk-chevron {
 
 /* ---- the search in the bar ------------------------------------------- */
 
+/*
+ * A field, not a button that opens a field. It takes the middle of the bar —
+ * as wide as the bar can spare while leaving clear air on both sides — and the
+ * predictive list drops straight out of it.
+ */
 .euk-topsearch {
+    position: relative;
     display: none;
-    width: 100%;
-    max-width: 560px;
+    flex: 1 1 0%;
+    min-width: 0;
+    max-width: 640px;
+    transition:
+        opacity 240ms ease,
+        transform 240ms cubic-bezier(0.2, 0.7, 0.1, 1);
 }
 
 @media (min-width: 640px) {
@@ -410,123 +494,312 @@ button:hover .euk-chevron {
     }
 }
 
-/* Sized to what it holds, so an examination's own name sets the width rather
-   than sitting in a field built for a placeholder. */
-.euk-topsearch-open {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    width: max-content;
-    max-width: 100%;
-    margin-inline: auto;
-    min-height: 38px;
-    padding: 6px 10px 6px 12px;
-    border: var(--rule-thin) solid var(--ink);
-    background: var(--paper-2);
-    color: var(--ink-55);
-    font-size: 14px;
-    text-align: left;
-    cursor: pointer;
-    transition:
-        opacity 240ms ease,
-        transform 240ms cubic-bezier(0.2, 0.7, 0.1, 1),
-        box-shadow 140ms ease,
-        border-color 140ms ease;
+/* Before the page's own search has gone, this one is not there — and not
+   reachable by keyboard either, which `inert` handles in the markup. */
+.euk-topsearch[data-shown="false"] {
+    opacity: 0;
+    transform: translateY(-10px);
+    pointer-events: none;
 }
 
-.euk-topsearch-open svg {
+.euk-topsearch-field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 42px;
+    padding: 5px 12px;
+    border: var(--rule-thin) solid var(--ink);
+    background: var(--paper-2);
+    transition:
+        box-shadow 140ms ease,
+        border-color 140ms ease,
+        background-color 140ms ease;
+}
+
+.euk-topsearch-field:focus-within {
+    border-color: var(--signal-deep);
+    background: var(--paper);
+    box-shadow: 4px 4px 0 var(--signal);
+}
+
+.euk-topsearch-glass {
     width: 17px;
     height: 17px;
     flex: none;
     color: var(--ink);
 }
 
-.euk-topsearch-label {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.euk-topsearch-key {
-    flex: none;
-    border: 1px solid var(--hairline);
-    padding: 1px 6px;
-    font-family: inherit;
-    font-size: 11px;
-    color: var(--ink-40);
-}
-
-@media (max-width: 899px) {
-    .euk-topsearch-key {
-        display: none;
-    }
-}
-
-.euk-topsearch-open:hover {
-    border-color: var(--signal-deep);
+.euk .euk-topsearch-input {
+    width: 100%;
+    min-width: 0;
+    background: transparent;
+    border: 0;
+    font-size: 15px;
     color: var(--ink);
-    box-shadow: 4px 4px 0 var(--signal);
-    transform: translateY(-1px);
 }
 
-.euk-topsearch-open:active {
-    transform: translateY(1px);
-    box-shadow: 2px 2px 0 var(--signal);
+.euk .euk-topsearch-input::placeholder {
+    color: var(--ink-55);
 }
 
-/* Before the page's own search has gone, this one is not there — and not
-   reachable by keyboard either, which `inert` handles in the markup. */
-.euk-topsearch[data-shown="false"] .euk-topsearch-open {
-    opacity: 0;
-    transform: translateY(-10px);
-    pointer-events: none;
+.euk-topsearch-clear {
+    flex: none;
+    padding: 3px 6px;
+    font-size: 11px;
+    color: var(--ink-55);
+    cursor: pointer;
 }
 
-.euk-topsearch-panel {
+.euk-topsearch-clear:hover {
+    color: var(--ink);
+}
+
+/* The list hangs from the bar, the width of the field. */
+.euk-topsearch-drop {
     position: absolute;
+    top: calc(100% + 10px);
     left: 0;
     right: 0;
-    top: 100%;
-    max-height: calc(100dvh - 100%);
+    max-height: calc(100dvh - 100% - 32px);
     overflow-y: auto;
-    padding: 20px 18px 24px;
-    border-bottom: var(--rule) solid var(--ink);
-    background: var(--paper);
-    box-shadow: 0 10px 0 -4px var(--hairline);
-    animation: euk-topsearch-in 200ms cubic-bezier(0.2, 0.7, 0.1, 1);
-}
-
-@media (min-width: 768px) {
-    .euk-topsearch-panel {
-        padding: 24px 28px 28px;
-    }
-}
-
-.euk-topsearch-panel-inner {
-    max-width: 760px;
+    animation: euk-topsearch-in 180ms cubic-bezier(0.2, 0.7, 0.1, 1);
 }
 
 @keyframes euk-topsearch-in {
     from {
         opacity: 0;
-        transform: translateY(-12px);
+        transform: translateY(-10px);
     }
 }
 
 .euk .euk-topsearch-wait {
-    padding: 18px 0;
-    font-size: 15px;
+    border: var(--rule) solid var(--ink);
+    background: var(--paper);
+    box-shadow: var(--drop) var(--drop) 0 var(--ink);
+    padding: 16px 18px;
+    font-size: 14px;
     color: var(--ink-55);
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .euk-topsearch-open,
-    .euk-topsearch-panel {
+    .euk-topsearch,
+    .euk-topsearch-field,
+    .euk-topsearch-drop {
         transition: none;
         animation: none;
     }
-    .euk-topsearch-open:hover,
-    .euk-topsearch-open:active {
+    .euk-topsearch[data-shown="false"] {
         transform: none;
     }
+}
+
+/* ---- the picker, as a page carries it -------------------------------- */
+
+.euk-picker {
+    width: 100%;
+}
+
+.euk-picker-field {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: var(--rule) solid var(--ink);
+    background: var(--paper);
+    box-shadow: var(--drop-sm) var(--drop-sm) 0 var(--ink);
+    padding: 16px 20px;
+    transition:
+        border-color 140ms ease,
+        box-shadow 140ms ease;
+}
+
+.euk-picker-field:focus-within {
+    border-color: var(--signal-deep);
+    box-shadow: var(--drop-sm) var(--drop-sm) 0 var(--signal);
+}
+
+.euk-picker-glass {
+    width: 20px;
+    height: 20px;
+    flex: none;
+    color: var(--ink);
+}
+
+.euk .euk-picker-input {
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    background: transparent;
+    font-size: 18px;
+    color: var(--ink);
+}
+
+.euk .euk-picker-input::placeholder {
+    color: var(--ink-55);
+}
+
+.euk-picker-clear {
+    flex: none;
+    padding: 4px 6px;
+    font-size: 11px;
+    color: var(--ink-55);
+    cursor: pointer;
+}
+
+.euk-picker-clear:hover {
+    color: var(--ink);
+}
+
+.euk-picker-foot {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 12px 16px;
+    font-size: 11px;
+}
+
+.euk-picker-foot a {
+    color: var(--ink-55);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+.euk-picker-foot a:hover {
+    color: var(--signal-deep);
+}
+
+/* Neither field shows the browser's own clear cross: there is a Clear button
+   already, and the native one sits outside the frame's rhythm. */
+.euk .euk-searchfield::-webkit-search-cancel-button {
+    appearance: none;
+}
+
+/* ---- what the picker found ------------------------------------------- */
+
+.euk-results {
+    overflow: hidden;
+    border: var(--rule) solid var(--ink);
+    background: var(--paper);
+    box-shadow: var(--drop) var(--drop) 0 var(--ink);
+}
+
+.euk-results--page {
+    margin-top: 8px;
+}
+
+.euk-results-none {
+    padding: 18px 16px 20px;
+}
+
+.euk .euk-results-none p {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink-70);
+}
+
+.euk-results-said {
+    font-weight: 600;
+    color: var(--ink);
+}
+
+.euk .euk-results-none a {
+    display: inline-block;
+    margin-top: 12px;
+    font-size: 15px;
+}
+
+.euk-results-row {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: 12px;
+    border-bottom: var(--rule-thin) solid var(--hairline);
+    padding: 12px 16px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.euk-results-row:last-child {
+    border-bottom: 0;
+}
+
+.euk-results-row:hover {
+    background: var(--paper-2);
+}
+
+.euk-results-row[data-active="true"] {
+    background: var(--partial-fill);
+}
+
+.euk-results-name {
+    display: block;
+    min-width: 0;
+    flex: 1;
+}
+
+.euk-results-name > span {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.euk-results-name > span:first-child {
+    font-weight: 500;
+    color: var(--ink);
+}
+
+.euk-results-body {
+    margin-top: 2px;
+    font-size: 12px;
+    color: var(--ink-55);
+}
+
+.euk-results-via {
+    color: var(--ink-70);
+}
+
+.euk-results-count {
+    flex: none;
+    font-size: 12px;
+    color: var(--ink-70);
+    font-variant-numeric: tabular-nums;
+}
+
+.euk-results-go {
+    width: 16px;
+    height: 16px;
+    flex: none;
+    color: var(--ink-55);
+}
+
+.euk-results-blocked {
+    border-top: var(--rule-thin) solid var(--ink);
+    background: var(--paper-2);
+}
+
+.euk-results-blocked .euk-label {
+    padding: 12px 16px 6px;
+    font-size: 11px;
+}
+
+.euk-results-blocked > div {
+    border-bottom: var(--rule-thin) solid var(--hairline);
+    padding: 12px 16px;
+}
+
+.euk-results-blocked > div:last-child {
+    border-bottom: 0;
+}
+
+.euk .euk-results-blocked-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink-70);
+}
+
+.euk .euk-results-blocked-why {
+    margin-top: 2px;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--ink-55);
 }

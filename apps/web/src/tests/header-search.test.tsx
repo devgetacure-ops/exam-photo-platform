@@ -1,10 +1,17 @@
 import { describe, test, expect, vi, beforeEach, afterEach } from "vitest";
-import { act, render, screen, fireEvent, waitFor } from "@testing-library/react";
+import {
+    act,
+    render,
+    screen,
+    fireEvent,
+    waitFor,
+} from "@testing-library/react";
 import { HeaderSearch } from "../components/header-search";
 import type { SearchEntry } from "../lib/types";
 
+const push = vi.fn();
 vi.mock("next/navigation", () => ({
-    useRouter: () => ({ push: vi.fn() }),
+    useRouter: () => ({ push }),
 }));
 
 const exams: SearchEntry[] = [
@@ -17,9 +24,18 @@ const exams: SearchEntry[] = [
         prepares: 2,
         total: 3,
     },
+    {
+        id: "neet-ug-2026",
+        name: "NEET (UG) 2026",
+        body: "National Testing Agency",
+        year: 2026,
+        aliases: ["NEET"],
+        prepares: 4,
+        total: 18,
+    },
 ];
 
-/** The observer the header uses, with its callback in reach of the test. */
+/** The observer the bar uses, with its callback in reach of the test. */
 let fire: ((entries: { isIntersecting: boolean }[]) => void) | null = null;
 
 class StubObserver {
@@ -31,7 +47,14 @@ class StubObserver {
     unobserve() {}
 }
 
+const field = () => screen.getByRole("combobox");
+
+function type(value: string) {
+    fireEvent.change(field(), { target: { value } });
+}
+
 beforeEach(() => {
+    push.mockClear();
     fire = null;
     vi.stubGlobal("IntersectionObserver", StubObserver);
     vi.stubGlobal(
@@ -47,7 +70,7 @@ afterEach(() => {
     vi.unstubAllGlobals();
 });
 
-describe("the search in the header", () => {
+describe("the search in the bar", () => {
     test("stays out of the way until the page's own search has gone", async () => {
         const page = document.createElement("div");
         page.id = "hero-search";
@@ -60,17 +83,13 @@ describe("the search in the header", () => {
 
         expect(slot?.getAttribute("data-shown")).toBe("false");
         // Out of the tab order too, not merely invisible.
-        expect(
-            container.querySelector(".euk-topsearch-open")?.hasAttribute("inert"),
-        ).toBe(true);
+        expect(field().hasAttribute("inert")).toBe(true);
 
         act(() => fire?.([{ isIntersecting: false }]));
         await waitFor(() =>
             expect(slot?.getAttribute("data-shown")).toBe("true"),
         );
-        expect(
-            container.querySelector(".euk-topsearch-open")?.hasAttribute("inert"),
-        ).toBe(false);
+        expect(field().hasAttribute("inert")).toBe(false);
 
         act(() => fire?.([{ isIntersecting: true }]));
         await waitFor(() =>
@@ -79,44 +98,59 @@ describe("the search in the header", () => {
         page.remove();
     });
 
-    test("wears the examination's name where there is one", () => {
+    test("is a field to type in, not a button that opens one", async () => {
         render(<HeaderSearch examName="GATE 2026" />);
-        expect(screen.getByRole("button").textContent).toContain("GATE 2026");
+
+        // No second search to open: the field in the bar is the search.
+        expect(screen.queryByRole("dialog")).toBeNull();
+        expect(field().getAttribute("placeholder")).toBe("GATE 2026");
+
+        fireEvent.focus(field());
+        type("neet");
+
+        const row = await screen.findByRole("option", { name: /NEET/ });
+        fireEvent.click(row);
+        expect(push).toHaveBeenCalledWith("/exam/neet-ug-2026");
     });
 
-    test("fetches the catalogue once, when it is first opened", async () => {
+    test("fetches the catalogue once, on first focus", async () => {
         render(<HeaderSearch examName="GATE 2026" />);
         expect(fetch).not.toHaveBeenCalled();
 
-        fireEvent.click(screen.getByRole("button"));
-        await waitFor(() =>
-            expect(
-                screen.getByRole("combobox", {
-                    name: /search for your examination/i,
-                }),
-            ).toBeTruthy(),
-        );
-        expect(fetch).toHaveBeenCalledTimes(1);
+        fireEvent.focus(field());
+        await waitFor(() => expect(fetch).toHaveBeenCalledTimes(1));
 
-        fireEvent.keyDown(document, { key: "Escape" });
-        await waitFor(() =>
-            expect(screen.queryByRole("dialog")).toBeNull(),
-        );
-
-        fireEvent.click(screen.getByRole("button"));
-        await waitFor(() => expect(screen.getByRole("dialog")).toBeTruthy());
+        fireEvent.blur(field());
+        fireEvent.focus(field());
         expect(fetch).toHaveBeenCalledTimes(1);
     });
 
-    test("says so when the catalogue cannot be loaded", async () => {
+    test("says the list is loading rather than claiming nothing matches", async () => {
+        let release: (value: unknown) => void = () => {};
         vi.stubGlobal(
             "fetch",
-            vi.fn(async () => ({ ok: false, status: 500, json: async () => ({}) })),
+            vi.fn(
+                () =>
+                    new Promise((resolve) => {
+                        release = resolve;
+                    }),
+            ),
         );
-        render(<HeaderSearch examName="GATE 2026" />);
-        fireEvent.click(screen.getByRole("button"));
+        render(<HeaderSearch />);
+        fireEvent.focus(field());
+        type("gate");
+
+        expect(screen.getByText(/Loading examinations/)).toBeTruthy();
+        expect(screen.queryByText(/Nothing matches/)).toBeNull();
+
+        await act(async () => {
+            release({
+                ok: true,
+                json: async () => ({ exams, unavailable: [] }),
+            });
+        });
         await waitFor(() =>
-            expect(screen.getByText(/didn’t load/i)).toBeTruthy(),
+            expect(screen.getByRole("option", { name: /GATE/ })).toBeTruthy(),
         );
     });
 
@@ -124,17 +158,30 @@ describe("the search in the header", () => {
         render(
             <>
                 <input aria-label="somewhere else" />
-                <HeaderSearch examName="GATE 2026" />
+                <HeaderSearch />
             </>,
         );
 
         const elsewhere = screen.getByLabelText("somewhere else");
         elsewhere.focus();
         fireEvent.keyDown(document, { key: "/" });
-        expect(screen.queryByRole("dialog")).toBeNull();
+        expect(document.activeElement).toBe(elsewhere);
 
         elsewhere.blur();
         fireEvent.keyDown(document, { key: "/" });
-        await waitFor(() => expect(screen.getByRole("dialog")).toBeTruthy());
+        await waitFor(() => expect(document.activeElement).toBe(field()));
+    });
+
+    test("clicking away puts the list down without losing what was typed", async () => {
+        render(<HeaderSearch />);
+        fireEvent.focus(field());
+        type("gate");
+        await waitFor(() =>
+            expect(screen.getByRole("option", { name: /GATE/ })).toBeTruthy(),
+        );
+
+        fireEvent.mouseDown(document.body);
+        await waitFor(() => expect(screen.queryByRole("option")).toBeNull());
+        expect((field() as HTMLInputElement).value).toBe("gate");
     });
 });

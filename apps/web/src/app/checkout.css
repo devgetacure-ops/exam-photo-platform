@@ -404,7 +404,7 @@
 @media (min-width: 1000px) {
     .euk-review-total {
         position: sticky;
-        top: 24px;
+        top: calc(var(--bar) + 24px);
     }
 }
 

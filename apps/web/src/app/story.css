@@ -177,12 +177,16 @@
 /* The search is the page's one action, so it gets the page's largest control:
    a taller field, larger type, and the hard offset shadow the rest of the
    system reserves for things you are meant to press. */
-.euk-hero-search > div > div:first-child {
+.euk-hero-search .euk-picker-field {
     box-shadow: 8px 8px 0 var(--ink);
     padding-block: 6px;
 }
 
-.euk-hero-search input {
+.euk-hero-search .euk-picker-field:focus-within {
+    box-shadow: 8px 8px 0 var(--signal);
+}
+
+.euk-hero-search .euk-picker-input {
     font-size: 19px;
     padding-block: 16px;
 }
@@ -365,10 +369,27 @@
     color: var(--signal-deep);
 }
 
-.euk-band-pair {
+.euk-band-body {
     display: grid;
     gap: 26px;
     margin-top: 30px;
+}
+
+/* Wide enough for a column beside the frames: the note goes there rather than
+   below, which fills the empty right-hand side and takes a screen's worth of
+   height out of the section. */
+@media (min-width: 1180px) {
+    .euk-band-body {
+        grid-template-columns: minmax(0, 1fr) 300px;
+        gap: 44px;
+        align-items: start;
+    }
+}
+
+.euk-band-pair {
+    display: grid;
+    gap: 26px;
+    min-width: 0;
 }
 
 @media (min-width: 900px) {
@@ -383,8 +404,14 @@
     }
 }
 
+/* In two columns the cap is the column itself. */
+@media (min-width: 1180px) {
+    .euk-band-pair {
+        max-width: none;
+    }
+}
+
 .euk .euk-band-note {
-    margin-top: 26px;
     border-left: var(--rule) solid var(--hairline);
     padding-left: 15px;
     font-size: 13px;
@@ -720,10 +747,12 @@
 
     /* The right column runs three times the height of the left, which left a
        field of black under the headline. The headline rides along instead, so
-       the claim stays in view for as long as the evidence for it does. */
+       the claim stays in view for as long as the evidence for it does — and it
+       pins below the bar, not behind it, which is what was cropping the first
+       line off "Six tabs". */
     .euk-problem-head {
         position: sticky;
-        top: 40px;
+        top: calc(var(--bar) + 28px);
     }
 }
 
@@ -1548,8 +1577,17 @@
    are here for. Real links, so a crawler follows them to the examination
    pages too. Static: a moving strip makes a target harder to hit, and an
    auto-scrolling one would need a pause control to be usable at all. */
+/* It sat close under the search and read as a tail on it. It is its own row,
+   so it starts well clear of the field above — and with eighteen shortcuts the
+   rows want a little more air between them than between the chips. */
 .euk-jumps {
-    margin-top: 34px;
+    margin-top: 64px;
+}
+
+@media (min-width: 768px) {
+    .euk-jumps {
+        margin-top: 84px;
+    }
 }
 
 .euk .euk-jumps-lead {
@@ -1563,12 +1601,13 @@
 
 .euk-jumps ul {
     list-style: none;
-    margin: 14px 0 0;
+    margin: 18px auto 0;
     padding: 0;
+    max-width: 1000px;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 10px;
+    gap: 12px 10px;
 }
 
 .euk-jumps a {

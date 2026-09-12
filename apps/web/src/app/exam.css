@@ -264,7 +264,7 @@
     }
     .euk-kit-side {
         position: sticky;
-        top: 24px;
+        top: calc(var(--bar) + 24px);
     }
 }
 
@@ -912,7 +912,7 @@
 @media (min-width: 1000px) {
     .euk-file-work-inner {
         position: sticky;
-        top: 24px;
+        top: calc(var(--bar) + 24px);
     }
 }
 

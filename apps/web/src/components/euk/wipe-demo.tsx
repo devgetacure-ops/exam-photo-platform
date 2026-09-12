@@ -416,32 +416,38 @@ export function WipeDemo({
                 </button>
             </div>
 
-            <div className="euk-band-pair">
-                <WipeSet
-                    title="Photograph"
-                    pairs={photos}
-                    checks={photoChecks}
-                    width={720}
-                    height={960}
-                    allowed={allowed}
-                />
-                <WipeSet
-                    title="Signature"
-                    pairs={signatures}
-                    checks={signatureChecks}
-                    width={960}
-                    height={720}
-                    allowed={allowed}
-                />
-            </div>
+            {/* The pair and the note it belongs to sit side by side where
+                there is room: underneath, the note was a paragraph you
+                scrolled past, and the space beside the frames was empty. */}
+            <div className="euk-band-body">
+                <div className="euk-band-pair">
+                    <WipeSet
+                        title="Photograph"
+                        pairs={photos}
+                        checks={photoChecks}
+                        width={720}
+                        height={960}
+                        allowed={allowed}
+                    />
+                    <WipeSet
+                        title="Signature"
+                        pairs={signatures}
+                        checks={signatureChecks}
+                        width={960}
+                        height={720}
+                        allowed={allowed}
+                    />
+                </div>
 
-            <p className="euk-band-note">
-                Representational examples. The faces and the signatures are
-                generated, not photographs of candidates, and these pairs were
-                made to show the difference rather than produced by our engine.
-                Your own file is prepared to your examination&rsquo;s published
-                rules, and you see it before you pay.
-            </p>
+                <p className="euk-band-note">
+                    Representational examples. The faces and the signatures are
+                    generated, not photographs of candidates, and these pairs
+                    were made to show the difference rather than produced by our
+                    engine. Your own file is prepared to your
+                    examination&rsquo;s published rules, and you see it before
+                    you pay.
+                </p>
+            </div>
         </div>
     );
 }

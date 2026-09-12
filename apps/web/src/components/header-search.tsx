@@ -2,47 +2,63 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { SearchEntry } from "../lib/types";
-import { ExamSearch } from "./exam-search";
+import { useExamPicker } from "../lib/use-exam-picker";
+import { ExamResults } from "./exam-results";
 
 /**
- * The search that lives in the header.
+ * The search that lives in the bar.
  *
- * Two jobs, one control. On the landing page the search *is* the page, so the
- * header stays out of the way until that one scrolls off — then this takes its
- * place, moving up into the bar rather than appearing from nowhere. On an
- * examination page there is no search on the page at all, so it is simply
- * there, wearing the examination's name and sized to it.
+ * It is the search, not a door to one. Click it and type: the predictive list
+ * drops straight out of the bar. An earlier version opened a panel with a
+ * second field inside it, which made every candidate type in a box that was
+ * not the box they clicked.
  *
- * The index is not in this page. It is fetched once, the first time somebody
- * opens the panel, because the alternative is putting the whole catalogue into
- * 415 documents for the few candidates who search from here.
+ * Two jobs, one field. On the landing page and the directory the search *is*
+ * the page, so this one appears only once that has scrolled off — and is out
+ * of the tab order until then. On an examination page there is no search on
+ * the page at all, so it is there from the start, wearing that examination's
+ * name as its placeholder.
+ *
+ * The index is not in this page. It is fetched once, on first focus, because
+ * the alternative is putting the whole catalogue into 415 documents for the
+ * few candidates who search from here. Focus is early enough that it has
+ * arrived by the second keystroke; if it somehow has not, the list says it is
+ * loading rather than claiming nothing matches.
  */
 interface Props {
-    /** Shown in the closed control on an examination page. */
+    /** Placeholder on an examination page. */
     examName?: string;
     /**
-     * Id of the element this replaces — the control appears only once that
-     * one has scrolled out of sight. Omit and it is always there.
+     * Id of the element this replaces — the field appears only once that one
+     * has scrolled out of sight. Omit and it is always there.
      */
     takesOverFrom?: string;
 }
 
 type Index = { exams: SearchEntry[]; unavailable: SearchEntry[] };
 
+const EMPTY: SearchEntry[] = [];
+
 export function HeaderSearch({ examName, takesOverFrom }: Props) {
     const [shown, setShown] = useState(!takesOverFrom);
-    const [open, setOpen] = useState(false);
     const [index, setIndex] = useState<Index | null>(null);
     const [failed, setFailed] = useState(false);
-    const panelRef = useRef<HTMLDivElement>(null);
-    const buttonRef = useRef<HTMLButtonElement>(null);
+    const [dropped, setDropped] = useState(false);
+    const boxRef = useRef<HTMLDivElement>(null);
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    const picker = useExamPicker(
+        index?.exams ?? EMPTY,
+        index?.unavailable ?? EMPTY,
+        () => setDropped(false),
+    );
 
     // Appear only once the page's own search has gone.
     useEffect(() => {
         if (!takesOverFrom) return;
         const target = document.getElementById(takesOverFrom);
         if (!target || typeof IntersectionObserver === "undefined") {
-            // No anchor to watch, so the header keeps the search rather than
+            // No anchor to watch, so the bar keeps the search rather than
             // leaving a candidate with no way to look anything up.
             const frame = requestAnimationFrame(() => setShown(true));
             return () => cancelAnimationFrame(frame);
@@ -66,37 +82,17 @@ export function HeaderSearch({ examName, takesOverFrom }: Props) {
             .catch(() => setFailed(true));
     }, [index]);
 
-    const show = useCallback(() => {
-        load();
-        setOpen(true);
-    }, [load]);
-
-    const close = useCallback(() => {
-        setOpen(false);
-        buttonRef.current?.focus();
-    }, []);
-
+    // Clicking away puts the list down without clearing what was typed.
     useEffect(() => {
-        if (!open) return;
-        const onKey = (event: KeyboardEvent) => {
-            if (event.key === "Escape") close();
-        };
+        if (!dropped) return;
         const onDown = (event: MouseEvent) => {
-            const target = event.target as Node;
-            if (
-                !panelRef.current?.contains(target) &&
-                !buttonRef.current?.contains(target)
-            ) {
-                setOpen(false);
+            if (!boxRef.current?.contains(event.target as Node)) {
+                setDropped(false);
             }
         };
-        document.addEventListener("keydown", onKey);
         document.addEventListener("mousedown", onDown);
-        return () => {
-            document.removeEventListener("keydown", onKey);
-            document.removeEventListener("mousedown", onDown);
-        };
-    }, [open, close]);
+        return () => document.removeEventListener("mousedown", onDown);
+    }, [dropped]);
 
     // The shortcut every search field on the web has. Never while the
     // candidate is typing into something else.
@@ -112,25 +108,26 @@ export function HeaderSearch({ examName, takesOverFrom }: Props) {
                 return;
             }
             event.preventDefault();
-            show();
+            load();
+            inputRef.current?.focus();
         };
         document.addEventListener("keydown", onKey);
         return () => document.removeEventListener("keydown", onKey);
-    }, [show]);
+    }, [load]);
+
+    const waiting = picker.asking && !index;
+    const open = dropped && (picker.asking || waiting);
 
     return (
-        <div className="euk-topsearch" data-shown={shown} data-open={open}>
-            <button
-                ref={buttonRef}
-                type="button"
-                className="euk-topsearch-open"
-                onClick={show}
-                onMouseEnter={load}
-                aria-expanded={open}
-                aria-haspopup="dialog"
-                inert={!shown ? true : undefined}
-            >
+        <div
+            ref={boxRef}
+            className="euk-topsearch"
+            data-shown={shown}
+            data-open={open}
+        >
+            <div className="euk-topsearch-field">
                 <svg
+                    className="euk-topsearch-glass"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -141,46 +138,62 @@ export function HeaderSearch({ examName, takesOverFrom }: Props) {
                     <circle cx="11" cy="11" r="7" />
                     <path d="m20.5 20.5-4.2-4.2" />
                 </svg>
-                <span className="euk-topsearch-label">
-                    {examName ?? "Search your examination"}
-                </span>
-                <kbd className="euk-topsearch-key" aria-hidden="true">
-                    /
-                </kbd>
-            </button>
-
-            {open && (
-                <div
-                    ref={panelRef}
-                    className="euk-topsearch-panel"
-                    role="dialog"
+                <input
+                    ref={inputRef}
+                    type="search"
+                    className="euk-searchfield euk-topsearch-input"
+                    value={picker.query}
+                    placeholder={examName ?? "Search your examination"}
                     aria-label="Search for your examination"
-                >
-                    <div
-                        className="euk-wrap euk-topsearch-panel-inner"
-                        /* Choosing a result navigates; the panel has done its
-                           job and should not still be over the page that
-                           arrives. Closing on the choice itself beats watching
-                           the route for a change we already know about. */
-                        onClickCapture={(event) => {
-                            const el = event.target as HTMLElement;
-                            if (el.closest('a,[role="option"]')) setOpen(false);
+                    aria-autocomplete="list"
+                    aria-controls={picker.listId}
+                    aria-activedescendant={
+                        picker.available[picker.active]
+                            ? `${picker.listId}-${picker.active}`
+                            : undefined
+                    }
+                    aria-expanded={open}
+                    role="combobox"
+                    autoComplete="off"
+                    spellCheck={false}
+                    inert={!shown ? true : undefined}
+                    onMouseEnter={load}
+                    onFocus={() => {
+                        load();
+                        setDropped(true);
+                    }}
+                    onChange={(event) => {
+                        picker.type(event.target.value);
+                        setDropped(true);
+                    }}
+                    onKeyDown={picker.onKeyDown}
+                />
+                {picker.query && (
+                    <button
+                        type="button"
+                        className="euk-label euk-topsearch-clear"
+                        aria-label="Clear search"
+                        onClick={() => {
+                            picker.clear();
+                            inputRef.current?.focus();
                         }}
                     >
-                        {index ? (
-                            <ExamSearch
-                                exams={index.exams}
-                                unavailable={index.unavailable}
-                                autoFocus
-                            />
-                        ) : (
-                            <p className="euk-topsearch-wait">
-                                {failed
-                                    ? "The list of examinations didn’t load. Reload the page, or browse them all."
-                                    : "Loading examinations…"}
-                            </p>
-                        )}
-                    </div>
+                        Clear
+                    </button>
+                )}
+            </div>
+
+            {open && (
+                <div className="euk-topsearch-drop">
+                    {waiting ? (
+                        <p className="euk-topsearch-wait">
+                            {failed
+                                ? "The list of examinations didn’t load. Reload the page, or browse them all."
+                                : "Loading examinations…"}
+                        </p>
+                    ) : (
+                        <ExamResults picker={picker} />
+                    )}
                 </div>
             )}
         </div>

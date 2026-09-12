@@ -17,18 +17,75 @@
 
 @media (min-width: 768px) {
     .euk-pdfpage-top {
-        padding: 80px 48px 16px;
+        padding: 72px 48px 16px;
     }
 }
 
-.euk-pdfpage > .euk-section:first-of-type {
-    padding-top: 56px;
+/* 16px here plus the section's own 120px read as a field rather than a break,
+   and it pushed the one tool on this site a candidate can use before paying
+   below the fold.
+   
+   The earlier attempt at this wrote `.euk-section:first-of-type`, which asks
+   for an element that is both `.euk-section` *and* the first <section> among
+   its siblings. The first <section> here is this head, which carries no such
+   class, so the rule matched nothing at all and the hole stayed. Naming the
+   sibling directly is what actually selects it. */
+.euk-pdfpage-top + .euk-section {
+    padding-top: 36px;
 }
 
 @media (min-width: 768px) {
-    .euk-pdfpage > .euk-section:first-of-type {
-        padding-top: 80px;
+    .euk-pdfpage-top + .euk-section {
+        padding-top: 48px;
     }
+}
+
+/* ---- the head ---------------------------------------------------------- */
+
+.euk-pdfpage-head {
+    display: grid;
+    gap: 32px;
+}
+
+@media (min-width: 1000px) {
+    .euk-pdfpage-head {
+        grid-template-columns: minmax(0, 1.2fr) minmax(280px, 360px);
+        gap: 56px;
+        align-items: start;
+    }
+}
+
+.euk-pdfpage-ways {
+    border: var(--rule-thin) solid var(--ink);
+    background: var(--paper-2);
+}
+
+@media (min-width: 1000px) {
+    .euk-pdfpage-ways {
+        margin-top: 10px;
+    }
+}
+
+.euk-pdfpage-ways > div {
+    padding: 16px 18px 18px;
+}
+
+.euk-pdfpage-ways > div + div {
+    border-top: var(--rule-thin) solid var(--ink);
+}
+
+.euk .euk-pdfpage-ways p:not(.euk-label) {
+    margin-top: 7px;
+    max-width: none;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink-70);
+}
+
+.euk-pdfpage-ways a {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 14px;
 }
 
 .euk-pdfpage-title {

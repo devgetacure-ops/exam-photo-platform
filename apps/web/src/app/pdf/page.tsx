@@ -62,19 +62,54 @@ export default function PdfPage() {
             <SiteHeader />
             <main className="euk euk-pdfpage" id="main-content">
                 <section className="euk-pdfpage-top">
-                    <div className="euk-wrap">
-                        <h1 className="euk-display euk-pdfpage-title">
-                            Your form wants one PDF.
-                            <br />
-                            <span className="euk-mark">This is that whole job.</span>
-                        </h1>
-                        <p className="euk-lede">
-                            Portals rarely take what you already have. One PDF of
-                            four certificates. An image of a page that came to you
-                            as a PDF. Under 500 KB, named their way. All of it is
-                            here, and none of it costs anything on top of a
-                            prepared file.
-                        </p>
+                    <div className="euk-wrap euk-pdfpage-head">
+                        <div>
+                            <h1 className="euk-display euk-pdfpage-title">
+                                Your form wants one PDF.
+                                <br />
+                                <span className="euk-mark">
+                                    This is that whole job.
+                                </span>
+                            </h1>
+                            <p className="euk-lede">
+                                Portals rarely take what you already have. One
+                                PDF of four certificates. An image of a page that
+                                came to you as a PDF. Under 500 KB, named their
+                                way.
+                            </p>
+                        </div>
+
+                        {/* The two ways in, stated at the top instead of being
+                            discovered two sections down — and it fills the
+                            column the lede's reading measure leaves empty. */}
+                        <aside className="euk-pdfpage-ways">
+                            <div>
+                                <p className="euk-label">
+                                    Free for anybody, right now
+                                </p>
+                                <p>
+                                    A PDF page saved as an image. It runs inside
+                                    your own browser: nothing is uploaded,
+                                    nothing is charged, and you need no kit.
+                                </p>
+                                <a href="#to-image" className="euk-link">
+                                    Do it on this page ↓
+                                </a>
+                            </div>
+                            <div>
+                                <p className="euk-label">
+                                    Free with any prepared file
+                                </p>
+                                <p>
+                                    Pages merged, reordered, removed or rotated,
+                                    compressed under the byte limit and named the
+                                    way your form asks.
+                                </p>
+                                <Link href="/exams" className="euk-link">
+                                    Find your examination ↗
+                                </Link>
+                            </div>
+                        </aside>
                     </div>
                 </section>
 

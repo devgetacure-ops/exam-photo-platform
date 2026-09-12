@@ -51,13 +51,13 @@ export function SiteHeader({
                 <nav className="euk-label euk-top-nav">
                     {!onExam && (
                         <>
-                            <Link href="/#how" className="hidden sm:inline">
+                            <Link href="/#how" className="euk-top-link">
                                 How it works
                             </Link>
-                            <Link href="/pdf" className="hidden md:inline">
+                            <Link href="/pdf" className="euk-top-link">
                                 PDF tools
                             </Link>
-                            <Link href="/#pricing" className="hidden lg:inline">
+                            <Link href="/#pricing" className="euk-top-link">
                                 Pricing
                             </Link>
                         </>

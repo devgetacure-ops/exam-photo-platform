@@ -24,6 +24,9 @@ const SHARED: Record<string, string> = {
     "euk-link": "the underlined link, used everywhere",
     "euk-measure": "the reading measure, shared by the exam and rules pages",
     "euk-pdfimg-caution": "the converter's caution, shown on both pages",
+    "euk-picker-field":
+        "the hero gives the page's one action a larger frame than the rest",
+    "euk-picker-input": "same field, larger type in the hero",
     "euk-section": "the section rhythm, shared by the landing and PDF pages",
 };
 
