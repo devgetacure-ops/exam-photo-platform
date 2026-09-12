@@ -5,15 +5,42 @@ export interface ExamFact {
     kind: string;
     text: string;
     source: string;
+    /** Researched facts only: the authority's own word, or a publication's. */
+    official?: boolean | null;
+    /** Researched facts only: who published the source. */
+    reported_by?: string | null;
+}
+
+/**
+ * The line that says where a fact came from, and whose word it is.
+ *
+ * A figure a newspaper reported is not the examination's own statement, and
+ * since DEC-082 some facts here are exactly that. So a researched fact names
+ * its publisher, and the verb says which kind it is: "From" the authority or
+ * a government publisher, "Reported by" anyone else. A fact derived from the
+ * rule record has no publisher and keeps the plain link.
+ */
+/**
+ * The address a fact links to. `source` is "Title (https://…)" for most
+ * facts, not a URL, so it is never used as an href directly.
+ */
+export function factUrl(fact: ExamFact): string | undefined {
+    return fact.source?.match(/https?:\/\/[^\s)]+/)?.[0];
+}
+
+export function factAttribution(fact: ExamFact): string {
+    const publisher = fact.reported_by?.trim();
+    if (!publisher) return "Read it in the source";
+    return fact.official ? `From ${publisher}` : `Reported by ${publisher}`;
 }
 
 /**
  * Worth knowing: the examination's own facts, one at a time, pinned beside
  * its name.
  *
- * Every line is the source's wording, never paraphrased, with the source one
- * tap away. Nothing here restates a measurement the page already prints — the
- * filtering happens where the facts are read.
+ * Every line is the source's wording, with the source one tap away and its
+ * publisher named. Nothing here restates a measurement the page already
+ * prints — the filtering happens where the facts are read.
  *
  * It moves on by itself, which is what was asked for, and it stops the moment
  * it is being read: hovering it, tabbing into it, a reduced-motion preference,
@@ -28,6 +55,12 @@ const KIND: Record<string, string> = {
     dimensions: "Dimensions",
     capture: "On the portal",
     appearance: "Appearance",
+    volume: "How many candidates",
+    process: "How applying works",
+    exam_day: "On the day",
+    structure: "How it is set",
+    history: "Its history",
+    window: "A past cycle",
 };
 
 function Arrow({ back = false }: { back?: boolean }) {
@@ -65,7 +98,7 @@ export function ExamFacts({
     }, [playing, hovering, facts.length]);
     if (!facts.length) return null;
     const fact = facts[index % facts.length];
-    const url = fact.source.match(/https?:\/\/[^\s)]+/)?.[0];
+    const url = factUrl(fact);
     return (
         <aside
             className="euk-tip"
@@ -96,7 +129,7 @@ export function ExamFacts({
             <div className="euk-tip-foot">
                 {url ? (
                     <a className="euk-tip-source" href={url} target="_blank" rel="noreferrer">
-                        Read it in the source ↗
+                        {factAttribution(fact)} ↗
                     </a>
                 ) : (
                     <details className="euk-tip-source-details">

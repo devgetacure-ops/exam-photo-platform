@@ -88,10 +88,10 @@ def main() -> int:
     document = {
         "_generated_by": "scripts/generate_exam_facts.py",
         "_note": (
-            "Derived from the rule records, never hand-written (DEC-077). "
-            "Every fact rests on official provenance or on a rejection "
-            "condition quoted from the authority. Re-running replaces this "
-            "file, so an edit here is lost."
+            "Derived from the rule records, never hand-written (DEC-077), "
+            "plus researched facts from exam_trivia_2026.json, each checked "
+            "against its source page and naming its publisher (DEC-082). "
+            "Re-running replaces this file, so an edit here is lost."
         ),
         "exams": payload,
     }

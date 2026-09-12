@@ -21,12 +21,13 @@ sentence about what gets an application thrown out. It is passed through
 verbatim rather than paraphrased into something friendlier, because the
 paraphrase is where the meaning quietly changes.
 
-Researched trivia -- how many candidates sat it, when the window usually
-opens, what the authority tells people to carry -- is **not** derivable, and
-is not invented here either. `merge_researched` folds in a sourced research
-file when one exists, holding it to the same bar: an official URL, a date it
-was true, and no claim at all where those are missing. Until that research
-lands the function simply has nothing to merge, which is the honest state.
+Researched trivia -- how many candidates sat it, how the examination is set,
+what the authority tells people to carry -- is **not** derivable, and is not
+invented here either. `merge_researched` folds in a sourced research file:
+every entry carries its URL, the sentence it rests on, the date it was read
+and who published it, and nothing is claimed where those are missing. Since
+DEC-082 a reputable publication may be the source as well as the authority,
+and the publisher travels with the fact so the interface can say which.
 """
 
 from __future__ import annotations
@@ -51,6 +52,14 @@ class ExamFact(BaseModel):
     #: a wrong fact can be traced to the document that made it wrong.
     source: Optional[str] = None
     requirement_id: Optional[str] = None
+    #: Researched facts only (DEC-082). True where the source is the
+    #: conducting authority or a government publisher, False where a
+    #: publication reported the figure. None on a derived fact, which rests on
+    #: the rule record rather than on research.
+    official: Optional[bool] = None
+    #: Who published the source, named beside the fact so a reported figure is
+    #: never presented as the examination's own word.
+    reported_by: Optional[str] = None
 
 
 class ExamFacts(BaseModel):
@@ -272,11 +281,16 @@ TIME_SENSITIVE_KINDS = frozenset({"window", "deadline"})
 def merge_researched(
     facts: ExamFacts, researched: Optional[List[Dict[str, Any]]]
 ) -> ExamFacts:
-    """Fold sourced research into an examination's derived facts (DEC-078).
+    """Fold sourced research into an examination's derived facts.
 
-    Held to the bar the derived ones already meet, and one more besides:
+    DEC-078 set the bar and DEC-082 moved one part of it. An entry is kept
+    only with:
 
-    * an **official** source URL, or the entry is dropped;
+    * a source URL, and the **sentence it rests on** (`source_quote`), so every
+      figure can be checked against the words it came from;
+    * the **publisher**, because since DEC-082 a publication may be the source
+      as well as the authority, and a reported figure must never be shown as
+      the examination's own statement;
     * an `as_of` date, so a reader knows when it was true;
     * a `cycle` for anything time-sensitive, because a stale application
       window shown as current is the one fact here that can cost a candidate
@@ -296,8 +310,10 @@ def merge_researched(
             continue
         text = str(entry.get("text") or "").strip()
         url = str(entry.get("source_url") or "").strip()
+        quote = str(entry.get("source_quote") or "").strip()
+        publisher = str(entry.get("publisher") or "").strip()
         kind = str(entry.get("kind") or "trivia").strip() or "trivia"
-        if not text or not url or not entry.get("official_source"):
+        if not text or not url or not quote or not publisher:
             continue
         if not entry.get("as_of"):
             continue
@@ -312,6 +328,8 @@ def merge_researched(
                 kind=kind,
                 text=text,
                 source=f"{title} ({url})" if title else url,
+                official=entry.get("official_source") is True,
+                reported_by=publisher,
             )
         )
 

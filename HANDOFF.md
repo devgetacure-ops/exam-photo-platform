@@ -493,6 +493,16 @@ purpose -- the encoder deletes everything matching that prefix, so a sidecar
 called `exam_facts.json` disappears on the next run with no error. A test
 fails if the sidecar is stale.
 
+**Researched facts are curated before they are committed, never merged as
+delivered** (DEC-082). The first delivery's sentences were templates, a
+quarter of its "quotes" were database fields, and one figure was wrong. What
+shipped was fetched page by page, rewritten from the passage on the page, and
+refused by a check unless every figure is in its passage and every passage is
+on its page: 127 of 169 facts. `exam_trivia_2026_curation.md` lists what was
+dropped and why. The brief (`DEEP_RESEARCH_BRIEF_TRIVIA.md`) now asks for the
+passage and the publisher up front, so the next delivery should need less of
+this, not none.
+
 `scripts/encode_exam_rules.py` reads the versioned research in
 `packages/exam-rules/research/` and rebuilds the whole catalogue, the gap
 register, and `examples/rules/unavailable_examinations.json` — the

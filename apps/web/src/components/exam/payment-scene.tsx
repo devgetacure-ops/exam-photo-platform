@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, type ReactNode, type RefObject } from "react";
-import type { ExamFact } from "./exam-facts";
+import { factAttribution, type ExamFact } from "./exam-facts";
 
 /**
  * The wait between paying and receiving.
@@ -125,6 +125,9 @@ export function PaymentScene({
                         <p key={index} className="euk-pay-tip-text">
                             {fact.text}
                         </p>
+                        {/* Named, not linked: a link here would invite a
+                            candidate away from a payment still confirming. */}
+                        <p className="euk-pay-tip-source">{factAttribution(fact)}</p>
                     </aside>
                 )}
             </div>

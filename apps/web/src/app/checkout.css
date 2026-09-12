@@ -702,6 +702,14 @@
     animation: euk-pay-tip-in 320ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* Whose word the fact is (DEC-082): the authority's, or a publication's. */
+.euk .euk-pay-tip-source {
+    margin-top: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-70);
+}
+
 @keyframes euk-pay-tip-in {
     from {
         opacity: 0;

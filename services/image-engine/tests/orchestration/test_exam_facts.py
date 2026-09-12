@@ -233,7 +233,13 @@ def test_no_real_fact_is_empty_or_unattributed():
 
 
 def test_the_generated_sidecar_is_up_to_date():
-    """A hand edit, or a rule change without a regeneration, is caught here."""
+    """A hand edit, or a rule change without a regeneration, is caught here.
+
+    The derived facts come first and exactly as the records produce them.
+    Anything after them is researched (DEC-082), and must say who published
+    it -- a fact in that position without a publisher was not put there by the
+    importer.
+    """
     sidecar = RULES / "candidate_facts.json"
     assert sidecar.is_file(), "run scripts/generate_exam_facts.py"
 
@@ -243,9 +249,13 @@ def test_the_generated_sidecar_is_up_to_date():
         rule = json.loads(Path(path).read_text(encoding="utf-8"))
         derived = derive_facts(rule)
         assert derived.exam_id in stored, derived.exam_id
-        assert [f["text"] for f in stored[derived.exam_id]["facts"]] == [
+        facts = stored[derived.exam_id]["facts"]
+        assert [f["text"] for f in facts[: len(derived.facts)]] == [
             f.text for f in derived.facts
         ]
+        for researched in facts[len(derived.facts) :]:
+            assert researched.get("reported_by"), researched["text"]
+            assert researched.get("official") in (True, False), researched["text"]
 
 
 # ----------------------------------------------------------------------
@@ -259,6 +269,8 @@ def _trivia(**overrides):
         "text": "Over 2.4 million candidates registered for NEET (UG) 2025.",
         "source_url": "https://pib.gov.in/PressReleasePage.aspx?PRID=1",
         "source_title": "PIB release",
+        "source_quote": "Over 24 lakh candidates registered for NEET (UG) 2025.",
+        "publisher": "Press Information Bureau",
         "official_source": True,
         "as_of": "2026-09-20",
         "cycle": "2025",
@@ -296,15 +308,58 @@ def test_the_source_is_carried_through():
     "broken",
     [
         {"source_url": ""},
-        {"official_source": False},
+        {"source_quote": ""},
+        {"source_quote": "   "},
         {"as_of": ""},
         {"text": "  "},
     ],
 )
-def test_an_unsourced_or_undated_fact_is_dropped(broken):
+def test_an_unsourced_unquoted_or_undated_fact_is_dropped(broken):
     """Dropped, not softened. A trivia line with no source is exactly the
-    coaching-site claim this product exists to be better than."""
+    coaching-site claim this product exists to be better than, and a line
+    whose source sentence was not kept cannot be checked against it."""
     assert "volume" not in {f.kind for f in _merged(**broken).facts}
+
+
+def test_a_secondary_fact_is_kept_and_says_who_reported_it():
+    """DEC-082: the owner allowed reputable secondary sources. What keeps that
+    honest is that a reported figure is never presented as the examination's
+    own word, so the publisher travels with the fact."""
+    fact = next(
+        f
+        for f in _merged(
+            official_source=False,
+            publisher="The Indian Express",
+            source_url="https://indianexpress.com/article/education/x/",
+        ).facts
+        if f.kind == "volume"
+    )
+
+    assert fact.official is False
+    assert fact.reported_by == "The Indian Express"
+
+
+def test_a_secondary_fact_without_a_publisher_is_dropped():
+    """A secondary figure the interface cannot attribute would read as the
+    examination's own statement."""
+    merged = _merged(official_source=False, publisher="")
+
+    assert "volume" not in {f.kind for f in merged.facts}
+
+
+def test_an_official_fact_is_marked_official():
+    fact = next(f for f in _merged().facts if f.kind == "volume")
+
+    assert fact.official is True
+    assert fact.reported_by == "Press Information Bureau"
+
+
+def test_a_derived_fact_carries_no_research_attribution():
+    """Derived facts come from the rule record, not from research, and must
+    not pick up a publisher by default."""
+    derived = derive_facts(_rule())
+
+    assert all(f.official is None and f.reported_by is None for f in derived.facts)
 
 
 def test_a_time_sensitive_fact_without_its_cycle_is_dropped():

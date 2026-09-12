@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 import type { ExamDetail, RequirementSummary } from "../../lib/types";
-import type { ExamFact } from "../exam/exam-facts";
+import { factAttribution, factUrl, type ExamFact } from "../exam/exam-facts";
 import { isOurs } from "../../lib/kit-pricing";
 import { photographSpecRows, requirementSpecRows } from "../../lib/spec-format";
 import { specimensFor } from "../../lib/specimens";
@@ -145,9 +145,12 @@ export function ExamFiles({
                     {facts.map((fact) => (
                         <li key={fact.text}>
                             <p>{fact.text}</p>
-                            {fact.source && (
-                                <a href={fact.source} target="_blank" rel="noreferrer">
-                                    Read it in the source
+                            {/* The URL inside `source`, not `source` itself: it
+                                reads "Title (https://…)", and used as an href
+                                it sent every one of these links nowhere. */}
+                            {factUrl(fact) && (
+                                <a href={factUrl(fact)} target="_blank" rel="noreferrer">
+                                    {factAttribution(fact)} ↗
                                 </a>
                             )}
                         </li>

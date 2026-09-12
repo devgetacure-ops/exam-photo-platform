@@ -1,0 +1,1723 @@
+{
+  "generated_at": "2026-09-13",
+  "_curated": "Curated from the 2026-09-13 research delivery (DEC-082). Every sentence was rewritten from the passage in source_quote, read off the page at source_url; every figure in a sentence is in its passage. See exam_trivia_2026_curation.md.",
+  "exams": {
+    "andhra-pradesh-teacher-eligibility-test": [
+      {
+        "kind": "volume",
+        "text": "2,67,789 candidates applied for AP TET 2024, and 2,35,907 of them appeared.",
+        "source_url": "https://education.indianexpress.com/news/ap-tet-results-2024-at-aptet-apcfss-in-check-qualifying-marks-and-validity-of-tet-certificate-2468970",
+        "source_title": "AP TET 2024 participation statistics",
+        "source_quote": "a total of 2,67,789 candidates applied, and 2,35,907 candidates appeared for the AP TET exam.",
+        "publisher": "The Indian Express",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2024"
+      }
+    ],
+    "ap-mega-dsc-teacher-recruitment": [
+      {
+        "kind": "volume",
+        "text": "3,36,300 candidates submitted 5,77,675 applications for AP Mega DSC 2025.",
+        "source_url": "https://www.newindianexpress.com/amp/story/states/andhra-pradesh/2025/Sep/15/andhra-pradesh-education-department-releases-final-selection-list-of-mega-dsc-2025",
+        "source_title": "AP Mega DSC 2025 candidate and application statistics",
+        "source_quote": "A total of 3,36,300 candidates submitted 5,77,675 applications.",
+        "publisher": "The New Indian Express",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2025"
+      }
+    ],
+    "ap-polycet": [
+      {
+        "kind": "volume",
+        "text": "1,77,581 candidates registered for AP POLYCET 2026, and 1,63,008 appeared.",
+        "source_url": "https://indianexpress.com/article/education/ap-polycet-results-2026-declared-91-37-students-qualify-polycetap-ap-gov-in-10673452/lite/",
+        "source_title": "AP POLYCET 2026 result statistics",
+        "source_quote": "1,77,581 candidates registered and 1,63,008 appeared for the examination held on April 25.",
+        "publisher": "The Indian Express",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2026"
+      }
+    ],
+    "appsc-forest-beat-officer-assistant-beat-officer-2025": [
+      {
+        "kind": "structure",
+        "text": "The APPSC Forest Beat Officer screening test carries 150 marks over 150 minutes, and a wrong answer loses 1/3 of the question's marks.",
+        "source_url": "https://testbook.com/appsc-forest-beat-officer/syllabus",
+        "source_title": "APPSC Forest Beat Officer exam pattern 2025",
+        "source_quote": "The total marks for the APPSC FBO screening test will be 150. The duration of the test will be 150 minutes. Every correct answer carries 1 mark. Each wrong answer will be penalized with 1/3rd of the marks prescribed for the question.",
+        "publisher": "Testbook",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2025"
+      }
+    ],
+    "appsc-group-i-services-examination": [
+      {
+        "kind": "volume",
+        "text": "1,48,881 candidates applied for the APPSC Group-1 preliminary exam in 2024, and 91,463 appeared.",
+        "source_url": "https://timesofindia.indiatimes.com/city/vijayawada/appsc-group-1-exam-conducted-candidate-caught-copying-at-vijayawada-centre/articleshow/108571111.cms",
+        "source_title": "APPSC Group I participation statistics",
+        "source_quote": "Authorities had made extensive arrangements for 1,48,881 candidates who applied for the exam. As many as 1,26,068 candidates downloaded the hall tickets and 91,463 appeared for the examination (72.55%).",
+        "publisher": "The Times of India",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2024"
+      }
+    ],
+    "appsc-group-ii-services-examination": [
+      {
+        "kind": "volume",
+        "text": "4.83 lakh candidates applied for 899 APPSC Group-II posts in 2024, and 4.04 lakh appeared.",
+        "source_url": "https://www.newindianexpress.com/states/andhra-pradesh/2024/Feb/26/appsc-404-lakh-appear-for-group-ii-exam",
+        "source_title": "APPSC Group II participation statistics",
+        "source_quote": "A total of 4.04 lakh candidates appeared for the examination, which is 87.1% of 4.83 lakh candidates who applied for 899 Group-II posts.",
+        "publisher": "The New Indian Express",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2024"
+      }
+    ],
+    "assam-direct-recruitment-grade-iii": [
+      {
+        "kind": "volume",
+        "text": "About 18.50 lakh candidates applied for Grade III posts in Assam's direct recruitment exam, ADRE 2024.",
+        "source_url": "https://indianexpress.com/article/jobs/adre-2024-exam-concludes-results-latest-by-february-9642692/lite/",
+        "source_title": "Assam Direct Recruitment 2024 candidate statistics",
+        "source_quote": "About 18.50 lakh candidates had applied for the various classes of grade III posts and 13.70 lakh for the different grade IV posts, official sources said.",
+        "publisher": "The Indian Express",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2024"
+      }
+    ],
+    "assam-direct-recruitment-grade-iv": [
+      {
+        "kind": "volume",
+        "text": "About 13.70 lakh candidates applied for Grade IV posts in Assam's direct recruitment exam, ADRE 2024.",
+        "source_url": "https://indianexpress.com/article/jobs/adre-2024-exam-concludes-results-latest-by-february-9642692/lite/",
+        "source_title": "Assam Direct Recruitment 2024 candidate statistics",
+        "source_quote": "About 18.50 lakh candidates had applied for the various classes of grade III posts and 13.70 lakh for the different grade IV posts, official sources said.",
+        "publisher": "The Indian Express",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2024"
+      }
+    ],
+    "bihar-b-ed-common-entrance-test": [
+      {
+        "kind": "volume",
+        "text": "Bihar B.Ed CET 2026 received over one lakh applications, for 37,250 seats across Bihar's universities.",
+        "source_url": "https://www.ndtv.com/education/bihar-bed-cet-2026-registration-window-closes-today-exam-for-37-250-seats-on-june-7-11527098",
+        "source_title": "Bihar B.Ed CET 2026 registration report",
+        "source_quote": "So far, the university has received over one lakh applications. The entrance examination will be conducted for 37,250 seats available across universities in Bihar",
+        "publisher": "NDTV",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2026"
+      }
+    ],
+    "bihar-d-el-ed-joint-entrance-examination": [
+      {
+        "kind": "volume",
+        "text": "3,23,313 candidates appeared for the Bihar D.El.Ed Joint Entrance Examination 2025, and 2,55,468 qualified.",
+        "source_url": "https://www.ndtv.com/education/bihar-deled-entrance-result-2025-out-79-08-candidates-pass-admission-applications-open-from-november-29-to-december-5-9702845/amp/1",
+        "source_title": "Bihar D.El.Ed 2025 result statistics",
+        "source_quote": "A total of 3,23,313 candidates appeared for the examination, of which 2,55,468 have qualified.",
+        "publisher": "NDTV",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2025"
+      }
+    ],
+    "bihar-police-constable-recruitment": [
+      {
+        "kind": "volume",
+        "text": "For the 2025 Bihar Police constable written exam, 16,73,586 admit cards were issued and 13,30,121 candidates sat the exam.",
+        "source_url": "https://hindi.news24online.com/state/bihar/csbc-bihar-police-constable-2025-recruitment-result-released/1334255/",
+        "source_title": "Bihar Police Constable 2025 applicant count (Hindi)",
+        "source_quote": "जिसके लिए कुल 16,73,586 प्रवेश पत्र जारी किए गए थे. जिनमें से 13,30,121 अभ्यर्थियों ने परीक्षा दी थी.",
+        "publisher": "News24",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2025"
+      }
+    ],
+    "bihar-secondary-teacher-eligibility-test": [
+      {
+        "kind": "volume",
+        "text": "4,42,214 candidates appeared in Bihar STET 2025.",
+        "source_url": "https://indianexpress.com/article/education/bihar-stet-result-2025-out-1-54-lakh-qualify-paper-1-1-02-lakh-clear-paper-2-10456582/",
+        "source_title": "Bihar STET 2025 result statistics",
+        "source_quote": "In Bihar STET 2025, a total of 4,42,214 candidates appeared",
+        "publisher": "The Indian Express",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2025"
+      }
+    ],
+    "bssc-second-inter-level-combined-competitive-examination": [
+      {
+        "kind": "volume",
+        "text": "BSSC received about 26 lakh applications for its second inter-level exam, notified in August 2023.",
+        "source_url": "https://news.careers360.com/bssc-second-inter-level-exam-2023-recruitment-vacancies-24492-application-last-date-january-15-2026-preliminary-delays-uncertainty",
+        "source_title": "BSSC Second Inter-Level applicant volume",
+        "source_quote": "The BSSC second inter-level exam notification was issued in August 2023. The initial application process ran till November 2023, during which the commission received approximately 26 lakh applications.",
+        "publisher": "Careers360",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2023"
+      }
+    ],
+    "common-admission-test-2025": [
+      {
+        "kind": "volume",
+        "text": "2.95 lakh candidates registered for CAT 2025.",
+        "source_url": "https://indianexpress.com/article/education/cat-2025-result-announced-iimcat-ac-in-iim-mba-admission-top-percentiles-10436575/",
+        "source_title": "CAT 2025 result and registration statistics",
+        "source_quote": "As many as 2.95 lakh candidates registered for CAT 2025",
+        "publisher": "The Indian Express",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2025"
+      }
+    ],
+    "ctet-september-2026": [
+      {
+        "kind": "structure",
+        "text": "CTET has two papers: Paper I for those who want to teach classes I to V, and Paper II for classes VI to VIII.",
+        "source_url": "https://docs.aglasem.com/view/26c0918c-8d8e-11f1-a702-0aa932765c8b",
+        "source_title": "CTET 2026 Information Bulletin mirror",
+        "source_quote": "There will be two papers of CTET. (i) Paper I will be for a person who intends to be a teacher for classes I to V. (ii) Paper II will be for a person who intends to be a teacher for classes VI to VIII.",
+        "publisher": "AglaSem",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5
+      },
+      {
+        "kind": "structure",
+        "text": "Every CTET question is multiple choice, carries one mark, and has no negative marking.",
+        "source_url": "https://docs.aglasem.com/view/26c0918c-8d8e-11f1-a702-0aa932765c8b",
+        "source_title": "CTET 2026 Information Bulletin mirror",
+        "source_quote": "All questions in CTET will be Multiple Choice Questions (MCQs), with four alternatives out of which one answer will be most appropriate. Each carrying one mark and there will be no negative marking.",
+        "publisher": "AglaSem",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5
+      }
+    ],
+    "cuet-ug-2026": [
+      {
+        "kind": "structure",
+        "text": "CUET (UG) 2026 offered 37 subjects: 13 languages, 23 domain-specific subjects and one General Test.",
+        "source_url": "https://education.indianexpress.com/humanities-social-sciences-exam/cuet-exam-pattern",
+        "source_title": "CUET UG 2026 exam pattern — IE Education",
+        "source_quote": "Total subjects 37 (13 languages, 23 domain-specific, and 01 General Test)",
+        "publisher": "The Indian Express",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2026"
+      },
+      {
+        "kind": "structure",
+        "text": "Each CUET (UG) test paper has 50 compulsory questions and lasts 60 minutes.",
+        "source_url": "https://sathee.iitk.ac.in/sathee-cuet/cuet-exam/cuet-ug/cuet-details/exam-pattern",
+        "source_title": "SATHEE CUET exam pattern",
+        "source_quote": "Total Questions 50 questions for each test papers. All Question are compulsory. 5. Duration Duration for each test paper would be 60 minutes",
+        "publisher": "SATHEE, IIT Kanpur",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5
+      }
+    ],
+    "delhi-police-constable-executive": [
+      {
+        "kind": "volume",
+        "text": "32,43,083 candidates applied for the Delhi Police Constable (Executive) Examination-2023.",
+        "source_url": "https://www.hindustantimes.com/cities/others/delhi-police-constable-exe-recruitment-2023-32-lakh-aspirants-in-race-for-7-547-posts-101698838466425-amp.html",
+        "source_title": "Delhi Police Constable (Executive) recruitment 2023 applicant count",
+        "source_quote": "a total of 32,43,083 candidates in the age group of 18 to 25 have applied for this recruitment.",
+        "publisher": "Hindustan Times",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2023"
+      }
+    ],
+    "dsssb-major-recruitment-examination-family": [
+      {
+        "kind": "volume",
+        "text": "In 2024-25, DSSSB held written examinations for 414201 candidates across 52 post codes.",
+        "source_url": "https://dsssb.delhi.gov.in/sites/default/files/DSSSB/circulars-orders/annual_report_2024-25_s.pdf",
+        "source_title": "DSSSB Annual Report 2024-25",
+        "source_quote": "Board conducted written examinations of 414201 numbers of candidates of 52 post codes during the year 2024-25.",
+        "publisher": "DSSSB",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2024-25"
+      }
+    ],
+    "gate-2026": [
+      {
+        "kind": "structure",
+        "text": "GATE 2026 was held in 30 test papers, and a candidate could take one or up to two of them.",
+        "source_url": "https://gate2026.iitg.ac.in/exam-papers-and-syllabus.html",
+        "source_title": "GATE 2026 Test Papers & Syllabus",
+        "source_quote": "GATE 2026 will be conducted for 30 test papers. … A candidate is allowed to appear either in ONE or UP TO TWO test papers.",
+        "publisher": "GATE 2026, IIT Guwahati",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2026"
+      },
+      {
+        "kind": "structure",
+        "text": "In GATE 2026, a wrong answer lost 1/3 mark on a 1-mark MCQ and 2/3 mark on a 2-mark MCQ; MSQ and NAT answers had no negative marking.",
+        "source_url": "https://gate2026.iitg.ac.in/question-paper-pattern.html",
+        "source_title": "GATE 2026 Question Paper Pattern",
+        "source_quote": "For a 1-mark MCQ, 1/3 mark will be deducted for a wrong answer. For a 2-mark MCQ, 2/3 mark will be deducted for a wrong answer. There is no negative marking for wrong answer(s) to MSQ or NAT questions.",
+        "publisher": "GATE 2026, IIT Guwahati",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2026"
+      }
+    ],
+    "gic-assistant-manager-2024-25": [
+      {
+        "kind": "process",
+        "text": "GIC Assistant Manager selection has four stages: an online test, group discussion, interview and medical examination.",
+        "source_url": "https://www.jagranjosh.com/articles/gic-assistant-manager-exam-pattern-2024-check-paper-pattern-marking-scheme-duration-1733382069-1",
+        "source_title": "GIC Assistant Manager Exam Pattern 2024 — Jagran Josh",
+        "source_quote": "The GIC Assistant Manager examination consists of a four-stage selection procedure, i.e., an online test, group discussion, interview and medical examination.",
+        "publisher": "Jagran Josh",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2024"
+      },
+      {
+        "kind": "structure",
+        "text": "The GIC Assistant Manager online test carries 150 marks over 150 minutes.",
+        "source_url": "https://www.jagranjosh.com/articles/gic-assistant-manager-exam-pattern-2024-check-paper-pattern-marking-scheme-duration-1733382069-1",
+        "source_title": "GIC Assistant Manager Exam Pattern 2024 — Jagran Josh",
+        "source_quote": "The total marks that will be awarded will be 150 and the duration of the online examination will be 150 minutes.",
+        "publisher": "Jagran Josh",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2024"
+      }
+    ],
+    "gujcet": [
+      {
+        "kind": "volume",
+        "text": "1,36,071 students registered for GUJCET 2026, and 1,32,319 appeared.",
+        "source_url": "https://indianexpress.com/article/education/gujcet-results-2026-gseb-released-marksheets-gujcet-gseb-org-10670623/lite/",
+        "source_title": "GUJCET 2026 result and registration statistics",
+        "source_quote": "a total of 1,32,319 students appeared for the entrance exam this year out of the 1,36,071 who registered.",
+        "publisher": "The Indian Express",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2026"
+      }
+    ],
+    "haryana-cet-group-c": [
+      {
+        "kind": "volume",
+        "text": "13,48,893 candidates registered for Haryana CET (Group C) in 2025, and 12,46,497 appeared.",
+        "source_url": "https://indianexpress.com/article/education/hssc-haryana-cet-2025-sarkariresult-com-sarkari-naukri-chief-minister-nayab-singh-saini-correction-window-10212048/",
+        "source_title": "Haryana CET 2025 participation statistics",
+        "source_quote": "Saini said that of 13,48,893 candidates who had registered for the exam, 12,46,497 appeared",
+        "publisher": "The Indian Express",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2025"
+      }
+    ],
+    "haryana-teacher-eligibility-test": [
+      {
+        "kind": "volume",
+        "text": "2,33,294 candidates were scheduled to sit HTET in July 2026, at 383 centres across Haryana.",
+        "source_url": "https://prms.prharyana.gov.in/press-release/3244",
+        "source_title": "HTET 2026 government press release",
+        "source_quote": "The Chairman said that a total of 2,33,294 candidates will appear for the examination at 383 centres across Haryana.",
+        "publisher": "Government of Haryana",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2026"
+      }
+    ],
+    "hssc-cet-group-d": [
+      {
+        "kind": "volume",
+        "text": "13,76,183 candidates registered for HSSC CET 2023 (Group D), and 62.59% of them appeared.",
+        "source_url": "https://news.careers360.com/851-lakh-candidates-appear-for-hssc-cet-2023-group-d-exam-25-impersonators-arrested",
+        "source_title": "HSSC CET Group D 2023 candidate statistics",
+        "source_quote": "A total of 13,76,183 candidates had registered for the examination, of which 62.59% aspirants appeared for the exam.",
+        "publisher": "Careers360",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2023"
+      }
+    ],
+    "ibps-crp-customer-service-associates-xv": [
+      {
+        "kind": "process",
+        "text": "IBPS recruits Customer Service Associates (CRP CSA-XV) through an online examination in two stages, Preliminary and Main.",
+        "source_url": "https://www.ibps.in/wp-content/uploads/DetailedNotification_CRP_CSA_XV_Final_for_Website_12.9.2025.pdf",
+        "source_title": "IBPS CRP CSA-XV Detailed Notification",
+        "source_quote": "The Online Examination (Preliminary and Main) for the upcoming Common Recruitment Process (CRP CSA XV)",
+        "publisher": "IBPS",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "CRP CSA-XV"
+      }
+    ],
+    "ibps-crp-regional-rural-banks-xiv": [
+      {
+        "kind": "structure",
+        "text": "In IBPS RRB-XIV, the Office Assistant preliminary exam had 80 questions for 80 marks, in Reasoning and Numerical Ability.",
+        "source_url": "https://www.ibps.in/wp-content/uploads/CRP-RRBs-XIV_Final_AD_31.08.25.pdf",
+        "source_title": "IBPS CRP RRBs-XIV Detailed Notification",
+        "source_quote": "Reasoning * 40 40 2 Numerical Ability * 40 40 Total 80 80",
+        "publisher": "IBPS",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "CRP RRBs-XIV"
+      }
+    ],
+    "ibps-crp-specialist-officers-xvi": [
+      {
+        "kind": "process",
+        "text": "IBPS Agricultural Field Officer selection is two online objective phases followed by an interview.",
+        "source_url": "https://www.oliveboard.in/ibps-afo-exam-pattern/",
+        "source_title": "IBPS AFO/Specialist Officer XVI revised exam pattern",
+        "source_quote": "The revised IBPS AFO exam pattern includes 2 online objective phases followed by an interview.",
+        "publisher": "Oliveboard",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2026"
+      }
+    ],
+    "icai-examination-portal-photograph-current-portal-scope": [
+      {
+        "kind": "history",
+        "text": "ICAI announced that the Chartered Accountants Final Examination is held twice a year from the May 2026 examination onwards.",
+        "source_url": "https://www.icai.org/category/examination-students",
+        "source_title": "ICAI Examination Students announcements",
+        "source_quote": "Chartered Accountants Final Examination to be held twice a year from May 2026 Examination onwards",
+        "publisher": "ICAI",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "May 2026"
+      },
+      {
+        "kind": "process",
+        "text": "From May 2026, the CA exam form lets candidates choose a preferred exam centre directly, where they once picked only a zone or city.",
+        "source_url": "https://www.icai.org/post/exam-announ020326",
+        "source_title": "ICAI announcement on examination-centre selection, May 2026",
+        "source_quote": "unlike previous examinations where students selected only a zone or city, the online application form for May-2026 CA examinations will now provide the option to select the preferred exam centre in zone/city directly.",
+        "publisher": "ICAI",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "May 2026"
+      }
+    ],
+    "indian-air-force-agniveervayu-recruitment": [
+      {
+        "kind": "volume",
+        "text": "The Indian Air Force received 7,49,899 applications under Agnipath in 2022, against a previous high of 6,31,528.",
+        "source_url": "https://www.ndtv.com/india-news/indian-air-force-receives-7-5-lakh-applications-under-agnipath-recruitment-scheme-3131006",
+        "source_title": "IAF Agnipath application count",
+        "source_quote": "Compared to 6,31,528 applications in the past, which was the highest in any recruitment cycle, this time 7,49,899 applications have been received.",
+        "publisher": "NDTV",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2022"
+      }
+    ],
+    "indian-army-agniveer-cee-2025-26-online-upload": [
+      {
+        "kind": "process",
+        "text": "In Agniveer recruitment, candidates shortlisted on the online Common Entrance Exam are called to recruitment rallies.",
+        "source_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=1901422&lang=2&reg=48",
+        "source_title": "PIB press release on Indian Army online CEE",
+        "source_quote": "Based on their performance in the Online CEE, shortlisted candidates will be called to nominated venues for Recruitment Rallies.",
+        "publisher": "Press Information Bureau",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5
+      },
+      {
+        "kind": "structure",
+        "text": "The Indian Army's online Common Entrance Exam for Agniveers is a computer-based exam.",
+        "source_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=1901422&lang=2&reg=48",
+        "source_title": "PIB press release on Indian Army online CEE",
+        "source_quote": "The Online CEE is a computer based exam.",
+        "publisher": "Press Information Bureau",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5
+      }
+    ],
+    "indian-army-agniveer-recruitment": [
+      {
+        "kind": "volume",
+        "text": "Agnipath drew over 54 lakh registrations across the three Services in 2022, 37.09 lakh of them for the Indian Army.",
+        "source_url": "https://www.pib.gov.in/Pressreleasepage.Aspx?Lang=2&PRID=1884353&Reg=3",
+        "source_title": "Agnipath registrations official release",
+        "source_quote": "Over 54 lakh registrations, including by female aspirants, were received by the three Services for recruitment into the Armed Forces (Indian Army – 37.09 lakh; Indian Navy – 9.55 lakh and Indian Air Force – 7.69 lakh).",
+        "publisher": "Press Information Bureau",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2022"
+      }
+    ],
+    "jee-advanced-2026": [
+      {
+        "kind": "structure",
+        "text": "Both papers of JEE (Advanced) 2026 were compulsory; a candidate absent from either got no result at all.",
+        "source_url": "https://jeeadv.ac.in/faq.html",
+        "source_title": "JEE (Advanced) 2026 FAQ",
+        "source_quote": "Writing both Paper 1 and Paper 2 is compulsory in JEE (Advanced) 2026 to be considered for evaluation and rank list preparation. … Your result will neither be prepared nor declared.",
+        "publisher": "JEE (Advanced)",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2026"
+      }
+    ],
+    "jee-main-2026": [
+      {
+        "kind": "structure",
+        "text": "JEE Main 2026 Paper 1 is a computer-based test offered in 13 languages.",
+        "source_url": "https://www.allenoverseas.com/exam/jee-main/exam-pattern/",
+        "source_title": "JEE Main 2026 Exam Pattern — ALLEN Overseas",
+        "source_quote": "Mode of Exam Computer Based Test (CBT) mode only Exam Language 13 Languages",
+        "publisher": "ALLEN",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2026"
+      }
+    ],
+    "jkssb-police-constable-recruitment": [
+      {
+        "kind": "volume",
+        "text": "More than 5.5 lakh candidates applied for 4,002 police constable posts in Jammu and Kashmir.",
+        "source_url": "https://indianexpress.com/article/explained/jammu-kashmir-police-constable-exam-protests-court-case-9700752/",
+        "source_title": "Jammu & Kashmir Police Constable 2024 applicant count",
+        "source_quote": "More than 5.5 lakh candidates have applied for 4,002 posts of police constables in Jammu and Kashmir.",
+        "publisher": "The Indian Express",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2024"
+      }
+    ],
+    "joint-csir-ugc-net": [
+      {
+        "kind": "volume",
+        "text": "1,95,241 candidates registered for Joint CSIR UGC NET June 2025, and 1,47,732 appeared.",
+        "source_url": "https://www.hindustantimes.com/education/competitive-exams/csir-ugc-net-june-2025-results-declared-heres-direct-link-and-how-to-check-scores-101755704655476-amp.html",
+        "source_title": "CSIR UGC NET June 2025 result statistics",
+        "source_quote": "with 1,47,732 out of 1,95,241 candidates appearing",
+        "publisher": "Hindustan Times",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "June 2025"
+      }
+    ],
+    "joint-entrance-examination-council-uttar-pradesh-polytechnic-entrance": [
+      {
+        "kind": "volume",
+        "text": "JEECUP 2025 received 4,25,993 applications, and 3,31,193 candidates appeared.",
+        "source_url": "https://news.careers360.com/jeecup-result-2025-declared-on-jeecup-admissions-nic-in-how-to-download-upjee-polytechnic-btech-toppers",
+        "source_title": "JEECUP 2025 application and result statistics",
+        "source_quote": "a total of 4,25,993 applications were received, of which 3,31,193 candidates appeared, and 3,31,174 were declared qualified.",
+        "publisher": "Careers360",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2025"
+      }
+    ],
+    "jssc-combined-graduate-level-examination": [
+      {
+        "kind": "volume",
+        "text": "About 6,40,000 candidates applied for JSSC's graduate level examination, JGGLCCE-2023 (Regular).",
+        "source_url": "https://theprint.in/india/education/why-are-jharkhand-students-protesting-jssc-cgl-the-paper-leak-allegations-and-court-battle-explained/3010721/",
+        "source_title": "JSSC CGL candidate volume",
+        "source_quote": "Approximately 6,40,000 candidates applied.",
+        "publisher": "ThePrint",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2023"
+      }
+    ],
+    "karnataka-common-entrance-test-2026": [
+      {
+        "kind": "volume",
+        "text": "3,30,479 candidates registered for KCET 2026.",
+        "source_url": "https://timesofindia.indiatimes.com/education/news/kea-kcet-2026-result-shortly-at-cetonline-karnataka-gov-in-heres-how-to-download-your-scorecards/articleshow/131545019.cms",
+        "source_title": "KCET 2026 registration statistics",
+        "source_quote": "According to official data, a total of 3,30,479 candidates registered for KCET 2026.",
+        "publisher": "The Times of India",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2026"
+      }
+    ],
+    "karnataka-teacher-eligibility-test": [
+      {
+        "kind": "volume",
+        "text": "1,55,167 candidates appeared for KARTET Paper-2 in 2024, and 10,600 qualified.",
+        "source_url": "https://www.jnyanabhandar.in/2024/08/karnataka-tet-result-2024.html",
+        "source_title": "Karnataka TET 2024 participation statistics",
+        "source_quote": "1,55,167 candidates have appeared for Paper-2 and 10,600 candidates have qualified.",
+        "publisher": "Jnyana Bhandar",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2024"
+      }
+    ],
+    "kerala-engineering-architecture-medical-entrance-examination": [
+      {
+        "kind": "volume",
+        "text": "1,48,146 candidates registered for the KEAM 2026 entrance exam.",
+        "source_url": "https://indianexpress.com/article/education/keam-2026-rank-list-out-toppers-counsellng-schedule-cee-kerala-gov-in-10751937/lite/",
+        "source_title": "KEAM 2026 registration and result statistics",
+        "source_quote": "A total of 1,48,146 candidates registered for the KEAM 2026 entrance exam.",
+        "publisher": "The Indian Express",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2026"
+      }
+    ],
+    "kerala-psc-one-time-registration-photograph": [
+      {
+        "kind": "process",
+        "text": "To apply for any Kerala PSC post, a candidate first creates a profile through One Time Registration.",
+        "source_url": "https://keralapsc.gov.in/otr-instructions-candidates",
+        "source_title": "Kerala PSC OTR Instructions to Candidates",
+        "source_quote": "To apply for a notified post, you have to register and create a profile using One Time Registration",
+        "publisher": "Kerala PSC",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5
+      }
+    ],
+    "lic-assistant-administrative-officers-generalist-2025": [
+      {
+        "kind": "process",
+        "text": "LIC AAO selection has three stages: prelims, mains and interview.",
+        "source_url": "https://www.oliveboard.in/lic-aao-exam-pattern/",
+        "source_title": "LIC AAO Exam Pattern 2025 — Oliveboard",
+        "source_quote": "involves three stages: Prelims, Mains, and Interview.",
+        "publisher": "Oliveboard",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2025"
+      },
+      {
+        "kind": "process",
+        "text": "For LIC AAO, only the Main Examination and Interview scores count towards the final merit list; the prelims only qualify.",
+        "source_url": "https://www.oliveboard.in/lic-aao-exam-pattern/",
+        "source_title": "LIC AAO Exam Pattern 2025 — Oliveboard",
+        "source_quote": "Only the scores obtained in the Main Examination and the Interview will be counted while preparing the final merit list. The preliminary exam is a qualifying stage, and its marks will not be added to the final result.",
+        "publisher": "Oliveboard",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2025"
+      }
+    ],
+    "mah-mba-mms-cet": [
+      {
+        "kind": "volume",
+        "text": "157,281 candidates registered for MAH MBA CET 2025, and 129,131 took the exam.",
+        "source_url": "https://www.mbauniverse.com/mah-mba-cet",
+        "source_title": "MAH MBA/MMS CET 2025 participation statistics",
+        "source_quote": "Total number of candidates who registered for MAH CET 2025 was 157,281. However, only 129,131 candidates took the exam.",
+        "publisher": "MBAUniverse",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2025"
+      }
+    ],
+    "maharashtra-police-recruitment": [
+      {
+        "kind": "volume",
+        "text": "Maharashtra's 2024 police recruitment drive received more than 17.76 lakh applications for 17,471 posts.",
+        "source_url": "https://economictimes.indiatimes.com/jobs/government-jobs/maharashtra-police-recruitment-drive-more-than-17-76-lakh-applications-received-for-17471-posts/articleshow/111065798.cms",
+        "source_title": "Maharashtra Police recruitment 2024 applications",
+        "source_quote": "Maharashtra police recruitment drive: More than 17.76 lakh applications received for 17,471 posts",
+        "publisher": "The Economic Times",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2024"
+      }
+    ],
+    "maharashtra-teacher-eligibility-test-maha-tet": [
+      {
+        "kind": "volume",
+        "text": "6,00,125 candidates registered for MAHA TET 2026: 2,58,061 for Paper I and 3,42,064 for Paper II.",
+        "source_url": "https://www.hindustantimes.com/cities/pune-news/maha-tet-to-go-online-demand-for-15-pwd-marks-relaxation-intensifies-101783190076645.html",
+        "source_title": "MAHA TET 2026 registration statistics",
+        "source_quote": "A total of 6,00,125 candidates had registered, 2,58,061 for Paper I and 3,42,064 for Paper II.",
+        "publisher": "Hindustan Times",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2026"
+      }
+    ],
+    "management-aptitude-test-2026": [
+      {
+        "kind": "history",
+        "text": "MAT has been held since 1988, and the Ministry of Education approved it as a national-level test in 2003.",
+        "source_url": "https://www.aima.in/content/testing-and-assessment/mat/mat",
+        "source_title": "AIMA Management Aptitude Test — About MAT",
+        "source_quote": "Management Aptitude Test (MAT) is a standardised test being administered since 1988 to facilitate Business Schools (B-Schools) to screen candidates for admission to MBA and allied programmes. Govt. of India, Ministry of Education approved MAT as a national level test in 2003.",
+        "publisher": "AIMA",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5
+      },
+      {
+        "kind": "structure",
+        "text": "MAT September 2025 had five sections of thirty questions each: 150 questions in 120 minutes.",
+        "source_url": "https://www.aima.in/content/testing-and-assessment/mat/mat",
+        "source_title": "AIMA MAT September 2026 Information to Candidates",
+        "source_quote": "Information to Candidates for MAT September 2025 MAT Test Structure MAT has five sections, each with thirty questions. A total of 150 questions are to be attempted over 120 minutes.",
+        "publisher": "AIMA",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "September 2025"
+      }
+    ],
+    "mht-cet-2026": [
+      {
+        "kind": "volume",
+        "text": "MHT CET 2026 recorded 11,42,610 registrations across the PCM and PCB groups.",
+        "source_url": "https://news.careers360.com/mht-cet-2026-records-highest-ever-registration-at-11-42-lakh-for-pcm-pcb-form-correction-window-two-attempt-system-engineering",
+        "source_title": "MHT CET 2026 registration statistics",
+        "source_quote": "The State Common Entrance Test (CET) Cell has recorded 11,42,610 registrations for MHT CET 2026 in PCM and PCB groups.",
+        "publisher": "Careers360",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2026"
+      }
+    ],
+    "mp-patwari-recruitment-examination": [
+      {
+        "kind": "volume",
+        "text": "Madhya Pradesh's Patwari recruitment exam drew 12.79 lakh candidates, 1,000 of them holding doctorates.",
+        "source_url": "https://www.ndtv.com/india-news/12-lakh-apply-for-6-000-land-official-jobs-in-madhya-pradesh-3804938",
+        "source_title": "Madhya Pradesh Patwari 2023 application count",
+        "source_quote": "This year, out of the 12.79 lakh candidates, 1,000 are doctorates",
+        "publisher": "NDTV",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2023"
+      }
+    ],
+    "mpsc-general-online-application-photograph-instruction": [
+      {
+        "kind": "process",
+        "text": "On MPSC's online application system, profile creation is a one-time step after creating a user account.",
+        "source_url": "https://mpsconline.gov.in/downloads/userManual.pdf",
+        "source_title": "MPSC Online Application User Manual",
+        "source_quote": "Step 1: New User Registration / Create User Account (1st time user) 5 Step 2: Profile Creation (One time activity)",
+        "publisher": "MPSC",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5
+      }
+    ],
+    "nabard-grade-a-2025": [
+      {
+        "kind": "structure",
+        "text": "The NABARD Grade A preliminary exam has 200 questions for 200 marks in 120 minutes.",
+        "source_url": "https://education.indianexpress.com/bank-exam/nabard-grade-a-exam-overview",
+        "source_title": "NABARD Grade A 2025 exam pattern — IE Education",
+        "source_quote": "Total 200 200 120 Minutes",
+        "publisher": "The Indian Express",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2025"
+      },
+      {
+        "kind": "structure",
+        "text": "Paper I of the NABARD Grade A mains is a 100-mark descriptive General English paper of 90 minutes, answered by typing.",
+        "source_url": "https://education.indianexpress.com/bank-exam/nabard-grade-a-exam-overview",
+        "source_title": "NABARD Grade A 2025 exam pattern — IE Education",
+        "source_quote": "Paper I General English Online Descriptive 3 100 90 Minutes Descriptive Answers to be typed using keyboard",
+        "publisher": "The Indian Express",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2025"
+      }
+    ],
+    "neet-pg": [
+      {
+        "kind": "volume",
+        "text": "2,73,183 candidates registered for NEET-PG 2026, over 12.5% more than the year before.",
+        "source_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2293072&lang=1&reg=3&v=25",
+        "source_title": "NEET-PG 2026 registration statistics",
+        "source_quote": "A total of 2,73,183 candidates have successfully registered for NEET-PG 2026, representing an increase of over 12.5% compared to the previous year.",
+        "publisher": "Press Information Bureau",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2026"
+      }
+    ],
+    "neet-ug-2026": [
+      {
+        "kind": "structure",
+        "text": "NEET (UG) 2026 lasts 3 hours, with 180 multiple-choice questions for 720 marks and one mark deducted for each wrong answer.",
+        "source_url": "https://medicine.careers360.com/articles/neet-exam-pattern",
+        "source_title": "NEET Exam Pattern 2026 — Careers360",
+        "source_quote": "exam time duration is 3 hours … Total number of questions asked in NEET 2026 180 questions Total marks in NEET 720 Marks NEET marking scheme 2026 4 marks are awarded for each correct answer Negative marking in NEET is of one mark for each wrong attempt",
+        "publisher": "Careers360",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2026"
+      }
+    ],
+    "niacl-administrative-officers-2025": [
+      {
+        "kind": "structure",
+        "text": "The NIACL AO prelims has 100 one-mark questions in 60 minutes, with a quarter mark deducted for each wrong answer.",
+        "source_url": "https://competition.careers360.com/exams/niacl-ao",
+        "source_title": "NIACL AO 2025 exam pattern — Careers360",
+        "source_quote": "There will be 100 multiple-choice questions of 1 mark each. ¼ mark will be negative for each wrong answer. … Total 100 100 60 minutes",
+        "publisher": "Careers360",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2025"
+      },
+      {
+        "kind": "structure",
+        "text": "The NIACL AO mains has 200 objective questions and 2 essay or letter-writing questions, and each section must be cleared separately.",
+        "source_url": "https://competition.careers360.com/exams/niacl-ao",
+        "source_title": "NIACL AO 2025 exam pattern — Careers360",
+        "source_quote": "NIACL AO Mains Exam is divided into 2 Sections such as Objective and Descriptive Type and the candidate has to clear each section separately. The duration of the objective-type paper will be 2 hours and 30 minutes for explanation. There will be 200 multi chose question-type and 2 essay/letter writing questions.",
+        "publisher": "Careers360",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2025"
+      }
+    ],
+    "odisha-joint-entrance-examination-ojee": [
+      {
+        "kind": "volume",
+        "text": "1,03,434 candidates registered for OJEE 2026, and 92,628 appeared.",
+        "source_url": "https://timesofindia.indiatimes.com/city/bhubaneswar/62k-secure-ranks-in-ojee-counselling-from-3rd-week-of-june/amp_articleshow/131594559.cms",
+        "source_title": "OJEE 2026 result statistics",
+        "source_quote": "said 1,03,434 candidates registered for OJEE 2026 of whom 92,628 appeared for the entrance examination",
+        "publisher": "The Times of India",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2026"
+      }
+    ],
+    "osssc-combined-recruitment-examination": [
+      {
+        "kind": "volume",
+        "text": "Around 2.5 lakh candidates sat OSSSC's CRE-2023, held for 2,712 posts.",
+        "source_url": "https://www.newindianexpress.com/amp/story/states/odisha/2024/Sep/11/candidates-stage-demo-over-discrepancies-in-cre-and-peo-exams-conducted-by-osssc",
+        "source_title": "OSSSC CRE participation report",
+        "source_quote": "the OSSSC had conducted the combined recruitment examination (CRE)-2023 for 2,712 posts of foresters, forest guards and livestock inspectors. Around 2.5 lakh students had appeared the test",
+        "publisher": "The New Indian Express",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2023"
+      }
+    ],
+    "rajasthan-cet-graduate-level": [
+      {
+        "kind": "volume",
+        "text": "13,04,144 candidates registered for Rajasthan CET Graduation Level 2024, and 11,64,554 appeared.",
+        "source_url": "https://www.indiatoday.in/education-today/notification/story/rajasthan-cet-2024-answer-key-released-check-direct-link-to-download-2637035-2024-11-21",
+        "source_title": "Rajasthan CET Graduate Level 2024 registration count",
+        "source_quote": "A total of 13,04,144 candidates had registered for the exam, with 11,64,554 candidates appearing for it.",
+        "publisher": "India Today",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2024"
+      }
+    ],
+    "rajasthan-cet-senior-secondary-level": [
+      {
+        "kind": "volume",
+        "text": "15.4 lakh candidates registered for Rajasthan CET Senior Secondary Level 2024.",
+        "source_url": "https://www.livemint.com/education/news/rsmssb-cet-12th-level-result-2025-declared-at-rssb-rajasthan-gov-in-direct-link-scorecard-check-details/amp-11739798837691.html",
+        "source_title": "Rajasthan CET Senior Secondary 2024 registration count",
+        "source_quote": "A total of 15.4 lakh candidates had registered for the exam",
+        "publisher": "Mint",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2024"
+      }
+    ],
+    "rajasthan-eligibility-examination-for-teachers-reet": [
+      {
+        "kind": "volume",
+        "text": "14,29,822 candidates registered for REET 2025.",
+        "source_url": "https://www.hindustantimes.com/education/exam-results/reet-2025-rbse-announces-rajasthan-teacher-eligibility-examination-results-101746692739080.html",
+        "source_title": "REET 2025 candidate statistics",
+        "source_quote": "RBSE said 14,29,822 candidates registered for the exam",
+        "publisher": "Hindustan Times",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2025"
+      }
+    ],
+    "rajasthan-grade-iv-recruitment": [
+      {
+        "kind": "volume",
+        "text": "Rajasthan's Grade 4 exam in September 2025 was expected to draw over 24 lakh aspirants.",
+        "source_url": "https://www.ndtv.com/education/rajasthan-grade-4-exam-to-witness-over-24-lakh-aspirants-strict-dress-code-to-curb-cheating-9282610",
+        "source_title": "Rajasthan Grade IV applicant volume",
+        "source_quote": "Rajasthan Grade 4 Exam To Witness Over 24 Lakh Aspirants, Strict Dress Code To Curb Cheating This Article is From Sep 15, 2025",
+        "publisher": "NDTV",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2025"
+      }
+    ],
+    "rajasthan-patwari-recruitment": [
+      {
+        "kind": "volume",
+        "text": "Nearly 6.76 lakh candidates registered for the RSSB Patwari exam 2025, and about 600,858 appeared.",
+        "source_url": "https://indianexpress.com/article/education/rssb-patwari-exam-2025-result-date-heres-what-chairman-alok-raj-said-sarkari-result-rssb-rajasthan-gov-in-10400284/",
+        "source_title": "Rajasthan Patwari 2025 candidate statistics",
+        "source_quote": "nearly 6.76 lakh (676,011) candidates had registered for the RSSB Patwari exam, out of which approximately 600,858 appeared.",
+        "publisher": "The Indian Express",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2025"
+      }
+    ],
+    "rajasthan-police-constable-recruitment": [
+      {
+        "kind": "volume",
+        "text": "524,740 candidates were registered for Rajasthan's two-day police constable exam in 2025.",
+        "source_url": "https://timesofindia.indiatimes.com/city/jaipur/more-than-76k-candidates-appear-for-constable-exam-on-day-1-in-9-cities/articleshow/123874320.cms",
+        "source_title": "Rajasthan Police Constable 2025 participation statistics",
+        "source_quote": "Across the state, a total of 524,740 candidates are registered for the two-day exam",
+        "publisher": "The Times of India",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2025"
+      }
+    ],
+    "rajasthan-pre-d-el-ed-examination-bstc": [
+      {
+        "kind": "volume",
+        "text": "Rajasthan BSTC Pre D.El.Ed 2026 received 6,05,242 applications, and 4,97,178 candidates appeared.",
+        "source_url": "https://timesofindia.indiatimes.com/education/news/rajasthan-bstc-pre-deled-result-2026-to-be-released-shortly-at-predeledraj2026-com-heres-how-to-download-scorecards/amp_articleshow/131623634.cms",
+        "source_title": "Rajasthan Pre-D.El.Ed 2026 application statistics",
+        "source_quote": "A total of 6,05,242 applications were received for the examination, out of which 4,97,178 candidates appeared.",
+        "publisher": "The Times of India",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2026"
+      }
+    ],
+    "rajasthan-pre-teacher-education-test": [
+      {
+        "kind": "volume",
+        "text": "2.73 lakh candidates registered for Rajasthan PTET 2025, down from 4.27 lakh in 2024 and 5.21 lakh in 2023.",
+        "source_url": "https://studyriserr.com/news/rajasthan-ptet-answer-key-2025",
+        "source_title": "Rajasthan PTET 2025 participation report",
+        "source_quote": "This year, 2.73 lakh candidates registered for the Rajasthan PTET exam, a significant decrease from 4.27 lakh in 2024 and 5.21 lakh in 2023.",
+        "publisher": "StudyRiserr",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2025"
+      }
+    ],
+    "rbi-assistant-panel-year-2025": [
+      {
+        "kind": "process",
+        "text": "RBI Assistant 2025 had prelims and mains, followed by a Language Proficiency Test.",
+        "source_url": "https://education.indianexpress.com/bank-exam/rbi-assistant-pattern",
+        "source_title": "RBI Assistant Exam Pattern 2025 — IE Education",
+        "source_quote": "The RBI Assistant exam for 2025 consists of two phases: prelims and mains, followed by a Language Proficiency Test (LPT).",
+        "publisher": "The Indian Express",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2025"
+      },
+      {
+        "kind": "structure",
+        "text": "RBI Assistant 2025 prelims had 100 questions in 60 minutes; the mains had 200 questions in 135 minutes.",
+        "source_url": "https://education.indianexpress.com/bank-exam/rbi-assistant-pattern",
+        "source_title": "RBI Assistant Exam Pattern 2025 — IE Education",
+        "source_quote": "The total number of questions in the RBI Assistant prelims exam is 100, while in the mains exam, there are 200 questions. Furthermore, the time duration for the RBI Assistant prelims exam is 60 minutes, whereas the mains exam has a time duration of 135 minutes.",
+        "publisher": "The Indian Express",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2025"
+      }
+    ],
+    "rbi-assistant-panel-year-2025-live-photograph-live-capture": [
+      {
+        "kind": "process",
+        "text": "The RBI Assistant exam runs in three phases: preliminary, mains and a language proficiency test.",
+        "source_url": "https://competition.careers360.com/exams/rbi-assistant",
+        "source_title": "RBI Assistant 2025 — Careers360",
+        "source_quote": "The RBI Assistant exam is conducted in three phases – preliminary, mains and language proficiency test.",
+        "publisher": "Careers360",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2025"
+      }
+    ],
+    "rpf-constable": [
+      {
+        "kind": "volume",
+        "text": "The Railways' computer-based test for RPF Constable, for 4,208 vacancies, had 45,30,288 candidates in 147 cities.",
+        "source_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2224536&lang=1&reg=3",
+        "source_title": "Railway Recruitment candidate counts for 2024 CENs",
+        "source_quote": "CBT for the post of RPF-Constable (4,208 vacancies) 45,30,288 147 15",
+        "publisher": "Press Information Bureau",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2024"
+      }
+    ],
+    "rpf-sub-inspector": [
+      {
+        "kind": "volume",
+        "text": "The Railways' computer-based test for RPF Sub-Inspector, for 452 vacancies, had 15,35,635 candidates in 143 cities.",
+        "source_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2224536&lang=1&reg=3",
+        "source_title": "Railway Recruitment candidate counts for 2024 CENs",
+        "source_quote": "CBT for the post of RPF-SI (452 vacancies) 15,35,635 143 15",
+        "publisher": "Press Information Bureau",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2024"
+      }
+    ],
+    "rpsc-current-online-application-photograph": [
+      {
+        "kind": "history",
+        "text": "RPSC launched One Time Registration on 10 January 2022.",
+        "source_url": "https://rpsc.rajasthan.gov.in/Static/AnnualReport/English/2021-2022.pdf",
+        "source_title": "RPSC Annual Report 2021-22",
+        "source_quote": "On 10th January 2022, in the larger interest of candidates, the Commission launched the facility of One Time Registration of profile.",
+        "publisher": "RPSC",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2022"
+      },
+      {
+        "kind": "process",
+        "text": "With RPSC's One Time Registration, a candidate registers once on the recruitment portal and gets a unique registration number.",
+        "source_url": "https://rpsc.rajasthan.gov.in/Static/AnnualReport/English/2021-2022.pdf",
+        "source_title": "RPSC Annual Report 2021-22",
+        "source_quote": "Now a candidate has to register once only on the recruitment portal to get a unique one time registration number.",
+        "publisher": "RPSC",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5
+      }
+    ],
+    "rrb-je-dms-cma": [
+      {
+        "kind": "volume",
+        "text": "The first-stage computer-based test for RRB JE/DMS/CMA, for 2585 vacancies, had 5,74,351 candidates in 133 cities.",
+        "source_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2287637&lang=1&reg=48",
+        "source_title": "Railway Recruitment candidate counts for 2025 CENs",
+        "source_quote": "1 st Stage CBT for the post of JE/DMS/CMA (2585 vacancies) 5,74,351 133 15",
+        "publisher": "Press Information Bureau",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2025"
+      }
+    ],
+    "rrb-level-1-posts-cen-08-2024": [
+      {
+        "kind": "process",
+        "text": "In RRB Level-1 recruitment (CEN 08/2024), candidates were shortlisted from the computer-based test for a Physical Efficiency Test.",
+        "source_url": "https://www.rrbbbs.gov.in/cen.php?prmt=TXpVPQ%3D%3D",
+        "source_title": "RRB Bhubaneswar — CEN 08/2024 notices",
+        "source_quote": "CEN 08/2024 Level 1 Posts … CEN 08/2024 : Result of CBT and list of candidates shortlisted for Physical Efficiency test (PET).",
+        "publisher": "RRB Bhubaneswar",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "CEN 08/2024"
+      }
+    ],
+    "rrb-ministerial-and-isolated-categories": [
+      {
+        "kind": "volume",
+        "text": "The computer-based test for RRB Ministerial and Isolated categories, for 1,036 vacancies, had 4,46,013 candidates in 139 cities.",
+        "source_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2224536&lang=1&reg=3",
+        "source_title": "Railway Recruitment candidate counts for 2024 CENs",
+        "source_quote": "CBT for Ministerial & Isolated categories (1,036 vacancies) 4,46,013 139 15",
+        "publisher": "Press Information Bureau",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2024"
+      }
+    ],
+    "rrb-paramedical-categories": [
+      {
+        "kind": "volume",
+        "text": "The computer-based test for RRB Paramedical categories, for 434 vacancies, had 3,19,396 candidates in 106 cities.",
+        "source_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2287637&lang=1&reg=48",
+        "source_title": "Railway Recruitment candidate counts for 2025 CENs",
+        "source_quote": "CBT for Paramedical Categories (434 vacancies) 3,19,396 106 15",
+        "publisher": "Press Information Bureau",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2025"
+      }
+    ],
+    "rrb-section-controller": [
+      {
+        "kind": "volume",
+        "text": "The first-stage computer-based test for RRB Section Controller, for 368 vacancies, had 4,33,748 candidates in 131 cities.",
+        "source_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2287637&lang=1&reg=48",
+        "source_title": "Railway Recruitment candidate counts for 2025 CENs",
+        "source_quote": "1 st Stage CBT for the post of Section Controller Categories (368 vacancies) 4,33,748 131 15",
+        "publisher": "Press Information Bureau",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2025"
+      }
+    ],
+    "rrb-technician": [
+      {
+        "kind": "volume",
+        "text": "The computer-based test for RRB Technician, for 6238 vacancies, had 8,41,525 candidates in 117 cities.",
+        "source_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2287637&lang=1&reg=48",
+        "source_title": "Railway Recruitment candidate counts for 2025 CENs",
+        "source_quote": "CBT for the post of Technician (6238 vacancies) 8,41,525 117 15",
+        "publisher": "Press Information Bureau",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2025"
+      }
+    ],
+    "sbi-junior-associates-2025": [
+      {
+        "kind": "structure",
+        "text": "The SBI Junior Associate prelims is an online objective test of 100 marks lasting one hour.",
+        "source_url": "https://sbi.co.in/web/careers/junior-associate",
+        "source_title": "SBI Careers — Junior Associate selection procedure",
+        "source_quote": "Preliminary Examination consisting of Objective Tests for 100 marks will be conducted online. This test would be of 1 hour duration",
+        "publisher": "State Bank of India",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2025"
+      },
+      {
+        "kind": "structure",
+        "text": "The SBI Junior Associate mains has 190 questions for 200 marks in 2 hours 40 minutes.",
+        "source_url": "https://sbi.co.in/web/careers/junior-associate",
+        "source_title": "SBI Careers — Junior Associate selection procedure",
+        "source_quote": "Total 190 200 2 Hours 40 minutes",
+        "publisher": "State Bank of India",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2025"
+      }
+    ],
+    "sbi-probationary-officers-2025": [
+      {
+        "kind": "process",
+        "text": "SBI PO has a third phase, a group discussion and interview, for candidates ranked high enough after the objective and descriptive tests.",
+        "source_url": "https://sbi.co.in/web/careers/probationary-officers",
+        "source_title": "SBI Careers — Probationary Officers",
+        "source_quote": "Phase - III: Group Discussion & Interview The aggregate marks of candidates qualifying in both the Objective Tests and Descriptive Test will be arranged in descending order in each category. Adequate number of candidates in each category, as decided by the Bank will be called for Group Discussion and Interview.",
+        "publisher": "State Bank of India",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2025"
+      },
+      {
+        "kind": "structure",
+        "text": "In SBI PO's objective tests, a wrong answer costs one fourth of the question's marks, and a blank answer costs nothing.",
+        "source_url": "https://sbi.co.in/web/careers/probationary-officers",
+        "source_title": "SBI Careers — Probationary Officers",
+        "source_quote": "For each question for which a wrong answer has been given by the candidate one fourth of the marks assigned to that question will be deducted as penalty to arrive at corrected score. If a question is left blank, i.e. no answer is marked by the candidate, there will be no penalty for that question.",
+        "publisher": "State Bank of India",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2025"
+      }
+    ],
+    "ssc-combined-higher-secondary-10-2-level-examination-2025-live-capture": [
+      {
+        "kind": "structure",
+        "text": "Under the 2025 notification, the SSC CHSL computer-based examination is held in two tiers.",
+        "source_url": "https://sathee.iitk.ac.in/sathee-ssc/ssc-exams/ssc-chsl/ssc-details/exam-pattern/",
+        "source_title": "SATHEE SSC CHSL exam pattern, based on 2025 notification",
+        "source_quote": "Taking reference from SSC CHSL notification of 2025 The Computer Based Examination will be conducted in two tiers",
+        "publisher": "SATHEE, IIT Kanpur",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2025"
+      },
+      {
+        "kind": "structure",
+        "text": "SSC CHSL Tier-I has four parts of 25 questions for 50 marks each, in 60 minutes (80 minutes for scribe-eligible candidates).",
+        "source_url": "https://sathee.iitk.ac.in/sathee-ssc/ssc-exams/ssc-chsl/ssc-details/exam-pattern/",
+        "source_title": "SATHEE SSC CHSL exam pattern, based on 2025 notification",
+        "source_quote": "I English Language (Basic Knowledge) 25/50 60 Minutes (80 Minutes for candidates eligible for scribe as per Para-7.1, 7.2 and 7.3) II General Intelligence 25/50 III Quantitative Aptitude (Basic Arithmetic Skill) 25/50 IV General Awareness 25/50",
+        "publisher": "SATHEE, IIT Kanpur",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2025"
+      }
+    ],
+    "ssc-constable-gd-examination-2025-live-capture": [
+      {
+        "kind": "process",
+        "text": "SSC GD Constable 2025 selection ran through a computer-based exam of 160 marks in 60 minutes, then PET, PST and a medical examination.",
+        "source_url": "https://www.hindustantimes.com/education/employment-news/ssc-gd-answer-key-2025-released-at-ssc-gov-in-details-here-101741096819853.html",
+        "source_title": "SSC GD 2025 answer-key report — Hindustan Times",
+        "source_quote": "The recruitment process includes a computer-based examination (CBE), followed by a physical efficiency test (PET), physical standard test (PST) and medical examination/document verification. The computer-based test was for 160 marks (80 questions, 2 marks each) and the exam duration was 60 minutes.",
+        "publisher": "Hindustan Times",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2025"
+      },
+      {
+        "kind": "structure",
+        "text": "The SSC GD Constable computer-based exam has 80 questions in four sections, and deducts 0.50 marks for each wrong answer.",
+        "source_url": "https://education.indianexpress.com/ssc-exam/gd-constable-exam-pattern",
+        "source_title": "SSC GD exam pattern — IE Education",
+        "source_quote": "There are four sections with a total of 80 questions on the exam. SSC GD Constable Tier I exam duration is 60 minutes. SSC GD online tests carry a negative marking of 0.50 for each incorrect answer.",
+        "publisher": "The Indian Express",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2025"
+      }
+    ],
+    "ssc-junior-engineer-examination": [
+      {
+        "kind": "volume",
+        "text": "4,83,557 candidates applied for 968 SSC Junior Engineer posts in the recruitment that opened in March 2024.",
+        "source_url": "https://www.amarujala.com/uttar-pradesh/allahabad/1-27-lakh-candidates-of-up-bihar-will-appear-in-ssc-je-exam-exam-will-be-held-from-five-2024-06-02",
+        "source_title": "SSC JE applicant count report (Hindi)",
+        "source_quote": "एसएससी की ओर से जेई के 968 पदों पर भर्ती की प्रक्रिया 28 मार्च 2024 से शुरू हुई थी। इन पदों के सापेक्ष देशभर के 4,83,557 अभ्यर्थियों ने आवेदन किया था।",
+        "publisher": "Amar Ujala",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2024"
+      }
+    ],
+    "ssc-selection-post-phase-xiii": [
+      {
+        "kind": "volume",
+        "text": "29,39,401 candidates applied for SSC Selection Post Phase XIII, and around 67,500 were selected for the next stage.",
+        "source_url": "https://news.careers360.com/ssc-selection-post-phase-13-results-declared-just-2-3-shortlisted-out-of-29-lakh-marticulation-higher-secondary-graduation-link/amp",
+        "source_title": "SSC Selection Post Phase XIII results and application count",
+        "source_quote": "a total of 29,39,401 (29 lakh) candidates applied for the recruitment exam, of which only around 67,500 candidates have been selected for the next stage of scrutiny.",
+        "publisher": "Careers360",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "Phase XIII"
+      }
+    ],
+    "ssc-stenographer-grade-c-d-examination": [
+      {
+        "kind": "volume",
+        "text": "Over 3.50 lakh candidates registered for the SSC Stenographers Grade C & D Examination, 2025, held at 157 centres in 85 cities.",
+        "source_url": "https://www.sscwr.net/noticeboard/Stenographers%20Grade%20_C_D_Examination%2C%202025%20%E2%80%93%20Information%20regarding%20City.pdf",
+        "source_title": "Stenographers Grade C & D Examination 2025 city information",
+        "source_quote": "are being conducted by SSC at 157 centres spread over 85 cities across the country on 6th to 8th August, 2025. Over 3.50 lakh candidates have registered for the exam",
+        "publisher": "Staff Selection Commission, Western Region",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2025"
+      }
+    ],
+    "ssc-sub-inspector-in-delhi-police-and-capfs-examination": [
+      {
+        "kind": "volume",
+        "text": "7,34,157 candidates applied for the 2024 SSC exam for Sub-Inspector in Delhi Police and the CAPFs.",
+        "source_url": "https://timesofindia.indiatimes.com/city/allahabad/over-7-lakh-apply-for-delhi-police-capf-other-jobs/articleshow/110023804.cms",
+        "source_title": "SSC CPO applicant count report",
+        "source_quote": "As many as 7,34,157 candidates from across country have applied for Staff Selection Commission (SSC) Recruitment Examination 2024 for Sub-Inspector (SI) in Delhi Police and Central Armed Police Forces",
+        "publisher": "The Times of India",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2024"
+      }
+    ],
+    "telangana-dsc-teacher-recruitment": [
+      {
+        "kind": "volume",
+        "text": "2,79,966 candidates applied for Telangana's DSC teacher recruitment, notified with 11,062 vacancies.",
+        "source_url": "https://telanganatoday.com/tough-competition-for-dsc-teachers-recruitment-in-telangana",
+        "source_title": "Telangana DSC 2024 application statistics",
+        "source_quote": "as many as 2,79,966 candidates applied for the DSC, which has been notified with 11,062 vacancies.",
+        "publisher": "Telangana Today",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2024"
+      }
+    ],
+    "telangana-teacher-eligibility-test-tg-tet": [
+      {
+        "kind": "volume",
+        "text": "1,83,653 candidates registered for TG TET June 2025, fewer than for the January 2025 and June 2024 exams.",
+        "source_url": "https://telanganatoday.com/few-takers-for-telangana-teacher-eligibility-test-2025",
+        "source_title": "TG TET June 2025 registration statistics",
+        "source_quote": "a total of 1,83,653 candidates registered, which was over 1 lakh and 92,000 fewer applications compared to the last exams held in January 2025 and June 2024",
+        "publisher": "Telangana Today",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "June 2025"
+      }
+    ],
+    "tg-eapcet": [
+      {
+        "kind": "volume",
+        "text": "Over 3 lakh candidates applied for TG EAPCET 2026: 2,09,868 for Engineering and 90,279 for Agriculture & Pharmacy.",
+        "source_url": "https://indianexpress.com/article/education/ts-eapcet-2026-for-engineering-begins-checklist-reporting-time-tg-eapcet-tgche-ac-in-hall-ticket-eamcet-10679158/",
+        "source_title": "TG EAPCET 2026 application statistics",
+        "source_quote": "TG EAPCET-2026 over 3 lakh aspirants have applied for the exam, of which the Engineering stream accounted for the largest share with 2,09,868 applications, while the Agriculture & Pharmacy stream saw 90,279 applications.",
+        "publisher": "The Indian Express",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2026"
+      }
+    ],
+    "tg-ts-polycet": [
+      {
+        "kind": "volume",
+        "text": "1,06,716 students registered for TS POLYCET 2025, and 98,858 appeared.",
+        "source_url": "https://www.moneycontrol.com/education/telangana-sbtet-polycet-2025-results-rank-card-released-polycet-sbtet-telangana-gov-in-download-link-here-article-13044238.html",
+        "source_title": "TS POLYCET 2025 result statistics",
+        "source_quote": "A total of 1,06,716 students registered for the TS POLYCET exam, out of which 98,858 appeared",
+        "publisher": "Moneycontrol",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2025"
+      }
+    ],
+    "tgpsc-group-i-services-examination": [
+      {
+        "kind": "volume",
+        "text": "The TSPSC Group 1 prelims in 2024 received 403667 online applications, and 302172 candidates appeared.",
+        "source_url": "https://www.hindustantimes.com/education/exam-results/tspsc-group-1-prelims-result-2024-declared-at-tspsc-gov-in-direct-link-to-check-here-101720338257195.html",
+        "source_title": "TGPSC Group I 2024 participation statistics",
+        "source_quote": "A total Number of 403667 online applications were received from candidates and Hall Tickets were generated for 403645 candidates. A total of 302172 candidates have appeared for the examination.",
+        "publisher": "Hindustan Times",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2024"
+      }
+    ],
+    "tgpsc-group-ii-services-examination": [
+      {
+        "kind": "volume",
+        "text": "5,51,855 candidates applied for the TGPSC Group-II exam, and 2,49,964 attended all four papers.",
+        "source_url": "https://www.newindianexpress.com/states/telangana/2025/Mar/11/tgpsc-chairman-burra-venkatesham-releases-group-ii-results",
+        "source_title": "TGPSC Group II participation statistics",
+        "source_quote": "As many as 5,51,855 candidates applied for the Group-II examination. As many as 2,49,964 candidates attended all four papers.",
+        "publisher": "The New Indian Express",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2024"
+      }
+    ],
+    "tgpsc-group-iii-services-examination": [
+      {
+        "kind": "volume",
+        "text": "5,36,400 candidates applied for TGPSC Group III, and 2,67,921 appeared for the written test.",
+        "source_url": "https://www.newindianexpress.com/states/telangana/2025/Mar/15/tgpsc-announces-group-iii-results-3",
+        "source_title": "TGPSC Group III participation statistics",
+        "source_quote": "While a total of 5,36,400 candidates applied for the examination, 2,67,921 appeared for the written test.",
+        "publisher": "The New Indian Express",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2024"
+      }
+    ],
+    "tnpsc-combined-civil-services-examination-ii-group-ii-iia": [
+      {
+        "kind": "volume",
+        "text": "7,93,966 candidates applied for TNPSC Group 2 in 2024, and 5,83,467 appeared.",
+        "source_url": "https://news.careers360.com/tnpsc-group-2-result-2024-out-on-tnpscgovin-29809-qualified-for-main-exam/amp",
+        "source_title": "TNPSC Group II 2024 participation statistics",
+        "source_quote": "a total of 7,93,966 candidates applied for the TNPSC Group 2 exam and a total of 5,83,467 candidates appeared.",
+        "publisher": "Careers360",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2024"
+      }
+    ],
+    "tnpsc-combined-civil-services-examination-iv-group-iv-services": [
+      {
+        "kind": "volume",
+        "text": "13,89,738 candidates were admitted to the TNPSC Group-IV written examination held in July 2025.",
+        "source_url": "https://www.tnpsc.gov.in/Document/PressEnglish/PR_1422025_ENG.pdf",
+        "source_title": "TNPSC Group IV 2025 result press release",
+        "source_quote": "the written examination was held on 12.07.2025 FN at 38 district centres. A total number of 13,89,738 candidates were admitted to the said Examination.",
+        "publisher": "TNPSC",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2025"
+      }
+    ],
+    "tspsc-group-iv-services": [
+      {
+        "kind": "volume",
+        "text": "9,51,321 candidates applied for TSPSC Group IV, whose written exam was held on July 1, 2023.",
+        "source_url": "https://www.hindustantimes.com/education/exam-results/tspsc-group-4-provisional-selection-list-of-8084-candidates-out-at-tspsc-gov-in-check-details-101731594119779-amp.html",
+        "source_title": "TSPSC Group IV application statistics",
+        "source_quote": "A total of 9,51,321 candidates applied for the recruitment. The written examinations were conducted on July 01, 2023, in two shifts.",
+        "publisher": "Hindustan Times",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2023"
+      }
+    ],
+    "ugc-net-june-2026": [
+      {
+        "kind": "process",
+        "text": "UGC-NET decides eligibility for the Junior Research Fellowship, appointment as Assistant Professor, and PhD admission in Indian universities.",
+        "source_url": "https://ugcnet.nta.nic.in/about-department/introduction/",
+        "source_title": "UGC-NET official introduction",
+        "source_quote": "UGC-NET, which is a Test to determine the eligibility of Indian nationals for ‘Award of Junior Research Fellowship’ , ‘Appointment as Assistant Professor’",
+        "publisher": "National Testing Agency",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5
+      },
+      {
+        "kind": "history",
+        "text": "NTA has conducted UGC-NET as a computer-based test since December 2018.",
+        "source_url": "https://ugcnet.nta.nic.in/about-department/introduction/",
+        "source_title": "UGC-NET official introduction",
+        "source_quote": "The UGC-NET is being conducted by the National Testing Agency (NTA) in Computer Based Test (CBT) mode w.e.f. December 2018 onwards.",
+        "publisher": "National Testing Agency",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5
+      }
+    ],
+    "up-b-ed-joint-entrance-examination": [
+      {
+        "kind": "volume",
+        "text": "UP B.Ed JEE 2026 had 4,41,030 forms submitted, from 4,70,000 registrations.",
+        "source_url": "https://university.careers360.com/articles/up-bed-2026",
+        "source_title": "UP B.Ed JEE 2026 registration statistics",
+        "source_quote": "Current (2026) 4,70,000 4,41,030",
+        "publisher": "Careers360",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2026"
+      }
+    ],
+    "uppsc-combined-state-upper-subordinate-services-examination-pcs": [
+      {
+        "kind": "volume",
+        "text": "6,26,387 candidates applied for UPPSC PCS 2025, and 2,65,270 appeared in the prelims.",
+        "source_url": "https://www.hindustantimes.com/education/competitive-exams/up-pcs-prelims-2025-results-declared-11-727-candidates-selected-for-mains-101764605693835-amp.html",
+        "source_title": "UP PCS 2025 application and result statistics",
+        "source_quote": "a total of 6,26,387 candidates had applied online for the advertisement issued on February 20. Out of these, 2,65,270 candidates appeared for the preliminary examination held on October 12.",
+        "publisher": "Hindustan Times",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2025"
+      }
+    ],
+    "uppsc-one-time-registration-photograph": [
+      {
+        "kind": "process",
+        "text": "A candidate's UPPSC OTR number is the only registration number used to apply for any post the Commission advertises.",
+        "source_url": "https://uppsc.up.nic.in/default.aspx",
+        "source_title": "UPPSC home page — OTR notice",
+        "source_quote": "Applicant's OTR number is the only regsitration number for submitting application form against any post published by the commission.",
+        "publisher": "UPPSC",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5
+      },
+      {
+        "kind": "process",
+        "text": "UPPSC issues the OTR number instantly, and a candidate can apply for a post only after Lock and Final Submit.",
+        "source_url": "https://uppsc.pariksha.nic.in/OuterPages/OnlineInstruction_English.html",
+        "source_title": "UPPSC General Instructions for Online OTR Registration",
+        "source_quote": "Candidate can get the OTR number instantly … Candidates can apply for the advertised post only after doing \" Lock and Final Submit \"",
+        "publisher": "UPPSC",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5
+      }
+    ],
+    "uppsc-review-officer-assistant-review-officer": [
+      {
+        "kind": "volume",
+        "text": "The UPPSC RO/ARO prelims 2025 received 10,76,004 applications for 419 vacancies, and 4,54,589 candidates appeared.",
+        "source_url": "https://www.freepressjournal.in/education/uppsc-ro-aro-prelims-2025-results-declared-at-uppscupnicin-direct-link-here",
+        "source_title": "UPPSC RO/ARO application statistics",
+        "source_quote": "Total applications received: 10,76,004 Total vacancies announced: 419 Candidates who appeared for the exam: 4,54,589",
+        "publisher": "Free Press Journal",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2025"
+      }
+    ],
+    "upsc-civil-services-examination-2026": [
+      {
+        "kind": "process",
+        "text": "UPSC Civil Services has three phases, Prelims, Mains and Interview, and the CSAT paper in the prelims is only qualifying.",
+        "source_url": "https://education.indianexpress.com/upsc-exam/ias-exam-pattern",
+        "source_title": "UPSC Exam Pattern 2026 — IE Education",
+        "source_quote": "The IAS exam is conducted in three phases: Prelims, Mains, and Interview The preliminary exam consists of two papers - General Studies I and Civil Services Aptitude Test (CSAT) The CSAT paper is qualifying in nature",
+        "publisher": "The Indian Express",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5
+      },
+      {
+        "kind": "structure",
+        "text": "The Civil Services Main written examination has 9 essay-type papers, two of which are only qualifying.",
+        "source_url": "https://globaldrishti.in/wp-content/uploads/2026/03/UPSC_IAS_2026_Globaldrishti_in_english_notification.pdf",
+        "source_title": "UPSC CSE 2026 notification mirror, Appendix I",
+        "source_quote": "The Written Examination will consist of 9 papers of conventional essay type in the subjects set out in sub-section (B) of Section-II out of which two papers will be of qualifying in nature.",
+        "publisher": "Global Drishti",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5
+      }
+    ],
+    "upsc-combined-defence-services-examination-ii-2026": [
+      {
+        "kind": "structure",
+        "text": "In CDS, IMA, INA and AFA candidates take English, General Knowledge and Elementary Mathematics, 2 hours each; OTA candidates skip Mathematics.",
+        "source_url": "https://career.aglasem.com/upsc/cds/syllabus",
+        "source_title": "UPSC CDS Exam Pattern & Syllabus 2026 — AglaSem",
+        "source_quote": "Paper-I English 120 100 2 hours Paper-II General Knowledge 120 100 2 hours Paper-III Elementary Mathematics (IMA, INA and AFA only — not for OTA) 100 100 2 hours",
+        "publisher": "AglaSem",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5
+      },
+      {
+        "kind": "structure",
+        "text": "In CDS, one third of a question's marks is deducted for each wrong answer.",
+        "source_url": "https://career.aglasem.com/upsc/cds/syllabus",
+        "source_title": "UPSC CDS Exam Pattern & Syllabus 2026 — AglaSem",
+        "source_quote": "one third of the marks assigned to a question is deducted for each wrong answer.",
+        "publisher": "AglaSem",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5
+      }
+    ],
+    "upsc-nda-na-examination-ii-2026": [
+      {
+        "kind": "structure",
+        "text": "The NDA written exam has a 600-mark General Aptitude Test and a 300-mark Mathematics paper, 2.5 hours each; the SSB interview carries 900 marks.",
+        "source_url": "https://education.indianexpress.com/defence-exam/nda-exam-pattern",
+        "source_title": "NDA Exam Pattern 2026 — IE Education",
+        "source_quote": "Total marks General Aptitude Test (GAT): 600 Mathematics: 300 SSB Interview : 900 … Duration of the Exam General Aptitude Test (GAT): 2.5 hour Mathematics: 2.5 hour",
+        "publisher": "The Indian Express",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2026"
+      },
+      {
+        "kind": "process",
+        "text": "NDA 2 2026 has two stages, a written exam and an SSB interview, and only those who clear the written exam are called.",
+        "source_url": "https://education.indianexpress.com/defence-exam/nda-exam-pattern",
+        "source_title": "NDA Exam Pattern 2026 — IE Education",
+        "source_quote": "The NDA 2 exam 2026 comprises two stages: written examination and SSB Interview. Only candidates who clear the written exam will be invited for the SSB interview round.",
+        "publisher": "The Indian Express",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2026"
+      }
+    ],
+    "upsssc-preliminary-eligibility-test-pet": [
+      {
+        "kind": "volume",
+        "text": "25,31,996 candidates registered for UPSSSC PET 2025, and 19,41,993 appeared.",
+        "source_url": "https://www.hindustantimes.com/cities/lucknow-news/twoday-upsssc-pet-2025-ends-over-5-90-lakh-candidates-skip-it-101757264673407.html",
+        "source_title": "UPSSSC PET 2025 attendance and registration statistics",
+        "source_quote": "Out of 25,31,996 registered candidates, 19,41,993 (76.70%) appeared in the test",
+        "publisher": "Hindustan Times",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2025"
+      }
+    ],
+    "uttar-pradesh-police-constable-recruitment": [
+      {
+        "kind": "volume",
+        "text": "48,17,441 candidates applied to sit the Uttar Pradesh Police constable written exam in 2024.",
+        "source_url": "https://www.hindustantimes.com/cities/lucknow-news/up-police-constables-recruitment-exam-21-per-cent-candidates-skip-test-on-day-1-after-downloading-admit-cards-101724439718431.html",
+        "source_title": "UP Police Constable 2024 applicant count",
+        "source_quote": "As many as 48,17,441 (48,17 lakh or over 4.8 million) candidates had applied to appear in the written examination",
+        "publisher": "Hindustan Times",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2024"
+      }
+    ],
+    "wbjee-2026": [
+      {
+        "kind": "structure",
+        "text": "WBJEE 2026 is an offline OMR exam of two 2-hour papers: Paper 1 Mathematics, and Paper 2 Physics & Chemistry.",
+        "source_url": "https://www.collegedekho.com/exam/wbjee-exam-pattern",
+        "source_title": "WBJEE 2026 Exam Pattern — CollegeDekho",
+        "source_quote": "Examination mode Offline mode (OMR) Duration of examination 2 hours for each paper (Total of 4 hours) Subjects/Papers Paper 1 - Mathematics Paper 2 - Physics & Chemistry",
+        "publisher": "CollegeDekho",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2026"
+      },
+      {
+        "kind": "structure",
+        "text": "WBJEE 2026 has 155 questions: 75 in Mathematics, 40 in Physics and 40 in Chemistry.",
+        "source_url": "https://www.collegedekho.com/exam/wbjee-exam-pattern",
+        "source_title": "WBJEE 2026 Exam Pattern — CollegeDekho",
+        "source_quote": "There will be 155 questions from three subjects - Physics, Chemistry, and Mathematics. … Physics - 40 questions Chemistry - 40 questions Mathematics - 75 questions",
+        "publisher": "CollegeDekho",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2026"
+      }
+    ],
+    "west-bengal-school-service-commission-slst-assistant-teacher-recruitment": [
+      {
+        "kind": "volume",
+        "text": "5.9 lakh candidates applied for teaching jobs in Bengal's schools through WBSSC's 2025 recruitment exam.",
+        "source_url": "https://indianexpress.com/article/education/wbssc-teacher-recruitment-exam-5-9-lakh-candidates-apply-for-teaching-jobs-in-bengal-schools-10143673/",
+        "source_title": "WBSSC teacher recruitment application count",
+        "source_quote": "WBSSC Teacher Recruitment Exam: 5.9 lakh candidates apply for teaching jobs in Bengal schools",
+        "publisher": "The Indian Express",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2025"
+      }
+    ],
+    "xavier-aptitude-test": [
+      {
+        "kind": "volume",
+        "text": "1,42,235 candidates registered for XAT 2025, an all-time high.",
+        "source_url": "https://news.careers360.com/xat-records-all-time-high-registrations-142235-candidates-applied-year",
+        "source_title": "XAT 2025 registration press release",
+        "source_quote": "XAT records all-time high registrations; 1,42,235 candidates applied this year",
+        "publisher": "Careers360",
+        "official_source": false,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2025"
+      }
+    ]
+  }
+}
