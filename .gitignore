@@ -54,22 +54,29 @@ temp/
 *.tiff
 *.bmp
 
-# Two deliberate exceptions to the blanket image ban above. The ban exists to
-# stop a real candidate's photograph ever reaching version control, and it
-# stays. Neither of these is a candidate photograph:
+# Deliberate exceptions to the blanket image ban above. The ban exists to stop
+# a real candidate's photograph ever reaching version control, and it stays.
+# None of these is a candidate photograph:
 #
-#   assets/reference-portrait.jpg   the ideal-photo source, a synthetic face
-#   apps/web/public/examples/*      the accepted/rejected examples derived from
-#                                   it by scripts/generate_guidance_examples.py
+#   assets/reference-portrait.jpg        the ideal-photo source, a synthetic face
+#   apps/web/public/examples/*           guidance examples served by the web app
+#   apps/web/public/examples/demo/*      the landing band's before-and-after
+#                                        pairs: generated people and invented
+#                                        signatures, recorded in
+#                                        docs/ui-direction-2026-09-10/DEMO_ASSETS.md
 #
 # These MUST be tracked: they are served by the web app, so a clone without
-# them builds a site whose guidance images are all broken -- which is exactly
-# what happened before this exception was added, and it passed locally because
-# the files were present on the machine that generated them.
+# them builds a site whose images are all broken -- which is exactly what
+# happened before this exception was added, and it passed locally because the
+# files were present on the machine that generated them. Note the per-directory
+# globs: `examples/*.jpg` does not reach `examples/demo/`, and adding the demo
+# pairs without the second line silently shipped a band with no pictures in it.
 !assets/reference-portrait.jpg
 !apps/web/public/examples/*.jpg
 !apps/web/public/examples/*.png
 !apps/web/public/examples/*.webp
+!apps/web/public/examples/demo/*.jpg
+!apps/web/public/examples/demo/*.png
 # Ignore generated outputs
 output/
 downloads/
