@@ -9,6 +9,7 @@ import { SiteFooter } from "../../../components/site-footer";
 import { ExamHero } from "../../../components/exam/exam-hero";
 import { KitWorkspace } from "../../../components/exam/kit-workspace";
 import { PrepareCta } from "../../../components/m/prepare-cta";
+import { ExamFiles } from "../../../components/m/exam-files";
 
 /**
  * One examination: what it asks for, the kit that answers it, and each file
@@ -67,6 +68,7 @@ export default async function ExamPage({
         <main className="euk exam-page" id="main-content">
             <SiteHeader mobileTitle={`${exam.exam_name} upload kit`} />
             <ExamHero exam={exam} facts={facts} liveCapture={liveCapture} />
+            <ExamFiles exam={exam} facts={facts} />
             <KitWorkspace exam={exam} facts={facts} />
             <PrepareCta exam={exam} />
             <SiteFooter />

@@ -488,9 +488,23 @@
 }
 
 @media (max-width: 899px) {
-    /* The workspace is a two-column desktop arrangement; the flow replaces it
-       here. Its content stays in the document for anyone reading the page. */
-    .exam-page .euk-kit-layout {
+    /* The whole desktop workspace, not its grid wrapper: hiding only the
+       wrapper left the file panels behind, so the page showed inline upload
+       boxes under a flow that also offered to upload. One way in, not two. */
+    .exam-page .euk-kit {
+        display: none;
+    }
+
+    /* The hero's fact card is a desktop aside; on a phone it is a sheet, from
+       the row in the file list. */
+    .exam-page .euk-exam-tip {
+        display: none;
+    }
+
+    /* And its chips name the same files the list below names, with less in
+       them. One of the two has to go, and it is not the one with the
+       measurements. */
+    .exam-page .euk-exam-files {
         display: none;
     }
 
@@ -519,4 +533,164 @@
     font-family: var(--font-petrona), Georgia, serif;
     font-style: italic;
     color: var(--partial-line);
+}
+
+/* ---- the examination page, on a phone ---------------------------------- */
+
+.euk-mexam {
+    padding: 24px 16px 8px;
+}
+
+.euk-mexam-title {
+    font-size: clamp(26px, 7vw, 34px);
+    line-height: 0.98;
+    text-wrap: balance;
+}
+
+.euk-mexam-list {
+    list-style: none;
+    margin: 18px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+}
+
+.euk-mexam-row {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    width: 100%;
+    min-height: 72px;
+    padding: 13px 14px;
+    border: var(--rule-thin) solid var(--ink);
+    background: var(--paper);
+    color: var(--ink);
+    text-align: left;
+    cursor: pointer;
+}
+
+.euk-mexam-row:active {
+    background: var(--paper-2);
+}
+
+.euk-mexam-icon {
+    flex: none;
+    width: 34px;
+    height: 34px;
+    color: var(--ink);
+}
+
+.euk-mexam-body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.euk-mexam-body strong {
+    font-size: 16px;
+    line-height: 1.2;
+}
+
+.euk-mexam-body > span {
+    font-size: 13px;
+    line-height: 1.35;
+    color: var(--ink-55);
+    font-variant-numeric: tabular-nums;
+}
+
+.euk-mexam-part {
+    color: var(--partial-line);
+}
+
+.euk-mexam-go {
+    flex: none;
+    color: var(--ink-40);
+}
+
+.euk-mexam-fact {
+    display: grid;
+    gap: 6px;
+    width: 100%;
+    margin-top: 16px;
+    padding: 14px;
+    border: var(--rule-thin) dashed var(--partial-line);
+    background: var(--partial-fill);
+    color: var(--ink);
+    text-align: left;
+    cursor: pointer;
+}
+
+.euk-mexam-fact > span:nth-child(2) {
+    font-size: 14px;
+    line-height: 1.45;
+}
+
+.euk-mexam-fact-more {
+    font-size: 12px;
+    color: var(--partial-line);
+}
+
+.euk-mexam-yours {
+    margin-top: 22px;
+    border-top: var(--rule-thin) solid var(--hairline);
+    padding-top: 14px;
+}
+
+.euk-mexam-yours ul {
+    list-style: none;
+    margin: 8px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+}
+
+.euk .euk-mexam-yours li {
+    max-width: none;
+    font-size: 14px;
+    color: var(--ink-70);
+}
+
+.euk .euk-mexam-sources {
+    margin-top: 20px;
+    max-width: none;
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--ink-55);
+}
+
+.euk .euk-mexam-sources a {
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--signal-deep);
+    text-underline-offset: 3px;
+}
+
+.euk-mexam-specimens {
+    margin-top: 18px;
+}
+
+.euk-mexam-factlist {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 18px;
+}
+
+.euk .euk-mexam-factlist p {
+    max-width: none;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.euk-mexam-factlist a {
+    display: inline-block;
+    margin-top: 6px;
+    font-size: 13px;
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--signal-deep);
+    text-underline-offset: 3px;
 }
