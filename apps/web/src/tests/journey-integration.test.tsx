@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
+    act,
     cleanup,
     fireEvent,
     render,
@@ -71,7 +72,8 @@ describe("candidate delivery and evidence", () => {
             screen.getByRole("button", { name: "Try email again" }),
         ).toBeEnabled();
     });
-    it("preserves exact fact text and permits deliberate navigation without autoplay", () => {
+    it("preserves exact fact text, moves on by itself, and can be stopped", () => {
+        vi.useFakeTimers();
         render(
             <ExamFacts
                 examName="Example exam"
@@ -92,12 +94,30 @@ describe("candidate delivery and evidence", () => {
         expect(
             screen.getByText("Original authority wording; unchanged."),
         ).toBeInTheDocument();
-        expect(screen.getByRole("button", { name: "Play" })).toHaveAttribute(
-            "aria-pressed",
-            "false",
-        );
-        fireEvent.click(screen.getByRole("button", { name: "Next exam fact" }));
+
+        // It advances on its own, which is what the exam page asks of it.
+        const stop = screen.getByRole("button", { name: "Pause" });
+        expect(stop).toHaveAttribute("aria-pressed", "true");
+        act(() => {
+            vi.advanceTimersByTime(9000);
+        });
         expect(screen.getByText("JPEG only.")).toBeInTheDocument();
+
+        // And stops when asked, which is what WCAG 2.2.2 asks of it.
+        fireEvent.click(stop);
+        expect(
+            screen.getByRole("button", { name: "Play" }),
+        ).toHaveAttribute("aria-pressed", "false");
+        act(() => {
+            vi.advanceTimersByTime(30000);
+        });
+        expect(screen.getByText("JPEG only.")).toBeInTheDocument();
+
+        fireEvent.click(screen.getByRole("button", { name: "Next exam fact" }));
+        expect(
+            screen.getByText("Original authority wording; unchanged."),
+        ).toBeInTheDocument();
+        vi.useRealTimers();
     });
 });
 describe("private request validation", () => {

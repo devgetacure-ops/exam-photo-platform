@@ -7,13 +7,14 @@ import { RequirementPanel } from "./requirement-panel";
 import { useKit } from "./use-kit";
 import { ReportIssue } from "./report-issue";
 import { KitCheckout } from "./kit-checkout";
-import { Chevron, FileTypeDrawing } from "../euk/doodles";
+import { FileTypeDrawing } from "../euk/doodles";
 import {
     CHARGEABLE_TYPES,
     isOurs,
     kitPrice,
     rupees,
 } from "../../lib/kit-pricing";
+import { nextStep } from "../../lib/kit-next";
 import { photographSpecRows, requirementSpecRows } from "../../lib/spec-format";
 import { toolsReplaced } from "../../lib/value-tools";
 import type { ExamFact } from "./exam-facts";
@@ -35,6 +36,11 @@ import type { ExamFact } from "./exam-facts";
 
 type Tone = "idle" | "done" | "check" | "retry";
 
+/**
+ * The chip at the end of a row. There is none before a file has been added:
+ * the row's own Add button already says so, and a "Not added yet" chip beside
+ * an ADD button is the same sentence twice.
+ */
 function stateOf(
     entry: KitEntry | undefined,
     requirement: RequirementSummary,
@@ -149,20 +155,24 @@ export function KitWorkspace({
                 ? [...included.filter((x) => x !== id), id]
                 : included.filter((x) => x !== id),
         );
-    const open = (id: string) => {
+    const goTo = (elementId: string) => {
+        const reduce = window.matchMedia(
+            "(prefers-reduced-motion: reduce)",
+        ).matches;
+        requestAnimationFrame(() =>
+            document.getElementById(elementId)?.scrollIntoView({
+                behavior: reduce ? "auto" : "smooth",
+                block: "start",
+            }),
+        );
+    };
+    // `take` is the difference between choosing a file and going to work on
+    // it. The row switches the panel; Add carries the candidate down to it,
+    // which is the whole reason the button exists.
+    const open = (id: string, take = false) => {
         setSelectedId(id);
-        // On a phone the panel is below the list, out of sight; take the
-        // candidate to it rather than change something they cannot see.
-        if (window.matchMedia("(max-width: 999px)").matches) {
-            const reduce = window.matchMedia(
-                "(prefers-reduced-motion: reduce)",
-            ).matches;
-            requestAnimationFrame(() =>
-                document.getElementById(`panel-${id}`)?.scrollIntoView({
-                    behavior: reduce ? "auto" : "smooth",
-                    block: "start",
-                }),
-            );
+        if (take || window.matchMedia("(max-width: 999px)").matches) {
+            goTo(`panel-${id}`);
         }
     };
 
@@ -177,8 +187,22 @@ export function KitWorkspace({
         ),
     ).length;
     const selected = requirements.find((r) => r.requirement_id === selectedId);
-    const order = [...ours, ...yours];
-    const next = order[order.findIndex((r) => r.requirement_id === selectedId) + 1];
+    const preparedIds = ours
+        .filter((r) =>
+            ["prepared", "prepared_with_findings"].includes(
+                entries[r.requirement_id]?.outcome,
+            ),
+        )
+        .map((r) => r.requirement_id);
+    const onward = nextStep({
+        kit: ours.map((r) => ({
+            requirementId: r.requirement_id,
+            name: r.requirement_name,
+        })),
+        included,
+        prepared: preparedIds,
+        current: selectedId,
+    });
 
     const everything = price.kitFiles > 0 && price.chosen === price.kitFiles;
     const priceName = everything
@@ -281,11 +305,28 @@ export function KitWorkspace({
                                                         </span>
                                                     )}
                                                 </span>
-                                                <span
-                                                    className="euk-kit-state"
-                                                    data-tone={state.tone}
-                                                >
-                                                    {state.text}
+                                                {state.tone !== "idle" && (
+                                                    <span
+                                                        className="euk-kit-state"
+                                                        data-tone={state.tone}
+                                                    >
+                                                        {state.text}
+                                                    </span>
+                                                )}
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className="euk-kit-add"
+                                                onClick={() => {
+                                                    if (!on) toggle(id, true);
+                                                    open(id, true);
+                                                }}
+                                                aria-controls={`panel-${id}`}
+                                            >
+                                                {entries[id] ? "Open" : "Add"}
+                                                <span className="sr-only">
+                                                    {" "}
+                                                    {r.requirement_name}
                                                 </span>
                                             </button>
                                         </li>
@@ -423,16 +464,41 @@ export function KitWorkspace({
                                             onWorking={setPreparing}
                                         />
                                     </fieldset>
-                                    {next && selectedId === id && (
-                                        <button
-                                            type="button"
-                                            className="euk-kit-next"
-                                            onClick={() => open(next.requirement_id)}
-                                        >
-                                            <span>Next: {next.requirement_name}</span>
-                                            <Chevron />
-                                        </button>
-                                    )}
+                                    {selectedId === id &&
+                                        onward.kind !== "none" && (
+                                            <div className="euk-kit-onward">
+                                                <p className="euk-kit-onward-say">
+                                                    {onward.kind === "review"
+                                                        ? `All ${onward.total} file${onward.total === 1 ? "" : "s"} in your kit are prepared`
+                                                        : `${onward.prepared} of ${onward.total} prepared`}
+                                                </p>
+                                                {onward.kind === "review" ? (
+                                                    <button
+                                                        type="button"
+                                                        className="primary-button euk-kit-onward-go"
+                                                        onClick={() =>
+                                                            goTo("kit-review")
+                                                        }
+                                                    >
+                                                        Review and pay{" "}
+                                                        {rupees(price.amount)}
+                                                    </button>
+                                                ) : (
+                                                    <button
+                                                        type="button"
+                                                        className="secondary-button euk-kit-onward-go"
+                                                        onClick={() =>
+                                                            open(
+                                                                onward.requirementId,
+                                                                true,
+                                                            )
+                                                        }
+                                                    >
+                                                        Next: {onward.name}
+                                                    </button>
+                                                )}
+                                            </div>
+                                        )}
                                 </div>
                             );
                         })}

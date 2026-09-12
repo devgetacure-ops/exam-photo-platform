@@ -212,7 +212,7 @@ export default async function Home() {
 
     return (
         <div className="euk">
-            <SiteHeader />
+            <SiteHeader takesOverFrom="hero-search" />
             <main id="main-content">
                 {/* ---- hero ------------------------------------------------ */}
                 <section className="euk-hero">
@@ -226,7 +226,7 @@ export default async function Home() {
                         <p className="euk-hero-sub">
                             Your photograph, signature, thumb impression, declaration and certificates. Each one made to the rules your examination published.
                         </p>
-                        <div className="euk-hero-search">
+                        <div className="euk-hero-search" id="hero-search">
                             <ExamSearch exams={exams} unavailable={unavailable} />
                         </div>
                         <p className="euk-hero-facts">

@@ -14,6 +14,13 @@
  * are deleted.
  */
 
+/* The bar stays on screen, so an anchor that lands at the very top of the
+   viewport lands underneath it. One rule here beats a scroll-margin on every
+   target, and it keeps up with the bar's real height. */
+html {
+    scroll-padding-top: 78px;
+}
+
 .euk {
     /* ground and ink */
     --paper: #faf9f6;
@@ -308,3 +315,218 @@ button:hover .euk-chevron {
 }
 
 
+
+
+/* ---- the bar that stays ---------------------------------------------- */
+
+/*
+ * Full width, not the page measure: the wordmark hard left, everything you can
+ * do hard right, and the middle left for the search to move into once the
+ * page's own has scrolled away.
+ *
+ * Sticky rather than fixed. The two look identical here, but fixed takes the
+ * bar out of flow and every page below then needs a top padding that matches
+ * its height — a number that goes stale the first time the bar changes.
+ */
+.euk-top {
+    position: sticky;
+    top: 0;
+    z-index: 60;
+    border-bottom: var(--rule) solid var(--ink);
+    background: var(--paper);
+}
+
+.euk-top-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 11px 18px;
+}
+
+@media (min-width: 768px) {
+    .euk-top-row {
+        gap: 24px;
+        padding: 12px 28px;
+    }
+}
+
+.euk-top-mark {
+    flex: none;
+}
+
+.euk-top-mid {
+    display: flex;
+    flex: 1 1 auto;
+    min-width: 0;
+    justify-content: center;
+}
+
+.euk-top-nav {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 16px;
+    font-size: 11px;
+}
+
+@media (min-width: 768px) {
+    .euk-top-nav {
+        gap: 22px;
+    }
+}
+
+.euk-top-exams {
+    border: var(--rule-thin) solid var(--ink);
+    padding: 6px 10px 5px;
+}
+
+@media (min-width: 768px) {
+    .euk-top-exams {
+        padding: 6px 13px 5px;
+    }
+}
+
+.euk-top-title {
+    padding: 7px 18px 8px;
+    border-top: var(--rule-thin) solid var(--hairline);
+    font-size: 11px;
+    color: var(--ink-55);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ---- the search in the bar ------------------------------------------- */
+
+.euk-topsearch {
+    display: none;
+    width: 100%;
+    max-width: 560px;
+}
+
+@media (min-width: 640px) {
+    .euk-topsearch {
+        display: block;
+    }
+}
+
+/* Sized to what it holds, so an examination's own name sets the width rather
+   than sitting in a field built for a placeholder. */
+.euk-topsearch-open {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    width: max-content;
+    max-width: 100%;
+    margin-inline: auto;
+    min-height: 38px;
+    padding: 6px 10px 6px 12px;
+    border: var(--rule-thin) solid var(--ink);
+    background: var(--paper-2);
+    color: var(--ink-55);
+    font-size: 14px;
+    text-align: left;
+    cursor: pointer;
+    transition:
+        opacity 240ms ease,
+        transform 240ms cubic-bezier(0.2, 0.7, 0.1, 1),
+        box-shadow 140ms ease,
+        border-color 140ms ease;
+}
+
+.euk-topsearch-open svg {
+    width: 17px;
+    height: 17px;
+    flex: none;
+    color: var(--ink);
+}
+
+.euk-topsearch-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.euk-topsearch-key {
+    flex: none;
+    border: 1px solid var(--hairline);
+    padding: 1px 6px;
+    font-family: inherit;
+    font-size: 11px;
+    color: var(--ink-40);
+}
+
+@media (max-width: 899px) {
+    .euk-topsearch-key {
+        display: none;
+    }
+}
+
+.euk-topsearch-open:hover {
+    border-color: var(--signal-deep);
+    color: var(--ink);
+    box-shadow: 4px 4px 0 var(--signal);
+    transform: translateY(-1px);
+}
+
+.euk-topsearch-open:active {
+    transform: translateY(1px);
+    box-shadow: 2px 2px 0 var(--signal);
+}
+
+/* Before the page's own search has gone, this one is not there — and not
+   reachable by keyboard either, which `inert` handles in the markup. */
+.euk-topsearch[data-shown="false"] .euk-topsearch-open {
+    opacity: 0;
+    transform: translateY(-10px);
+    pointer-events: none;
+}
+
+.euk-topsearch-panel {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    max-height: calc(100dvh - 100%);
+    overflow-y: auto;
+    padding: 20px 18px 24px;
+    border-bottom: var(--rule) solid var(--ink);
+    background: var(--paper);
+    box-shadow: 0 10px 0 -4px var(--hairline);
+    animation: euk-topsearch-in 200ms cubic-bezier(0.2, 0.7, 0.1, 1);
+}
+
+@media (min-width: 768px) {
+    .euk-topsearch-panel {
+        padding: 24px 28px 28px;
+    }
+}
+
+.euk-topsearch-panel-inner {
+    max-width: 760px;
+}
+
+@keyframes euk-topsearch-in {
+    from {
+        opacity: 0;
+        transform: translateY(-12px);
+    }
+}
+
+.euk .euk-topsearch-wait {
+    padding: 18px 0;
+    font-size: 15px;
+    color: var(--ink-55);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .euk-topsearch-open,
+    .euk-topsearch-panel {
+        transition: none;
+        animation: none;
+    }
+    .euk-topsearch-open:hover,
+    .euk-topsearch-open:active {
+        transform: none;
+    }
+}

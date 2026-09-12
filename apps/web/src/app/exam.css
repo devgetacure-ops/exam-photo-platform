@@ -314,7 +314,7 @@
 
 .euk-kit-file {
     display: grid;
-    grid-template-columns: 46px minmax(0, 1fr);
+    grid-template-columns: 46px minmax(0, 1fr) auto;
     align-items: stretch;
     border-bottom: 2px solid var(--hairline);
     transition: background-color 160ms ease;
@@ -353,6 +353,9 @@
 }
 
 @media (max-width: 479px) {
+    .euk-kit-file {
+        grid-template-columns: 46px minmax(0, 1fr);
+    }
     .euk-kit-open {
         grid-template-columns: 32px minmax(0, 1fr);
         row-gap: 8px;
@@ -360,6 +363,57 @@
     .euk-kit-state {
         grid-column: 2;
         justify-self: start;
+    }
+    .euk-kit-add {
+        grid-column: 2;
+        justify-self: start;
+        margin: 0 0 16px;
+    }
+}
+
+/* Add, on the row itself.
+ *
+ * Clicking a row swapped the panel far below the fold, so on a laptop the
+ * only sign anything had happened was off screen. This button says what the
+ * row is for and carries the candidate down to it — and if the file had been
+ * unticked, ticking it is plainly part of adding it. */
+.euk-kit-add {
+    align-self: center;
+    margin-right: 14px;
+    padding: 7px 14px 6px;
+    border: var(--rule-thin) solid var(--ink);
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+        transform 120ms cubic-bezier(0.2, 0, 0.1, 1),
+        background-color 120ms ease,
+        color 120ms ease;
+}
+
+.euk-kit-add:hover {
+    background: var(--signal);
+    border-color: var(--signal);
+    color: var(--signal-ink);
+    transform: translateY(-1px);
+}
+
+.euk-kit-add:active {
+    transform: translateY(1px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .euk-kit-add {
+        transition: none;
+    }
+    .euk-kit-add:hover,
+    .euk-kit-add:active {
+        transform: none;
     }
 }
 
@@ -658,18 +712,37 @@
     scroll-margin-top: 16px;
 }
 
-.euk-kit-next {
+/* What to do when this one is done.
+ *
+ * The old version was a chevron and the name of whatever row came next, shown
+ * always — including for files the candidate had unticked, and for the row
+ * they had just finished. This says where they are, offers only a file that
+ * is in the kit and still waiting, and turns into the one thing left to do
+ * when none are. */
+.euk-kit-onward {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 12px;
-    margin: 22px 0 0 auto;
-    padding: 8px 0;
-    border: 0;
-    background: none;
-    color: var(--ink);
-    font-size: 17px;
+    justify-content: space-between;
+    gap: 14px 20px;
+    margin-top: 30px;
+    padding-top: 18px;
+    border-top: var(--rule) solid var(--ink);
+}
+
+.euk .euk-kit-onward-say {
+    margin: 0;
+    max-width: none;
+    font-size: 14px;
     font-weight: 600;
-    cursor: pointer;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--ink-55);
+    font-variant-numeric: tabular-nums;
+}
+
+.euk-kit-onward-go {
+    min-height: 46px;
 }
 
 
@@ -678,10 +751,10 @@
     display: flex;
     flex-wrap: wrap;
     gap: 8px 22px;
-    /* It had no space beneath it at all, so it read as a caption stuck to the
-       review block rather than a row of its own. */
-    margin: 40px 0 30px;
-    padding-top: 18px;
+    /* It read as a caption stuck to the block above it. The rule needs air on
+       both sides of it before it reads as a row of its own. */
+    margin: 72px 0 44px;
+    padding-top: 26px;
     border-top: 2px solid var(--hairline);
     font-size: 14px;
 }

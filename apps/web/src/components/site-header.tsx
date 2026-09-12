@@ -1,33 +1,55 @@
 import Link from "next/link";
 import { ThemeToggle } from "./theme-toggle";
 import { Wordmark } from "./euk/wordmark";
+import { HeaderSearch } from "./header-search";
 
 /**
- * One header for every route. On an exam page it also carries that
- * examination's name and a way back, because a candidate deep in a kit needs
- * to know which form they are filling before they need anything else.
+ * One header for every route, and it stays.
+ *
+ * It runs the full width of the screen rather than the page's measure: the
+ * wordmark sits hard left, everything you can do sits hard right, and the
+ * space between them is not decoration — it is where the search goes once the
+ * page's own search has scrolled away. On an examination page there is no
+ * search on the page at all, so the bar carries it from the start, wearing
+ * that examination's name.
+ *
+ * It is sticky rather than absolutely fixed: same result, and the page below
+ * needs no compensating padding that could fall out of step with the bar's
+ * real height.
  */
-export function SiteHeader({ mobileTitle }: { mobileTitle?: string }) {
+export function SiteHeader({
+    /** An examination page: its name, shown in the bar and in the search. */
+    mobileTitle,
+    examName,
+    /** Id of the page's own search, which this one takes over from. */
+    takesOverFrom,
+}: {
+    mobileTitle?: string;
+    examName?: string;
+    takesOverFrom?: string;
+}) {
+    const onExam = Boolean(mobileTitle);
+
     return (
-        <header className="euk border-b-[3px] border-[var(--ink)] bg-[var(--paper)]">
-            <div className="euk-wrap flex items-center justify-between gap-4 px-5 py-4 md:px-12">
-                <div className="flex min-w-0 items-center gap-4">
-                    <Link href="/" aria-label="examuploadkit home">
-                        <Wordmark />
-                    </Link>
-                    {mobileTitle && (
-                        <span className="euk-label hidden min-w-0 truncate border-l-2 border-[var(--hairline)] pl-4 text-[10px] text-[var(--ink-55)] sm:inline">
-                            {mobileTitle}
-                        </span>
-                    )}
+        <header className="euk euk-top">
+            <div className="euk-top-row">
+                <Link
+                    href="/"
+                    aria-label="examuploadkit home"
+                    className="euk-top-mark"
+                >
+                    <Wordmark />
+                </Link>
+
+                <div className="euk-top-mid">
+                    <HeaderSearch
+                        examName={examName}
+                        takesOverFrom={takesOverFrom}
+                    />
                 </div>
 
-                <nav className="euk-label flex items-center gap-4 text-[11px] md:gap-6">
-                    {mobileTitle ? (
-                        <Link href="/exams" className="hidden sm:inline">
-                            Change exam
-                        </Link>
-                    ) : (
+                <nav className="euk-label euk-top-nav">
+                    {!onExam && (
                         <>
                             <Link href="/#how" className="hidden sm:inline">
                                 How it works
@@ -35,19 +57,12 @@ export function SiteHeader({ mobileTitle }: { mobileTitle?: string }) {
                             <Link href="/pdf" className="hidden md:inline">
                                 PDF tools
                             </Link>
-                            <Link href="/#pricing" className="hidden sm:inline">
+                            <Link href="/#pricing" className="hidden lg:inline">
                                 Pricing
                             </Link>
                         </>
                     )}
-                    {/* The lockup is 250px and cannot shrink; at 390 the chip
-                        and the toggle together pushed past the edge and drew
-                        over the last two cells. The directory is reachable from
-                        the exam title row and the footer. */}
-                    <Link
-                        href="/exams"
-                        className="hidden border-2 border-[var(--ink)] px-2 py-1.5 sm:inline md:px-3"
-                    >
+                    <Link href="/exams" className="euk-top-exams">
                         Exams
                     </Link>
                     <ThemeToggle />
@@ -55,7 +70,7 @@ export function SiteHeader({ mobileTitle }: { mobileTitle?: string }) {
             </div>
 
             {mobileTitle && (
-                <p className="euk-wrap euk-label truncate border-t-2 border-[var(--hairline)] px-5 py-2 text-[11px] text-[var(--ink-55)] sm:hidden">
+                <p className="euk-label euk-top-title sm:hidden">
                     {mobileTitle}
                 </p>
             )}

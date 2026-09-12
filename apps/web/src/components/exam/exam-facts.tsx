@@ -12,8 +12,13 @@ export interface ExamFact {
  * its name.
  *
  * Every line is the source's wording, never paraphrased, with the source one
- * tap away. It does not play by itself unless asked, because a sentence that
- * changes while it is being read is a sentence nobody finishes.
+ * tap away. Nothing here restates a measurement the page already prints — the
+ * filtering happens where the facts are read.
+ *
+ * It moves on by itself, which is what was asked for, and it stops the moment
+ * it is being read: hovering it, tabbing into it, a reduced-motion preference,
+ * or the pause control all hold it where it is. Auto-advancing text without a
+ * way to stop it fails WCAG 2.2.2, so the control is not optional.
  */
 const KIND: Record<string, string> = {
     rejection: "What gets applications rejected",
@@ -41,14 +46,15 @@ export function ExamFacts({
     examName: string;
 }) {
     const [index, setIndex] = useState(0);
-    const [playing, setPlaying] = useState(false);
+    const [playing, setPlaying] = useState(true);
     const [hovering, setHovering] = useState(false);
     useEffect(() => {
         if (
             !playing ||
             hovering ||
             facts.length < 2 ||
-            matchMedia("(prefers-reduced-motion: reduce)").matches
+            (typeof matchMedia === "function" &&
+                matchMedia("(prefers-reduced-motion: reduce)").matches)
         )
             return;
         const timer = setInterval(

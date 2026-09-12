@@ -45,7 +45,7 @@ export default async function ExamsPage() {
 
     return (
         <>
-            <SiteHeader />
+            <SiteHeader takesOverFrom="directory-search" />
             <main className="euk euk-directory" id="main-content">
                 <section className="euk-directory-top">
                     <div className="euk-wrap">
@@ -58,7 +58,7 @@ export default async function ExamsPage() {
                             {exams.length} examinations, A to Z. Each one opens on
                             the files we prepare and the steps you take yourself.
                         </p>
-                        <div className="euk-directory-search">
+                        <div className="euk-directory-search" id="directory-search">
                             <ExamSearch
                                 exams={exams}
                                 unavailable={unavailable}
