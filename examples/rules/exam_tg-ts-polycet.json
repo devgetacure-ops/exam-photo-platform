@@ -12,7 +12,11 @@
     "application_stage": "application",
     "jurisdiction": "Telangana",
     "category": "state_entrance",
-    "aliases": []
+    "aliases": [
+      "TS POLYCET",
+      "TG POLYCET",
+      "Telangana Polytechnic"
+    ]
   },
   "source_evidence": [
     {

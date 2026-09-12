@@ -12,7 +12,10 @@
     "application_stage": "application",
     "jurisdiction": "Uttar Pradesh",
     "category": "state_psc",
-    "aliases": []
+    "aliases": [
+      "UPPSC",
+      "UPPSC OTR"
+    ]
   },
   "source_evidence": [
     {

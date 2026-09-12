@@ -12,7 +12,11 @@
     "application_stage": "application",
     "jurisdiction": "Telangana",
     "category": "teacher_recruitment",
-    "aliases": []
+    "aliases": [
+      "TG DSC",
+      "TS DSC",
+      "Telangana DSC"
+    ]
   },
   "source_evidence": [
     {

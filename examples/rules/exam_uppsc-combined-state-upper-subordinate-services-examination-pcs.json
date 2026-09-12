@@ -12,7 +12,10 @@
     "application_stage": "application",
     "jurisdiction": "Uttar Pradesh",
     "category": "state_psc_recruitment",
-    "aliases": []
+    "aliases": [
+      "UPPSC PCS",
+      "UP PCS"
+    ]
   },
   "source_evidence": [
     {

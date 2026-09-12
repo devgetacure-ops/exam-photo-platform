@@ -12,7 +12,10 @@
     "application_stage": "application",
     "jurisdiction": "Rajasthan",
     "category": "state_psc",
-    "aliases": []
+    "aliases": [
+      "RPSC",
+      "Rajasthan PSC"
+    ]
   },
   "source_evidence": [
     {

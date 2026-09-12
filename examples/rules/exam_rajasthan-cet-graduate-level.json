@@ -12,7 +12,10 @@
     "application_stage": "application",
     "jurisdiction": "Rajasthan",
     "category": "state_common_eligibility",
-    "aliases": []
+    "aliases": [
+      "Rajasthan CET Graduate",
+      "RSSB CET Graduate Level"
+    ]
   },
   "source_evidence": [
     {

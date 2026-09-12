@@ -9,6 +9,10 @@
     "conducting_body": "National Testing Agency / CSIR",
     "examination_year": 2025,
     "application_cycle": "June 2025 baseline / current family",
+    "aliases": [
+      "CSIR NET",
+      "CSIR UGC NET"
+    ],
     "application_stage": "application",
     "jurisdiction": "India",
     "category": "teaching_research_eligibility"

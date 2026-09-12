@@ -12,7 +12,11 @@
     "application_stage": "application",
     "jurisdiction": "Telangana",
     "category": "state_psc_recruitment",
-    "aliases": []
+    "aliases": [
+      "TGPSC Group 1",
+      "TSPSC Group 1",
+      "Telangana Group I"
+    ]
   },
   "source_evidence": [
     {

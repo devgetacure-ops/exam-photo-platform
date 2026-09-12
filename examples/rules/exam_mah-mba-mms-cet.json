@@ -12,7 +12,11 @@
     "application_stage": "application",
     "jurisdiction": "Maharashtra",
     "category": "state_entrance",
-    "aliases": []
+    "aliases": [
+      "MAH MBA CET",
+      "MBA CET",
+      "MAH CET MBA"
+    ]
   },
   "source_evidence": [
     {

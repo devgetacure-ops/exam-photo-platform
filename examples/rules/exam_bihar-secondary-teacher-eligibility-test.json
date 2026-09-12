@@ -12,7 +12,11 @@
     "application_stage": "application",
     "jurisdiction": "Bihar",
     "category": "teacher_eligibility",
-    "aliases": []
+    "aliases": [
+      "Bihar STET",
+      "BSEB STET",
+      "STET Bihar"
+    ]
   },
   "source_evidence": [
     {

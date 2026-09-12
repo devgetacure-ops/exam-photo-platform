@@ -12,7 +12,11 @@
     "application_stage": "application",
     "jurisdiction": "Chhattisgarh",
     "category": "state_entrance",
-    "aliases": []
+    "aliases": [
+      "CG Pre BEd",
+      "Vyapam Pre BEd",
+      "CG Vyapam BEd"
+    ]
   },
   "source_evidence": [
     {

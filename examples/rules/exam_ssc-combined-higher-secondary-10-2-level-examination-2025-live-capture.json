@@ -12,7 +12,11 @@
     "application_stage": "application",
     "jurisdiction": "India",
     "category": "central_recruitment",
-    "aliases": []
+    "aliases": [
+      "SSC CHSL",
+      "CHSL",
+      "SSC 10+2"
+    ]
   },
   "source_evidence": [
     {

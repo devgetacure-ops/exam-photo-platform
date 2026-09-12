@@ -12,7 +12,11 @@
     "application_stage": "application",
     "jurisdiction": "Madhya Pradesh",
     "category": "police_recruitment",
-    "aliases": []
+    "aliases": [
+      "MP Police",
+      "MP Police Constable",
+      "MPESB Constable"
+    ]
   },
   "source_evidence": [
     {

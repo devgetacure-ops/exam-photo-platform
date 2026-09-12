@@ -12,7 +12,11 @@
     "application_stage": "application",
     "jurisdiction": "Rajasthan",
     "category": "teacher_education_entrance",
-    "aliases": []
+    "aliases": [
+      "BSTC",
+      "Rajasthan BSTC",
+      "Rajasthan Pre DElEd"
+    ]
   },
   "source_evidence": [
     {

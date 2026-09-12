@@ -12,7 +12,11 @@
     "application_stage": "application",
     "jurisdiction": "India",
     "category": "railway_recruitment",
-    "aliases": []
+    "aliases": [
+      "RRB JE",
+      "RRB Junior Engineer",
+      "Railway Junior Engineer"
+    ]
   },
   "source_evidence": [
     {

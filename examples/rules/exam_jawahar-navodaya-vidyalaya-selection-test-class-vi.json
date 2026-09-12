@@ -12,7 +12,11 @@
     "application_stage": "application",
     "jurisdiction": "India",
     "category": "school_admission_entrance",
-    "aliases": []
+    "aliases": [
+      "JNVST",
+      "Navodaya Class 6",
+      "Navodaya Vidyalaya Entrance"
+    ]
   },
   "source_evidence": [
     {

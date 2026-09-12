@@ -12,7 +12,12 @@
     "application_stage": "application",
     "jurisdiction": "Uttar Pradesh",
     "category": "police_recruitment",
-    "aliases": []
+    "aliases": [
+      "UP Police",
+      "UP Police Constable",
+      "UP Constable",
+      "UPPRPB"
+    ]
   },
   "source_evidence": [
     {

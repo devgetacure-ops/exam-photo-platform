@@ -12,7 +12,10 @@
     "application_stage": "application",
     "jurisdiction": "Andhra Pradesh",
     "category": "state_entrance",
-    "aliases": []
+    "aliases": [
+      "POLYCET",
+      "AP Polytechnic"
+    ]
   },
   "source_evidence": [
     {

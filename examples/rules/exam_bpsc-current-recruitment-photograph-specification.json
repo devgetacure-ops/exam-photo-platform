@@ -12,7 +12,10 @@
     "application_stage": "application",
     "jurisdiction": "Bihar",
     "category": "state_psc",
-    "aliases": []
+    "aliases": [
+      "BPSC",
+      "Bihar PSC"
+    ]
   },
   "source_evidence": [
     {

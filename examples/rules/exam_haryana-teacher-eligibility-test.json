@@ -12,7 +12,10 @@
     "application_stage": "application",
     "jurisdiction": "Haryana",
     "category": "teacher_eligibility",
-    "aliases": []
+    "aliases": [
+      "HTET",
+      "Haryana TET"
+    ]
   },
   "source_evidence": [
     {

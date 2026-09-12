@@ -12,7 +12,10 @@
     "application_stage": "application",
     "jurisdiction": "Uttar Pradesh",
     "category": "state_recruitment_common_eligibility",
-    "aliases": []
+    "aliases": [
+      "UPSSSC PET",
+      "UP PET"
+    ]
   },
   "source_evidence": [
     {

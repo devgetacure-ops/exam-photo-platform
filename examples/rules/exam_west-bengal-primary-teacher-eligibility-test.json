@@ -12,7 +12,10 @@
     "application_stage": "application",
     "jurisdiction": "West Bengal",
     "category": "teacher_eligibility",
-    "aliases": []
+    "aliases": [
+      "WB TET",
+      "WB Primary TET"
+    ]
   },
   "source_evidence": [
     {

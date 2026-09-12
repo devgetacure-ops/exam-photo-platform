@@ -9,6 +9,11 @@
     "conducting_body": "Central Board of Secondary Education",
     "examination_year": 2025,
     "application_cycle": "2025-26",
+    "aliases": [
+      "CBSE Registration",
+      "CBSE Class 9 Registration",
+      "CBSE Class 11 Registration"
+    ],
     "application_stage": "application",
     "jurisdiction": "India",
     "category": "board_registration"

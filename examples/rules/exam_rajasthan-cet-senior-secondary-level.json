@@ -12,7 +12,11 @@
     "application_stage": "application",
     "jurisdiction": "Rajasthan",
     "category": "state_common_eligibility",
-    "aliases": []
+    "aliases": [
+      "Rajasthan CET",
+      "Rajasthan CET 12th Level",
+      "RSSB CET Senior Secondary"
+    ]
   },
   "source_evidence": [
     {

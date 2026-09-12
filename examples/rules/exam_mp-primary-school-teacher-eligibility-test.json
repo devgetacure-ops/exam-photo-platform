@@ -12,7 +12,11 @@
     "application_stage": "application",
     "jurisdiction": "Madhya Pradesh",
     "category": "teacher_eligibility",
-    "aliases": []
+    "aliases": [
+      "MP TET",
+      "MPTET Primary",
+      "MP Varg 3"
+    ]
   },
   "source_evidence": [
     {

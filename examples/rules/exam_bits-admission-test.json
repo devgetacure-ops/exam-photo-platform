@@ -12,7 +12,10 @@
     "application_stage": "application",
     "jurisdiction": "India",
     "category": "private_entrance",
-    "aliases": []
+    "aliases": [
+      "BITSAT",
+      "BITS Pilani"
+    ]
   },
   "source_evidence": [
     {

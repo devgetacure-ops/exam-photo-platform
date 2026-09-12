@@ -12,7 +12,10 @@
     "application_stage": "application",
     "jurisdiction": "India",
     "category": "school_admission_entrance",
-    "aliases": []
+    "aliases": [
+      "AISSEE",
+      "Sainik School Entrance"
+    ]
   },
   "source_evidence": [
     {

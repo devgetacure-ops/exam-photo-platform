@@ -12,7 +12,11 @@
     "application_stage": "application",
     "jurisdiction": "Telangana",
     "category": "teacher_eligibility",
-    "aliases": []
+    "aliases": [
+      "TS TET",
+      "Telangana TET",
+      "TG TET"
+    ]
   },
   "source_evidence": [
     {

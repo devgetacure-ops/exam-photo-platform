@@ -9,6 +9,10 @@
     "conducting_body": "Maharashtra Public Service Commission",
     "examination_year": 2026,
     "application_cycle": "current portal guide",
+    "aliases": [
+      "MPSC",
+      "Maharashtra PSC"
+    ],
     "application_stage": "application",
     "jurisdiction": "Maharashtra",
     "category": "state_psc"

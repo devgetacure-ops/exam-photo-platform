@@ -12,7 +12,10 @@
     "application_stage": "application",
     "jurisdiction": "Jharkhand",
     "category": "state_recruitment",
-    "aliases": []
+    "aliases": [
+      "JSSC CGL",
+      "Jharkhand CGL"
+    ]
   },
   "source_evidence": [
     {

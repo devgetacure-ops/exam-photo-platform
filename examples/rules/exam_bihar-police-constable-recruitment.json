@@ -12,7 +12,11 @@
     "application_stage": "application",
     "jurisdiction": "Bihar",
     "category": "police_recruitment",
-    "aliases": []
+    "aliases": [
+      "Bihar Police",
+      "Bihar Police Constable",
+      "CSBC Bihar Police"
+    ]
   },
   "source_evidence": [
     {

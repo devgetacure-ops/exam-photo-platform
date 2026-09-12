@@ -12,7 +12,10 @@
     "application_stage": "application",
     "jurisdiction": "Haryana",
     "category": "state_common_eligibility",
-    "aliases": []
+    "aliases": [
+      "Haryana CET Group D",
+      "HSSC Group D"
+    ]
   },
   "source_evidence": [
     {

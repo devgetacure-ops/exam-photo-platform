@@ -12,7 +12,10 @@
     "application_stage": "application",
     "jurisdiction": "Karnataka",
     "category": "teacher_eligibility",
-    "aliases": []
+    "aliases": [
+      "KARTET",
+      "Karnataka TET"
+    ]
   },
   "source_evidence": [
     {

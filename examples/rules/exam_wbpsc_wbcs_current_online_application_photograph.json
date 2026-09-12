@@ -9,6 +9,11 @@
     "conducting_body": "West Bengal Public Service Commission",
     "examination_year": 2026,
     "application_cycle": "current",
+    "aliases": [
+      "WBPSC",
+      "WBCS",
+      "West Bengal PSC"
+    ],
     "application_stage": "application",
     "jurisdiction": "West Bengal",
     "category": "state_psc"

@@ -12,7 +12,10 @@
     "application_stage": "application",
     "jurisdiction": "Uttar Pradesh",
     "category": "state_entrance",
-    "aliases": []
+    "aliases": [
+      "JEECUP",
+      "UP Polytechnic"
+    ]
   },
   "source_evidence": [
     {

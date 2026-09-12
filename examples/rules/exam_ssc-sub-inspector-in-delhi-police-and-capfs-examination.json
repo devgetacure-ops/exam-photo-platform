@@ -12,7 +12,11 @@
     "application_stage": "application",
     "jurisdiction": "India",
     "category": "central_recruitment",
-    "aliases": []
+    "aliases": [
+      "SSC CPO",
+      "SSC SI",
+      "Delhi Police SI"
+    ]
   },
   "source_evidence": [
     {

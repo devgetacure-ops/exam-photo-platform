@@ -12,7 +12,10 @@
     "application_stage": "application",
     "jurisdiction": "Bihar",
     "category": "teacher_education_entrance",
-    "aliases": []
+    "aliases": [
+      "Bihar DElEd",
+      "BSEB DElEd"
+    ]
   },
   "source_evidence": [
     {

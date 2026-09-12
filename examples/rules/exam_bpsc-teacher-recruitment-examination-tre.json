@@ -12,7 +12,11 @@
     "application_stage": "application",
     "jurisdiction": "Bihar",
     "category": "teacher_recruitment",
-    "aliases": []
+    "aliases": [
+      "BPSC TRE",
+      "Bihar Teacher Recruitment",
+      "BPSC Teacher"
+    ]
   },
   "source_evidence": [
     {

@@ -12,7 +12,10 @@
     "application_stage": "application",
     "jurisdiction": "Odisha",
     "category": "state_entrance",
-    "aliases": []
+    "aliases": [
+      "OJEE",
+      "Odisha JEE"
+    ]
   },
   "source_evidence": [
     {

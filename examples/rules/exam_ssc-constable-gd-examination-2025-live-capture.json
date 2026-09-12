@@ -12,7 +12,11 @@
     "application_stage": "application",
     "jurisdiction": "India",
     "category": "central_recruitment",
-    "aliases": []
+    "aliases": [
+      "SSC GD",
+      "SSC Constable GD",
+      "GD Constable"
+    ]
   },
   "source_evidence": [
     {

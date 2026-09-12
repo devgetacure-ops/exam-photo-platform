@@ -12,7 +12,10 @@
     "application_stage": "application",
     "jurisdiction": "Rajasthan",
     "category": "teacher_eligibility",
-    "aliases": []
+    "aliases": [
+      "REET",
+      "Rajasthan TET"
+    ]
   },
   "source_evidence": [
     {

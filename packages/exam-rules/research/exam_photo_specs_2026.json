@@ -2,7 +2,12 @@
   {
     "exam_name": "UPSC Civil Services Examination 2026",
     "aliases": [
-      "CSE 2026"
+      "CSE 2026",
+      "UPSC CSE",
+      "CSE",
+      "IAS",
+      "Civil Services Examination",
+      "UPSC Prelims"
     ],
     "conducting_body": "Union Public Service Commission",
     "examination_year": 2026,
@@ -777,7 +782,11 @@
   {
     "exam_name": "UPSC NDA & NA Examination (II) 2026",
     "aliases": [
-      "NDA II 2026"
+      "NDA II 2026",
+      "NDA",
+      "UPSC NDA",
+      "NDA NA",
+      "National Defence Academy"
     ],
     "conducting_body": "Union Public Service Commission",
     "examination_year": 2026,
@@ -1552,7 +1561,10 @@
   {
     "exam_name": "UPSC Combined Defence Services Examination (II) 2026",
     "aliases": [
-      "CDS II 2026"
+      "CDS II 2026",
+      "CDS",
+      "UPSC CDS",
+      "Combined Defence Services"
     ],
     "conducting_body": "Union Public Service Commission",
     "examination_year": 2026,
@@ -2327,7 +2339,11 @@
   {
     "exam_name": "UPSC CAPF (Assistant Commandants) Examination 2026",
     "aliases": [
-      "CAPF AC 2026"
+      "CAPF AC 2026",
+      "CAPF",
+      "UPSC CAPF",
+      "CAPF AC",
+      "Central Armed Police Forces"
     ],
     "conducting_body": "Union Public Service Commission",
     "examination_year": 2026,
@@ -3101,7 +3117,10 @@
   },
   {
     "exam_name": "SSC Combined Graduate Level Examination 2026",
-    "aliases": [],
+    "aliases": [
+      "SSC CGL",
+      "CGL"
+    ],
     "conducting_body": "Staff Selection Commission",
     "examination_year": 2026,
     "application_cycle": "2026",
@@ -3869,7 +3888,11 @@
   },
   {
     "exam_name": "SSC Combined Higher Secondary (10+2) Level Examination 2025",
-    "aliases": [],
+    "aliases": [
+      "SSC CHSL",
+      "CHSL",
+      "SSC 10+2"
+    ],
     "conducting_body": "Staff Selection Commission",
     "examination_year": 2025,
     "application_cycle": "2025",
@@ -4637,7 +4660,11 @@
   },
   {
     "exam_name": "SSC Multi-Tasking Staff and Havaldar Examination 2025",
-    "aliases": [],
+    "aliases": [
+      "SSC MTS",
+      "MTS",
+      "SSC Havaldar"
+    ],
     "conducting_body": "Staff Selection Commission",
     "examination_year": 2025,
     "application_cycle": "2025",
@@ -5405,7 +5432,11 @@
   },
   {
     "exam_name": "SSC Constable (GD) Examination 2025",
-    "aliases": [],
+    "aliases": [
+      "SSC GD",
+      "SSC Constable GD",
+      "GD Constable"
+    ],
     "conducting_body": "Staff Selection Commission",
     "examination_year": 2025,
     "application_cycle": "2025",
@@ -6173,7 +6204,11 @@
   },
   {
     "exam_name": "IBPS CRP PO/MT-XVI",
-    "aliases": [],
+    "aliases": [
+      "IBPS PO",
+      "IBPS PO MT",
+      "IBPS CRP PO"
+    ],
     "conducting_body": "Institute of Banking Personnel Selection",
     "examination_year": 2026,
     "application_cycle": "2026-27",
@@ -6947,7 +6982,11 @@
   },
   {
     "exam_name": "IBPS CRP Customer Service Associates-XV",
-    "aliases": [],
+    "aliases": [
+      "IBPS Clerk",
+      "IBPS CSA",
+      "IBPS Clerical"
+    ],
     "conducting_body": "Institute of Banking Personnel Selection",
     "examination_year": 2025,
     "application_cycle": "2025-26",
@@ -7721,7 +7760,10 @@
   },
   {
     "exam_name": "IBPS CRP Specialist Officers-XVI",
-    "aliases": [],
+    "aliases": [
+      "IBPS SO",
+      "IBPS Specialist Officer"
+    ],
     "conducting_body": "Institute of Banking Personnel Selection",
     "examination_year": 2026,
     "application_cycle": "2026-27",
@@ -8495,7 +8537,10 @@
   },
   {
     "exam_name": "IBPS CRP Regional Rural Banks-XIV",
-    "aliases": [],
+    "aliases": [
+      "IBPS RRB",
+      "IBPS Regional Rural Banks"
+    ],
     "conducting_body": "Institute of Banking Personnel Selection",
     "examination_year": 2025,
     "application_cycle": "2025-26",
@@ -9269,7 +9314,10 @@
   },
   {
     "exam_name": "SBI Probationary Officers 2025",
-    "aliases": [],
+    "aliases": [
+      "SBI PO",
+      "SBI Probationary Officer"
+    ],
     "conducting_body": "State Bank of India",
     "examination_year": 2025,
     "application_cycle": "2025",
@@ -10043,7 +10091,11 @@
   },
   {
     "exam_name": "SBI Junior Associates 2025",
-    "aliases": [],
+    "aliases": [
+      "SBI Clerk",
+      "SBI Junior Associate",
+      "SBI JA"
+    ],
     "conducting_body": "State Bank of India",
     "examination_year": 2025,
     "application_cycle": "2025",
@@ -10817,7 +10869,10 @@
   },
   {
     "exam_name": "LIC Assistant Administrative Officers (Generalist) 2025",
-    "aliases": [],
+    "aliases": [
+      "LIC AAO",
+      "LIC Assistant Administrative Officer"
+    ],
     "conducting_body": "Life Insurance Corporation of India",
     "examination_year": 2025,
     "application_cycle": "2025",
@@ -11591,7 +11646,9 @@
   },
   {
     "exam_name": "RBI Assistant - Panel Year 2025",
-    "aliases": [],
+    "aliases": [
+      "RBI Assistant"
+    ],
     "conducting_body": "Reserve Bank of India",
     "examination_year": 2025,
     "application_cycle": "2025",
@@ -12365,7 +12422,10 @@
   },
   {
     "exam_name": "RBI Officers in Grade B 2026 - prior-cycle official fallback",
-    "aliases": [],
+    "aliases": [
+      "RBI Grade B",
+      "RBI Officer Grade B"
+    ],
     "conducting_body": "Reserve Bank of India",
     "examination_year": 2026,
     "application_cycle": "2026",
@@ -13140,7 +13200,10 @@
   },
   {
     "exam_name": "NABARD Grade A 2025",
-    "aliases": [],
+    "aliases": [
+      "NABARD Grade A",
+      "NABARD Assistant Manager"
+    ],
     "conducting_body": "National Bank for Agriculture and Rural Development",
     "examination_year": 2025,
     "application_cycle": "2025",
@@ -13914,7 +13977,10 @@
   },
   {
     "exam_name": "NIACL Administrative Officers 2025",
-    "aliases": [],
+    "aliases": [
+      "NIACL AO",
+      "New India Assurance AO"
+    ],
     "conducting_body": "The New India Assurance Company Limited",
     "examination_year": 2025,
     "application_cycle": "2025",
@@ -14688,7 +14754,9 @@
   },
   {
     "exam_name": "GIC Assistant Manager 2024-25",
-    "aliases": [],
+    "aliases": [
+      "GIC AM"
+    ],
     "conducting_body": "General Insurance Corporation of India",
     "examination_year": 2024,
     "application_cycle": "2024-25",
@@ -15453,7 +15521,9 @@
   },
   {
     "exam_name": "RBI Assistant - Panel Year 2025 (live photograph)",
-    "aliases": [],
+    "aliases": [
+      "RBI Assistant"
+    ],
     "conducting_body": "Reserve Bank of India",
     "examination_year": 2025,
     "application_cycle": "2025",
@@ -16220,7 +16290,10 @@
   {
     "exam_name": "JEE (Main) 2026",
     "aliases": [
-      "JEE Main"
+      "JEE Main",
+      "JEE",
+      "JEE Mains",
+      "Joint Entrance Examination Main"
     ],
     "conducting_body": "National Testing Agency",
     "examination_year": 2026,
@@ -16991,7 +17064,9 @@
   {
     "exam_name": "NEET (UG) 2026",
     "aliases": [
-      "NEET UG"
+      "NEET UG",
+      "NEET",
+      "National Eligibility cum Entrance Test"
     ],
     "conducting_body": "National Testing Agency",
     "examination_year": 2026,
@@ -17766,7 +17841,9 @@
   {
     "exam_name": "CUET (UG) 2026",
     "aliases": [
-      "CUET UG"
+      "CUET UG",
+      "CUET",
+      "Common University Entrance Test"
     ],
     "conducting_body": "National Testing Agency",
     "examination_year": 2026,
@@ -18537,7 +18614,8 @@
   {
     "exam_name": "CUET (PG) 2026",
     "aliases": [
-      "CUET PG"
+      "CUET PG",
+      "Common University Entrance Test PG"
     ],
     "conducting_body": "National Testing Agency",
     "examination_year": 2026,
@@ -19308,7 +19386,9 @@
   {
     "exam_name": "UGC-NET June 2026",
     "aliases": [
-      "UGC NET"
+      "UGC NET",
+      "NET",
+      "National Eligibility Test"
     ],
     "conducting_body": "National Testing Agency",
     "examination_year": 2026,
@@ -20083,7 +20163,9 @@
   {
     "exam_name": "JEE (Advanced) 2026",
     "aliases": [
-      "JEE Advanced"
+      "JEE Advanced",
+      "JEE Adv",
+      "IIT JEE"
     ],
     "conducting_body": "Joint Admission Board / IIT Roorkee",
     "examination_year": 2026,
@@ -20842,7 +20924,8 @@
   {
     "exam_name": "GATE 2026",
     "aliases": [
-      "Graduate Aptitude Test in Engineering"
+      "Graduate Aptitude Test in Engineering",
+      "GATE"
     ],
     "conducting_body": "IIT Guwahati",
     "examination_year": 2026,
@@ -21620,7 +21703,11 @@
   },
   {
     "exam_name": "RRB Level-1 Posts - CEN 08/2024",
-    "aliases": [],
+    "aliases": [
+      "RRB Group D",
+      "Railway Group D",
+      "RRB Level 1"
+    ],
     "conducting_body": "Railway Recruitment Boards",
     "examination_year": 2025,
     "application_cycle": "CEN 08/2024",
@@ -22398,7 +22485,11 @@
   },
   {
     "exam_name": "RRB NTPC Graduate - CEN 05/2024",
-    "aliases": [],
+    "aliases": [
+      "RRB NTPC",
+      "NTPC",
+      "Railway NTPC"
+    ],
     "conducting_body": "Railway Recruitment Boards",
     "examination_year": 2024,
     "application_cycle": "CEN 05/2024",
@@ -23177,7 +23268,8 @@
   {
     "exam_name": "CTET September 2026",
     "aliases": [
-      "Central Teacher Eligibility Test"
+      "Central Teacher Eligibility Test",
+      "CTET"
     ],
     "conducting_body": "Central Board of Secondary Education",
     "examination_year": 2026,
@@ -23945,7 +24037,8 @@
   {
     "exam_name": "TNPSC Combined Technical Services Examination 2025",
     "aliases": [
-      "TNPSC CTS"
+      "TNPSC CTS",
+      "TNPSC Combined Technical Services"
     ],
     "conducting_body": "Tamil Nadu Public Service Commission",
     "examination_year": 2025,
@@ -24717,7 +24810,11 @@
   },
   {
     "exam_name": "CBSE Classes IX/XI Registration 2025-26",
-    "aliases": [],
+    "aliases": [
+      "CBSE Registration",
+      "CBSE Class 9 Registration",
+      "CBSE Class 11 Registration"
+    ],
     "conducting_body": "Central Board of Secondary Education",
     "examination_year": 2025,
     "application_cycle": "2025-26",
@@ -25489,7 +25586,10 @@
   },
   {
     "exam_name": "MPSC General Online Application Photograph Instruction",
-    "aliases": [],
+    "aliases": [
+      "MPSC",
+      "Maharashtra PSC"
+    ],
     "conducting_body": "Maharashtra Public Service Commission",
     "examination_year": 2026,
     "application_cycle": "current portal guide",
@@ -26252,7 +26352,10 @@
   },
   {
     "exam_name": "UPPSC One Time Registration Photograph",
-    "aliases": [],
+    "aliases": [
+      "UPPSC",
+      "UPPSC OTR"
+    ],
     "conducting_body": "Uttar Pradesh Public Service Commission",
     "examination_year": 2026,
     "application_cycle": "current OTR",
@@ -27013,7 +27116,10 @@
   },
   {
     "exam_name": "BPSC Current Recruitment Photograph Specification",
-    "aliases": [],
+    "aliases": [
+      "BPSC",
+      "Bihar PSC"
+    ],
     "conducting_body": "Bihar Public Service Commission",
     "examination_year": 2026,
     "application_cycle": "current",
@@ -27771,7 +27877,10 @@
   },
   {
     "exam_name": "RPSC Current Online Application Photograph",
-    "aliases": [],
+    "aliases": [
+      "RPSC",
+      "Rajasthan PSC"
+    ],
     "conducting_body": "Rajasthan Public Service Commission",
     "examination_year": 2026,
     "application_cycle": "current",
@@ -28587,7 +28696,10 @@
   },
   {
     "exam_name": "Karnataka PSC Current Recruitment Portal Photograph",
-    "aliases": [],
+    "aliases": [
+      "KPSC",
+      "Karnataka PSC"
+    ],
     "conducting_body": "Karnataka Public Service Commission",
     "examination_year": 2026,
     "application_cycle": "current",
@@ -29348,7 +29460,11 @@
   },
   {
     "exam_name": "WBPSC / WBCS Current Online Application Photograph",
-    "aliases": [],
+    "aliases": [
+      "WBPSC",
+      "WBCS",
+      "West Bengal PSC"
+    ],
     "conducting_body": "West Bengal Public Service Commission",
     "examination_year": 2026,
     "application_cycle": "current",
@@ -30110,7 +30226,10 @@
   },
   {
     "exam_name": "Kerala PSC One Time Registration Photograph",
-    "aliases": [],
+    "aliases": [
+      "Kerala PSC",
+      "KPSC Kerala"
+    ],
     "conducting_body": "Kerala Public Service Commission",
     "examination_year": 2026,
     "application_cycle": "current OTR",
@@ -30881,7 +31000,10 @@
   },
   {
     "exam_name": "APPSC Forest Beat Officer / Assistant Beat Officer 2025",
-    "aliases": [],
+    "aliases": [
+      "APPSC FBO",
+      "AP Forest Beat Officer"
+    ],
     "conducting_body": "Andhra Pradesh Public Service Commission",
     "examination_year": 2025,
     "application_cycle": "2025",
@@ -31639,7 +31761,9 @@
   {
     "exam_name": "Common Admission Test 2025",
     "aliases": [
-      "CAT 2025"
+      "CAT 2025",
+      "CAT",
+      "IIM CAT"
     ],
     "conducting_body": "Indian Institutes of Management",
     "examination_year": 2025,
@@ -32403,7 +32527,9 @@
   {
     "exam_name": "Management Aptitude Test 2026",
     "aliases": [
-      "MAT 2026"
+      "MAT 2026",
+      "MAT",
+      "AIMA MAT"
     ],
     "conducting_body": "All India Management Association",
     "examination_year": 2026,
@@ -33172,7 +33298,9 @@
   {
     "exam_name": "MHT-CET 2026",
     "aliases": [
-      "Maharashtra Common Entrance Test"
+      "Maharashtra Common Entrance Test",
+      "MHT CET",
+      "MHCET"
     ],
     "conducting_body": "State Common Entrance Test Cell, Maharashtra",
     "examination_year": 2026,
@@ -33949,7 +34077,9 @@
   {
     "exam_name": "Karnataka Common Entrance Test 2026",
     "aliases": [
-      "KCET 2026"
+      "KCET 2026",
+      "KCET",
+      "Karnataka CET"
     ],
     "conducting_body": "Karnataka Examinations Authority",
     "examination_year": 2026,
@@ -34715,7 +34845,8 @@
   {
     "exam_name": "WBJEE 2026",
     "aliases": [
-      "West Bengal Joint Entrance Examination"
+      "West Bengal Joint Entrance Examination",
+      "WBJEE"
     ],
     "conducting_body": "West Bengal Joint Entrance Examinations Board",
     "examination_year": 2026,
@@ -35476,7 +35607,12 @@
   },
   {
     "exam_name": "ICAI Examination Portal Photograph (current portal scope)",
-    "aliases": [],
+    "aliases": [
+      "ICAI",
+      "CA",
+      "CA Foundation",
+      "CA Intermediate"
+    ],
     "conducting_body": "Institute of Chartered Accountants of India",
     "examination_year": 2026,
     "application_cycle": "current",
@@ -36239,7 +36375,11 @@
   },
   {
     "exam_name": "ICSI Student Registration / Examination Account Photograph",
-    "aliases": [],
+    "aliases": [
+      "ICSI",
+      "CS",
+      "Company Secretary"
+    ],
     "conducting_body": "Institute of Company Secretaries of India",
     "examination_year": 2026,
     "application_cycle": "current",
@@ -37036,7 +37176,12 @@
   },
   {
     "exam_name": "Indian Army Agniveer CEE 2025-26 - online upload",
-    "aliases": [],
+    "aliases": [
+      "Agniveer",
+      "Army Agniveer",
+      "Agniveer CEE",
+      "Agnipath"
+    ],
     "conducting_body": "Indian Army",
     "examination_year": 2025,
     "application_cycle": "2025-26",
@@ -37860,7 +38005,12 @@
   },
   {
     "exam_name": "Indian Army Agniveer CEE 2025-26 - rally/document verification",
-    "aliases": [],
+    "aliases": [
+      "Agniveer",
+      "Army Agniveer",
+      "Agniveer CEE",
+      "Agnipath"
+    ],
     "conducting_body": "Indian Army",
     "examination_year": 2025,
     "application_cycle": "2025-26",
@@ -38623,7 +38773,12 @@
   },
   {
     "exam_name": "Uttar Pradesh Police Constable Recruitment",
-    "aliases": [],
+    "aliases": [
+      "UP Police",
+      "UP Police Constable",
+      "UP Constable",
+      "UPPRPB"
+    ],
     "conducting_body": "Uttar Pradesh Police Recruitment and Promotion Board",
     "examination_year": 2024,
     "application_cycle": "2024 high-volume baseline",
@@ -39379,7 +39534,10 @@
   },
   {
     "exam_name": "RPF Constable",
-    "aliases": [],
+    "aliases": [
+      "RPF",
+      "Railway Protection Force Constable"
+    ],
     "conducting_body": "Railway Protection Force / RRB",
     "examination_year": 2024,
     "application_cycle": "CEN RPF 02/2024",
@@ -40137,7 +40295,11 @@
   },
   {
     "exam_name": "Indian Army Agniveer Recruitment",
-    "aliases": [],
+    "aliases": [
+      "Agniveer",
+      "Army Agniveer",
+      "Agnipath"
+    ],
     "conducting_body": "Indian Army",
     "examination_year": 2022,
     "application_cycle": "Agnipath 2022 benchmark",
@@ -40893,7 +41055,10 @@
   },
   {
     "exam_name": "Delhi Police Constable (Executive)",
-    "aliases": [],
+    "aliases": [
+      "Delhi Police Constable",
+      "Delhi Police"
+    ],
     "conducting_body": "Staff Selection Commission / Delhi Police",
     "examination_year": 2025,
     "application_cycle": "2023 high-volume baseline; current 2025 family",
@@ -41649,7 +41814,11 @@
   },
   {
     "exam_name": "SSC Selection Post Phase XIII",
-    "aliases": [],
+    "aliases": [
+      "SSC Selection Post",
+      "SSC Phase 13",
+      "Selection Post Phase 13"
+    ],
     "conducting_body": "Staff Selection Commission",
     "examination_year": 2025,
     "application_cycle": "Phase XIII 2025",
@@ -42405,7 +42574,10 @@
   },
   {
     "exam_name": "BSSC Second Inter-Level Combined Competitive Examination",
-    "aliases": [],
+    "aliases": [
+      "BSSC Inter Level",
+      "Bihar SSC Inter Level"
+    ],
     "conducting_body": "Bihar Staff Selection Commission",
     "examination_year": 2023,
     "application_cycle": "Second Inter-Level 2023 recruitment",
@@ -43163,7 +43335,11 @@
   },
   {
     "exam_name": "Jawahar Navodaya Vidyalaya Selection Test Class VI",
-    "aliases": [],
+    "aliases": [
+      "JNVST",
+      "Navodaya Class 6",
+      "Navodaya Vidyalaya Entrance"
+    ],
     "conducting_body": "Navodaya Vidyalaya Samiti / CBSE",
     "examination_year": 2026,
     "application_cycle": "2026 summer-bound",
@@ -43919,7 +44095,10 @@
   },
   {
     "exam_name": "UPSSSC Preliminary Eligibility Test (PET)",
-    "aliases": [],
+    "aliases": [
+      "UPSSSC PET",
+      "UP PET"
+    ],
     "conducting_body": "Uttar Pradesh Subordinate Services Selection Commission",
     "examination_year": 2026,
     "application_cycle": "2025 verified volume / 2026 current family",
@@ -44675,7 +44854,11 @@
   },
   {
     "exam_name": "Rajasthan Grade IV Recruitment",
-    "aliases": [],
+    "aliases": [
+      "Rajasthan Grade 4",
+      "RSSB Grade IV",
+      "RSMSSB Grade IV"
+    ],
     "conducting_body": "Rajasthan Staff Selection Board",
     "examination_year": 2025,
     "application_cycle": "2025",
@@ -45431,7 +45614,11 @@
   },
   {
     "exam_name": "Kendriya Vidyalaya Sangathan Direct Recruitment Examination",
-    "aliases": [],
+    "aliases": [
+      "KVS",
+      "KVS Recruitment",
+      "Kendriya Vidyalaya"
+    ],
     "conducting_body": "Kendriya Vidyalaya Sangathan",
     "examination_year": 2023,
     "application_cycle": "2022-23 recruitment",
@@ -46190,7 +46377,11 @@
   },
   {
     "exam_name": "Assam Direct Recruitment Grade III",
-    "aliases": [],
+    "aliases": [
+      "ADRE Grade III",
+      "Assam ADRE",
+      "Assam Grade 3"
+    ],
     "conducting_body": "State Level Recruitment Commission Assam",
     "examination_year": 2024,
     "application_cycle": "2024",
@@ -46946,7 +47137,10 @@
   },
   {
     "exam_name": "Maharashtra Police Recruitment",
-    "aliases": [],
+    "aliases": [
+      "Maharashtra Police",
+      "Maharashtra Police Constable"
+    ],
     "conducting_body": "Maharashtra Police",
     "examination_year": 2024,
     "application_cycle": "2024",
@@ -47702,7 +47896,11 @@
   },
   {
     "exam_name": "Bihar Police Constable Recruitment",
-    "aliases": [],
+    "aliases": [
+      "Bihar Police",
+      "Bihar Police Constable",
+      "CSBC Bihar Police"
+    ],
     "conducting_body": "Central Selection Board of Constable, Bihar",
     "examination_year": 2025,
     "application_cycle": "2025",
@@ -48458,7 +48656,11 @@
   },
   {
     "exam_name": "Rajasthan CET Senior Secondary Level",
-    "aliases": [],
+    "aliases": [
+      "Rajasthan CET",
+      "Rajasthan CET 12th Level",
+      "RSSB CET Senior Secondary"
+    ],
     "conducting_body": "Rajasthan Staff Selection Board",
     "examination_year": 2024,
     "application_cycle": "2024 baseline",
@@ -49214,7 +49416,10 @@
   },
   {
     "exam_name": "RPF Sub-Inspector",
-    "aliases": [],
+    "aliases": [
+      "RPF SI",
+      "Railway Protection Force Sub Inspector"
+    ],
     "conducting_body": "Railway Protection Force / RRB",
     "examination_year": 2024,
     "application_cycle": "CEN RPF 01/2024",
@@ -49972,7 +50177,10 @@
   },
   {
     "exam_name": "Rajasthan Eligibility Examination for Teachers (REET)",
-    "aliases": [],
+    "aliases": [
+      "REET",
+      "Rajasthan TET"
+    ],
     "conducting_body": "Board of Secondary Education Rajasthan",
     "examination_year": 2025,
     "application_cycle": "2025",
@@ -50728,7 +50936,11 @@
   },
   {
     "exam_name": "TNPSC Combined Civil Services Examination IV (Group IV Services)",
-    "aliases": [],
+    "aliases": [
+      "TNPSC Group 4",
+      "TNPSC Group IV",
+      "TNPSC CCSE IV"
+    ],
     "conducting_body": "Tamil Nadu Public Service Commission",
     "examination_year": 2025,
     "application_cycle": "2025",
@@ -51489,7 +51701,10 @@
   },
   {
     "exam_name": "HSSC CET Group D",
-    "aliases": [],
+    "aliases": [
+      "Haryana CET Group D",
+      "HSSC Group D"
+    ],
     "conducting_body": "Haryana Staff Selection Commission",
     "examination_year": 2026,
     "application_cycle": "2023 volume baseline / current 2026 family",
@@ -52245,7 +52460,10 @@
   },
   {
     "exam_name": "Assam Direct Recruitment Grade IV",
-    "aliases": [],
+    "aliases": [
+      "ADRE Grade IV",
+      "Assam Grade 4"
+    ],
     "conducting_body": "State Level Recruitment Commission Assam",
     "examination_year": 2024,
     "application_cycle": "2024",
@@ -53001,7 +53219,10 @@
   },
   {
     "exam_name": "Haryana CET Group C",
-    "aliases": [],
+    "aliases": [
+      "HSSC CET Group C",
+      "Haryana Group C"
+    ],
     "conducting_body": "Haryana Staff Selection Commission",
     "examination_year": 2025,
     "application_cycle": "2025",
@@ -53757,7 +53978,10 @@
   },
   {
     "exam_name": "Rajasthan CET Graduate Level",
-    "aliases": [],
+    "aliases": [
+      "Rajasthan CET Graduate",
+      "RSSB CET Graduate Level"
+    ],
     "conducting_body": "Rajasthan Staff Selection Board",
     "examination_year": 2024,
     "application_cycle": "2024 baseline",
@@ -54513,7 +54737,11 @@
   },
   {
     "exam_name": "MP Patwari Recruitment Examination",
-    "aliases": [],
+    "aliases": [
+      "MP Patwari",
+      "MPESB Patwari",
+      "Madhya Pradesh Patwari"
+    ],
     "conducting_body": "Madhya Pradesh Employees Selection Board",
     "examination_year": 2023,
     "application_cycle": "2023 high-volume baseline",
@@ -55269,7 +55497,11 @@
   },
   {
     "exam_name": "Gujarat Police Lokrakshak Recruitment",
-    "aliases": [],
+    "aliases": [
+      "Gujarat Lokrakshak",
+      "LRD",
+      "Gujarat Police Constable"
+    ],
     "conducting_body": "Gujarat Police Recruitment Board",
     "examination_year": 2024,
     "application_cycle": "2024",
@@ -56025,7 +56257,11 @@
   },
   {
     "exam_name": "UPPSC Review Officer / Assistant Review Officer",
-    "aliases": [],
+    "aliases": [
+      "UPPSC RO ARO",
+      "RO ARO",
+      "UP Review Officer"
+    ],
     "conducting_body": "Uttar Pradesh Public Service Commission",
     "examination_year": 2025,
     "application_cycle": "2023 recruitment / prelim held 2025",
@@ -56781,7 +57017,11 @@
   },
   {
     "exam_name": "MP Police Constable Recruitment Test",
-    "aliases": [],
+    "aliases": [
+      "MP Police",
+      "MP Police Constable",
+      "MPESB Constable"
+    ],
     "conducting_body": "Madhya Pradesh Employees Selection Board",
     "examination_year": 2025,
     "application_cycle": "2025",
@@ -57537,7 +57777,11 @@
   },
   {
     "exam_name": "Indian Navy Agniveer SSR/MR Recruitment",
-    "aliases": [],
+    "aliases": [
+      "Navy Agniveer",
+      "Agniveer SSR",
+      "Agniveer MR"
+    ],
     "conducting_body": "Indian Navy",
     "examination_year": 2022,
     "application_cycle": "Agnipath 2022 benchmark",
@@ -58296,7 +58540,10 @@
   },
   {
     "exam_name": "TSPSC Group IV Services",
-    "aliases": [],
+    "aliases": [
+      "TSPSC Group 4",
+      "Telangana Group IV"
+    ],
     "conducting_body": "Telangana State Public Service Commission",
     "examination_year": 2023,
     "application_cycle": "2023 baseline",
@@ -59052,7 +59299,9 @@
   },
   {
     "exam_name": "RRB Technician",
-    "aliases": [],
+    "aliases": [
+      "Railway Technician"
+    ],
     "conducting_body": "Railway Recruitment Boards",
     "examination_year": 2025,
     "application_cycle": "CEN 02/2025",
@@ -59808,7 +60057,11 @@
   },
   {
     "exam_name": "TNPSC Combined Civil Services Examination II (Group II/IIA)",
-    "aliases": [],
+    "aliases": [
+      "TNPSC Group 2",
+      "TNPSC Group II",
+      "TNPSC Group 2A"
+    ],
     "conducting_body": "Tamil Nadu Public Service Commission",
     "examination_year": 2024,
     "application_cycle": "2024",
@@ -60566,7 +60819,11 @@
   },
   {
     "exam_name": "Indian Air Force Agniveervayu Recruitment",
-    "aliases": [],
+    "aliases": [
+      "Agniveervayu",
+      "IAF Agniveer",
+      "Air Force Agniveer"
+    ],
     "conducting_body": "Indian Air Force",
     "examination_year": 2022,
     "application_cycle": "Agnipath 2022 benchmark",
@@ -61322,7 +61579,11 @@
   },
   {
     "exam_name": "SSC Sub-Inspector in Delhi Police and CAPFs Examination",
-    "aliases": [],
+    "aliases": [
+      "SSC CPO",
+      "SSC SI",
+      "Delhi Police SI"
+    ],
     "conducting_body": "Staff Selection Commission",
     "examination_year": 2024,
     "application_cycle": "2024",
@@ -62078,7 +62339,10 @@
   },
   {
     "exam_name": "Rajasthan Patwari Recruitment",
-    "aliases": [],
+    "aliases": [
+      "Rajasthan Patwari",
+      "RSSB Patwari"
+    ],
     "conducting_body": "Rajasthan Staff Selection Board",
     "examination_year": 2025,
     "application_cycle": "2025",
@@ -62834,7 +63098,10 @@
   },
   {
     "exam_name": "JSSC Combined Graduate Level Examination",
-    "aliases": [],
+    "aliases": [
+      "JSSC CGL",
+      "Jharkhand CGL"
+    ],
     "conducting_body": "Jharkhand Staff Selection Commission",
     "examination_year": 2024,
     "application_cycle": "2024 baseline",
@@ -63590,7 +63857,10 @@
   },
   {
     "exam_name": "UPPSC Combined State/Upper Subordinate Services Examination (PCS)",
-    "aliases": [],
+    "aliases": [
+      "UPPSC PCS",
+      "UP PCS"
+    ],
     "conducting_body": "Uttar Pradesh Public Service Commission",
     "examination_year": 2025,
     "application_cycle": "2025",
@@ -64346,7 +64616,10 @@
   },
   {
     "exam_name": "West Bengal Primary Teacher Eligibility Test",
-    "aliases": [],
+    "aliases": [
+      "WB TET",
+      "WB Primary TET"
+    ],
     "conducting_body": "West Bengal Board of Primary Education",
     "examination_year": 2022,
     "application_cycle": "2022 latest high-volume official baseline",
@@ -65102,7 +65375,11 @@
   },
   {
     "exam_name": "Rajasthan Pre-D.El.Ed Examination (BSTC)",
-    "aliases": [],
+    "aliases": [
+      "BSTC",
+      "Rajasthan BSTC",
+      "Rajasthan Pre DElEd"
+    ],
     "conducting_body": "Vardhman Mahaveer Open University / designated authority",
     "examination_year": 2026,
     "application_cycle": "2026",
@@ -65858,7 +66135,10 @@
   },
   {
     "exam_name": "Maharashtra Teacher Eligibility Test (MAHA TET)",
-    "aliases": [],
+    "aliases": [
+      "MAHATET",
+      "Maharashtra TET"
+    ],
     "conducting_body": "Maharashtra State Council of Examination",
     "examination_year": 2026,
     "application_cycle": "2026",
@@ -66616,7 +66896,11 @@
   },
   {
     "exam_name": "West Bengal School Service Commission SLST Assistant Teacher Recruitment",
-    "aliases": [],
+    "aliases": [
+      "WBSSC SLST",
+      "SLST",
+      "West Bengal SSC Teacher"
+    ],
     "conducting_body": "West Bengal School Service Commission",
     "examination_year": 2025,
     "application_cycle": "2025",
@@ -67374,7 +67658,11 @@
   },
   {
     "exam_name": "RRB JE/DMS/CMA",
-    "aliases": [],
+    "aliases": [
+      "RRB JE",
+      "RRB Junior Engineer",
+      "Railway Junior Engineer"
+    ],
     "conducting_body": "Railway Recruitment Boards",
     "examination_year": 2025,
     "application_cycle": "CEN 05/2025",
@@ -68130,7 +68418,11 @@
   },
   {
     "exam_name": "TGPSC Group II Services Examination",
-    "aliases": [],
+    "aliases": [
+      "TGPSC Group 2",
+      "TSPSC Group 2",
+      "Telangana Group II"
+    ],
     "conducting_body": "Telangana Public Service Commission",
     "examination_year": 2024,
     "application_cycle": "2024-25",
@@ -68886,7 +69178,10 @@
   },
   {
     "exam_name": "JKSSB Police Constable Recruitment",
-    "aliases": [],
+    "aliases": [
+      "JKSSB Constable",
+      "JK Police Constable"
+    ],
     "conducting_body": "Jammu & Kashmir Services Selection Board",
     "examination_year": 2024,
     "application_cycle": "2024",
@@ -69642,7 +69937,11 @@
   },
   {
     "exam_name": "TGPSC Group III Services Examination",
-    "aliases": [],
+    "aliases": [
+      "TGPSC Group 3",
+      "TSPSC Group 3",
+      "Telangana Group III"
+    ],
     "conducting_body": "Telangana Public Service Commission",
     "examination_year": 2024,
     "application_cycle": "2024-25",
@@ -70398,7 +70697,10 @@
   },
   {
     "exam_name": "Rajasthan Police Constable Recruitment",
-    "aliases": [],
+    "aliases": [
+      "Rajasthan Police",
+      "Rajasthan Police Constable"
+    ],
     "conducting_body": "Rajasthan Police",
     "examination_year": 2025,
     "application_cycle": "2025",
@@ -71154,7 +71456,10 @@
   },
   {
     "exam_name": "Gujarat Police PSI Recruitment",
-    "aliases": [],
+    "aliases": [
+      "Gujarat PSI",
+      "Gujarat Police Sub Inspector"
+    ],
     "conducting_body": "Gujarat Police Recruitment Board",
     "examination_year": 2024,
     "application_cycle": "2024",
@@ -71910,7 +72215,10 @@
   },
   {
     "exam_name": "SSC Junior Engineer Examination",
-    "aliases": [],
+    "aliases": [
+      "SSC JE",
+      "SSC Junior Engineer"
+    ],
     "conducting_body": "Staff Selection Commission",
     "examination_year": 2024,
     "application_cycle": "2024",
@@ -72666,7 +72974,10 @@
   },
   {
     "exam_name": "APPSC Group II Services Examination",
-    "aliases": [],
+    "aliases": [
+      "APPSC Group 2",
+      "AP Group II"
+    ],
     "conducting_body": "Andhra Pradesh Public Service Commission",
     "examination_year": 2024,
     "application_cycle": "2024",
@@ -73422,7 +73733,11 @@
   },
   {
     "exam_name": "BPSC Teacher Recruitment Examination (TRE)",
-    "aliases": [],
+    "aliases": [
+      "BPSC TRE",
+      "Bihar Teacher Recruitment",
+      "BPSC Teacher"
+    ],
     "conducting_body": "Bihar Public Service Commission",
     "examination_year": 2026,
     "application_cycle": "TRE 3 historical scale / TRE 4 current 2026 family",
@@ -74178,7 +74493,9 @@
   },
   {
     "exam_name": "RRB Ministerial and Isolated Categories",
-    "aliases": [],
+    "aliases": [
+      "RRB Ministerial"
+    ],
     "conducting_body": "Railway Recruitment Boards",
     "examination_year": 2024,
     "application_cycle": "CEN 07/2024",
@@ -74936,7 +75253,11 @@
   },
   {
     "exam_name": "Bihar Secondary Teacher Eligibility Test",
-    "aliases": [],
+    "aliases": [
+      "Bihar STET",
+      "BSEB STET",
+      "STET Bihar"
+    ],
     "conducting_body": "Bihar School Examination Board",
     "examination_year": 2025,
     "application_cycle": "2025",
@@ -75692,7 +76013,10 @@
   },
   {
     "exam_name": "UP B.Ed Joint Entrance Examination",
-    "aliases": [],
+    "aliases": [
+      "UP BEd JEE",
+      "UP BEd"
+    ],
     "conducting_body": "Bundelkhand University Jhansi",
     "examination_year": 2026,
     "application_cycle": "2026",
@@ -76448,7 +76772,9 @@
   },
   {
     "exam_name": "RRB Section Controller",
-    "aliases": [],
+    "aliases": [
+      "Railway Section Controller"
+    ],
     "conducting_body": "Railway Recruitment Boards",
     "examination_year": 2025,
     "application_cycle": "CEN 04/2025",
@@ -77204,7 +77530,10 @@
   },
   {
     "exam_name": "Joint Entrance Examination Council Uttar Pradesh Polytechnic Entrance",
-    "aliases": [],
+    "aliases": [
+      "JEECUP",
+      "UP Polytechnic"
+    ],
     "conducting_body": "Joint Entrance Examination Council Uttar Pradesh",
     "examination_year": 2025,
     "application_cycle": "2025",
@@ -77960,7 +78289,10 @@
   },
   {
     "exam_name": "DSSSB Major Recruitment Examination Family",
-    "aliases": [],
+    "aliases": [
+      "DSSSB",
+      "Delhi SSSB"
+    ],
     "conducting_body": "Delhi Subordinate Services Selection Board",
     "examination_year": 2025,
     "application_cycle": "2024-25 aggregate",
@@ -78716,7 +79048,11 @@
   },
   {
     "exam_name": "TGPSC Group I Services Examination",
-    "aliases": [],
+    "aliases": [
+      "TGPSC Group 1",
+      "TSPSC Group 1",
+      "Telangana Group I"
+    ],
     "conducting_body": "Telangana Public Service Commission",
     "examination_year": 2024,
     "application_cycle": "2024",
@@ -79472,7 +79808,10 @@
   },
   {
     "exam_name": "SSC Stenographer Grade C & D Examination",
-    "aliases": [],
+    "aliases": [
+      "SSC Stenographer",
+      "SSC Steno"
+    ],
     "conducting_body": "Staff Selection Commission",
     "examination_year": 2025,
     "application_cycle": "2025",
@@ -80228,7 +80567,11 @@
   },
   {
     "exam_name": "AP Mega DSC Teacher Recruitment",
-    "aliases": [],
+    "aliases": [
+      "AP DSC",
+      "Mega DSC",
+      "AP Teacher Recruitment"
+    ],
     "conducting_body": "Government of Andhra Pradesh",
     "examination_year": 2025,
     "application_cycle": "2025",
@@ -80984,7 +81327,10 @@
   },
   {
     "exam_name": "Bihar D.El.Ed Joint Entrance Examination",
-    "aliases": [],
+    "aliases": [
+      "Bihar DElEd",
+      "BSEB DElEd"
+    ],
     "conducting_body": "Bihar School Examination Board",
     "examination_year": 2025,
     "application_cycle": "2025",
@@ -81740,7 +82086,10 @@
   },
   {
     "exam_name": "RRB Paramedical Categories",
-    "aliases": [],
+    "aliases": [
+      "RRB Paramedical",
+      "Railway Paramedical"
+    ],
     "conducting_body": "Railway Recruitment Boards",
     "examination_year": 2025,
     "application_cycle": "CEN 03/2025",
@@ -82496,7 +82845,11 @@
   },
   {
     "exam_name": "TG EAPCET",
-    "aliases": [],
+    "aliases": [
+      "TS EAMCET",
+      "Telangana EAMCET",
+      "EAMCET"
+    ],
     "conducting_body": "JNTU Hyderabad / TGCHE",
     "examination_year": 2026,
     "application_cycle": "2026",
@@ -83252,7 +83605,11 @@
   },
   {
     "exam_name": "Telangana DSC Teacher Recruitment",
-    "aliases": [],
+    "aliases": [
+      "TG DSC",
+      "TS DSC",
+      "Telangana DSC"
+    ],
     "conducting_body": "Government of Telangana",
     "examination_year": 2024,
     "application_cycle": "2024 baseline",
@@ -84764,7 +85121,10 @@
   },
   {
     "exam_name": "Rajasthan Pre-Teacher Education Test",
-    "aliases": [],
+    "aliases": [
+      "PTET",
+      "Rajasthan PTET"
+    ],
     "conducting_body": "Rajasthan PTET conducting university",
     "examination_year": 2025,
     "application_cycle": "2025",
@@ -85520,7 +85880,9 @@
   },
   {
     "exam_name": "Andhra Pradesh Teacher Eligibility Test",
-    "aliases": [],
+    "aliases": [
+      "AP TET"
+    ],
     "conducting_body": "Department of School Education Andhra Pradesh",
     "examination_year": 2024,
     "application_cycle": "2024",
@@ -86278,7 +86640,11 @@
   },
   {
     "exam_name": "MP Primary School Teacher Eligibility Test",
-    "aliases": [],
+    "aliases": [
+      "MP TET",
+      "MPTET Primary",
+      "MP Varg 3"
+    ],
     "conducting_body": "Madhya Pradesh Employees Selection Board",
     "examination_year": 2024,
     "application_cycle": "2024",
@@ -87034,7 +87400,10 @@
   },
   {
     "exam_name": "AP EAPCET",
-    "aliases": [],
+    "aliases": [
+      "AP EAMCET",
+      "EAMCET"
+    ],
     "conducting_body": "JNTU Kakinada / APSCHE",
     "examination_year": 2026,
     "application_cycle": "2026",
@@ -87790,7 +88159,10 @@
   },
   {
     "exam_name": "OSSSC Combined Recruitment Examination",
-    "aliases": [],
+    "aliases": [
+      "OSSSC",
+      "Odisha SSSC"
+    ],
     "conducting_body": "Odisha Sub-ordinate Staff Selection Commission",
     "examination_year": 2024,
     "application_cycle": "CRE 2023 examination cycle",
@@ -88550,7 +88922,10 @@
   },
   {
     "exam_name": "TNPSC Combined Civil Services Examination I (Group I)",
-    "aliases": [],
+    "aliases": [
+      "TNPSC Group 1",
+      "TNPSC Group I"
+    ],
     "conducting_body": "Tamil Nadu Public Service Commission",
     "examination_year": 2024,
     "application_cycle": "2024",
@@ -89308,7 +89683,10 @@
   },
   {
     "exam_name": "Haryana Teacher Eligibility Test",
-    "aliases": [],
+    "aliases": [
+      "HTET",
+      "Haryana TET"
+    ],
     "conducting_body": "Board of School Education Haryana",
     "examination_year": 2026,
     "application_cycle": "2026",
@@ -90064,7 +90442,10 @@
   },
   {
     "exam_name": "All India Sainik Schools Entrance Examination",
-    "aliases": [],
+    "aliases": [
+      "AISSEE",
+      "Sainik School Entrance"
+    ],
     "conducting_body": "National Testing Agency",
     "examination_year": 2026,
     "application_cycle": "2026",
@@ -90820,7 +91201,10 @@
   },
   {
     "exam_name": "Joint CSIR-UGC NET",
-    "aliases": [],
+    "aliases": [
+      "CSIR NET",
+      "CSIR UGC NET"
+    ],
     "conducting_body": "National Testing Agency / CSIR",
     "examination_year": 2025,
     "application_cycle": "June 2025 baseline / current family",
@@ -91578,7 +91962,11 @@
   },
   {
     "exam_name": "CG Vyapam Pre-B.Ed Entrance Examination",
-    "aliases": [],
+    "aliases": [
+      "CG Pre BEd",
+      "Vyapam Pre BEd",
+      "CG Vyapam BEd"
+    ],
     "conducting_body": "Chhattisgarh Professional Examination Board",
     "examination_year": 2025,
     "application_cycle": "2025",
@@ -92334,7 +92722,11 @@
   },
   {
     "exam_name": "Telangana Teacher Eligibility Test (TG TET)",
-    "aliases": [],
+    "aliases": [
+      "TS TET",
+      "Telangana TET",
+      "TG TET"
+    ],
     "conducting_body": "Department of School Education Telangana",
     "examination_year": 2025,
     "application_cycle": "2025",
@@ -93090,7 +93482,10 @@
   },
   {
     "exam_name": "AP POLYCET",
-    "aliases": [],
+    "aliases": [
+      "POLYCET",
+      "AP Polytechnic"
+    ],
     "conducting_body": "State Board of Technical Education and Training Andhra Pradesh",
     "examination_year": 2026,
     "application_cycle": "2026",
@@ -93846,7 +94241,11 @@
   },
   {
     "exam_name": "MAH MBA/MMS CET",
-    "aliases": [],
+    "aliases": [
+      "MAH MBA CET",
+      "MBA CET",
+      "MAH CET MBA"
+    ],
     "conducting_body": "State Common Entrance Test Cell Maharashtra",
     "examination_year": 2025,
     "application_cycle": "2025",
@@ -94602,7 +95001,10 @@
   },
   {
     "exam_name": "Karnataka Teacher Eligibility Test",
-    "aliases": [],
+    "aliases": [
+      "KARTET",
+      "Karnataka TET"
+    ],
     "conducting_body": "School Education Department Karnataka",
     "examination_year": 2024,
     "application_cycle": "2024",
@@ -95358,7 +95760,10 @@
   },
   {
     "exam_name": "BITS Admission Test",
-    "aliases": [],
+    "aliases": [
+      "BITSAT",
+      "BITS Pilani"
+    ],
     "conducting_body": "Birla Institute of Technology and Science Pilani",
     "examination_year": 2025,
     "application_cycle": "2025",
@@ -96114,7 +96519,10 @@
   },
   {
     "exam_name": "APPSC Group I Services Examination",
-    "aliases": [],
+    "aliases": [
+      "APPSC Group 1",
+      "AP Group I"
+    ],
     "conducting_body": "Andhra Pradesh Public Service Commission",
     "examination_year": 2024,
     "application_cycle": "2024",
@@ -96870,7 +97278,10 @@
   },
   {
     "exam_name": "Kerala Engineering Architecture Medical Entrance Examination",
-    "aliases": [],
+    "aliases": [
+      "KEAM",
+      "Kerala KEAM"
+    ],
     "conducting_body": "Commissioner for Entrance Examinations Kerala",
     "examination_year": 2026,
     "application_cycle": "2026",
@@ -97629,7 +98040,10 @@
   },
   {
     "exam_name": "Jharkhand Police Constable Recruitment",
-    "aliases": [],
+    "aliases": [
+      "Jharkhand Police",
+      "JSSC Constable"
+    ],
     "conducting_body": "Jharkhand Staff Selection Commission",
     "examination_year": 2024,
     "application_cycle": "2024",
@@ -98385,7 +98799,10 @@
   },
   {
     "exam_name": "Xavier Aptitude Test",
-    "aliases": [],
+    "aliases": [
+      "XAT",
+      "XLRI XAT"
+    ],
     "conducting_body": "XLRI Xavier School of Management",
     "examination_year": 2025,
     "application_cycle": "2025",
@@ -99144,7 +99561,12 @@
   },
   {
     "exam_name": "UPSC Engineering Services Examination",
-    "aliases": [],
+    "aliases": [
+      "ESE",
+      "UPSC ESE",
+      "IES",
+      "Engineering Services Examination"
+    ],
     "conducting_body": "Union Public Service Commission",
     "examination_year": 2026,
     "application_cycle": "historical applicant baseline / recurring 2026 family",
@@ -99900,7 +100322,10 @@
   },
   {
     "exam_name": "GUJCET",
-    "aliases": [],
+    "aliases": [
+      "Gujarat CET",
+      "Gujarat Common Entrance Test"
+    ],
     "conducting_body": "Gujarat Secondary and Higher Secondary Education Board",
     "examination_year": 2026,
     "application_cycle": "2026",
@@ -100656,7 +101081,11 @@
   },
   {
     "exam_name": "TG/TS POLYCET",
-    "aliases": [],
+    "aliases": [
+      "TS POLYCET",
+      "TG POLYCET",
+      "Telangana Polytechnic"
+    ],
     "conducting_body": "State Board of Technical Education and Training Telangana",
     "examination_year": 2025,
     "application_cycle": "2025",
@@ -101412,7 +101841,10 @@
   },
   {
     "exam_name": "Odisha Joint Entrance Examination (OJEE)",
-    "aliases": [],
+    "aliases": [
+      "OJEE",
+      "Odisha JEE"
+    ],
     "conducting_body": "OJEE Committee",
     "examination_year": 2026,
     "application_cycle": "2026",
@@ -102168,7 +102600,10 @@
   },
   {
     "exam_name": "Bihar B.Ed Common Entrance Test",
-    "aliases": [],
+    "aliases": [
+      "Bihar BEd CET",
+      "Bihar BEd"
+    ],
     "conducting_body": "Lalit Narayan Mithila University / Bihar CET-B.Ed",
     "examination_year": 2026,
     "application_cycle": "2026",
