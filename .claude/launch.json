@@ -6,6 +6,12 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev", "--prefix", "apps/web"],
       "port": 3000
+    },
+    {
+      "name": "engine",
+      "runtimeExecutable": "C:/Projects/exam-photo-platform/services/image-engine/.venv/Scripts/python.exe",
+      "runtimeArgs": ["C:/Projects/exam-photo-platform/scripts/serve_local_engine.py"],
+      "port": 8000
     }
   ]
 }
