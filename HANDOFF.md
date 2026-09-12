@@ -579,18 +579,16 @@ defects the reference set could not.
    hair-edge half (18, 19, and the non-fragment part of 17) is fixed --
    DEC-033's trusted-alpha path was skipping an anti-halo contrast correction
    the coarse-mask path already had.
-8. **`apps/web/public/examples/portrait-*.jpg` are committed, and their
-   provenance is unconfirmed.** They are photorealistic portraits of an
-   identifiable-looking person. They were untracked when this was first
-   noticed; they are now **in history**, added by `27bf5a3` on this branch,
-   which is a change of kind rather than of degree -- an untracked file is
-   deleted, a committed one is rewritten out of history. AGENTS.md forbids
-   committing real candidate photographs and this file records that
-   reject-gallery examples must be synthetic. `docs/UI_ENGINE_HANDOFF.md`
-   states they are fictional guidance assets and not customer uploads, which
-   is an answer but not evidence of one. **Confirm how they were produced
-   before this branch merges**, because the cost of being wrong rises the
-   moment it does.
+8. ~~**`apps/web/public/examples/portrait-*.jpg` are committed, and their
+   provenance is unconfirmed.**~~ **Closed (12 September 2026).** Every
+   unverified image under `apps/web/public/examples/` was deleted:
+   `portrait-*.jpg`, `photo-*.jpg`, `signature-*.jpg`, `hero-*.jpg` and the two
+   guide PNGs. Nothing referenced them any more. The landing band now runs on
+   owner-supplied generated pairs under `public/examples/demo/`, recorded in
+   `docs/ui-direction-2026-09-10/DEMO_ASSETS.md`: fictional people, invented
+   signatures, no candidate's file, and labelled on the page as
+   representational rather than as engine output. They remain in git history;
+   rewriting that is the owner's call and blocks nothing.
 
 ## Verifying
 

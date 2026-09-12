@@ -43,7 +43,7 @@ document tools.
 | — our story | landing | done — told as the product's principles; a founder account needs the owner's words |
 | Editorial, not AI-slop; copy that connects | landing | done — slopmonster 5/5 |
 | Doodles, graphics, illustrations, drawings | inline SVG, drawn in the system's ink | done — each drawing is a file the product prepares |
-| Animations, micro-animations, interactivity | `Reveal`, stroke draw-on, the comparison | done — reveal, stroke draw-on, the comparison, hover ticks |
+| Animations, micro-animations, interactivity | `Reveal`, stroke draw-on, the before-and-after band | done — reveal, stroke draw-on, hover ticks, and a band that drags itself: a photograph and a signature side by side, each sweeping on its own and cycling the owner's examples, with dots to choose one, one Pause control, and a first drag that hands the handle over. Still under prefers-reduced-motion and while off screen. Examples are representational and say so |
 | The story of the problem crores of students face | problem section | done — with the brief's point 5 as a ledger of what a free tool calls "ready" and leaves out: sizing, the file limit and the name; face coverage; flagging a bad photograph; the prompt it expects you to write |
 | Rs 3 against years of preparation | why / pricing | done |
 | Footer that is not industry-standard | the back of the form: declaration, signature, date, enclosures | done — the back of the form |

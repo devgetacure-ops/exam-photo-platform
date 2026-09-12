@@ -2,8 +2,7 @@ import Link from "next/link";
 import { ExamSearch } from "../components/exam-search";
 import { SiteFooter } from "../components/site-footer";
 import { SiteHeader } from "../components/site-header";
-import { Note } from "../components/euk/note";
-import { Compare } from "../components/euk/compare";
+import { WipeDemo } from "../components/euk/wipe-demo";
 import { Reveal } from "../components/euk/reveal";
 import {
     ArrowDrawing,
@@ -14,7 +13,6 @@ import {
     ThumbDrawing,
 } from "../components/euk/doodles";
 import { loadSearchIndex } from "../lib/catalogue.server";
-import { readImageFacts, formatBytes } from "../lib/image-facts.server";
 
 /**
  * The landing page, in the order the brief sets: the hero, then what we do,
@@ -83,6 +81,58 @@ const ELSEWHERE = [
     "a PDF merger",
 ];
 
+/**
+ * Representational before-and-after pairs for the landing band.
+ *
+ * Generated people and invented signatures: no candidate's photograph or
+ * signature appears anywhere on this site, and these particular pairs were
+ * made to show the difference rather than produced by the engine. The band
+ * says so under the frames.
+ */
+const PHOTO_PAIRS = ["a1", "a2", "a3", "a4"].map((id) => ({
+    id,
+    before: `/examples/demo/photo-${id}-uploaded.jpg`,
+    after: `/examples/demo/photo-${id}-prepared.jpg`,
+    alt: "A photograph taken at home, and the same photograph prepared for an application",
+}));
+
+const SIGNATURE_PAIRS = ["s1", "s2", "s3"].map((id) => ({
+    id,
+    before: `/examples/demo/sign-${id}-uploaded.jpg`,
+    after: `/examples/demo/sign-${id}-prepared.jpg`,
+    alt: "A signature photographed on paper, and the same signature prepared for an application",
+}));
+
+const PHOTO_CHECKS = [
+    { label: "Background", before: "Your room, your wall", after: "Plain and even" },
+    { label: "Light", before: "Warm, one side brighter", after: "Even across the face" },
+    {
+        label: "Framing",
+        before: "Small and off to one side",
+        after: "Centred, head at the size they ask for",
+    },
+    {
+        label: "The file",
+        before: "Whatever your phone saved",
+        after: "The pixels, the KB and the name the form wants",
+    },
+];
+
+const SIGNATURE_CHECKS = [
+    {
+        label: "Paper",
+        before: "Table, shadow, taken at an angle",
+        after: "Clean white, square to the page",
+    },
+    { label: "Ink", before: "Thin and patchy", after: "Firm and even" },
+    { label: "Crop", before: "Lost in a big empty page", after: "Tight around the strokes" },
+    {
+        label: "The file",
+        before: "Whatever your phone saved",
+        after: "The pixels, the KB and the name the form wants",
+    },
+];
+
 const PRINCIPLES = [
     {
         title: "It never changes your face.",
@@ -104,33 +154,6 @@ const PRINCIPLES = [
 
 export default async function Home() {
     const { exams, unavailable } = await loadSearchIndex();
-
-    // Measured from the files themselves, so the page cannot claim a number
-    // the asset does not have. Swap either photograph and this updates.
-    const before = readImageFacts("/examples/hero-before.jpg");
-    const after = readImageFacts("/examples/hero-after.jpg");
-    const checks =
-        before && after
-            ? [
-                  {
-                      label: "Background",
-                      before: "Whatever was behind you",
-                      after: "Plain, even, the shade they ask for",
-                  },
-                  {
-                      label: "Dimensions",
-                      before: `${before.width} × ${before.height}`,
-                      after: `${after.width} × ${after.height}`,
-                  },
-                  {
-                      label: "File size",
-                      before: formatBytes(before.bytes),
-                      after: formatBytes(after.bytes),
-                  },
-                  { label: "Format", before: before.format, after: after.format },
-                  { label: "File name", before: before.name, after: after.name },
-              ]
-            : [];
 
     const steps = [
         {
@@ -217,44 +240,12 @@ export default async function Home() {
                             ))}
                         </div>
 
-                        <div className="euk-demo">
-                            <Reveal className="euk-demo-copy">
-                                <h3 className="euk-display">
-                                    Drag it.
-                                    <br />
-                                    Five things get fixed.
-                                </h3>
-                                <p>
-                                    This is the comparison you see after you
-                                    upload: what you gave us on one side, what
-                                    came back on the other. Drag the line across
-                                    and each problem is checked off as it goes.
-                                </p>
-                                <Note className="text-[15px]">
-                                    The sizes and file names in that list are
-                                    measured from the two files themselves.
-                                </Note>
-                            </Reveal>
-                            <Reveal delay={120} className="euk-demo-frame">
-                                <span className="euk-stamp" aria-hidden="true">
-                                    Prepared to the
-                                    <br />
-                                    published rules
-                                </span>
-                                <Compare
-                                    beforeSrc="/examples/hero-before.jpg"
-                                    afterSrc="/examples/hero-after.jpg"
-                                    width={before?.width ?? 240}
-                                    height={before?.height ?? 320}
-                                    alt="The same photograph before and after preparation"
-                                    checks={checks}
-                                    placeholder={
-                                        before?.width === after?.width &&
-                                        before?.height === after?.height
-                                    }
-                                />
-                            </Reveal>
-                        </div>
+                        <WipeDemo
+                            photos={PHOTO_PAIRS}
+                            photoChecks={PHOTO_CHECKS}
+                            signatures={SIGNATURE_PAIRS}
+                            signatureChecks={SIGNATURE_CHECKS}
+                        />
                     </div>
                 </section>
 
