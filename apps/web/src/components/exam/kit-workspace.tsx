@@ -322,12 +322,17 @@ export function KitWorkspace({
                                                     open(id, true);
                                                 }}
                                                 aria-controls={`panel-${id}`}
+                                                /* The visible word is the
+                                                   start of the name, so the
+                                                   two agree for anyone using
+                                                   speech (WCAG 2.5.3). It is
+                                                   a label rather than hidden
+                                                   text because hidden text
+                                                   inside this button would
+                                                   inherit its capitals. */
+                                                aria-label={`${entries[id] ? "Open" : "Add"} ${r.requirement_name}`}
                                             >
                                                 {entries[id] ? "Open" : "Add"}
-                                                <span className="sr-only">
-                                                    {" "}
-                                                    {r.requirement_name}
-                                                </span>
                                             </button>
                                         </li>
                                     );

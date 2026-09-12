@@ -67,14 +67,14 @@ document tools.
 | Research how exams present visual examples and adapt that style | requirement panel | done — SSC's captioned sheet of photographs not acceptable, and the banking notices' capitals rule set beside the signature, adapted as drawings rather than photographs of strangers |
 | Photo, signature, documents: each curated for itself, one shared language | per-type panels | done — one frame (name, what we do, measurements, upload, specimens), with each file's own intro, specimens and drop zone |
 | Full kit price vs single-file price, shown | kit list | done — the price moves on the server's ladder as files are ticked, with the struck price and what the whole kit costs |
-| Push the kit at each step; advertise its benefits | kit list, panel, review | building — "Add the other N for ₹X more" on the price card, a price bar on phones, "Add it to the kit" on an unticked file; the review step comes with the purchase flow |
+| Push the kit at each step; advertise its benefits | kit list, panel, review | done — "Add the other N for ₹X more" on the price card, a price bar on phones, "Add it to the kit" on an unticked file, an Add button on every row that ticks the file and carries the candidate down to it, and a step at the foot of each file offering the next file that is in the kit and still waiting — or, when none are, review and pay |
 | One photo plus PDFs is Rs 3 (from Rs 4) | quote | done — server-computed |
 | Show the value: without us, they collect these across several sites | exam page | done — the separate tools this application's files would need, read from its own record |
 | PDF to image, image to PDF, rearrange, remove, merge — shown as free | document tools | done — image to PDF, merge, reorder, rotate (newly given its button; the engine already supported it) and remove, plus PDF to image in the candidate's own browser with pdf.js: 100/150/200 dpi, JPEG or PNG, nothing uploaded, and the cost to a certificate's verifiability stated beside it. Each failure has the retry that fits it: a password-protected PDF is turned away with a direction to upload a copy without a password (the same check runs before any PDF is uploaded, and no password is ever asked for), a page that can't be drawn keeps the pages before it and retries from that page, a converter that didn't load tries again, and a damaged file is not offered a retry that can't work. DEC-052 amended. The work has its own page at `/pdf` — the browser-side converter usable before anyone pays, every job a form asks of a PDF, and what we don't do (no OCR, no password removal, no editing inside a PDF, no Word or Excel) — linked from the header, the footer and the pricing block |
 | Attention to minute detail | everywhere | building |
 | Visual interaction while a process runs | preparation | done — the candidate's own photograph sharpens and regains its colour with the engine's real progress, the frame's edge fills, and the steps tick as the engine reports them (DEC-075); honest when progress can't be read |
 | Kit pre-selected; the candidate unchecks; price follows | kit list | done |
-| Exam tips and facts: special, attention-getting, not the main subject, the centre of interest | exam page | done — pinned beside the title in the hero, each fact in the source's wording with the source a tap away; plays only when asked |
+| Exam tips and facts: special, attention-getting, not the main subject, the centre of interest | exam page | done — pinned beside the title in the hero, each fact in the source's wording with the source a tap away. Facts that only restate a measurement the page already prints in full (file size, format, dimensions) are dropped where the facts are read. It moves on by itself at the owner's instruction, and stops on hover, on focus, under a reduced-motion preference and on its own pause control, which WCAG 2.2.2 makes compulsory rather than optional |
 
 ## Purchase flow
 
@@ -103,3 +103,42 @@ yourself. They will not say the files go over WhatsApp.
 **Our story.** No founder story has been supplied, and one will not be invented. The
 section tells the true story of why the product is built the way it is, and marks
 the place a real founder account would go.
+
+
+## The owner's eighteen desktop notes — 12 September 2026
+
+Given one at a time against screenshots, with instructions to ingest them all
+before acting. Everything below is on the desktop view; the phone build is
+parked at the owner's word until this is settled.
+
+| # | The note | What was done |
+|---|---|---|
+| 1 | The PDF tiles are uneven | Seven jobs became six ("pages in the right order" and "a page left out" are one job), and the grid is capped at three columns so no row is short |
+| 2 | Negative space between two blocks on /pdf | The seam has one owner: the lede closes tight and the section below opens it |
+| 3 | The arrows between the five steps are unaligned | Arrows gone. A single ruled track with a node per step, the one step that is ours picked out in the signal colour |
+| 4 | Put examination buttons in the empty space | Eight hand-picked shortcuts under the hero, each a real catalogue id; any id that leaves the catalogue drops out at build rather than shipping as a dead link. It is not called a popularity ranking, because there is no traffic to rank |
+| 5 | Photograph and signature side by side, in one screen | One band, two comparison frames, equal in everything but the aspect each file has |
+| 6 | Impersonate real browser tabs | A drawn window: tab strip, address bar on a page still loading, and the paragraph inside it as that page. Background tabs drop their close button before their name, as a real strip does. The address is invented — naming a real tool here would be a swipe at somebody's product |
+| 7 | This section is barren land | The six frames are a measured sheet now: a datum line, a dimension line on each frame, and a title block. Equal area rather than equal scale, and the block says so |
+| 8 | Make the ₹5 tile playful on hover | The tile lifts and presses, its file glyphs rise in sequence, and the old price strikes itself through |
+| 9 | The principles section is ordinary | Each of the four refusals performs itself: a wand passes over a face that does not change, a blank fills with est. rather than a number, an upload closes instead of pretending, a sheet is swept clean. Every one reads at rest as well as in motion |
+| 10 | The arrow pointers everywhere are ruining it | Every drawn arrow is gone. Notes are margin marks against a signal rule; where direction is genuinely needed there is one small chevron |
+| 11, 15 | Remove the rectangle inside the search bar | The frame carries focus itself; the global focus ring no longer draws a second box inside the first |
+| 12 | Logo hard left, options hard right, fixed, and the search moves up into it | The bar runs the full width and stays. On the landing page and the directory the search appears only once the page's own has scrolled away, and is out of the tab order before that. Opening it drops a full-width panel with the predictive list; slash opens it from anywhere that is not a text field |
+| 13 | Worth knowing should not restate rules, and should scroll itself | Both done. The owner's own facts file replaces the generated one when it arrives; nothing in the reader assumes the generated wording |
+| 14 | An Add button on every item in the kit | Every row has one. It ticks the file if it was unticked and takes the candidate to its panel — the reason it exists is that clicking a row changed something off screen |
+| 16 | Next should appear only when there is one, and end in review and pay | A pure function decides: only from a file that is in the kit, only to a file that is in the kit and still waiting, and review and pay when none are. Tested on its own |
+| 17 | The three options are stuck to the section | Air on both sides of the rule above them |
+| 18 | The exam page's bar search should size to the name, and lose "Change exam" | The control is sized to what it holds, so a long examination name sets its width. "Change exam" is gone from the bar and from the foot of the kit: the bar is how you change exam |
+
+Verified: lint, types and 165 frontend tests pass; the production build generates
+415 pages; the landing, examination, directory and PDF pages were screenshotted at
+1024, 1280 and 1440 and read; the design detector reports no new finding on the
+examination, directory or PDF pages.
+
+One detector complaint on the landing page is a false positive worth writing down
+rather than chasing: the six frames sit on the drafting grid, which is a repeating
+gradient over a background colour, and the detector's analytic path cannot
+composite the two — it reports 1.6:1 for text measured at 10.2:1 from the rendered
+pixels. The eight low-contrast findings on that section are all this, and three of
+them predate this work.
