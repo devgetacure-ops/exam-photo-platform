@@ -278,10 +278,13 @@ describe("the before-and-after band", () => {
         expect(wipeOf(container, 1)).toBeCloseTo(50, 0);
     });
 
-    test("the sheet carries a photograph and a signature, each with its examples", () => {
+    test("the pair carries a photograph and a signature, each with its examples", () => {
         const { container } = renderBand();
 
-        expect(container.querySelector(".euk-band-sheet")).toBeInTheDocument();
+        // Side by side, in one row: the columns are sized so both frames come
+        // out the same height despite their different shapes.
+        expect(container.querySelector(".euk-band-pair")).toBeInTheDocument();
+        expect(container.querySelectorAll(".euk-band-pair .euk-wipe")).toHaveLength(2);
         expect(screen.getByText("Photograph")).toBeInTheDocument();
         expect(screen.getByText("Signature")).toBeInTheDocument();
         expect(screen.getAllByRole("button", { name: /^Example \d of 3$/ })).toHaveLength(3);

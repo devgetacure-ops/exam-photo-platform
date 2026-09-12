@@ -12,6 +12,7 @@ import {
     ThumbDrawing,
 } from "../components/euk/doodles";
 import { loadSearchIndex } from "../lib/catalogue.server";
+import { TOP_EXAMS } from "../lib/top-exams";
 
 /**
  * The landing page, in the order the brief sets: the hero, then what we do,
@@ -154,6 +155,13 @@ const PRINCIPLES = [
 export default async function Home() {
     const { exams, unavailable } = await loadSearchIndex();
 
+    // Shortcuts under the hero. An id that has left the catalogue drops out
+    // here rather than shipping as a link to nothing.
+    const shortcuts = TOP_EXAMS.map((pick) => {
+        const exam = exams.find((row) => row.id === pick.id);
+        return exam ? { ...pick, name: exam.name } : null;
+    }).filter((row): row is { id: string; label: string; name: string } => row !== null);
+
     const steps = [
         {
             whose: "Yours",
@@ -208,6 +216,22 @@ export default async function Home() {
                                 Not on the list? Tell us which one
                             </Link>
                         </p>
+
+                        {shortcuts.length > 0 && (
+                            <div className="euk-jumps">
+                                <p className="euk-jumps-lead">Straight to one of these</p>
+                                <ul>
+                                    {shortcuts.map((exam) => (
+                                        <li key={exam.id}>
+                                            <Link href={`/exam/${exam.id}`}>
+                                                {exam.label}
+                                                <span className="sr-only"> — {exam.name}</span>
+                                            </Link>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
                     </div>
                 </section>
 
@@ -504,6 +528,12 @@ export default async function Home() {
                                     <span className="euk-price-figure">₹8</span>
                                     <span className="euk-price-was">₹10</span>
                                 </p>
+                                <p className="euk-price-files" aria-hidden="true">
+                                    <PhotoDrawing />
+                                    <SignatureDrawing />
+                                    <ThumbDrawing />
+                                    <CertificateDrawing />
+                                </p>
                                 <p className="euk-price-body">
                                     Three files or more. The price stops at ₹8,
                                     whatever your examination asks for.
@@ -518,10 +548,19 @@ export default async function Home() {
                                     <span className="euk-price-figure">₹5</span>
                                     <span className="euk-price-was">₹8</span>
                                 </p>
+                                <p className="euk-price-files" aria-hidden="true">
+                                    <PhotoDrawing />
+                                    <SignatureDrawing />
+                                </p>
                                 <p className="euk-price-body">
                                     Two files, such as your photograph and your
                                     signature.
                                 </p>
+                                <Link href="/exams" className="euk-price-hit">
+                                    <span className="sr-only">
+                                        Find your examination
+                                    </span>
+                                </Link>
                             </Reveal>
                             <Reveal delay={180} className="euk-price">
                                 <p className="euk-price-name">One file</p>
@@ -529,9 +568,17 @@ export default async function Home() {
                                     <span className="euk-price-figure">₹3</span>
                                     <span className="euk-price-was">₹4</span>
                                 </p>
+                                <p className="euk-price-files" aria-hidden="true">
+                                    <PhotoDrawing />
+                                </p>
                                 <p className="euk-price-body">
                                     Any single file, such as your photograph.
                                 </p>
+                                <Link href="/exams" className="euk-price-hit">
+                                    <span className="sr-only">
+                                        Find your examination
+                                    </span>
+                                </Link>
                             </Reveal>
                         </div>
 

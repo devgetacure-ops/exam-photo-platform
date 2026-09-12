@@ -32,20 +32,16 @@ const JOBS = [
         body: "A portal that accepts one attachment, and a certificate that reached you as four separate scans.",
     },
     {
-        title: "Pages in the right order",
-        body: "Front and back photographed the wrong way round. Move them until the document reads as it should.",
+        title: "Pages in the order you want",
+        body: "Front and back photographed the wrong way round, or a blank page this form never asked for. Move them, drop them, keep what's left.",
     },
     {
         title: "A sideways page turned upright",
         body: "You photographed it the long way round, so it uploads on its side. Turn it a quarter at a time.",
     },
     {
-        title: "A page left out",
-        body: "The blank back of a certificate, or a page this form never asked for.",
-    },
-    {
         title: "Under the size limit",
-        body: "Forms cap the file at 200 KB, 500 KB, sometimes 1 MB. A scan is compressed down to it, and where that cannot be reached without wrecking the page, the result says so instead of pretending.",
+        body: "Forms cap the file at 200 KB, 500 KB, sometimes 1 MB. A scan is compressed down to whatever yours asks for.",
     },
     {
         title: "Named the way the portal expects",
@@ -134,6 +130,10 @@ export default function PdfPage() {
                                 ))}
                             </ul>
                         </Reveal>
+                        <p className="euk-pdfpage-caveat">
+                            Where a limit cannot be met without wrecking the page,
+                            the result says so instead of pretending.
+                        </p>
                     </div>
                 </section>
 

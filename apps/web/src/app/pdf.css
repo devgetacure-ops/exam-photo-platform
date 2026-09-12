@@ -51,13 +51,36 @@
 
 /* ---- the jobs ---------------------------------------------------------- */
 
+/* Six jobs in three columns. Seven in an auto-fit grid resolved to four
+   columns on a wide screen and left a hole where the seventh should have
+   been; capping the columns keeps every row full at every width. */
 .euk-pdfpage-jobs {
     list-style: none;
     margin: 32px 0 0;
     padding: 0;
     display: grid;
     gap: 16px;
-    grid-template-columns: repeat(auto-fit, minmax(264px, 1fr));
+    grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+    .euk-pdfpage-jobs {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1000px) {
+    .euk-pdfpage-jobs {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+.euk .euk-pdfpage-caveat {
+    margin-top: 18px;
+    max-width: 68ch;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink-55);
 }
 
 .euk .euk-pdfpage-job {

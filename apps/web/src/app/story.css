@@ -128,12 +128,24 @@
 
 .euk-hero {
     text-align: center;
-    padding: 56px 20px 64px;
+    padding: 56px 20px 40px;
 }
 
 @media (min-width: 768px) {
     .euk-hero {
-        padding: 104px 48px 112px;
+        padding: 104px 48px 56px;
+    }
+}
+
+/* The hero closed with 112px and the section below opened with 120px, which
+   left a 230px hole under the shortcuts. One seam, one owner. */
+.euk-hero + .euk-section {
+    padding-top: 64px;
+}
+
+@media (min-width: 768px) {
+    .euk-hero + .euk-section {
+        padding-top: 96px;
     }
 }
 
@@ -295,51 +307,43 @@
 
 /* ---- the before-and-after band --------------------------------------- */
 
-/* Set like the head of an application form: a photograph box, and a signature
-   strip of the same width beneath it, on one sheet. The two comparisons then
-   share an edge and a rhythm, instead of standing side by side at two
-   different heights with a ragged foot. */
+/* Side by side, and level with each other. The photograph is 3:4 and the
+   signature 4:3, so equal columns would give them different heights and a
+   ragged foot — which is what the first attempt did. The columns are set in
+   the ratio the two images actually are (1 : 1.78), which makes their heights
+   identical, their tops and bottoms flush, and every row beneath them align.
+   Nothing is cropped and nothing is letterboxed. */
 
 .euk-band {
-    display: grid;
-    gap: 44px;
-    margin-top: 96px;
+    margin-top: 88px;
 }
 
-@media (min-width: 900px) {
-    .euk-band {
-        grid-template-columns: minmax(0, 1fr) minmax(340px, 400px);
-        gap: 72px;
-        align-items: start;
-    }
-}
-
-/* The sheet runs taller than the viewport, so the copy travels with it. */
-@media (min-width: 1100px) {
-    .euk-band-copy {
-        position: sticky;
-        top: 32px;
-    }
+.euk-band-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 18px 32px;
 }
 
 .euk-band-copy h3 {
-    font-size: clamp(32px, 3.6vw, 52px);
-    line-height: 0.9;
+    font-size: clamp(30px, 3.4vw, 46px);
+    line-height: 0.92;
+    text-wrap: balance;
 }
 
 .euk .euk-band-copy p {
-    margin-top: 18px;
-    font-size: 17px;
+    margin-top: 14px;
+    max-width: 58ch;
+    font-size: 16px;
     line-height: 1.6;
     color: var(--ink-70);
-    max-width: 52ch;
 }
 
 .euk-band-toggle {
     display: inline-flex;
     align-items: center;
     gap: 9px;
-    margin-top: 26px;
     border: var(--rule-thin) solid var(--ink);
     background: var(--paper);
     color: var(--ink);
@@ -357,33 +361,32 @@
     color: var(--signal-deep);
 }
 
-.euk .euk-band-note {
+.euk-band-pair {
+    display: grid;
+    gap: 26px;
     margin-top: 30px;
+}
+
+@media (min-width: 900px) {
+    .euk-band-pair {
+        /* 1 : 1.78 — a 3:4 frame and a 4:3 frame of the same height. */
+        grid-template-columns: 1fr 1.78fr;
+        gap: 28px;
+        align-items: start;
+        /* Capped so the pair, its ticks and the heading land inside one
+           screen rather than needing a scroll to see the second one. */
+        max-width: 1020px;
+    }
+}
+
+.euk .euk-band-note {
+    margin-top: 26px;
     border-left: var(--rule) solid var(--hairline);
     padding-left: 15px;
     font-size: 13px;
     line-height: 1.6;
     color: var(--ink-55);
-    max-width: 52ch;
-}
-
-.euk-band-sheet {
-    display: grid;
-    gap: 26px;
-    width: 100%;
-    max-width: 420px;
-    margin-inline: auto;
-    border: var(--rule) solid var(--ink);
-    background: var(--paper);
-    box-shadow: var(--drop) var(--drop) 0 var(--ink);
-    padding: 18px;
-}
-
-@media (min-width: 900px) {
-    .euk-band-sheet {
-        margin-inline: 0;
-        justify-self: end;
-    }
+    max-width: 64ch;
 }
 
 /* ---- one comparison --------------------------------------------------- */
@@ -597,7 +600,10 @@
 @media (min-width: 1024px) {
     .euk-steps {
         grid-template-columns: repeat(5, minmax(0, 1fr));
-        gap: 22px;
+        /* No column gap: the rule above each step has to meet its neighbour's,
+           or the track breaks into five dashes and needs arrows to span the
+           holes. The breathing room moves inside each step instead. */
+        gap: 0;
     }
 }
 
@@ -609,12 +615,49 @@
 
 @media (min-width: 1024px) {
     .euk-step {
-        padding: 26px 10px 0 0;
+        padding: 26px 26px 0 0;
+    }
+
+    .euk-step:last-child {
+        padding-right: 0;
     }
 }
 
+/* Whose turn it is, carried by the track itself: four segments in ink, the
+   one we do in the signal colour. The chips say it too; the line means you
+   can see the handover without reading them. */
 .euk-step--ours {
-    border-top-color: var(--signal-deep);
+    border-top-color: var(--signal);
+}
+
+/* A stop on the track where each step begins. */
+.euk-step::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 11px;
+    height: 11px;
+    translate: 0 -50%;
+    background: var(--ink);
+}
+
+.euk-step--ours::before {
+    background: var(--signal);
+}
+
+@media (min-width: 1024px) {
+    /* The track ends where the last step ends, rather than running off. */
+    .euk-step:last-child::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 11px;
+        height: 11px;
+        translate: 0 -50%;
+        background: var(--ink);
+    }
 }
 
 .euk-step h3 {
@@ -791,6 +834,7 @@
 }
 
 .euk-price {
+    position: relative;
     border: var(--rule) solid var(--ink);
     background: var(--paper);
     padding: 26px 24px 28px;
@@ -798,11 +842,88 @@
     flex-direction: column;
     gap: 10px;
     box-shadow: var(--drop-sm) var(--drop-sm) 0 var(--ink);
+    transition:
+        transform 160ms cubic-bezier(0.2, 0, 0.1, 1),
+        box-shadow 160ms cubic-bezier(0.2, 0, 0.1, 1);
+}
+
+/* The two cheaper tiers had no action at all. The whole card is the target
+   now, with the link stretched across it rather than a second button. */
+.euk-price-hit {
+    position: absolute;
+    inset: 0;
+}
+
+.euk-price:hover,
+.euk-price:focus-within {
+    transform: translate(-3px, -3px);
+    box-shadow: 8px 8px 0 var(--ink);
+}
+
+.euk-price:active {
+    transform: translate(1px, 1px);
+    box-shadow: 3px 3px 0 var(--ink);
 }
 
 .euk-price--kit {
     border-color: var(--ink);
     box-shadow: 9px 9px 0 var(--signal);
+}
+
+.euk-price--kit:hover,
+.euk-price--kit:focus-within {
+    box-shadow: 13px 13px 0 var(--signal);
+}
+
+.euk-price--kit:active {
+    box-shadow: 6px 6px 0 var(--signal);
+}
+
+/* What the price covers, drawn: one file, two, or the whole kit. Always
+   visible — a touch screen has no hover, and this is information — and it
+   lifts as the card does. */
+.euk-price-files {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    margin-top: 2px;
+    color: var(--ink-40);
+    transition: color 200ms ease;
+}
+
+.euk-price-files svg {
+    width: 30px;
+    height: 34px;
+    stroke-width: 3;
+    transition: transform 220ms cubic-bezier(0.2, 0.7, 0.1, 1);
+}
+
+.euk-price:hover .euk-price-files {
+    color: var(--ink);
+}
+
+.euk-price--kit .euk-price-files {
+    color: color-mix(in srgb, var(--paper) 55%, transparent);
+}
+
+.euk-price--kit:hover .euk-price-files {
+    color: var(--paper);
+}
+
+.euk-price:hover .euk-price-files svg {
+    transform: translateY(-4px);
+}
+
+.euk-price:hover .euk-price-files svg:nth-child(2) {
+    transition-delay: 45ms;
+}
+
+.euk-price:hover .euk-price-files svg:nth-child(3) {
+    transition-delay: 90ms;
+}
+
+.euk-price:hover .euk-price-files svg:nth-child(4) {
+    transition-delay: 135ms;
 }
 
 .euk-price-name {
@@ -828,10 +949,36 @@
 }
 
 .euk-price-was {
+    position: relative;
     font-size: 20px;
     color: var(--ink-55);
-    text-decoration: line-through;
-    text-decoration-thickness: 2px;
+}
+
+/* Struck by default — the old price is never shown as if it still stood —
+   and struck again, in front of you, when the card is touched. */
+.euk-price-was::after {
+    content: "";
+    position: absolute;
+    left: -3px;
+    right: -3px;
+    top: 52%;
+    height: 2px;
+    background: var(--signal-deep);
+    transform-origin: left center;
+}
+
+.euk-price:hover .euk-price-was::after,
+.euk-price:focus-within .euk-price-was::after {
+    animation: euk-strike 300ms cubic-bezier(0.2, 0, 0.1, 1);
+}
+
+@keyframes euk-strike {
+    from {
+        transform: scaleX(0);
+    }
+    to {
+        transform: scaleX(1);
+    }
 }
 
 .euk-price-body {
@@ -1205,4 +1352,95 @@
     font-size: 15px;
     line-height: 1.55;
     color: var(--ink-70);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .euk-price,
+    .euk-price-files,
+    .euk-price-files svg {
+        transition: none;
+    }
+
+    .euk-price:hover,
+    .euk-price:focus-within,
+    .euk-price:active {
+        transform: none;
+    }
+
+    .euk-price:hover .euk-price-files svg {
+        transform: none;
+    }
+
+    .euk-price:hover .euk-price-was::after,
+    .euk-price:focus-within .euk-price-was::after {
+        animation: none;
+    }
+}
+
+/* ---- straight to a popular examination -------------------------------- */
+
+/* The band under the hero was empty, and these are the journeys most people
+   are here for. Real links, so a crawler follows them to the examination
+   pages too. Static: a moving strip makes a target harder to hit, and an
+   auto-scrolling one would need a pause control to be usable at all. */
+.euk-jumps {
+    margin-top: 34px;
+}
+
+.euk .euk-jumps-lead {
+    font-family: var(--font-shoulders), "Arial Narrow", sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-55);
+    max-width: none;
+}
+
+.euk-jumps ul {
+    list-style: none;
+    margin: 14px 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+.euk-jumps a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 8px 16px;
+    border: var(--rule-thin) solid var(--ink);
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 15px;
+    font-weight: 600;
+    box-shadow: 4px 4px 0 var(--ink);
+    transition:
+        transform 140ms cubic-bezier(0.2, 0, 0.1, 1),
+        box-shadow 140ms cubic-bezier(0.2, 0, 0.1, 1),
+        background-color 140ms ease;
+}
+
+.euk-jumps a:hover {
+    background: var(--signal-soft);
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--ink);
+}
+
+.euk-jumps a:active {
+    transform: translate(1px, 1px);
+    box-shadow: 2px 2px 0 var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .euk-jumps a {
+        transition: background-color 140ms ease;
+    }
+
+    .euk-jumps a:hover,
+    .euk-jumps a:active {
+        transform: none;
+    }
 }

@@ -393,22 +393,18 @@ export function WipeDemo({
 
     return (
         <div className="euk-band" ref={bandRef}>
-            <div className="euk-band-copy">
-                <h3 className="euk-display">
-                    Watch it,
-                    <br />
-                    or take the handle.
-                </h3>
-                <p>
-                    This is the comparison you get after you upload: what you
-                    gave us on one side, what came back on the other. Both
-                    frames work through their examples on their own.
-                </p>
-                <p>
-                    Drag either one and it stays where you put it, then picks
-                    itself up three seconds after you let go. The dots change
-                    the example.
-                </p>
+            <div className="euk-band-head">
+                <div className="euk-band-copy">
+                    <h3 className="euk-display">
+                        Watch it, or take the handle.
+                    </h3>
+                    <p>
+                        What you gave us on one side, what came back on the
+                        other. Each frame works through its examples on its own;
+                        drag either and it stays where you put it, then picks
+                        itself up three seconds later.
+                    </p>
+                </div>
                 <button
                     type="button"
                     className="euk-band-toggle"
@@ -418,16 +414,9 @@ export function WipeDemo({
                     <span aria-hidden="true">{playing ? "❚❚" : "▶"}</span>
                     {playing ? "Pause both" : "Play both"}
                 </button>
-                <p className="euk-band-note">
-                    Representational examples. The faces and the signatures are
-                    generated, not photographs of candidates, and these pairs
-                    were made to show the difference rather than produced by our
-                    engine. Your own file is prepared to your examination&rsquo;s
-                    published rules, and you see it before you pay.
-                </p>
             </div>
 
-            <div className="euk-band-sheet">
+            <div className="euk-band-pair">
                 <WipeSet
                     title="Photograph"
                     pairs={photos}
@@ -445,6 +434,14 @@ export function WipeDemo({
                     allowed={allowed}
                 />
             </div>
+
+            <p className="euk-band-note">
+                Representational examples. The faces and the signatures are
+                generated, not photographs of candidates, and these pairs were
+                made to show the difference rather than produced by our engine.
+                Your own file is prepared to your examination&rsquo;s published
+                rules, and you see it before you pay.
+            </p>
         </div>
     );
 }
