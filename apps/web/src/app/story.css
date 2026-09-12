@@ -49,13 +49,17 @@
 @media (prefers-reduced-motion: reduce) {
     [data-reveal],
     [data-reveal] .euk-draw path,
-    .euk-tab,
+    .euk-browser-tab,
+    .euk-browser-address::after,
     .euk-kit-card {
         transition: none !important;
     }
     [data-reveal][data-armed]:not([data-shown]) {
         opacity: 1;
         transform: none;
+    }
+    [data-armed]:not([data-shown]) .euk-browser-address::after {
+        transform: scaleX(0.62);
     }
     [data-armed]:not([data-shown]) .euk-draw path {
         stroke-dashoffset: 0;
@@ -703,11 +707,23 @@
     gap: 40px;
 }
 
-@media (min-width: 1000px) {
+/* Two columns only once the right one can still hold six legible tabs. The
+   strip needs 523px and the column tops out at 570px, so the break is here
+   and not a step earlier; below it the section stacks and the window takes the
+   full width, which is better than a tab strip squeezed to "re…" and "c…". */
+@media (min-width: 1340px) {
     .euk-problem {
         grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
         gap: 72px;
         align-items: start;
+    }
+
+    /* The right column runs three times the height of the left, which left a
+       field of black under the headline. The headline rides along instead, so
+       the claim stays in view for as long as the evidence for it does. */
+    .euk-problem-head {
+        position: sticky;
+        top: 40px;
     }
 }
 
@@ -727,42 +743,174 @@
     margin-top: 18px;
 }
 
-.euk-tabs-row {
-    display: flex;
-    align-items: flex-end;
-    gap: 5px;
-    overflow-x: auto;
+/* The five tools, drawn as what they actually are: six tabs open at once.
+   Not a metaphor to decode — a window, a tab strip, an address bar, and the
+   sixth tab still open on the page you are reading. The window is drawn, not
+   skinned: the same 3px rule and hard drop as everything else on the site, so
+   it reads as a diagram of the routine rather than a screenshot of a browser
+   we are pretending to be. The address is a deliberately invented one; naming
+   a real tool here would be a swipe at somebody's product. */
+.euk-browser {
+    border: var(--rule) solid var(--ink);
+    background: var(--paper-2);
+    box-shadow: var(--drop-sm) var(--drop-sm) 0 var(--ink);
 }
 
-.euk-tab {
-    flex-shrink: 0;
-    border: 2px solid var(--ink);
+.euk-browser-bar {
+    padding: 9px 10px 0;
+    border-bottom: var(--rule-thin) solid var(--ink);
+}
+
+.euk-browser-tabs {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    overflow-x: auto;
+    /* the live tab sits 2px lower, over the strip's rule */
+    padding-bottom: 2px;
+    margin-bottom: -2px;
+    scrollbar-width: thin;
+}
+
+/* Six tabs never fit, which is the point: they shrink and start dropping
+   their labels exactly the way a real window's do. The live tab is the one
+   thing that never gives ground — it is the sentence the section is making. */
+.euk-browser-tab {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    border: var(--rule-thin) solid var(--hairline);
     border-bottom: 0;
-    background: var(--paper-2);
-    color: var(--ink-70);
-    padding: 8px 12px 7px;
-    font-size: 13px;
+    border-radius: 7px 7px 0 0;
+    background: var(--paper);
+    color: var(--ink-55);
+    padding: 7px 7px;
+    font-size: 12.5px;
+    max-width: 190px;
     font-weight: 500;
     transition:
         opacity 360ms ease,
         transform 360ms cubic-bezier(0.2, 0.7, 0.1, 1);
 }
 
-[data-armed]:not([data-shown]) .euk-tab {
+.euk-browser-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+[data-armed]:not([data-shown]) .euk-browser-tab {
     opacity: 0;
     transform: translateY(12px);
 }
 
-.euk-tab--wrong {
-    background: var(--signal);
-    color: var(--signal-ink);
-    font-weight: 700;
-    border-color: var(--signal);
+.euk-browser-fav {
+    width: 9px;
+    height: 9px;
+    flex: none;
+    border: 2px solid currentColor;
+    opacity: 0.75;
 }
 
-.euk-tabs-rail {
-    height: 3px;
-    background: var(--ink);
+/* Background tabs give up their close button before they give up their name,
+   which is the order a real window drops chrome in too. */
+.euk-browser-x {
+    display: none;
+    font-size: 14px;
+    line-height: 1;
+    opacity: 0.55;
+}
+
+.euk-browser-tab--live .euk-browser-x {
+    display: block;
+}
+
+/* The sixth tab is the one you are on, so it holds the signal, keeps its own
+   bottom edge, and hangs over the strip's rule into the page below. */
+.euk-browser-tab--live {
+    flex: 0 0 auto;
+    max-width: none;
+    padding-left: 10px;
+    padding-right: 10px;
+    background: var(--signal);
+    border-color: var(--signal);
+    color: var(--signal-ink);
+    font-weight: 700;
+    padding-bottom: 9px;
+}
+
+.euk-browser-tab--live .euk-browser-fav {
+    background: var(--signal-ink);
+    opacity: 1;
+}
+
+.euk-browser-tab--live .euk-browser-x {
+    opacity: 0.7;
+}
+
+.euk-browser-address {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 10px 14px 11px;
+    border-bottom: var(--rule-thin) solid var(--hairline);
+    font-size: 12.5px;
+    letter-spacing: 0.01em;
+    color: var(--ink-40);
+    position: relative;
+    overflow: hidden;
+}
+
+.euk-browser-dot {
+    width: 10px;
+    height: 10px;
+    flex: none;
+    border: 2px solid currentColor;
+    border-radius: 50%;
+}
+
+/* A page still loading, on the sixth attempt. */
+.euk-browser-address::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: var(--rule-thin);
+    background: var(--signal);
+    transform: scaleX(0.62);
+    transform-origin: left center;
+    transition: transform 900ms cubic-bezier(0.2, 0.7, 0.1, 1) 520ms;
+}
+
+[data-armed]:not([data-shown]) .euk-browser-address::after {
+    transform: scaleX(0);
+}
+
+.euk-browser-page {
+    padding: 22px 18px 24px;
+    background: var(--paper);
+}
+
+@media (min-width: 640px) {
+    .euk-browser-page {
+        padding: 26px 24px 28px;
+    }
+}
+
+.euk-browser-page > * + * {
+    margin-top: 18px;
+}
+
+/* Stacked, the window runs the full container width and the paragraphs would
+   run 110 characters with it. The measure holds wherever the window sits. */
+.euk .euk-browser-page p {
+    max-width: 66ch;
 }
 
 /* ---- why ------------------------------------------------------------- */
@@ -1090,6 +1238,16 @@
 .euk-principle {
     padding: 30px 0;
     border-bottom: 2px solid var(--hairline);
+    display: grid;
+    gap: 18px;
+    align-items: start;
+}
+
+@media (min-width: 560px) {
+    .euk-principle {
+        grid-template-columns: 132px minmax(0, 1fr);
+        gap: 26px;
+    }
 }
 
 @media (min-width: 860px) {
@@ -1100,6 +1258,13 @@
         padding: 36px 0 36px 40px;
         border-left: 2px solid var(--hairline);
     }
+}
+
+.euk-principle-mark {
+    width: 132px;
+    height: auto;
+    color: var(--ink);
+    margin-top: 4px;
 }
 
 .euk-principle h3 {
@@ -1442,5 +1607,477 @@
     .euk-jumps a:hover,
     .euk-jumps a:active {
         transform: none;
+    }
+}
+
+/* ---- the measured sheet ---------------------------------------------- */
+
+/* Six frames drawn on a sheet, not six boxes floating in a band. The grid
+   ground was already there; what was missing was anything using it. So the
+   row now stands on a datum line, each box carries its own dimension line,
+   and the sheet is signed off in a title block at the end of the datum — the
+   three things any drawing has. It fills the space with the measurements the
+   section is actually about. */
+.euk-plate {
+    padding: 56px 20px 52px;
+}
+
+@media (min-width: 768px) {
+    .euk-plate {
+        padding: 80px 48px 68px;
+    }
+}
+
+.euk-plate-head {
+    max-width: 56ch;
+}
+
+.euk-plate-title {
+    font-size: clamp(38px, 4.6vw, 56px);
+    line-height: 0.9;
+}
+
+.euk .euk-plate-head p {
+    margin-top: 14px;
+    max-width: 48ch;
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--ink-70);
+}
+
+.euk-plate-body {
+    margin-top: 44px;
+}
+
+.euk-plate-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 22px;
+    overflow-x: auto;
+    padding: 0 0 14px 16px;
+}
+
+@media (min-width: 900px) {
+    .euk-plate-row {
+        gap: 34px;
+        justify-content: space-between;
+        padding-left: 18px;
+    }
+}
+
+.euk-frame {
+    flex: none;
+    position: relative;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 9px;
+}
+
+.euk-frame-box {
+    position: relative;
+    width: var(--fw, 120px);
+    height: var(--fh, 120px);
+    border: var(--rule-thin) solid var(--ink);
+    background: #fff;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.euk-frame-face {
+    height: 76%;
+    width: auto;
+}
+
+/* The dimension line: a hairline the exact height of the frame, capped top
+   and bottom, standing off its left edge. Six of them at six lengths is the
+   whole argument of this section in one glance. */
+.euk-frame-rise {
+    position: absolute;
+    left: -11px;
+    top: 0;
+    height: var(--fh, 120px);
+    width: 1px;
+    background: var(--ink-40);
+}
+
+.euk-frame-rise::before,
+.euk-frame-rise::after {
+    content: "";
+    position: absolute;
+    left: -3px;
+    width: 7px;
+    height: 1px;
+    background: var(--ink-40);
+}
+
+.euk-frame-rise::before {
+    top: 0;
+}
+
+.euk-frame-rise::after {
+    bottom: 0;
+}
+
+.euk-frame-dim {
+    font-variant-numeric: tabular-nums;
+    font-size: 12px;
+    letter-spacing: 0.02em;
+    color: var(--ink-70);
+    white-space: nowrap;
+}
+
+.euk-frame-dim--band {
+    color: var(--ink-55);
+    font-style: italic;
+}
+
+.euk-frame-strip {
+    position: absolute;
+    inset: auto 0 0;
+    border-top: 2px dashed var(--signal-deep);
+    background: var(--signal-soft);
+    color: var(--signal-deep);
+    font-size: 11px;
+    font-weight: 600;
+    text-align: center;
+    padding: 4px 0 5px;
+}
+
+.euk-frame--band .euk-frame-box {
+    border-color: var(--signal-deep);
+}
+
+.euk-frame--live .euk-frame-box {
+    border-style: dashed;
+    border-color: var(--notyet-line);
+    background: var(--notyet-fill);
+    align-items: center;
+}
+
+.euk-frame-live {
+    font-size: 12px;
+    color: var(--ink-55);
+}
+
+/* The datum every frame stands on, ticked at both ends. */
+.euk-plate-datum {
+    position: relative;
+    height: 0;
+    border-top: var(--rule-thin) solid var(--ink);
+}
+
+/* The end ticks rise from the datum rather than hang below it, where the
+   title block would sit on top of the right-hand one. */
+.euk-plate-datum::before,
+.euk-plate-datum::after {
+    content: "";
+    position: absolute;
+    top: -9px;
+    width: var(--rule-thin);
+    height: 9px;
+    background: var(--ink);
+}
+
+.euk-plate-datum::before {
+    left: 0;
+}
+
+.euk-plate-datum::after {
+    right: 0;
+}
+
+/* The title block, hung off the end of the datum the way a drawing signs
+   itself off. */
+.euk-plate-block {
+    margin: 0 0 0 auto;
+    width: max-content;
+    max-width: 100%;
+    display: grid;
+    border: var(--rule-thin) solid var(--ink);
+    border-top: 0;
+    background: var(--paper);
+}
+
+@media (min-width: 640px) {
+    .euk-plate-block {
+        grid-auto-flow: column;
+    }
+}
+
+.euk-plate-block > div {
+    padding: 10px 16px 11px;
+    border-top: 1px solid var(--hairline);
+}
+
+@media (min-width: 640px) {
+    .euk-plate-block > div {
+        border-top: 0;
+        border-left: 1px solid var(--hairline);
+    }
+
+    .euk-plate-block > div:first-child {
+        border-left: 0;
+    }
+}
+
+.euk-plate-block dt {
+    font-size: 11px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--ink-55);
+}
+
+.euk-plate-block dd {
+    margin: 3px 0 0;
+    font-size: 15px;
+    color: var(--ink);
+}
+
+/* ---- the four refusals, performing themselves ------------------------ */
+
+/* Each drawing does the thing its principle refuses, and refuses it. The
+   demonstration plays once as the block is revealed, and again on hover, so a
+   candidate who scrolls past gets it without doing anything and a candidate
+   who stops can watch it again. Only transforms and opacity move; the strokes
+   themselves are drawn on by the shared reveal rule. */
+.euk-vow g,
+.euk-vow path {
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+/* 1. the wand passes over the second face, and nothing about it changes.
+   It rests parked beside the pair rather than hidden: a drawing that is only
+   legible mid-animation is not a drawing. */
+.euk-vow-wand {
+    transform: none;
+}
+
+.euk-vow-eq {
+    transform: scale(1);
+}
+
+[data-shown] .euk-vow-wand {
+    animation: euk-wand 1500ms cubic-bezier(0.4, 0, 0.2, 1) 700ms 1;
+}
+
+[data-shown] .euk-vow-eq {
+    animation: euk-eq 900ms cubic-bezier(0.34, 1.56, 0.64, 1) 1700ms 1;
+}
+
+.euk-principle:hover .euk-vow-wand {
+    animation: euk-wand 1500ms cubic-bezier(0.4, 0, 0.2, 1) 1;
+}
+
+.euk-principle:hover .euk-vow-eq {
+    animation: euk-eq 900ms cubic-bezier(0.34, 1.56, 0.64, 1) 1000ms 1;
+}
+
+@keyframes euk-wand {
+    0% {
+        transform: none;
+    }
+    45% {
+        transform: translate(-42px, -26px) rotate(-8deg);
+    }
+    62% {
+        transform: translate(-42px, -22px) rotate(6deg);
+    }
+    100% {
+        transform: none;
+    }
+}
+
+@keyframes euk-eq {
+    40% {
+        transform: scale(1.18);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* 2. the blank takes a tag, never a number. The tag lands and stays. */
+.euk-vow-tag {
+    opacity: 1;
+    transform: none;
+}
+
+[data-shown] .euk-vow-tag {
+    animation: euk-tag 1600ms cubic-bezier(0.34, 1.56, 0.64, 1) 900ms 1;
+}
+
+.euk-principle:hover .euk-vow-tag {
+    animation: euk-tag 1600ms cubic-bezier(0.34, 1.56, 0.64, 1) 1;
+}
+
+@keyframes euk-tag {
+    0% {
+        opacity: 0;
+        transform: translateY(-12px);
+    }
+    55% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 3. the tray shuts instead of taking a file it cannot prepare. At rest the
+   tray is shut and the arrow has already turned back, which is the honest
+   still frame of this one. */
+.euk-vow-arrow {
+    transform: translateY(-10px);
+    opacity: 0.35;
+}
+
+.euk-vow-shut {
+    transform: scaleX(1);
+    transform-origin: left center;
+}
+
+[data-shown] .euk-vow-arrow {
+    animation: euk-arrow 1600ms cubic-bezier(0.4, 0, 0.2, 1) 800ms 1;
+}
+
+[data-shown] .euk-vow-shut {
+    animation: euk-shut 1600ms cubic-bezier(0.2, 0.7, 0.1, 1) 800ms 1;
+}
+
+.euk-principle:hover .euk-vow-arrow {
+    animation: euk-arrow 1600ms cubic-bezier(0.4, 0, 0.2, 1) 1;
+}
+
+.euk-principle:hover .euk-vow-shut {
+    animation: euk-shut 1600ms cubic-bezier(0.2, 0.7, 0.1, 1) 1;
+}
+
+@keyframes euk-arrow {
+    0% {
+        transform: translateY(-14px);
+        opacity: 0;
+    }
+    26% {
+        transform: translateY(6px);
+        opacity: 1;
+    }
+    58%,
+    100% {
+        transform: translateY(-10px);
+        opacity: 0.35;
+    }
+}
+
+@keyframes euk-shut {
+    0%,
+    34% {
+        transform: scaleX(0);
+    }
+    62%,
+    100% {
+        transform: scaleX(1);
+    }
+}
+
+/* The marks keep their final frame rather than snapping back to the static
+   rule the instant the animation ends. */
+.euk-vow-tag,
+.euk-vow-arrow,
+.euk-vow-shut,
+.euk-vow-wand,
+.euk-vow-eq,
+.euk-vow-sweep,
+.euk-vow-lines {
+    animation-fill-mode: both;
+}
+
+/* 4. the sheet is swept, and what was on it is gone */
+.euk-vow-sweep {
+    opacity: 0;
+    transform: translateX(0);
+}
+
+.euk-vow-lines {
+    opacity: 1;
+}
+
+[data-shown] .euk-vow-sweep {
+    animation: euk-sweep 1800ms cubic-bezier(0.4, 0, 0.2, 1) 800ms 1;
+}
+
+[data-shown] .euk-vow-lines {
+    animation: euk-forget 1800ms linear 800ms 1;
+}
+
+.euk-principle:hover .euk-vow-sweep {
+    animation: euk-sweep 1800ms cubic-bezier(0.4, 0, 0.2, 1) 1;
+}
+
+.euk-principle:hover .euk-vow-lines {
+    animation: euk-forget 1800ms linear 1;
+}
+
+@keyframes euk-sweep {
+    0% {
+        opacity: 0;
+        transform: translateX(0);
+    }
+    12%,
+    72% {
+        opacity: 1;
+    }
+    80%,
+    100% {
+        opacity: 0;
+        transform: translateX(112px);
+    }
+}
+
+@keyframes euk-forget {
+    0%,
+    24% {
+        opacity: 1;
+    }
+    62%,
+    82% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .euk-vow-wand,
+    .euk-vow-eq,
+    .euk-vow-tag,
+    .euk-vow-arrow,
+    .euk-vow-shut,
+    .euk-vow-sweep,
+    .euk-vow-lines,
+    .euk-principle:hover .euk-vow-wand,
+    .euk-principle:hover .euk-vow-eq,
+    .euk-principle:hover .euk-vow-tag,
+    .euk-principle:hover .euk-vow-arrow,
+    .euk-principle:hover .euk-vow-shut,
+    .euk-principle:hover .euk-vow-sweep,
+    .euk-principle:hover .euk-vow-lines {
+        animation: none !important;
+    }
+    /* At rest the drawing still has to read: the wand waits beside the face,
+       the tag sits in the blank, the tray is shut, the sweep is done. */
+    .euk-vow-wand,
+    .euk-vow-tag {
+        opacity: 1;
+        transform: none;
+    }
+    .euk-vow-sweep {
+        opacity: 0;
     }
 }

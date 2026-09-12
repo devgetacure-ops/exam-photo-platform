@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { CSSProperties } from "react";
 import { ExamSearch } from "../components/exam-search";
 import { SiteFooter } from "../components/site-footer";
 import { SiteHeader } from "../components/site-header";
@@ -11,6 +12,12 @@ import {
     SignatureDrawing,
     ThumbDrawing,
 } from "../components/euk/doodles";
+import {
+    EstimateMark,
+    ForgetsMark,
+    NoPretenceMark,
+    UntouchedMark,
+} from "../components/euk/principle-marks";
 import { loadSearchIndex } from "../lib/catalogue.server";
 import { TOP_EXAMS } from "../lib/top-exams";
 
@@ -54,11 +61,20 @@ const KIT = [
 
 const TOOL_TABS = ["resize", "remove bg", "compress", "convert", "rename"];
 
-const SPECS = [
-    { w: 84, h: 97, label: "200×230" },
-    { w: 100, h: 100, label: "1200×1200" },
-    { w: 75, h: 100, label: "150×200" },
-    { w: 100, h: 78, label: "413×319" },
+/**
+ * Six frames, drawn as a measured sheet.
+ *
+ * Every box is given the same area rather than the same scale — at true scale a
+ * 1200px square would swallow a 150×200 one and the row would say nothing. What
+ * the row is for is the shape: no two examinations want the same one. The
+ * figures on each box are the examination's own pixel dimensions, so the
+ * proportions you see are real even though the sizes are not.
+ */
+const FRAMES = [
+    { w: 112, h: 129, px: "200 × 230" },
+    { w: 120, h: 120, px: "1200 × 1200" },
+    { w: 104, h: 139, px: "150 × 200" },
+    { w: 137, h: 105, px: "413 × 319" },
 ];
 
 const FREE_TOOLS = [
@@ -135,18 +151,22 @@ const SIGNATURE_CHECKS = [
 
 const PRINCIPLES = [
     {
+        Mark: UntouchedMark,
         title: "It never changes your face.",
         body: "Exposure and contrast, yes. Whitening or reshaping, never. The photograph on your admit card has to be the person who walks into the exam hall.",
     },
     {
+        Mark: EstimateMark,
         title: "It never guesses a rule.",
         body: "Where an examination didn't publish a number, the value we use is marked est., so you know exactly which figures to check against your notification.",
     },
     {
+        Mark: NoPretenceMark,
         title: "It never pretends.",
         body: "Some files we can't prepare. The portal might photograph you itself, or want your name printed on the image. When that happens the page says so, and there's no upload button pretending otherwise.",
     },
     {
+        Mark: ForgetsMark,
         title: "It forgets you.",
         body: "No account and nothing to sign up for. Your files are deleted within 30 minutes, or within an hour if you ask us to keep them.",
     },
@@ -322,39 +342,68 @@ export default async function Home() {
                             </p>
                         </Reveal>
                         <div className="euk-problem-body">
-                            <Reveal className="euk-tabs">
-                                <div className="euk-tabs-row">
-                                    {TOOL_TABS.map((t, i) => (
-                                        <span
-                                            key={t}
-                                            className="euk-tab"
-                                            style={{
-                                                transitionDelay: `${i * 90 + 200}ms`,
-                                            }}
+                            <Reveal className="euk-browser">
+                                <div className="euk-browser-bar">
+                                    <ul className="euk-browser-tabs">
+                                        {TOOL_TABS.map((t, i) => (
+                                            <li
+                                                key={t}
+                                                className="euk-browser-tab"
+                                                style={{
+                                                    transitionDelay: `${i * 90 + 200}ms`,
+                                                }}
+                                            >
+                                                <span
+                                                    className="euk-browser-fav"
+                                                    aria-hidden="true"
+                                                />
+                                                <span className="euk-browser-label">
+                                                    {t}
+                                                </span>
+                                                <span
+                                                    className="euk-browser-x"
+                                                    aria-hidden="true"
+                                                >
+                                                    ×
+                                                </span>
+                                            </li>
+                                        ))}
+                                        <li
+                                            className="euk-browser-tab euk-browser-tab--live"
+                                            style={{ transitionDelay: "720ms" }}
                                         >
-                                            {t}
-                                        </span>
-                                    ))}
-                                    <span
-                                        className="euk-tab euk-tab--wrong"
-                                        style={{ transitionDelay: "720ms" }}
-                                    >
-                                        still wrong
-                                    </span>
+                                            <span
+                                                className="euk-browser-fav"
+                                                aria-hidden="true"
+                                            />
+                                            <span className="euk-browser-label">
+                                                still wrong
+                                            </span>
+                                            <span
+                                                className="euk-browser-x"
+                                                aria-hidden="true"
+                                            >
+                                                ×
+                                            </span>
+                                        </li>
+                                    </ul>
                                 </div>
-                                <div className="euk-tabs-rail" />
-                            </Reveal>
-                            <Reveal delay={100}>
-                                <p>
-                                    Every year, crores of applications reach an
-                                    upload screen like the one you&rsquo;re
-                                    about to meet. So the routine goes: resize on one site, remove the background on another, compress somewhere else, convert the format and rename it yourself. Then you find the background was never actually removed, and you start again.
-                                </p>
-                                <p className="euk-problem-turn">
-                                    None of those tools has ever read your
-                                    examination&rsquo;s rules. That is the whole
-                                    problem, and it is the only thing we do.
-                                </p>
+                                <div className="euk-browser-address" aria-hidden="true">
+                                    <span className="euk-browser-dot" />
+                                    <span>another-free-tool.example/upload</span>
+                                </div>
+                                <div className="euk-browser-page">
+                                    <p>
+                                        Every year, crores of applications reach an
+                                        upload screen like the one you&rsquo;re
+                                        about to meet. So the routine goes: resize on one site, remove the background on another, compress somewhere else, convert the format and rename it yourself. Then you find the background was never actually removed, and you start again.
+                                    </p>
+                                    <p className="euk-problem-turn">
+                                        None of those tools has ever read your
+                                        examination&rsquo;s rules. That is the whole
+                                        problem, and it is the only thing we do.
+                                    </p>
+                                </div>
                             </Reveal>
                             <Reveal delay={160} className="euk-ledger">
                                 <h3 className="euk-ledger-title">
@@ -399,66 +448,101 @@ export default async function Home() {
                     </div>
                 </section>
 
-                <section className="euk-gridded px-5 py-12 md:px-12 md:py-16">
+                <section className="euk-gridded euk-plate">
                     <div className="euk-wrap">
-                        <Reveal className="flex flex-col gap-2 pb-7 md:flex-row md:items-end md:justify-between">
-                            <div>
-                                <h2 className="euk-display text-[38px] md:text-[52px] md:leading-[0.9]">
-                                    One face.
-                                    <br />
-                                    Six examinations.
-                                </h2>
-                                <p className="pt-3 text-[16px] leading-relaxed text-[var(--ink-70)]">
-                                    No preset fits all six. Each one is read from
-                                    what that examination actually published.
-                                </p>
-                            </div>
-                            <p className="text-[14px] leading-relaxed text-[var(--ink-55)] md:text-right">
-                                418 requirements across {exams.length}{" "}
-                                examinations
+                        <Reveal className="euk-plate-head">
+                            <h2 className="euk-display euk-plate-title">
+                                One face.
+                                <br />
+                                Six examinations.
+                            </h2>
+                            <p>
+                                No preset fits all six. Each one is read from
+                                what that examination actually published.
                             </p>
                         </Reveal>
-                        <Reveal delay={120} className="flex items-end gap-3 overflow-x-auto pb-2 md:gap-5">
-                            {SPECS.map((s) => (
-                                <div
-                                    key={s.label}
-                                    className="flex shrink-0 flex-col items-center gap-2"
-                                >
-                                    <div
-                                        className="flex items-end justify-center border-2 border-[var(--ink)] bg-white"
-                                        style={{ width: s.w, height: s.h }}
+
+                        <Reveal delay={120} className="euk-plate-body">
+                            <div className="euk-plate-row">
+                                {FRAMES.map((f) => (
+                                    <figure
+                                        key={f.px}
+                                        className="euk-frame"
+                                        style={
+                                            {
+                                                "--fw": `${f.w}px`,
+                                                "--fh": `${f.h}px`,
+                                            } as CSSProperties
+                                        }
                                     >
+                                        <span className="euk-frame-rise" aria-hidden="true" />
+                                        <div className="euk-frame-box">
+                                            <svg
+                                                viewBox="0 0 40 48"
+                                                className="euk-frame-face"
+                                                aria-hidden="true"
+                                                fill="var(--ink-40)"
+                                            >
+                                                <ellipse cx="20" cy="15" rx="9" ry="11" />
+                                                <path d="M20 28 C 9 28, 3 38, 2 48 L 38 48 C 37 38, 31 28, 20 28 Z" />
+                                            </svg>
+                                        </div>
+                                        <figcaption className="euk-frame-dim">
+                                            {f.px}
+                                        </figcaption>
+                                    </figure>
+                                ))}
+
+                                <figure className="euk-frame euk-frame--band">
+                                    <span className="euk-frame-rise" aria-hidden="true" />
+                                    <div className="euk-frame-box">
                                         <svg
                                             viewBox="0 0 40 48"
-                                            className="h-[78%] w-auto"
+                                            className="euk-frame-face"
                                             aria-hidden="true"
                                             fill="var(--ink-40)"
                                         >
                                             <ellipse cx="20" cy="15" rx="9" ry="11" />
                                             <path d="M20 28 C 9 28, 3 38, 2 48 L 38 48 C 37 38, 31 28, 20 28 Z" />
                                         </svg>
+                                        <span className="euk-frame-strip">
+                                            name + date
+                                        </span>
                                     </div>
-                                    <span className="euk-figures text-[12px]">
-                                        {s.label}
-                                    </span>
-                                </div>
-                            ))}
-                            <div className="flex shrink-0 flex-col items-center gap-2">
-                                <div className="relative h-[92px] w-[78px] border-2 border-[var(--signal-deep)] bg-white">
-                                    <div className="absolute inset-x-0 bottom-0 flex h-[24px] items-center justify-center border-t-2 border-dashed border-[var(--signal-deep)] bg-[var(--signal-soft)] text-[11px] font-semibold text-[var(--signal-deep)]">
-                                        name + date
+                                    <figcaption className="euk-frame-dim euk-frame-dim--band">
+                                        printed on the photo
+                                    </figcaption>
+                                </figure>
+
+                                <figure className="euk-frame euk-frame--live">
+                                    <span className="euk-frame-rise" aria-hidden="true" />
+                                    <div className="euk-frame-box">
+                                        <span className="euk-frame-live">
+                                            taken live
+                                        </span>
                                     </div>
+                                    <figcaption className="euk-frame-dim euk-frame-dim--band">
+                                        not ours to prepare
+                                    </figcaption>
+                                </figure>
+                            </div>
+
+                            <div className="euk-plate-datum" aria-hidden="true" />
+
+                            <dl className="euk-plate-block">
+                                <div>
+                                    <dt>Requirements read</dt>
+                                    <dd>418</dd>
                                 </div>
-                                <span className="text-[12px] text-[var(--signal-deep)]">
-                                    TNPSC
-                                </span>
-                            </div>
-                            <div className="flex shrink-0 flex-col items-center gap-2">
-                                <div className="h-[78px] w-[78px] border-2 border-dashed border-[var(--notyet-line)] bg-[var(--notyet-fill)]" />
-                                <span className="text-[12px] text-[var(--ink-55)]">
-                                    Taken live
-                                </span>
-                            </div>
+                                <div>
+                                    <dt>Examinations</dt>
+                                    <dd>{exams.length}</dd>
+                                </div>
+                                <div>
+                                    <dt>Drawn</dt>
+                                    <dd>to equal area, not to scale</dd>
+                                </div>
+                            </dl>
                         </Reveal>
                     </div>
                 </section>
@@ -648,8 +732,13 @@ export default async function Home() {
                                     delay={i * 90}
                                     className="euk-principle"
                                 >
-                                    <h3 className="euk-display">{p.title}</h3>
-                                    <p>{p.body}</p>
+                                    <p.Mark className="euk-principle-mark" />
+                                    <div className="euk-principle-say">
+                                        <h3 className="euk-display">
+                                            {p.title}
+                                        </h3>
+                                        <p>{p.body}</p>
+                                    </div>
                                 </Reveal>
                             ))}
                         </div>
