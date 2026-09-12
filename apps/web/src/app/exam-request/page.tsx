@@ -6,7 +6,7 @@ import { RequestForm } from "../../components/request-form";
 import { ExamSearch } from "../../components/exam-search";
 import { Reveal } from "../../components/euk/reveal";
 import {
-    ArrowDrawing,
+    Chevron,
     EnvelopeDrawing,
     ListDrawing,
     NoticeDrawing,
@@ -230,7 +230,7 @@ export default async function ExamRequest({
                                                             prepared
                                                         </span>
                                                     </span>
-                                                    <ArrowDrawing className="euk-nearby-arrow" />
+                                                    <Chevron className="euk-chevron--end" />
                                                 </Link>
                                             </li>
                                         ))}
@@ -289,9 +289,6 @@ export default async function ExamRequest({
                                             <h3>{title}</h3>
                                         </div>
                                         <p>{body}</p>
-                                        {index < AFTER.length - 1 && (
-                                            <ArrowDrawing className="euk-after-arrow" />
-                                        )}
                                     </Reveal>
                                 </li>
                             ))}

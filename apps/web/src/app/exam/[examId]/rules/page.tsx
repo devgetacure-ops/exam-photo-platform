@@ -10,7 +10,7 @@ import { GuidanceList } from "../../../../components/exam/guidance-list";
 import { SourceNote } from "../../../../components/exam/source-note";
 import { SiteHeader } from "../../../../components/site-header";
 import { SiteFooter } from "../../../../components/site-footer";
-import { ArrowDrawing } from "../../../../components/euk/doodles";
+import { Chevron } from "../../../../components/euk/doodles";
 
 /**
  * The reference half of an examination: every file's published rules, the
@@ -87,7 +87,7 @@ export default async function RulesPage({
                     </p>
                     <Link className="primary-button euk-rules-cta" href={`/exam/${exam.exam_id}`}>
                         Prepare these files
-                        <ArrowDrawing className="euk-rules-cta-arrow" />
+                        <Chevron />
                     </Link>
                 </div>
             </section>

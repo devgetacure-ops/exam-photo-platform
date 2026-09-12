@@ -113,12 +113,27 @@ export function CertificateDrawing({ className }: { className?: string }) {
     );
 }
 
-export function ArrowDrawing({ className }: { className?: string }) {
+/**
+ * The only pointer left on the site, and it sits inside the control it
+ * belongs to — a link or a button — where it can point one way and be right.
+ * The loose arrows it replaces pointed at whatever happened to be nearby.
+ */
+export function Chevron({ className }: { className?: string }) {
     return (
-        <Drawing viewBox="0 0 84 32" className={className}>
-            <S d="M4 20 C 22 6, 50 6, 74 15" />
-            <S d="M63 6 L76 15 L64 24" />
-        </Drawing>
+        <svg
+            className={`euk-chevron ${className ?? ""}`}
+            width="9"
+            height="15"
+            viewBox="0 0 9 15"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M1.5 1 L7.5 7.5 L1.5 14" />
+        </svg>
     );
 }
 

@@ -7,13 +7,27 @@
  * padding outside the container, 3px rules, one signal colour.
  */
 
+/* The head of the page and the section under it were each carrying a full
+   padding — 56px below the lede, then 120px above the next heading — which
+   read as a hole rather than a break. The seam has one owner now: the section
+   below opens it, and this block closes tight. */
 .euk-pdfpage-top {
-    padding: 40px 20px 36px;
+    padding: 40px 20px 8px;
 }
 
 @media (min-width: 768px) {
     .euk-pdfpage-top {
-        padding: 80px 48px 56px;
+        padding: 80px 48px 16px;
+    }
+}
+
+.euk-pdfpage > .euk-section:first-of-type {
+    padding-top: 56px;
+}
+
+@media (min-width: 768px) {
+    .euk-pdfpage > .euk-section:first-of-type {
+        padding-top: 80px;
     }
 }
 

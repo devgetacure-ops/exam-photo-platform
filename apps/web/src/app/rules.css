@@ -48,15 +48,7 @@
     margin-top: 28px;
 }
 
-.euk-rules-cta-arrow {
-    width: 34px;
-    height: auto;
-    transition: translate 160ms cubic-bezier(0.2, 0, 0.1, 1);
-}
 
-.euk-rules-cta:hover .euk-rules-cta-arrow {
-    translate: 4px 0;
-}
 
 /* Side padding sits outside the page container, as it does in the header
    above. Inside it, the body started 48px to the right of the headline. */
@@ -340,7 +332,4 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .euk-rules-cta-arrow {
-        transition: none;
-    }
 }

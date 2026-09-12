@@ -153,20 +153,39 @@
    never a standfirst, a pull quote, or a second body voice — it is the hand in
    the margin, and it always arrives with its arrow. Two or three per page. */
 .euk-note {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
+    margin: 0;
+    border-left: var(--rule) solid var(--signal);
+    padding-left: 14px;
     font-family: var(--font-petrona), Georgia, serif;
     font-style: italic;
-    line-height: 1.35;
+    line-height: 1.4;
     color: var(--ink-70);
-    margin: 0;
 }
 
-.euk-note svg {
-    flex-shrink: 0;
-    margin-top: 0.35em;
-    color: var(--signal-deep);
+/* The pointer that survived: inside a control, pointing the way it goes. */
+.euk-chevron {
+    flex: none;
+    transition: translate 160ms cubic-bezier(0.2, 0, 0.1, 1);
+}
+
+a:hover .euk-chevron,
+button:hover .euk-chevron {
+    translate: 3px 0;
+}
+
+.euk-chevron--end {
+    margin-left: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .euk-chevron {
+        transition: none;
+    }
+
+    a:hover .euk-chevron,
+    button:hover .euk-chevron {
+        translate: none;
+    }
 }
 
 /* ---- the wordmark: thirteen connected cells ------------------------- */

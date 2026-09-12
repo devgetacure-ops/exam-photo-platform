@@ -80,9 +80,12 @@ export function ExamSearch({
   return (
     <div className="w-full">
       <div
+        /* The frame carries focus itself. The global focus ring would draw a
+           second rectangle inside this one, which is a box in a box. */
         className="group flex items-center gap-3 border-[3px] border-[var(--ink)] bg-[var(--paper)]
-                   px-5 py-4 shadow-[5px_5px_0_var(--ink)] transition-colors
-                   focus-within:border-[var(--signal-deep)]"
+                   px-5 py-4 shadow-[5px_5px_0_var(--ink)] transition-[border-color,box-shadow]
+                   focus-within:border-[var(--signal-deep)]
+                   focus-within:shadow-[5px_5px_0_var(--signal)]"
       >
         <svg
           className="size-5 shrink-0 text-[var(--ink)]"
@@ -116,6 +119,7 @@ export function ExamSearch({
           autoComplete="off"
           spellCheck={false}
           className="w-full bg-transparent text-lg text-[var(--ink)] outline-none
+                     focus-visible:outline-none
                      placeholder:text-[var(--ink-55)]
                      [&::-webkit-search-cancel-button]:appearance-none"
         />

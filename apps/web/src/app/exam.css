@@ -672,22 +672,15 @@
     cursor: pointer;
 }
 
-.euk-kit-next-arrow {
-    width: 42px;
-    height: auto;
-    color: var(--signal-deep);
-    transition: translate 160ms cubic-bezier(0.2, 0, 0.1, 1);
-}
 
-.euk-kit-next:hover .euk-kit-next-arrow {
-    translate: 6px 0;
-}
 
 .euk-kit-links {
     display: flex;
     flex-wrap: wrap;
-    gap: 22px;
-    margin-top: 40px;
+    gap: 8px 22px;
+    /* It had no space beneath it at all, so it read as a caption stuck to the
+       review block rather than a row of its own. */
+    margin: 40px 0 30px;
     padding-top: 18px;
     border-top: 2px solid var(--hairline);
     font-size: 14px;
@@ -695,6 +688,10 @@
 
 .euk-kit-links a,
 .euk-kit-links button {
+    /* A thumb needs more than a 14px line to land on. */
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
     color: var(--ink-55);
     text-decoration: underline;
     text-underline-offset: 4px;
@@ -1934,7 +1931,6 @@
     .euk-tip,
     .euk-tip-controls button,
     .euk-kit-file,
-    .euk-kit-next-arrow,
     .euk-drop,
     .euk-drop-art,
     .euk-switch-track,

@@ -5,7 +5,6 @@ import { SiteHeader } from "../components/site-header";
 import { WipeDemo } from "../components/euk/wipe-demo";
 import { Reveal } from "../components/euk/reveal";
 import {
-    ArrowDrawing,
     CertificateDrawing,
     DeclarationDrawing,
     PhotoDrawing,
@@ -269,9 +268,6 @@ export default async function Home() {
                                     className={`euk-step ${step.whose === "Ours" ? "euk-step--ours" : ""}`}
                                 >
                                     <Reveal delay={i * 110}>
-                                        {i < steps.length - 1 && (
-                                            <ArrowDrawing className="euk-step-arrow" />
-                                        )}
                                         <h3>
                                             {step.title}{" "}
                                             <span className="euk-whose">

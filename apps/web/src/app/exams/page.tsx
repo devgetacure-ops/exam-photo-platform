@@ -3,7 +3,7 @@ import { loadSearchIndex } from "../../lib/catalogue.server";
 import { ExamSearch } from "../../components/exam-search";
 import { SiteHeader } from "../../components/site-header";
 import { SiteFooter } from "../../components/site-footer";
-import { ArrowDrawing } from "../../components/euk/doodles";
+import { Chevron } from "../../components/euk/doodles";
 
 export const metadata = {
     title: "Find your exam · examuploadkit",
@@ -123,7 +123,7 @@ export default async function ExamsPage() {
                         </div>
                         <Link className="primary-button euk-dir-invite-link" href="/exam-request">
                             Ask us to add it
-                            <ArrowDrawing className="euk-dir-invite-arrow" />
+                            <Chevron />
                         </Link>
                     </div>
                 </div>

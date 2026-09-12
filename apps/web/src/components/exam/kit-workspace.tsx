@@ -7,7 +7,7 @@ import { RequirementPanel } from "./requirement-panel";
 import { useKit } from "./use-kit";
 import { ReportIssue } from "./report-issue";
 import { KitCheckout } from "./kit-checkout";
-import { ArrowDrawing, FileTypeDrawing } from "../euk/doodles";
+import { Chevron, FileTypeDrawing } from "../euk/doodles";
 import {
     CHARGEABLE_TYPES,
     isOurs,
@@ -430,7 +430,7 @@ export function KitWorkspace({
                                             onClick={() => open(next.requirement_id)}
                                         >
                                             <span>Next: {next.requirement_name}</span>
-                                            <ArrowDrawing className="euk-kit-next-arrow" />
+                                            <Chevron />
                                         </button>
                                     )}
                                 </div>
