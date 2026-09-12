@@ -91,15 +91,15 @@ const ELSEWHERE = [
  */
 const PHOTO_PAIRS = ["a1", "a2", "a3", "a4"].map((id) => ({
     id,
-    before: `/examples/demo/photo-${id}-uploaded.jpg`,
-    after: `/examples/demo/photo-${id}-prepared.jpg`,
+    before: `/examples/band/photo-${id}-uploaded.jpg`,
+    after: `/examples/band/photo-${id}-prepared.jpg`,
     alt: "A photograph taken at home, and the same photograph prepared for an application",
 }));
 
 const SIGNATURE_PAIRS = ["s1", "s2", "s3"].map((id) => ({
     id,
-    before: `/examples/demo/sign-${id}-uploaded.jpg`,
-    after: `/examples/demo/sign-${id}-prepared.jpg`,
+    before: `/examples/band/sign-${id}-uploaded.jpg`,
+    after: `/examples/band/sign-${id}-prepared.jpg`,
     alt: "A signature photographed on paper, and the same signature prepared for an application",
 }));
 

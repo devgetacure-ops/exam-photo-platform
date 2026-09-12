@@ -1,6 +1,6 @@
 # The demonstration images
 
-**Recorded 12 September 2026.** What is in `apps/web/public/examples/demo/`,
+**Recorded 12 September 2026.** What is in `apps/web/public/examples/band/`,
 where it came from, and what may be claimed about it.
 
 ## What these are
@@ -41,10 +41,24 @@ shot against a tight head-and-shoulders prepared file, and the partition
 crosses between them at different scales — which is what the upload actually
 looks like.
 
+## How they are shown
+
+On one sheet, set the way the head of an application form is set: the
+photograph box, and beneath it a signature strip of the same width. Side by
+side, a tall portrait against a short landscape left the row ragged along the
+bottom and the two comparisons arguing with each other.
+
+Both frames sweep the same way at the same time. Each is otherwise its own:
+dragging one holds only that one, and it picks itself up three seconds after
+the last touch. Each moves to its next example after every sweep, so all seven
+pairs are seen without anybody clicking. One control pauses and plays both.
+
 ## If they are replaced
 
 Keep the same file names, or update `PHOTO_PAIRS` and `SIGNATURE_PAIRS` in
 `apps/web/src/app/page.tsx`. Next.js caches optimised images by URL, so a new
-file under an old name will not appear until `.next/cache/images` is cleared —
-changing the name is the safer move. The band takes any number of pairs per
-kind and builds its own selector dots.
+file under an old name will not appear until `.next/cache/images` is cleared,
+and a running dev server can hold one in memory past that — changing the name,
+or the folder, is the reliable move. That is why these live in `band/` and not
+the `demo/` they started in. The band takes any number of pairs per kind and
+builds its own selector dots.

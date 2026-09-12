@@ -295,43 +295,55 @@
 
 /* ---- the before-and-after band --------------------------------------- */
 
-/* Two frames: a photograph, which is tall, and a signature, which is wide.
-   Side by side they read as one demonstration and fill the row evenly; the
-   signature column is wider because its frame is shorter. */
+/* Set like the head of an application form: a photograph box, and a signature
+   strip of the same width beneath it, on one sheet. The two comparisons then
+   share an edge and a rhythm, instead of standing side by side at two
+   different heights with a ragged foot. */
 
-.euk-wipes {
+.euk-band {
+    display: grid;
+    gap: 44px;
     margin-top: 96px;
 }
 
-.euk-wipes-head {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 18px 28px;
+@media (min-width: 900px) {
+    .euk-band {
+        grid-template-columns: minmax(0, 1fr) minmax(340px, 400px);
+        gap: 72px;
+        align-items: start;
+    }
 }
 
-.euk-wipes-head h3 {
-    font-size: clamp(32px, 3.6vw, 50px);
+/* The sheet runs taller than the viewport, so the copy travels with it. */
+@media (min-width: 1100px) {
+    .euk-band-copy {
+        position: sticky;
+        top: 32px;
+    }
+}
+
+.euk-band-copy h3 {
+    font-size: clamp(32px, 3.6vw, 52px);
     line-height: 0.9;
 }
 
-.euk .euk-wipes-head p {
-    margin-top: 16px;
+.euk .euk-band-copy p {
+    margin-top: 18px;
     font-size: 17px;
     line-height: 1.6;
     color: var(--ink-70);
-    max-width: 54ch;
+    max-width: 52ch;
 }
 
-.euk-wipes-toggle {
+.euk-band-toggle {
     display: inline-flex;
     align-items: center;
     gap: 9px;
+    margin-top: 26px;
     border: var(--rule-thin) solid var(--ink);
     background: var(--paper);
     color: var(--ink);
-    padding: 9px 15px;
+    padding: 10px 16px;
     font-family: var(--font-shoulders), "Arial Narrow", sans-serif;
     font-size: 13px;
     letter-spacing: 0.08em;
@@ -340,24 +352,41 @@
     white-space: nowrap;
 }
 
-.euk-wipes-toggle span {
+.euk-band-toggle span {
     font-size: 11px;
     color: var(--signal-deep);
 }
 
-.euk-wipes-grid {
+.euk .euk-band-note {
+    margin-top: 30px;
+    border-left: var(--rule) solid var(--hairline);
+    padding-left: 15px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--ink-55);
+    max-width: 52ch;
+}
+
+.euk-band-sheet {
     display: grid;
-    gap: 34px;
-    margin-top: 38px;
+    gap: 26px;
+    width: 100%;
+    max-width: 420px;
+    margin-inline: auto;
+    border: var(--rule) solid var(--ink);
+    background: var(--paper);
+    box-shadow: var(--drop) var(--drop) 0 var(--ink);
+    padding: 18px;
 }
 
 @media (min-width: 900px) {
-    .euk-wipes-grid {
-        grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
-        gap: 44px;
-        align-items: start;
+    .euk-band-sheet {
+        margin-inline: 0;
+        justify-self: end;
     }
 }
+
+/* ---- one comparison --------------------------------------------------- */
 
 .euk-wipe {
     margin: 0;
@@ -369,7 +398,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    margin-bottom: 10px;
+    margin-bottom: 9px;
 }
 
 .euk-wipe-title {
@@ -379,12 +408,12 @@
 
 .euk-wipe-dots {
     display: flex;
-    gap: 6px;
+    gap: 5px;
 }
 
 .euk-wipe-dot {
-    width: 24px;
-    height: 11px;
+    width: 22px;
+    height: 10px;
     border: var(--rule-thin) solid var(--ink);
     background: var(--paper);
     cursor: pointer;
@@ -396,10 +425,10 @@
 }
 
 .euk-wipe-frame {
-    --wipe: 55;
+    --wipe: 50;
     position: relative;
     overflow: hidden;
-    border: var(--rule) solid var(--ink);
+    border: var(--rule-thin) solid var(--ink);
     background: var(--paper-2);
     touch-action: pan-y;
     cursor: ew-resize;
@@ -458,8 +487,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 42px;
-    height: 42px;
+    width: 40px;
+    height: 40px;
     border: var(--rule) solid var(--ink);
     background: var(--signal-deep);
     cursor: ew-resize;
@@ -467,75 +496,73 @@
 
 .euk-wipe-tag {
     position: absolute;
-    top: 8px;
-    padding: 4px 8px;
-    font-size: 11px;
+    top: 7px;
+    padding: 4px 7px;
+    font-size: 10px;
     pointer-events: none;
 }
 
 .euk-wipe-tag--before {
-    left: 8px;
+    left: 7px;
     background: var(--ink);
     color: var(--paper);
 }
 
-/* The deeper signal, not the bright one: white on #f04e23 is 3.6:1 and this
+/* The deeper signal, not the bright one: white on #f04e23 is 3.6:1, and this
    label is small uppercase text. */
 .euk-wipe-tag--after {
-    right: 8px;
+    right: 7px;
     background: var(--signal-deep);
     color: var(--signal-ink);
 }
 
-.euk-wipe-checks {
+/* ---- what the partition has passed ------------------------------------ */
+
+.euk-wipe-ticks {
     list-style: none;
-    margin: 14px 0 0;
+    margin: 12px 0 0;
     padding: 0;
-}
-
-.euk .euk-wipe-check {
     display: flex;
-    align-items: flex-start;
-    gap: 11px;
+    flex-wrap: wrap;
+    gap: 7px 14px;
+}
+
+.euk .euk-wipe-ticks li {
+    display: flex;
+    align-items: center;
+    gap: 7px;
     max-width: none;
-    border-bottom: var(--rule-thin) solid var(--hairline);
-    padding: 8px 0;
+    font-size: 12px;
+    color: var(--ink-40);
 }
 
-.euk-wipe-check:last-child {
-    border-bottom: 0;
+.euk-wipe-ticks li[data-done="true"] {
+    color: var(--ink);
 }
 
-.euk-wipe-check-mark {
+.euk-wipe-tickbox {
     display: flex;
     align-items: center;
     justify-content: center;
     flex: none;
-    width: 20px;
-    height: 20px;
-    margin-top: 2px;
+    width: 15px;
+    height: 15px;
     border: var(--rule-thin) solid var(--ink-40);
 }
 
-.euk-wipe-check[data-done="true"] .euk-wipe-check-mark {
+.euk-wipe-ticks li[data-done="true"] .euk-wipe-tickbox {
     border-color: var(--ink);
     background: var(--signal);
 }
 
-.euk-wipe-check-label {
-    flex: none;
-    width: 78px;
-    padding-top: 3px;
-    font-size: 11px;
-    color: var(--ink-55);
-}
-
-.euk-wipe-check-text {
-    min-width: 0;
+/* Held at two lines so the sheet never jumps as the caption changes. */
+.euk .euk-wipe-caption {
+    margin-top: 9px;
+    min-height: 2.9em;
+    max-width: none;
     font-size: 13px;
     line-height: 1.45;
-    color: var(--ink-70);
-    overflow-wrap: anywhere;
+    color: var(--ink-55);
 }
 
 .euk-wipe-was {
@@ -546,16 +573,6 @@
 .euk-wipe-now {
     color: var(--ink);
     font-weight: 600;
-}
-
-.euk .euk-wipes-note {
-    margin-top: 26px;
-    border-left: var(--rule) solid var(--hairline);
-    padding-left: 15px;
-    font-size: 14px;
-    line-height: 1.6;
-    color: var(--ink-55);
-    max-width: 66ch;
 }
 
 @media (prefers-reduced-motion: reduce) {

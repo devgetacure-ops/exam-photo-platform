@@ -4,20 +4,29 @@ import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 /**
- * The before-and-after band: a photograph and a signature, side by side.
+ * The before-and-after band, set the way an application form is set.
  *
- * It drags itself. A candidate who never touches it still sees what the
- * product does, and one who does touch it takes the handle mid-sweep — the
- * first drag stops the motion everywhere and the control reads Play.
+ * A form gives you a photograph box and, beneath it, a signature strip of the
+ * same width. Arranging the two comparisons that way fixes the layout problem
+ * the side-by-side version had — a tall portrait next to a short landscape,
+ * ragged along the bottom — and it is the thing the candidate is filling in.
  *
- * The sweep writes a CSS custom property on the frame rather than React state,
- * so a 60fps loop re-renders nothing; the only state that changes during a
- * sweep is how many checks have been passed, which moves a handful of times.
- * Motion stops when the band scrolls out of view, and never starts at all
- * under prefers-reduced-motion.
+ * The motion rules, in one place:
  *
- * The examples are representational: generated photographs and signatures,
- * not files this site prepared and not any candidate's. The band says so.
+ * - Both frames sweep the same way at the same time. Out of phase, one
+ *   travelled left while the other travelled right, which reads as two
+ *   arguments rather than one demonstration.
+ * - Each frame is its own in every other way: taking the handle of one holds
+ *   only that one, and it picks itself up three seconds after the last touch.
+ * - At the end of each sweep a frame moves to its next example, so everything
+ *   on offer is seen without anybody clicking.
+ * - The control pauses and plays both, for anyone who wants it still
+ *   (WCAG 2.2.2). Nothing moves under prefers-reduced-motion, or while the
+ *   band is off screen.
+ *
+ * The sweep writes a CSS custom property on the frame rather than React
+ * state, so the loop re-renders nothing; the only state that changes during a
+ * sweep is how many of the checks the partition has passed.
  */
 
 export interface WipePair {
@@ -33,43 +42,36 @@ export interface WipeCheck {
     after: string;
 }
 
+/** One sweep, out and back. */
+const PERIOD_MS = 7500;
+const LOW = 4;
+const HIGH = 96;
+const START = 50;
+/** How long after the last touch a frame picks itself up again. */
+const RESUME_AFTER_MS = 3000;
+
 interface SetProps {
     title: string;
     pairs: WipePair[];
     checks: WipeCheck[];
     width: number;
     height: number;
-    running: boolean;
-    /** Where this frame's handle rests, so the two never move in lockstep. */
-    start: number;
-    onTakeover: () => void;
+    /** The band's control says yes, and the band is on screen. */
+    allowed: boolean;
 }
 
-/** A full sweep, out and back. Slow enough to read the checks as they turn. */
-const PERIOD_MS = 8200;
-const LOW = 4;
-const HIGH = 96;
-
-function WipeSet({
-    title,
-    pairs,
-    checks,
-    width,
-    height,
-    running,
-    start,
-    onTakeover,
-}: SetProps) {
+function WipeSet({ title, pairs, checks, width, height, allowed }: SetProps) {
     const [index, setIndex] = useState(0);
     const [previous, setPrevious] = useState<number | null>(null);
-    const [pinned, setPinned] = useState(false);
-    const [done, setDone] = useState(0);
+    const [held, setHeld] = useState(false);
+    const [passed, setPassed] = useState(0);
 
     const frameRef = useRef<HTMLDivElement>(null);
     const sliderRef = useRef<HTMLDivElement>(null);
-    const pctRef = useRef(start);
-    const doneRef = useRef(0);
+    const pctRef = useRef(START);
+    const passedRef = useRef(0);
     const indexRef = useRef(0);
+    const resumeRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     useEffect(() => {
         indexRef.current = index;
@@ -81,12 +83,12 @@ function WipeSet({
             pctRef.current = pct;
             frameRef.current?.style.setProperty("--wipe", pct.toFixed(2));
             sliderRef.current?.setAttribute("aria-valuenow", String(Math.round(pct)));
-            const passed = checks.filter(
+            const crossed = checks.filter(
                 (_, i) => pct >= ((i + 1) / (checks.length + 1)) * 100,
             ).length;
-            if (passed !== doneRef.current) {
-                doneRef.current = passed;
-                setDone(passed);
+            if (crossed !== passedRef.current) {
+                passedRef.current = crossed;
+                setPassed(crossed);
             }
         },
         [checks],
@@ -96,52 +98,70 @@ function WipeSet({
         apply(pctRef.current);
     }, [apply]);
 
+    /** Any touch holds this frame; it lets go again after a quiet spell. */
+    const hold = useCallback(() => {
+        setHeld(true);
+        if (resumeRef.current) clearTimeout(resumeRef.current);
+        resumeRef.current = setTimeout(() => setHeld(false), RESUME_AFTER_MS);
+    }, []);
+
+    useEffect(
+        () => () => {
+            if (resumeRef.current) clearTimeout(resumeRef.current);
+        },
+        [],
+    );
+
+    const running = allowed && !held;
+
     useEffect(() => {
         if (!running) return;
         let frame = 0;
         let started = false;
         let origin = 0;
-        let lastTriangle = 1;
+        let lastCycle = 0;
         const tick = (now: number) => {
             if (!started) {
-                // Pick up the sweep where the handle already rests, so
-                // starting it never throws the partition across the frame.
+                // Pick the sweep up where the handle rests, so starting it
+                // never throws the partition across the frame.
                 const norm = Math.min(
                     1,
                     Math.max(0, (pctRef.current - LOW) / (HIGH - LOW)),
                 );
                 const from = Math.acos(1 - 2 * norm) / Math.PI;
                 origin = now - (from / 2) * PERIOD_MS;
-                lastTriangle = from;
+                lastCycle = 0;
                 started = true;
             }
-            const t = ((now - origin) / PERIOD_MS) % 1;
-            // Out and back, eased at both ends so it never snaps around.
+            const elapsed = (now - origin) / PERIOD_MS;
+            const t = elapsed % 1;
             const triangle = t < 0.5 ? t * 2 : (1 - t) * 2;
             const eased = 0.5 - 0.5 * Math.cos(Math.PI * triangle);
             apply(LOW + eased * (HIGH - LOW));
-            // Change example at the far end of the sweep, where the prepared
-            // file fills the frame and the swap reads as one picture becoming
-            // another rather than as a jump.
-            if (triangle < 0.02 && lastTriangle >= 0.02 && !pinned && pairs.length > 1) {
+            // On to the next example once a whole sweep has run, which lands
+            // at the far end where the prepared file fills the frame. Counted
+            // rather than watched for: a dropped frame can step clean over a
+            // narrow window, and on a slow phone that means a frame that
+            // quietly stops changing example.
+            const cycle = Math.floor(elapsed);
+            if (cycle !== lastCycle && pairs.length > 1) {
+                lastCycle = cycle;
                 setPrevious(indexRef.current);
                 setIndex((i) => (i + 1) % pairs.length);
             }
-            lastTriangle = triangle;
             frame = requestAnimationFrame(tick);
         };
         frame = requestAnimationFrame(tick);
         return () => cancelAnimationFrame(frame);
-    }, [running, pinned, pairs.length, apply]);
+    }, [running, pairs.length, apply]);
 
-    // Clear the outgoing layer once its fade has run.
     useEffect(() => {
         if (previous === null) return;
         const timer = setTimeout(() => setPrevious(null), 360);
         return () => clearTimeout(timer);
     }, [previous]);
 
-    // Fetch the next pair before it is needed, so a swap never shows a gap.
+    // Fetch the next pair before it is wanted, so a change never shows a gap.
     useEffect(() => {
         const next = pairs[(index + 1) % pairs.length];
         if (!next || typeof window === "undefined") return;
@@ -164,6 +184,7 @@ function WipeSet({
 
     const pair = pairs[index];
     const outgoing = previous !== null && previous !== index ? pairs[previous] : null;
+    const latest = passed > 0 ? checks[passed - 1] : null;
 
     return (
         <figure className="euk-wipe">
@@ -182,10 +203,10 @@ function WipeSet({
                             aria-label={`Example ${i + 1} of ${pairs.length}`}
                             aria-pressed={i === index}
                             onClick={() => {
+                                hold();
                                 if (i === index) return;
                                 setPrevious(index);
                                 setIndex(i);
-                                setPinned(true);
                             }}
                         />
                     ))}
@@ -198,14 +219,15 @@ function WipeSet({
                 style={{ aspectRatio: `${width} / ${height}` }}
                 onPointerDown={(event) => {
                     event.currentTarget.setPointerCapture(event.pointerId);
-                    onTakeover();
-                    setPinned(true);
+                    hold();
                     fromClientX(event.clientX);
                 }}
                 onPointerMove={(event) => {
                     if (!event.currentTarget.hasPointerCapture(event.pointerId)) return;
+                    hold();
                     fromClientX(event.clientX);
                 }}
+                onPointerUp={hold}
             >
                 {outgoing && (
                     <Image
@@ -247,7 +269,7 @@ function WipeSet({
                     aria-label={`Drag to compare the ${title.toLowerCase()} as uploaded with the prepared file`}
                     aria-valuemin={0}
                     aria-valuemax={100}
-                    aria-valuenow={55}
+                    aria-valuenow={START}
                     aria-valuetext="Part of the uploaded file shown"
                     className="euk-wipe-handle"
                     onKeyDown={(event) => {
@@ -261,8 +283,7 @@ function WipeSet({
                         const delta = moves[event.key];
                         if (delta === undefined) return;
                         event.preventDefault();
-                        onTakeover();
-                        setPinned(true);
+                        hold();
                         apply(pctRef.current + delta);
                     }}
                 >
@@ -290,37 +311,31 @@ function WipeSet({
             </div>
 
             <figcaption>
-                <ol className="euk-wipe-checks">
+                <ul className="euk-wipe-ticks">
                     {checks.map((check, i) => (
-                        <li
-                            key={check.label}
-                            className="euk-wipe-check"
-                            data-done={i < done ? "true" : undefined}
-                        >
-                            <span className="euk-wipe-check-mark" aria-hidden="true">
-                                {i < done ? (
-                                    <svg width="11" height="9" viewBox="0 0 11 9" fill="none" stroke="var(--signal-ink)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <li key={check.label} data-done={i < passed ? "true" : undefined}>
+                            <span className="euk-wipe-tickbox" aria-hidden="true">
+                                {i < passed ? (
+                                    <svg width="9" height="8" viewBox="0 0 11 9" fill="none" stroke="var(--signal-ink)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
                                         <path d="M1 4.5 L4 7.5 L10 1.5" />
                                     </svg>
                                 ) : null}
                             </span>
-                            <span className="euk-label euk-wipe-check-label">
-                                {check.label}
-                            </span>
-                            <span className="euk-wipe-check-text">
-                                <span className={i < done ? "euk-wipe-was" : undefined}>
-                                    {check.before}
-                                </span>
-                                {i < done && (
-                                    <span className="euk-wipe-now">
-                                        {" → "}
-                                        {check.after}
-                                    </span>
-                                )}
-                            </span>
+                            {check.label}
                         </li>
                     ))}
-                </ol>
+                </ul>
+                <p className="euk-wipe-caption">
+                    {latest ? (
+                        <>
+                            <span className="euk-wipe-was">{latest.before}</span>
+                            {" → "}
+                            <span className="euk-wipe-now">{latest.after}</span>
+                        </>
+                    ) : (
+                        "Drag the handle, or leave it running."
+                    )}
+                </p>
             </figcaption>
         </figure>
     );
@@ -341,9 +356,6 @@ export function WipeDemo({
     const [onScreen, setOnScreen] = useState(false);
     const bandRef = useRef<HTMLDivElement>(null);
 
-    // Motion is opt-out for everyone else and opt-in here: it starts only
-    // after the browser says it is wanted (WCAG 2.3.3), and the control
-    // stays for anyone who wants it the other way.
     useEffect(() => {
         const query = window.matchMedia("(prefers-reduced-motion: reduce)");
         const sync = () => setPlaying(!query.matches);
@@ -358,9 +370,8 @@ export function WipeDemo({
             setOnScreen(true);
             return;
         }
-        // Any part of it showing counts: the band is taller than a phone
-        // viewport, so a fractional threshold would never be met on the
-        // screen it matters most on.
+        // Any part of it showing counts: the sheet is taller than a phone
+        // viewport, so a fractional threshold would never be met there.
         const observer = new IntersectionObserver(([entry]) =>
             setOnScreen(entry.isIntersecting),
         );
@@ -368,44 +379,52 @@ export function WipeDemo({
         return () => observer.disconnect();
     }, []);
 
-    const running = playing && onScreen;
+    const allowed = playing && onScreen;
 
     return (
-        <div className="euk-wipes" ref={bandRef}>
-            <div className="euk-wipes-head">
-                <div>
-                    <h3 className="euk-display">
-                        Watch it, or
-                        <br />
-                        take the handle.
-                    </h3>
-                    <p>
-                        This is the comparison you get after you upload: what you
-                        gave us on one side, what came back on the other. Each
-                        problem is checked off as the line passes it.
-                    </p>
-                </div>
+        <div className="euk-band" ref={bandRef}>
+            <div className="euk-band-copy">
+                <h3 className="euk-display">
+                    Watch it,
+                    <br />
+                    or take the handle.
+                </h3>
+                <p>
+                    This is the comparison you get after you upload: what you
+                    gave us on one side, what came back on the other. Both
+                    frames work through their examples on their own.
+                </p>
+                <p>
+                    Drag either one and it stays where you put it, then picks
+                    itself up three seconds after you let go. The dots change
+                    the example.
+                </p>
                 <button
                     type="button"
-                    className="euk-wipes-toggle"
+                    className="euk-band-toggle"
                     aria-pressed={playing}
                     onClick={() => setPlaying((value) => !value)}
                 >
                     <span aria-hidden="true">{playing ? "❚❚" : "▶"}</span>
-                    {playing ? "Pause" : "Play"}
+                    {playing ? "Pause both" : "Play both"}
                 </button>
+                <p className="euk-band-note">
+                    Representational examples. The faces and the signatures are
+                    generated, not photographs of candidates, and these pairs
+                    were made to show the difference rather than produced by our
+                    engine. Your own file is prepared to your examination&rsquo;s
+                    published rules, and you see it before you pay.
+                </p>
             </div>
 
-            <div className="euk-wipes-grid">
+            <div className="euk-band-sheet">
                 <WipeSet
                     title="Photograph"
                     pairs={photos}
                     checks={photoChecks}
                     width={720}
                     height={960}
-                    running={running}
-                    start={55}
-                    onTakeover={() => setPlaying(false)}
+                    allowed={allowed}
                 />
                 <WipeSet
                     title="Signature"
@@ -413,19 +432,9 @@ export function WipeDemo({
                     checks={signatureChecks}
                     width={960}
                     height={720}
-                    running={running}
-                    start={30}
-                    onTakeover={() => setPlaying(false)}
+                    allowed={allowed}
                 />
             </div>
-
-            <p className="euk-wipes-note">
-                Representational examples. The faces and the signatures are
-                generated, not photographs of candidates, and these particular
-                pairs were made to show the difference rather than produced by
-                our engine. Your own file is prepared to your examination&rsquo;s
-                published rules, and you see it before you pay.
-            </p>
         </div>
     );
 }

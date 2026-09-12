@@ -60,7 +60,7 @@ temp/
 #
 #   assets/reference-portrait.jpg        the ideal-photo source, a synthetic face
 #   apps/web/public/examples/*           guidance examples served by the web app
-#   apps/web/public/examples/demo/*      the landing band's before-and-after
+#   apps/web/public/examples/band/*      the landing band's before-and-after
 #                                        pairs: generated people and invented
 #                                        signatures, recorded in
 #                                        docs/ui-direction-2026-09-10/DEMO_ASSETS.md
@@ -75,8 +75,8 @@ temp/
 !apps/web/public/examples/*.jpg
 !apps/web/public/examples/*.png
 !apps/web/public/examples/*.webp
-!apps/web/public/examples/demo/*.jpg
-!apps/web/public/examples/demo/*.png
+!apps/web/public/examples/band/*.jpg
+!apps/web/public/examples/band/*.png
 # Ignore generated outputs
 output/
 downloads/

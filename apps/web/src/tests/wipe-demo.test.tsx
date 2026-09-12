@@ -6,22 +6,24 @@ import { WipeDemo } from "../components/euk/wipe-demo";
 
 /**
  * The band drives itself with requestAnimationFrame, which a test environment
- * never runs on its own, so the clock is stubbed and stepped by hand. That is
- * also the only way to prove the sweep advances the example at the far end
- * rather than at some arbitrary moment.
+ * never runs on its own, so the clock is stubbed and stepped by hand. The
+ * three-second pick-up runs on a timer, so that is faked too. Between them
+ * they are the only way to prove the rules that matter: both frames sweep the
+ * same way, a drag holds one frame and not the other, and a held frame lets go
+ * again by itself.
  */
 
 const photos = ["a1", "a2", "a3"].map((id) => ({
     id,
-    before: `/examples/demo/photo-${id}-before.jpg`,
-    after: `/examples/demo/photo-${id}-after.jpg`,
+    before: `/examples/band/photo-${id}-uploaded.jpg`,
+    after: `/examples/band/photo-${id}-prepared.jpg`,
     alt: `photo ${id}`,
 }));
 
 const signatures = ["s1", "s2"].map((id) => ({
     id,
-    before: `/examples/demo/sign-${id}-before.jpg`,
-    after: `/examples/demo/sign-${id}-after.jpg`,
+    before: `/examples/band/sign-${id}-uploaded.jpg`,
+    after: `/examples/band/sign-${id}-prepared.jpg`,
     alt: `signature ${id}`,
 }));
 
@@ -42,16 +44,32 @@ function step(now: number) {
     });
 }
 
-/** What the frame is showing, ignoring the layer fading out behind it. */
-function showing(container: HTMLElement): string {
-    const images = [...container.querySelectorAll<HTMLImageElement>("img")];
+function wait(ms: number) {
+    act(() => {
+        vi.advanceTimersByTime(ms);
+    });
+}
+
+/** Where a frame's partition sits, as the CSS custom property holds it. */
+function wipeOf(container: HTMLElement, which: number): number {
+    const frame = container.querySelectorAll<HTMLElement>(".euk-wipe-frame")[which];
+    return Number.parseFloat(frame.style.getPropertyValue("--wipe"));
+}
+
+/** What a frame is showing, ignoring the layer fading out behind it. */
+function showing(container: HTMLElement, which: number): string {
+    const figure = container.querySelectorAll(".euk-wipe")[which];
+    const images = [...figure.querySelectorAll<HTMLImageElement>("img")];
     return images.find((image) => image.alt !== "")?.alt ?? "";
 }
 
-/** The photograph frame's sweep position, as the CSS custom property holds it. */
-function wipeOf(container: HTMLElement, which = 0): number {
+function grab(container: HTMLElement, which: number, clientX: number) {
     const frame = container.querySelectorAll<HTMLElement>(".euk-wipe-frame")[which];
-    return Number.parseFloat(frame.style.getPropertyValue("--wipe"));
+    frame.setPointerCapture = () => {};
+    frame.hasPointerCapture = () => true;
+    frame.getBoundingClientRect = () =>
+        ({ left: 0, width: 400, top: 0, height: 500 }) as DOMRect;
+    fireEvent.pointerDown(frame, { pointerId: 1, clientX });
 }
 
 function renderBand() {
@@ -67,6 +85,7 @@ function renderBand() {
 
 describe("the before-and-after band", () => {
     beforeEach(() => {
+        vi.useFakeTimers();
         pending = new Map();
         nextFrameId = 1;
         reduceMotion = false;
@@ -106,105 +125,117 @@ describe("the before-and-after band", () => {
     afterEach(() => {
         cleanup();
         vi.unstubAllGlobals();
+        vi.useRealTimers();
     });
 
-    test("it sweeps on its own, from where the handle already rests", () => {
+    test("both frames sweep the same way, never against each other", () => {
         const { container } = renderBand();
 
-        step(0);
-        const first = wipeOf(container);
-        // The first frame picks the sweep up at the resting position rather
-        // than throwing the partition to one edge.
-        expect(first).toBeCloseTo(55, 0);
-
-        step(1200);
-        const second = wipeOf(container);
-        step(2400);
-        const third = wipeOf(container);
-
-        expect(second).not.toBeCloseTo(first, 1);
-        expect(third).not.toBeCloseTo(second, 1);
-        for (const value of [first, second, third]) {
-            expect(value).toBeGreaterThanOrEqual(4);
-            expect(value).toBeLessThanOrEqual(96);
+        for (const now of [0, 900, 1800, 2700, 3600]) {
+            step(now);
+            expect(wipeOf(container, 0)).toBeCloseTo(wipeOf(container, 1), 2);
         }
+        // And it is a sweep, not a resting position.
+        step(0);
+        const first = wipeOf(container, 0);
+        step(1500);
+        expect(wipeOf(container, 0)).not.toBeCloseTo(first, 1);
     });
 
-    test("it changes example at the far end of a sweep, not before", () => {
+    test("a drag holds that frame, and leaves the other one running", () => {
         const { container } = renderBand();
         step(0);
-        expect(showing(container)).toBe("photo a1");
+        step(900);
+        const signatureWas = wipeOf(container, 1);
 
-        // Most of a sweep: out to the far side and back, but not past the end.
-        for (let now = 200; now <= 3600; now += 400) step(now);
-        expect(showing(container)).toBe("photo a1");
+        grab(container, 0, 100);
+        expect(wipeOf(container, 0)).toBeCloseTo(25, 0);
 
-        // Past the end of the sweep, where the prepared file fills the frame.
-        for (let now = 4000; now <= 9200; now += 400) step(now);
-        expect(showing(container)).toBe("photo a2");
+        step(1800);
+        step(2700);
+        expect(wipeOf(container, 0)).toBeCloseTo(25, 0);
+        expect(wipeOf(container, 1)).not.toBeCloseTo(signatureWas, 1);
     });
 
-    test("pausing holds it still, and playing starts it again", () => {
+    test("a held frame picks itself up three seconds after the last touch", () => {
         const { container } = renderBand();
         step(0);
-        step(1200);
-        const moving = wipeOf(container);
+        grab(container, 0, 100);
 
-        fireEvent.click(screen.getByRole("button", { name: /pause/i }));
-        step(2400);
+        wait(2000);
+        step(900);
+        expect(wipeOf(container, 0)).toBeCloseTo(25, 0);
+
+        wait(1200);
+        step(1800);
+        step(2700);
+        expect(wipeOf(container, 0)).not.toBeCloseTo(25, 0);
+    });
+
+    test("each frame moves to its next example at the end of a sweep", () => {
+        const { container } = renderBand();
+        step(0);
+        expect(showing(container, 0)).toBe("photo a1");
+        expect(showing(container, 1)).toBe("signature s1");
+
+        for (let now = 300; now <= 3600; now += 300) step(now);
+        expect(showing(container, 0)).toBe("photo a1");
+
+        for (let now = 3900; now <= 8400; now += 300) step(now);
+        expect(showing(container, 0)).toBe("photo a2");
+        expect(showing(container, 1)).toBe("signature s2");
+    });
+
+    test("a dot chooses an example and holds it, then the cycle resumes", () => {
+        const { container } = renderBand();
+        step(0);
+
+        fireEvent.click(screen.getAllByRole("button", { name: "Example 3 of 3" })[0]);
+        expect(showing(container, 0)).toBe("photo a3");
+
+        // Held: the sweep stays put while the viewer is looking.
+        step(900);
+        step(1800);
+        expect(showing(container, 0)).toBe("photo a3");
+
+        wait(3100);
+        for (let now = 2100; now <= 9000; now += 300) step(now);
+        expect(showing(container, 0)).toBe("photo a1");
+    });
+
+    test("the control stops and starts both frames", () => {
+        const { container } = renderBand();
+        step(0);
+        step(900);
+        const [photo, signature] = [wipeOf(container, 0), wipeOf(container, 1)];
+
+        fireEvent.click(screen.getByRole("button", { name: /pause both/i }));
+        step(1800);
+        step(2700);
+        expect(wipeOf(container, 0)).toBeCloseTo(photo, 2);
+        expect(wipeOf(container, 1)).toBeCloseTo(signature, 2);
+
+        fireEvent.click(screen.getByRole("button", { name: /play both/i }));
         step(3600);
-        expect(wipeOf(container)).toBeCloseTo(moving, 2);
-
-        fireEvent.click(screen.getByRole("button", { name: /play/i }));
-        step(4800);
-        step(6000);
-        expect(wipeOf(container)).not.toBeCloseTo(moving, 1);
+        step(4500);
+        expect(wipeOf(container, 0)).not.toBeCloseTo(photo, 1);
     });
 
-    test("dragging it hands the handle over and stops the motion", () => {
-        const { container } = renderBand();
-        step(0);
-        const frame = container.querySelector<HTMLElement>(".euk-wipe-frame")!;
-        frame.setPointerCapture = () => {};
-        frame.hasPointerCapture = () => true;
-        frame.getBoundingClientRect = () =>
-            ({ left: 0, width: 400, top: 0, height: 500 }) as DOMRect;
-
-        fireEvent.pointerDown(frame, { pointerId: 1, clientX: 100 });
-        expect(wipeOf(container)).toBeCloseTo(25, 0);
-
-        // The control now offers to start it again, and frames change nothing.
-        expect(screen.getByRole("button", { name: /play/i })).toBeInTheDocument();
-        step(1200);
-        step(2400);
-        expect(wipeOf(container)).toBeCloseTo(25, 0);
-    });
-
-    test("choosing an example pins it, so the sweep stops cycling", () => {
-        const { container } = renderBand();
-        step(0);
-
-        const dots = screen.getAllByRole("button", { name: "Example 3 of 3" });
-        fireEvent.click(dots[0]);
-        expect(showing(container)).toBe("photo a3");
-
-        for (let now = 400; now <= 12000; now += 400) step(now);
-        expect(showing(container)).toBe("photo a3");
-    });
-
-    test("it does not move at all when the browser asks for less motion", () => {
+    test("nothing moves when the browser asks for less motion", () => {
         reduceMotion = true;
         const { container } = renderBand();
 
-        expect(screen.getByRole("button", { name: /play/i })).toBeInTheDocument();
+        expect(screen.getByRole("button", { name: /play both/i })).toBeInTheDocument();
         step(0);
         step(2400);
-        expect(wipeOf(container)).toBeCloseTo(55, 0);
+        expect(wipeOf(container, 0)).toBeCloseTo(50, 0);
+        expect(wipeOf(container, 1)).toBeCloseTo(50, 0);
     });
 
-    test("both a photograph and a signature are shown, each with its own examples", () => {
-        renderBand();
+    test("the sheet carries a photograph and a signature, each with its examples", () => {
+        const { container } = renderBand();
 
+        expect(container.querySelector(".euk-band-sheet")).toBeInTheDocument();
         expect(screen.getByText("Photograph")).toBeInTheDocument();
         expect(screen.getByText("Signature")).toBeInTheDocument();
         expect(screen.getAllByRole("button", { name: /^Example \d of 3$/ })).toHaveLength(3);
