@@ -15,6 +15,7 @@ import "./states.css";
 import "./directory.css";
 import "./rules.css";
 import "./pdf.css";
+import "./mobile.css";
 
 /**
  * Three families. Each carries a different register and none of them is a
@@ -67,9 +68,19 @@ export const metadata: Metadata = {
     },
     description:
         "Choose your examination and we prepare every upload it asks for — photograph, signature, thumb impression, declaration and certificates — to that examination's published specification.",
+    // Added to the home screen on an iPhone, this opens without Safari's
+    // chrome; the manifest covers Android.
+    appleWebApp: {
+        capable: true,
+        title: "examuploadkit",
+        statusBarStyle: "default",
+    },
 };
 
 export const viewport: Viewport = {
+    // Without this iOS reports every safe-area inset as zero, and the action
+    // bar sits under the home indicator.
+    viewportFit: "cover",
     themeColor: [
         { media: "(prefers-color-scheme: light)", color: "#faf9f6" },
         { media: "(prefers-color-scheme: dark)", color: "#12100e" },

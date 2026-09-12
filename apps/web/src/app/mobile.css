@@ -1,0 +1,522 @@
+/*
+ * examuploadkit — the phone build's shell.
+ *
+ * Not a set of overrides. These are the parts the mobile screens are made of,
+ * written at phone size first: a top bar that gets out of the way, one action
+ * bar in the thumb's reach, sheets for anything that would otherwise cost a
+ * page, and a step header for the flows.
+ *
+ * Two rules run through all of it. Heights are `dvh`, so the address bar
+ * sliding away cannot cut the action bar off. Anything fixed to the foot of
+ * the screen carries `env(safe-area-inset-bottom)`, so the home indicator
+ * never sits on top of a button.
+ */
+
+/* ---- the top bar ------------------------------------------------------ */
+
+.euk-appbar {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 48px;
+    padding: 0 12px;
+    background: var(--paper);
+    border-bottom: var(--rule-thin) solid var(--ink);
+    transition: transform 180ms cubic-bezier(0.2, 0, 0.1, 1);
+}
+
+.euk-appbar[data-hidden] {
+    transform: translateY(-100%);
+}
+
+.euk-appbar-back {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    /* 44px of target inside a 48px bar. */
+    width: 44px;
+    height: 44px;
+    margin-left: -10px;
+    border: 0;
+    background: none;
+    color: var(--ink);
+    cursor: pointer;
+}
+
+.euk-appbar-title {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: var(--font-shoulders), "Arial Narrow", sans-serif;
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+}
+
+.euk-appbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .euk-appbar {
+        transition: none;
+    }
+}
+
+/* ---- the action bar --------------------------------------------------- */
+
+.euk-actionbar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 35;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
+    background: var(--paper);
+    border-top: var(--rule) solid var(--ink);
+}
+
+/* Its own height, given back at the end of the document. */
+.euk-actionbar-spacer {
+    height: calc(74px + env(safe-area-inset-bottom));
+}
+
+.euk-actionbar-note {
+    min-width: 0;
+    font-size: 13px;
+    line-height: 1.3;
+    color: var(--ink-70);
+}
+
+.euk-actionbar-note strong {
+    display: block;
+    font-family: var(--font-shoulders), "Arial Narrow", sans-serif;
+    font-size: 22px;
+    line-height: 1;
+    color: var(--ink);
+}
+
+.euk-actionbar-action {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.euk-actionbar-action > * {
+    width: 100%;
+    max-width: 220px;
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+/* ---- sheets ------------------------------------------------------------ */
+
+.euk-sheet {
+    position: fixed;
+    inset: auto 0 0 0;
+    width: 100%;
+    max-width: 560px;
+    max-height: 86dvh;
+    margin: 0 auto;
+    padding: 0;
+    border: var(--rule) solid var(--ink);
+    border-bottom: 0;
+    background: var(--paper);
+    color: var(--ink);
+    overflow: hidden;
+}
+
+.euk-sheet::backdrop {
+    background: color-mix(in srgb, var(--ink) 55%, transparent);
+}
+
+/* Both ends written out, and held: an implicit end state leaves the sheet
+   parked at its first frame anywhere the animation never ticks. */
+.euk-sheet[open] {
+    animation: euk-sheet-up 260ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes euk-sheet-up {
+    from {
+        transform: translateY(12%);
+        opacity: 0.6;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.euk-sheet-grip {
+    width: 44px;
+    height: 4px;
+    margin: 9px auto 0;
+    background: var(--hairline);
+}
+
+.euk-sheet-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 14px 12px;
+    border-bottom: var(--rule-thin) solid var(--hairline);
+}
+
+.euk-sheet-head h2 {
+    font-family: var(--font-shoulders), "Arial Narrow", sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    text-transform: uppercase;
+    line-height: 1;
+}
+
+.euk-sheet-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 40px;
+    height: 40px;
+    margin: -8px -8px -8px 0;
+    border: 0;
+    background: none;
+    color: var(--ink);
+    cursor: pointer;
+}
+
+.euk-sheet-body {
+    max-height: calc(86dvh - 90px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 16px 14px calc(20px + env(safe-area-inset-bottom));
+    -webkit-overflow-scrolling: touch;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .euk-sheet[open] {
+        animation: none;
+    }
+}
+
+/* Sheets are a phone pattern. On a desktop the same content sits in the page,
+   so nothing here should be reachable there. */
+@media (min-width: 900px) {
+    .euk-sheet {
+        max-width: 620px;
+        inset: 0;
+        margin: auto;
+        max-height: 80dvh;
+        border-bottom: var(--rule) solid var(--ink);
+    }
+}
+
+/* ---- the flow's screens ------------------------------------------------ */
+
+.euk-m {
+    /* dvh so the address bar sliding away cannot clip the action bar; vh
+       first for anything too old to know dvh. */
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    background: var(--paper);
+}
+
+@media (min-width: 900px) {
+    /* The flow is a phone arrangement. On a desktop it simply sits in a
+       column rather than pretending to be a second workspace. */
+    .euk-m {
+        max-width: 620px;
+        margin: 0 auto;
+        border-inline: var(--rule-thin) solid var(--hairline);
+    }
+}
+
+.euk-m-screen {
+    flex: 1;
+    padding: 18px 16px 4px;
+}
+
+.euk-m-title {
+    font-size: clamp(28px, 7.6vw, 38px);
+    line-height: 0.95;
+    text-wrap: balance;
+}
+
+.euk .euk-m-lede {
+    margin-top: 10px;
+    max-width: none;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink-70);
+}
+
+/* ---- progress ---------------------------------------------------------- */
+
+.euk-m-steps {
+    display: flex;
+    gap: 6px;
+    list-style: none;
+    margin: 0;
+    padding: 12px 16px 2px;
+}
+
+.euk-m-steps li {
+    flex: 1;
+    font-family: var(--font-shoulders), "Arial Narrow", sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--ink-40);
+}
+
+.euk-m-steps li span {
+    display: block;
+    padding-top: 7px;
+    border-top: var(--rule) solid var(--hairline);
+}
+
+.euk-m-steps li[data-state="done"] {
+    color: var(--ink-55);
+}
+
+.euk-m-steps li[data-state="done"] span {
+    border-top-color: var(--ink);
+}
+
+.euk-m-steps li[data-state="now"] {
+    color: var(--ink);
+}
+
+.euk-m-steps li[data-state="now"] span {
+    border-top-color: var(--signal);
+}
+
+/* ---- the file rows ----------------------------------------------------- */
+
+.euk-m-files {
+    list-style: none;
+    margin: 20px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+}
+
+.euk-m-file {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    /* Comfortably past the 44px a thumb needs. */
+    min-height: 66px;
+    padding: 12px 14px;
+    border: var(--rule-thin) solid var(--ink);
+    background: var(--paper);
+    color: var(--ink);
+    text-align: left;
+    cursor: pointer;
+}
+
+.euk-m-file:focus-within,
+.euk-m-file:focus-visible {
+    outline: var(--rule) solid var(--signal);
+    outline-offset: 2px;
+}
+
+.euk-m-file input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.euk-m-file-body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.euk-m-file-body strong {
+    font-size: 16px;
+    line-height: 1.2;
+}
+
+.euk-m-file-body span {
+    font-size: 13px;
+    line-height: 1.35;
+    color: var(--ink-55);
+}
+
+.euk-m-file-tick,
+.euk-m-file-state {
+    flex: none;
+    width: 26px;
+    height: 26px;
+    border: var(--rule-thin) solid var(--ink-40);
+}
+
+.euk-m-file input:checked ~ .euk-m-file-tick {
+    border-color: var(--ink);
+    background: var(--signal);
+}
+
+.euk-m-file-state[data-done] {
+    border-color: var(--ok-line);
+    background: var(--ok-fill);
+}
+
+.euk-m-yours {
+    margin-top: 28px;
+    border-top: var(--rule-thin) solid var(--hairline);
+    padding-top: 16px;
+}
+
+.euk-m-yours h3 {
+    font-family: var(--font-shoulders), "Arial Narrow", sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--ink-55);
+}
+
+.euk-m-yours ul {
+    list-style: none;
+    margin: 10px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 7px;
+}
+
+.euk .euk-m-yours li {
+    max-width: none;
+    font-size: 15px;
+    color: var(--ink-70);
+}
+
+.euk .euk-m-yours p {
+    margin-top: 12px;
+    max-width: none;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ink-55);
+}
+
+/* ---- odds and ends ----------------------------------------------------- */
+
+.euk-m-linkbtn {
+    min-height: 36px;
+    padding: 7px 11px;
+    border: var(--rule-thin) solid var(--ink);
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-shoulders), "Arial Narrow", sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.euk-m-specs {
+    margin: 0;
+    display: grid;
+    gap: 10px;
+}
+
+.euk-m-specs > div {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    border-bottom: var(--rule-thin) solid var(--hairline);
+    padding-bottom: 9px;
+}
+
+.euk-m-specs dt {
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-55);
+}
+
+.euk-m-specs dd {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    text-align: right;
+}
+
+.euk .euk-m-sheet-note {
+    margin-top: 16px;
+    max-width: none;
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--ink-55);
+}
+
+.euk .euk-m-sheet-note a {
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--signal-deep);
+    text-underline-offset: 3px;
+}
+
+/* ---- what belongs to which screen size --------------------------------- */
+
+@media (min-width: 900px) {
+    .euk-m-only {
+        display: none;
+    }
+}
+
+@media (max-width: 899px) {
+    /* The workspace is a two-column desktop arrangement; the flow replaces it
+       here. Its content stays in the document for anyone reading the page. */
+    .exam-page .euk-kit-layout {
+        display: none;
+    }
+
+    /* iOS zooms the page when a field under 16px takes focus, and never zooms
+       back out. */
+    .euk input,
+    .euk select,
+    .euk textarea {
+        font-size: 16px;
+    }
+
+    /* The grey flash on tap is the browser's, and it is not ours. Our own
+       press states do this job. `manipulation` drops the 300ms double-tap
+       wait that iOS still applies. */
+    .euk a,
+    .euk button,
+    .euk label,
+    .euk summary {
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+    }
+}
+
+/* The platform's own estimate, never a published figure (an invariant). */
+.euk-m-est {
+    font-family: var(--font-petrona), Georgia, serif;
+    font-style: italic;
+    color: var(--partial-line);
+}

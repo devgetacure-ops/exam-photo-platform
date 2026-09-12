@@ -77,6 +77,13 @@ temp/
 !apps/web/public/examples/*.webp
 !apps/web/public/examples/band/*.jpg
 !apps/web/public/examples/band/*.png
+# The application's own icons: drawn from the wordmark's tick by
+# scripts, served to the home screen, and not a photograph of anybody.
+!apps/web/public/icon-192.png
+!apps/web/public/icon-512.png
+!apps/web/public/icon-maskable-512.png
+!apps/web/src/app/icon.png
+!apps/web/src/app/apple-icon.png
 # Ignore generated outputs
 output/
 downloads/
