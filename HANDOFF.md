@@ -350,9 +350,9 @@ design. What follows is UI/UX and operations.
    every scripted control dead**: the dev server refused its scripts to the
    LAN address, so the page never hydrated (DEC-085; `allowedDevOrigins` now
    admits private addresses, and a phone check must load the LAN address, not
-   `localhost`). The same pass removed every sideways strip on a phone. **What
-   is left is the owner's retest on the phone**, and a pass on a production
-   build (`next start`), since dev mode is far slower than what candidates get.
+   `localhost`). The same pass removed every sideways strip on a phone. **The
+   owner has since checked the prepare flow on a real phone against a
+   production build (2026-09-13); the phone build is complete.**
 2. **Design the empty state for 80 examinations.** DEC-079 encodes records with
    **no photograph specification** -- served for a signature or certificates
    alone. Their *rules* page has almost nothing to show. It degrades to empty
@@ -367,10 +367,9 @@ design. What follows is UI/UX and operations.
    details render only when `EUK_BUSINESS_NAME`, `EUK_BUSINESS_ADDRESS`,
    `EUK_BUSINESS_PHONE` and `EUK_BUSINESS_HOURS` are set**: in
    `apps/web/.env.local` locally, and on the host at deploy. Never commit the
-   values. Before they are published, the four examuploadkit.com mailboxes
-   must work, and the owner was advised to have a lawyer read the pages.
-   Consent is recorded only in the browser; recording it with the job on the
-   server is the open item.
+   values. The domain is bought and a lawyer has read the pages (owner,
+   2026-09-13). Consent is recorded only in the browser; recording it with the
+   job on the server is the open item.
 5. **Multi-page documents** via `planDocument` -> arrange -> `assembleDocument`.
    The engine pair exists; the arranging interface does not.
 7. **A preview for a PDF deliverable.** `preview_watermarked` is false and
