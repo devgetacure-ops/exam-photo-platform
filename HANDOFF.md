@@ -318,7 +318,7 @@ puts the product's worst failure mode back on the table.
 | Checkout, entitlement polling, retention countdown, extension, delivery | `components/exam/kit-checkout.tsx`, `live-job-state.ts` |
 | The sticky bar, its search and the predictive list | `components/site-header.tsx`, `header-search.tsx`, `exam-results.tsx`, `lib/use-exam-picker.ts`, `app/search-index.json/route.ts` |
 | The PDF page and the in-browser converter | `src/app/pdf/page.tsx`, `app/pdf.css`, `components/exam/pdf-to-image.tsx`, `lib/pdfjs.ts` |
-| The phone build — phases 1 to 3 | `components/m/` (bar, menu, full-screen search, home, flow, file list, PDF work, converter screen, support search, policies), `components/home-story.tsx`, `app/about/`, `app/pdf/to-image/`, `app/mobile.css`, `app/manifest.ts` |
+| The phone build — phases 1 to 4 | `components/m/` (bar, menu, full-screen search, home, flow, file list, PDF work, converter screen, support search, policies), `components/home-story.tsx`, `app/about/`, `app/pdf/to-image/`, `app/mobile.css`, `app/manifest.ts` |
 | Exam workspace, 132 static pages | `src/app/exam/[examId]/page.tsx` + `components/exam/kit-workspace.tsx` — fixed file list left, one file's detail right |
 | Rules & sources, 132 more pages | `src/app/exam/[examId]/rules/page.tsx` — reference split off the workspace |
 | Real accepted/rejected examples | `scripts/generate_guidance_examples.py` → `public/examples/` |
@@ -346,9 +346,13 @@ design. What follows is UI/UX and operations.
    screen, `/about` for the long argument, a short footer, the PDF work with
    the converter on its own screen, searchable support, and collapsed
    searchable policies, and the install prompt (DEC-084): asked once after a
-   useful moment, never on arrival. **What is left is a pass on a real
-   mid-range Android**, which needs the owner's phone on the same network as
-   the dev server, at `http://<machine-ip>:3100`.
+   useful moment, never on arrival. **The owner's first real-phone test found
+   every scripted control dead**: the dev server refused its scripts to the
+   LAN address, so the page never hydrated (DEC-085; `allowedDevOrigins` now
+   admits private addresses, and a phone check must load the LAN address, not
+   `localhost`). The same pass removed every sideways strip on a phone. **What
+   is left is the owner's retest on the phone**, and a pass on a production
+   build (`next start`), since dev mode is far slower than what candidates get.
 2. **Design the empty state for 80 examinations.** DEC-079 encodes records with
    **no photograph specification** -- served for a signature or certificates
    alone. Their *rules* page has almost nothing to show. It degrades to empty
@@ -357,9 +361,16 @@ design. What follows is UI/UX and operations.
    listed deliberately -- the examination does ask for a photograph and hiding
    it would say otherwise -- but the workspace shows that state far more often
    now and it must read as "we cannot prepare this yet", never as a failure.
-4. **The four candidate-facing pages Razorpay onboarding requires**: terms,
-   privacy, refund/cancellation, contact. These gate the payment account, not
-   the launch, so they are earlier than they look.
+4. **The pages Razorpay onboarding requires now exist** (DEC-086): terms,
+   privacy and refunds carry the limits, the grievance officer and the dispute
+   terms, and the upload asks for the agreements the law needs. **The seller's
+   details render only when `EUK_BUSINESS_NAME`, `EUK_BUSINESS_ADDRESS`,
+   `EUK_BUSINESS_PHONE` and `EUK_BUSINESS_HOURS` are set**: in
+   `apps/web/.env.local` locally, and on the host at deploy. Never commit the
+   values. Before they are published, the four examuploadkit.com mailboxes
+   must work, and the owner was advised to have a lawyer read the pages.
+   Consent is recorded only in the browser; recording it with the job on the
+   server is the open item.
 5. **Multi-page documents** via `planDocument` -> arrange -> `assembleDocument`.
    The engine pair exists; the arranging interface does not.
 7. **A preview for a PDF deliverable.** `preview_watermarked` is false and

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 
 /**
  * A policy, on a phone.
@@ -13,7 +13,14 @@ import { useState } from "react";
  * what was typed. The text is the same text as the desktop page, passed in,
  * never rewritten here.
  */
-export function PhonePolicy({ sections }: { sections: { title: string; text: string }[] }) {
+export function PhonePolicy({
+    sections,
+    after,
+}: {
+    sections: { title: string; text: string }[];
+    /** Rendered under the sections, whatever the search: who runs the service. */
+    after?: ReactNode;
+}) {
     const [query, setQuery] = useState("");
     const needle = query.trim().toLowerCase();
     const shown = sections.filter(
@@ -58,6 +65,7 @@ export function PhonePolicy({ sections }: { sections: { title: string; text: str
                     ))}
                 </div>
             )}
+            {after}
         </div>
     );
 }

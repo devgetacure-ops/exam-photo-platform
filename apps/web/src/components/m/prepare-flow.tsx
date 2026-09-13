@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 
 import type { ExamDetail, RequirementSummary } from "../../lib/types";
-import type { ExamFact } from "../exam/exam-facts";
+import { factAttribution, factUrl, type ExamFact } from "../exam/exam-facts";
 import { isOurs, kitPrice, rupees } from "../../lib/kit-pricing";
 import { useKit } from "../exam/use-kit";
 import { DocumentWorkspace } from "../exam/document-workspace";
@@ -126,6 +126,9 @@ export function PrepareFlow({
             entry && ["prepared", "prepared_with_findings"].includes(entry.outcome)
         );
     });
+    // A different one of the examination's facts each time a file comes back
+    // ready, so returning to the list is never the same screen twice.
+    const fact = facts.length > 0 ? facts[ready.length % facts.length] : null;
     const active = activeId ? ours.find((r) => r.requirement_id === activeId) : null;
     const stepIndex = STEP_LABELS.findIndex((s) => s.id === step);
 
@@ -345,6 +348,18 @@ export function PrepareFlow({
                             );
                         })}
                     </ul>
+
+                    {fact && (
+                        <aside className="euk-m-fact" aria-label="Worth knowing">
+                            <span className="euk-label">Worth knowing</span>
+                            <p>{fact.text}</p>
+                            {factUrl(fact) && (
+                                <a href={factUrl(fact)} target="_blank" rel="noreferrer">
+                                    {factAttribution(fact)} ↗
+                                </a>
+                            )}
+                        </aside>
+                    )}
                 </div>
             )}
 

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { BusinessContact } from "../../components/business-contact";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { SiteHeader } from "../../components/site-header";
@@ -277,9 +278,12 @@ export default async function SupportPage({
                                 <p>
                                     Write again, quote your reference, and begin
                                     the message with the word Grievance, so it
-                                    is read as one. Every reply comes by email,
-                                    to the address you gave.
+                                    is read as one. A grievance is acknowledged
+                                    within 48 hours and resolved within one
+                                    month. Every reply comes by email, to the
+                                    address you gave.
                                 </p>
+                                <BusinessContact />
                             </div>
                         </div>
 

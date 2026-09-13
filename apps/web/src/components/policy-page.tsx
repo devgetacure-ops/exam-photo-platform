@@ -4,6 +4,7 @@ import { SiteFooter } from "./site-footer";
 import { PolicyTabs } from "./policy-tabs";
 import { ActionBar } from "./m/action-bar";
 import { PhonePolicy } from "./m/policy-phone";
+import { BusinessContact } from "./business-contact";
 
 /**
  * Privacy, terms and refunds.
@@ -48,7 +49,7 @@ export function PolicyPage({
                 <div className="euk-policy-main">
                     {/* A phone reads the same sections collapsed, with a
                         search; the grid below steps aside for it. */}
-                    <PhonePolicy sections={sections} />
+                    <PhonePolicy sections={sections} after={<BusinessContact />} />
                     <div className="euk-wrap euk-policy-grid">
                         <nav className="euk-policy-toc" aria-label="On this page">
                             <p className="euk-policy-toc-title">On this page</p>
@@ -74,6 +75,8 @@ export function PolicyPage({
                                     <p>{section.text}</p>
                                 </section>
                             ))}
+
+                            <BusinessContact />
 
                             <div className="euk-policy-close">
                                 <p>Not covered here, or not clear enough?</p>

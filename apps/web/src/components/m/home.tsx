@@ -17,9 +17,12 @@ import { FindButton } from "./home-actions";
  * on a 360px screen reads as a poster; set left it reads as the first screen
  * of an application, which is what it is.
  *
- * The before-and-after is a strip the candidate swipes, not the desktop
- * band's self-dragging frames. Nothing on this screen moves by itself, so
- * there is nothing to pause and nothing drawing frames on a slow phone.
+ * The before-and-after is four equal boxes, not the desktop band's
+ * self-dragging frames and not a strip to swipe: a photograph pair over a
+ * signature pair, each file shown whole inside a square. A swipe strip of a
+ * tall photograph card beside a short signature card read as ragged, and hid
+ * half of what it had to show. Nothing here moves by itself, so there is
+ * nothing to pause and nothing drawing frames on a slow phone.
  */
 
 interface Shortcut {
@@ -28,9 +31,10 @@ interface Shortcut {
     name: string;
 }
 
-const PAIRS = [
-    ...PHOTO_PAIRS.map((pair) => ({ ...pair, kind: "Photograph", width: 720, height: 960 })),
-    ...SIGNATURE_PAIRS.map((pair) => ({ ...pair, kind: "Signature", width: 960, height: 720 })),
+/** One of each: the difference, shown once, rather than a gallery to swipe. */
+const COMPARE = [
+    { ...PHOTO_PAIRS[0], kind: "Photograph", width: 720, height: 960 },
+    { ...SIGNATURE_PAIRS[0], kind: "Signature", width: 960, height: 720 },
 ];
 
 export function PhoneHome({
@@ -85,50 +89,36 @@ export function PhoneHome({
             )}
 
             <div className="euk-mhome-block">
-                <div className="euk-mhome-bandhead">
-                    <p className="euk-mhome-label">What changes</p>
-                    <p className="euk-mhome-swipe" aria-hidden="true">
-                        Swipe
-                        <svg width="16" height="10" viewBox="0 0 16 10" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M1 5 H14 M10 1 L14 5 L10 9" />
-                        </svg>
-                    </p>
-                </div>
-                <ul className="euk-mhome-pairs" aria-label="Examples, as uploaded and as prepared">
-                    {PAIRS.map((pair) => (
-                        <li
-                            key={pair.id}
-                            className="euk-mhome-pair"
-                            data-kind={pair.kind === "Signature" ? "sign" : "photo"}
-                        >
-                            <figure>
-                                <div className="euk-mhome-frames">
-                                    <div>
-                                        <Image
-                                            src={pair.before}
-                                            alt={pair.alt}
-                                            width={pair.width}
-                                            height={pair.height}
-                                            sizes="42vw"
-                                        />
-                                        <span>Uploaded</span>
-                                    </div>
-                                    <div>
-                                        <Image
-                                            src={pair.after}
-                                            alt=""
-                                            width={pair.width}
-                                            height={pair.height}
-                                            sizes="42vw"
-                                        />
-                                        <span>Prepared</span>
-                                    </div>
+                <p className="euk-mhome-label">What changes</p>
+                <div className="euk-mhome-compare">
+                    {COMPARE.map((pair) => (
+                        <figure key={pair.id} className="euk-mhome-pair">
+                            <figcaption>{pair.kind}</figcaption>
+                            <div className="euk-mhome-frames">
+                                <div>
+                                    <Image
+                                        src={pair.before}
+                                        alt={pair.alt}
+                                        width={pair.width}
+                                        height={pair.height}
+                                        sizes="46vw"
+                                    />
+                                    <span>Uploaded</span>
                                 </div>
-                                <figcaption>{pair.kind}</figcaption>
-                            </figure>
-                        </li>
+                                <div>
+                                    <Image
+                                        src={pair.after}
+                                        alt=""
+                                        width={pair.width}
+                                        height={pair.height}
+                                        sizes="46vw"
+                                    />
+                                    <span>Prepared</span>
+                                </div>
+                            </div>
+                        </figure>
                     ))}
-                </ul>
+                </div>
                 <p className="euk-mhome-note">
                     Representational. The faces and signatures are generated, and
                     these pairs were made to show the difference rather than

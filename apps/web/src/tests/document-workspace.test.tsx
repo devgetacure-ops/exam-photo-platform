@@ -3,6 +3,7 @@ import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/re
 import "@testing-library/jest-dom/vitest";
 
 import { DocumentWorkspace } from "../components/exam/document-workspace";
+import { TERMS_VERSION } from "../lib/consent";
 import * as api from "../lib/api-client";
 import * as pdfjs from "../lib/pdfjs";
 
@@ -54,6 +55,9 @@ async function planTwoPages() {
 describe("arranging a document", () => {
     beforeEach(() => {
         window.localStorage.clear();
+        // Agreed already: these tests are about preparing, and the
+        // agreement before an upload has its own (upload-consent.test).
+        window.localStorage.setItem("uploadready:terms-accepted", TERMS_VERSION);
         planDocument.mockReset();
         assembleDocument.mockReset();
     });

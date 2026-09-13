@@ -55,6 +55,37 @@ for (const run of plan) {
             const r = await send(step.cdp, step.params ?? {});
             console.log(JSON.stringify({ w: run.width, label: step.label ?? step.cdp, r: r.result ?? r.error }));
         }
+        // A real finger: touch events through the input pipeline, so
+        // touch-action and pointer capture behave as they do on a phone.
+        // { drag: selector, from: 0..1, to: 0..1, y?: 0..1 } across the element.
+        if (step.drag) {
+            await evaluate(`document.querySelector(${JSON.stringify(step.drag)})?.scrollIntoView({ block: "center" })`);
+            await sleep(400);
+            const box = await evaluate(`(() => { const el = document.querySelector(${JSON.stringify(step.drag)}); if (!el) return null; const r = el.getBoundingClientRect(); return { x: r.left, y: r.top, w: r.width, h: r.height }; })()`);
+            if (!box) console.log(JSON.stringify({ w: run.width, drag: step.drag, r: "missing" }));
+            else {
+                const y = box.y + box.h * (step.y ?? 0.5);
+                const at = (f) => box.x + box.w * f;
+                await send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x: at(step.from), y }] });
+                for (let i = 1; i <= 12; i++) {
+                    await send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: [{ x: at(step.from + ((step.to - step.from) * i) / 12), y }] });
+                    await sleep(16);
+                }
+                await send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+                console.log(JSON.stringify({ w: run.width, drag: step.drag, r: "done" }));
+            }
+        }
+        // { tap: selector }: a touch tap at the element's centre.
+        if (step.tap) {
+            await evaluate(`document.querySelector(${JSON.stringify(step.tap)})?.scrollIntoView({ block: "center" })`);
+            await sleep(400);
+            const p = await evaluate(`(() => { const el = document.querySelector(${JSON.stringify(step.tap)}); if (!el) return null; const r = el.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; })()`);
+            if (p) {
+                await send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [p] });
+                await send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+            }
+            console.log(JSON.stringify({ w: run.width, tap: step.tap, r: p ? "done" : "missing" }));
+        }
         if (step.click) console.log(JSON.stringify({ w: run.width, click: step.click, r: await evaluate(`(() => { const el = document.querySelector(${JSON.stringify(step.click)}); if (!el) return 'missing'; el.click(); return 'ok'; })()`) }));
         if (step.eval) console.log(JSON.stringify({ w: run.width, label: step.label, r: await evaluate(step.eval) }));
         if (step.shot) {

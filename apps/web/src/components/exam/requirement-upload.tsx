@@ -17,6 +17,7 @@ import { useLiveJob } from "./live-job-state";
 import { switchLighting, type PreparedFile } from "../../lib/journey-client";
 import { PreparationLoader } from "./preparation-loader";
 import { FileTypeDrawing } from "../euk/doodles";
+import { useUploadConsent } from "./upload-consent";
 
 /**
  * Preparing one requirement.
@@ -143,6 +144,7 @@ export function RequirementUpload({
         requirementType,
     );
     const photo = requirementType === "photograph";
+    const consent = useUploadConsent(examId, requirementType);
 
     const submit = useCallback(
         async (file: File) => {
@@ -246,6 +248,7 @@ export function RequirementUpload({
     const onDrop = (event: React.DragEvent) => {
         event.preventDefault();
         setDragging(false);
+        if (!consent.allow()) return;
         const file = event.dataTransfer.files?.[0];
         if (file) void submit(file);
     };
@@ -360,6 +363,7 @@ export function RequirementUpload({
                     onToken={setChallengeToken}
                 />
             )}
+            {consent.panel}
             <div
                 className="euk-drop"
                 data-dragging={dragging}
@@ -374,7 +378,9 @@ export function RequirementUpload({
                 <FileTypeDrawing type={requirementType} className="euk-drop-art" />
                 <button
                     type="button"
-                    onClick={() => inputRef.current?.click()}
+                    onClick={() => {
+                        if (consent.allow()) inputRef.current?.click();
+                    }}
                     className="primary-button euk-drop-button"
                 >
                     {PROMPT[requirementType] ?? "Add your file"}
@@ -391,7 +397,7 @@ export function RequirementUpload({
                     aria-label={`Upload for ${requirementName}`}
                     onChange={(event) => {
                         const file = event.target.files?.[0];
-                        if (file) void submit(file);
+                        if (file && consent.allow()) void submit(file);
                         // Reset so choosing the same file twice still fires a change.
                         event.target.value = "";
                     }}

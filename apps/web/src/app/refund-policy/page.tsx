@@ -16,7 +16,7 @@ export default function Refunds() {
                 },
                 {
                     title: "What the review can establish",
-                    text: "The service records file download and email-send events to help investigate delivery. Reporting a problem does not itself issue a refund. A refund is confirmed only after the payment provider processes it; this page does not promise an automatic refund or a processing deadline.",
+                    text: "The service records file download and email-send events to help investigate delivery. Reporting a problem does not itself issue a refund. Once a refund is approved, it is started within 5 to 7 working days, to the payment method you used; your bank may take a few more days to show it.",
                 },
                 {
                     title: "Expiry and exam outcomes",

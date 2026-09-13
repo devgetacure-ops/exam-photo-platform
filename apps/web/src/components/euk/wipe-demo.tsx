@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { type CSSProperties, useCallback, useEffect, useRef, useState } from "react";
 
 /**
  * The before-and-after band, set the way an application form is set.
@@ -226,7 +226,9 @@ function WipeSet({ title, pairs, checks, width, height, allowed }: SetProps) {
             <div
                 ref={frameRef}
                 className="euk-wipe-frame"
-                style={{ aspectRatio: `${width} / ${height}` }}
+                // A property rather than the ratio itself, so a phone can set
+                // both frames square without fighting an inline style.
+                style={{ "--wipe-ratio": `${width} / ${height}` } as CSSProperties}
                 onPointerDown={(event) => {
                     event.currentTarget.setPointerCapture(event.pointerId);
                     hold();

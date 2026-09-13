@@ -192,9 +192,9 @@
     align-items: center;
     justify-content: center;
     flex: none;
-    width: 40px;
-    height: 40px;
-    margin: -8px -8px -8px 0;
+    width: 44px;
+    height: 44px;
+    margin: -10px -10px -10px 0;
     border: 0;
     background: none;
     color: var(--ink);
@@ -566,6 +566,7 @@
     background: var(--paper);
     color: var(--ink);
     text-align: left;
+    text-decoration: none;
     cursor: pointer;
 }
 
@@ -628,6 +629,31 @@
 }
 
 .euk-mexam-fact-more {
+    font-size: 12px;
+    color: var(--partial-line);
+}
+
+/* In the flow, under the files still to add: one of the examination's facts,
+   a different one each time a file comes back ready. */
+.euk-m-fact {
+    display: grid;
+    gap: 6px;
+    margin-top: 20px;
+    padding: 14px 14px 4px;
+    border: var(--rule-thin) dashed var(--partial-line);
+    background: var(--partial-fill);
+}
+
+.euk .euk-m-fact p {
+    max-width: none;
+    font-size: 14px;
+    line-height: 1.45;
+}
+
+.euk-m-fact a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     font-size: 12px;
     color: var(--partial-line);
 }
@@ -814,104 +840,66 @@
     color: var(--ink-55);
 }
 
-/* Both strips run to the screen's edges and scroll inside themselves; the
-   page never scrolls sideways. */
-.euk-mhome-jumps,
-.euk-mhome-pairs {
-    list-style: none;
-    display: flex;
-    margin: 12px -16px 0;
-    padding: 0 16px 10px;
-    overflow-x: auto;
-    overscroll-behavior-x: contain;
-    scroll-padding-inline: 16px;
-    scrollbar-width: none;
-}
-
-.euk-mhome-jumps::-webkit-scrollbar,
-.euk-mhome-pairs::-webkit-scrollbar {
-    display: none;
-}
-
-/* A flex scroller drops its end padding in some engines; this keeps it. */
-.euk-mhome-jumps::after,
-.euk-mhome-pairs::after {
-    content: "";
-    flex: none;
-    width: 4px;
-}
-
+/* The shortcuts sit three to a row, every one of them on screen. A swipe row
+   put most of them past the edge, and a phone should not make anyone scroll
+   sideways to find their examination (the owner's call). */
 /* Positioned, so it is the containing block of the chips' screen-reader
-   labels. Unpositioned, those absolutely placed spans escaped the strip's
-   clipping and widened a 360px page's layout viewport to 1440px, which took
-   the fixed action bar's button off the right of the screen. */
+   labels. Unpositioned, those absolutely placed spans once escaped the
+   list's clipping and widened a 360px page's layout viewport to 1440px, which
+   took the fixed action bar's button off the right of the screen. */
 .euk-mhome-jumps {
     position: relative;
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 8px;
-    scroll-snap-type: x proximity;
+    margin: 12px 0 0;
+    padding: 0;
 }
 
 .euk-mhome-jumps li {
-    flex: none;
-    scroll-snap-align: start;
+    min-width: 0;
 }
 
 .euk-mhome-jumps a {
-    display: inline-flex;
+    display: flex;
     align-items: center;
+    justify-content: center;
+    height: 100%;
     min-height: 44px;
-    padding: 8px 14px;
-    border: var(--rule-thin) solid var(--ink);
+    padding: 6px 10px;
+    border: 1.5px solid var(--ink);
     background: var(--paper);
     color: var(--ink);
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 600;
-    white-space: nowrap;
-    box-shadow: 3px 3px 0 var(--ink);
+    line-height: 1.3;
+    text-align: center;
+    overflow-wrap: anywhere;
 }
 
 .euk-mhome-jumps a:active {
     background: var(--signal-soft);
 }
 
-.euk-mhome-bandhead {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 12px;
+/* Four equal boxes: the photograph as uploaded and as prepared, then the
+   signature the same way. The photograph is 3:4 and the signature 4:3, so
+   each is shown whole inside a square rather than cropped to fill it; the
+   boxes line up, and neither pair stands taller than the other. */
+.euk-mhome-compare {
+    display: grid;
+    gap: 16px;
+    margin-top: 12px;
 }
 
-.euk .euk-mhome-swipe {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    max-width: none;
-    font-family: var(--font-shoulders), "Arial Narrow", sans-serif;
-    font-size: 12px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--ink-55);
-}
-
-.euk-mhome-pairs {
-    align-items: flex-start;
-    gap: 12px;
-    scroll-snap-type: x mandatory;
-}
-
-/* Most of a screen wide, so the next card's edge shows and the gesture needs
-   no explaining. */
 .euk-mhome-pair {
-    flex: none;
-    width: calc(100% - 56px);
-    scroll-snap-align: start;
+    margin: 0;
 }
 
-.euk-mhome-pair figure {
-    margin: 0;
-    padding: 8px;
-    border: var(--rule-thin) solid var(--ink);
-    background: var(--paper);
+.euk-mhome-pair figcaption {
+    margin-bottom: 6px;
+    font-size: 13px;
+    font-weight: 600;
 }
 
 .euk-mhome-frames {
@@ -922,13 +910,18 @@
 
 .euk-mhome-frames > div {
     position: relative;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    padding: 6px;
+    border: var(--rule-thin) solid var(--ink);
+    background: var(--paper-2);
 }
 
 .euk-mhome-frames img {
     display: block;
     width: 100%;
-    height: auto;
-    border: 1px solid var(--hairline);
+    height: 100%;
+    object-fit: contain;
 }
 
 .euk-mhome-frames span {
@@ -947,12 +940,6 @@
 .euk-mhome-frames > div:last-child span {
     background: var(--signal-deep);
     color: var(--signal-ink);
-}
-
-.euk-mhome-pair figcaption {
-    margin-top: 8px;
-    font-size: 13px;
-    font-weight: 600;
 }
 
 .euk .euk-mhome-note {

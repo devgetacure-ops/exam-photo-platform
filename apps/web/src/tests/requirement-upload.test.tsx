@@ -7,6 +7,7 @@ import {
     RequirementNotServedError,
     type PrepareRequirementResponse,
 } from "../lib/types";
+import { TERMS_VERSION } from "../lib/consent";
 import * as api from "../lib/api-client";
 import * as pdfjs from "../lib/pdfjs";
 import { getKit } from "../lib/kit-state";
@@ -66,6 +67,9 @@ const image = () =>
 describe("preparing one requirement", () => {
     beforeEach(() => {
         window.localStorage.clear();
+        // Agreed already: these tests are about preparing, and the
+        // agreement before an upload has its own (upload-consent.test).
+        window.localStorage.setItem("uploadready:terms-accepted", TERMS_VERSION);
         prepareRequirement.mockReset();
     });
     afterEach(() => vi.clearAllMocks());

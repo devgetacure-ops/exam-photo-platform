@@ -67,10 +67,18 @@ export function ExamFiles({
             <ul className="euk-mexam-list">
                 {ours.map((r, index) => (
                     <li key={r.requirement_id}>
-                        <button
-                            type="button"
+                        {/* A link, not a button: on a slow phone a tap can land
+                            before the page's script has, and a button does
+                            nothing then. The link still goes to this file's
+                            rules; once the script is in, it opens the sheet. */}
+                        <Link
+                            href={`/exam/${exam.exam_id}/rules#rules-files`}
                             className="euk-mexam-row"
-                            onClick={() => setOpen(r.requirement_id)}
+                            onClick={(event) => {
+                                if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+                                event.preventDefault();
+                                setOpen(r.requirement_id);
+                            }}
                         >
                             <FileTypeDrawing
                                 type={r.requirement_type}
@@ -90,7 +98,7 @@ export function ExamFiles({
                                     <path d="M1.5 1 L7.5 7.5 L1.5 14" />
                                 </svg>
                             </span>
-                        </button>
+                        </Link>
                     </li>
                 ))}
             </ul>

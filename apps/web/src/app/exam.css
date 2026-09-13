@@ -1016,6 +1016,35 @@
     margin-top: 4px;
 }
 
+/* ---- the agreements above an upload (DEC-086) ------------------------- */
+
+.euk-upload-consent {
+    display: grid;
+    gap: 6px;
+    margin-bottom: 14px;
+    padding: 12px 14px;
+    border: var(--rule-thin) solid var(--hairline);
+    background: var(--paper);
+}
+
+.euk-upload-consent[data-nudge] {
+    border-color: var(--signal-deep);
+}
+
+.euk-upload-consent a {
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--signal-deep);
+    text-underline-offset: 3px;
+}
+
+.euk .euk-upload-consent-nudge {
+    max-width: none;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--signal-deep);
+}
+
 /* ---- specimens ------------------------------------------------------- */
 
 .euk-specimens {
@@ -1031,23 +1060,12 @@
     gap: 18px 14px;
 }
 
-/* A phone gets a strip to swipe, so the sheet costs one row of height. */
+/* A phone fits three to a row, smaller, so the whole sheet is seen at once
+   rather than swiped through. */
 @media (max-width: 639px) {
     .euk-specimen-list {
-        grid-template-columns: none;
-        grid-auto-flow: column;
-        grid-auto-columns: 40%;
-        overflow-x: auto;
-        scroll-snap-type: x mandatory;
-        margin-inline: -20px;
-        padding: 10px 20px 8px;
-        scrollbar-width: none;
-    }
-    .euk-specimen-list::-webkit-scrollbar {
-        display: none;
-    }
-    .euk-specimen {
-        scroll-snap-align: start;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px 10px;
     }
     .euk-specimen[data-family="signature"] {
         grid-column: span 1;
@@ -1115,6 +1133,12 @@
 .euk .euk-specimen--ok .euk-specimen-caption {
     color: var(--ink);
     font-weight: 600;
+}
+
+@media (max-width: 639px) {
+    .euk .euk-specimen-caption {
+        font-size: 12px;
+    }
 }
 
 .euk-specimens-note {

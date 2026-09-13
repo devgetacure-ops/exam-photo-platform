@@ -9,6 +9,7 @@ import type {
     PrepareRequirementResponse,
 } from "../../lib/types";
 import { useKit } from "./use-kit";
+import { useUploadConsent } from "./upload-consent";
 import { OutcomeResult } from "./outcome-result";
 import { PreparationLoader } from "./preparation-loader";
 import { Tick } from "./specimen-sheet";
@@ -68,6 +69,7 @@ export function DocumentWorkspace({
     const [error, setError] = useState("");
     const input = useRef<HTMLInputElement>(null);
     const { record, forget } = useKit(examId);
+    const consent = useUploadConsent(examId, "certificate_scan");
     if (busy) return <PreparationLoader requirementType="certificate_scan" />;
     if (result)
         return (
@@ -105,11 +107,14 @@ export function DocumentWorkspace({
                 <p className="euk-doc-free">Free with your kit</p>
             </div>
 
+            {consent.panel}
             <div className="euk-drop" data-type="document">
                 <button
                     className="primary-button euk-drop-button"
                     type="button"
-                    onClick={() => input.current?.click()}
+                    onClick={() => {
+                        if (consent.allow()) input.current?.click();
+                    }}
                 >
                     {plan ? "Choose different source files" : "Add images or PDFs"}
                 </button>
@@ -128,6 +133,7 @@ export function DocumentWorkspace({
                         const files = Array.from(event.target.files ?? []);
                         event.target.value = "";
                         if (!files.length) return;
+                        if (!consent.allow()) return;
                         if (
                             files.length > 10 ||
                             files.some((file) => file.size > 5 * 1024 * 1024)
