@@ -16,7 +16,7 @@ import { rankEntries } from "../../lib/search-rank";
 import type { SearchEntry } from "../../lib/types";
 
 export const metadata: Metadata = {
-    title: "Request an examination · examuploadkit",
+    title: "Request an examination",
     description:
         "Your examination isn’t on examuploadkit yet? Tell us which one and leave your email. We read its published upload rules, prepare to them, and write to you when it’s ready.",
     alternates: { canonical: "/exam-request" },

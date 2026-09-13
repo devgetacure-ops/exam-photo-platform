@@ -333,3 +333,46 @@
 
 @media (prefers-reduced-motion: reduce) {
 }
+
+/* ---- in short: the questions a search asks, answered from the record ---- */
+/* DEC-087. Question and answer side by side where there is room, stacked on a
+   phone; set in the page's own body type, so it reads as part of the
+   reference rather than as a block written for a crawler. */
+
+.euk-short {
+    margin: 20px 0 0;
+}
+
+.euk-short > div {
+    padding: 14px 0;
+    border-bottom: 1px solid var(--hairline);
+}
+
+@media (min-width: 900px) {
+    .euk-short > div {
+        display: grid;
+        grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+        gap: 32px;
+    }
+}
+
+.euk-short dt {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--ink);
+}
+
+.euk-short dd {
+    margin: 4px 0 0;
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--ink-70);
+    overflow-wrap: anywhere;
+}
+
+@media (min-width: 900px) {
+    .euk-short dd {
+        margin-top: 0;
+    }
+}

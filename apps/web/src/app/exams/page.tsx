@@ -4,13 +4,18 @@ import { ExamSearch } from "../../components/exam-search";
 import { SiteHeader } from "../../components/site-header";
 import { SiteFooter } from "../../components/site-footer";
 import { Chevron } from "../../components/euk/doodles";
+import { JsonLd } from "../../components/json-ld";
+import { absoluteUrl, breadcrumbs, pageMetadata } from "../../lib/site";
 
-export const metadata = {
-    title: "Find your exam · examuploadkit",
-    description:
-        "Every examination we prepare upload files for, A to Z, with the photographs, signatures and documents each one asks for.",
-    alternates: { canonical: "/exams" },
-};
+export async function generateMetadata() {
+    const { exams } = await loadSearchIndex();
+    return pageMetadata({
+        title: `Photo and signature size for all ${exams.length} exams, A to Z`,
+        description:
+            "Every examination we prepare upload files for, A to Z: SSC, UPSC, banking, railways, police, teaching, state commissions and entrances, with the photograph, signature and documents each one asks for.",
+        path: "/exams",
+    });
+}
 
 /**
  * The directory has to stay usable as the catalogue grows, and it is already
@@ -47,6 +52,28 @@ export default async function ExamsPage() {
         <>
             <SiteHeader takesOverFrom="directory-search" />
             <main className="euk euk-directory" id="main-content">
+                <JsonLd
+                    data={{
+                        "@context": "https://schema.org",
+                        "@type": "ItemList",
+                        name: "Examinations",
+                        numberOfItems: exams.length,
+                        itemListElement: [...exams]
+                            .sort((a, b) => a.name.localeCompare(b.name))
+                            .map((exam, index) => ({
+                                "@type": "ListItem",
+                                position: index + 1,
+                                name: exam.name,
+                                url: absoluteUrl(`/exam/${exam.id}`),
+                            })),
+                    }}
+                />
+                <JsonLd
+                    data={breadcrumbs([
+                        { name: "Home", path: "/" },
+                        { name: "All examinations", path: "/exams" },
+                    ])}
+                />
                 <section className="euk-directory-top">
                     <div className="euk-wrap">
                         <h1 className="euk-display euk-directory-title">

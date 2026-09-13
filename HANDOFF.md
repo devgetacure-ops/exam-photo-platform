@@ -370,6 +370,10 @@ design. What follows is UI/UX and operations.
    values. The domain is bought and a lawyer has read the pages (owner,
    2026-09-13). Consent is recorded only in the browser; recording it with the
    job on the server is the open item.
+   **Search and previews (DEC-087)** need `NEXT_PUBLIC_SITE_URL` set on the
+   host at build time, and `GOOGLE_SITE_VERIFICATION` /
+   `BING_SITE_VERIFICATION` once the owner adds the site to Search Console and
+   Bing Webmaster Tools; then submit `/sitemap.xml` to both.
 5. **Multi-page documents** via `planDocument` -> arrange -> `assembleDocument`.
    The engine pair exists; the arranging interface does not.
 7. **A preview for a PDF deliverable.** `preview_watermarked` is false and

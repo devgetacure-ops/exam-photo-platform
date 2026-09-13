@@ -11,6 +11,10 @@ import { SourceNote } from "../../../../components/exam/source-note";
 import { SiteHeader } from "../../../../components/site-header";
 import { SiteFooter } from "../../../../components/site-footer";
 import { Chevron } from "../../../../components/euk/doodles";
+import { ExamShortAnswers } from "../../../../components/exam/exam-short-answers";
+import { JsonLd } from "../../../../components/json-ld";
+import { examAnswers } from "../../../../lib/exam-answers";
+import { breadcrumbs, pageMetadata } from "../../../../lib/site";
 
 /**
  * The reference half of an examination: every file's published rules, the
@@ -36,11 +40,12 @@ export async function generateMetadata({
     const { examId } = await params;
     const exam = await loadExam(examId);
     if (!exam) return { title: "Examination not found" };
-    return {
-        title: `${exam.exam_name} upload rules — photographs, signatures and documents`,
-        description: `${exam.conducting_body}'s published photograph rules for ${exam.exam_name}: spectacles, headwear, expression, recency, and the causes of rejection they list.`,
-        alternates: { canonical: `/exam/${exam.exam_id}/rules` },
-    };
+    return pageMetadata({
+        title: `${exam.exam_name} upload rules: file sizes, formats and rejection reasons`,
+        description: `${exam.conducting_body}'s published upload rules for ${exam.exam_name}: every file's size, dimensions and format, how to look in the photograph, and the causes of rejection it lists.`,
+        path: `/exam/${exam.exam_id}/rules`,
+        image: `/exam/${exam.exam_id}/opengraph-image`,
+    });
 }
 
 export default async function RulesPage({
@@ -54,6 +59,7 @@ export default async function RulesPage({
 
     const requirements = exam.requirements ?? [];
     const guidance = appearanceGuidance(exam.image_requirements);
+    const answers = examAnswers(exam);
     const hasPhotograph = requirements.some(
         (r) => r.requirement_type === "photograph",
     );
@@ -67,6 +73,26 @@ export default async function RulesPage({
 
     return (
         <main className="euk euk-rules" id="main-content">
+            <JsonLd
+                data={breadcrumbs([
+                    { name: "Home", path: "/" },
+                    { name: "All examinations", path: "/exams" },
+                    { name: exam.exam_name, path: `/exam/${exam.exam_id}` },
+                    { name: "Upload rules", path: `/exam/${exam.exam_id}/rules` },
+                ])}
+            />
+            {/* The same questions and answers as the "In short" block, word for word. */}
+            <JsonLd
+                data={{
+                    "@context": "https://schema.org",
+                    "@type": "FAQPage",
+                    mainEntity: answers.map((item) => ({
+                        "@type": "Question",
+                        name: item.question,
+                        acceptedAnswer: { "@type": "Answer", text: item.answer },
+                    })),
+                }}
+            />
             <SiteHeader mobileTitle={`${exam.exam_name} rules`} />
 
             <section className="euk-rules-top">
@@ -94,6 +120,7 @@ export default async function RulesPage({
 
             <div className="euk-rules-body">
             <div className="euk-wrap euk-rules-stack">
+                <ExamShortAnswers answers={answers} />
                 <section aria-labelledby="rules-files">
                     <h2 id="rules-files" className="euk-display euk-rules-h2">
                         The files

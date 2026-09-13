@@ -7,6 +7,10 @@ import { SiteFooter } from "../components/site-footer";
 import { SiteHeader } from "../components/site-header";
 import { loadSearchIndex } from "../lib/catalogue.server";
 import { TOP_EXAMS } from "../lib/top-exams";
+import type { Metadata } from "next";
+import { JsonLd } from "../components/json-ld";
+import { rupees, tier } from "../lib/kit-pricing";
+import { ORGANIZATION_ID, SITE_URL, pageMetadata } from "../lib/site";
 
 /**
  * The landing page, in the order the brief sets: the hero, then what we do,
@@ -22,6 +26,21 @@ import { TOP_EXAMS } from "../lib/top-exams";
  * page stays statically rendered.
  */
 
+export async function generateMetadata(): Promise<Metadata> {
+    const { exams } = await loadSearchIndex();
+    return pageMetadata({
+        title: `Exam photo and signature resizer for ${exams.length} Indian exams | examuploadkit`,
+        description: `Your photograph, signature, thumb impression and documents at the exact size, KB and format your examination publishes: SSC, UPSC, IBPS, NEET, JEE and more. ${rupees(tier(1))} a file, no account, previewed before you pay.`,
+        path: "/",
+    });
+}
+
+const OFFERS = [
+    { name: "One file", files: 1 },
+    { name: "Two files", files: 2 },
+    { name: "Three files or more", files: 3 },
+];
+
 export default async function Home() {
     const { exams, unavailable } = await loadSearchIndex();
 
@@ -34,6 +53,24 @@ export default async function Home() {
 
     return (
         <div className="euk euk-home">
+            <JsonLd
+                data={{
+                    "@context": "https://schema.org",
+                    "@type": "Service",
+                    name: "Exam upload file preparation",
+                    serviceType:
+                        "Photograph, signature, thumb impression and document preparation for examination applications",
+                    provider: { "@id": ORGANIZATION_ID },
+                    areaServed: { "@type": "Country", name: "India" },
+                    url: SITE_URL,
+                    offers: OFFERS.map((offer) => ({
+                        "@type": "Offer",
+                        name: offer.name,
+                        price: String(tier(offer.files) / 100),
+                        priceCurrency: "INR",
+                    })),
+                }}
+            />
             <SiteHeader takesOverFrom="hero-search" />
             <main id="main-content">
                 <PhoneHome examCount={exams.length} shortcuts={shortcuts} />

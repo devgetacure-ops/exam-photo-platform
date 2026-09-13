@@ -18,6 +18,8 @@ import "./pdf.css";
 import "./mobile.css";
 import { InstallCard } from "../components/m/install-card";
 import { INSTALL_LISTENER_SCRIPT } from "../lib/install";
+import { JsonLd } from "../components/json-ld";
+import { CONTACT_EMAILS, ORGANIZATION_ID, SITE_NAME, SITE_URL } from "../lib/site";
 
 /**
  * Three families. Each carries a different register and none of them is a
@@ -64,12 +66,26 @@ const petrona = Petrona({
 });
 
 export const metadata: Metadata = {
+    // Every relative canonical and preview address on the site resolves
+    // against this. Without it they have no domain at all (DEC-087).
+    metadataBase: new URL(SITE_URL),
+    applicationName: SITE_NAME,
     title: {
-        default: "Exam upload files, prepared to the rules",
-        template: "%s",
+        default: "examuploadkit: exam upload files, prepared to the rules",
+        template: `%s | ${SITE_NAME}`,
     },
     description:
         "Choose your examination and we prepare every upload it asks for — photograph, signature, thumb impression, declaration and certificates — to that examination's published specification.",
+    openGraph: { siteName: SITE_NAME, locale: "en_IN", type: "website" },
+    twitter: { card: "summary_large_image" },
+    // Search Console and Bing Webmaster Tools prove ownership with these,
+    // set on the host. Bing's index also feeds several AI answer engines.
+    verification: {
+        ...(process.env.GOOGLE_SITE_VERIFICATION ? { google: process.env.GOOGLE_SITE_VERIFICATION } : {}),
+        ...(process.env.BING_SITE_VERIFICATION
+            ? { other: { "msvalidate.01": process.env.BING_SITE_VERIFICATION } }
+            : {}),
+    },
     // Added to the home screen on an iPhone, this opens without Safari's
     // chrome; the manifest covers Android.
     appleWebApp: {
@@ -77,6 +93,41 @@ export const metadata: Metadata = {
         title: "examuploadkit",
         statusBarStyle: "default",
     },
+};
+
+/**
+ * Who publishes the site, for search and answer engines: the service and its
+ * support address, never a person (DEC-086, DEC-087).
+ */
+const SITE_GRAPH = {
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "Organization",
+            "@id": ORGANIZATION_ID,
+            name: SITE_NAME,
+            url: SITE_URL,
+            logo: { "@type": "ImageObject", url: `${SITE_URL}/icon-512.png`, width: 512, height: 512 },
+            email: CONTACT_EMAILS.support,
+            contactPoint: [
+                {
+                    "@type": "ContactPoint",
+                    contactType: "customer support",
+                    email: CONTACT_EMAILS.support,
+                    areaServed: "IN",
+                    availableLanguage: ["en"],
+                },
+            ],
+        },
+        {
+            "@type": "WebSite",
+            "@id": `${SITE_URL}/#website`,
+            url: SITE_URL,
+            name: SITE_NAME,
+            inLanguage: "en-IN",
+            publisher: { "@id": ORGANIZATION_ID },
+        },
+    ],
 };
 
 export const viewport: Viewport = {
@@ -97,7 +148,7 @@ export default function RootLayout({
     return (
         <html
             suppressHydrationWarning
-            lang="en"
+            lang="en-IN"
             data-theme="light"
             className={`${shoulders.variable} ${anek.variable} ${petrona.variable} h-full antialiased`}
         >
@@ -115,6 +166,7 @@ export default function RootLayout({
                 <a className="skip-link" href="#main-content">
                     Skip to content
                 </a>
+                <JsonLd data={SITE_GRAPH} />
                 {children}
                 <InstallCard />
             </body>

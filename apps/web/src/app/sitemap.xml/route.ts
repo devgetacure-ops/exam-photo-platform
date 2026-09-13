@@ -1,12 +1,15 @@
 import { loadExams } from "../../lib/catalogue.server";
+import { SITE_URL } from "../../lib/site";
 
-export async function GET(request: Request) {
-    const origin = new URL(process.env.NEXT_PUBLIC_SITE_URL || request.url)
-        .origin;
+// The host the canonicals name (DEC-087), not whichever address the request
+// came in on: behind a proxy that is an internal name.
+export async function GET() {
+    const origin = SITE_URL;
     const exams = await loadExams();
     const routes = [
         "/",
         "/exams",
+        "/pdf",
         "/exam-request",
         "/support",
         "/privacy",

@@ -10,7 +10,7 @@ import { ActionBar } from "../../components/m/action-bar";
 import { AnswerSearch } from "../../components/m/answer-search";
 
 export const metadata: Metadata = {
-    title: "Support and grievances · examuploadkit",
+    title: "Support and grievances",
     description:
         "Paid but no files, a file the portal rejected, an email that didn’t arrive. The known ways out, and a private form for anything else.",
     alternates: { canonical: "/support" },

@@ -1,5 +1,11 @@
+import { pageMetadata } from "../../lib/site";
 import { PolicyPage } from "../../components/policy-page";
-export const metadata = { title: "Service terms · examuploadkit" };
+export const metadata = pageMetadata({
+    title: "Terms and conditions",
+    description:
+        "What examuploadkit prepares, how payment and delivery work, and the terms of using the service.",
+    path: "/terms",
+});
 export default function Terms() {
     return (
         <PolicyPage

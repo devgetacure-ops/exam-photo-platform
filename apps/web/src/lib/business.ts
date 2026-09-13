@@ -15,12 +15,7 @@ import "server-only";
  * EUK_BUSINESS_HOURS.
  */
 
-export const CONTACT_EMAILS = {
-    support: "support@examuploadkit.com",
-    privacy: "privacy@examuploadkit.com",
-    grievance: "grievance@examuploadkit.com",
-    legal: "legal@examuploadkit.com",
-} as const;
+export { CONTACT_EMAILS } from "./site";
 
 export const GRIEVANCE_DESIGNATION = "Proprietor and Grievance Officer";
 

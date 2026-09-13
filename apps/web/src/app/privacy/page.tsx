@@ -1,5 +1,11 @@
+import { pageMetadata } from "../../lib/site";
 import { PolicyPage } from "../../components/policy-page";
-export const metadata = { title: "Privacy · examuploadkit" };
+export const metadata = pageMetadata({
+    title: "Privacy policy",
+    description:
+        "How examuploadkit handles your uploads: kept for 30 minutes by default, never used to train models, thumbprints and photographs used only to prepare your file, and your rights over your data.",
+    path: "/privacy",
+});
 export default function Privacy() {
     return (
         <PolicyPage

@@ -1,5 +1,11 @@
+import { pageMetadata } from "../../lib/site";
 import { PolicyPage } from "../../components/policy-page";
-export const metadata = { title: "Payment and refund help · examuploadkit" };
+export const metadata = pageMetadata({
+    title: "Payment and refund help",
+    description:
+        "Paid but no files, or a payment still confirming: what to do, and how an approved refund is returned within 5 to 7 working days.",
+    path: "/refund-policy",
+});
 export default function Refunds() {
     return (
         <PolicyPage

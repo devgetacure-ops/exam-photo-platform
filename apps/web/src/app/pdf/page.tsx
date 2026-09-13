@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { JsonLd } from "../../components/json-ld";
+import { absoluteUrl, pageMetadata } from "../../lib/site";
 import { SiteHeader } from "../../components/site-header";
 import { SiteFooter } from "../../components/site-footer";
 import { Reveal } from "../../components/euk/reveal";
@@ -9,12 +11,12 @@ import { PdfAction, PhonePdf } from "../../components/m/pdf-home";
 // work; imported under the names this page has always used.
 import { PDF_JOBS as JOBS, PDF_LIMITS as LIMITS } from "../../lib/pdf-work";
 
-export const metadata = {
-    title: "PDF work for exam forms · examuploadkit",
+export const metadata = pageMetadata({
+    title: "PDF work for exam forms: merge, compress and PDF to image",
     description:
         "Photographs into one PDF, certificates merged, pages reordered, turned or left out, compressed under the form's limit, and any PDF page saved as an image. Free with any file we prepare.",
-    alternates: { canonical: "/pdf" },
-};
+    path: "/pdf",
+});
 
 /**
  * The PDF surface, gathered into one page.
@@ -31,6 +33,22 @@ export default function PdfPage() {
         <>
             <SiteHeader />
             <main className="euk euk-pdfpage" id="main-content">
+                {/* Only the converter is a tool anybody can use on its own (DEC-083). */}
+                <JsonLd
+                    data={{
+                        "@context": "https://schema.org",
+                        "@type": "WebApplication",
+                        name: "PDF page to image",
+                        url: absoluteUrl("/pdf"),
+                        applicationCategory: "UtilitiesApplication",
+                        operatingSystem: "Any",
+                        browserRequirements: "Requires JavaScript",
+                        isAccessibleForFree: true,
+                        description:
+                            "Save any page of a PDF as a JPEG or PNG inside your own browser. Nothing is uploaded.",
+                        offers: { "@type": "Offer", price: "0", priceCurrency: "INR" },
+                    }}
+                />
                 {/* A phone's own arrangement: the converter as one row that
                     opens its own screen, the rest as rows that open a sheet. */}
                 <PhonePdf />

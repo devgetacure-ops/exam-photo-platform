@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { PdfToolScreen } from "../../../components/m/pdf-tool";
 
 export const metadata: Metadata = {
-    title: "PDF page to image · examuploadkit",
+    title: "PDF page to image",
     description:
         "Save any page of a PDF as a JPEG or PNG, inside your own browser. Nothing is uploaded and nothing is charged.",
     // The converter is also on /pdf, which is the page to rank.

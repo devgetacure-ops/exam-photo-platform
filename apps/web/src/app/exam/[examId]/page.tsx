@@ -10,6 +10,9 @@ import { ExamHero } from "../../../components/exam/exam-hero";
 import { KitWorkspace } from "../../../components/exam/kit-workspace";
 import { PrepareCta } from "../../../components/m/prepare-cta";
 import { ExamFiles } from "../../../components/m/exam-files";
+import { JsonLd } from "../../../components/json-ld";
+import { examDescription, examTitle } from "../../../lib/exam-answers";
+import { breadcrumbs, pageMetadata } from "../../../lib/site";
 
 /**
  * One examination: what it asks for, the kit that answers it, and each file
@@ -35,11 +38,14 @@ export async function generateMetadata({
     const exam = await loadExam(examId);
     if (!exam) return { title: "Examination not found" };
 
-    return {
-        title: `${exam.exam_name} — photo, signature and document upload rules`,
-        description: `Every file ${exam.exam_name} asks you to upload, with its exact size, dimensions and format. Prepared automatically to ${exam.conducting_body}'s published specification.`,
-        alternates: { canonical: `/exam/${exam.exam_id}` },
-    };
+    // Shaped like the search it answers ("SSC CGL photo size"), with the
+    // figures themselves in the description (DEC-087).
+    return pageMetadata({
+        title: examTitle(exam),
+        description: examDescription(exam),
+        path: `/exam/${exam.exam_id}`,
+        image: `/exam/${exam.exam_id}/opengraph-image`,
+    });
 }
 
 export default async function ExamPage({
@@ -66,6 +72,13 @@ export default async function ExamPage({
 
     return (
         <main className="euk exam-page" id="main-content">
+            <JsonLd
+                data={breadcrumbs([
+                    { name: "Home", path: "/" },
+                    { name: "All examinations", path: "/exams" },
+                    { name: exam.exam_name, path: `/exam/${exam.exam_id}` },
+                ])}
+            />
             <SiteHeader
                 mobileTitle={`${exam.exam_name} upload kit`}
                 examName={exam.exam_name}
