@@ -47,7 +47,10 @@ def main() -> None:
         flush=True,
     )
     os.chdir(ENGINE_ROOT)
-    sys.argv = ["exam_photo", "serve-api", "--host", "127.0.0.1", "--port", "8000"]
+    # 127.0.0.1 unless .env.local says otherwise; 0.0.0.0 lets a phone on the
+    # same Wi-Fi reach the engine for real-device testing.
+    host = os.environ.get("EXAM_PHOTO_BIND_HOST", "127.0.0.1")
+    sys.argv = ["exam_photo", "serve-api", "--host", host, "--port", "8000"]
     runpy.run_module("exam_photo", run_name="__main__", alter_sys=True)
 
 

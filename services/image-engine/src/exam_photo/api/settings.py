@@ -125,6 +125,13 @@ class ApiSettings(BaseModel):
     razorpay_key_id: str = ""
     razorpay_key_secret: str = ""
 
+    #: DEC-089. A stand-in for Razorpay, for walking the whole checkout on a
+    #: machine with no payment account. Off by default. It refuses to create or
+    #: settle anything beside real Razorpay credentials, and `GET /ready`
+    #: reports `payments: simulated`, so it can never pass for a working
+    #: payment setup.
+    payment_simulator_enabled: bool = False
+
     #: How many files one document request may carry.  `max_upload_bytes`
     #: bounds each file and nothing bounded the count, so a single request
     #: could hand the service an unlimited number of 5 MB uploads to hold in
@@ -254,6 +261,9 @@ def get_settings() -> ApiSettings:
     if "EXAM_PHOTO_PURCHASE_GATE_ENABLED" in os.environ:
         val = os.environ["EXAM_PHOTO_PURCHASE_GATE_ENABLED"].lower()
         kwargs["purchase_gate_enabled"] = val in ("1", "true", "yes")
+    if "EXAM_PHOTO_PAYMENT_SIMULATOR" in os.environ:
+        val = os.environ["EXAM_PHOTO_PAYMENT_SIMULATOR"].lower()
+        kwargs["payment_simulator_enabled"] = val in ("1", "true", "yes")
     if "EXAM_PHOTO_WARMUP_ON_BOOT" in os.environ:
         val = os.environ["EXAM_PHOTO_WARMUP_ON_BOOT"].lower()
         kwargs["warmup_on_boot"] = val in ("1", "true", "yes")

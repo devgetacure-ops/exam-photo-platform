@@ -1100,6 +1100,9 @@ def get_kit_quote(
         included_free_count=quote.included_free_count,
         already_released_count=quote.already_released_count,
         is_payable=quote.is_payable,
+        payment_mode=(
+            "simulator" if service.settings.payment_simulator_enabled else "razorpay"
+        ),
         lines=[
             QuoteLineResponse(
                 job_id=line.job_id,
@@ -1345,6 +1348,21 @@ async def razorpay_webhook(request: Request) -> JSONResponse:
             f"razorpay webhook could not release {outcome['unknown']} "
             f"for payment={instruction.payment_id}"
         )
+    return JSONResponse({"status": "released", **outcome})
+
+
+@app.post("/v1/payments/simulator/{order_id}/pay")
+def simulate_payment(order_id: str) -> JSONResponse:
+    """Settle a simulated order, for testing checkout without Razorpay (DEC-089).
+
+    Answers 404 unless the simulator is switched on and no Razorpay credentials
+    are set, so on a real deployment this route does not exist in any way a
+    caller can tell. It releases through the same code a verified webhook uses.
+    """
+    try:
+        outcome = service.simulate_payment(order_id)
+    except (PermissionError, KeyError):
+        raise HTTPException(status_code=404, detail="Not Found") from None
     return JSONResponse({"status": "released", **outcome})
 
 

@@ -13,6 +13,7 @@ import { publishJobs } from "./live-job-state";
 import { EmailDelivery } from "./email-delivery";
 import { PaymentScene } from "./payment-scene";
 import { KitSuccess } from "./kit-success";
+import { SimulatedCheckout } from "./simulated-checkout";
 import type { ExamFact } from "./exam-facts";
 import { FileTypeDrawing } from "../euk/doodles";
 import { Note } from "../euk/note";
@@ -51,6 +52,8 @@ interface Quote {
     list_amount_paise: number;
     currency: string;
     is_payable: boolean;
+    /** "simulator" on a test machine running the engine's payment simulator (DEC-089). */
+    payment_mode?: string;
     included_free_count: number;
     lines: { job_id: string; reason: string }[];
 }
@@ -328,6 +331,7 @@ export function KitCheckout({
     const [note, setNote] = useState("");
     const [busy, setBusy] = useState(false);
     const [pending, setPending] = useState(false);
+    const [simOrder, setSimOrder] = useState<Order | null>(null);
     const [failed, setFailed] = useState(false);
     const [ack, setAck] = useState(false);
     const [now, setNow] = useState(0);
@@ -475,6 +479,33 @@ export function KitCheckout({
         shownStage.current = stage;
     }, [stage]);
 
+    // One set of outcomes, whichever window took the payment: Razorpay's, or
+    // the test sheet on a machine running the payment simulator (DEC-089).
+    const paymentSubmitted = () => {
+        setPending(true);
+        setNote(
+            "Payment submitted. We’re waiting for confirmed release of your files. Please don’t pay again.",
+        );
+        void refresh();
+    };
+    const checkoutClosed = () => {
+        setBusy(false);
+        setPending(true);
+        onBusy(false);
+        setNote(
+            "Checkout closed. If you paid, wait for confirmation and refresh your files before trying again.",
+        );
+        void refresh();
+    };
+    const paymentFailed = () => {
+        setBusy(false);
+        setFailed(true);
+        onBusy(false);
+        setError(
+            "Payment was not confirmed. Check its status with your payment provider before retrying.",
+        );
+    };
+
     const pay = async () => {
         if (
             !kitId ||
@@ -493,7 +524,9 @@ export function KitCheckout({
         setError("");
         setNote("");
         try {
-            await loadCheckout();
+            const simulated = quote.payment_mode === "simulator";
+            // The test sheet needs no script; the live site always loads Razorpay.
+            if (!simulated) await loadCheckout();
             const order = await request<Order>(
                 `/v1/kits/${encodeURIComponent(kitId)}/order?${new URLSearchParams(files.map((file) => ["job_ids", file.jobId])).toString()}`,
                 "POST",
@@ -508,46 +541,11 @@ export function KitCheckout({
                     "The quote changed. Review the updated total before continuing.",
                 );
             }
-            if (!window.Razorpay) throw new Error("Checkout could not open.");
             const nextReceipt = {
                 orderId: order.order_id,
                 amountPaise: order.amount_paise,
             };
             setReceipt(nextReceipt);
-            const checkout = new window.Razorpay({
-                key: order.key_id,
-                order_id: order.order_id,
-                amount: order.amount_paise,
-                currency: order.currency,
-                name: "examuploadkit",
-                description: exam.exam_name,
-                handler: () => {
-                    setPending(true);
-                    setNote(
-                        "Payment submitted. We’re waiting for confirmed release of your files. Please don’t pay again.",
-                    );
-                    void refresh();
-                },
-                modal: {
-                    ondismiss: () => {
-                        setBusy(false);
-                        setPending(true);
-                        onBusy(false);
-                        setNote(
-                            "Checkout closed. If you paid, wait for confirmation and refresh your files before trying again.",
-                        );
-                        void refresh();
-                    },
-                },
-            });
-            checkout.on("payment.failed", () => {
-                setBusy(false);
-                setFailed(true);
-                onBusy(false);
-                setError(
-                    "Payment was not confirmed. Check its status with your payment provider before retrying.",
-                );
-            });
             try {
                 if (pendingKey)
                     sessionStorage.setItem(pendingKey, order.order_id);
@@ -556,6 +554,22 @@ export function KitCheckout({
             } catch {
                 /* Optional. */
             }
+            if (simulated) {
+                setSimOrder(order);
+                return;
+            }
+            if (!window.Razorpay) throw new Error("Checkout could not open.");
+            const checkout = new window.Razorpay({
+                key: order.key_id,
+                order_id: order.order_id,
+                amount: order.amount_paise,
+                currency: order.currency,
+                name: "examuploadkit",
+                description: exam.exam_name,
+                handler: paymentSubmitted,
+                modal: { ondismiss: checkoutClosed },
+            });
+            checkout.on("payment.failed", paymentFailed);
             checkout.open();
         } catch (err) {
             setError(
@@ -656,7 +670,7 @@ export function KitCheckout({
                 examName={exam.exam_name}
                 facts={facts}
                 headingRef={headingRef}
-                title={pending ? "Payment sent. Confirming it." : "Finish paying in the Razorpay window."}
+                title={pending ? "Payment sent. Confirming it." : simOrder ? "Finish paying in the test payment window." : "Finish paying in the Razorpay window."}
                 note={
                     note ||
                     (pending
@@ -664,6 +678,28 @@ export function KitCheckout({
                         : "It opens over this page. Close it and you’re straight back here.")
                 }
             >
+                {simOrder && (
+                    <SimulatedCheckout
+                        amount={money(simOrder.amount_paise)}
+                        examName={exam.exam_name}
+                        onPay={async () => {
+                            await request(
+                                `/v1/payments/simulator/${encodeURIComponent(simOrder.order_id)}/pay`,
+                                "POST",
+                            );
+                            setSimOrder(null);
+                            paymentSubmitted();
+                        }}
+                        onFail={() => {
+                            setSimOrder(null);
+                            paymentFailed();
+                        }}
+                        onClose={() => {
+                            setSimOrder(null);
+                            checkoutClosed();
+                        }}
+                    />
+                )}
                 <div className="euk-pay-actions">
                     <button
                         type="button"

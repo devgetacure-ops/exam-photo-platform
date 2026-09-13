@@ -16,6 +16,7 @@ payment path most needs the tests that always run.
 from __future__ import annotations
 
 import json
+import secrets
 from dataclasses import dataclass
 from typing import Any, Dict, Optional, Protocol
 
@@ -135,10 +136,65 @@ class HttpOrderGateway:
         )
 
 
+#: The publishable "key" a simulated order carries. The browser reads it as
+#: the signal to open the test sheet instead of Razorpay's window (DEC-089).
+SIMULATOR_KEY_ID = "simulator"
+
+#: Every simulated order id starts with this, so a real Razorpay order can
+#: never be settled by the simulator.
+SIMULATED_ORDER_PREFIX = "order_sim"
+
+
+class SimulatedOrderGateway:
+    """Creates orders that exist only in this service's own registry (DEC-089).
+
+    For trying the whole checkout on a machine with no Razorpay account: the
+    order is priced and recorded exactly as a real one is, and nothing leaves
+    the process. It is settled by `ApiProcessingService.simulate_payment`,
+    which releases through the same path a verified webhook does.
+    """
+
+    def create_order(
+        self, amount_paise: int, currency: str, notes: Dict[str, str], receipt: str
+    ) -> CreatedOrder:
+        for key, value in notes.items():
+            if len(value) > MAX_NOTE_LENGTH:
+                raise OrderCreationError(f"note {key!r} is too long for Razorpay")
+        return CreatedOrder(
+            order_id=f"{SIMULATED_ORDER_PREFIX}{secrets.token_hex(7)}",
+            amount_paise=amount_paise,
+            currency=currency,
+            key_id=SIMULATOR_KEY_ID,
+        )
+
+
+class ConflictingSimulatorGateway:
+    """What a host gets when it asks for the simulator beside real credentials.
+
+    Refuses, because a simulator running where real keys are configured means
+    a real deployment was switched into test mode by mistake, and settling
+    orders for free there would give paid files away.
+    """
+
+    def create_order(
+        self, amount_paise: int, currency: str, notes: Dict[str, str], receipt: str
+    ) -> CreatedOrder:
+        raise OrderCreationError(
+            "the payment simulator refuses to run beside Razorpay credentials"
+        )
+
+
 def gateway_for(
-    key_id: str, key_secret: str, timeout_seconds: float = 10.0
+    key_id: str,
+    key_secret: str,
+    timeout_seconds: float = 10.0,
+    simulator: bool = False,
 ) -> OrderGateway:
     """The gateway a host's configuration entitles it to."""
+    if simulator:
+        if key_id or key_secret:
+            return ConflictingSimulatorGateway()
+        return SimulatedOrderGateway()
     if key_id and key_secret:
         return HttpOrderGateway(key_id, key_secret, timeout_seconds)
     return UnconfiguredOrderGateway()

@@ -33,7 +33,11 @@ from exam_photo.api.orders import OrderRegistry
 from exam_photo.api.payments import ReleaseInstruction
 from exam_photo.api.progress import ProgressRegistry
 from exam_photo.api.protection import UsageRegistry
-from exam_photo.api.razorpay_orders import OrderGateway, gateway_for
+from exam_photo.api.razorpay_orders import (
+    SIMULATED_ORDER_PREFIX,
+    OrderGateway,
+    gateway_for,
+)
 from exam_photo.api.settings import ApiSettings
 from exam_photo.api.storage import LocalArtifactStore
 from exam_photo.models.exam_rule import (
@@ -578,7 +582,9 @@ class ApiProcessingService:
             # that looks healthy and cannot take money. This is the one place
             # that state is visible.
             "payments": (
-                "configured"
+                "simulated"
+                if self.settings.payment_simulator_enabled
+                else "configured"
                 if self.settings.razorpay_webhook_secret
                 else "not_configured"
             ),
@@ -786,6 +792,36 @@ class ApiProcessingService:
             "unknown": list(dict.fromkeys(unknown)),
         }
 
+    def simulate_payment(self, order_id: str) -> Dict[str, Any]:
+        """Settle a simulated order as a verified payment would (DEC-089).
+
+        Only for a host running the simulator with no Razorpay credentials,
+        and only for an order the simulator created. It builds the same
+        instruction a verified `order.paid` webhook carries and releases
+        through `apply_release_instruction`, so what a tester sees after
+        paying is what a candidate will see.
+        """
+        settings = self.settings
+        if (
+            not settings.payment_simulator_enabled
+            or settings.razorpay_key_id
+            or settings.razorpay_key_secret
+        ):
+            raise PermissionError("the payment simulator is not enabled")
+        if not order_id.startswith(SIMULATED_ORDER_PREFIX):
+            raise KeyError(order_id)
+        order = self.orders.get(order_id)
+        if order is None:
+            raise KeyError(order_id)
+        instruction = ReleaseInstruction(
+            event="order.paid",
+            payment_id=f"pay_sim{secrets.token_hex(7)}",
+            order_id=order.order_id,
+            amount=order.amount_paise,
+            currency=order.currency,
+        )
+        return self.apply_release_instruction(instruction)
+
     @property
     def order_gateway(self) -> OrderGateway:
         """The gateway this host's credentials entitle it to (DEC-070).
@@ -796,7 +832,9 @@ class ApiProcessingService:
         """
         if self._order_gateway is None:
             self._order_gateway = gateway_for(
-                self.settings.razorpay_key_id, self.settings.razorpay_key_secret
+                self.settings.razorpay_key_id,
+                self.settings.razorpay_key_secret,
+                simulator=self.settings.payment_simulator_enabled,
             )
         return self._order_gateway
 

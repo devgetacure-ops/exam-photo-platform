@@ -140,6 +140,9 @@ class KitQuoteResponse(BaseModel):
     already_released_count: int
     is_payable: bool
     lines: List[QuoteLineResponse] = Field(default_factory=list)
+    #: "razorpay", or "simulator" on a test machine (DEC-089), which tells the
+    #: browser to open the test sheet instead of loading Razorpay Checkout.
+    payment_mode: str = "razorpay"
 
 
 class KitOrderResponse(BaseModel):

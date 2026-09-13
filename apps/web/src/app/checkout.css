@@ -1065,3 +1065,63 @@
         animation: none;
     }
 }
+
+/* ---- the test payment sheet (DEC-089) ------------------------------------ */
+/* Only on a machine running the engine's payment simulator. Labelled as a
+   test on its first line, and deliberately plain, so it cannot be mistaken
+   for a real payment page. */
+
+.euk-simpay {
+    width: min(420px, calc(100vw - 32px));
+    padding: 22px 22px 18px;
+    border: var(--rule) dashed var(--ink);
+    background: var(--paper);
+    color: var(--ink);
+}
+
+.euk-simpay::backdrop {
+    background: rgb(17 17 16 / 0.55);
+}
+
+.euk .euk-simpay-flag,
+.euk-simpay-flag {
+    display: inline-block;
+    padding: 4px 8px;
+    background: var(--partial-fill);
+    color: var(--partial-line);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.euk-simpay-title {
+    margin-top: 14px;
+    font-family: var(--font-shoulders), "Arial Narrow", sans-serif;
+    font-size: 56px;
+    font-weight: 900;
+    line-height: 0.9;
+}
+
+.euk-simpay-for,
+.euk-simpay-note,
+.euk-simpay-error {
+    margin-top: 8px;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--ink-70);
+}
+
+.euk-simpay-error {
+    color: var(--signal-deep);
+    font-weight: 600;
+}
+
+.euk-simpay-actions {
+    display: grid;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.euk-simpay-actions button {
+    min-height: 44px;
+}
+

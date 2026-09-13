@@ -403,6 +403,17 @@ EXAM_PHOTO_LOCAL_CORS_ENABLED=true .venv/Scripts/python.exe -m exam_photo serve-
 Without it every upload fails as an ordinary network error, because a blocked
 cross-origin request and a dead server are the same `TypeError` to a browser.
 
+**Walking the whole flow, including checkout, before Razorpay exists (DEC-089).**
+Start the `engine` and `web-3100` launch configurations. The engine reads
+`services/image-engine/.env.local` (git-ignored): `EXAM_PHOTO_PAYMENT_SIMULATOR=true`
+opens a labelled test sheet where Razorpay's window would be, and paying there
+releases files through the real release path; `EXAM_PHOTO_BIND_HOST=0.0.0.0` and
+`EXAM_PHOTO_ALLOWED_ORIGINS` let a phone on the same Wi-Fi use it, with
+`NEXT_PUBLIC_EXAM_PHOTO_API_BASE_URL` in `apps/web/.env.local` pointing the site at the
+machine's LAN address. The engine and the dev server together need about 4 GB of
+free memory. When Razorpay arrives, remove the simulator line and add the three
+Razorpay values; the simulator refuses to run beside them.
+
 ### Deploying it
 
 Every hardening knob is off or permissive by default so local development is
