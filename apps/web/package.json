@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "seo:keywords": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/build-keywords.mjs"
   },
   "dependencies": {
     "next": "16.2.9",

@@ -374,6 +374,10 @@ design. What follows is UI/UX and operations.
    host at build time, and `GOOGLE_SITE_VERIFICATION` /
    `BING_SITE_VERIFICATION` once the owner adds the site to Search Console and
    Bing Webmaster Tools; then submit `/sitemap.xml` to both.
+   **The keyword map (DEC-088)** is `docs/seo/`: regenerate it with
+   `npm run seo:keywords` after any catalogue change, and build the gap pages
+   in the order `KEYWORD_STRATEGY.md` gives, starting with a standalone
+   compress-to-size tool.
 5. **Multi-page documents** via `planDocument` -> arrange -> `assembleDocument`.
    The engine pair exists; the arranging interface does not.
 7. **A preview for a PDF deliverable.** `preview_watermarked` is false and
