@@ -86,36 +86,60 @@ into the delivered photograph. Do not take it to hit a latency number.
 
 # Platform State
 
-**Last updated: 2026-09-12.** Branch `feat/upload-kit-ui`, merged up to date
-with `main` (which carries the ONNX matting backend, DEC-054). The kit API is
-built (DEC-055..058) and the whole candidate path works: a candidate searches
-**132 examinations**, sees everything each one asks for on statically generated
-pages, prepares files, reviews them watermarked, pays a server-computed price
-and downloads. The desktop design is built to the owner's direction; the phone
-build is not, and is the next piece of work.
+**Last updated: 2026-09-14.** Branch `feat/upload-kit-ui`, 102 commits ahead of
+`main`, with no pull request yet. Everything is pushed except `b3762d8` (the
+payment simulator) and this handoff. The whole candidate path works locally on
+a desktop and on a real phone, across **132 examinations**: search, every file
+an examination asks for, preparation, the agreements before the first upload
+(DEC-086), a watermarked preview, checkout (Razorpay, or the local simulator,
+DEC-089), and delivery.
 
-**Both lanes share one working tree**, at `C:/Projects/exam-photo-platform` on
-`feat/upload-kit-ui`. That is why `git status` always shows the other lane's
-uncommitted work and why neither lane can commit without staging by path. It is
-the single biggest source of friction in this arrangement and it is fixable --
-see *[Two agents, one repository](#two-agents-one-repository)*.
+**Where the work is now.** The owner is testing the whole product by hand, on
+this machine and on their phone, and collecting issues. **The next session
+fixes them, the owner's way**: they send screenshots and notes; the session
+diagnoses and plans each one *without changing anything*; when they say to act,
+everything is fixed in one pass, verified and committed.
+`docs/NEXT_SESSION_PROMPT.md` is written for exactly that session.
 
-**The engine lane is committed and pushed. Codex's UI work is not** -- the
-modified app/component files and the four new components are uncommitted in the
-tree. Check `git status` before assuming anything is clean.
+**Built on 13–14 September, beyond the phone phases:**
 
-**The engine can take money.** The watermarked preview and purchase gate are built
-(DEC-063), the service warms itself, sweeps expired artifacts and gates its
-operator surface (DEC-064), `deploy/` holds a working Dockerfile, compose file
-and reverse proxy (DEC-065), retention is a real 30-minute promise (DEC-066)
-with a candidate-requested extension (DEC-067), and **the Razorpay webhook now
-calls `release_job`** (DEC-069) against **orders created server-side at a price
-the service computes** (DEC-070), so the amount never comes from the browser.
-What is missing is **delivery** -- download, email, `wa.me` -- and the rest of
-the **2026 research refresh**.
+| What | Decision |
+|---|---|
+| The phone works over the LAN (`allowedDevOrigins`), nothing scrolls sideways on a phone, exam rows are real links | DEC-085 |
+| Agreements above the upload: terms and privacy, a parent or guardian on 28 examinations, the thumb impression. Policy pages carry independence, liability, disputes, rights, grievance timelines and refund days. The seller's details come from the environment only | DEC-086 |
+| Search, answer engines and link previews: one metadata helper, JSON-LD, an "In short" block on every rules page, generated preview cards, `/llms.txt`, `en-IN` | DEC-087 |
+| A generated map of 30,018 search keywords in `docs/seo/`, each tied to the page that answers it | DEC-088 |
+| A payment simulator for walking checkout on a test machine, through the real release path | DEC-089 |
 
-**None of those need Docker.** Deployment work is done to the point where the
-next useful step happens on a real VPS, not here.
+**A brand kit exists outside the repository**, at
+`C:\Users\dmbar\Documents\examuploadkit-brand-kit`: wordmark and icon (SVG and
+PNG), palette, type specimen, the 13 drawings, social banners and posts,
+product screenshots, messaging and claims, and an 8-page guidelines PDF, all
+rendered from the site's own assets on 13 September. Its build scripts were in
+a session scratch folder and are gone; regenerate from the site if it goes
+stale.
+
+### Running the test setup
+
+Start the `engine` and `web-3100` launch configurations (`preview_start`).
+**The desktop app stops both whenever its window or Browser pane closes, or the
+machine sleeps** — when the owner says the engine is off, restart both, then
+confirm `GET http://127.0.0.1:8000/ready` says `ready` and `payments: simulated`.
+
+- `services/image-engine/.env.local` (git-ignored): `EXAM_PHOTO_PAYMENT_SIMULATOR=true`,
+  `EXAM_PHOTO_BIND_HOST=0.0.0.0`, and `EXAM_PHOTO_ALLOWED_ORIGINS` for
+  `localhost:3100`, `127.0.0.1:3100` and the LAN address.
+- `apps/web/.env.local` (git-ignored): `NEXT_PUBLIC_EXAM_PHOTO_API_BASE_URL=http://192.168.29.72:8000`,
+  and the owner's private `EUK_BUSINESS_*` values, which never go into git.
+- **Check the Wi-Fi address first** (`Get-NetIPAddress -InterfaceAlias WiFi`).
+  If it is no longer `192.168.29.72`, update both files and restart both servers;
+  `NEXT_PUBLIC_*` is read when the dev server starts.
+- **Memory is the constraint on this machine**: 7.4 GB in all, the engine holds
+  about 2.4 GB warm and peaks near 2.9 GB. With the ChatGPT and Codex apps open
+  there was under 1.5 GB free and the first photograph took 69 s; ask the owner
+  to close them rather than closing anything yourself.
+- The owner opens `http://localhost:3100`, or `http://192.168.29.72:3100` on the
+  phone. Windows may ask to allow Python through the firewall for the phone.
 
 ## One agent now, both lanes
 
@@ -180,7 +204,7 @@ colour.** The stylesheets are global, so one class name has one owner --
 in two sheets without a stated reason, after three collisions in one session
 shipped a line drawing as a solid orange block.
 
-### Current UI state, verified 2026-09-12
+### Current UI state, verified 2026-09-14
 
 **Desktop is built and the owner has signed off on two rounds of notes.** The
 landing page (hero search, eighteen examination shortcuts, the kit, a steps
@@ -188,7 +212,8 @@ track, a self-dragging before/after band for a photograph and a signature, a
 drawn browser window, a measured sheet of six frames, four principles that
 perform their own refusal, pricing, the story), the examination workspace with
 the three-way boundary intact, rules pages, the PDF page at `/pdf`, checkout,
-delivery, policies and every error state. **416 static pages**, 169 Vitest
+delivery, policies and every error state. **552 static pages** (418, plus a
+preview card for each examination, the site card and `/llms.txt`), 232 Vitest
 tests, production build clean.
 
 **The bar is sticky, full-bleed, and carries the search.** On the landing page
@@ -329,6 +354,50 @@ puts the product's worst failure mode back on the table.
 | Upload and preparation | `components/exam/requirement-upload.tsx` — client island, records the job against the kit |
 | Three outcome states | `components/exam/outcome-result.tsx` — clean / with-findings / blocked |
 | The watermarked preview and the purchase gate | Engine: `src/exam_photo/preview/`, `api/app.py` (`/v1/jobs/{id}/preview`, 402 on `/output`). UI already wired by Codex |
+
+### Open, found while the owner tested (13 September 2026)
+
+1. **A photograph under an examination's minimum KB is refused instead of
+   prepared.** Diagnosed with the owner, **not fixed** — they had not said to
+   act. The candidate sees "We could not prepare this one · Pipeline final byte
+   size invalid". Found on SBI Junior Associates: 200 × 230 px, 20–50 KB
+   published, the output 17.7 KB. Two causes. The photograph compressor
+   (`providers/compression/deterministic_image_compressor.py`,
+   `OutputCompressionConfig.max_quality = 98`, default 4:2:0 chroma) never tries
+   quality 100 or 4:4:4. And `orchestration/final_validation.py` treats a size
+   under the minimum as a hard failure, so `api/service.py` records
+   `not_produced`. The deliverable path already does the right thing —
+   `orchestration/deliverable_pipeline._largest_encoding`, then a finding
+   (DEC-051) — and DEC-041 requires producing. Measured on a fictional demo
+   photograph at 200 × 230: 23.1 KB at quality 98 with 4:2:0, 45.9 KB at quality
+   100 with 4:4:4. **Planned fix**: when a photograph is under its floor and a
+   quality-100, 4:4:4 encoding stays under the ceiling, use it; if it is still
+   under, deliver it as `prepared_with_findings` with a plain note naming both
+   figures; never pad the file; show plain words, not raw issue codes; test the
+   lifted, the still-short and the over-ceiling cases; re-run the owner's SBI
+   photograph on the running engine. About 20 photograph records carry a floor
+   this can hit: IBPS ×4, SBI ×2, RBI ×2, LIC, NABARD, NIACL, GIC, XAT, TNPSC ×4,
+   KEAM and the RRB Level-1 and NTPC records.
+2. **Four deployment blockers**, found on 13 September and not fixed.
+   (a) `lib/api-client.ts` falls back to `http://127.0.0.1:8000` with `||` and
+   builds every address with `new URL(path, base)`, which throws on an empty
+   base — a same-origin deployment needs both changed, or every phone sends its
+   uploads to itself. (b) `deploy/web.Dockerfile` passes no build arguments, so
+   `EUK_BUSINESS_*`, `NEXT_PUBLIC_SITE_URL` and `NEXT_PUBLIC_TURNSTILE_SITE_KEY`
+   never reach the build, and `deploy/docker-compose.yml` sets a variable the app
+   does not read (`NEXT_PUBLIC_API_BASE_URL`); the support page also reads
+   `EUK_BUSINESS_*` at request time, so the web container needs them at runtime
+   too. (c) `/api/requests` refuses in production without
+   `UPLOADREADY_REQUESTS_DIR`, and the web container has no volume for it.
+   (d) The Caddyfile has no `www` redirect. The branch also needs merging to
+   `main` before a deploy.
+3. **Regional languages are not ready**, and the owner intends them soon. No
+   translation layer; copy is written into about 30 components; Big Shoulders
+   and Petrona are Latin-only; 40 uppercase, 30 letter-spacing and 51
+   sub-1.0 line-height rules would break Indian scripts; the engine returns
+   some English sentences rather than codes; the records hold no Hindi names and
+   search matches a–z only. Cheap preparation meanwhile: new copy in one place,
+   codes rather than sentences from the engine, Hindi names gathered in research.
 
 ### What is actually left, in order
 
@@ -692,7 +761,8 @@ covers neither the eleven `mandatory_*` marker suites nor `ink_robustness`.
 cd services/image-engine && ruff format --check . && ruff check . && .venv/Scripts/python.exe -m mypy src tests
 ```
 
-Current: format, lint and mypy clean across 142 files. 382 fast tests passing,
+Current (2026-09-13): format, lint and mypy clean across 168 files; the API
+suite 262 passing. 382 fast tests passing,
 15 skipped, and one failing **only for want of a model asset** in a checkout
 with an empty `model-assets/` (`test_crop_cli_save_preview_overwrite_protection`
 needs the face detector). `ink_robustness` (~100 synthetic captures) green as
