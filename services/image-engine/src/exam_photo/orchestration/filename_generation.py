@@ -1,6 +1,6 @@
 import re
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Sequence
 
 from pydantic import BaseModel, ConfigDict
 
@@ -121,3 +121,100 @@ def generate_safe_filename(
                 counter += 1
 
     return filename
+
+
+# ---------------------------------------------------------------------------
+# The standard name for a file an examination does not name itself
+# ---------------------------------------------------------------------------
+
+#: The word for each kind of file. Anything else -- a certificate, an identity
+#: document -- is named by its requirement, because "certificate" alone would
+#: not tell a Class X marksheet from a caste certificate in a downloads folder.
+_FILE_WORD = {
+    "photograph": "photo",
+    "signature": "signature",
+    "thumb_impression": "thumb",
+    "handwritten_declaration": "declaration",
+}
+_PREFIX_MAX = 16
+_WORD_MAX = 24
+
+#: Where an examination's own short form reads badly in a file name, keyed by
+#: exam_id. The generated list is reviewed by the owner; corrections go here.
+FILE_PREFIX_OVERRIDES: dict[str, str] = {}
+
+
+def _slug(text: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
+
+
+def _trim_words(slug: str, limit: int) -> str:
+    if len(slug) <= limit:
+        return slug
+    cut = slug[:limit]
+    if "-" in cut:
+        cut = cut[: cut.rindex("-")]
+    return cut.strip("-")
+
+
+def exam_file_prefix(exam_id: str, aliases: Sequence[str]) -> str:
+    """The examination part of a file name: its short form, as candidates type it."""
+    if exam_id in FILE_PREFIX_OVERRIDES:
+        return FILE_PREFIX_OVERRIDES[exam_id]
+    for alias in aliases:
+        slug = _slug(alias)
+        if slug and len(slug) <= _PREFIX_MAX:
+            return slug
+    return _trim_words(_slug(exam_id), _PREFIX_MAX) or "exam"
+
+
+def standard_file_stem(
+    exam_id: str,
+    aliases: Sequence[str],
+    requirement_type: str,
+    requirement_id: Optional[str] = None,
+    same_type_count: int = 1,
+) -> str:
+    """``<exam>_<file>``, e.g. ``neet-ug_photo``, for a file with no published name.
+
+    A published exact name always wins over this; see the callers. Two files of
+    one kind in the same application (an English and a Hindi signature) are
+    told apart by their requirement, so the archive never holds two of a name.
+    """
+    word = _FILE_WORD.get(requirement_type)
+    if word is None or (same_type_count > 1 and requirement_id):
+        base = re.sub(r"^candidate[_-]", "", requirement_id or requirement_type)
+        word = _trim_words(_slug(base), _WORD_MAX) or _slug(requirement_type)
+    return f"{exam_file_prefix(exam_id, aliases)}_{word}"
+
+
+def standard_file_stems(
+    exam_id: str,
+    aliases: Sequence[str],
+    requirements: Sequence[tuple[str, str]],
+) -> dict[str, str]:
+    """Standard stems for every ``(requirement_type, requirement_id)`` of one exam.
+
+    Unique across the application. Two requirements whose names still meet
+    after trimming -- Karnataka PSC lists two claim-supporting certificates --
+    are numbered in the order the examination lists them, so a ZIP never
+    carries two files of one name.
+    """
+    type_counts: dict[str, int] = {}
+    for requirement_type, _ in requirements:
+        type_counts[requirement_type] = type_counts.get(requirement_type, 0) + 1
+    stems: dict[str, str] = {}
+    seen: dict[str, int] = {}
+    for requirement_type, requirement_id in requirements:
+        stem = standard_file_stem(
+            exam_id,
+            aliases,
+            requirement_type,
+            requirement_id,
+            type_counts[requirement_type],
+        )
+        seen[stem] = seen.get(stem, 0) + 1
+        if seen[stem] > 1:
+            stem = f"{stem}-{seen[stem]}"
+        stems[requirement_id] = stem
+    return stems

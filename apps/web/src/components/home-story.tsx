@@ -548,7 +548,7 @@ export function HomeStory({ examCount }: { examCount: number }) {
                 <div className="euk-wrap">
                     <Reveal>
                         <h2 className="euk-display euk-h2">
-                            The whole kit is ₹8.
+                            The whole kit is ₹5.
                             {" "}
                             <br />
                             However many files your exam asks for.
@@ -563,7 +563,7 @@ export function HomeStory({ examCount }: { examCount: number }) {
                         <Reveal className="euk-invert euk-price euk-price--kit">
                             <p className="euk-price-name">The whole kit</p>
                             <p className="euk-price-row">
-                                <span className="euk-price-figure">₹8</span>
+                                <span className="euk-price-figure">₹5</span>
                                 <span className="euk-price-was">₹10</span>
                             </p>
                             <p className="euk-price-files" aria-hidden="true">
@@ -573,7 +573,7 @@ export function HomeStory({ examCount }: { examCount: number }) {
                                 <CertificateDrawing />
                             </p>
                             <p className="euk-price-body">
-                                Three files or more. The price stops at ₹8,
+                                Two files or more. The price stops at ₹5,
                                 whatever your examination asks for.
                             </p>
                             <Link href="/exams" className="primary-button">
@@ -581,30 +581,10 @@ export function HomeStory({ examCount }: { examCount: number }) {
                             </Link>
                         </Reveal>
                         <Reveal delay={90} className="euk-price">
-                            <p className="euk-price-name">Two files</p>
-                            <p className="euk-price-row">
-                                <span className="euk-price-figure">₹5</span>
-                                <span className="euk-price-was">₹8</span>
-                            </p>
-                            <p className="euk-price-files" aria-hidden="true">
-                                <PhotoDrawing />
-                                <SignatureDrawing />
-                            </p>
-                            <p className="euk-price-body">
-                                Two files, such as your photograph and your
-                                signature.
-                            </p>
-                            <Link href="/exams" className="euk-price-hit">
-                                <span className="sr-only">
-                                    Find your examination
-                                </span>
-                            </Link>
-                        </Reveal>
-                        <Reveal delay={180} className="euk-price">
                             <p className="euk-price-name">One file</p>
                             <p className="euk-price-row">
                                 <span className="euk-price-figure">₹3</span>
-                                <span className="euk-price-was">₹4</span>
+                                <span className="euk-price-was">₹5</span>
                             </p>
                             <p className="euk-price-files" aria-hidden="true">
                                 <PhotoDrawing />

@@ -118,25 +118,43 @@ class DeterministicJpegCompressor(OutputCompressor):
         best_bytes: Optional[bytes] = None
         iterations = 0
 
-        def encode_jpeg(q: int) -> bytes:
+        def encode_jpeg(q: int, full_chroma: bool = False) -> bytes:
             buf = io.BytesIO()
-            if config.target_dpi is not None:
-                img_to_encode.save(
-                    buf,
-                    format="JPEG",
-                    quality=q,
-                    optimize=config.optimize,
-                    progressive=config.progressive,
-                    dpi=(config.target_dpi, config.target_dpi),
-                )
-            else:
-                img_to_encode.save(
-                    buf,
-                    format="JPEG",
-                    quality=q,
-                    optimize=config.optimize,
-                    progressive=config.progressive,
-                )
+            # -1 is Pillow's own default; 0 keeps full colour detail (4:4:4).
+            subsampling = 0 if full_chroma else -1
+
+            def save(optimize: bool) -> None:
+                buf.seek(0)
+                buf.truncate()
+                if config.target_dpi is not None:
+                    img_to_encode.save(
+                        buf,
+                        format="JPEG",
+                        quality=q,
+                        optimize=optimize,
+                        progressive=config.progressive,
+                        subsampling=subsampling,
+                        dpi=(config.target_dpi, config.target_dpi),
+                    )
+                else:
+                    img_to_encode.save(
+                        buf,
+                        format="JPEG",
+                        quality=q,
+                        optimize=optimize,
+                        progressive=config.progressive,
+                        subsampling=subsampling,
+                    )
+
+            try:
+                save(config.optimize)
+            except OSError:
+                # Pillow's encoder buffer can be too small for an optimised
+                # quality-100 encoding ("Suspension not allowed here"). The
+                # unoptimised file is the same image, a little larger.
+                if not config.optimize:
+                    raise
+                save(False)
             return buf.getvalue()
 
         # Binary Search Mode
@@ -249,6 +267,23 @@ class DeterministicJpegCompressor(OutputCompressor):
                         True,
                     )
 
+        # Quality 100 with full colour detail, whenever the budget still holds
+        # it. Only after a search that fitted: a file already over its target
+        # has no budget to spend.
+        full_quality = False
+        if (
+            config.full_quality_when_it_fits
+            and best_bytes is not None
+            and final_q is not None
+            and final_q < 100
+        ):
+            iterations += 1
+            candidate = encode_jpeg(100, full_chroma=True)
+            if len(final_bytes) < len(candidate) <= target_bytes:
+                final_bytes = candidate
+                final_q = 100
+                full_quality = True
+
         # Minimum bytes check
         actual_size = len(final_bytes)
         minimum_size_satisfied = None
@@ -353,6 +388,7 @@ class DeterministicJpegCompressor(OutputCompressor):
             final_quality=final_q,
             min_quality=config.min_quality,
             max_quality=config.max_quality,
+            full_quality_encoding=full_quality,
             iterations_used=iterations,
             search_mode=config.search_mode,
             optimize=config.optimize,

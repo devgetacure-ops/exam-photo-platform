@@ -38,14 +38,14 @@ CHARGEABLE_REQUIREMENT_TYPES = frozenset(
 )
 
 #: Paise. Indexed by how many chargeable deliverables are in the basket; the
-#: last entry is the ceiling, so three items and six cost the same. That is
+#: last entry is the ceiling, so two items and six cost the same. That is
 #: deliberate and it is the product's promise: **everything an examination asks
-#: for, for eight rupees.**
-PRICE_LADDER_PAISE: Sequence[int] = (300, 500, 800)
+#: for, for five rupees.** Set by the owner on 2026-09-14 (DEC-070, amended).
+PRICE_LADDER_PAISE: Sequence[int] = (300, 500)
 
 #: The struck-through figure shown beside each tier. Marketing, not arithmetic,
 #: so it lives beside the real price rather than being derived from it.
-LIST_LADDER_PAISE: Sequence[int] = (400, 800, 1000)
+LIST_LADDER_PAISE: Sequence[int] = (500, 1000)
 
 CURRENCY = "INR"
 

@@ -19,8 +19,8 @@ export const CHARGEABLE_TYPES: ReadonlySet<string> = new Set([
     "handwritten_declaration",
 ]);
 
-const PRICE_LADDER = [300, 500, 800];
-const LIST_LADDER = [400, 800, 1000];
+const PRICE_LADDER = [300, 500];
+const LIST_LADDER = [500, 1000];
 
 export function tier(count: number, ladder: readonly number[] = PRICE_LADDER): number {
     if (count <= 0) return 0;

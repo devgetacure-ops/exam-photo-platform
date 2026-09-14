@@ -32,7 +32,7 @@ in the first place.
 """
 
 import io
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any, Optional
 
 from PIL import Image
@@ -110,7 +110,13 @@ class DeliverableResult:
     #: ``None`` when the upload was already a PDF: nothing was prepared from
     #: pixels, because a PDF is restructured rather than re-rendered.
     preparation: Optional[InkPreparation]
+    #: Things worth a candidate's attention before they submit.
     findings: list[str]
+    #: Routine normalisation done to the upload -- metadata removed, colour
+    #: mode converted -- as codes. Not findings: nothing is wrong, and a
+    #: caveat that fires on every ordinary JPEG trains people to ignore the
+    #: caveats that matter (DEC-056).
+    changes: list[str] = field(default_factory=list)
 
 
 def treatment_for(requirement_type: RequirementType) -> InkTreatment:
@@ -258,19 +264,26 @@ def prepare_deliverable(
     requirement_type: RequirementType,
     file_spec: Optional[DeliverableFileSpec] = None,
     limits: Optional[InputLimits] = None,
+    name_stem: Optional[str] = None,
+    exam_name: Optional[str] = None,
 ) -> DeliverableResult:
-    """Prepare one uploaded file into the deliverable a requirement asks for."""
+    """Prepare one uploaded file into the deliverable a requirement asks for.
+
+    ``name_stem`` is the standard name used when the examination publishes no
+    exact one; ``exam_name`` is how the plain-words findings name the body.
+    """
     findings: list[str] = []
+    stem = _published_name(file_spec) or name_stem or requirement_type.value
     size = file_spec.file_size if file_spec else None
     ceiling = size.maximum_bytes if size is not None else _UNSPECIFIED_BYTE_CEILING
 
     if data.startswith(_PDF_MAGIC):
         return _prepare_uploaded_pdf(
-            data, requirement_type, file_spec, ceiling, size is None
+            data, requirement_type, file_spec, ceiling, size is None, stem
         )
 
     normalized = normalize_image_input(data, filename, limits or InputLimits())
-    findings.extend(normalized.warnings)
+    changes = [str(getattr(code, "value", code)) for code in normalized.warnings]
 
     treatment = treatment_for(requirement_type)
     prepared = prepare_ink_document(normalized.image.convert("RGB"), treatment)
@@ -289,7 +302,23 @@ def prepare_deliverable(
         and dimensions.width_px
         and dimensions.height_px
     ):
-        image = _pad_to_aspect(image, dimensions.width_px / dimensions.height_px)
+        target_aspect = dimensions.width_px / dimensions.height_px
+        if (
+            treatment is InkTreatment.PAGE
+            and target_aspect >= 1.2
+            and image.width / image.height <= 0.9
+        ):
+            # IBPS, SBI, RBI, LIC, NABARD and NIACL publish the declaration at
+            # 800 x 400. An upright page can only be padded into that frame --
+            # never stretched, never turned on its side -- so it arrives small,
+            # and the candidate is told how to write it instead.
+            findings.append(
+                "Your page was upright, so it sits small in the "
+                f"{dimensions.width_px} x {dimensions.height_px} px landscape "
+                "frame this examination asks for. Write it across a sheet held "
+                "sideways and upload that photo instead."
+            )
+        image = _pad_to_aspect(image, target_aspect)
 
     resize = _resize_config(file_spec)
     if resize is not None:
@@ -297,7 +326,11 @@ def prepare_deliverable(
         if prepared_output.output_image is not None:
             image = prepared_output.output_image
         if not prepared_output.validation.is_valid:
-            findings.extend(prepared_output.validation.issue_codes)
+            findings.append(
+                "This file could not be sized exactly to the published "
+                "dimensions, so it is delivered at its own size. Check it "
+                "against the notice before you upload it."
+            )
 
     if _wants_pdf(file_spec):
         assembled = build_pdf_from_images([image], maximum_bytes=ceiling)
@@ -305,8 +338,7 @@ def prepare_deliverable(
         return DeliverableResult(
             content=assembled.content,
             filename=generate_safe_filename(
-                _published_name(file_spec) or requirement_type.value,
-                config=FilenameGenerationConfig(extension="pdf"),
+                stem, config=FilenameGenerationConfig(extension="pdf")
             ),
             width=image.width,
             height=image.height,
@@ -315,6 +347,7 @@ def prepare_deliverable(
             is_blank=prepared.is_blank,
             preparation=prepared,
             findings=findings,
+            changes=changes,
         )
 
     compression = DeterministicJpegCompressor().compress_output(
@@ -331,16 +364,20 @@ def prepare_deliverable(
     if minimum is not None and len(content) < minimum:
         content, _ = _largest_encoding(image, ceiling, len(content), content)
         if len(content) < minimum:
+            assert size is not None
+            unit = size.size_unit_as_published or "KB"
+            floor = (
+                f"{size.published_minimum:g} {unit}"
+                if size.published_minimum
+                else f"{minimum / 1000:g} KB"
+            )
             findings.append(
-                f"The published minimum of {minimum} bytes cannot be reached at "
-                f"the published dimensions: the file is {len(content)} bytes at "
-                "the highest quality JPEG allows. Nothing is wrong with the "
-                "image; the two published values are difficult to satisfy "
-                "together for a clean two-tone mark."
+                f"This file is {len(content) / 1000:.1f} KB; "
+                f"{exam_name or 'this examination'} asks for at least {floor}."
             )
 
     name = generate_safe_filename(
-        _published_name(file_spec) or requirement_type.value,
+        stem,
         config=FilenameGenerationConfig(extension=_output_extension(file_spec)),
     )
 
@@ -354,6 +391,7 @@ def prepare_deliverable(
         is_blank=prepared.is_blank,
         preparation=prepared,
         findings=findings,
+        changes=changes,
     )
 
 
@@ -374,6 +412,7 @@ def _prepare_uploaded_pdf(
     file_spec: Optional[DeliverableFileSpec],
     ceiling: int,
     ceiling_unpublished: bool,
+    stem: str,
 ) -> DeliverableResult:
     """Prepare a PDF the candidate already had.
 
@@ -399,8 +438,7 @@ def _prepare_uploaded_pdf(
     return DeliverableResult(
         content=result.content,
         filename=generate_safe_filename(
-            _published_name(file_spec) or requirement_type.value,
-            config=FilenameGenerationConfig(extension="pdf"),
+            stem, config=FilenameGenerationConfig(extension="pdf")
         ),
         width=0,
         height=0,

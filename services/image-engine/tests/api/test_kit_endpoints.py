@@ -1,7 +1,6 @@
 """API tests for kit preparation, documents and packaging (DEC-055..058)."""
 
 import io
-import json
 import zipfile
 from unittest.mock import MagicMock, patch
 
@@ -441,7 +440,7 @@ def test_the_checklist_lists_every_requirement_including_refused_ones(api):
 
 
 @pytest.mark.mandatory_api
-def test_the_archive_carries_the_files_the_checklist_and_the_report(api):
+def test_the_archive_carries_only_the_files(api):
     kit = "kit_archive"
     _prepare(SIGNATURE, _signature_photo(), kit_id=kit)
     _release_kit(api, kit)
@@ -452,31 +451,9 @@ def test_the_archive_carries_the_files_the_checklist_and_the_report(api):
     assert response.headers["content-type"].startswith("application/zip")
     with zipfile.ZipFile(io.BytesIO(response.content)) as bundle:
         names = bundle.namelist()
-        assert "checklist.json" in names
-        assert "validation-report.json" in names
+        # The candidate's files and nothing else: no JSON beside them (P24).
+        assert not any(name.endswith(".json") for name in names)
         assert any(name.endswith(".jpg") for name in names)
-
-
-@pytest.mark.mandatory_api
-def test_the_validation_report_names_every_platform_estimate(api):
-    """DEC-057: disclosure proportionate to what the reader can do.
-
-    Quiet in the application, explicit here -- this is the artifact somebody
-    opens after a portal rejects a file.
-    """
-    kit = "kit_estimates"
-    _prepare(ESTIMATE_SIGNATURE, _signature_photo(), kit_id=kit, exam=ESTIMATE_EXAM)
-    _release_kit(api, kit)
-
-    response = client.get(f"/v1/kits/{kit}/package/download")
-    with zipfile.ZipFile(io.BytesIO(response.content)) as bundle:
-        report = json.loads(bundle.read("validation-report.json"))
-
-    assert report["estimate_count"] > 0
-    assert all(entry["reasoning"] for entry in report["platform_estimates"])
-    assert all(
-        "platform estimate" in entry["note"] for entry in report["platform_estimates"]
-    )
 
 
 @pytest.mark.mandatory_api

@@ -107,7 +107,9 @@ def test_jpeg_compression_rgb_input() -> None:
     assert len(result.encoded_bytes) == result.actual_bytes
     assert result.actual_bytes <= result.target_bytes
     assert result.final_quality is not None
-    assert result.min_quality <= result.final_quality <= result.max_quality
+    assert result.min_quality <= result.final_quality <= result.max_quality or (
+        result.full_quality_encoding and result.final_quality == 100
+    )
 
 
 def test_jpeg_compression_rgba_input() -> None:
@@ -230,3 +232,70 @@ def test_allow_quality_below_minimum() -> None:
                 OutputCompressionIssueCode.COMPRESSION_QUALITY_TOO_LOW
                 in result.validation.issue_codes
             )
+
+
+def _detailed(width: int, height: int) -> Image.Image:
+    """A photograph-like frame: smooth gradients with fine texture, not a flat fill."""
+    import random
+
+    rng = random.Random(7)
+    img = Image.new("RGB", (width, height))
+    pixels = img.load()
+    assert pixels is not None
+    for y in range(height):
+        for x in range(width):
+            pixels[x, y] = (
+                (x * 255 // width + rng.randint(0, 40)) % 256,
+                (y * 255 // height + rng.randint(0, 40)) % 256,
+                ((x + y) * 128 // (width + height) + rng.randint(0, 40)) % 256,
+            )
+    return img
+
+
+def _sampling(data: bytes) -> int:
+    from PIL import JpegImagePlugin
+
+    with Image.open(io.BytesIO(data)) as opened:
+        return int(JpegImagePlugin.get_sampling(opened))
+
+
+def test_full_quality_is_used_when_the_budget_holds_it() -> None:
+    img = _detailed(200, 230)
+    result = DeterministicJpegCompressor().compress_output(
+        img, OutputCompressionConfig(maximum_bytes=200_000)
+    )
+    assert result.validation.is_valid
+    assert result.full_quality_encoding is True
+    assert result.final_quality == 100
+    assert result.encoded_bytes is not None
+    assert _sampling(result.encoded_bytes) == 0  # 4:4:4, no chroma subsampling
+    assert result.actual_bytes <= result.target_bytes
+
+
+def test_full_quality_is_skipped_when_it_would_break_the_ceiling() -> None:
+    img = _detailed(200, 230)
+    searched = DeterministicJpegCompressor().compress_output(
+        img,
+        OutputCompressionConfig(maximum_bytes=200_000, full_quality_when_it_fits=False),
+    )
+    ceiling = searched.actual_bytes + 2000  # room for the search, not for quality 100
+    result = DeterministicJpegCompressor().compress_output(
+        img, OutputCompressionConfig(maximum_bytes=ceiling)
+    )
+    assert result.validation.is_valid
+    assert result.full_quality_encoding is False
+    assert result.final_quality is not None and result.final_quality <= 98
+    assert result.actual_bytes <= result.target_bytes
+
+
+def test_full_quality_lifts_a_small_photo_over_its_floor() -> None:
+    img = _detailed(200, 230)
+    plain = DeterministicJpegCompressor().compress_output(
+        img,
+        OutputCompressionConfig(maximum_bytes=200_000, full_quality_when_it_fits=False),
+    )
+    lifted = DeterministicJpegCompressor().compress_output(
+        img, OutputCompressionConfig(maximum_bytes=200_000)
+    )
+    floor = plain.actual_bytes + 1  # unreachable at the searched quality
+    assert lifted.actual_bytes >= floor

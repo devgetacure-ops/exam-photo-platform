@@ -24,7 +24,7 @@ export async function GET() {
         "## What it is",
         "",
         `- Covers ${exams.length} Indian examinations, each read from the rules its conducting body published.`,
-        `- Price: ${rupees(tier(1))} for one file, ${rupees(tier(2))} for two, ${rupees(tier(3))} for three or more. No account is needed.`,
+        `- Price: ${rupees(tier(1))} for one file, ${rupees(tier(2))} for two or more. No account is needed.`,
         "- Each prepared file is shown as a watermarked preview before payment.",
         "- The face is never reshaped or whitened; only exposure, contrast, colour and sharpness are adjusted.",
         "- Uploaded and prepared files are deleted 30 minutes after preparation, or within an hour if the candidate asks for more time.",

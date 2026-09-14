@@ -37,8 +37,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 const OFFERS = [
     { name: "One file", files: 1 },
-    { name: "Two files", files: 2 },
-    { name: "Three files or more", files: 3 },
+    { name: "Two files or more", files: 2 },
 ];
 
 export default async function Home() {

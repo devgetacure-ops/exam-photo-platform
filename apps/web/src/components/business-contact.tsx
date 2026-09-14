@@ -1,10 +1,10 @@
 import { CONTACT_EMAILS, GRIEVANCE_DESIGNATION, readBusiness } from "../lib/business";
 
 /**
- * Who runs the service and how to reach them: the details the consumer rules
- * ask a seller to publish, set once and shown on the terms, the privacy
- * policy and support. Renders nothing until the owner's details are set in
- * the environment (DEC-086).
+ * How to reach the service: shown on the terms, the privacy policy and
+ * support. No personal name and no home address, ever (owner, 2026-09-14);
+ * the grievance officer is the designation and its address. Renders nothing
+ * until the phone and hours are set in the environment.
  */
 export function BusinessContact() {
     const business = readBusiness();
@@ -12,17 +12,15 @@ export function BusinessContact() {
     const tel = business.phone.replace(/[^\d+]/g, "");
 
     return (
-        <address className="euk-business" aria-label="Who runs examuploadkit">
-            <p className="euk-business-title">Who runs examuploadkit</p>
+        <address className="euk-business" aria-label="How to reach ExamUploadKit">
+            <p className="euk-business-title">How to reach ExamUploadKit</p>
             <dl>
-                <div>
-                    <dt>Proprietor</dt>
-                    <dd>{business.name}</dd>
-                </div>
-                <div>
-                    <dt>Address</dt>
-                    <dd>{business.address}</dd>
-                </div>
+                {business.address && (
+                    <div>
+                        <dt>Address</dt>
+                        <dd>{business.address}</dd>
+                    </div>
+                )}
                 <div>
                     <dt>Phone</dt>
                     <dd>
@@ -42,7 +40,7 @@ export function BusinessContact() {
                 <div>
                     <dt>Grievance Officer</dt>
                     <dd>
-                        {business.name}, {GRIEVANCE_DESIGNATION}
+                        {GRIEVANCE_DESIGNATION}
                         <br />
                         <a href={`mailto:${CONTACT_EMAILS.grievance}`}>{CONTACT_EMAILS.grievance}</a>
                     </dd>

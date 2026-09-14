@@ -95,6 +95,8 @@ class ProcessingJobRecord(BaseModel):
     # one was.  DEC-056 turns them into the third UI state.
     outcome: Optional[str] = None
     findings: List[str] = Field(default_factory=list)
+    #: Routine normalisation codes, kept apart from findings (P15).
+    changes: List[str] = Field(default_factory=list)
     is_blank: Optional[bool] = None
     ceiling_was_unpublished: Optional[bool] = None
     exceeds_ceiling: Optional[bool] = None

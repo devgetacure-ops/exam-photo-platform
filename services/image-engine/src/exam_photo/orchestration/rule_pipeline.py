@@ -12,8 +12,12 @@ from pydantic import BaseModel, ConfigDict, Field
 from exam_photo.input.limits import InputLimits
 from exam_photo.input.normalization import normalize_image_input
 from exam_photo.models.exam_rule import ExamRule
+from exam_photo.orchestration.composite_frame import resolve_composite_frame
 from exam_photo.orchestration.filename_generation import generate_safe_filename
-from exam_photo.orchestration.final_validation import validate_final_candidate
+from exam_photo.orchestration.final_validation import (
+    BELOW_MINIMUM_CODE,
+    validate_final_candidate,
+)
 from exam_photo.orchestration.rule_resolver import RuleResolutionError, resolve_rule
 from exam_photo.providers.compression.deterministic_image_compressor import (
     DeterministicJpegCompressor,
@@ -38,9 +42,6 @@ from exam_photo.providers.landmark_geometric_head_estimator import (
     LandmarkGeometricHeadEstimator,
 )
 from exam_photo.providers.mediapipe_face_detector import MediapipeFaceDetector
-from exam_photo.providers.output_preparers.deterministic_output_preparer import (
-    DeterministicOutputPreparer,
-)
 from exam_photo.providers.portrait_composition import (
     DeterministicPortraitCompositionEstimator,
 )
@@ -189,6 +190,7 @@ class PipelineIssueCode(str, Enum):
     PIPELINE_FINAL_FORMAT_INVALID = "PIPELINE_FINAL_FORMAT_INVALID"
     PIPELINE_FINAL_DPI_INVALID = "PIPELINE_FINAL_DPI_INVALID"
     PIPELINE_FINAL_BYTE_SIZE_INVALID = "PIPELINE_FINAL_BYTE_SIZE_INVALID"
+    PIPELINE_FINAL_BYTE_SIZE_BELOW_MINIMUM = "PIPELINE_FINAL_BYTE_SIZE_BELOW_MINIMUM"
     PIPELINE_FILENAME_INVALID = "PIPELINE_FILENAME_INVALID"
     PIPELINE_PROVIDER_FAILED = "PIPELINE_PROVIDER_FAILED"
 
@@ -1406,44 +1408,32 @@ class RuleOrchestratedPipeline:
                     rgb_color = rgb_color[:3]
                 rgb_color_tuple = (rgb_color[0], rgb_color[1], rgb_color[2])
 
-                target_w = (
-                    plan.output_preparation_config.target_width
-                    if plan.output_preparation_config
-                    else 300
-                )
-                target_h = (
-                    plan.output_preparation_config.target_height
-                    if plan.output_preparation_config
-                    else 400
-                )
                 allow_trans = (
                     plan.background_config.allow_transparent_output
                     if plan.background_config
                     else False
                 )
 
-                if target_w is None or target_h is None:
-                    preparer = DeterministicOutputPreparer()
-                    min_w = plan.output_preparation_config.min_width
-                    max_w = plan.output_preparation_config.max_width
-                    min_h = plan.output_preparation_config.min_height
-                    max_h = plan.output_preparation_config.max_height
-                    assert min_w is not None and max_w is not None
-                    assert min_h is not None and max_h is not None
-                    target_w, target_h, aspect_preserved = (
-                        preparer._resolve_range_dimensions(
-                            source_width=crop_res.crop_box_width,
-                            source_height=crop_res.crop_box_height,
-                            min_w=min_w,
-                            max_w=max_w,
-                            min_h=min_h,
-                            max_h=max_h,
-                            pref_w=plan.output_preparation_config.preferred_width,
-                            pref_h=plan.output_preparation_config.preferred_height,
-                        )
+                # Sized from the box that is composited, and never stretched
+                # to fit: see `composite_frame`. The crop result's own width
+                # and height are the box clamped to the image, which is not the
+                # box composited when padding is on.
+                target_w, target_h, composite_box, frame_trimmed = (
+                    resolve_composite_frame(
+                        plan.output_preparation_config, crop_res.crop_box
                     )
-
-                assert target_w is not None and target_h is not None
+                )
+                if frame_trimmed:
+                    record_stage(
+                        PipelineStage.BACKGROUND_COMPOSITION,
+                        PipelineStageStatus.WARNING,
+                        issues=["COMPOSITE_FRAME_TRIMMED_TO_ASPECT"],
+                        dur=0.0,
+                        summary=(
+                            "The crop was trimmed to the output's shape rather "
+                            "than stretched to fill it."
+                        ),
+                    )
 
                 # Natural enhancement (DEC-043), applied to the source before
                 # compositing so the replacement background is laid down at the
@@ -1487,7 +1477,7 @@ class RuleOrchestratedPipeline:
                 prepared_image = premultiply_crop_resize_composite(
                     image=decon_image,
                     alpha=ref_result.refined_alpha_mask,
-                    crop_box=crop_res.crop_box,
+                    crop_box=composite_box,
                     target_size=(target_w, target_h),
                     background_color=rgb_color_tuple,
                     allow_transparent_output=allow_trans,
@@ -1501,7 +1491,7 @@ class RuleOrchestratedPipeline:
                     alternate_prepared = premultiply_crop_resize_composite(
                         image=decon_image_plain,
                         alpha=ref_result.refined_alpha_mask,
-                        crop_box=crop_res.crop_box,
+                        crop_box=composite_box,
                         target_size=(target_w, target_h),
                         background_color=rgb_color_tuple,
                         allow_transparent_output=allow_trans,
@@ -1512,7 +1502,7 @@ class RuleOrchestratedPipeline:
                 cropped_alpha = safe_crop_numpy(
                     np.array(decon_image),
                     ref_result.refined_alpha_mask,
-                    crop_res.crop_box,
+                    composite_box,
                 )[1]
                 total_pixels = cropped_alpha.size
                 alpha_thresh = (
@@ -1851,8 +1841,22 @@ class RuleOrchestratedPipeline:
                 other_errors = [
                     c
                     for c in final_validation_res.issue_codes
-                    if c != "PIPELINE_FINAL_DECODE_FAILED"
+                    if c not in ("PIPELINE_FINAL_DECODE_FAILED", BELOW_MINIMUM_CODE)
                 ]
+                if BELOW_MINIMUM_CODE in final_validation_res.issue_codes:
+                    pipeline_issues.append(
+                        PipelineIssueCode.PIPELINE_FINAL_BYTE_SIZE_BELOW_MINIMUM
+                    )
+                    record_stage(
+                        PipelineStage.FINAL_RULE_VALIDATION,
+                        PipelineStageStatus.WARNING,
+                        issues=[BELOW_MINIMUM_CODE],
+                        dur=0.0,
+                        summary=(
+                            "Under the published minimum size at the largest "
+                            "honest encoding; delivered with a finding."
+                        ),
+                    )
                 if other_errors:
                     failed = True
                     for err in other_errors:

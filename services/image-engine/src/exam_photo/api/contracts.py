@@ -403,6 +403,9 @@ class PrepareRequirementResponse(BaseModel):
 
     #: Everything the pipeline reported rather than raised.
     findings: List[str] = Field(default_factory=list)
+    #: Routine things done to the upload (metadata removed, colour mode
+    #: converted), as codes. Never a reason for the findings state.
+    changes: List[str] = Field(default_factory=list)
     is_blank: Optional[bool] = None
     #: ``True`` when the byte ceiling was the platform's fallback rather than a
     #: figure the examination published.

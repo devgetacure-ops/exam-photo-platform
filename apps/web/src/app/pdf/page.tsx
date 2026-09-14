@@ -190,7 +190,7 @@ export default function PdfPage() {
                             <h3>The PDF work is free with any file we prepare.</h3>
                             <p>
                                 One prepared file is ₹3. Everything your
-                                examination asks for is ₹8. The PDF work is
+                                examination asks for is ₹5. The PDF work is
                                 included in both, and it is the same work either
                                 way.
                             </p>

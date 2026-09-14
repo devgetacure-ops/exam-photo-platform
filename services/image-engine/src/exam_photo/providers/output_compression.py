@@ -35,6 +35,14 @@ class OutputCompressionConfig(BaseModel):
     # gain, which would waste the same budget in the opposite direction.
     max_quality: int = 98
     initial_quality: int = 92
+    # After the search, one more encoding at quality 100 with full colour
+    # detail (no chroma subsampling), kept when the byte budget still holds it.
+    # The search stops at 98 because above it size climbs steeply, but a small
+    # photograph -- 200 x 230 for most bank and railway notices -- lands far
+    # below its ceiling even at 98, and the unspent bytes are better spent on
+    # colour edges than left unused. It is also the last honest step towards a
+    # published *minimum*: nothing is ever padded into the file to reach one.
+    full_quality_when_it_fits: bool = True
 
     max_iterations: int = 10
     search_mode: CompressionSearchMode = CompressionSearchMode.BINARY_SEARCH
@@ -135,6 +143,8 @@ class OutputCompressionResult(BaseModel):
     final_quality: int | None = None
     min_quality: int
     max_quality: int
+    #: True when the delivered file is the quality-100, full-colour encoding.
+    full_quality_encoding: bool = False
     iterations_used: int
 
     search_mode: CompressionSearchMode

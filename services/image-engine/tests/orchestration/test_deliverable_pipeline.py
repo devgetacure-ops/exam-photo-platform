@@ -156,7 +156,7 @@ def test_the_file_lands_under_the_published_ceiling() -> None:
     # The floor is a preference and may be unreachable; when it is missed, that
     # has to be said rather than silently delivered.
     if result.byte_size < 50000:
-        assert any("minimum" in finding for finding in result.findings)
+        assert any("asks for at least" in finding for finding in result.findings)
 
 
 def test_the_published_filename_is_used() -> None:
@@ -206,7 +206,9 @@ def test_an_unreachable_minimum_is_reported_not_faked() -> None:
     )
     assert result.byte_size < 10000
     assert result.byte_size <= 20000, "the ceiling still has to hold"
-    assert any("minimum" in finding for finding in result.findings), result.findings
+    assert any("asks for at least" in finding for finding in result.findings), (
+        result.findings
+    )
 
 
 def test_the_minimum_push_never_breaks_the_ceiling() -> None:

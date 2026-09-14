@@ -53,6 +53,8 @@ from exam_photo.orchestration.deliverable_pipeline import (
 from exam_photo.orchestration.filename_generation import (
     FilenameGenerationConfig,
     generate_safe_filename,
+    standard_file_stem,
+    standard_file_stems,
 )
 from exam_photo.orchestration.rule_catalogue import Catalogue, load_catalogue
 
@@ -150,6 +152,24 @@ _MEDIA_TYPES = {
 }
 
 
+def _standard_stem(rule: ExamRule, requirement: ExamRequirement) -> str:
+    """The standard `<exam>_<file>` name for a deliverable with no published one."""
+    stems = standard_file_stems(
+        rule.exam.exam_id,
+        rule.exam.aliases,
+        [
+            (other.requirement_type.value, other.requirement_id)
+            for other in rule.requirements or []
+        ],
+    )
+    return stems.get(requirement.requirement_id) or standard_file_stem(
+        rule.exam.exam_id,
+        rule.exam.aliases,
+        requirement.requirement_type.value,
+        requirement.requirement_id,
+    )
+
+
 def _published_filename(requirement: ExamRequirement) -> Optional[str]:
     """The exact filename the body requires, where one is published."""
     spec = requirement.file_spec
@@ -171,6 +191,26 @@ def _alternate_filename(filename: str) -> str:
     if not stem:
         return f"{filename}__alt"
     return f"{stem}__alt.{extension}"
+
+
+def size_floor_finding(
+    rule_dict: Dict[str, Any], byte_size: Optional[int]
+) -> Optional[str]:
+    """The plain sentence for a photograph under its published minimum size.
+
+    Names both figures, the delivered size and the examination's floor, in the
+    unit the notice used. Returns None when there is no floor or it was met.
+    """
+    image = rule_dict.get("image_requirements") or {}
+    size = image.get("file_size") or {}
+    minimum = size.get("minimum_bytes")
+    if not minimum or byte_size is None or byte_size >= minimum:
+        return None
+    published = size.get("published_minimum")
+    unit = size.get("size_unit_as_published") or "KB"
+    floor = f"{published:g} {unit}" if published else f"{minimum / 1000:g} KB"
+    name = (rule_dict.get("exam") or {}).get("exam_name") or "This examination"
+    return f"This photo is {byte_size / 1000:.1f} KB; {name} asks for at least {floor}."
 
 
 def _media_type_for(filename: str) -> str:
@@ -586,6 +626,13 @@ class ApiProcessingService:
                 if self.settings.payment_simulator_enabled
                 else "configured"
                 if self.settings.razorpay_webhook_secret
+                else "not_configured"
+            ),
+            # Read by the site, which offers emailing the files only where this
+            # host can actually send them (P18). Never the credentials.
+            "email": (
+                "configured"
+                if self.settings.smtp_host and self.settings.smtp_from_address
                 else "not_configured"
             ),
         }
@@ -1205,6 +1252,13 @@ class ApiProcessingService:
                 result.output_filename if should_save_output else None
             )
             record.issue_codes = [c.value for c in result.issue_codes]
+            floor_note = (
+                size_floor_finding(rule_dict, len(result.encoded_bytes))
+                if result.is_valid and result.encoded_bytes
+                else None
+            )
+            if floor_note:
+                record.findings = [floor_note]
             record.artifact_names = artifact_names
             record.rule_compliant = result.rule_compliant
             record.visual_quality_acceptable = result.visual_quality_acceptable
@@ -1336,6 +1390,8 @@ class ApiProcessingService:
                 filename,
                 requirement.requirement_type,
                 file_spec=requirement.file_spec,
+                name_stem=_standard_stem(rule, requirement),
+                exam_name=rule.exam.exam_name,
             )
         except PasswordProtectedPdfError:
             # Its own code, so the candidate is told what to upload instead
@@ -1384,6 +1440,7 @@ class ApiProcessingService:
             "is_blank": result.is_blank,
             "ceiling_was_unpublished": result.ceiling_was_unpublished,
             "findings": list(result.findings),
+            "changes": list(result.changes),
             "file_spec": (
                 requirement.file_spec.model_dump(exclude_none=True)
                 if requirement.file_spec is not None
@@ -1406,6 +1463,7 @@ class ApiProcessingService:
         record.is_blank = result.is_blank
         record.ceiling_was_unpublished = result.ceiling_was_unpublished
         record.findings = list(result.findings)
+        record.changes = list(result.changes)
         record.artifact_names = artifact_names
         # The watermarked preview (DEC-063). A signature or a declaration is an
         # image and gets one; a certificate assembled as a PDF does not, and
@@ -1502,8 +1560,11 @@ class ApiProcessingService:
 
         result = assemble_document(sources, order=order, maximum_bytes=ceiling)
 
+        entry = self.catalogue.get(record.exam_id) if record.exam_id else None
         filename = generate_safe_filename(
-            _published_filename(requirement) or requirement.requirement_type.value,
+            _published_filename(requirement)
+            or (_standard_stem(entry.rule, requirement) if entry else None)
+            or requirement.requirement_type.value,
             config=FilenameGenerationConfig(extension="pdf"),
         )
         self.store.write_file(record.job_id, filename, result.content)
@@ -1617,16 +1678,9 @@ class ApiProcessingService:
                         item["filename"] = name
                 items.append(item)
 
+            # The archive is the candidate's files and nothing else (P24). The
+            # checklist is still built, for the package route the page reads.
             checklist = self._build_checklist(kit_id, entry, items)
-            bundle.writestr(
-                "checklist.json", json.dumps(checklist, indent=2).encode("utf-8")
-            )
-            bundle.writestr(
-                "validation-report.json",
-                json.dumps(
-                    self._build_validation_report(entry, items), indent=2
-                ).encode("utf-8"),
-            )
 
         return archive.getvalue(), checklist
 
@@ -1680,55 +1734,6 @@ class ApiProcessingService:
             ),
             "requirements": requirements,
             "items": items,
-        }
-
-    @staticmethod
-    def _build_validation_report(
-        entry: Optional[Any], items: list[dict[str, Any]]
-    ) -> dict[str, Any]:
-        """The report somebody opens after a portal rejects a file.
-
-        DEC-057: every interim value is named here explicitly. In the
-        application the same fact is a quiet marker, because a candidate cannot
-        act on it -- but this is read at the moment a file has been rejected,
-        and "this ceiling was our estimate, not a published figure" is then the
-        most useful sentence in the document.
-        """
-        estimates: list[dict[str, Any]] = []
-        if entry is not None:
-            for path, provenance in entry.rule.provenance.items():
-                if provenance.type.value != "interim_default":
-                    continue
-                estimates.append(
-                    {
-                        "field": path,
-                        "reasoning": provenance.reasoning,
-                        "confidence": provenance.confidence,
-                        "note": (
-                            "This value is a platform estimate, not a figure "
-                            "published by the examination body. If the portal "
-                            "rejected this file, check the current "
-                            "notification for the published specification."
-                        ),
-                    }
-                )
-
-        return {
-            "exam_id": entry.exam_id if entry is not None else None,
-            "exam_name": entry.rule.exam.exam_name if entry is not None else None,
-            "rule_version": entry.rule.rule_version if entry is not None else None,
-            "rule_status": entry.rule.status.value if entry is not None else None,
-            "platform_estimates": estimates,
-            "estimate_count": len(estimates),
-            "findings": [
-                {
-                    "requirement_id": item["requirement_id"],
-                    "outcome": item["outcome"],
-                    "findings": item["findings"],
-                }
-                for item in items
-                if item["findings"]
-            ],
         }
 
     def cleanup_expired_jobs(self) -> int:

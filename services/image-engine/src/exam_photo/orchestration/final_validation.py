@@ -6,6 +6,10 @@ from pydantic import BaseModel
 
 from exam_photo.providers.output_compression import OutputCompressionConfig
 
+#: A finished photograph under the examination's published minimum size.
+#: Reported on the file, never a reason to withhold it.
+BELOW_MINIMUM_CODE = "PIPELINE_FINAL_BYTE_SIZE_BELOW_MINIMUM"
+
 
 class FinalValidationReport(BaseModel):
     is_valid: bool
@@ -59,17 +63,20 @@ def validate_final_candidate(
     if config.target_dpi is not None and actual_dpi != config.target_dpi:
         issue_codes.append("PIPELINE_FINAL_DPI_INVALID")
 
-    # Verify file size limits
+    # Verify file size limits. Over the ceiling is a file the portal refuses
+    # outright, so it fails. Under a published minimum is reported, not failed
+    # (DEC-041, DEC-051): the compressor has already taken the largest honest
+    # encoding, and the alternative is handing the candidate nothing at all.
     if actual_size > config.maximum_bytes:
         issue_codes.append("PIPELINE_FINAL_BYTE_SIZE_INVALID")
     elif config.minimum_bytes is not None and actual_size < config.minimum_bytes:
-        issue_codes.append("PIPELINE_FINAL_BYTE_SIZE_INVALID")
+        issue_codes.append(BELOW_MINIMUM_CODE)
 
     # Verify metadata stripped
     if not metadata_stripped:
         issue_codes.append("COMPRESSION_METADATA_STRIP_FAILED")
 
-    is_valid = len(issue_codes) == 0
+    is_valid = all(code == BELOW_MINIMUM_CODE for code in issue_codes)
 
     return FinalValidationReport(
         is_valid=is_valid,

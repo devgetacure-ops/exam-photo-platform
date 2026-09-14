@@ -554,6 +554,7 @@ def _preparation_response(
         enhancements_applied=list(record.enhancements_applied),
         enhancement_switchable=bool(record.alternate_output_filename),
         findings=list(record.findings),
+        changes=list(record.changes),
         is_blank=record.is_blank,
         ceiling_was_unpublished=record.ceiling_was_unpublished,
         exceeds_ceiling=record.exceeds_ceiling,

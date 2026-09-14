@@ -670,13 +670,13 @@ def test_cli_process_rule_invalid_save(tmp_path):
     with open(rule_path, "r", encoding="utf-8") as f:
         rule_dict = json.load(f)
 
-    # We want compression to succeed (e.g. 50 KB fits under 300 KB maximum),
-    # but the rule validation to fail because the size is below 200 KB.
+    # A ceiling no photograph at these dimensions can fit, so the finished
+    # file fails final validation. (A file under a published *minimum* is no
+    # longer invalid: it is delivered with a finding, per item 1 / DEC-041.)
     rule_dict["image_requirements"]["file_size"] = {
-        "minimum_bytes": 200000,  # 200 KB floor
-        "maximum_bytes": 300000,  # 300 KB ceiling
+        "maximum_bytes": 3000,
         "target_ceiling_ratio": 0.95,
-        "safety_margin_bytes": 2048,
+        "safety_margin_bytes": 256,
     }
 
     temp_rule_path = tmp_path / "temp_rule.json"

@@ -109,9 +109,9 @@ def _job(api, job_id, requirement_type, kit_id=KIT, released=False, prepared=Tru
 
 
 def test_the_ladder_is_the_owners_prices():
-    """Rs 3, Rs 5, Rs 8, struck through from Rs 4, Rs 8, Rs 10."""
-    assert PRICE_LADDER_PAISE == (300, 500, 800)
-    assert LIST_LADDER_PAISE == (400, 800, 1000)
+    """Rs 3 for one, Rs 5 for two or more, struck through from Rs 5 and Rs 10."""
+    assert PRICE_LADDER_PAISE == (300, 500)
+    assert LIST_LADDER_PAISE == (500, 1000)
 
 
 def test_one_image_deliverable_costs_three_rupees(api):
@@ -120,7 +120,7 @@ def test_one_image_deliverable_costs_three_rupees(api):
     body = client.get(f"/v1/kits/{KIT}/quote").json()
 
     assert body["amount_paise"] == 300
-    assert body["list_amount_paise"] == 400
+    assert body["list_amount_paise"] == 500
     assert body["chargeable_count"] == 1
 
 
@@ -131,16 +131,16 @@ def test_two_cost_five(api):
     assert client.get(f"/v1/kits/{KIT}/quote").json()["amount_paise"] == 500
 
 
-def test_three_cost_eight(api):
+def test_three_still_cost_five(api):
     _job(api, "job_a", "photograph")
     _job(api, "job_b", "signature")
     _job(api, "job_c", "thumb_impression")
 
-    assert client.get(f"/v1/kits/{KIT}/quote").json()["amount_paise"] == 800
+    assert client.get(f"/v1/kits/{KIT}/quote").json()["amount_paise"] == 500
 
 
 def test_the_top_tier_is_a_ceiling_not_a_step(api):
-    """Eight rupees is the promise: everything an examination asks for."""
+    """Five rupees is the promise: everything an examination asks for."""
     for index, kind in enumerate(
         ["photograph", "signature", "thumb_impression", "handwritten_declaration"]
     ):
@@ -149,7 +149,7 @@ def test_the_top_tier_is_a_ceiling_not_a_step(api):
     body = client.get(f"/v1/kits/{KIT}/quote").json()
 
     assert body["chargeable_count"] == 4
-    assert body["amount_paise"] == 800
+    assert body["amount_paise"] == 500
 
 
 # ----------------------------------------------------------------------

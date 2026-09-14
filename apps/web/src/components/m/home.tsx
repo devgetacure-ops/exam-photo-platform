@@ -64,7 +64,7 @@ export function PhoneHome({
                 </li>
                 <li>
                     <strong>₹3</strong>
-                    <span>a file, ₹8 the whole kit</span>
+                    <span>a file, ₹5 the whole kit</span>
                 </li>
                 <li>
                     <strong>No</strong>

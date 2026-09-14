@@ -3,6 +3,7 @@ from typing import Any, Optional
 from pydantic import BaseModel
 
 from exam_photo.models.exam_rule import BackgroundMode, DimensionMode, ExamRule
+from exam_photo.orchestration.filename_generation import standard_file_stem
 from exam_photo.providers.background_composition import BackgroundCompositionConfig
 from exam_photo.providers.crop_planning import (
     CropConfig,
@@ -365,10 +366,19 @@ def resolve_rule(
     elif dim.mode == DimensionMode.UNSPECIFIED:
         crop_mode = "b"
         defaults = EXAM_COMPOSITION_DEFAULTS
+        preferred_aspect, min_aspect, max_aspect = 0.75, 0.65, 0.90
+        if dim.preferred_width_px and dim.preferred_height_px:
+            # A published preferred size is delivered at exactly that size
+            # (below), so the crop is planned at exactly its shape. Leaving the
+            # planner on its own 3:4 while the output was forced to 200 x 230
+            # squeezed every IBPS, SBI, RBI, LIC, NABARD, NIACL and XAT
+            # photograph about 16% wider than the candidate's face.
+            preferred_aspect = dim.preferred_width_px / dim.preferred_height_px
+            min_aspect = max_aspect = preferred_aspect
         crop_config = CropModeBConfig(
-            preferred_aspect_ratio=0.75,
-            min_aspect_ratio=0.65,
-            max_aspect_ratio=0.90,
+            preferred_aspect_ratio=preferred_aspect,
+            min_aspect_ratio=min_aspect,
+            max_aspect_ratio=max_aspect,
             target_head_height_ratio=resolve_mode_b_ratio(
                 "target_head_height_ratio", 0.76
             ),
@@ -521,7 +531,11 @@ def resolve_rule(
             )
         target_filename = fn.fallback_basename or "exam_photo"
     else:
-        target_filename = fn.fallback_basename or "exam_photo"
+        # No published name: the standard `<exam>_photo`, so a candidate's
+        # downloads folder says which examination each photograph is for.
+        target_filename = fn.fallback_basename or standard_file_stem(
+            rule.exam.exam_id, rule.exam.aliases, "photograph"
+        )
 
     return ResolvedProcessingPlan(
         crop_mode=crop_mode,
