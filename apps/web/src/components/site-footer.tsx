@@ -111,7 +111,7 @@ export function SiteFooter() {
             <div className="euk-foot-desk bg-[var(--paper)] px-5 py-12 md:px-12 md:py-14">
                 <div className="euk-wrap euk-enclosures">
                     <div className="flex flex-col gap-4">
-                        <Link href="/" aria-label="examuploadkit home">
+                        <Link href="/" aria-label="ExamUploadKit home">
                             <Wordmark />
                         </Link>
                         <p className="text-[14px] leading-relaxed text-[var(--ink-70)]">

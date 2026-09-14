@@ -8,8 +8,8 @@ import type { MetadataRoute } from "next";
  */
 export default function manifest(): MetadataRoute.Manifest {
     return {
-        name: "examuploadkit — exam upload files, prepared to the rules",
-        short_name: "examuploadkit",
+        name: "ExamUploadKit — exam upload files, prepared to the rules",
+        short_name: "ExamUploadKit",
         description:
             "Your photograph, signature, thumb impression, declaration and certificates, prepared to the rules your examination published.",
         start_url: "/",

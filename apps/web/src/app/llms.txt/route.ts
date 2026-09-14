@@ -17,7 +17,7 @@ export async function GET() {
     const exams = [...(await loadExams())].sort((a, b) => a.exam_name.localeCompare(b.exam_name));
 
     const lines = [
-        "# examuploadkit",
+        "# ExamUploadKit",
         "",
         "> Prepares the files Indian examination applications ask candidates to upload (photograph, signature, thumb impression, handwritten declaration, certificates and ID documents) to each examination's published dimensions, file size and format.",
         "",

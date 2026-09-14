@@ -92,7 +92,7 @@ describe("what search and answer engines are told", () => {
     test("llms.txt links every examination's rules", async () => {
         const text = await (await llms()).text();
         const exams = await loadExams();
-        expect(text.startsWith("# examuploadkit")).toBe(true);
+        expect(text.startsWith("# ExamUploadKit")).toBe(true);
         for (const exam of exams) expect(text).toContain(`/exam/${encodeURIComponent(exam.exam_id)}/rules)`);
     });
 });

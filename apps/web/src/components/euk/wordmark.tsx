@@ -9,7 +9,7 @@
  */
 const LETTERS = "EXAMUPLOADKIT".split("");
 
-export function Wordmark({ label = "examuploadkit" }: { label?: string }) {
+export function Wordmark({ label = "ExamUploadKit" }: { label?: string }) {
     return (
         <span className="euk-lock" role="img" aria-label={label}>
             {LETTERS.map((letter, i) => (

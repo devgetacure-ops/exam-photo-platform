@@ -29,7 +29,7 @@ import { ORGANIZATION_ID, SITE_URL, pageMetadata } from "../lib/site";
 export async function generateMetadata(): Promise<Metadata> {
     const { exams } = await loadSearchIndex();
     return pageMetadata({
-        title: `Exam photo and signature resizer for ${exams.length} Indian exams | examuploadkit`,
+        title: `Exam photo and signature resizer for ${exams.length} Indian exams | ExamUploadKit`,
         description: `Your photograph, signature, thumb impression and documents at the exact size, KB and format your examination publishes: SSC, UPSC, IBPS, NEET, JEE and more. ${rupees(tier(1))} a file, no account, previewed before you pay.`,
         path: "/",
     });

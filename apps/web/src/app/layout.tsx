@@ -71,7 +71,7 @@ export const metadata: Metadata = {
     metadataBase: new URL(SITE_URL),
     applicationName: SITE_NAME,
     title: {
-        default: "examuploadkit: exam upload files, prepared to the rules",
+        default: "ExamUploadKit: exam upload files, prepared to the rules",
         template: `%s | ${SITE_NAME}`,
     },
     description:
@@ -90,7 +90,7 @@ export const metadata: Metadata = {
     // chrome; the manifest covers Android.
     appleWebApp: {
         capable: true,
-        title: "examuploadkit",
+        title: "ExamUploadKit",
         statusBarStyle: "default",
     },
 };

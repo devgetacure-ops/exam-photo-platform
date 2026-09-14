@@ -76,7 +76,7 @@ export function InstallCard() {
         >
             <aside className="euk-install-card" aria-labelledby="install-title" aria-live="polite">
                 <p id="install-title" className="euk-install-title">
-                    Keep examuploadkit on your home screen
+                    Keep ExamUploadKit on your home screen
                 </p>
                 {mode === "prompt" ? (
                     <>

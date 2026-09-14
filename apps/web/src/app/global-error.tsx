@@ -20,7 +20,7 @@ export default function GlobalError({
     return (
         <html lang="en" data-theme="light">
             <body>
-                <title>Something broke · examuploadkit</title>
+                <title>Something broke · ExamUploadKit</title>
                 <StatePage
                     art={<TornPageDrawing />}
                     title="The site hit a problem loading."

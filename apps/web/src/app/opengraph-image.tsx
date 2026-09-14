@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 
 import { OG_SIZE, OgCard, og } from "../components/og-card";
 
-export const alt = "examuploadkit: exam upload files, prepared to the rules";
+export const alt = "ExamUploadKit: exam upload files, prepared to the rules";
 export const size = OG_SIZE;
 export const contentType = "image/png";
 

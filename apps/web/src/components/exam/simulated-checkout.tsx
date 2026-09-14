@@ -60,7 +60,7 @@ export function SimulatedCheckout({
             <h2 id="simpay-title" className="euk-simpay-title">
                 {amount}
             </h2>
-            <p className="euk-simpay-for">examuploadkit · {examName}</p>
+            <p className="euk-simpay-for">ExamUploadKit · {examName}</p>
             <p className="euk-simpay-note">
                 This stands in for Razorpay on a test machine. The live site
                 opens Razorpay here.

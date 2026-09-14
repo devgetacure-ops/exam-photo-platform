@@ -10,7 +10,7 @@ import type { Metadata } from "next";
  * canonical and no preview, or a preview whose title disagrees with the tab.
  */
 
-export const SITE_NAME = "examuploadkit";
+export const SITE_NAME = "ExamUploadKit";
 
 /** Set at build time on the host; the production domain otherwise. */
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://examuploadkit.com").replace(/\/+$/, "");

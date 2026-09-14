@@ -564,7 +564,7 @@ export function KitCheckout({
                 order_id: order.order_id,
                 amount: order.amount_paise,
                 currency: order.currency,
-                name: "examuploadkit",
+                name: "ExamUploadKit",
                 description: exam.exam_name,
                 handler: paymentSubmitted,
                 modal: { ondismiss: checkoutClosed },
@@ -773,7 +773,7 @@ export function KitCheckout({
 
     if (stage === "delivered") {
         const deadline = earliest !== null ? clock(earliest) : null;
-        const reminder = `My ${exam.exam_name} upload files are ready on examuploadkit.${deadline ? ` Download them before ${deadline}, in the browser I used.` : ""} ${typeof window !== "undefined" ? window.location.origin : ""}/exam/${exam.exam_id}`;
+        const reminder = `My ${exam.exam_name} upload files are ready on ExamUploadKit.${deadline ? ` Download them before ${deadline}, in the browser I used.` : ""} ${typeof window !== "undefined" ? window.location.origin : ""}/exam/${exam.exam_id}`;
         return (
             <section className="euk-delivered" aria-labelledby="done-title">
                 <KitSuccess examName={exam.exam_name} titleRef={headingRef} />

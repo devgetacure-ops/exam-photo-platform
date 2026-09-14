@@ -70,7 +70,7 @@ describe("the invitation to install", () => {
         const prompt = offerInstall("accepted");
         moment();
 
-        expect(screen.getByText("Keep examuploadkit on your home screen")).toBeInTheDocument();
+        expect(screen.getByText("Keep ExamUploadKit on your home screen")).toBeInTheDocument();
         await act(async () => {
             fireEvent.click(screen.getByRole("button", { name: "Add to home screen" }));
         });

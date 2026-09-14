@@ -54,7 +54,7 @@ export function PhoneBar() {
 
     return (
         <div className="euk-mtop">
-            <Link href="/" aria-label="examuploadkit home" className="euk-mtop-mark">
+            <Link href="/" aria-label="ExamUploadKit home" className="euk-mtop-mark">
                 <Wordmark />
             </Link>
 

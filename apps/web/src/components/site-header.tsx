@@ -39,7 +39,7 @@ export function SiteHeader({
             <div className="euk-top-row">
                 <Link
                     href="/"
-                    aria-label="examuploadkit home"
+                    aria-label="ExamUploadKit home"
                     className="euk-top-mark"
                 >
                     <Wordmark />
