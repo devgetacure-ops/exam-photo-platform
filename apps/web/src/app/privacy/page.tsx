@@ -3,7 +3,7 @@ import { PolicyPage } from "../../components/policy-page";
 export const metadata = pageMetadata({
     title: "Privacy policy",
     description:
-        "How examuploadkit handles your uploads: kept for 30 minutes by default, never used to train models, thumbprints and photographs used only to prepare your file, and your rights over your data.",
+        "How ExamUploadKit handles your uploads: kept for 30 minutes by default, never used to train models, thumbprints and photographs used only to prepare your file, and your rights over your data.",
     path: "/privacy",
 });
 export default function Privacy() {
@@ -22,11 +22,11 @@ export default function Privacy() {
                 },
                 {
                     title: "Thumbprints and photographs",
-                    text: "A thumb impression and a photograph of your face are biometric information. They are processed only to prepare the file you asked for, after you agree to it at upload, and they follow the same deadline as the rest of your kit. They are not used to identify you, and they are not shared except in the files delivered to you.",
+                    text: "A thumb impression and a photograph of your face are biometric information. They are processed only to prepare the file you asked for, under the agreement you give before your first upload, and they follow the same deadline as the rest of your kit. They are not used to identify you, and they are not shared except in the files delivered to you.",
                 },
                 {
                     title: "Candidates under 18",
-                    text: "Where the candidate is, or can be, under 18, files are prepared only after a parent or guardian agrees, before the first upload. A child's files are never used for tracking, profiling or advertising.",
+                    text: "Where the candidate is, or can be, under 18, the agreement ticked before the first upload confirms that a parent or guardian agrees to their files being prepared. A child's files are never used for tracking, profiling or advertising.",
                 },
                 {
                     title: "Browser and payment records",

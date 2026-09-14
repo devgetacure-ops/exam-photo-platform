@@ -1,24 +1,21 @@
-import { readFileSync, readdirSync } from "node:fs";
-import path from "node:path";
-
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
 
 import { RequirementUpload } from "../components/exam/requirement-upload";
 import { DocumentWorkspace } from "../components/exam/document-workspace";
-import { TERMS_VERSION, UNDER_18 } from "../lib/consent";
+import { TERMS_VERSION } from "../lib/consent";
 import type { PrepareRequirementResponse } from "../lib/types";
 import * as api from "../lib/api-client";
 import * as pdfjs from "../lib/pdfjs";
 
 /**
- * The agreements before the first file (DEC-086).
+ * One agreement before the first file (DEC-086, amended 2026-09-14).
  *
- * The refusals lead: no file leaves the device until every agreement this
- * upload needs is given, and a candidate who can be under 18 or a thumb
- * impression each add their own. Then that one tick is enough for an adult,
- * and that it is remembered rather than asked for every file.
+ * The refusals lead: no file leaves the device until the terms are agreed.
+ * Then one tick is enough for every examination and every kind of file --
+ * a school examination and a thumb impression included -- and it is
+ * remembered rather than asked for every file.
  */
 
 vi.mock("../lib/api-client", async () => {
@@ -89,19 +86,34 @@ describe("agreeing before the first file", () => {
         expect(prepareRequirement).not.toHaveBeenCalled();
     });
 
-    test("an adult's signature needs one tick, with both policies linked", () => {
+    test("one tick, worded as the owner approved, with both policies linked", () => {
         upload("ssc-junior-engineer-examination");
 
         expect(screen.getAllByRole("checkbox")).toHaveLength(1);
+        expect(
+            screen.getByRole("checkbox", {
+                name: "I have read and agree to the terms and conditions and the privacy policy.",
+            }),
+        ).toBeInTheDocument();
         expect(screen.getByRole("link", { name: "terms and conditions" })).toHaveAttribute("href", "/terms");
         expect(screen.getByRole("link", { name: "privacy policy" })).toHaveAttribute("href", "/privacy");
     });
 
-    test("once agreed, the file goes, and the next upload does not ask again", async () => {
-        prepareRequirement.mockResolvedValue(prepared("ssc-junior-engineer-examination", "signature"));
-        upload("ssc-junior-engineer-examination");
+    test.each([
+        ["an examination whose candidates can be under 18", "neet-ug-2026", "signature", "Candidate signature"],
+        ["a school examination", "jawahar-navodaya-vidyalaya-selection-test-class-vi", "photograph", "Photograph"],
+        ["a thumb impression", "sbi-probationary-officers-2025", "thumb_impression", "Thumb impression"],
+    ])("%s asks for the same single tick and nothing more", (_label, examId, type, name) => {
+        upload(examId, type, name);
+        expect(screen.getAllByRole("checkbox")).toHaveLength(1);
+        expect(screen.queryByText(/18 or older|parent or guardian|thumb impression being used/i)).toBeNull();
+    });
+
+    test("once agreed, the file goes, and no upload anywhere asks again", async () => {
+        prepareRequirement.mockResolvedValue(prepared("neet-ug-2026", "thumb_impression"));
+        upload("neet-ug-2026", "thumb_impression", "Thumb impression");
         fireEvent.click(screen.getByRole("checkbox", { name: /terms and conditions/i }));
-        addFile();
+        addFile("Thumb impression");
 
         await waitFor(() => expect(prepareRequirement).toHaveBeenCalled());
         expect(window.localStorage.getItem("uploadready:terms-accepted")).toBe(TERMS_VERSION);
@@ -109,6 +121,12 @@ describe("agreeing before the first file", () => {
         cleanup();
         upload("ssc-junior-engineer-examination");
         expect(screen.queryByRole("checkbox")).toBeNull();
+    });
+
+    test("an agreement to an earlier version of the terms asks again", () => {
+        window.localStorage.setItem("uploadready:terms-accepted", "2026-09-13");
+        upload("ssc-junior-engineer-examination");
+        expect(screen.getAllByRole("checkbox")).toHaveLength(1);
     });
 
     test("unticking takes the agreement back", () => {
@@ -120,48 +138,7 @@ describe("agreeing before the first file", () => {
         expect(window.localStorage.getItem("uploadready:terms-accepted")).toBeNull();
     });
 
-    test("a candidate who can be under 18 needs a parent's or guardian's agreement too", async () => {
-        prepareRequirement.mockResolvedValue(prepared("neet-ug-2026", "signature"));
-        upload("neet-ug-2026");
-        fireEvent.click(screen.getByRole("checkbox", { name: /terms and conditions/i }));
-        addFile();
-
-        expect(await screen.findByRole("alert")).toBeInTheDocument();
-        expect(prepareRequirement).not.toHaveBeenCalled();
-
-        fireEvent.click(
-            screen.getByRole("checkbox", { name: /18 or older, or my parent or guardian agrees/i }),
-        );
-        addFile();
-        await waitFor(() => expect(prepareRequirement).toHaveBeenCalled());
-    });
-
-    test("a school examination asks as the child's parent or guardian", () => {
-        upload("jawahar-navodaya-vidyalaya-selection-test-class-vi");
-
-        expect(
-            screen.getByRole("checkbox", { name: /i am the candidate’s parent or guardian/i }),
-        ).toBeInTheDocument();
-    });
-
-    test("a thumb impression asks for its own agreement, and only that file does", () => {
-        window.localStorage.setItem("uploadready:terms-accepted", TERMS_VERSION);
-        upload("sbi-probationary-officers-2025", "thumb_impression", "Thumb impression");
-
-        // The terms stay on show, already ticked, beside the one still missing.
-        expect(screen.getAllByRole("checkbox")).toHaveLength(2);
-        expect(screen.getByRole("checkbox", { name: /terms and conditions/i })).toBeChecked();
-        expect(
-            screen.getByRole("checkbox", { name: /thumb impression being used only to prepare/i }),
-        ).not.toBeChecked();
-
-        cleanup();
-        upload("sbi-probationary-officers-2025");
-        expect(screen.queryByRole("checkbox")).toBeNull();
-    });
-
     test("a document upload is held back the same way", async () => {
-        window.localStorage.setItem("uploadready:terms-accepted", TERMS_VERSION);
         render(
             <DocumentWorkspace
                 examId="cuet-ug-2026"
@@ -177,23 +154,5 @@ describe("agreeing before the first file", () => {
 
         expect(await screen.findByRole("alert")).toBeInTheDocument();
         expect(planDocument).not.toHaveBeenCalled();
-    });
-
-    test("every examination on the under-18 list is one the catalogue has", () => {
-        const dir = path.join(process.cwd(), "..", "..", "examples", "rules");
-        const ids = new Set(
-            readdirSync(dir)
-                .filter((file) => file.startsWith("exam_") && file.endsWith(".json"))
-                .map((file) => {
-                    const record = JSON.parse(readFileSync(path.join(dir, file), "utf8")) as {
-                        exam_id?: string;
-                        exam?: { exam_id?: string };
-                    };
-                    return record.exam_id ?? record.exam?.exam_id;
-                }),
-        );
-        const stale = Object.keys(UNDER_18).filter((id) => !ids.has(id));
-
-        expect(stale).toEqual([]);
     });
 });

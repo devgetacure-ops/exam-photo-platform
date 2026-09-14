@@ -144,7 +144,7 @@ export function RequirementUpload({
         requirementType,
     );
     const photo = requirementType === "photograph";
-    const consent = useUploadConsent(examId, requirementType);
+    const consent = useUploadConsent();
 
     const submit = useCallback(
         async (file: File) => {

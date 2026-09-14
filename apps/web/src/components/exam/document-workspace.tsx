@@ -69,7 +69,7 @@ export function DocumentWorkspace({
     const [error, setError] = useState("");
     const input = useRef<HTMLInputElement>(null);
     const { record, forget } = useKit(examId);
-    const consent = useUploadConsent(examId, "certificate_scan");
+    const consent = useUploadConsent();
     if (busy) return <PreparationLoader requirementType="certificate_scan" />;
     if (result)
         return (

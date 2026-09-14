@@ -3,7 +3,7 @@ import { PolicyPage } from "../../components/policy-page";
 export const metadata = pageMetadata({
     title: "Terms and conditions",
     description:
-        "What examuploadkit prepares, how payment and delivery work, and the terms of using the service.",
+        "What ExamUploadKit prepares, how payment and delivery work, and the terms of using the service.",
     path: "/terms",
 });
 export default function Terms() {
@@ -33,8 +33,8 @@ export default function Terms() {
                     text: "Do not use this service to impersonate another person, falsify documents, compromise the service or submit files you are not authorized to use. The service prepares existing files; it does not create evidence of eligibility or admission.",
                 },
                 {
-                    title: "Candidates under 18",
-                    text: "If the candidate is under 18, a parent or legal guardian must agree to their files being prepared and to these terms. That agreement is given before the first file is uploaded, and the parent or guardian is responsible for the use of the service on the candidate's behalf.",
+                    title: "Your agreement",
+                    text: "Before your first file is prepared you tick one box agreeing to these terms and the privacy policy. That one agreement also confirms two things. If the candidate is under 18, a parent or legal guardian agrees to their files being prepared and to these terms, and is responsible for the use of the service on the candidate's behalf. And if you upload a thumb impression, you agree to it being processed only to prepare that file, as the privacy policy describes.",
                 },
                 {
                     title: "Our responsibility",
@@ -42,7 +42,7 @@ export default function Terms() {
                 },
                 {
                     title: "An independent service",
-                    text: "examuploadkit is an independent service run by a sole proprietor in India. It is not connected with, authorised by or endorsed by any examination authority, board, commission or recruitment body named on this site. Their names are used only to identify the examination you are applying to.",
+                    text: "ExamUploadKit is an independent service run by a sole proprietor in India. It is not connected with, authorised by or endorsed by any examination authority, board, commission or recruitment body named on this site. Their names are used only to identify the examination you are applying to.",
                 },
                 {
                     title: "Law and disputes",
@@ -50,7 +50,7 @@ export default function Terms() {
                 },
                 {
                     title: "Changes to these terms",
-                    text: "These terms were last updated on 13 September 2026. If they change in substance, the upload asks you to agree to them again before your next file.",
+                    text: "These terms were last updated on 14 September 2026. If they change in substance, the upload asks you to agree to them again before your next file.",
                 },
             ]}
         />
