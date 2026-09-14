@@ -214,6 +214,76 @@
     }
 }
 
+/* ---- the preview in each row (testing note 7) ----------------------- */
+
+.euk .euk-order-file[data-thumb] {
+    grid-template-columns: 64px minmax(0, 1fr);
+}
+
+@media (min-width: 640px) {
+    .euk .euk-order-file[data-thumb] {
+        grid-template-columns: 72px minmax(0, 1fr) auto;
+    }
+}
+
+.euk-order-thumb {
+    display: block;
+    width: 100%;
+    min-height: 44px;
+    padding: 0;
+    border: var(--rule-thin) solid var(--ink);
+    background: var(--paper-2);
+    cursor: zoom-in;
+}
+
+.euk-order-thumb img {
+    display: block;
+    width: 100%;
+    max-height: 96px;
+    object-fit: contain;
+}
+
+.euk-order-thumb:focus-visible {
+    outline: 3px solid var(--signal);
+    outline-offset: 2px;
+}
+
+/* Centred explicitly: Tailwind's preflight zeroes a dialog's own margin. */
+.euk-order-zoom {
+    margin: auto;
+    width: min(560px, calc(100vw - 32px));
+    max-height: calc(100dvh - 32px);
+    overflow-y: auto;
+    padding: 16px;
+    border: var(--rule) solid var(--ink);
+    background: var(--paper);
+    color: var(--ink);
+    box-shadow: var(--drop-sm) var(--drop-sm) 0 var(--ink);
+}
+
+.euk-order-zoom::backdrop {
+    background: rgb(17 17 16 / 0.55);
+}
+
+.euk-order-zoom img {
+    display: block;
+    width: 100%;
+    max-height: calc(100dvh - 180px);
+    object-fit: contain;
+    background: var(--paper-2);
+    border: var(--rule-thin) solid var(--ink);
+}
+
+.euk .euk-order-zoom-note {
+    margin: 10px 0 12px;
+    font-size: 14px;
+    color: var(--ink-70);
+}
+
+.euk-order-zoom button {
+    min-height: 44px;
+}
+
 /* ---- the clock ------------------------------------------------------- */
 
 .euk-clock {

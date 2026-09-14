@@ -1,6 +1,16 @@
 "use client";
-import { useId, useState } from "react";
+import { useId, useRef, useState } from "react";
 
+/**
+ * The upload beside its prepared preview, compared by dragging anywhere on the
+ * picture (testing note 6).
+ *
+ * The old version put an unstyled range input under the picture, so only a
+ * thin strip at its top ever took a drag. Now the frame itself follows the
+ * pointer: a horizontal drag moves the divider, a vertical one still scrolls
+ * the page (`touch-action: pan-y`), and the range input stays for the
+ * keyboard, visually hidden but focusable.
+ */
 export function FileComparison({
     before,
     after,
@@ -11,12 +21,36 @@ export function FileComparison({
     illustration?: boolean;
 }) {
     const [position, setPosition] = useState(50);
+    const frameRef = useRef<HTMLDivElement>(null);
     const id = useId();
+
+    const follow = (clientX: number) => {
+        const frame = frameRef.current;
+        if (!frame) return;
+        const box = frame.getBoundingClientRect();
+        if (box.width <= 0) return;
+        const pct = ((clientX - box.left) / box.width) * 100;
+        setPosition(Math.round(Math.min(100, Math.max(0, pct))));
+    };
+
     return (
         <figure
             className={`file-comparison ${illustration ? "illustrated-comparison" : ""}`}
         >
-            <div className="comparison-images">
+            <div
+                ref={frameRef}
+                className="comparison-images"
+                data-testid="comparison-frame"
+                onPointerDown={(event) => {
+                    event.currentTarget.setPointerCapture?.(event.pointerId);
+                    follow(event.clientX);
+                }}
+                onPointerMove={(event) => {
+                    const frame = event.currentTarget;
+                    if (frame.hasPointerCapture && !frame.hasPointerCapture(event.pointerId)) return;
+                    follow(event.clientX);
+                }}
+            >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                     src={after}
@@ -47,7 +81,7 @@ export function FileComparison({
                     style={{ left: `${position}%` }}
                     aria-hidden="true"
                 >
-                    <span>↔</span>
+                    <span className="comparison-handle">↔</span>
                 </span>
                 <div className="comparison-labels" aria-hidden="true">
                     <span>
@@ -57,6 +91,7 @@ export function FileComparison({
                 </div>
                 <input
                     id={id}
+                    className="comparison-range"
                     type="range"
                     min="0"
                     max="100"
@@ -67,7 +102,7 @@ export function FileComparison({
                 />
             </div>
             <figcaption>
-                <label htmlFor={id}>Drag or use arrow keys to compare</label>
+                <label htmlFor={id}>Drag across the picture, or use the arrow keys</label>
                 <div className="comparison-actions">
                     <button type="button" onClick={() => setPosition(100)}>
                         Original
@@ -79,7 +114,7 @@ export function FileComparison({
                 <span>
                     {illustration
                         ? "Illustration only · not an engine result"
-                        : "Reduced-resolution, watermarked preview · clean file after payment"}
+                        : "Watermarked preview · your download is the full, unmarked file"}
                 </span>
             </figcaption>
         </figure>

@@ -49,6 +49,8 @@ export interface KitEntry {
   outputMediaType?: string | null;
   /** Relative to the API base — resolve with `jobOutputUrl(jobId)`. */
   outputUrl?: string | null;
+  /** The watermarked preview, relative to the API base; only where a mark was burned in. */
+  previewUrl?: string | null;
   reportUrl?: string | null;
   expiresAt?: string | null;
   findings: string[];
@@ -156,6 +158,8 @@ export function recordPreparation(
     outputFilename: response.output_filename ?? null,
     outputMediaType: response.output_media_type ?? null,
     outputUrl: response.output_url ?? null,
+    previewUrl:
+      response.preview_watermarked === true ? (response.preview_url ?? null) : null,
     reportUrl: response.report_url ?? null,
     expiresAt: response.expires_at ?? null,
     findings: response.findings ?? [],

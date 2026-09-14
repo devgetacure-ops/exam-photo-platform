@@ -18,6 +18,7 @@ import { SimulatedCheckout } from "./simulated-checkout";
 import type { ExamFact } from "./exam-facts";
 import { FileTypeDrawing } from "../euk/doodles";
 import { plainFindings } from "../../lib/finding-text";
+import { PreviewThumb } from "./preview-thumb";
 import { Note } from "../euk/note";
 
 /**
@@ -246,8 +247,16 @@ function FileRow({
         <li
             className="euk-order-file"
             data-state={expired ? "expired" : available ? "released" : "protected"}
+            data-thumb={(entry.previewUrl && !expired) || undefined}
         >
-            <FileTypeDrawing type={entry.requirementType} className="euk-order-icon" />
+            {entry.previewUrl && !expired ? (
+                <PreviewThumb
+                    src={new URL(entry.previewUrl, getApiBaseUrl()).toString()}
+                    name={name}
+                />
+            ) : (
+                <FileTypeDrawing type={entry.requirementType} className="euk-order-icon" />
+            )}
             <div className="euk-order-body">
                 <h3 className="euk-order-name">{name}</h3>
                 <p className="euk-order-filename">
