@@ -86,20 +86,26 @@ into the delivered photograph. Do not take it to hit a latency number.
 
 # Platform State
 
-**Last updated: 2026-09-14.** Branch `feat/upload-kit-ui`, 102 commits ahead of
-`main`, with no pull request yet. Everything is pushed except `b3762d8` (the
-payment simulator) and this handoff. The whole candidate path works locally on
-a desktop and on a real phone, across **132 examinations**: search, every file
-an examination asks for, preparation, the agreements before the first upload
-(DEC-086), a watermarked preview, checkout (Razorpay, or the local simulator,
-DEC-089), and delivery.
+**Last updated: 2026-09-15.** Branch `feat/upload-kit-ui`, with no pull request
+yet. `b9eaa3f` and everything before it are on `origin`; **the fixing session's
+commits after it are local and not pushed** (the owner pushes). The whole
+candidate path works locally on a desktop and on a real phone, across **131
+examinations** (DEC-093 removed a duplicate): search, every file an examination
+asks for, preparation, **one agreement** before the first upload (DEC-086,
+amended), a sharp watermarked preview that names its file (DEC-063, amended),
+checkout (Razorpay, or the local simulator, DEC-089), and delivery.
 
-**Where the work is now.** The owner is testing the whole product by hand, on
-this machine and on their phone, and collecting issues. **The next session
-fixes them, the owner's way**: they send screenshots and notes; the session
-diagnoses and plans each one *without changing anything*; when they say to act,
-everything is fixed in one pass, verified and committed.
-`docs/NEXT_SESSION_PROMPT.md` is written for exactly that session.
+**Where the work is now.** The owner tested the whole product by hand and sent
+about fifty issues (screenshots in `C:\Users\dmbar\Downloads\errors-euk`, notes
+in the session). The owner's rule for this phase: **build everything that needs
+no input from them, and ask for every input at once** (memory:
+`build-now-ask-later`). Built and committed: DEC-090 (never stretch, never refuse
+a small photo, file names, ZIP, prices Rs 3 / Rs 5), DEC-091 (a photograph
+uploaded as a signature is refused), DEC-092 (the landing band; impression paper
+left alone), DEC-093 (catalogue audit, 131 examinations), DEC-094 (plain words,
+scroll, paid state, previews in review, draggable comparison, clock, email,
+ExamUploadKit, stacked logo). See "Waiting on the owner" below for what is not
+done and why.
 
 **Built on 13–14 September, beyond the phone phases:**
 
@@ -261,7 +267,7 @@ Read alongside:
 | File | What it carries |
 |---|---|
 | `AGENTS.md` | The binding operating contract |
-| `docs/08_DECISION_LOG.md` | DEC-029..079. **Living** — amend an entry when implementation moves; never bend implementation to fit a stale one |
+| `docs/08_DECISION_LOG.md` | DEC-029..094. **Living** — amend an entry when implementation moves; never bend implementation to fit a stale one |
 | `HANDOFF-INVARIANTS.md` | How composition work is done here: the invariant sweep, the ratchet, the planner/validator defect class |
 | `docs/EXAM_RULE_GAP_REGISTER.md` | Generated. Which examinations are encoded, which are not, and why |
 
@@ -355,30 +361,52 @@ puts the product's worst failure mode back on the table.
 | Three outcome states | `components/exam/outcome-result.tsx` — clean / with-findings / blocked |
 | The watermarked preview and the purchase gate | Engine: `src/exam_photo/preview/`, `api/app.py` (`/v1/jobs/{id}/preview`, 402 on `/output`). UI already wired by Codex |
 
-### Open, found while the owner tested (13 September 2026)
+### Waiting on the owner (the fixing session, 14–15 September 2026)
 
-1. **A photograph under an examination's minimum KB is refused instead of
-   prepared.** Diagnosed with the owner, **not fixed** — they had not said to
-   act. The candidate sees "We could not prepare this one · Pipeline final byte
-   size invalid". Found on SBI Junior Associates: 200 × 230 px, 20–50 KB
-   published, the output 17.7 KB. Two causes. The photograph compressor
-   (`providers/compression/deterministic_image_compressor.py`,
-   `OutputCompressionConfig.max_quality = 98`, default 4:2:0 chroma) never tries
-   quality 100 or 4:4:4. And `orchestration/final_validation.py` treats a size
-   under the minimum as a hard failure, so `api/service.py` records
-   `not_produced`. The deliverable path already does the right thing —
-   `orchestration/deliverable_pipeline._largest_encoding`, then a finding
-   (DEC-051) — and DEC-041 requires producing. Measured on a fictional demo
-   photograph at 200 × 230: 23.1 KB at quality 98 with 4:2:0, 45.9 KB at quality
-   100 with 4:4:4. **Planned fix**: when a photograph is under its floor and a
-   quality-100, 4:4:4 encoding stays under the ceiling, use it; if it is still
-   under, deliver it as `prepared_with_findings` with a plain note naming both
-   figures; never pad the file; show plain words, not raw issue codes; test the
-   lifted, the still-short and the over-ceiling cases; re-run the owner's SBI
-   photograph on the running engine. About 20 photograph records carry a floor
-   this can hit: IBPS ×4, SBI ×2, RBI ×2, LIC, NABARD, NIACL, GIC, XAT, TNPSC ×4,
-   KEAM and the RRB Level-1 and NTPC records.
-2. **Four deployment blockers**, found on 13 September and not fixed.
+Everything below needs something only the owner can supply. The rest of their
+testing notes is built (DEC-090 to DEC-094).
+
+1. **Photographs to prove fixes on**, into
+   `C:\Users\dmbar\Downloads\errors-euk\originals\`: the SBI Junior Associates
+   original (item 1, the minimum-KB floor), the photograph that gave "crop
+   failed" and its exam (note 19), and the originals of the loosely cropped
+   photographs with their exams (note 25). Note 25's crop work is not started:
+   it must be measured stage by stage on those originals and the ten `perfect`
+   photographs before any constant moves.
+2. **Research**: the "Worth knowing" facts for 27 examinations (the prompt was
+   sent) and the pixel-size sheet for 27 photographs, both keyed by the old exam
+   ids -- map them through
+   `packages/exam-rules/research/exam_id_renames_2026_09_14.json` on import. The
+   full list of missing information is `docs/research-requests/missing-information.csv`
+   (302 rows). Open question with it: where a notice publishes no pixel size, use
+   413 x 531 marked est., or keep sizing per photograph?
+3. **Email**: a provider account and its SMTP credentials in
+   `services/image-engine/.env.local` (Amazon SES recommended for cost, Resend
+   simplest). Until then `/ready` reports `email: not_configured` and the site
+   hides the email form.
+4. **Decisions**: the eight exam hub groups; who reviews Hindi pages; whether the
+   compress-to-size tool is free. Hubs, Hindi and the tool wait on these.
+5. **A public business address**, set as `EUK_BUSINESS_PUBLIC_ADDRESS`, before
+   Razorpay review. `EUK_BUSINESS_NAME` and `EUK_BUSINESS_ADDRESS` are no longer
+   read and can be deleted from `apps/web/.env.local`.
+6. **Machine time with memory free** (about 4 GB): the timing of slow
+   photographs (note J) through the warm engine, and the full prepare-review-pay
+   walk on a phone against the running engine, which this session could not run
+   alongside the dev server.
+7. **Intelligent lighting (note K1), a decision**: measured on the 40-photo set,
+   32 need nothing and come back pixel-identical, 5 are corrected; a colour-cast
+   or contrast correction is visible (4.6-23 levels on the face), but a
+   sharpening-only correction changes the face by 0.2-0.3 levels -- invisible --
+   while the switch is still offered. Recommended: offer the switch only when the
+   change is visible.
+
+**Not reproduced**: NEET UG's rules page (note 12) answers 200 on the dev server
+; the owner's 404 was most likely a dev-server
+compile under memory pressure.
+
+### Open, older
+
+1. **Four deployment blockers**, found on 13 September and not fixed.
    (a) `lib/api-client.ts` falls back to `http://127.0.0.1:8000` with `||` and
    builds every address with `new URL(path, base)`, which throws on an empty
    base — a same-origin deployment needs both changed, or every phone sends its
