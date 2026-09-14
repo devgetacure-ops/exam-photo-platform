@@ -37,6 +37,10 @@ dependencies = [
     # licensed; PyMuPDF is faster and can rasterise, but it is AGPL, which is
     # not compatible with shipping this as a commercial service.
     "pypdf>=5.0.0",
+    # The watermarked preview of a PDF deliverable's first page (DEC-063,
+    # amended). Apache-2.0 / BSD-3-Clause. Renders a picture for the candidate
+    # to judge; the delivered PDF itself is never re-rendered (DEC-052).
+    "pypdfium2>=4.30",
 ]
 
 [project.optional-dependencies]

@@ -1,8 +1,8 @@
-"""The watermarked preview, and the properties it has to keep (DEC-063).
+"""The watermarked preview, and the properties it has to keep (DEC-063, amended).
 
-These assert the two things a purchase gate depends on: the preview is not the
-finished file, and it is not silently claimed to be watermarked when it is not.
-Everything else about it is presentation.
+A purchase gate depends on two things: the preview is not the finished file,
+and it is not claimed to be watermarked when it is not. Since the owner's
+testing note B it must also be sharp, and its mark must say what the file is.
 """
 
 import io
@@ -16,7 +16,11 @@ from exam_photo.preview import (
     PreviewUnavailableError,
     render_watermarked_preview,
 )
-from exam_photo.preview.watermark import _MIN_PREVIEW_LONG_EDGE, _preview_size
+from exam_photo.preview.watermark import (
+    PREVIEW_LONG_EDGE,
+    _preview_size,
+    watermark_line,
+)
 
 
 def _photo(width: int, height: int, shade: int = 200, mode: str = "RGB") -> bytes:
@@ -33,57 +37,64 @@ def _pixels(content: bytes) -> np.ndarray:
 
 
 # ----------------------------------------------------------------------
-# Reduced resolution
+# Never the file's own size, and sharp
 # ----------------------------------------------------------------------
 
 
 @pytest.mark.parametrize(
     ("width", "height"),
-    [(413, 531), (1200, 1600), (900, 400), (200, 230)],
+    [(413, 531), (1200, 1600), (900, 400), (200, 230), (140, 60), (800, 600)],
 )
-def test_the_preview_cannot_meet_the_exams_pixel_specification(width, height):
-    """The point of the downscale: a preview is not submittable."""
+def test_the_preview_is_never_the_files_own_pixel_size(width, height):
+    """The point of the fixed size: a preview cannot meet a pixel specification."""
     preview = render_watermarked_preview(_photo(width, height))
 
     assert (preview.width, preview.height) != (width, height)
-    assert max(preview.width, preview.height) < max(width, height)
     assert preview.is_reduced
 
 
-def test_the_aspect_ratio_survives_the_downscale():
+def test_a_small_file_is_shown_at_a_size_a_phone_screen_keeps_sharp():
+    preview = render_watermarked_preview(_photo(200, 230))
+    assert max(preview.width, preview.height) == PREVIEW_LONG_EDGE
+
+
+def test_a_large_file_is_not_shown_at_full_size():
+    preview = render_watermarked_preview(_photo(1200, 1600))
+    assert max(preview.width, preview.height) == PREVIEW_LONG_EDGE
+
+
+def test_the_aspect_ratio_survives():
     """Never distort. A stretched preview misrepresents the file being sold."""
     preview = render_watermarked_preview(_photo(413, 531))
 
     assert preview.width / preview.height == pytest.approx(413 / 531, abs=0.01)
 
 
-def test_a_photograph_already_smaller_than_the_floor_is_not_shrunk_further():
-    """DEC-063: below the floor the mark is the whole of the gate.
-
-    A candidate cannot judge their own face at a hundred pixels, so the few
-    examinations specifying a photograph this small get the preview at the
-    finished file's own size and the watermark alone carries it.
-    """
-    preview = render_watermarked_preview(_photo(150, 190))
-
-    assert (preview.width, preview.height) == (150, 190)
-    assert preview.is_reduced is False
-
-
-def test_the_floor_is_honoured_rather_than_halving_blindly():
-    assert _preview_size(200, 230) == (174, _MIN_PREVIEW_LONG_EDGE)
-    assert _preview_size(1000, 500) == (500, 250)
+def test_a_file_already_at_the_display_size_still_gets_a_different_size():
+    assert max(_preview_size(800, 600)) != 800
 
 
 # ----------------------------------------------------------------------
-# The mark is in the pixels
+# The mark is in the pixels, and it names the file
 # ----------------------------------------------------------------------
+
+
+def test_the_mark_names_the_file_in_ascii():
+    line = watermark_line(
+        "PREVIEW ONLY - NOT FOR SUBMISSION",
+        ["NEET (UG) 2026", "200×230 px", "21 KB", "JPEG", "neet-ug_photo.jpg", ""],
+    )
+    assert line == (
+        "PREVIEW ONLY - NOT FOR SUBMISSION - NEET (UG) 2026 - 200x230 px - "
+        "21 KB - JPEG - neet-ug_photo.jpg"
+    )
+    assert line.isascii()
 
 
 def test_the_mark_is_burned_into_the_pixels():
     """Not a layer, not an overlay: the pixels themselves differ."""
     source = _photo(600, 800, shade=200)
-    preview = render_watermarked_preview(source)
+    preview = render_watermarked_preview(source, details=["Exam", "600x800 px"])
 
     with Image.open(io.BytesIO(source)) as opened:
         plain = opened.convert("RGB").resize(
@@ -101,14 +112,14 @@ def test_the_mark_reaches_every_region_of_the_frame():
     pixels = _pixels(preview.content)
 
     height, width, _ = pixels.shape
-    for row in range(2):
-        for column in range(2):
-            quadrant = pixels[
-                row * height // 2 : (row + 1) * height // 2,
-                column * width // 2 : (column + 1) * width // 2,
+    for row in range(3):
+        for column in range(3):
+            region = pixels[
+                row * height // 3 : (row + 1) * height // 3,
+                column * width // 3 : (column + 1) * width // 3,
             ]
-            spread = int(quadrant.max()) - int(quadrant.min())
-            assert spread > 30, f"quadrant ({row}, {column}) carries no mark"
+            spread = int(region.max()) - int(region.min())
+            assert spread > 30, f"region ({row}, {column}) carries no mark"
 
 
 def test_the_preview_carries_no_metadata_from_the_source():
@@ -133,12 +144,28 @@ def test_transparency_is_flattened_onto_white_not_left_to_the_browser():
 
 
 # ----------------------------------------------------------------------
-# Refusal, rather than a preview that is not one
+# PDFs, and refusals
 # ----------------------------------------------------------------------
 
 
-def test_a_pdf_gets_no_preview_rather_than_a_pretend_one():
-    """The rasteriser this repository deliberately does not carry."""
+def _pdf() -> bytes:
+    page = Image.new("RGB", (620, 877), (255, 255, 255))
+    buffer = io.BytesIO()
+    page.save(buffer, "PDF", resolution=72)
+    return buffer.getvalue()
+
+
+def test_a_pdf_gets_a_watermarked_preview_of_its_first_page():
+    preview = render_watermarked_preview(
+        _pdf(), media_type="application/pdf", details=["certificate.pdf"]
+    )
+    assert preview.media_type == PREVIEW_MEDIA_TYPE
+    assert max(preview.width, preview.height) == PREVIEW_LONG_EDGE
+    pixels = _pixels(preview.content)
+    assert int(pixels.max()) - int(pixels.min()) > 30, "the page carries no mark"
+
+
+def test_a_broken_pdf_gets_no_preview_rather_than_a_pretend_one():
     with pytest.raises(PreviewUnavailableError):
         render_watermarked_preview(b"%PDF-1.7\n", media_type="application/pdf")
 

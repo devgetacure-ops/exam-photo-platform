@@ -697,11 +697,12 @@ class ApiProcessingService:
         """
         try:
             preview = render_watermarked_preview(
-                output_bytes, media_type=record.output_media_type
+                output_bytes,
+                media_type=record.output_media_type,
+                details=self._preview_details(record, output_bytes),
             )
         except PreviewUnavailableError:
-            # The ordinary case is a PDF: rendering a page needs a rasteriser
-            # this repository deliberately does not carry (DEC-063).
+            # A file that cannot be decoded, or a PDF pypdfium2 cannot render.
             record.preview_filename = None
             record.preview_watermarked = False
             record.preview_width = None
@@ -728,6 +729,38 @@ class ApiProcessingService:
         record.preview_width = preview.width
         record.preview_height = preview.height
         return record
+
+    def _preview_details(
+        self, record: ProcessingJobRecord, output_bytes: bytes
+    ) -> list[str]:
+        """What the watermark says about this file (testing note B).
+
+        The examination, pixel size, byte size, format and filename, so every
+        preview names the file it stands for and differs by examination.
+        """
+        entry = self.catalogue.get(record.exam_id) if record.exam_id else None
+        size = len(output_bytes) / 1000
+        media = record.output_media_type or ""
+        if media == "application/pdf":
+            kind = "PDF"
+        elif record.output_filename and "." in record.output_filename:
+            kind = (
+                record.output_filename.rsplit(".", 1)[1].upper().replace("JPG", "JPEG")
+            )
+        else:
+            kind = "JPEG"
+        details = [
+            entry.rule.exam.exam_name if entry is not None else "",
+            (
+                f"{record.output_width}x{record.output_height} px"
+                if record.output_width and record.output_height
+                else ""
+            ),
+            f"{size:.0f} KB" if size >= 10 else f"{size:.1f} KB",
+            kind,
+            record.output_filename or "",
+        ]
+        return [detail for detail in details if detail]
 
     def output_is_released(self, record: ProcessingJobRecord) -> bool:
         """Whether this job's clean output may be served.

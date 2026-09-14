@@ -193,7 +193,7 @@ export function OutcomeResult({
                 !(result.preview_url && result.preview_watermarked === true) && (
                     <p className="euk-outcome-text">
                         {result.output_media_type === "application/pdf"
-                            ? "PDF prepared. A visual preview is not available: review the file details and findings before purchasing."
+                            ? "PDF prepared. We couldn’t make a picture of it this time, so check its details before you buy."
                             : "Your file was prepared. A protected preview is not available yet."}
                     </p>
                 )}

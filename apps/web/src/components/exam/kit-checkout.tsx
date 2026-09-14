@@ -283,7 +283,7 @@ function FileRow({
                         Document preparation included free with your purchase
                     </p>
                 )}
-                {entry.outputMediaType === "application/pdf" && (
+                {entry.outputMediaType === "application/pdf" && !entry.previewUrl && (
                     <p className="euk-order-meta">PDF · no visual preview available</p>
                 )}
                 {partial && (
@@ -965,10 +965,9 @@ export function KitCheckout({
                             onChange={(e) => setAck(e.target.checked)}
                         />
                         <span>
-                            I have reviewed the files, findings and any
-                            remaining steps. I understand that PDFs have no
-                            visual preview and files must be downloaded before
-                            deletion.
+                            I have reviewed the files and any remaining
+                            steps, and I understand files must be downloaded
+                            before deletion.
                         </span>
                     </label>
                     <button

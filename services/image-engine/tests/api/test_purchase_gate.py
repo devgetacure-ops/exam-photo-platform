@@ -199,10 +199,13 @@ def test_the_preview_is_served_and_is_not_the_clean_file(api):
     assert preview.headers["content-type"].startswith("image/jpeg")
     assert preview.content != clean.content
 
+    # Never the file's own pixel size (DEC-063, amended): the preview is shown
+    # at a fixed display size, sharp on a phone, so it cannot meet the
+    # examination's pixel specification.
     with Image.open(io.BytesIO(preview.content)) as previewed:
         with Image.open(io.BytesIO(clean.content)) as delivered:
             assert previewed.size != delivered.size
-            assert max(previewed.size) < max(delivered.size)
+            assert max(previewed.size) in (800, 760)
 
 
 @pytest.mark.mandatory_api
@@ -224,8 +227,8 @@ def test_the_response_claims_a_watermark_only_where_one_was_applied(api):
 
 
 @pytest.mark.mandatory_api
-def test_a_pdf_deliverable_claims_no_preview_rather_than_a_pretend_one(api):
-    """No rasteriser, so no preview -- and the field says so (DEC-063)."""
+def test_a_pdf_deliverable_gets_a_watermarked_preview_and_stays_gated(api):
+    """A picture of page one to judge; the clean PDF still costs (DEC-063, amended)."""
     plan = client.post(
         f"/v1/exams/{DOC_EXAM}/requirements/{DOC_REQUIREMENT}/documents",
         files=[
@@ -236,10 +239,13 @@ def test_a_pdf_deliverable_claims_no_preview_rather_than_a_pretend_one(api):
     body = client.post(f"/v1/documents/{plan['job_id']}/assemble", json={}).json()
 
     assert body["output_media_type"] == "application/pdf"
-    assert body["preview_watermarked"] is False
-    assert body["preview_url"] is None
-    assert client.get(f"/v1/jobs/{body['job_id']}/preview").status_code == 404
-    # Still gated: a candidate buys it unseen until a preview rasteriser exists.
+    assert body["preview_watermarked"] is True
+    assert body["preview_url"] == f"/v1/jobs/{body['job_id']}/preview"
+    preview = client.get(body["preview_url"])
+    assert preview.status_code == 200
+    assert preview.headers["content-type"].startswith("image/jpeg")
+    assert not preview.content.startswith(b"%PDF")
+    # Still gated: the preview is a picture; the PDF itself is what is sold.
     assert client.get(body["output_url"]).status_code == 402
 
 
