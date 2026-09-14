@@ -246,3 +246,47 @@ def test_the_delivered_bytes_decode_to_the_declared_size() -> None:
     decoded = Image.open(io.BytesIO(result.content))
     assert decoded.size == (result.width, result.height) == (200, 90)
     assert len(result.content) == result.byte_size
+
+
+def test_a_preferred_size_is_delivered_padded_not_stretched() -> None:
+    """DEC-093: "140 x 60 pixels (preferred)" is honoured without claiming a mandate."""
+    result = prepare_deliverable(
+        _photo_of(_signature_sheet()),
+        "sign.jpg",
+        RequirementType.SIGNATURE,
+        _spec(
+            dimensions={
+                "mode": "unspecified",
+                "preferred_width_px": 140,
+                "preferred_height_px": 60,
+                "fallback_reason": "preferred, not mandated",
+            },
+            file_size={"maximum_bytes": 40000},
+            formats={"allowed_formats": ["jpg"], "preferred_format": "jpg"},
+        ),
+    )
+    assert (result.width, result.height) == (140, 60)
+    assert not any("could not be sized" in f for f in result.findings)
+
+
+def test_a_tall_range_takes_a_wide_signature_by_padding() -> None:
+    """BPSC: 150-220 px wide and 250-320 px tall; a wide signature is padded to fit."""
+    result = prepare_deliverable(
+        _photo_of(_signature_sheet()),
+        "sign.jpg",
+        RequirementType.SIGNATURE,
+        _spec(
+            dimensions={
+                "mode": "range",
+                "minimum_width_px": 150,
+                "maximum_width_px": 220,
+                "minimum_height_px": 250,
+                "maximum_height_px": 320,
+            },
+            file_size={"maximum_bytes": 20000},
+            formats={"allowed_formats": ["jpg"], "preferred_format": "jpg"},
+        ),
+    )
+    assert 150 <= result.width <= 220
+    assert 250 <= result.height <= 320
+    assert not any("could not be sized" in f for f in result.findings)

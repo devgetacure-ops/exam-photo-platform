@@ -1,48 +1,51 @@
 {
   "schema_version": "1.1",
-  "rule_id": "tnpsc-combined-technical-services-examination-2025",
+  "rule_id": "kerala-psc-one-time-registration",
   "rule_version": "1.0.0",
   "status": "verified",
   "exam": {
-    "exam_id": "tnpsc-combined-technical-services-examination-2025",
-    "exam_name": "TNPSC Combined Technical Services Examination 2025",
-    "conducting_body": "Tamil Nadu Public Service Commission",
-    "examination_year": 2025,
-    "application_cycle": "2025",
+    "exam_id": "kerala-psc-one-time-registration",
+    "exam_name": "Kerala PSC One Time Registration",
+    "conducting_body": "Kerala Public Service Commission",
+    "examination_year": 2026,
+    "application_cycle": "current OTR",
     "aliases": [
-      "TNPSC CTS",
-      "TNPSC Combined Technical Services"
+      "Kerala PSC",
+      "KPSC Kerala"
     ],
     "application_stage": "application",
-    "jurisdiction": "Tamil Nadu",
+    "jurisdiction": "Kerala",
     "category": "state_psc"
   },
   "source_evidence": [
     {
+      "source_type": "official_webpage",
+      "official_source": true,
+      "captured_wording": "150 pixels width and 200 pixels height; 30 Kb; JPG; white/light coloured background; face at the centre; front facial pose; eyes open; religious custom",
+      "source_url": "https://psc.kerala.gov.in/kpsc/faq.php",
+      "document_title": "Kerala PSC FAQ / One Time Registration",
+      "section_name": "Photograph upload FAQ"
+    },
+    {
       "source_type": "official_pdf",
       "official_source": true,
-      "captured_wording": "130 pixels width and 170 pixels height; 200 DPI; 20 KB; 50 KB; Photograph.jpg; white background; 115 pixels; both ears; frontal view; name of the applicant and the date; bottom; last 3 months",
-      "source_url": "https://www.tnpsc.gov.in/static_pdf/document/instructions-to-candiates.pdf",
-      "document_title": "Instructions to Candidates / Combined Technical Services 2025",
-      "page_number": 14,
-      "section_name": "Photograph upload instructions"
+      "captured_wording": "name of the applicant and the date; bottom; within six months",
+      "source_url": "https://keralapsc.gov.in/sites/default/files/2024-11/noti-373-24.pdf",
+      "document_title": "Kerala PSC Notification No. 373/2024",
+      "document_identifier": "373/2024"
     }
   ],
   "image_requirements": {
     "dimensions": {
       "mode": "exact",
-      "width_px": 130,
-      "height_px": 170,
-      "aspect_ratio": "13:17",
-      "dpi": 200,
-      "permitted_pixel_range": "3.5 cm width (130 pixels) \u00d7 4.5 cm height (170 pixels); candidate image 3.0 cm (115 pixels), imprint 1.5 cm (55 pixels)"
+      "width_px": 150,
+      "height_px": 200,
+      "aspect_ratio": "3:4"
     },
     "file_size": {
-      "maximum_bytes": 50000,
-      "minimum_bytes": 20000,
-      "size_unit_as_published": "KB",
-      "published_maximum": 50.0,
-      "published_minimum": 20.0
+      "maximum_bytes": 30000,
+      "size_unit_as_published": "Kb",
+      "published_maximum": 30.0
     },
     "formats": {
       "allowed_formats": [
@@ -54,20 +57,25 @@
       "colour_space": "sRGB"
     },
     "background": {
-      "mode": "exact_colour",
-      "required_colour": "#FFFFFF",
-      "tolerance": 3.0
+      "mode": "plain_light",
+      "fallback_colour": "#FFFFFF"
     },
     "composition": {
       "crop_profile": "tight_exam_portrait",
       "complete_hair_required": true,
       "complete_chin_required": true,
-      "ears_policy": "required_visible",
-      "ears_visible": true,
-      "frontal_pose": true
+      "ears_policy": "unspecified",
+      "face_centred": true,
+      "frontal_pose": true,
+      "eye_visibility": true
     },
     "appearance": {
-      "recency_maximum_days": 90,
+      "headwear": {
+        "policy": "conditional",
+        "condition": "Cap/goggles prohibited except where required by religious custom; face and shoulders must remain clear.",
+        "source_wording": "religious custom"
+      },
+      "recency_maximum_days": 180,
       "imprint": {
         "policy": "required",
         "fields": [
@@ -78,14 +86,14 @@
       }
     },
     "filename": {
-      "mode": "exact",
+      "mode": "unspecified",
       "extension_required": true,
-      "exact_filename": "Photograph.jpg",
-      "case_sensitive": true
+      "case_sensitive": false
     },
     "exceptional_instructions": {
       "printed_name": true,
       "printed_date": true,
+      "headwear_restriction": true,
       "recent_photo_requirement": true,
       "processing_support_status": "partially_supported",
       "unsupported_requirement_reasons": [
@@ -102,12 +110,12 @@
       "requirement_status": "mandatory",
       "platform_support": "partially_supported",
       "applicability": "All applicants",
-      "content_instructions": "Uploaded candidate photograph; format: JPG; file size: 20-50 KB; dimensions: 130 x 170 px; 200 dpi; filename: Photograph.jpg; background: white; recency: within 90 days.",
-      "evidence_status": "Current official TNPSC instruction",
+      "content_instructions": "Uploaded candidate photograph; format: JPG; file size: up to 30 Kb; dimensions: 150 x 200 px; recency: within 180 days.",
+      "evidence_status": "Evidence tier as recorded in supplied photograph report",
       "rejection_conditions": [
         "Non-frontal or side-facing pose can fail the stated requirement.",
-        "Failure to upload clear images of the photograph and signature will result in rejection of online application after due process.",
-        "In case of uploading an inappropriate photograph, the application is liable to be rejected after due process."
+        "Eyes must be visible/open as stated.",
+        "Caps/hats are restricted; any permitted religious covering must leave required facial features visible."
       ]
     },
     {
@@ -117,18 +125,13 @@
       "submission_method": "file_upload",
       "requirement_status": "mandatory",
       "platform_support": "supported",
-      "applicability": "All applicants",
-      "content_instructions": "JPG; 10\u201320 KB; 230\u00d775 px; 200 DPI; Signature.jpg",
-      "evidence_status": "Official TNPSC instructions / CTS notice",
-      "rejection_conditions": [
-        "Failure to upload clear images of the photograph and signature will result in rejection of online application after due process."
-      ],
+      "applicability": "All OTR registrants",
+      "content_instructions": "JPG; maximum 30 KB; 150\u00d7100 px; blue/black ink on white paper; no minimum published",
+      "evidence_status": "Current official Kerala PSC Thulasi portal",
       "file_spec": {
         "file_size": {
-          "maximum_bytes": 20000,
-          "minimum_bytes": 10000,
-          "published_minimum": 10,
-          "published_maximum": 20,
+          "maximum_bytes": 30000,
+          "published_maximum": 30,
           "size_unit_as_published": "KB"
         },
         "formats": {
@@ -139,21 +142,21 @@
         },
         "dimensions": {
           "mode": "exact",
-          "width_px": 230,
-          "height_px": 75
+          "width_px": 150,
+          "height_px": 100
         }
       }
     },
     {
-      "requirement_id": "supporting_certificates_for_claims",
-      "requirement_name": "Supporting certificates for claims",
+      "requirement_id": "claim_supporting_certificates",
+      "requirement_name": "Claim-supporting certificates",
       "requirement_type": "certificate_scan",
       "submission_method": "document_scan_upload",
       "requirement_status": "conditional",
       "platform_support": "supported",
-      "applicability": "Candidates making reservation, PSTM, disability, experience or other special claims",
-      "content_instructions": "Upload the exact certificate asked for by the application/claim. The list varies by post and candidate category; do not treat all certificates as universal.",
-      "evidence_status": "Exam-specific official notification required",
+      "applicability": "Candidates claiming reservation, disability, domicile, age relaxation, experience or a post-specific qualification",
+      "content_instructions": "Upload only the certificate explicitly requested by that examination and category. The exact list is notification-specific and was not fully established in the supplied photograph evidence.",
+      "evidence_status": "Exam-specific gap; active notification required",
       "file_spec": {
         "file_size": {
           "maximum_bytes": 400000
@@ -164,16 +167,16 @@
   "provenance": {
     "image_requirements.file_size": {
       "type": "official",
-      "evidence_reference": "Instructions to Candidates / Combined Technical Services 2025 - Photograph upload instructions (https://www.tnpsc.gov.in/static_pdf/document/instructions-to-candiates.pdf)",
+      "evidence_reference": "Kerala PSC FAQ / One Time Registration - Photograph upload FAQ (https://psc.kerala.gov.in/kpsc/faq.php)",
       "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
-      "confidence": 5,
+      "confidence": 4,
       "approved": true
     },
     "image_requirements.dimensions": {
       "type": "official",
-      "evidence_reference": "Instructions to Candidates / Combined Technical Services 2025 - Photograph upload instructions (https://www.tnpsc.gov.in/static_pdf/document/instructions-to-candiates.pdf)",
+      "evidence_reference": "Kerala PSC FAQ / One Time Registration - Photograph upload FAQ (https://psc.kerala.gov.in/kpsc/faq.php)",
       "reasoning": "Pixel dimensions transcribed from the cited source.",
-      "confidence": 5,
+      "confidence": 4,
       "approved": true
     },
     "image_requirements.formats.preferred_format": {

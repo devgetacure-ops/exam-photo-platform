@@ -2,7 +2,7 @@
 
 **For the owner, not the research tool.** Copy everything below the line into
 the research AI. It is self-contained: the examination list, the rules and the
-output format are all inline. If the tool cannot cover 132 examinations
+output format are all inline. If the tool cannot cover 131 examinations
 in one run, run it again with the same prompt and add "continue from the
 examinations listed under Not reached in the previous coverage.md". Put the JSON
 it returns somewhere outside the repository first: each fact is checked against
@@ -177,7 +177,7 @@ list. Return valid JSON only, UTF-8, with no comments inside it.
   later run can continue from exactly there.
 - **Doubts:** anything you left out because two official sources disagreed.
 
-## The examinations (132)
+## The examinations (131)
 
 Work through them in this order. The "also called" column is there to help you
 recognise each one; the key is what goes in the JSON.
@@ -198,7 +198,7 @@ recognise each one; the key is what goes in the JSON.
 | Bihar Police Constable Recruitment | Central Selection Board of Constable, Bihar | Bihar Police, Bihar Police Constable, CSBC Bihar Police | `bihar-police-constable-recruitment` |
 | Bihar Secondary Teacher Eligibility Test | Bihar School Examination Board | Bihar STET, BSEB STET, STET Bihar | `bihar-secondary-teacher-eligibility-test` |
 | BITS Admission Test | Birla Institute of Technology and Science Pilani | BITSAT, BITS Pilani | `bits-admission-test` |
-| BPSC Current Recruitment Photograph Specification | Bihar Public Service Commission | BPSC, Bihar PSC | `bpsc-current-recruitment-photograph-specification` |
+| BPSC Online Application | Bihar Public Service Commission | BPSC, Bihar PSC | `bpsc-online-application` |
 | BPSC Teacher Recruitment Examination (TRE) | Bihar Public Service Commission | BPSC TRE, Bihar Teacher Recruitment, BPSC Teacher | `bpsc-teacher-recruitment-examination-tre` |
 | BSSC Second Inter-Level Combined Competitive Examination | Bihar Staff Selection Commission | BSSC Inter Level, Bihar SSC Inter Level | `bssc-second-inter-level-combined-competitive-examination` |
 | CBSE Classes IX/XI Registration 2025-26 | Central Board of Secondary Education | CBSE Registration, CBSE Class 9 Registration, CBSE Class 11 Registration | `cbse-classes-ix-xi-registration-2025-26` |
@@ -208,7 +208,7 @@ recognise each one; the key is what goes in the JSON.
 | CUET (PG) 2026 | National Testing Agency | CUET PG, Common University Entrance Test PG | `cuet-pg-2026` |
 | CUET (UG) 2026 | National Testing Agency | CUET UG, CUET, Common University Entrance Test | `cuet-ug-2026` |
 | Delhi Police Constable (Executive) | Staff Selection Commission / Delhi Police | Delhi Police Constable, Delhi Police | `delhi-police-constable-executive` |
-| DSSSB Major Recruitment Examination Family | Delhi Subordinate Services Selection Board | DSSSB, Delhi SSSB | `dsssb-major-recruitment-examination-family` |
+| DSSSB Recruitment Examinations | Delhi Subordinate Services Selection Board | DSSSB, Delhi SSSB | `dsssb-recruitment-examinations` |
 | GATE 2026 | IIT Guwahati | Graduate Aptitude Test in Engineering, GATE | `gate-2026` |
 | GIC Assistant Manager 2024-25 | General Insurance Corporation of India | GIC AM | `gic-assistant-manager-2024-25` |
 | Gujarat Police Lokrakshak Recruitment | Gujarat Police Recruitment Board | Gujarat Lokrakshak, LRD, Gujarat Police Constable | `gujarat-police-lokrakshak-recruitment` |
@@ -221,8 +221,8 @@ recognise each one; the key is what goes in the JSON.
 | IBPS CRP PO/MT-XVI | Institute of Banking Personnel Selection | IBPS PO, IBPS PO MT, IBPS CRP PO | `ibps-crp-po-mt-xvi` |
 | IBPS CRP Regional Rural Banks-XIV | Institute of Banking Personnel Selection | IBPS RRB, IBPS Regional Rural Banks | `ibps-crp-regional-rural-banks-xiv` |
 | IBPS CRP Specialist Officers-XVI | Institute of Banking Personnel Selection | IBPS SO, IBPS Specialist Officer | `ibps-crp-specialist-officers-xvi` |
-| ICAI Examination Portal Photograph (current portal scope) | Institute of Chartered Accountants of India | ICAI, CA, CA Foundation, CA Intermediate | `icai-examination-portal-photograph-current-portal-scope` |
-| ICSI Student Registration / Examination Account Photograph | Institute of Company Secretaries of India | ICSI, CS, Company Secretary | `icsi-student-registration-examination-account-photograph` |
+| ICAI Examination Portal | Institute of Chartered Accountants of India | ICAI, CA, CA Foundation, CA Intermediate | `icai-examination-portal` |
+| ICSI Student Registration and Examination | Institute of Company Secretaries of India | ICSI, CS, Company Secretary | `icsi-student-registration-and-examination` |
 | Indian Air Force Agniveervayu Recruitment | Indian Air Force | Agniveervayu, IAF Agniveer, Air Force Agniveer | `indian-air-force-agniveervayu-recruitment` |
 | Indian Army Agniveer CEE 2025-26 - online upload | Indian Army | Agniveer, Army Agniveer, Agniveer CEE, Agnipath | `indian-army-agniveer-cee-2025-26-online-upload` |
 | Indian Army Agniveer Recruitment | Indian Army | Agniveer, Army Agniveer, Agnipath | `indian-army-agniveer-recruitment` |
@@ -235,11 +235,11 @@ recognise each one; the key is what goes in the JSON.
 | Joint Entrance Examination Council Uttar Pradesh Polytechnic Entrance | Joint Entrance Examination Council Uttar Pradesh | JEECUP, UP Polytechnic | `joint-entrance-examination-council-uttar-pradesh-polytechnic-entrance` |
 | JSSC Combined Graduate Level Examination | Jharkhand Staff Selection Commission | JSSC CGL, Jharkhand CGL | `jssc-combined-graduate-level-examination` |
 | Karnataka Common Entrance Test 2026 | Karnataka Examinations Authority | KCET 2026, KCET, Karnataka CET | `karnataka-common-entrance-test-2026` |
-| Karnataka PSC Current Recruitment Portal Photograph | Karnataka Public Service Commission | KPSC, Karnataka PSC | `karnataka-psc-current-recruitment-portal-photograph` |
+| Karnataka PSC Online Application | Karnataka Public Service Commission | KPSC, Karnataka PSC | `karnataka-psc-online-application` |
 | Karnataka Teacher Eligibility Test | School Education Department Karnataka | KARTET, Karnataka TET | `karnataka-teacher-eligibility-test` |
 | Kendriya Vidyalaya Sangathan Direct Recruitment Examination | Kendriya Vidyalaya Sangathan | KVS, KVS Recruitment, Kendriya Vidyalaya | `kendriya-vidyalaya-sangathan-direct-recruitment-examination` |
 | Kerala Engineering Architecture Medical Entrance Examination | Commissioner for Entrance Examinations Kerala | KEAM, Kerala KEAM | `kerala-engineering-architecture-medical-entrance-examination` |
-| Kerala PSC One Time Registration Photograph | Kerala Public Service Commission | Kerala PSC, KPSC Kerala | `kerala-psc-one-time-registration-photograph` |
+| Kerala PSC One Time Registration | Kerala Public Service Commission | Kerala PSC, KPSC Kerala | `kerala-psc-one-time-registration` |
 | LIC Assistant Administrative Officers (Generalist) 2025 | Life Insurance Corporation of India | LIC AAO, LIC Assistant Administrative Officer | `lic-assistant-administrative-officers-generalist-2025` |
 | MAH MBA/MMS CET | State Common Entrance Test Cell Maharashtra | MAH MBA CET, MBA CET, MAH CET MBA | `mah-mba-mms-cet` |
 | Maharashtra Police Recruitment | Maharashtra Police | Maharashtra Police, Maharashtra Police Constable | `maharashtra-police-recruitment` |
@@ -249,7 +249,7 @@ recognise each one; the key is what goes in the JSON.
 | MP Patwari Recruitment Examination | Madhya Pradesh Employees Selection Board | MP Patwari, MPESB Patwari, Madhya Pradesh Patwari | `mp-patwari-recruitment-examination` |
 | MP Police Constable Recruitment Test | Madhya Pradesh Employees Selection Board | MP Police, MP Police Constable, MPESB Constable | `mp-police-constable-recruitment-test` |
 | MP Primary School Teacher Eligibility Test | Madhya Pradesh Employees Selection Board | MP TET, MPTET Primary, MP Varg 3 | `mp-primary-school-teacher-eligibility-test` |
-| MPSC General Online Application Photograph Instruction | Maharashtra Public Service Commission | MPSC, Maharashtra PSC | `mpsc-general-online-application-photograph-instruction` |
+| MPSC Online Application | Maharashtra Public Service Commission | MPSC, Maharashtra PSC | `mpsc-online-application` |
 | NABARD Grade A 2025 | National Bank for Agriculture and Rural Development | NABARD Grade A, NABARD Assistant Manager | `nabard-grade-a-2025` |
 | NEET (UG) 2026 | National Testing Agency | NEET UG, NEET, National Eligibility cum Entrance Test | `neet-ug-2026` |
 | NEET-PG | National Board of Examinations in Medical Sciences | — | `neet-pg` |
@@ -265,11 +265,10 @@ recognise each one; the key is what goes in the JSON.
 | Rajasthan Pre-D.El.Ed Examination (BSTC) | Vardhman Mahaveer Open University / designated authority | BSTC, Rajasthan BSTC, Rajasthan Pre DElEd | `rajasthan-pre-d-el-ed-examination-bstc` |
 | Rajasthan Pre-Teacher Education Test | Rajasthan PTET conducting university | PTET, Rajasthan PTET | `rajasthan-pre-teacher-education-test` |
 | RBI Assistant - Panel Year 2025 | Reserve Bank of India | RBI Assistant | `rbi-assistant-panel-year-2025` |
-| RBI Assistant - Panel Year 2025 (live photograph) | Reserve Bank of India | RBI Assistant | `rbi-assistant-panel-year-2025-live-photograph-live-capture` |
-| RBI Officers in Grade B 2026 - prior-cycle official fallback | Reserve Bank of India | RBI Grade B, RBI Officer Grade B | `rbi-officers-in-grade-b-2026-prior-cycle-official-fallback` |
+| RBI Officers in Grade B 2026 | Reserve Bank of India | RBI Grade B, RBI Officer Grade B | `rbi-officers-in-grade-b-2026` |
 | RPF Constable | Railway Protection Force / RRB | RPF, Railway Protection Force Constable | `rpf-constable` |
 | RPF Sub-Inspector | Railway Protection Force / RRB | RPF SI, Railway Protection Force Sub Inspector | `rpf-sub-inspector` |
-| RPSC Current Online Application Photograph | Rajasthan Public Service Commission | RPSC, Rajasthan PSC | `rpsc-current-online-application-photograph` |
+| RPSC Online Application | Rajasthan Public Service Commission | RPSC, Rajasthan PSC | `rpsc-online-application` |
 | RRB JE/DMS/CMA | Railway Recruitment Boards | RRB JE, RRB Junior Engineer, Railway Junior Engineer | `rrb-je-dms-cma` |
 | RRB Level-1 Posts - CEN 08/2024 | Railway Recruitment Boards | RRB Group D, Railway Group D, RRB Level 1 | `rrb-level-1-posts-cen-08-2024` |
 | RRB Ministerial and Isolated Categories | Railway Recruitment Boards | RRB Ministerial | `rrb-ministerial-and-isolated-categories` |
@@ -302,7 +301,7 @@ recognise each one; the key is what goes in the JSON.
 | UGC-NET June 2026 | National Testing Agency | UGC NET, NET, National Eligibility Test | `ugc-net-june-2026` |
 | UP B.Ed Joint Entrance Examination | Bundelkhand University Jhansi | UP BEd JEE, UP BEd | `up-b-ed-joint-entrance-examination` |
 | UPPSC Combined State/Upper Subordinate Services Examination (PCS) | Uttar Pradesh Public Service Commission | UPPSC PCS, UP PCS | `uppsc-combined-state-upper-subordinate-services-examination-pcs` |
-| UPPSC One Time Registration Photograph | Uttar Pradesh Public Service Commission | UPPSC, UPPSC OTR | `uppsc-one-time-registration-photograph` |
+| UPPSC One Time Registration | Uttar Pradesh Public Service Commission | UPPSC, UPPSC OTR | `uppsc-one-time-registration` |
 | UPPSC Review Officer / Assistant Review Officer | Uttar Pradesh Public Service Commission | UPPSC RO ARO, RO ARO, UP Review Officer | `uppsc-review-officer-assistant-review-officer` |
 | UPSC CAPF (Assistant Commandants) Examination 2026 | Union Public Service Commission | CAPF AC 2026, CAPF, UPSC CAPF, CAPF AC, Central Armed Police Forces | `upsc-capf-assistant-commandants-examination-2026` |
 | UPSC Civil Services Examination 2026 | Union Public Service Commission | CSE 2026, UPSC CSE, CSE, IAS, Civil Services Examination, UPSC Prelims | `upsc-civil-services-examination-2026` |
@@ -312,7 +311,7 @@ recognise each one; the key is what goes in the JSON.
 | UPSSSC Preliminary Eligibility Test (PET) | Uttar Pradesh Subordinate Services Selection Commission | UPSSSC PET, UP PET | `upsssc-preliminary-eligibility-test-pet` |
 | Uttar Pradesh Police Constable Recruitment | Uttar Pradesh Police Recruitment and Promotion Board | UP Police, UP Police Constable, UP Constable, UPPRPB | `uttar-pradesh-police-constable-recruitment` |
 | WBJEE 2026 | West Bengal Joint Entrance Examinations Board | West Bengal Joint Entrance Examination, WBJEE | `wbjee-2026` |
-| WBPSC / WBCS Current Online Application Photograph | West Bengal Public Service Commission | WBPSC, WBCS, West Bengal PSC | `wbpsc-wbcs-current-online-application-photograph` |
+| WBPSC / WBCS Online Application | West Bengal Public Service Commission | WBPSC, WBCS, West Bengal PSC | `wbpsc-wbcs-online-application` |
 | West Bengal Primary Teacher Eligibility Test | West Bengal Board of Primary Education | WB TET, WB Primary TET | `west-bengal-primary-teacher-eligibility-test` |
 | West Bengal School Service Commission SLST Assistant Teacher Recruitment | West Bengal School Service Commission | WBSSC SLST, SLST, West Bengal SSC Teacher | `west-bengal-school-service-commission-slst-assistant-teacher-recruitment` |
 | Xavier Aptitude Test | XLRI Xavier School of Management | XAT, XLRI XAT | `xavier-aptitude-test` |

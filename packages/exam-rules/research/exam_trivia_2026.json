@@ -261,20 +261,6 @@
         "cycle": "2023"
       }
     ],
-    "dsssb-major-recruitment-examination-family": [
-      {
-        "kind": "volume",
-        "text": "In 2024-25, DSSSB held written examinations for 414201 candidates across 52 post codes.",
-        "source_url": "https://dsssb.delhi.gov.in/sites/default/files/DSSSB/circulars-orders/annual_report_2024-25_s.pdf",
-        "source_title": "DSSSB Annual Report 2024-25",
-        "source_quote": "Board conducted written examinations of 414201 numbers of candidates of 52 post codes during the year 2024-25.",
-        "publisher": "DSSSB",
-        "official_source": true,
-        "as_of": "2026-09-13",
-        "confidence": 5,
-        "cycle": "2024-25"
-      }
-    ],
     "gate-2026": [
       {
         "kind": "structure",
@@ -423,32 +409,6 @@
         "as_of": "2026-09-13",
         "confidence": 5,
         "cycle": "2026"
-      }
-    ],
-    "icai-examination-portal-photograph-current-portal-scope": [
-      {
-        "kind": "history",
-        "text": "ICAI announced that the Chartered Accountants Final Examination is held twice a year from the May 2026 examination onwards.",
-        "source_url": "https://www.icai.org/category/examination-students",
-        "source_title": "ICAI Examination Students announcements",
-        "source_quote": "Chartered Accountants Final Examination to be held twice a year from May 2026 Examination onwards",
-        "publisher": "ICAI",
-        "official_source": true,
-        "as_of": "2026-09-13",
-        "confidence": 5,
-        "cycle": "May 2026"
-      },
-      {
-        "kind": "process",
-        "text": "From May 2026, the CA exam form lets candidates choose a preferred exam centre directly, where they once picked only a zone or city.",
-        "source_url": "https://www.icai.org/post/exam-announ020326",
-        "source_title": "ICAI announcement on examination-centre selection, May 2026",
-        "source_quote": "unlike previous examinations where students selected only a zone or city, the online application form for May-2026 CA examinations will now provide the option to select the preferred exam centre in zone/city directly.",
-        "publisher": "ICAI",
-        "official_source": true,
-        "as_of": "2026-09-13",
-        "confidence": 5,
-        "cycle": "May 2026"
       }
     ],
     "indian-air-force-agniveervayu-recruitment": [
@@ -629,19 +589,6 @@
         "cycle": "2026"
       }
     ],
-    "kerala-psc-one-time-registration-photograph": [
-      {
-        "kind": "process",
-        "text": "To apply for any Kerala PSC post, a candidate first creates a profile through One Time Registration.",
-        "source_url": "https://keralapsc.gov.in/otr-instructions-candidates",
-        "source_title": "Kerala PSC OTR Instructions to Candidates",
-        "source_quote": "To apply for a notified post, you have to register and create a profile using One Time Registration",
-        "publisher": "Kerala PSC",
-        "official_source": true,
-        "as_of": "2026-09-13",
-        "confidence": 5
-      }
-    ],
     "lic-assistant-administrative-officers-generalist-2025": [
       {
         "kind": "process",
@@ -761,19 +708,6 @@
         "as_of": "2026-09-13",
         "confidence": 5,
         "cycle": "2023"
-      }
-    ],
-    "mpsc-general-online-application-photograph-instruction": [
-      {
-        "kind": "process",
-        "text": "On MPSC's online application system, profile creation is a one-time step after creating a user account.",
-        "source_url": "https://mpsconline.gov.in/downloads/userManual.pdf",
-        "source_title": "MPSC Online Application User Manual",
-        "source_quote": "Step 1: New User Registration / Create User Account (1st time user) 5 Step 2: Profile Creation (One time activity)",
-        "publisher": "MPSC",
-        "official_source": true,
-        "as_of": "2026-09-13",
-        "confidence": 5
       }
     ],
     "nabard-grade-a-2025": [
@@ -1020,9 +954,7 @@
         "as_of": "2026-09-13",
         "confidence": 5,
         "cycle": "2025"
-      }
-    ],
-    "rbi-assistant-panel-year-2025-live-photograph-live-capture": [
+      },
       {
         "kind": "process",
         "text": "The RBI Assistant exam runs in three phases: preliminary, mains and a language proficiency test.",
@@ -1062,31 +994,6 @@
         "as_of": "2026-09-13",
         "confidence": 5,
         "cycle": "2024"
-      }
-    ],
-    "rpsc-current-online-application-photograph": [
-      {
-        "kind": "history",
-        "text": "RPSC launched One Time Registration on 10 January 2022.",
-        "source_url": "https://rpsc.rajasthan.gov.in/Static/AnnualReport/English/2021-2022.pdf",
-        "source_title": "RPSC Annual Report 2021-22",
-        "source_quote": "On 10th January 2022, in the larger interest of candidates, the Commission launched the facility of One Time Registration of profile.",
-        "publisher": "RPSC",
-        "official_source": true,
-        "as_of": "2026-09-13",
-        "confidence": 5,
-        "cycle": "2022"
-      },
-      {
-        "kind": "process",
-        "text": "With RPSC's One Time Registration, a candidate registers once on the recruitment portal and gets a unique registration number.",
-        "source_url": "https://rpsc.rajasthan.gov.in/Static/AnnualReport/English/2021-2022.pdf",
-        "source_title": "RPSC Annual Report 2021-22",
-        "source_quote": "Now a candidate has to register once only on the recruitment portal to get a unique one time registration number.",
-        "publisher": "RPSC",
-        "official_source": true,
-        "as_of": "2026-09-13",
-        "confidence": 5
       }
     ],
     "rrb-je-dms-cma": [
@@ -1525,30 +1432,6 @@
         "cycle": "2025"
       }
     ],
-    "uppsc-one-time-registration-photograph": [
-      {
-        "kind": "process",
-        "text": "A candidate's UPPSC OTR number is the only registration number used to apply for any post the Commission advertises.",
-        "source_url": "https://uppsc.up.nic.in/default.aspx",
-        "source_title": "UPPSC home page — OTR notice",
-        "source_quote": "Applicant's OTR number is the only regsitration number for submitting application form against any post published by the commission.",
-        "publisher": "UPPSC",
-        "official_source": true,
-        "as_of": "2026-09-13",
-        "confidence": 5
-      },
-      {
-        "kind": "process",
-        "text": "UPPSC issues the OTR number instantly, and a candidate can apply for a post only after Lock and Final Submit.",
-        "source_url": "https://uppsc.pariksha.nic.in/OuterPages/OnlineInstruction_English.html",
-        "source_title": "UPPSC General Instructions for Online OTR Registration",
-        "source_quote": "Candidate can get the OTR number instantly … Candidates can apply for the advertised post only after doing \" Lock and Final Submit \"",
-        "publisher": "UPPSC",
-        "official_source": true,
-        "as_of": "2026-09-13",
-        "confidence": 5
-      }
-    ],
     "uppsc-review-officer-assistant-review-officer": [
       {
         "kind": "volume",
@@ -1717,6 +1600,121 @@
         "as_of": "2026-09-13",
         "confidence": 5,
         "cycle": "2025"
+      }
+    ],
+    "dsssb-recruitment-examinations": [
+      {
+        "kind": "volume",
+        "text": "In 2024-25, DSSSB held written examinations for 414201 candidates across 52 post codes.",
+        "source_url": "https://dsssb.delhi.gov.in/sites/default/files/DSSSB/circulars-orders/annual_report_2024-25_s.pdf",
+        "source_title": "DSSSB Annual Report 2024-25",
+        "source_quote": "Board conducted written examinations of 414201 numbers of candidates of 52 post codes during the year 2024-25.",
+        "publisher": "DSSSB",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2024-25"
+      }
+    ],
+    "icai-examination-portal": [
+      {
+        "kind": "history",
+        "text": "ICAI announced that the Chartered Accountants Final Examination is held twice a year from the May 2026 examination onwards.",
+        "source_url": "https://www.icai.org/category/examination-students",
+        "source_title": "ICAI Examination Students announcements",
+        "source_quote": "Chartered Accountants Final Examination to be held twice a year from May 2026 Examination onwards",
+        "publisher": "ICAI",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "May 2026"
+      },
+      {
+        "kind": "process",
+        "text": "From May 2026, the CA exam form lets candidates choose a preferred exam centre directly, where they once picked only a zone or city.",
+        "source_url": "https://www.icai.org/post/exam-announ020326",
+        "source_title": "ICAI announcement on examination-centre selection, May 2026",
+        "source_quote": "unlike previous examinations where students selected only a zone or city, the online application form for May-2026 CA examinations will now provide the option to select the preferred exam centre in zone/city directly.",
+        "publisher": "ICAI",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "May 2026"
+      }
+    ],
+    "kerala-psc-one-time-registration": [
+      {
+        "kind": "process",
+        "text": "To apply for any Kerala PSC post, a candidate first creates a profile through One Time Registration.",
+        "source_url": "https://keralapsc.gov.in/otr-instructions-candidates",
+        "source_title": "Kerala PSC OTR Instructions to Candidates",
+        "source_quote": "To apply for a notified post, you have to register and create a profile using One Time Registration",
+        "publisher": "Kerala PSC",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5
+      }
+    ],
+    "mpsc-online-application": [
+      {
+        "kind": "process",
+        "text": "On MPSC's online application system, profile creation is a one-time step after creating a user account.",
+        "source_url": "https://mpsconline.gov.in/downloads/userManual.pdf",
+        "source_title": "MPSC Online Application User Manual",
+        "source_quote": "Step 1: New User Registration / Create User Account (1st time user) 5 Step 2: Profile Creation (One time activity)",
+        "publisher": "MPSC",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5
+      }
+    ],
+    "rpsc-online-application": [
+      {
+        "kind": "history",
+        "text": "RPSC launched One Time Registration on 10 January 2022.",
+        "source_url": "https://rpsc.rajasthan.gov.in/Static/AnnualReport/English/2021-2022.pdf",
+        "source_title": "RPSC Annual Report 2021-22",
+        "source_quote": "On 10th January 2022, in the larger interest of candidates, the Commission launched the facility of One Time Registration of profile.",
+        "publisher": "RPSC",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5,
+        "cycle": "2022"
+      },
+      {
+        "kind": "process",
+        "text": "With RPSC's One Time Registration, a candidate registers once on the recruitment portal and gets a unique registration number.",
+        "source_url": "https://rpsc.rajasthan.gov.in/Static/AnnualReport/English/2021-2022.pdf",
+        "source_title": "RPSC Annual Report 2021-22",
+        "source_quote": "Now a candidate has to register once only on the recruitment portal to get a unique one time registration number.",
+        "publisher": "RPSC",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5
+      }
+    ],
+    "uppsc-one-time-registration": [
+      {
+        "kind": "process",
+        "text": "A candidate's UPPSC OTR number is the only registration number used to apply for any post the Commission advertises.",
+        "source_url": "https://uppsc.up.nic.in/default.aspx",
+        "source_title": "UPPSC home page — OTR notice",
+        "source_quote": "Applicant's OTR number is the only regsitration number for submitting application form against any post published by the commission.",
+        "publisher": "UPPSC",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5
+      },
+      {
+        "kind": "process",
+        "text": "UPPSC issues the OTR number instantly, and a candidate can apply for a post only after Lock and Final Submit.",
+        "source_url": "https://uppsc.pariksha.nic.in/OuterPages/OnlineInstruction_English.html",
+        "source_title": "UPPSC General Instructions for Online OTR Registration",
+        "source_quote": "Candidate can get the OTR number instantly … Candidates can apply for the advertised post only after doing \" Lock and Final Submit \"",
+        "publisher": "UPPSC",
+        "official_source": true,
+        "as_of": "2026-09-13",
+        "confidence": 5
       }
     ]
   }

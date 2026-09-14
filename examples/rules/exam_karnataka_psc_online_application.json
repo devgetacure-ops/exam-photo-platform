@@ -1,104 +1,80 @@
 {
   "schema_version": "1.1",
-  "rule_id": "kerala-psc-one-time-registration-photograph",
+  "rule_id": "karnataka-psc-online-application",
   "rule_version": "1.0.0",
   "status": "verified",
   "exam": {
-    "exam_id": "kerala-psc-one-time-registration-photograph",
-    "exam_name": "Kerala PSC One Time Registration Photograph",
-    "conducting_body": "Kerala Public Service Commission",
+    "exam_id": "karnataka-psc-online-application",
+    "exam_name": "Karnataka PSC Online Application",
+    "conducting_body": "Karnataka Public Service Commission",
     "examination_year": 2026,
-    "application_cycle": "current OTR",
+    "application_cycle": "current",
     "aliases": [
-      "Kerala PSC",
-      "KPSC Kerala"
+      "KPSC",
+      "Karnataka PSC"
     ],
     "application_stage": "application",
-    "jurisdiction": "Kerala",
+    "jurisdiction": "Karnataka",
     "category": "state_psc"
   },
   "source_evidence": [
     {
-      "source_type": "official_webpage",
-      "official_source": true,
-      "captured_wording": "150 pixels width and 200 pixels height; 30 Kb; JPG; white/light coloured background; face at the centre; front facial pose; eyes open; religious custom",
-      "source_url": "https://psc.kerala.gov.in/kpsc/faq.php",
-      "document_title": "Kerala PSC FAQ / One Time Registration",
-      "section_name": "Photograph upload FAQ"
+      "source_type": "official_application_portal",
+      "official_source": false,
+      "captured_wording": "100 x 100 pixels to 150 x 150 pixels",
+      "source_url": "https://apply.registernow.in/KPSC/Registration/",
+      "document_title": "KPSC recruitment registration portal"
     },
     {
-      "source_type": "official_pdf",
+      "source_type": "official_webpage",
       "official_source": true,
-      "captured_wording": "name of the applicant and the date; bottom; within six months",
-      "source_url": "https://keralapsc.gov.in/sites/default/files/2024-11/noti-373-24.pdf",
-      "document_title": "Kerala PSC Notification No. 373/2024",
-      "document_identifier": "373/2024"
+      "captured_wording": "Minimum 100 x 100 pixels; Maximum 150 x 150 pixels; Max File Size: 200KB; ONLY JPG/JPEG/PNG",
+      "source_url": "https://apply.registernow.in/KPSC/Registration/",
+      "document_title": "KPSC current registration portal",
+      "section_name": "Photograph"
     }
   ],
   "image_requirements": {
     "dimensions": {
-      "mode": "exact",
-      "width_px": 150,
-      "height_px": 200,
-      "aspect_ratio": "3:4"
+      "mode": "range",
+      "minimum_width_px": 100,
+      "maximum_width_px": 150,
+      "minimum_height_px": 100,
+      "maximum_height_px": 150
     },
     "file_size": {
-      "maximum_bytes": 30000,
-      "size_unit_as_published": "Kb",
-      "published_maximum": 30.0
+      "maximum_bytes": 200000,
+      "size_unit_as_published": "KB",
+      "published_maximum": 200.0
     },
     "formats": {
       "allowed_formats": [
-        "jpg"
+        "jpg",
+        "jpeg",
+        "png"
       ],
-      "preferred_format": "jpg",
+      "preferred_format": "jpeg",
       "preserve_transparency": false,
       "strip_metadata": true,
       "colour_space": "sRGB"
     },
     "background": {
-      "mode": "plain_light",
-      "fallback_colour": "#FFFFFF"
+      "mode": "unspecified"
     },
     "composition": {
       "crop_profile": "tight_exam_portrait",
       "complete_hair_required": true,
       "complete_chin_required": true,
-      "ears_policy": "unspecified",
-      "face_centred": true,
-      "frontal_pose": true,
-      "eye_visibility": true
+      "ears_policy": "unspecified"
     },
-    "appearance": {
-      "headwear": {
-        "policy": "conditional",
-        "condition": "Cap/goggles prohibited except where required by religious custom; face and shoulders must remain clear.",
-        "source_wording": "religious custom"
-      },
-      "recency_maximum_days": 180,
-      "imprint": {
-        "policy": "required",
-        "fields": [
-          "candidate_name",
-          "photograph_date"
-        ],
-        "position": "bottom"
-      }
-    },
+    "appearance": {},
     "filename": {
       "mode": "unspecified",
       "extension_required": true,
       "case_sensitive": false
     },
     "exceptional_instructions": {
-      "printed_name": true,
-      "printed_date": true,
-      "headwear_restriction": true,
-      "recent_photo_requirement": true,
-      "processing_support_status": "partially_supported",
-      "unsupported_requirement_reasons": [
-        "The body requires the candidate's name and/or the photograph date printed on the image. The engine has no text-rendering capability, so the photograph is produced correctly sized and composed but without the imprint, which the candidate must add before uploading."
-      ]
+      "processing_support_status": "supported"
     }
   },
   "requirements": [
@@ -108,15 +84,10 @@
       "requirement_type": "photograph",
       "submission_method": "file_upload",
       "requirement_status": "mandatory",
-      "platform_support": "partially_supported",
+      "platform_support": "supported",
       "applicability": "All applicants",
-      "content_instructions": "Uploaded candidate photograph; format: JPG; file size: up to 30 Kb; dimensions: 150 x 200 px; recency: within 180 days.",
-      "evidence_status": "Evidence tier as recorded in supplied photograph report",
-      "rejection_conditions": [
-        "Non-frontal or side-facing pose can fail the stated requirement.",
-        "Eyes must be visible/open as stated.",
-        "Caps/hats are restricted; any permitted religious covering must leave required facial features visible."
-      ]
+      "content_instructions": "Uploaded candidate photograph; format: JPG/JPEG/PNG; file size: up to 200 KB; dimensions: 100 x 100 to 150 x 150 px.",
+      "evidence_status": "Evidence tier as recorded in supplied photograph report"
     },
     {
       "requirement_id": "candidate_signature",
@@ -125,13 +96,13 @@
       "submission_method": "file_upload",
       "requirement_status": "mandatory",
       "platform_support": "supported",
-      "applicability": "All OTR registrants",
-      "content_instructions": "JPG; maximum 30 KB; 150\u00d7100 px; blue/black ink on white paper; no minimum published",
-      "evidence_status": "Current official Kerala PSC Thulasi portal",
+      "applicability": "All registrants",
+      "content_instructions": "JPG/JPEG/PNG; maximum 50 KB; 50\u00d750 to 150\u00d7150 px; no minimum file size published",
+      "evidence_status": "Current official KPSC registration portal",
       "file_spec": {
         "file_size": {
-          "maximum_bytes": 30000,
-          "published_maximum": 30,
+          "maximum_bytes": 50000,
+          "published_maximum": 50,
           "size_unit_as_published": "KB"
         },
         "formats": {
@@ -139,6 +110,13 @@
             "jpg"
           ],
           "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "range",
+          "minimum_width_px": 50,
+          "maximum_width_px": 150,
+          "minimum_height_px": 50,
+          "maximum_height_px": 150
         }
       }
     },
@@ -157,21 +135,32 @@
           "maximum_bytes": 400000
         }
       }
+    },
+    {
+      "requirement_id": "claim_supporting_documents",
+      "requirement_name": "Claim-supporting documents",
+      "requirement_type": "other",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "not_yet_supported",
+      "applicability": "Where the active recruitment asks for documentary proof",
+      "content_instructions": "not_found",
+      "evidence_status": "Current registration page confirms document upload stage but publishes no universal certificate file-size maximum."
     }
   ],
   "provenance": {
     "image_requirements.file_size": {
       "type": "official",
-      "evidence_reference": "Kerala PSC FAQ / One Time Registration - Photograph upload FAQ (https://psc.kerala.gov.in/kpsc/faq.php)",
+      "evidence_reference": "KPSC current registration portal - Photograph (https://apply.registernow.in/KPSC/Registration/)",
       "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
-      "confidence": 4,
+      "confidence": 5,
       "approved": true
     },
     "image_requirements.dimensions": {
       "type": "official",
-      "evidence_reference": "Kerala PSC FAQ / One Time Registration - Photograph upload FAQ (https://psc.kerala.gov.in/kpsc/faq.php)",
+      "evidence_reference": "KPSC current registration portal - Photograph (https://apply.registernow.in/KPSC/Registration/)",
       "reasoning": "Pixel dimensions transcribed from the cited source.",
-      "confidence": 4,
+      "confidence": 5,
       "approved": true
     },
     "image_requirements.formats.preferred_format": {

@@ -43,7 +43,7 @@ describe("the examination aliases", () => {
     const entries = catalogue();
 
     it("covers the catalogue", () => {
-        expect(entries.length).toBe(132);
+        expect(entries.length).toBe(131);
         const without = entries.filter((entry) => entry.aliases.length === 0);
         // One record is its own short form already: NEET-PG.
         expect(without.map((entry) => entry.name)).toEqual(["NEET-PG"]);
@@ -74,7 +74,7 @@ describe("the examination aliases", () => {
             .filter(([, names]) => names.length > 1)
             .map(([key, names]) => `${key}: ${names.join(" / ")}`);
         // Two records of the *same* examination legitimately share a short
-        // form — the RBI Assistant live-photograph variant, and the Army's
+        // form — the Army's
         // Agniveer entries, which are stages of one recruitment rather than
         // different examinations. So this asserts the known list rather than
         // zero: a new line appearing here means an alias has been hung on an
@@ -84,7 +84,6 @@ describe("the examination aliases", () => {
                 "Indian Army::agniveer: Indian Army Agniveer CEE 2025-26 - online upload / Indian Army Agniveer Recruitment",
                 "Indian Army::army agniveer: Indian Army Agniveer CEE 2025-26 - online upload / Indian Army Agniveer Recruitment",
                 "Indian Army::agnipath: Indian Army Agniveer CEE 2025-26 - online upload / Indian Army Agniveer Recruitment",
-                "Reserve Bank of India::rbi assistant: RBI Assistant - Panel Year 2025 / RBI Assistant - Panel Year 2025 (live photograph)",
             ].sort(),
         );
     });

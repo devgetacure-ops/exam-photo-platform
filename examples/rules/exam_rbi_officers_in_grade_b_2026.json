@@ -1,11 +1,11 @@
 {
   "schema_version": "1.1",
-  "rule_id": "rbi-officers-in-grade-b-2026-prior-cycle-official-fallback",
+  "rule_id": "rbi-officers-in-grade-b-2026",
   "rule_version": "1.0.0",
   "status": "verified",
   "exam": {
-    "exam_id": "rbi-officers-in-grade-b-2026-prior-cycle-official-fallback",
-    "exam_name": "RBI Officers in Grade B 2026 - prior-cycle official fallback",
+    "exam_id": "rbi-officers-in-grade-b-2026",
+    "exam_name": "RBI Officers in Grade B 2026",
     "conducting_body": "Reserve Bank of India",
     "examination_year": 2026,
     "application_cycle": "2026",

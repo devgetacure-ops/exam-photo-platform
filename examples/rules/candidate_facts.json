@@ -302,13 +302,13 @@
         }
       ]
     },
-    "bpsc-current-recruitment-photograph-specification": {
-      "exam_id": "bpsc-current-recruitment-photograph-specification",
-      "exam_name": "BPSC Current Recruitment Photograph Specification",
+    "bpsc-online-application": {
+      "exam_id": "bpsc-online-application",
+      "exam_name": "BPSC Online Application",
       "facts": [
         {
           "kind": "deliverables",
-          "text": "This application asks for 6 files, not only a photograph — 5 more files besides it.",
+          "text": "This application asks for 3 files, not only a photograph — 2 more files besides it.",
           "source": "https://form-mitra.com/bpsc",
           "requirement_id": null,
           "official": null,
@@ -566,7 +566,7 @@
         },
         {
           "kind": "deliverables",
-          "text": "This application asks for 5 files, not only a photograph — 4 more files besides it.",
+          "text": "This application asks for 4 files, not only a photograph — 3 more files besides it.",
           "source": "https://cdnbbsr.s3waas.gov.in/s388a839f2f6f1427879fc33ee4acf4f66/uploads/2025/12/202512161583029269.pdf",
           "requirement_id": null,
           "official": null,
@@ -620,7 +620,7 @@
         },
         {
           "kind": "deliverables",
-          "text": "This application asks for 7 files, not only a photograph — 6 more files besides it.",
+          "text": "This application asks for 6 files, not only a photograph — 5 more files besides it.",
           "source": "https://cdnbbsr.s3waas.gov.in/s3d1a21da7bca4abff8b0b61b87597de73/uploads/2026/01/202601031633478370.pdf",
           "requirement_id": null,
           "official": null,
@@ -666,9 +666,9 @@
         }
       ]
     },
-    "dsssb-major-recruitment-examination-family": {
-      "exam_id": "dsssb-major-recruitment-examination-family",
-      "exam_name": "DSSSB Major Recruitment Examination Family",
+    "dsssb-recruitment-examinations": {
+      "exam_id": "dsssb-recruitment-examinations",
+      "exam_name": "DSSSB Recruitment Examinations",
       "facts": [
         {
           "kind": "deliverables",
@@ -1448,9 +1448,9 @@
         }
       ]
     },
-    "icai-examination-portal-photograph-current-portal-scope": {
-      "exam_id": "icai-examination-portal-photograph-current-portal-scope",
-      "exam_name": "ICAI Examination Portal Photograph (current portal scope)",
+    "icai-examination-portal": {
+      "exam_id": "icai-examination-portal",
+      "exam_name": "ICAI Examination Portal",
       "facts": [
         {
           "kind": "file_size",
@@ -1494,9 +1494,9 @@
         }
       ]
     },
-    "icsi-student-registration-examination-account-photograph": {
-      "exam_id": "icsi-student-registration-examination-account-photograph",
-      "exam_name": "ICSI Student Registration / Examination Account Photograph",
+    "icsi-student-registration-and-examination": {
+      "exam_id": "icsi-student-registration-and-examination",
+      "exam_name": "ICSI Student Registration and Examination",
       "facts": [
         {
           "kind": "file_size",
@@ -1516,7 +1516,7 @@
         },
         {
           "kind": "deliverables",
-          "text": "This application asks for 7 files, not only a photograph — 6 more files besides it.",
+          "text": "This application asks for 6 files, not only a photograph — 5 more files besides it.",
           "source": "https://smash.icsi.edu/Scripts/Registration/Instructions.aspx?ID=R2",
           "requirement_id": null,
           "official": null,
@@ -1858,9 +1858,9 @@
         }
       ]
     },
-    "karnataka-psc-current-recruitment-portal-photograph": {
-      "exam_id": "karnataka-psc-current-recruitment-portal-photograph",
-      "exam_name": "Karnataka PSC Current Recruitment Portal Photograph",
+    "karnataka-psc-online-application": {
+      "exam_id": "karnataka-psc-online-application",
+      "exam_name": "Karnataka PSC Online Application",
       "facts": [
         {
           "kind": "file_size",
@@ -1940,9 +1940,9 @@
         }
       ]
     },
-    "kerala-psc-one-time-registration-photograph": {
-      "exam_id": "kerala-psc-one-time-registration-photograph",
-      "exam_name": "Kerala PSC One Time Registration Photograph",
+    "kerala-psc-one-time-registration": {
+      "exam_id": "kerala-psc-one-time-registration",
+      "exam_name": "Kerala PSC One Time Registration",
       "facts": [
         {
           "kind": "file_size",
@@ -2416,9 +2416,9 @@
         }
       ]
     },
-    "mpsc-general-online-application-photograph-instruction": {
-      "exam_id": "mpsc-general-online-application-photograph-instruction",
-      "exam_name": "MPSC General Online Application Photograph Instruction",
+    "mpsc-online-application": {
+      "exam_id": "mpsc-online-application",
+      "exam_name": "MPSC Online Application",
       "facts": [
         {
           "kind": "file_size",
@@ -2632,7 +2632,7 @@
         },
         {
           "kind": "deliverables",
-          "text": "This application asks for 18 files, not only a photograph — 17 more files besides it.",
+          "text": "This application asks for 17 files, not only a photograph — 16 more files besides it.",
           "source": "https://cdnbbsr.s3waas.gov.in/s37bc1ec1d9c3426357e69acd5bf320061/uploads/2026/02/202602231394640855.pdf",
           "requirement_id": null,
           "official": null,
@@ -3181,68 +3181,6 @@
           "requirement_id": null,
           "official": false,
           "reported_by": "The Indian Express"
-        }
-      ]
-    },
-    "rbi-assistant-panel-year-2025-live-photograph-live-capture": {
-      "exam_id": "rbi-assistant-panel-year-2025-live-photograph-live-capture",
-      "exam_name": "RBI Assistant - Panel Year 2025 (live photograph)",
-      "facts": [
-        {
-          "kind": "capture",
-          "text": "This examination also photographs you live through its own portal, as well as taking the photograph you upload.",
-          "source": "https://opportunities.rbi.org.in/scripts/bs_viewcontent.aspx?Id=4912",
-          "requirement_id": null,
-          "official": null,
-          "reported_by": null
-        },
-        {
-          "kind": "file_size",
-          "text": "The photograph has to be between 20 KB and 50 KB.",
-          "source": "Recruitment for the Post of Assistant - Panel Year 2025 - Paragraph 9.6 / upload instructions (https://opportunities.rbi.org.in/scripts/bs_viewcontent.aspx?Id=4912)",
-          "requirement_id": null,
-          "official": null,
-          "reported_by": null
-        },
-        {
-          "kind": "format",
-          "text": "The only accepted formats are JPG, JPEG.",
-          "source": "https://opportunities.rbi.org.in/scripts/bs_viewcontent.aspx?Id=4912",
-          "requirement_id": null,
-          "official": null,
-          "reported_by": null
-        },
-        {
-          "kind": "deliverables",
-          "text": "This application asks for 5 files, not only a photograph — 4 more files besides it.",
-          "source": "https://opportunities.rbi.org.in/scripts/bs_viewcontent.aspx?Id=4912",
-          "requirement_id": null,
-          "official": null,
-          "reported_by": null
-        },
-        {
-          "kind": "rejection",
-          "text": "The online application is not registered unless all mandatory image fields are uploaded.",
-          "source": "https://opportunities.rbi.org.in/scripts/bs_viewcontent.aspx?Id=4912",
-          "requirement_id": null,
-          "official": null,
-          "reported_by": null
-        },
-        {
-          "kind": "rejection",
-          "text": "Unclear photograph, signature, thumb impression or declaration can lead to rejection.",
-          "source": "https://opportunities.rbi.org.in/scripts/bs_viewcontent.aspx?Id=4912",
-          "requirement_id": "recent_passport_size_photograph",
-          "official": null,
-          "reported_by": null
-        },
-        {
-          "kind": "rejection",
-          "text": "Signature or handwritten declaration in capital letters is not accepted in the cited banking-family instructions.",
-          "source": "https://opportunities.rbi.org.in/scripts/bs_viewcontent.aspx?Id=4912",
-          "requirement_id": "candidate_signature",
-          "official": null,
-          "reported_by": null
         },
         {
           "kind": "process",
@@ -3254,9 +3192,9 @@
         }
       ]
     },
-    "rbi-officers-in-grade-b-2026-prior-cycle-official-fallback": {
-      "exam_id": "rbi-officers-in-grade-b-2026-prior-cycle-official-fallback",
-      "exam_name": "RBI Officers in Grade B 2026 - prior-cycle official fallback",
+    "rbi-officers-in-grade-b-2026": {
+      "exam_id": "rbi-officers-in-grade-b-2026",
+      "exam_name": "RBI Officers in Grade B 2026",
       "facts": [
         {
           "kind": "file_size",
@@ -3424,9 +3362,9 @@
         }
       ]
     },
-    "rpsc-current-online-application-photograph": {
-      "exam_id": "rpsc-current-online-application-photograph",
-      "exam_name": "RPSC Current Online Application Photograph",
+    "rpsc-online-application": {
+      "exam_id": "rpsc-online-application",
+      "exam_name": "RPSC Online Application",
       "facts": [
         {
           "kind": "deliverables",
@@ -4786,7 +4724,7 @@
         },
         {
           "kind": "deliverables",
-          "text": "This application asks for 4 files, not only a photograph — 3 more files besides it.",
+          "text": "This application asks for 3 files, not only a photograph — 2 more files besides it.",
           "source": "https://cdnbbsr.s3waas.gov.in/s301eee509ee2f68dc6014898c309e86bf/uploads/2026/04/202604301078678748.pdf",
           "requirement_id": null,
           "official": null,
@@ -4878,9 +4816,9 @@
         }
       ]
     },
-    "uppsc-one-time-registration-photograph": {
-      "exam_id": "uppsc-one-time-registration-photograph",
-      "exam_name": "UPPSC One Time Registration Photograph",
+    "uppsc-one-time-registration": {
+      "exam_id": "uppsc-one-time-registration",
+      "exam_name": "UPPSC One Time Registration",
       "facts": [
         {
           "kind": "deliverables",
@@ -5482,9 +5420,9 @@
         }
       ]
     },
-    "wbpsc-wbcs-current-online-application-photograph": {
-      "exam_id": "wbpsc-wbcs-current-online-application-photograph",
-      "exam_name": "WBPSC / WBCS Current Online Application Photograph",
+    "wbpsc-wbcs-online-application": {
+      "exam_id": "wbpsc-wbcs-online-application",
+      "exam_name": "WBPSC / WBCS Online Application",
       "facts": [
         {
           "kind": "file_size",

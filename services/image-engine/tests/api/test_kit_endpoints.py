@@ -28,12 +28,12 @@ DECLARATION = "online_declaration_confirmation"
 # ceiling that DEC-049 records as an interim platform estimate. This was BPSC
 # until DEC-068 withdrew it: BPSC photographs the candidate through a web
 # camera, so it carries no photograph specification and is no longer encoded.
-DOC_EXAM = "wbpsc-wbcs-current-online-application-photograph"
+DOC_EXAM = "wbpsc-wbcs-online-application"
 DOC_REQUIREMENT = "claim_supporting_certificates"
 
 # CTET publishes its signature specification, so it carries no interim values.
 # ICAI's is stood in for, which is what the package report must disclose.
-ESTIMATE_EXAM = "icai-examination-portal-photograph-current-portal-scope"
+ESTIMATE_EXAM = "icai-examination-portal"
 ESTIMATE_SIGNATURE = "candidate_signature"
 
 

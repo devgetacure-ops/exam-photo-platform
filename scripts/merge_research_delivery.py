@@ -137,10 +137,64 @@ def _parsed_depth(deliverable: Dict[str, Any]) -> int:
     )
 
 
+def _apply_record_edits(
+    records: List[Record], overlay: Dict[str, Any], log: List[str]
+) -> List[Record]:
+    """Renames and removals from an audit overlay (DEC-093).
+
+    Applied before and after the merge so a delivery that still uses an old
+    name is joined to its record, and so a removed record stays removed.
+    Removals are keyed by the name in use when the audit was made.
+    """
+    renames = {
+        old: (entry.get("to") if isinstance(entry, dict) else entry)
+        for old, entry in (overlay.get("rename_records") or {}).items()
+    }
+    removed = set((overlay.get("remove_records") or {}).keys())
+    kept: List[Record] = []
+    for record in records:
+        name = str(record.get("exam_name") or "")
+        if name in removed:
+            log.append(f"REMOVED record {name}")
+            continue
+        if name in renames and renames[name]:
+            record["exam_name"] = renames[name]
+            log.append(f"RENAMED record {name} -> {renames[name]}")
+        kept.append(record)
+    return kept
+
+
+def _remove_deliverables(
+    records: List[Record], overlay: Dict[str, Any], log: List[str]
+) -> None:
+    renames = {
+        old: (entry.get("to") if isinstance(entry, dict) else entry)
+        for old, entry in (overlay.get("rename_records") or {}).items()
+    }
+    for name, entries in (overlay.get("remove_deliverables") or {}).items():
+        target_name = renames.get(name) or name
+        target = next(
+            (r for r in records if r.get("exam_name") in (name, target_name)), None
+        )
+        if target is None:
+            log.append(f"SKIP    removal for unknown record {name}")
+            continue
+        drop = {_key(item) for item in entries}
+        before = target.get("deliverables") or []
+        target["deliverables"] = [
+            d for d in before if _key(d.get("name", "")) not in drop
+        ]
+        for d in before:
+            if _key(d.get("name", "")) in drop:
+                log.append(f"DELIV-  {target_name} :: {d.get('name')}")
+
+
 def merge_specs(
     repo: List[Record], delivery: List[Record], overlay: Dict[str, Any]
 ) -> Tuple[List[Record], List[str]]:
     log: List[str] = []
+    repo = _apply_record_edits(repo, overlay, log)
+    delivery = _apply_record_edits(delivery, overlay, [])
     out = _by_name(repo)
 
     for name, incoming in _by_name(delivery).items():
@@ -179,6 +233,8 @@ def merge_deliverables(
     repo: List[Record], delivery: List[Record], overlay: Dict[str, Any]
 ) -> Tuple[List[Record], List[str]]:
     log: List[str] = []
+    repo = _apply_record_edits(repo, overlay, log)
+    delivery = _apply_record_edits(delivery, overlay, [])
     out = _by_name(repo)
     next_number = max((int(r.get("record_number") or 0) for r in repo), default=0)
 
@@ -238,7 +294,9 @@ def merge_deliverables(
                 log.append(f"OVERLAY {name} :: rejection condition")
         target["rejection_conditions"] = merged
 
-    return list(out.values()), log
+    records = list(out.values())
+    _remove_deliverables(records, overlay, log)
+    return records, log
 
 
 def _load(path: Path) -> Any:
@@ -256,8 +314,9 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--research-dir", type=Path,
                         default=Path("packages/exam-rules/research"))
-    parser.add_argument("--delivery", type=Path, required=True,
-                        help="Directory holding the delivery's two JSON files.")
+    parser.add_argument("--delivery", type=Path, default=None,
+                        help="Directory holding the delivery's two JSON files. "
+                             "Omit to apply only an overlay, such as an audit.")
     parser.add_argument("--overlay", type=Path, default=None)
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
@@ -268,12 +327,12 @@ def main() -> int:
 
     specs, specs_log = merge_specs(
         _load(specs_path),
-        _load(args.delivery / "exam_photo_specs_2026.json"),
+        _load(args.delivery / "exam_photo_specs_2026.json") if args.delivery else [],
         overlay,
     )
     deliverables, deliv_log = merge_deliverables(
         _load(deliv_path),
-        _load(args.delivery / "exam_deliverables_2026.json"),
+        _load(args.delivery / "exam_deliverables_2026.json") if args.delivery else [],
         overlay,
     )
 

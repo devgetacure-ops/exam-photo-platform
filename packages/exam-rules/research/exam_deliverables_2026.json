@@ -2209,7 +2209,7 @@
   },
   {
     "record_number": 17,
-    "exam_name": "RBI Officers in Grade B 2026 - prior-cycle official fallback",
+    "exam_name": "RBI Officers in Grade B 2026",
     "conducting_body": "Reserve Bank of India",
     "application_cycle": "2026",
     "application_stage": "application",
@@ -2690,6 +2690,12 @@
               "jpeg"
             ],
             "source_wording": "The image file should be jpg or jpeg format"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 140,
+            "height": 60,
+            "source_wording": "140 x 60 pixels"
           }
         }
       },
@@ -2748,172 +2754,6 @@
       "Signature or handwritten declaration in capital letters is not accepted in the cited banking-family instructions.",
       "Signature / Hand written declaration in CAPITAL LETTERS shall NOT be accepted.",
       "If the Applicant's signature on the attendance sheet or Call letter, signed at the time of the examination, does not match the signature uploaded, the applicant will be disqualified."
-    ]
-  },
-  {
-    "record_number": 21,
-    "exam_name": "RBI Assistant - Panel Year 2025 (live photograph)",
-    "conducting_body": "Reserve Bank of India",
-    "application_cycle": "2025",
-    "application_stage": "application",
-    "photo_role": "live_capture",
-    "evidence_source_url": "https://opportunities.rbi.org.in/scripts/bs_viewcontent.aspx?Id=4912",
-    "deliverables": [
-      {
-        "name": "Recent passport-size photograph",
-        "requirement_status": "Mandatory",
-        "submission_method": "file_upload",
-        "applicability": "All applicants",
-        "specification": "JPG/JPEG; 20-50 KB; 200 x 230 pixels preferred; approximately 4.5 cm x 3.5 cm; 200 dpi where stated. Light/white background; face clearly visible.",
-        "evidence_status": "Current/recent official recruiting notice",
-        "source_url": "https://opportunities.rbi.org.in/scripts/bs_viewcontent.aspx?Id=4912",
-        "important_note": null,
-        "parsed": {
-          "file_size_kb": {
-            "minimum": 20.0,
-            "maximum": 50.0,
-            "source_wording": "20-50 KB"
-          },
-          "dimensions_px": {
-            "mode": "exact",
-            "width": 200,
-            "height": 230,
-            "source_wording": "200 x 230 pixels"
-          },
-          "formats": {
-            "values": [
-              "jpg",
-              "jpeg"
-            ],
-            "source_wording": "JPG/JPEG"
-          }
-        }
-      },
-      {
-        "name": "Candidate signature",
-        "requirement_status": "Mandatory",
-        "submission_method": "file_upload",
-        "applicability": "All applicants",
-        "specification": "JPG/JPEG; normally 10-20 KB; about 140 x 60 pixels; signature in black ink on white paper; signed by the applicant; not in capital letters.",
-        "evidence_status": "Current/recent official recruiting notice",
-        "source_url": "https://opportunities.rbi.org.in/scripts/bs_viewcontent.aspx?Id=4912",
-        "important_note": null,
-        "parsed": {
-          "file_size_kb": {
-            "minimum": 10.0,
-            "maximum": 20.0,
-            "source_wording": "10-20 KB"
-          },
-          "dimensions_px": {
-            "mode": "exact",
-            "width": 140,
-            "height": 60,
-            "source_wording": "140 x 60 pixels"
-          },
-          "formats": {
-            "values": [
-              "jpg",
-              "jpeg"
-            ],
-            "source_wording": "JPG/JPEG"
-          }
-        }
-      },
-      {
-        "name": "Left thumb impression",
-        "requirement_status": "Mandatory",
-        "submission_method": "handwritten_then_uploaded",
-        "applicability": "All applicants",
-        "specification": "JPG/JPEG; normally 20-50 KB; about 240 x 240 pixels; applicant's left thumb impression on white paper using black or blue ink; clear and unsmudged.",
-        "evidence_status": "Current/recent official recruiting notice",
-        "source_url": "https://opportunities.rbi.org.in/scripts/bs_viewcontent.aspx?Id=4912",
-        "important_note": null,
-        "parsed": {
-          "file_size_kb": {
-            "minimum": 20.0,
-            "maximum": 50.0,
-            "source_wording": "20-50 KB"
-          },
-          "dimensions_px": {
-            "mode": "exact",
-            "width": 240,
-            "height": 240,
-            "source_wording": "240 x 240 pixels"
-          },
-          "formats": {
-            "values": [
-              "jpg",
-              "jpeg"
-            ],
-            "source_wording": "JPG/JPEG"
-          }
-        }
-      },
-      {
-        "name": "Handwritten declaration",
-        "requirement_status": "Mandatory",
-        "submission_method": "handwritten_then_uploaded",
-        "applicability": "All applicants",
-        "specification": "JPG/JPEG; normally 50-100 KB; about 800 x 400 pixels; handwritten in English on white paper with black ink; not in capital letters. Standard wording: 'I, ______ (Name of the candidate), hereby declare that all the information submitted by me in the application form is correct, true and valid. I will present the supporting documents as and when required.' Copy the exact live-portal wording.",
-        "evidence_status": "Current/recent official recruiting notice",
-        "source_url": "https://opportunities.rbi.org.in/scripts/bs_viewcontent.aspx?Id=4912",
-        "important_note": null,
-        "parsed": {
-          "file_size_kb": {
-            "minimum": 50.0,
-            "maximum": 100.0,
-            "source_wording": "50-100 KB"
-          },
-          "dimensions_px": {
-            "mode": "exact",
-            "width": 800,
-            "height": 400,
-            "source_wording": "800 x 400 pixels"
-          },
-          "formats": {
-            "values": [
-              "jpg",
-              "jpeg"
-            ],
-            "source_wording": "JPG/JPEG"
-          }
-        }
-      },
-      {
-        "name": "Live photograph",
-        "requirement_status": "Mandatory",
-        "submission_method": "official_live_capture",
-        "applicability": "All applicants",
-        "specification": "In addition to the uploaded photograph, capture and upload a live photograph using a webcam or mobile phone. Preferred image 240 x 240 pixels, 200 dpi, 20-50 KB, JPG/JPEG.",
-        "evidence_status": "Current official RBI recruitment page",
-        "source_url": "https://opportunities.rbi.org.in/scripts/bs_viewcontent.aspx?Id=4912",
-        "important_note": null,
-        "parsed": {
-          "file_size_kb": {
-            "minimum": 20.0,
-            "maximum": 50.0,
-            "source_wording": "20-50 KB"
-          },
-          "dimensions_px": {
-            "mode": "exact",
-            "width": 240,
-            "height": 240,
-            "source_wording": "240 x 240 pixels"
-          },
-          "formats": {
-            "values": [
-              "jpg",
-              "jpeg"
-            ],
-            "source_wording": "JPG/JPEG"
-          }
-        }
-      }
-    ],
-    "rejection_conditions": [
-      "The online application is not registered unless all mandatory image fields are uploaded.",
-      "Unclear photograph, signature, thumb impression or declaration can lead to rejection.",
-      "Signature or handwritten declaration in capital letters is not accepted in the cited banking-family instructions."
     ]
   },
   {
@@ -3174,17 +3014,6 @@
             "source_wording": "in pdf format"
           }
         }
-      },
-      {
-        "name": "Category/PwBD/citizenship certificate",
-        "requirement_status": "Conditional",
-        "submission_method": "document_scan_upload",
-        "applicability": "Candidates claiming the corresponding category, disability or nationality status",
-        "specification": "Upload the applicable prescribed certificate where the form asks for it. Do not upload an unrelated certificate.",
-        "evidence_status": "Current 2026 bulletin; exact applicability varies",
-        "source_url": "https://cdnbbsr.s3waas.gov.in/s37bc1ec1d9c3426357e69acd5bf320061/uploads/2026/02/202602231394640855.pdf",
-        "important_note": null,
-        "parsed": {}
       },
       {
         "name": "Live photograph captured through the application portal",
@@ -3576,17 +3405,6 @@
         "parsed": {}
       },
       {
-        "name": "PwD certificate",
-        "requirement_status": "Conditional",
-        "submission_method": "document_scan_upload",
-        "applicability": "Candidates claiming disability benefit",
-        "specification": "Upload the prescribed disability certificate where applicable.",
-        "evidence_status": "Current official CUET UG application audit/bulletin",
-        "source_url": "https://examsaudit.ntaonline.in/AUDIT/CUET_UG_AUDIT/frontend/web/registration/index",
-        "important_note": null,
-        "parsed": {}
-      },
-      {
         "name": "Result-awaiting certificate",
         "requirement_status": "Conditional",
         "submission_method": "document_scan_upload",
@@ -3723,17 +3541,6 @@
         }
       },
       {
-        "name": "Category/PwD certificate",
-        "requirement_status": "Conditional",
-        "submission_method": "document_scan_upload",
-        "applicability": "Candidates claiming the relevant benefit",
-        "specification": "Upload only where the application asks for documentary proof; exact format/size not extracted.",
-        "evidence_status": "Current official CUET PG bulletin",
-        "source_url": "https://exams.nta.nic.in/document/cuet-pg-information-bulletin/",
-        "important_note": null,
-        "parsed": {}
-      },
-      {
         "name": "Category certificate",
         "requirement_status": "Conditional",
         "submission_method": "document_scan_upload",
@@ -3829,24 +3636,6 @@
               "jpeg"
             ],
             "source_wording": "JPG/JPEG"
-          }
-        }
-      },
-      {
-        "name": "PwD certificate",
-        "requirement_status": "Conditional",
-        "submission_method": "document_scan_upload",
-        "applicability": "Candidates claiming PwD benefit",
-        "specification": "Upload the prescribed certificate in PDF where the application requests it.",
-        "evidence_status": "Recent official UGC-NET bulletin",
-        "source_url": "https://ugcnet.nta.ac.in/",
-        "important_note": null,
-        "parsed": {
-          "formats": {
-            "values": [
-              "pdf"
-            ],
-            "source_wording": "PDF"
           }
         }
       },
@@ -4323,6 +4112,12 @@
           "dimensions": {
             "preferred_width_px": 140,
             "preferred_height_px": 60
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 140,
+            "height": 60,
+            "source_wording": "140×60 px"
           }
         }
       },
@@ -4506,6 +4301,12 @@
           "dimensions": {
             "width_px": 230,
             "height_px": 75
+          },
+          "dimensions_px": {
+            "mode": "exact",
+            "width": 230,
+            "height": 75,
+            "source_wording": "230×75 px"
           }
         }
       },
@@ -4578,7 +4379,7 @@
   },
   {
     "record_number": 34,
-    "exam_name": "MPSC General Online Application Photograph Instruction",
+    "exam_name": "MPSC Online Application",
     "conducting_body": "Maharashtra Public Service Commission",
     "application_cycle": "current portal guide",
     "application_stage": "application",
@@ -4652,7 +4453,7 @@
   },
   {
     "record_number": 35,
-    "exam_name": "UPPSC One Time Registration Photograph",
+    "exam_name": "UPPSC One Time Registration",
     "conducting_body": "Uttar Pradesh Public Service Commission",
     "application_cycle": "current OTR",
     "application_stage": "application",
@@ -4715,7 +4516,7 @@
   },
   {
     "record_number": 36,
-    "exam_name": "BPSC Current Recruitment Photograph Specification",
+    "exam_name": "BPSC Online Application",
     "conducting_body": "Bihar Public Service Commission",
     "application_cycle": "current",
     "application_stage": "application",
@@ -4732,19 +4533,6 @@
         "source_url": "https://bpsconline.bihar.gov.in/downloads/Instruction_Online_Application.pdf",
         "important_note": "The platform cannot prepare this deliverable: the authority photographs the candidate directly.",
         "parsed": {}
-      },
-      {
-        "name": "Candidate signature",
-        "requirement_status": "Mandatory or portal-dependent",
-        "submission_method": "file_upload",
-        "applicability": "All applicants where the OTR/application asks for it",
-        "specification": "A separate signature is normally part of the PSC profile/application, but the exact current file specification was not established by the supplied photograph-only evidence. Follow the active portal.",
-        "evidence_status": "Not fully established; not_found for exact specification",
-        "source_url": "https://form-mitra.com/bpsc",
-        "important_note": null,
-        "parsed": {
-          "specification_not_established": true
-        }
       },
       {
         "name": "Claim-supporting certificates",
@@ -4771,54 +4559,6 @@
         }
       },
       {
-        "name": "English signature",
-        "requirement_status": "Mandatory",
-        "submission_method": "file_upload",
-        "applicability": "All applicants",
-        "specification": "maximum 20 KB; width 150–220 px; height 250–320 px; format and minimum not published in the cited manual",
-        "evidence_status": "Current official BPSC user manual",
-        "source_url": "https://bpsc.bihar.gov.in/wp-content/uploads/BPSC_content/Notices/NB-2025-06-19-02.pdf",
-        "important_note": null,
-        "parsed": {
-          "specification_not_established": false,
-          "file_size_kb": {
-            "minimum": null,
-            "maximum": 20,
-            "source_wording": "up to 20 KB"
-          },
-          "dimensions": {
-            "minimum_width_px": 150,
-            "maximum_width_px": 220,
-            "minimum_height_px": 250,
-            "maximum_height_px": 320
-          }
-        }
-      },
-      {
-        "name": "Hindi signature",
-        "requirement_status": "Mandatory",
-        "submission_method": "file_upload",
-        "applicability": "All applicants",
-        "specification": "maximum 20 KB; width 150–220 px; height 250–320 px; format and minimum not published in the cited manual",
-        "evidence_status": "Current official BPSC user manual",
-        "source_url": "https://bpsc.bihar.gov.in/wp-content/uploads/BPSC_content/Notices/NB-2025-06-19-02.pdf",
-        "important_note": null,
-        "parsed": {
-          "specification_not_established": false,
-          "file_size_kb": {
-            "minimum": null,
-            "maximum": 20,
-            "source_wording": "up to 20 KB"
-          },
-          "dimensions": {
-            "minimum_width_px": 150,
-            "maximum_width_px": 220,
-            "minimum_height_px": 250,
-            "maximum_height_px": 320
-          }
-        }
-      },
-      {
         "name": "Candidate signature (English)",
         "requirement_status": "Mandatory",
         "submission_method": "file_upload",
@@ -4836,6 +4576,14 @@
           "formats": {
             "values": [],
             "source_wording": null
+          },
+          "dimensions_px": {
+            "mode": "range",
+            "minimum_width": 150,
+            "maximum_width": 220,
+            "minimum_height": 250,
+            "maximum_height": 320,
+            "source_wording": "width between 150-220 pixels and height between 250-320 pixels"
           }
         }
       },
@@ -4857,6 +4605,14 @@
           "formats": {
             "values": [],
             "source_wording": null
+          },
+          "dimensions_px": {
+            "mode": "range",
+            "minimum_width": 150,
+            "maximum_width": 220,
+            "minimum_height": 250,
+            "maximum_height": 320,
+            "source_wording": "width between 150-220 pixels and height between 250-320 pixels"
           }
         }
       }
@@ -4867,7 +4623,7 @@
   },
   {
     "record_number": 37,
-    "exam_name": "RPSC Current Online Application Photograph",
+    "exam_name": "RPSC Online Application",
     "conducting_body": "Rajasthan Public Service Commission",
     "application_cycle": "current",
     "application_stage": "application",
@@ -4930,7 +4686,7 @@
   },
   {
     "record_number": 38,
-    "exam_name": "Karnataka PSC Current Recruitment Portal Photograph",
+    "exam_name": "Karnataka PSC Online Application",
     "conducting_body": "Karnataka Public Service Commission",
     "application_cycle": "current",
     "application_stage": "application",
@@ -4998,6 +4754,14 @@
             "minimum_height_px": 50,
             "maximum_width_px": 150,
             "maximum_height_px": 150
+          },
+          "dimensions_px": {
+            "mode": "range",
+            "minimum_width": 50,
+            "minimum_height": 50,
+            "maximum_width": 150,
+            "maximum_height": 150,
+            "source_wording": "50×50 to 150×150 px"
           }
         }
       },
@@ -5032,7 +4796,7 @@
   },
   {
     "record_number": 39,
-    "exam_name": "WBPSC / WBCS Current Online Application Photograph",
+    "exam_name": "WBPSC / WBCS Online Application",
     "conducting_body": "West Bengal Public Service Commission",
     "application_cycle": "current",
     "application_stage": "application",
@@ -5109,7 +4873,7 @@
   },
   {
     "record_number": 40,
-    "exam_name": "Kerala PSC One Time Registration Photograph",
+    "exam_name": "Kerala PSC One Time Registration",
     "conducting_body": "Kerala Public Service Commission",
     "application_cycle": "current OTR",
     "application_stage": "application",
@@ -5169,6 +4933,12 @@
           "dimensions": {
             "width_px": 150,
             "height_px": 100
+          },
+          "dimensions_px": {
+            "mode": "exact",
+            "width": 150,
+            "height": 100,
+            "source_wording": "150×100 px"
           }
         }
       },
@@ -5660,7 +5430,7 @@
   },
   {
     "record_number": 47,
-    "exam_name": "ICAI Examination Portal Photograph (current portal scope)",
+    "exam_name": "ICAI Examination Portal",
     "conducting_body": "Institute of Chartered Accountants of India",
     "application_cycle": "current",
     "application_stage": "application",
@@ -5731,7 +5501,7 @@
   },
   {
     "record_number": 48,
-    "exam_name": "ICSI Student Registration / Examination Account Photograph",
+    "exam_name": "ICSI Student Registration and Examination",
     "conducting_body": "Institute of Company Secretaries of India",
     "application_cycle": "current",
     "application_stage": "application",
@@ -5853,17 +5623,6 @@
             "source_wording": "up to 2048 KB"
           }
         }
-      },
-      {
-        "name": "Identity/address/category proof",
-        "requirement_status": "Conditional",
-        "submission_method": "document_scan_upload",
-        "applicability": "Where the registration route asks for it",
-        "specification": "Upload only the identity, address, category or exemption document explicitly requested.",
-        "evidence_status": "Current ICSI portal process; exact set varies",
-        "source_url": "https://smash.icsi.edu/Scripts/Registration/Instructions.aspx?ID=R2",
-        "important_note": null,
-        "parsed": {}
       },
       {
         "name": "Category certificate",
@@ -6076,6 +5835,12 @@
             "minimum": 30,
             "maximum": 50,
             "source_wording": "30-50 KB"
+          },
+          "dimensions_px": {
+            "mode": "exact",
+            "width": 140,
+            "height": 60,
+            "source_wording": "140 x 60 pixels"
           }
         }
       }
@@ -6333,6 +6098,14 @@
             "minimum": 10,
             "maximum": 20,
             "source_wording": "10-20 KB"
+          },
+          "dimensions_px": {
+            "mode": "range",
+            "minimum_width": 80,
+            "minimum_height": 280,
+            "maximum_width": 160,
+            "maximum_height": 560,
+            "source_wording": "80x280 to 160x560 pixels"
           }
         }
       }
@@ -8755,6 +8528,14 @@
             "minimum": null,
             "maximum": 20,
             "source_wording": "up to 20 KB"
+          },
+          "dimensions_px": {
+            "mode": "range",
+            "minimum_width": 150,
+            "maximum_width": 220,
+            "minimum_height": 250,
+            "maximum_height": 320,
+            "source_wording": "150–220×250–320 px"
           }
         }
       },
@@ -8773,6 +8554,14 @@
             "minimum": null,
             "maximum": 20,
             "source_wording": "up to 20 KB"
+          },
+          "dimensions_px": {
+            "mode": "range",
+            "minimum_width": 150,
+            "maximum_width": 220,
+            "minimum_height": 250,
+            "maximum_height": 320,
+            "source_wording": "150–220×250–320 px"
           }
         }
       },
@@ -9056,7 +8845,7 @@
   },
   {
     "record_number": 103,
-    "exam_name": "DSSSB Major Recruitment Examination Family",
+    "exam_name": "DSSSB Recruitment Examinations",
     "conducting_body": "Delhi Subordinate Services Selection Board",
     "application_cycle": "2024-25 aggregate",
     "application_stage": "application",
@@ -10630,6 +10419,12 @@
           "dimensions": {
             "width_px": 150,
             "height_px": 200
+          },
+          "dimensions_px": {
+            "mode": "exact",
+            "width": 150,
+            "height": 200,
+            "source_wording": "150×200 px"
           }
         }
       },
@@ -10659,6 +10454,12 @@
           "dimensions": {
             "width_px": 150,
             "height_px": 100
+          },
+          "dimensions_px": {
+            "mode": "exact",
+            "width": 150,
+            "height": 100,
+            "source_wording": "150×100 px"
           }
         }
       },
@@ -10910,6 +10711,12 @@
           "dimensions": {
             "preferred_width_px": 200,
             "preferred_height_px": 230
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 200,
+            "height": 230,
+            "source_wording": "200×230 px"
           }
         }
       },
@@ -10939,6 +10746,12 @@
           "dimensions": {
             "preferred_width_px": 140,
             "preferred_height_px": 60
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 140,
+            "height": 60,
+            "source_wording": "140×60 px"
           }
         }
       },

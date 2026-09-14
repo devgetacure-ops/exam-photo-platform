@@ -72,7 +72,7 @@ describe("worth knowing shows researched facts only", () => {
     });
 
     test("an examination with only rule facts shows no card", () => {
-        const bpsc = sidecar.exams["bpsc-current-recruitment-photograph-specification"];
+        const bpsc = sidecar.exams["bpsc-online-application"];
         expect(bpsc).toBeDefined();
         expect(bpsc.facts.filter(isResearchedFact)).toEqual([]);
     });

@@ -1,11 +1,11 @@
 {
   "schema_version": "1.1",
-  "rule_id": "icsi-student-registration-examination-account-photograph",
+  "rule_id": "icsi-student-registration-and-examination",
   "rule_version": "1.0.0",
   "status": "verified_with_ambiguity",
   "exam": {
-    "exam_id": "icsi-student-registration-examination-account-photograph",
-    "exam_name": "ICSI Student Registration / Examination Account Photograph",
+    "exam_id": "icsi-student-registration-and-examination",
+    "exam_name": "ICSI Student Registration and Examination",
     "conducting_body": "Institute of Company Secretaries of India",
     "examination_year": 2026,
     "application_cycle": "current",
@@ -142,17 +142,6 @@
           "size_unit_as_published": "KB"
         }
       }
-    },
-    {
-      "requirement_id": "identity_address_category_proof",
-      "requirement_name": "Identity/address/category proof",
-      "requirement_type": "identity_document",
-      "submission_method": "document_scan_upload",
-      "requirement_status": "conditional",
-      "platform_support": "not_yet_supported",
-      "applicability": "Where the registration route asks for it",
-      "content_instructions": "Upload only the identity, address, category or exemption document explicitly requested.",
-      "evidence_status": "Current ICSI portal process; exact set varies"
     },
     {
       "requirement_id": "category_certificate",

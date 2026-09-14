@@ -104,6 +104,13 @@
             "jpg"
           ],
           "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "range",
+          "minimum_width_px": 80,
+          "maximum_width_px": 160,
+          "minimum_height_px": 280,
+          "maximum_height_px": 560
         }
       }
     }

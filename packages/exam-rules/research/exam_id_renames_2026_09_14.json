@@ -1,0 +1,17 @@
+{
+  "_note": "Old exam_id to new exam_id after the 2026-09-14 catalogue audit (DEC-093). Research that arrives keyed by an old id -- the owner's facts and pixel-size research for the 27 examinations was briefed with the old keys -- is mapped through this before import. A removed record maps to the record it duplicated.",
+  "renames": {
+    "bpsc-current-recruitment-photograph-specification": "bpsc-online-application",
+    "dsssb-major-recruitment-examination-family": "dsssb-recruitment-examinations",
+    "icai-examination-portal-photograph-current-portal-scope": "icai-examination-portal",
+    "icsi-student-registration-examination-account-photograph": "icsi-student-registration-and-examination",
+    "karnataka-psc-current-recruitment-portal-photograph": "karnataka-psc-online-application",
+    "kerala-psc-one-time-registration-photograph": "kerala-psc-one-time-registration",
+    "mpsc-general-online-application-photograph-instruction": "mpsc-online-application",
+    "rbi-officers-in-grade-b-2026-prior-cycle-official-fallback": "rbi-officers-in-grade-b-2026",
+    "rpsc-current-online-application-photograph": "rpsc-online-application",
+    "uppsc-one-time-registration-photograph": "uppsc-one-time-registration",
+    "wbpsc-wbcs-current-online-application-photograph": "wbpsc-wbcs-online-application",
+    "rbi-assistant-panel-year-2025-live-photograph-live-capture": "rbi-assistant-panel-year-2025"
+  }
+}

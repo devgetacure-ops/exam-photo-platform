@@ -987,6 +987,18 @@ def _deliverable_file_spec(
             "minimum_height_px": dimensions["minimum_height"],
             "maximum_height_px": dimensions["maximum_height"],
         }
+    elif dimensions.get("mode") == "preferred":
+        # "140 x 60 pixels (preferred)": the body's own number, honoured as
+        # the delivered size, without claiming it is mandated (DEC-093).
+        spec["dimensions"] = {
+            "mode": "unspecified",
+            "preferred_width_px": dimensions["width"],
+            "preferred_height_px": dimensions["height"],
+            "fallback_reason": (
+                "The body publishes a preferred pixel size without mandating it, "
+                "so the size is honoured while the mode stays unspecified."
+            ),
+        }
 
     filename = parsed.get("filename") or {}
     if filename.get("value"):

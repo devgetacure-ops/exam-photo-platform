@@ -48,6 +48,13 @@
             "jpg"
           ],
           "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "range",
+          "minimum_width_px": 150,
+          "maximum_width_px": 220,
+          "minimum_height_px": 250,
+          "maximum_height_px": 320
         }
       }
     },
@@ -72,6 +79,13 @@
             "jpg"
           ],
           "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "range",
+          "minimum_width_px": 150,
+          "maximum_width_px": 220,
+          "minimum_height_px": 250,
+          "maximum_height_px": 320
         }
       }
     },

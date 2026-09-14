@@ -19,8 +19,8 @@ browser; those passages are the rendered page text.
 | `all-india-sainik-schools-entrance-examination` | no publisher mapping for cdnbbsr.s3waas.gov.in |
 | `appsc-forest-beat-officer-assistant-beat-officer-2025` | file host or clone site, not a publisher |
 | `bits-admission-test` | the figure is not on the page; the match was an unrelated INR 1.5 lakh grant |
-| `bpsc-current-recruitment-photograph-specification` | figure or wording not found on the page |
-| `bpsc-current-recruitment-photograph-specification` | figure or wording not found on the page |
+| `bpsc-online-application` | figure or wording not found on the page |
+| `bpsc-online-application` | figure or wording not found on the page |
 | `bpsc-teacher-recruitment-examination-tre` | figure or wording not found on the page |
 | `cbse-classes-ix-xi-registration-2025-26` | file host or clone site, not a publisher |
 | `cg-vyapam-pre-b-ed-entrance-examination` | page unavailable |
@@ -32,18 +32,18 @@ browser; those passages are the rendered page text.
 | `ibps-crp-po-mt-xvi` | file host or clone site, not a publisher |
 | `ibps-crp-po-mt-xvi` | file host or clone site, not a publisher |
 | `ibps-crp-regional-rural-banks-xiv` | the mains table could not be read from the PDF text |
-| `icsi-student-registration-examination-account-photograph` | figure or wording not found on the page |
-| `icsi-student-registration-examination-account-photograph` | figure or wording not found on the page |
+| `icsi-student-registration-and-examination` | figure or wording not found on the page |
+| `icsi-student-registration-and-examination` | figure or wording not found on the page |
 | `jawahar-navodaya-vidyalaya-selection-test-class-vi` | no publisher mapping for cbseit.in |
 | `jee-advanced-2026` | the language-toggle answer is not in the page text |
 | `jee-main-2026` | the paper pattern is not in the page text |
 | `jharkhand-police-constable-recruitment` | a count of cancelled applications, not something a candidate can use |
-| `karnataka-psc-current-recruitment-portal-photograph` | the source is a garbled copy of a KPSC notice |
+| `karnataka-psc-online-application` | the source is a garbled copy of a KPSC notice |
 | `kendriya-vidyalaya-sangathan-direct-recruitment-examination` | no publisher mapping for www.education.gov.in |
 | `mp-police-constable-recruitment-test` | an unlabelled statistical table; which column is registered and which appeared cannot be told |
 | `mp-primary-school-teacher-eligibility-test` | page unavailable |
 | `neet-ug-2026` | the subject split is not in the page text |
-| `rbi-officers-in-grade-b-2026-prior-cycle-official-fallback` | file host or clone site, not a publisher |
+| `rbi-officers-in-grade-b-2026` | file host or clone site, not a publisher |
 | `rrb-ntpc-graduate-cen-05-2024` | no publisher mapping for www.rrbcdg.gov.in |
 | `rrb-ntpc-graduate-cen-05-2024` | no publisher mapping for www.rrbkolkata.gov.in |
 | `ssc-combined-graduate-level-examination-2026-live-capture` | the pattern is not in the page text |
@@ -55,6 +55,6 @@ browser; those passages are the rendered page text.
 | `upsc-capf-assistant-commandants-examination-2026` | file host or clone site, not a publisher |
 | `upsc-capf-assistant-commandants-examination-2026` | figure or wording not found on the page |
 | `upsc-engineering-services-examination` | figure or wording not found on the page |
-| `wbpsc-wbcs-current-online-application-photograph` | page unavailable |
-| `wbpsc-wbcs-current-online-application-photograph` | page unavailable |
+| `wbpsc-wbcs-online-application` | page unavailable |
+| `wbpsc-wbcs-online-application` | page unavailable |
 | `west-bengal-primary-teacher-eligibility-test` | no publisher mapping for wbbpe.wb.gov.in |

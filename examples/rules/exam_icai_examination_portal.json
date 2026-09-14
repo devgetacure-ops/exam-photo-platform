@@ -1,11 +1,11 @@
 {
   "schema_version": "1.1",
-  "rule_id": "icai-examination-portal-photograph-current-portal-scope",
+  "rule_id": "icai-examination-portal",
   "rule_version": "1.0.0",
   "status": "verified_with_ambiguity",
   "exam": {
-    "exam_id": "icai-examination-portal-photograph-current-portal-scope",
-    "exam_name": "ICAI Examination Portal Photograph (current portal scope)",
+    "exam_id": "icai-examination-portal",
+    "exam_name": "ICAI Examination Portal",
     "conducting_body": "Institute of Chartered Accountants of India",
     "examination_year": 2026,
     "application_cycle": "current",

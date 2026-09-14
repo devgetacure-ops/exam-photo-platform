@@ -189,22 +189,6 @@
       }
     },
     {
-      "requirement_id": "category_pwbd_citizenship_certificate",
-      "requirement_name": "Category/PwBD/citizenship certificate",
-      "requirement_type": "certificate_scan",
-      "submission_method": "document_scan_upload",
-      "requirement_status": "conditional",
-      "platform_support": "supported",
-      "applicability": "Candidates claiming the corresponding category, disability or nationality status",
-      "content_instructions": "Upload the applicable prescribed certificate where the form asks for it. Do not upload an unrelated certificate.",
-      "evidence_status": "Current 2026 bulletin; exact applicability varies",
-      "file_spec": {
-        "file_size": {
-          "maximum_bytes": 400000
-        }
-      }
-    },
-    {
       "requirement_id": "category_certificate_sc_st_obc_ncl_ews",
       "requirement_name": "Category certificate (SC / ST / OBC-NCL / EWS)",
       "requirement_type": "certificate_scan",
@@ -508,19 +492,13 @@
       "confidence": 1,
       "approved": false
     },
-    "requirements[4].file_spec.file_size.maximum_bytes": {
+    "requirements[11].file_spec.file_size.maximum_bytes": {
       "type": "interim_default",
       "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",
       "confidence": 1,
       "approved": false
     },
-    "requirements[12].file_spec.file_size.maximum_bytes": {
-      "type": "interim_default",
-      "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",
-      "confidence": 1,
-      "approved": false
-    },
-    "requirements[13].file_spec.formats.allowed_formats": {
+    "requirements[12].file_spec.formats.allowed_formats": {
       "type": "interim_default",
       "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
       "confidence": 1,

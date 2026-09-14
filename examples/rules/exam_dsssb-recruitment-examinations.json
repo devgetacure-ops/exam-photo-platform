@@ -1,11 +1,11 @@
 {
   "schema_version": "1.1",
-  "rule_id": "dsssb-major-recruitment-examination-family",
+  "rule_id": "dsssb-recruitment-examinations",
   "rule_version": "1.0.0",
   "status": "provisional",
   "exam": {
-    "exam_id": "dsssb-major-recruitment-examination-family",
-    "exam_name": "DSSSB Major Recruitment Examination Family",
+    "exam_id": "dsssb-recruitment-examinations",
+    "exam_name": "DSSSB Recruitment Examinations",
     "conducting_body": "Delhi Subordinate Services Selection Board",
     "examination_year": 2025,
     "application_cycle": "2024-25 aggregate",

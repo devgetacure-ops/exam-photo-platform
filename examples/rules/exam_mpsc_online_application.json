@@ -1,11 +1,11 @@
 {
   "schema_version": "1.1",
-  "rule_id": "mpsc-general-online-application-photograph-instruction",
+  "rule_id": "mpsc-online-application",
   "rule_version": "1.0.0",
   "status": "verified_with_ambiguity",
   "exam": {
-    "exam_id": "mpsc-general-online-application-photograph-instruction",
-    "exam_name": "MPSC General Online Application Photograph Instruction",
+    "exam_id": "mpsc-online-application",
+    "exam_name": "MPSC Online Application",
     "conducting_body": "Maharashtra Public Service Commission",
     "examination_year": 2026,
     "application_cycle": "current portal guide",

@@ -5,7 +5,7 @@ evidence research. Do not edit by hand: re-running the script rebuilds
 both the rule records and this register, so a manual edit here is lost
 and a manual edit to a rule record silently diverges from its evidence.
 
-**Encoded: 132. Not encoded: 3. Rejected by validation: 0.**
+**Encoded: 131. Not encoded: 3. Rejected by validation: 0.**
 
 ## Encoded
 
@@ -20,14 +20,14 @@ and a manual edit to a rule record silently diverges from its evidence.
 | Assam Direct Recruitment Grade III | deliverables only -- no photograph rule | `exam_assam-direct-recruitment-grade-iii.json` |
 | Assam Direct Recruitment Grade IV | deliverables only -- no photograph rule | `exam_assam-direct-recruitment-grade-iv.json` |
 | BITS Admission Test | deliverables only -- no photograph rule | `exam_bits-admission-test.json` |
-| BPSC Current Recruitment Photograph Specification | deliverables only -- no photograph rule | `exam_bpsc-current-recruitment-photograph-specification.json` |
+| BPSC Online Application | deliverables only -- no photograph rule | `exam_bpsc-online-application.json` |
 | BPSC Teacher Recruitment Examination (TRE) | deliverables only -- no photograph rule | `exam_bpsc-teacher-recruitment-examination-tre.json` |
 | Bihar B.Ed Common Entrance Test | deliverables only -- no photograph rule | `exam_bihar-b-ed-common-entrance-test.json` |
 | Bihar D.El.Ed Joint Entrance Examination | deliverables only -- no photograph rule | `exam_bihar-d-el-ed-joint-entrance-examination.json` |
 | Bihar Police Constable Recruitment | deliverables only -- no photograph rule | `exam_bihar-police-constable-recruitment.json` |
 | Bihar Secondary Teacher Eligibility Test | deliverables only -- no photograph rule | `exam_bihar-secondary-teacher-eligibility-test.json` |
 | CG Vyapam Pre-B.Ed Entrance Examination | deliverables only -- no photograph rule | `exam_cg-vyapam-pre-b-ed-entrance-examination.json` |
-| DSSSB Major Recruitment Examination Family | deliverables only -- no photograph rule | `exam_dsssb-major-recruitment-examination-family.json` |
+| DSSSB Recruitment Examinations | deliverables only -- no photograph rule | `exam_dsssb-recruitment-examinations.json` |
 | Delhi Police Constable (Executive) | deliverables only -- no photograph rule | `exam_delhi-police-constable-executive.json` |
 | GUJCET | deliverables only -- no photograph rule | `exam_gujcet.json` |
 | Gujarat Police Lokrakshak Recruitment | deliverables only -- no photograph rule | `exam_gujarat-police-lokrakshak-recruitment.json` |
@@ -54,7 +54,7 @@ and a manual edit to a rule record silently diverges from its evidence.
 | Maharashtra Police Recruitment | deliverables only -- no photograph rule | `exam_maharashtra-police-recruitment.json` |
 | NEET-PG | deliverables only -- no photograph rule | `exam_neet-pg.json` |
 | Odisha Joint Entrance Examination (OJEE) | deliverables only -- no photograph rule | `exam_odisha-joint-entrance-examination-ojee.json` |
-| RPSC Current Online Application Photograph | deliverables only -- no photograph rule | `exam_rpsc-current-online-application-photograph.json` |
+| RPSC Online Application | deliverables only -- no photograph rule | `exam_rpsc-online-application.json` |
 | RRB JE/DMS/CMA | deliverables only -- no photograph rule | `exam_rrb-je-dms-cma.json` |
 | RRB Paramedical Categories | deliverables only -- no photograph rule | `exam_rrb-paramedical-categories.json` |
 | RRB Section Controller | deliverables only -- no photograph rule | `exam_rrb-section-controller.json` |
@@ -85,7 +85,7 @@ and a manual edit to a rule record silently diverges from its evidence.
 | Telangana Teacher Eligibility Test (TG TET) | deliverables only -- no photograph rule | `exam_telangana-teacher-eligibility-test-tg-tet.json` |
 | UP B.Ed Joint Entrance Examination | deliverables only -- no photograph rule | `exam_up-b-ed-joint-entrance-examination.json` |
 | UPPSC Combined State/Upper Subordinate Services Examination (PCS) | deliverables only -- no photograph rule | `exam_uppsc-combined-state-upper-subordinate-services-examination-pcs.json` |
-| UPPSC One Time Registration Photograph | deliverables only -- no photograph rule | `exam_uppsc-one-time-registration-photograph.json` |
+| UPPSC One Time Registration | deliverables only -- no photograph rule | `exam_uppsc-one-time-registration.json` |
 | UPPSC Review Officer / Assistant Review Officer | deliverables only -- no photograph rule | `exam_uppsc-review-officer-assistant-review-officer.json` |
 | UPSC Engineering Services Examination | deliverables only -- no photograph rule | `exam_upsc-engineering-services-examination.json` |
 | UPSSSC Preliminary Eligibility Test (PET) | deliverables only -- no photograph rule | `exam_upsssc-preliminary-eligibility-test-pet.json` |
@@ -98,15 +98,14 @@ and a manual edit to a rule record silently diverges from its evidence.
 | IBPS CRP PO/MT-XVI | Full specification (official dimensions, size and format) | `exam_ibps_crp_po_mt_xvi.json` |
 | IBPS CRP Regional Rural Banks-XIV | Full specification (official dimensions, size and format) | `exam_ibps_crp_regional_rural_banks_xiv.json` |
 | IBPS CRP Specialist Officers-XVI | Full specification (official dimensions, size and format) | `exam_ibps_crp_specialist_officers_xvi.json` |
-| Karnataka PSC Current Recruitment Portal Photograph | Full specification (official dimensions, size and format) | `exam_karnataka_psc_current_recruitment_portal_photograph.json` |
+| Karnataka PSC Online Application | Full specification (official dimensions, size and format) | `exam_karnataka_psc_online_application.json` |
 | Kerala Engineering Architecture Medical Entrance Examination | Full specification (official dimensions, size and format) | `exam_kerala_engineering_architecture_medical_entrance_examination.json` |
-| Kerala PSC One Time Registration Photograph | Full specification (official dimensions, size and format) | `exam_kerala_psc_one_time_registration_photograph.json` |
+| Kerala PSC One Time Registration | Full specification (official dimensions, size and format) | `exam_kerala_psc_one_time_registration.json` |
 | LIC Assistant Administrative Officers (Generalist) 2025 | Full specification (official dimensions, size and format) | `exam_lic_assistant_administrative_officers_generalist_2025.json` |
 | NABARD Grade A 2025 | Full specification (official dimensions, size and format) | `exam_nabard_grade_a_2025.json` |
 | NIACL Administrative Officers 2025 | Full specification (official dimensions, size and format) | `exam_niacl_administrative_officers_2025.json` |
 | RBI Assistant - Panel Year 2025 | Full specification (official dimensions, size and format) | `exam_rbi_assistant_panel_year_2025.json` |
-| RBI Assistant - Panel Year 2025 (live photograph) | Full specification (official dimensions, size and format) | `exam_rbi_assistant_panel_year_2025_live_photograph_live_capture.json` |
-| RBI Officers in Grade B 2026 - prior-cycle official fallback | Full specification (official dimensions, size and format) | `exam_rbi_officers_in_grade_b_2026_prior_cycle_official_fallback.json` |
+| RBI Officers in Grade B 2026 | Full specification (official dimensions, size and format) | `exam_rbi_officers_in_grade_b_2026.json` |
 | RRB Level-1 Posts - CEN 08/2024 | Full specification (official dimensions, size and format) | `exam_rrb_level_1_posts_cen_08_2024.json` |
 | RRB NTPC Graduate - CEN 05/2024 | Full specification (official dimensions, size and format) | `exam_rrb_ntpc_graduate_cen_05_2024.json` |
 | SBI Junior Associates 2025 | Full specification (official dimensions, size and format) | `exam_sbi_junior_associates_2025.json` |
@@ -123,11 +122,11 @@ and a manual edit to a rule record silently diverges from its evidence.
 | CTET September 2026 | Size and format only -- no pixel dimensions published | `exam_ctet_september_2026.json` |
 | CUET (PG) 2026 | Size and format only -- no pixel dimensions published | `exam_cuet_pg_2026.json` |
 | CUET (UG) 2026 | Size and format only -- no pixel dimensions published | `exam_cuet_ug_2026.json` |
-| ICAI Examination Portal Photograph (current portal scope) | Size and format only -- no pixel dimensions published | `exam_icai_examination_portal_photograph_current_portal_scope.json` |
-| ICSI Student Registration / Examination Account Photograph | Size and format only -- no pixel dimensions published | `exam_icsi_student_registration_examination_account_photograph.json` |
+| ICAI Examination Portal | Size and format only -- no pixel dimensions published | `exam_icai_examination_portal.json` |
+| ICSI Student Registration and Examination | Size and format only -- no pixel dimensions published | `exam_icsi_student_registration_and_examination.json` |
 | JEE (Main) 2026 | Size and format only -- no pixel dimensions published | `exam_jee_main_2026.json` |
 | Joint CSIR-UGC NET | Size and format only -- no pixel dimensions published | `exam_joint_csir_ugc_net.json` |
-| MPSC General Online Application Photograph Instruction | Size and format only -- no pixel dimensions published | `exam_mpsc_general_online_application_photograph_instruction.json` |
+| MPSC Online Application | Size and format only -- no pixel dimensions published | `exam_mpsc_online_application.json` |
 | Maharashtra Teacher Eligibility Test (MAHA TET) | Size and format only -- no pixel dimensions published | `exam_maharashtra_teacher_eligibility_test_maha_tet.json` |
 | Management Aptitude Test 2026 | Size and format only -- no pixel dimensions published | `exam_management_aptitude_test_2026.json` |
 | NEET (UG) 2026 | Size and format only -- no pixel dimensions published | `exam_neet_ug_2026.json` |
@@ -141,7 +140,7 @@ and a manual edit to a rule record silently diverges from its evidence.
 | UPSC Combined Defence Services Examination (II) 2026 | Size and format only -- no pixel dimensions published | `exam_upsc_combined_defence_services_examination_ii_2026.json` |
 | UPSC NDA & NA Examination (II) 2026 | Size and format only -- no pixel dimensions published | `exam_upsc_nda_na_examination_ii_2026.json` |
 | WBJEE 2026 | Size and format only -- no pixel dimensions published | `exam_wbjee_2026.json` |
-| WBPSC / WBCS Current Online Application Photograph | Size and format only -- no pixel dimensions published | `exam_wbpsc_wbcs_current_online_application_photograph.json` |
+| WBPSC / WBCS Online Application | Size and format only -- no pixel dimensions published | `exam_wbpsc_wbcs_online_application.json` |
 | West Bengal School Service Commission SLST Assistant Teacher Recruitment | Size and format only -- no pixel dimensions published | `exam_west_bengal_school_service_commission_slst_assistant_teacher_recruitment.json` |
 
 ## Not encoded
@@ -173,8 +172,8 @@ so no submission method could be written without guessing one.
 | Assam Direct Recruitment Grade III | Application upload deliverables |
 | Assam Direct Recruitment Grade IV | Application upload deliverables |
 | BITS Admission Test | Application upload deliverables |
-| BPSC Current Recruitment Photograph Specification | Candidate photograph |
-| BPSC Current Recruitment Photograph Specification | Live candidate photograph |
+| BPSC Online Application | Candidate photograph |
+| BPSC Online Application | Live candidate photograph |
 | BPSC Teacher Recruitment Examination (TRE) | Application upload deliverables |
 | BPSC Teacher Recruitment Examination (TRE) | Live candidate photograph |
 | BSSC Second Inter-Level Combined Competitive Examination | Candidate photograph |
@@ -184,7 +183,7 @@ so no submission method could be written without guessing one.
 | Bihar Secondary Teacher Eligibility Test | Application upload deliverables |
 | CG Vyapam Pre-B.Ed Entrance Examination | Application upload deliverables |
 | CUET (UG) 2026 | Live candidate photograph |
-| DSSSB Major Recruitment Examination Family | Application upload deliverables |
+| DSSSB Recruitment Examinations | Application upload deliverables |
 | Delhi Police Constable (Executive) | Candidate photograph |
 | GATE 2026 | OBC-NCL/EWS certificate |
 | GUJCET | Application upload deliverables |
@@ -284,14 +283,14 @@ photograph specification, which is what blocks them.
 | Assam Direct Recruitment Grade III | 1 |
 | Assam Direct Recruitment Grade IV | 1 |
 | BITS Admission Test | 1 |
-| BPSC Current Recruitment Photograph Specification | 6 |
+| BPSC Online Application | 3 |
 | BPSC Teacher Recruitment Examination (TRE) | 3 |
 | Bihar B.Ed Common Entrance Test | 1 |
 | Bihar D.El.Ed Joint Entrance Examination | 2 |
 | Bihar Police Constable Recruitment | 1 |
 | Bihar Secondary Teacher Eligibility Test | 1 |
 | CG Vyapam Pre-B.Ed Entrance Examination | 1 |
-| DSSSB Major Recruitment Examination Family | 4 |
+| DSSSB Recruitment Examinations | 4 |
 | Delhi Police Constable (Executive) | 1 |
 | GUJCET | 1 |
 | Gujarat Police Lokrakshak Recruitment | 1 |
@@ -319,7 +318,7 @@ photograph specification, which is what blocks them.
 | Maharashtra Police Recruitment | 1 |
 | NEET-PG | 3 |
 | Odisha Joint Entrance Examination (OJEE) | 1 |
-| RPSC Current Online Application Photograph | 2 |
+| RPSC Online Application | 2 |
 | RRB JE/DMS/CMA | 1 |
 | RRB Paramedical Categories | 1 |
 | RRB Section Controller | 1 |
@@ -350,7 +349,7 @@ photograph specification, which is what blocks them.
 | Telangana Teacher Eligibility Test (TG TET) | 1 |
 | UP B.Ed Joint Entrance Examination | 1 |
 | UPPSC Combined State/Upper Subordinate Services Examination (PCS) | 2 |
-| UPPSC One Time Registration Photograph | 2 |
+| UPPSC One Time Registration | 2 |
 | UPPSC Review Officer / Assistant Review Officer | 2 |
 | UPSC Engineering Services Examination | 2 |
 | UPSSSC Preliminary Eligibility Test (PET) | 1 |

@@ -121,22 +121,6 @@
       }
     },
     {
-      "requirement_id": "category_pwd_certificate",
-      "requirement_name": "Category/PwD certificate",
-      "requirement_type": "certificate_scan",
-      "submission_method": "document_scan_upload",
-      "requirement_status": "conditional",
-      "platform_support": "supported",
-      "applicability": "Candidates claiming the relevant benefit",
-      "content_instructions": "Upload only where the application asks for documentary proof; exact format/size not extracted.",
-      "evidence_status": "Current official CUET PG bulletin",
-      "file_spec": {
-        "file_size": {
-          "maximum_bytes": 400000
-        }
-      }
-    },
-    {
       "requirement_id": "category_certificate",
       "requirement_name": "Category certificate",
       "requirement_type": "certificate_scan",
@@ -206,12 +190,6 @@
       "approved": false
     },
     "requirements[2].file_spec.file_size.maximum_bytes": {
-      "type": "interim_default",
-      "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",
-      "confidence": 1,
-      "approved": false
-    },
-    "requirements[3].file_spec.file_size.maximum_bytes": {
       "type": "interim_default",
       "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",
       "confidence": 1,

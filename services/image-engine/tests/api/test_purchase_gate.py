@@ -27,7 +27,7 @@ EXAM = "ctet-september-2026"
 SIGNATURE = "candidate_signature"
 
 # WBPSC replaced BPSC here when DEC-068 withdrew BPSC from the catalogue.
-DOC_EXAM = "wbpsc-wbcs-current-online-application-photograph"
+DOC_EXAM = "wbpsc-wbcs-online-application"
 DOC_REQUIREMENT = "claim_supporting_certificates"
 
 

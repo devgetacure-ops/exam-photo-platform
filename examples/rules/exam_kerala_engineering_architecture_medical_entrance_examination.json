@@ -105,6 +105,11 @@
             "jpg"
           ],
           "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "exact",
+          "width_px": 150,
+          "height_px": 100
         }
       }
     },

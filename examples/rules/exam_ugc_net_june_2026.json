@@ -132,22 +132,6 @@
       }
     },
     {
-      "requirement_id": "pwd_certificate",
-      "requirement_name": "PwD certificate",
-      "requirement_type": "certificate_scan",
-      "submission_method": "document_scan_upload",
-      "requirement_status": "conditional",
-      "platform_support": "supported",
-      "applicability": "Candidates claiming PwD benefit",
-      "content_instructions": "Upload the prescribed certificate in PDF where the application requests it.",
-      "evidence_status": "Recent official UGC-NET bulletin",
-      "file_spec": {
-        "file_size": {
-          "maximum_bytes": 400000
-        }
-      }
-    },
-    {
       "requirement_id": "pwd_pwbd_certificate",
       "requirement_name": "PwD/PwBD certificate",
       "requirement_type": "certificate_scan",
@@ -193,12 +177,6 @@
       "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
       "confidence": 5,
       "approved": true
-    },
-    "requirements[2].file_spec.file_size.maximum_bytes": {
-      "type": "interim_default",
-      "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",
-      "confidence": 1,
-      "approved": false
     }
   },
   "verification": {

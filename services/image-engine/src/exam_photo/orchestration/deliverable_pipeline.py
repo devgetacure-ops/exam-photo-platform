@@ -155,6 +155,23 @@ def _resize_config(
             allow_padding=True,
             enhancement_mode=EnhancementMode.NONE,
         )
+    if (
+        dimensions.mode == DimensionMode.UNSPECIFIED
+        and dimensions.preferred_width_px
+        and dimensions.preferred_height_px
+    ):
+        # A published preferred size (DEC-093): delivered at exactly that size,
+        # the content padded to its shape first.
+        return OutputPreparationConfig(
+            resize_mode=ResizeMode.RANGE_SELECT,
+            min_width=dimensions.preferred_width_px,
+            max_width=dimensions.preferred_width_px,
+            min_height=dimensions.preferred_height_px,
+            max_height=dimensions.preferred_height_px,
+            preferred_width=dimensions.preferred_width_px,
+            preferred_height=dimensions.preferred_height_px,
+            enhancement_mode=EnhancementMode.NONE,
+        )
     if dimensions.mode == DimensionMode.RANGE:
         return OutputPreparationConfig(
             resize_mode=ResizeMode.RANGE_SELECT,
@@ -296,15 +313,41 @@ def prepare_deliverable(
     image: Image.Image = prepared.image
 
     dimensions = file_spec.dimensions if file_spec else None
-    if (
-        dimensions is not None
-        and dimensions.mode == DimensionMode.EXACT
-        and dimensions.width_px
-        and dimensions.height_px
-    ):
-        target_aspect = dimensions.width_px / dimensions.height_px
+    target_aspect: Optional[float] = None
+    if dimensions is not None:
+        if (
+            dimensions.mode == DimensionMode.EXACT
+            and dimensions.width_px
+            and dimensions.height_px
+        ):
+            target_aspect = dimensions.width_px / dimensions.height_px
+        elif (
+            dimensions.mode == DimensionMode.UNSPECIFIED
+            and dimensions.preferred_width_px
+            and dimensions.preferred_height_px
+        ):
+            target_aspect = (
+                dimensions.preferred_width_px / dimensions.preferred_height_px
+            )
+        elif (
+            dimensions.mode == DimensionMode.RANGE
+            and dimensions.minimum_width_px
+            and dimensions.maximum_width_px
+            and dimensions.minimum_height_px
+            and dimensions.maximum_height_px
+        ):
+            # BPSC asks for a signature 150-220 px wide and 250-320 px tall. A
+            # signature cropped to its strokes is far wider than that allows,
+            # so it is padded to the nearest shape the range can hold.
+            narrowest = dimensions.minimum_width_px / dimensions.maximum_height_px
+            widest = dimensions.maximum_width_px / dimensions.minimum_height_px
+            current = image.width / image.height if image.height else widest
+            if not narrowest <= current <= widest:
+                target_aspect = min(widest, max(narrowest, current))
+    if dimensions is not None and target_aspect is not None:
         if (
             treatment is InkTreatment.PAGE
+            and dimensions.mode == DimensionMode.EXACT
             and target_aspect >= 1.2
             and image.width / image.height <= 0.9
         ):

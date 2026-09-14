@@ -29,7 +29,7 @@ def test_loads_the_real_catalogue():
     catalogue = load_catalogue(CATALOGUE_ROOT)
 
     assert catalogue.unreadable == {}
-    assert len(catalogue.entries) == 132
+    assert len(catalogue.entries) == 131
     entry = catalogue.get("ibps-crp-customer-service-associates-xv")
     assert entry is not None
     assert entry.rule.exam.exam_name == "IBPS CRP Customer Service Associates-XV"
@@ -152,7 +152,7 @@ def test_the_sidecar_is_never_mistaken_for_a_rule_record():
     catalogue = load_catalogue(CATALOGUE_ROOT)
 
     assert "unavailable_examinations.json" not in catalogue.unreadable
-    assert len(catalogue.entries) == 132
+    assert len(catalogue.entries) == 131
 
 
 def test_a_catalogue_without_the_sidecar_still_serves(tmp_path, real_record):
@@ -189,8 +189,8 @@ def test_catalogue_wide_support_totals_match_the_recorded_figures():
         for support, count in support_counts(entry.rule).items():
             totals[support] += count
 
-    assert sum(totals.values()) == 418
-    assert totals[PlatformSupport.SUPPORTED] == 314
-    assert totals[PlatformSupport.GUIDANCE_ONLY] == 29
+    assert sum(totals.values()) == 405
+    assert totals[PlatformSupport.SUPPORTED] == 303
+    assert totals[PlatformSupport.GUIDANCE_ONLY] == 28
     assert totals[PlatformSupport.PARTIALLY_SUPPORTED] == 3
-    assert totals[PlatformSupport.NOT_YET_SUPPORTED] == 72
+    assert totals[PlatformSupport.NOT_YET_SUPPORTED] == 71

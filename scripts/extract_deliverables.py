@@ -46,11 +46,37 @@ _SIZE_MAX_ONLY = re.compile(
     r"(?:up to|maximum(?: of)?|max\.?|not exceeding)\s*(\d+(?:\.\d+)?)\s*(KB|MB|kB|kb|mb)\b",
     re.I,
 )
-# "about 140 x 60 pixels", "240 x 240 pixels"
-_DIM_EXACT = re.compile(r"(\d{2,5})\s*[x×]\s*(\d{2,5})\s*(?:pixels|px)\b", re.I)
+# A dash or a multiplication sign that a delivery's encoding turned into the
+# replacement character: "width 150\ufffd220 px", "230\ufffd75 px".
+_DASH = "\-–—\ufffd"
+_TIMES = "x×\ufffd"
+# "about 140 x 60 pixels", "240 x 240 pixels". Not preceded by a digit and a
+# separator, so "150-220-250-320 px" is never read as one size.
+_DIM_EXACT = re.compile(
+    rf"(?<![\d{_DASH}{_TIMES}])(\d{{2,5}})\s*[{_TIMES}]\s*(\d{{2,5}})\s*(?:pixels|px)\b",
+    re.I,
+)
+# "width between 150-220 pixels and height between 250-320 pixels",
+# "width 150\ufffd220 px; height 250\ufffd320 px"
+_DIM_AXES = re.compile(
+    rf"width\s*(?:between\s*)?(\d{{2,5}})\s*[{_DASH}]\s*(\d{{2,5}})\s*(?:pixels|px)?"
+    rf"\s*[;,]?\s*(?:and\s*)?height\s*(?:between\s*)?(\d{{2,5}})\s*[{_DASH}]\s*(\d{{2,5}})"
+    r"\s*(?:pixels|px)\b",
+    re.I,
+)
+# "150–220×250–320 px": a width range by a height range, in that order, as
+# BPSC writes it. Only with a real dash and a real multiplication sign; the
+# replacement character could be either, so it is never read here.
+_DIM_RANGE_BY_RANGE = re.compile(
+    r"(\d{2,5})\s*[-–—]\s*(\d{2,5})\s*[x×]\s*(\d{2,5})\s*[-–—]\s*(\d{2,5})\s*(?:pixels|px)\b",
+    re.I,
+)
+#: Words that make a stated size a preference, or a bound that is not a size.
+_PREFERRED = re.compile(r"prefer", re.I)
+_LOWER_BOUND = re.compile(r"(?:minimum|at least|not less than)\s*$", re.I)
 # "250 x 80 to 580 x 180 pixels"
 _DIM_RANGE = re.compile(
-    r"(\d{2,5})\s*[x×]\s*(\d{2,5})\s*(?:to|-|–)\s*(\d{2,5})\s*[x×]\s*(\d{2,5})\s*"
+    rf"(\d{{2,5}})\s*[{_TIMES}]\s*(\d{{2,5}})\s*(?:to|[{_DASH}])\s*(\d{{2,5}})\s*[{_TIMES}]\s*(\d{{2,5}})\s*"
     r"(?:pixels|px)\b",
     re.I,
 )
@@ -103,8 +129,22 @@ def _parse_specification(text: str) -> dict[str, Any]:
 
     # Range first: "250 x 80 to 580 x 180" also matches the exact pattern twice,
     # and reading it as a single exact size would silently discard the range.
+    axes = _DIM_AXES.search(text) or _DIM_RANGE_BY_RANGE.search(text)
     match = _DIM_RANGE.search(text)
-    if match:
+    if match and match.group(0).count("�") >= 3:
+        # "150�220�250�320 px": every separator lost to encoding, so
+        # which numbers are widths and which are heights cannot be read.
+        match = None
+    if axes:
+        parsed["dimensions_px"] = {
+            "mode": "range",
+            "minimum_width": int(axes.group(1)),
+            "maximum_width": int(axes.group(2)),
+            "minimum_height": int(axes.group(3)),
+            "maximum_height": int(axes.group(4)),
+            "source_wording": axes.group(0).strip(),
+        }
+    elif match:
         parsed["dimensions_px"] = {
             "mode": "range",
             "minimum_width": int(match.group(1)),
@@ -115,9 +155,14 @@ def _parse_specification(text: str) -> dict[str, Any]:
         }
     else:
         match = _DIM_EXACT.search(text)
+        if match and _LOWER_BOUND.search(text[max(0, match.start() - 20) : match.start()]):
+            # "minimum 140 x 60 pixels" is a bound, not a size; reading it as
+            # one would invent the size a notice declined to set.
+            match = None
         if match:
+            around = text[max(0, match.start() - 25) : match.end() + 25]
             parsed["dimensions_px"] = {
-                "mode": "exact",
+                "mode": "preferred" if _PREFERRED.search(around) else "exact",
                 "width": int(match.group(1)),
                 "height": int(match.group(2)),
                 "source_wording": match.group(0).strip(),

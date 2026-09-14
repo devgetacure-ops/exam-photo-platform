@@ -16,8 +16,8 @@ def test_list_exams_returns_the_catalogue():
 
     assert response.status_code == 200
     body = response.json()
-    assert body["total"] == 132
-    assert len(body["exams"]) == 132
+    assert body["total"] == 131
+    assert len(body["exams"]) == 131
     assert body["unreadable"] == {}
 
     names = [exam["exam_name"] for exam in body["exams"]]
@@ -57,7 +57,7 @@ def test_unavailable_examinations_are_not_merged_into_the_selectable_list():
     selectable = {exam["exam_name"] for exam in body["exams"]}
     unavailable = {item["exam_name"] for item in body["unavailable"]}
 
-    assert body["total"] == len(body["exams"]) == 132
+    assert body["total"] == len(body["exams"]) == 131
     assert selectable.isdisjoint(unavailable)
 
 

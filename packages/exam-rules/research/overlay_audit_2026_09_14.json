@@ -1,0 +1,74 @@
+{
+  "_note": "Catalogue audit of 2026-09-14 (owner's testing note 5, DEC-093). Applied by scripts/merge_research_delivery.py after every delivery, like any overlay. Each entry says why. Renames change a record's display name and so its exam_id; they never change a value a notice published.",
+  "rename_records": {
+    "BPSC Current Recruitment Photograph Specification": {
+      "to": "BPSC Online Application",
+      "why": "The old name was the research brief's scope label, not an examination. The record covers BPSC's online application and one-time registration."
+    },
+    "DSSSB Major Recruitment Examination Family": {
+      "to": "DSSSB Recruitment Examinations",
+      "why": "Scope label. The record covers DSSSB's recruitment applications."
+    },
+    "ICAI Examination Portal Photograph (current portal scope)": {
+      "to": "ICAI Examination Portal",
+      "why": "Scope label."
+    },
+    "ICSI Student Registration / Examination Account Photograph": {
+      "to": "ICSI Student Registration and Examination",
+      "why": "Scope label."
+    },
+    "Karnataka PSC Current Recruitment Portal Photograph": {
+      "to": "Karnataka PSC Online Application",
+      "why": "Scope label."
+    },
+    "Kerala PSC One Time Registration Photograph": {
+      "to": "Kerala PSC One Time Registration",
+      "why": "Scope label."
+    },
+    "MPSC General Online Application Photograph Instruction": {
+      "to": "MPSC Online Application",
+      "why": "Scope label."
+    },
+    "RBI Officers in Grade B 2026 - prior-cycle official fallback": {
+      "to": "RBI Officers in Grade B 2026",
+      "why": "'prior-cycle official fallback' described how the research sourced the record, which the record's provenance already carries."
+    },
+    "RPSC Current Online Application Photograph": {
+      "to": "RPSC Online Application",
+      "why": "Scope label."
+    },
+    "UPPSC One Time Registration Photograph": {
+      "to": "UPPSC One Time Registration",
+      "why": "Scope label."
+    },
+    "WBPSC / WBCS Current Online Application Photograph": {
+      "to": "WBPSC / WBCS Online Application",
+      "why": "Scope label."
+    }
+  },
+  "remove_records": {
+    "RBI Assistant - Panel Year 2025 (live photograph)": "An exact copy of 'RBI Assistant - Panel Year 2025': the same notice (opportunities.rbi.org.in Id=4912) and the same five deliverables, the live photograph among them. One examination, one page."
+  },
+  "remove_deliverables": {
+    "BPSC Current Recruitment Photograph Specification": {
+      "Candidate signature": "Not a separate item: BPSC's application instructions (bpsconline.bihar.gov.in, Instruction_Online_Application.pdf, Step 6) ask for exactly one English and one Hindi signature, both kept as 'Candidate signature (English)' and 'Candidate signature (Hindi)'.",
+      "English signature": "Duplicate of 'Candidate signature (English)', from a user manual whose certificate could not be verified; the application instructions state the same figures.",
+      "Hindi signature": "Duplicate of 'Candidate signature (Hindi)', as above."
+    },
+    "CUET (PG) 2026": {
+      "Category/PwD certificate": "Covered by 'Category certificate' and 'PwD/PwBD certificate', both listed separately in the information bulletin; this combined entry came from a portal page with no specification."
+    },
+    "CUET (UG) 2026": {
+      "PwD certificate": "Duplicate of 'PwD/UDID certificate', which carries the bulletin's PDF 50-300 KB specification."
+    },
+    "UGC-NET June 2026": {
+      "PwD certificate": "Duplicate of 'PwD/PwBD certificate', which carries the bulletin's PDF 50-300 KB specification."
+    },
+    "ICSI Student Registration / Examination Account Photograph": {
+      "Identity/address/category proof": "Duplicate of 'Identity proof', which carries ICSI's published formats and size."
+    },
+    "NEET (UG) 2026": {
+      "Category/PwBD/citizenship certificate": "A generic entry from an earlier source; the bulletin lists the citizenship, category and PwBD documents as their own items, which are kept."
+    }
+  }
+}

@@ -80,7 +80,8 @@ def test_a_preferred_size_locks_the_crop_to_its_shape() -> None:
         assert config.min_aspect_ratio == pytest.approx(aspect)
         assert config.max_aspect_ratio == pytest.approx(aspect)
         locked += 1
-    assert locked >= 13
+    # Twelve since DEC-093 removed the RBI Assistant duplicate record.
+    assert locked >= 12
 
 
 @pytest.mark.parametrize("box_aspect", [0.55, 0.65, 0.70, 0.75, 0.80, 0.87, 0.95, 1.1])
