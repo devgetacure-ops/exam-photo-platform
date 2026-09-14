@@ -142,34 +142,52 @@ describe("the before-and-after band", () => {
         expect(wipeOf(container, 0)).not.toBeCloseTo(first, 1);
     });
 
-    test("the partition only travels from the upload towards the prepared file", () => {
+    test("the next example arrives on the sweep itself, with no broken frame between", () => {
         const { container } = renderBand();
         step(0);
 
-        let previousWipe = wipeOf(container, 0);
         let previousShown = showing(container, 0);
-        let restarts = 0;
-        let closest = previousWipe;
+        let previousWipe = wipeOf(container, 0);
+        let handovers = 0;
+        let reachedPrepared = false;
+        let broughtNextUploadIn = false;
 
-        for (let now = 200; now <= 14000; now += 200) {
+        for (let now = 100; now <= 16000; now += 100) {
             step(now);
             const wipe = wipeOf(container, 0);
             const shown = showing(container, 0);
-            if (wipe > previousWipe + 0.5) {
-                // The only jump back is the start of the next example.
-                restarts += 1;
-                expect(shown).not.toBe(previousShown);
-                expect(wipe).toBeGreaterThan(90);
+            if (wipe <= 0.5) reachedPrepared = true;
+            if (wipe > previousWipe + 0.5) broughtNextUploadIn = true;
+            if (shown !== previousShown) {
+                // The prepared file underneath changes only while the next
+                // upload covers the whole frame: nothing visible jumps.
+                handovers += 1;
+                expect(previousWipe).toBeGreaterThanOrEqual(99.5);
+                expect(wipe).toBeGreaterThanOrEqual(99);
             }
-            closest = Math.min(closest, wipe);
+            // Never a jump: the partition moves smoothly between steps.
+            expect(Math.abs(wipe - previousWipe)).toBeLessThan(20);
             previousWipe = wipe;
             previousShown = shown;
         }
 
-        expect(restarts).toBeGreaterThanOrEqual(1);
-        // Each run arrives at the prepared file and rests there before the
-        // next example begins.
-        expect(closest).toBeLessThan(10);
+        expect(reachedPrepared).toBe(true);
+        expect(broughtNextUploadIn).toBe(true);
+        expect(handovers).toBeGreaterThanOrEqual(1);
+        // No outgoing layer fading over the frame any more.
+        expect(container.querySelector(".euk-wipe-prev")).toBeNull();
+    });
+
+    test("the sweep back uncovers the next upload over the current prepared file", () => {
+        const { container } = renderBand();
+        step(0);
+        const clip = () =>
+            container.querySelectorAll(".euk-wipe")[0].querySelector(".euk-wipe-clip img")!.getAttribute("src") ?? "";
+        expect(clip()).toContain("photo-a1-uploaded");
+        // Past the rest on the prepared file, the upload layer is the next one.
+        for (let now = 300; now <= 5100; now += 300) step(now);
+        expect(clip()).toContain("photo-a2-uploaded");
+        expect(showing(container, 0)).toBe("photo a1");
     });
 
     test("checks tick as the prepared file takes over, not as the upload does", () => {
@@ -227,7 +245,7 @@ describe("the before-and-after band", () => {
         for (let now = 300; now <= 3600; now += 300) step(now);
         expect(showing(container, 0)).toBe("photo a1");
 
-        for (let now = 3900; now <= 8400; now += 300) step(now);
+        for (let now = 3900; now <= 8700; now += 300) step(now);
         expect(showing(container, 0)).toBe("photo a2");
         expect(showing(container, 1)).toBe("signature s2");
     });
@@ -281,8 +299,7 @@ describe("the before-and-after band", () => {
     test("the pair carries a photograph and a signature, each with its examples", () => {
         const { container } = renderBand();
 
-        // Side by side, in one row: the columns are sized so both frames come
-        // out the same height despite their different shapes.
+        // Side by side, two equal frames (testing note 1).
         expect(container.querySelector(".euk-band-pair")).toBeInTheDocument();
         expect(container.querySelectorAll(".euk-band-pair .euk-wipe")).toHaveLength(2);
         expect(screen.getByText("Photograph")).toBeInTheDocument();

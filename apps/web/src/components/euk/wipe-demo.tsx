@@ -4,31 +4,28 @@ import Image from "next/image";
 import { type CSSProperties, useCallback, useEffect, useRef, useState } from "react";
 
 /**
- * The before-and-after band, set the way an application form is set.
+ * The before-and-after band: a photograph and a signature, two equal frames.
  *
- * A form gives you a photograph box and, beneath it, a signature strip of the
- * same width. Arranging the two comparisons that way fixes the layout problem
- * the side-by-side version had — a tall portrait next to a short landscape,
- * ragged along the bottom — and it is the thing the candidate is filling in.
+ * The motion is one continuous conveyor (the owner's testing note 2). The
+ * first version swept to the prepared file, snapped the partition back and
+ * faded the next example in over it, which read as a broken frame between
+ * examples. Now the same partition carries the handover:
  *
- * The motion rules, in one place:
+ * - it sweeps across, and the upload becomes the prepared file;
+ * - it rests there, long enough to be read;
+ * - it sweeps back, and this time what it uncovers is the **next** upload,
+ *   laid over the prepared file it is replacing;
+ * - at the far edge the next upload covers the whole frame, so the prepared
+ *   file underneath is swapped for the next one with nothing visible changing,
+ *   and the next sweep begins.
  *
- * - The sweep runs one way only, from the upload to the prepared file, and
- *   both frames run it together. Travelling back the other way said
- *   "prepared becomes your phone photograph", which is the story backwards.
- * - It rests on the prepared file at the end of each run, long enough to be
- *   read, then dissolves into the next example and starts again.
- * - Each frame is its own in every other way: taking the handle of one holds
- *   only that one, and it picks itself up three seconds after the last touch.
- * - At the end of each sweep a frame moves to its next example, so everything
- *   on offer is seen without anybody clicking.
- * - The control pauses and plays both, for anyone who wants it still
- *   (WCAG 2.2.2). Nothing moves under prefers-reduced-motion, or while the
- *   band is off screen.
+ * Every other rule stands: taking the handle of one frame holds only that one,
+ * and it picks itself up three seconds after the last touch; the control
+ * pauses and plays both (WCAG 2.2.2); nothing moves under
+ * prefers-reduced-motion or while the band is off screen.
  *
- * The sweep writes a CSS custom property on the frame rather than React
- * state, so the loop re-renders nothing; the only state that changes during a
- * sweep is how many of the checks the partition has passed.
+ * The sweep writes a CSS custom property on the frame rather than React state,
+ * so the loop re-renders nothing except at the two phase changes of a cycle.
  */
 
 export interface WipePair {
@@ -44,15 +41,22 @@ export interface WipeCheck {
     after: string;
 }
 
-/** One example: the sweep across, then a rest on the prepared file. */
-const PERIOD_MS = 7000;
-const SWEEP_SHARE = 0.72;
-/** The partition's travel. It starts on the upload and ends on the result. */
-const FROM = 96;
-const TO = 4;
+/** One example: across, a rest on the result, back with the next upload. */
+const PERIOD_MS = 7600;
+/** End of the sweep to the prepared file, as a share of the period. */
+const ARRIVE = 0.38;
+/** Start of the sweep that brings in the next upload. */
+const DEPART = 0.56;
+/** End of that sweep. The remainder rests on the next upload before the swap. */
+const RETURN = 0.94;
+/** The partition's travel: the whole frame, so each handover is invisible. */
+const UPLOAD = 100;
+const PREPARED = 0;
 const START = 50;
 /** How long after the last touch a frame picks itself up again. */
 const RESUME_AFTER_MS = 3000;
+
+const ease = (x: number) => 0.5 - 0.5 * Math.cos(Math.PI * Math.min(1, Math.max(0, x)));
 
 interface SetProps {
     title: string;
@@ -66,7 +70,8 @@ interface SetProps {
 
 function WipeSet({ title, pairs, checks, width, height, allowed }: SetProps) {
     const [index, setIndex] = useState(0);
-    const [previous, setPrevious] = useState<number | null>(null);
+    /** True while the sweep back is uncovering the next upload. */
+    const [incoming, setIncoming] = useState(false);
     const [held, setHeld] = useState(false);
     const [passed, setPassed] = useState(0);
 
@@ -74,12 +79,7 @@ function WipeSet({ title, pairs, checks, width, height, allowed }: SetProps) {
     const sliderRef = useRef<HTMLDivElement>(null);
     const pctRef = useRef(START);
     const passedRef = useRef(0);
-    const indexRef = useRef(0);
     const resumeRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-    useEffect(() => {
-        indexRef.current = index;
-    }, [index]);
 
     const apply = useCallback(
         (next: number) => {
@@ -87,10 +87,8 @@ function WipeSet({ title, pairs, checks, width, height, allowed }: SetProps) {
             pctRef.current = pct;
             frameRef.current?.style.setProperty("--wipe", pct.toFixed(2));
             sliderRef.current?.setAttribute("aria-valuenow", String(Math.round(pct)));
-            // Counted from the prepared side, which is the side that grows:
-            // a check is ticked once the prepared file has covered the place
-            // it sits. Counting from the upload had all four ticked while the
-            // frame still showed the phone photograph.
+            // Counted from the prepared side, which is the side that grows: a
+            // check is ticked once the prepared file has covered its place.
             const covered = 100 - pct;
             const crossed = checks.filter(
                 (_, i) => covered >= ((i + 1) / (checks.length + 1)) * 100,
@@ -107,9 +105,10 @@ function WipeSet({ title, pairs, checks, width, height, allowed }: SetProps) {
         apply(pctRef.current);
     }, [apply]);
 
-    /** Any touch holds this frame; it lets go again after a quiet spell. */
+    /** Any touch holds this frame, on the example it is showing now. */
     const hold = useCallback(() => {
         setHeld(true);
+        setIncoming(false);
         if (resumeRef.current) clearTimeout(resumeRef.current);
         resumeRef.current = setTimeout(() => setHeld(false), RESUME_AFTER_MS);
     }, []);
@@ -126,52 +125,56 @@ function WipeSet({ title, pairs, checks, width, height, allowed }: SetProps) {
     useEffect(() => {
         if (!running) return;
         let frame = 0;
-        let started = false;
         let origin = 0;
+        let started = false;
         let lastCycle = 0;
+        let lastIncoming = false;
         const tick = (now: number) => {
             if (!started) {
-                // Pick the sweep up where the handle rests, so starting it
-                // never throws the partition across the frame.
-                const travelled = Math.min(
-                    1,
-                    Math.max(0, (FROM - pctRef.current) / (FROM - TO)),
-                );
-                const done = Math.acos(1 - 2 * travelled) / Math.PI;
-                origin = now - done * SWEEP_SHARE * PERIOD_MS;
-                lastCycle = 0;
+                // Pick the sweep up where the handle rests, so starting never
+                // throws the partition across the frame.
+                const travelled = (UPLOAD - pctRef.current) / (UPLOAD - PREPARED);
+                const done = Math.acos(1 - 2 * Math.min(1, Math.max(0, travelled))) / Math.PI;
+                origin = now - done * ARRIVE * PERIOD_MS;
                 started = true;
             }
             const elapsed = (now - origin) / PERIOD_MS;
-            const t = elapsed % 1;
-            // Across, then a rest on the result. One direction: the upload
-            // becomes the prepared file, never the other way about.
-            const travel = Math.min(1, t / SWEEP_SHARE);
-            const eased = 0.5 - 0.5 * Math.cos(Math.PI * travel);
-            apply(FROM - eased * (FROM - TO));
-            // On to the next example once a whole run has played. Counted
-            // rather than watched for: a dropped frame can step clean over a
-            // narrow window, and on a slow phone that means a frame that
-            // quietly stops changing example.
             const cycle = Math.floor(elapsed);
-            if (cycle !== lastCycle && pairs.length > 1) {
+            const t = elapsed - cycle;
+
+            // Counted rather than watched for: a dropped frame can step over
+            // a narrow window, and on a slow phone that would stall the band.
+            if (cycle !== lastCycle) {
                 lastCycle = cycle;
-                setPrevious(indexRef.current);
-                setIndex((i) => (i + 1) % pairs.length);
+                lastIncoming = false;
+                if (pairs.length > 1) {
+                    // The next upload already covers the whole frame, so
+                    // swapping the prepared file beneath it shows nothing.
+                    setIndex((i) => (i + 1) % pairs.length);
+                }
+                setIncoming(false);
             }
+
+            const bringing = t >= DEPART;
+            if (bringing !== lastIncoming) {
+                // Swapped while the partition sits at the prepared edge, where
+                // the upload layer is fully hidden.
+                lastIncoming = bringing;
+                setIncoming(bringing);
+            }
+
+            if (t < ARRIVE) apply(UPLOAD - ease(t / ARRIVE) * (UPLOAD - PREPARED));
+            else if (t < DEPART) apply(PREPARED);
+            else if (t < RETURN) apply(PREPARED + ease((t - DEPART) / (RETURN - DEPART)) * (UPLOAD - PREPARED));
+            else apply(UPLOAD);
+
             frame = requestAnimationFrame(tick);
         };
         frame = requestAnimationFrame(tick);
         return () => cancelAnimationFrame(frame);
     }, [running, pairs.length, apply]);
 
-    useEffect(() => {
-        if (previous === null) return;
-        const timer = setTimeout(() => setPrevious(null), 420);
-        return () => clearTimeout(timer);
-    }, [previous]);
-
-    // Fetch the next pair before it is wanted, so a change never shows a gap.
+    // Fetch the next pair before it is wanted, so a handover never shows a gap.
     useEffect(() => {
         const next = pairs[(index + 1) % pairs.length];
         if (!next || typeof window === "undefined") return;
@@ -193,7 +196,7 @@ function WipeSet({ title, pairs, checks, width, height, allowed }: SetProps) {
     );
 
     const pair = pairs[index];
-    const outgoing = previous !== null && previous !== index ? pairs[previous] : null;
+    const upload = incoming ? pairs[(index + 1) % pairs.length] : pair;
     const latest = passed > 0 ? checks[passed - 1] : null;
 
     return (
@@ -214,9 +217,7 @@ function WipeSet({ title, pairs, checks, width, height, allowed }: SetProps) {
                             aria-pressed={i === index}
                             onClick={() => {
                                 hold();
-                                if (i === index) return;
-                                setPrevious(index);
-                                setIndex(i);
+                                if (i !== index) setIndex(i);
                             }}
                         />
                     ))}
@@ -226,8 +227,6 @@ function WipeSet({ title, pairs, checks, width, height, allowed }: SetProps) {
             <div
                 ref={frameRef}
                 className="euk-wipe-frame"
-                // A property rather than the ratio itself, so a phone can set
-                // both frames square without fighting an inline style.
                 style={{ "--wipe-ratio": `${width} / ${height}` } as CSSProperties}
                 onPointerDown={(event) => {
                     event.currentTarget.setPointerCapture(event.pointerId);
@@ -241,18 +240,6 @@ function WipeSet({ title, pairs, checks, width, height, allowed }: SetProps) {
                 }}
                 onPointerUp={hold}
             >
-                {outgoing && (
-                    <Image
-                        key={outgoing.id}
-                        className="euk-wipe-img euk-wipe-prev"
-                        src={outgoing.after}
-                        alt=""
-                        width={width}
-                        height={height}
-                        aria-hidden="true"
-                        draggable={false}
-                    />
-                )}
                 <Image
                     className="euk-wipe-img"
                     src={pair.after}
@@ -265,7 +252,7 @@ function WipeSet({ title, pairs, checks, width, height, allowed }: SetProps) {
                 <div className="euk-wipe-clip" aria-hidden="true">
                     <Image
                         className="euk-wipe-img"
-                        src={pair.before}
+                        src={upload.before}
                         alt=""
                         width={width}
                         height={height}
@@ -418,9 +405,10 @@ export function WipeDemo({
                 </button>
             </div>
 
-            {/* The pair and the note it belongs to sit side by side where
-                there is room: underneath, the note was a paragraph you
-                scrolled past, and the space beside the frames was empty. */}
+            {/* Two equal frames and one line beneath them (testing note 1):
+                the photograph and the signature at the same size, so neither
+                dwarfs the other, and the note as a caption rather than a
+                column of its own. */}
             <div className="euk-band-body">
                 <div className="euk-band-pair">
                     <WipeSet

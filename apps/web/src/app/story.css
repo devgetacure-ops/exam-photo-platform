@@ -374,17 +374,10 @@
     margin-top: 30px;
 }
 
-/* Wide enough for a column beside the frames: the note goes there rather than
-   below, which fills the empty right-hand side and takes a screen's worth of
-   height out of the section. */
-@media (min-width: 1180px) {
-    .euk-band-body {
-        grid-template-columns: minmax(0, 1fr) 300px;
-        gap: 44px;
-        align-items: start;
-    }
-}
-
+/* Two equal frames side by side, the note a caption beneath them
+   (testing note 1). The old pair gave the signature 1.78 times the
+   photograph's width and put the note in a third column, which left the
+   photograph small, the signature huge and a hole on the right. */
 .euk-band-pair {
     display: grid;
     gap: 26px;
@@ -393,30 +386,17 @@
 
 @media (min-width: 900px) {
     .euk-band-pair {
-        /* 1 : 1.78 — a 3:4 frame and a 4:3 frame of the same height. */
-        grid-template-columns: 1fr 1.78fr;
-        gap: 28px;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 32px;
         align-items: start;
-        /* Capped so the pair, its ticks and the heading land inside one
-           screen rather than needing a scroll to see the second one. */
-        max-width: 1020px;
-    }
-}
-
-/* In two columns the cap is the column itself. */
-@media (min-width: 1180px) {
-    .euk-band-pair {
-        max-width: none;
     }
 }
 
 .euk .euk-band-note {
-    border-left: var(--rule) solid var(--hairline);
-    padding-left: 15px;
     font-size: 13px;
     line-height: 1.6;
     color: var(--ink-55);
-    max-width: 64ch;
+    max-width: 72ch;
 }
 
 /* ---- one comparison --------------------------------------------------- */
@@ -493,13 +473,15 @@
     }
 }
 
+/* Square at every width, each file shown whole inside it, so a tall
+   photograph and a wide signature read as a matching pair. */
 .euk-wipe-frame {
     --wipe: 50;
     position: relative;
     overflow: hidden;
     border: var(--rule-thin) solid var(--ink);
     background: var(--paper-2);
-    aspect-ratio: var(--wipe-ratio, auto);
+    aspect-ratio: 1 / 1;
     touch-action: pan-y;
     cursor: ew-resize;
     user-select: none;
@@ -509,7 +491,17 @@
     display: block;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
+}
+
+/* On a wide screen two squares would stand taller than the window. The frames
+   keep one shared height instead, so the heading, both frames and their ticks
+   land in one view; each file is still shown whole inside. */
+@media (min-width: 900px) {
+    .euk-wipe-frame {
+        aspect-ratio: auto;
+        height: min(520px, 58vh);
+    }
 }
 
 .euk-wipe-frame > .euk-wipe-img,
@@ -524,22 +516,6 @@
     clip-path: inset(0 calc((100 - var(--wipe)) * 1%) 0 0);
 }
 
-/* The outgoing prepared file sits on top and dissolves, which covers the
-   partition's jump back to the upload for the next example. */
-.euk-wipe-prev {
-    z-index: 3;
-    animation: euk-wipe-out 420ms ease-out forwards;
-}
-
-@keyframes euk-wipe-out {
-    from {
-        opacity: 1;
-    }
-    to {
-        opacity: 0;
-    }
-}
-
 .euk-wipe-line {
     position: absolute;
     top: 0;
@@ -551,10 +527,12 @@
     pointer-events: none;
 }
 
+/* The partition travels edge to edge, so the handle is kept inside the
+   frame while the line itself reaches the border. */
 .euk-wipe-handle {
     position: absolute;
     top: 50%;
-    left: calc(var(--wipe) * 1%);
+    left: clamp(24px, calc(var(--wipe) * 1%), calc(100% - 24px));
     transform: translate(-50%, -50%);
     display: flex;
     align-items: center;
@@ -572,14 +550,6 @@
    takes a drag outright: touching it never scrolls the page, and its reach is
    wider than its drawing. The rest of the frame still scrolls vertically. */
 @media (max-width: 899px) {
-    .euk-wipe-frame {
-        aspect-ratio: 1 / 1;
-    }
-
-    .euk-wipe-img {
-        object-fit: contain;
-    }
-
     .euk-wipe-handle {
         width: 48px;
         height: 48px;
@@ -672,13 +642,6 @@
 .euk-wipe-now {
     color: var(--ink);
     font-weight: 600;
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .euk-wipe-prev {
-        animation: none;
-        opacity: 0;
-    }
 }
 
 /* ---- how we do it ---------------------------------------------------- */
