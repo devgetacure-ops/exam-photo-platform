@@ -1762,6 +1762,29 @@
     stroke: var(--signal-deep);
 }
 
+/* The step being worked on breathes, so a wait on one step still reads as work
+   (testing note 21). The ticks themselves stay the engine's real progress;
+   this only shows which one is in hand. Transform and opacity only, and none
+   of it under a reduced-motion preference. */
+@media (prefers-reduced-motion: no-preference) {
+    .euk-prep-steps li[data-state="now"] .euk-prep-box {
+        transform-origin: center;
+        animation: euk-prep-now 1200ms ease-in-out infinite;
+    }
+}
+
+@keyframes euk-prep-now {
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(0.78);
+        opacity: 0.55;
+    }
+}
+
 .euk .euk-prep-note {
     margin-top: 12px;
     font-size: 14px;

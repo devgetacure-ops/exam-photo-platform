@@ -12,6 +12,9 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Dict, Iterator, List, Optional, Tuple
 
+import numpy as np
+from PIL import Image, ImageOps
+
 from exam_photo.api.contracts import ApiJobStatus, JobEntitlement
 from exam_photo.api.delivery import (
     Attachment,
@@ -40,6 +43,7 @@ from exam_photo.api.razorpay_orders import (
 )
 from exam_photo.api.settings import ApiSettings
 from exam_photo.api.storage import LocalArtifactStore
+from exam_photo.ink.paper_region import locate_paper
 from exam_photo.models.exam_rule import (
     ExamRequirement,
     ExamRule,
@@ -74,6 +78,13 @@ from exam_photo.preview import (
     PREVIEW_FILENAME,
     PreviewUnavailableError,
     render_watermarked_preview,
+)
+from exam_photo.providers.mediapipe_face_detector import MediapipeFaceDetector
+from exam_photo.suitability.not_ink import (
+    LIKELY_FACE_CONFIDENCE,
+    REFUSAL_CODE,
+    REFUSAL_TEXT,
+    looks_like_a_photograph,
 )
 
 
@@ -259,6 +270,12 @@ class ApiProcessingService:
         #: test ever reaches api.razorpay.com (DEC-070).
         self._order_gateway: Optional[OrderGateway] = None
         self._email_sender: Optional[EmailSender] = None
+        # Note 23: the face detector that tells a photograph from ink, built
+        # on first use. None with `_not_ink_unavailable` set means it could
+        # not be loaded, and then nothing is ever refused on its word.
+        self._not_ink_detector: Optional[MediapipeFaceDetector] = None
+        self._not_ink_unavailable = False
+        self._not_ink_lock = threading.Lock()
         self.repo_root = find_repo_root()
 
         # Load existing manifests on startup
@@ -317,6 +334,53 @@ class ApiProcessingService:
         """Re-read the catalogue from disk, e.g. after re-running the encoder."""
         self.catalogue = load_catalogue(self.catalogue_root)
         return self.catalogue
+
+    def _not_ink_face_detector(self) -> Optional[MediapipeFaceDetector]:
+        """The detector for the not-ink check, or None where it cannot load."""
+        with self._not_ink_lock:
+            if self._not_ink_detector is None and not self._not_ink_unavailable:
+                try:
+                    path, sha = self._resolve_face_model()
+                    if not path.exists():
+                        raise FileNotFoundError(path)
+                    self._not_ink_detector = MediapipeFaceDetector(
+                        model_path=path,
+                        expected_sha256=sha,
+                        min_detection_confidence=LIKELY_FACE_CONFIDENCE,
+                    )
+                except Exception:
+                    self._not_ink_unavailable = True
+            return self._not_ink_detector
+
+    def _upload_is_a_photograph(self, upload: bytes, kind: str) -> bool:
+        """Whether a signature or thumb impression upload is a photograph instead.
+
+        See `suitability/not_ink.py` for the measurements behind the rule.
+        Anything that goes wrong here -- an undecodable file, no detector --
+        answers no, so the ordinary path reports it as it always has.
+        """
+        if kind not in REFUSAL_CODE or upload.startswith(b"%PDF-"):
+            return False
+        detector = self._not_ink_face_detector()
+        if detector is None:
+            return False
+        try:
+            with Image.open(io.BytesIO(upload)) as opened:
+                image = ImageOps.exif_transpose(opened).convert("RGB")
+            analysis = image.copy()
+            analysis.thumbnail((1400, 1400))
+            paper = locate_paper(np.asarray(analysis).astype(np.float32))
+            faces = detector.detect_faces(
+                image, config={"min_detection_confidence": LIKELY_FACE_CONFIDENCE}
+            ).detections
+        except Exception:
+            return False
+        return looks_like_a_photograph(
+            kind,
+            [face.confidence for face in faces],
+            paper.area_fraction,
+            paper.is_fallback,
+        )
 
     def _resolve_face_model(self) -> Tuple[Path, str]:
         """Resolve face model path and expected sha256."""
@@ -1416,6 +1480,19 @@ class ApiProcessingService:
 
         self.store.write_file(job_id, "input.bin", upload)
         artifact_names = ["input.bin"]
+
+        kind = requirement.requirement_type.value
+        if self._upload_is_a_photograph(upload, kind):
+            # Refused before any work, and never priced: no output exists, so
+            # the quote classes the job `nothing_prepared` (note 23).
+            record.status = ApiJobStatus.FAILED
+            record.is_valid = False
+            record.outcome = "not_produced"
+            record.issue_codes = [REFUSAL_CODE[kind]]
+            record.findings = [REFUSAL_TEXT[kind]]
+            record.artifact_names = artifact_names
+            self.registry.update_job(record)
+            return record
 
         try:
             result = prepare_deliverable(

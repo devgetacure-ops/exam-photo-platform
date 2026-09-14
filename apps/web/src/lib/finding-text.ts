@@ -57,6 +57,10 @@ export const ISSUE_TEXT: Readonly<Record<string, string>> = {
     SUITABILITY_FACE_OCCLUDED: "Something is covering part of the face.",
     PDF_PASSWORD_PROTECTED:
         "This PDF is password-protected, so we can’t open it. Upload a copy of the PDF without a password.",
+    UPLOAD_NOT_A_SIGNATURE:
+        "This looks like a photograph, not a signature. Sign on plain white paper and take a photo of just the signature.",
+    UPLOAD_NOT_A_THUMB_IMPRESSION:
+        "This looks like a photograph, not a thumb impression. Press your thumb on plain white paper and take a photo of just the impression.",
     PIPELINE_CROP_FAILED: FRAMING,
     PIPELINE_CROP_MODE_UNSUPPORTED: FRAMING,
     PIPELINE_FACE_COUNT_INVALID: "We need exactly one face in the photo.",
