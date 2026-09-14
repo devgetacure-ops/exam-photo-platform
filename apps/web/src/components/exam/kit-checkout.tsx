@@ -9,7 +9,8 @@ import {
 } from "../../lib/api-client";
 import { getKit, type KitEntry } from "../../lib/kit-state";
 import type { ExamDetail } from "../../lib/types";
-import { publishJobs } from "./live-job-state";
+import { publishCheckoutStage, publishJobs } from "./live-job-state";
+import { bringIntoView, focusQuietly } from "../../lib/scroll";
 import { EmailDelivery } from "./email-delivery";
 import { PaymentScene } from "./payment-scene";
 import { KitSuccess } from "./kit-success";
@@ -473,13 +474,19 @@ export function KitCheckout({
 
     // Focus follows the stage, so a keyboard or screen-reader user lands on what
     // changed. Not on first render: arriving at the page is not a change.
+    // Focus moves without the browser's own scroll, which put the section's
+    // top under the sticky bar; the section is then brought to just under the
+    // bar, and only if it is not already in view (testing notes 9, 11).
     const shownStage = useRef<Stage | null>(null);
     useEffect(() => {
+        publishCheckoutStage(exam.exam_id, stage);
         if (shownStage.current !== null && shownStage.current !== stage) {
-            headingRef.current?.focus();
+            const heading = headingRef.current;
+            focusQuietly(heading);
+            bringIntoView(heading?.closest("section") ?? heading, { onlyIfNeeded: true });
         }
         shownStage.current = stage;
-    }, [stage]);
+    }, [stage, exam.exam_id]);
 
     // One set of outcomes, whichever window took the payment: Razorpay's, or
     // the test sheet on a machine running the payment simulator (DEC-089).

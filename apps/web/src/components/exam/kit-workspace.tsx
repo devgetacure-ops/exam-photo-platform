@@ -18,6 +18,8 @@ import { nextStep } from "../../lib/kit-next";
 import { photographSpecRows, requirementSpecRows } from "../../lib/spec-format";
 import { toolsReplaced } from "../../lib/value-tools";
 import { plainFindings } from "../../lib/finding-text";
+import { bringIntoView } from "../../lib/scroll";
+import { useCheckoutStage } from "./live-job-state";
 import type { ExamFact } from "./exam-facts";
 
 /**
@@ -159,17 +161,26 @@ export function KitWorkspace({
                 ? [...included.filter((x) => x !== id), id]
                 : included.filter((x) => x !== id),
         );
+    // Every move the workspace makes lands the same way (lib/scroll).
     const goTo = (elementId: string) => {
-        const reduce = window.matchMedia(
-            "(prefers-reduced-motion: reduce)",
-        ).matches;
         requestAnimationFrame(() =>
-            document.getElementById(elementId)?.scrollIntoView({
-                behavior: reduce ? "auto" : "smooth",
-                block: "start",
-            }),
+            bringIntoView(document.getElementById(elementId)),
         );
     };
+    const checkoutStage = useCheckoutStage(exam.exam_id);
+    const paid = checkoutStage === "delivered";
+    // The bar is hidden while the review itself is on screen, so the one
+    // action is never shown twice (testing note E).
+    const [reviewInView, setReviewInView] = useState(false);
+    useEffect(() => {
+        const el = document.getElementById("kit-review");
+        if (!el || typeof IntersectionObserver === "undefined") return;
+        const observer = new IntersectionObserver(([entry]) =>
+            setReviewInView(entry.isIntersecting),
+        );
+        observer.observe(el);
+        return () => observer.disconnect();
+    }, []);
     // `take` is the difference between choosing a file and going to work on
     // it. The row switches the panel; Add carries the candidate down to it,
     // which is the whole reason the button exists.
@@ -477,11 +488,23 @@ export function KitWorkspace({
                                         onward.kind !== "none" && (
                                             <div className="euk-kit-onward">
                                                 <p className="euk-kit-onward-say">
-                                                    {onward.kind === "review"
-                                                        ? `All ${onward.total} file${onward.total === 1 ? "" : "s"} in your kit are prepared`
-                                                        : `${onward.prepared} of ${onward.total} prepared`}
+                                                    {paid
+                                                        ? "Paid. Your downloads are below"
+                                                        : onward.kind === "review"
+                                                          ? `All ${onward.total} file${onward.total === 1 ? "" : "s"} in your kit are prepared`
+                                                          : `${onward.prepared} of ${onward.total} prepared`}
                                                 </p>
-                                                {onward.kind === "review" ? (
+                                                {paid ? (
+                                                    <button
+                                                        type="button"
+                                                        className="primary-button euk-kit-onward-go"
+                                                        onClick={() =>
+                                                            goTo("kit-review")
+                                                        }
+                                                    >
+                                                        Go to your downloads
+                                                    </button>
+                                                ) : onward.kind === "review" ? (
                                                     <button
                                                         type="button"
                                                         className="primary-button euk-kit-onward-go"
@@ -537,10 +560,26 @@ export function KitWorkspace({
             </div>
 
             {ours.length > 0 && (
-                <div className="euk-kit-bar">
-                    <span className="euk-kit-bar-name">{priceName}</span>
-                    <strong className="euk-kit-bar-figure">{rupees(price.amount)}</strong>
-                    <a href="#kit-review">Review</a>
+                <div
+                    className="euk-kit-bar"
+                    data-ready={ready > 0 || undefined}
+                    data-hidden={reviewInView || undefined}
+                >
+                    <span className="euk-kit-bar-name">
+                        {paid ? "Paid" : priceName}
+                    </span>
+                    {!paid && (
+                        <strong className="euk-kit-bar-figure">{rupees(price.amount)}</strong>
+                    )}
+                    <a
+                        href="#kit-review"
+                        onClick={(event) => {
+                            event.preventDefault();
+                            goTo("kit-review");
+                        }}
+                    >
+                        {paid ? "Downloads" : ready > 0 ? "Review and pay" : "Review"}
+                    </a>
                 </div>
             )}
         </div>

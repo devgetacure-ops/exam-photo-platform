@@ -638,9 +638,62 @@
     font-size: 13px;
 }
 
-/* The price follows a phone user down the page; the review is one tap away. */
+/* The price follows a phone user down the page; the review is one tap away.
+   On a wider screen it appears once a file is ready, so "Review and pay" is
+   never a scroll away (testing note E), and it steps aside while the review
+   itself is on screen. Motion is opacity and transform only. */
 .euk-kit-bar {
     display: none;
+}
+
+.euk-kit-bar[data-hidden] {
+    opacity: 0;
+    transform: translateY(12px);
+    pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .euk-kit-bar {
+        transition:
+            opacity 160ms ease-out,
+            transform 160ms ease-out;
+    }
+}
+
+@media (min-width: 1000px) {
+    .euk-kit-bar[data-ready] {
+        position: fixed;
+        z-index: 40;
+        right: 24px;
+        bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        border: var(--rule) solid var(--ink);
+        background: var(--paper);
+        box-shadow: 5px 5px 0 var(--ink);
+        padding: 8px 8px 8px 18px;
+    }
+    .euk-kit-bar[data-ready] .euk-kit-bar-name {
+        font-size: 14px;
+        color: var(--ink-70);
+    }
+    .euk-kit-bar[data-ready] .euk-kit-bar-figure {
+        font-family: var(--font-shoulders), "Arial Narrow", sans-serif;
+        font-weight: 900;
+        font-size: 30px;
+        line-height: 1;
+    }
+    .euk-kit-bar[data-ready] a {
+        background: var(--signal);
+        color: var(--signal-ink);
+        padding: 12px 18px;
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        font-size: 15px;
+        font-weight: 700;
+    }
 }
 
 @media (max-width: 999px) {
