@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { emailKit } from "../../lib/journey-client";
+import { getReadiness } from "../../lib/api-client";
 
 /**
  * A copy of the files for the candidate's inbox, which outlives our deletion.
@@ -47,6 +48,19 @@ export function EmailDelivery({
     const [message, setMessage] = useState("");
     const attempted = useRef(saved?.attempted ?? "");
     const signature = [...jobIds].sort().join(",");
+    // Offered only where this host can actually send (testing note 18): a
+    // form that always fails, and then blames the address, is worse than no
+    // form. Unknown -- the engine unreachable or silent -- keeps the form.
+    const [unavailable, setUnavailable] = useState(false);
+    useEffect(() => {
+        let live = true;
+        void getReadiness().then((ready) => {
+            if (live && ready?.email === "not_configured") setUnavailable(true);
+        });
+        return () => {
+            live = false;
+        };
+    }, []);
 
     const remember = (patch: Partial<Draft>) => {
         const current = drafts.get(kitId) ?? {
@@ -99,6 +113,8 @@ export function EmailDelivery({
         const timer = setTimeout(() => void sendRef.current(), 0);
         return () => clearTimeout(timer);
     }, [released, consent, address, signature]);
+
+    if (unavailable) return null;
 
     return (
         <form

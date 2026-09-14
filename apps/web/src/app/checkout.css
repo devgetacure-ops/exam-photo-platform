@@ -247,9 +247,24 @@
     max-width: none;
 }
 
-.euk-clock-figure span {
+/* The display face has no equal-width figures, so a 1 is narrower than a 0
+   and the paragraph beside the clock shifted every second (testing note 18).
+   Each digit gets a box of one width instead. */
+.euk-clock-digit {
     display: inline-block;
-    animation: euk-colon 1000ms steps(1) infinite;
+    width: 0.56em;
+    text-align: center;
+}
+
+.euk-clock-colon {
+    display: inline-block;
+}
+
+/* The colon blinks only for those who have not asked for less motion. */
+@media (prefers-reduced-motion: no-preference) {
+    .euk-clock-colon {
+        animation: euk-colon 1000ms steps(1) infinite;
+    }
 }
 
 @keyframes euk-colon {

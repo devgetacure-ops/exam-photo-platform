@@ -25,6 +25,30 @@ export function getApiBaseUrl(): string {
 /**
  * Submits a candidate photo and rule JSON to the API for synchronous processing.
  */
+/**
+ * What the engine says about itself at `/ready`. Only the fields the site
+ * reads; a warming engine answers 503 with the same body, which is still an
+ * answer. Returns null when the engine cannot be reached at all.
+ */
+export interface EngineReadiness {
+  status?: string;
+  payments?: string;
+  email?: "configured" | "not_configured";
+}
+
+export async function getReadiness(): Promise<EngineReadiness | null> {
+  try {
+    const response = await fetch(new URL("/ready", getApiBaseUrl()), {
+      cache: "no-store",
+      signal: AbortSignal.timeout(5000),
+    });
+    const body: unknown = await response.json();
+    return body && typeof body === "object" ? (body as EngineReadiness) : null;
+  } catch {
+    return null;
+  }
+}
+
 export async function processImage({
     image,
     ruleJson,

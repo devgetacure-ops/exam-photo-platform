@@ -41,20 +41,24 @@ describe("candidate delivery and evidence", () => {
             target: { value: "test@example.com" },
         });
         fireEvent.click(screen.getByRole("checkbox"));
-        expect(fetcher).not.toHaveBeenCalled();
+        // Only sends are counted: the form also asks the engine once whether
+        // email is set up at all (testing note 18).
+        const sends = () =>
+            fetcher.mock.calls.filter(([url]) => String(url).includes("/email"));
+        expect(sends()).toHaveLength(0);
         rerender(
             <EmailDelivery kitId="kit_test" jobIds={["job_one"]} released />,
         );
         await screen.findByText(/Sent 1 file to t\*\*\*@example.com/);
-        expect(fetcher).toHaveBeenCalledTimes(1);
-        expect(JSON.parse(fetcher.mock.calls[0][1].body)).toEqual({
+        expect(sends()).toHaveLength(1);
+        expect(JSON.parse(sends()[0][1].body)).toEqual({
             address: "test@example.com",
             job_ids: ["job_one"],
         });
         rerender(
             <EmailDelivery kitId="kit_test" jobIds={["job_one"]} released />,
         );
-        await waitFor(() => expect(fetcher).toHaveBeenCalledTimes(1));
+        await waitFor(() => expect(sends()).toHaveLength(1));
     });
     it("keeps email failure visible and does not retry without a new action", async () => {
         const fetcher = vi.fn().mockResolvedValue({ ok: false, status: 422 });
@@ -67,7 +71,9 @@ describe("candidate delivery and evidence", () => {
         });
         fireEvent.click(screen.getByRole("checkbox"));
         await screen.findByRole("alert");
-        expect(fetcher).toHaveBeenCalledTimes(1);
+        expect(
+            fetcher.mock.calls.filter(([url]) => String(url).includes("/email")),
+        ).toHaveLength(1);
         expect(
             screen.getByRole("button", { name: "Try email again" }),
         ).toBeEnabled();

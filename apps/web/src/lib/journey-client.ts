@@ -49,7 +49,7 @@ export async function journeyRequest<T>(
             403: "Please complete the verification and try again.",
             404: "This file is no longer available. Please prepare it again.",
             409: "This option is no longer available for this file. Refresh its status.",
-            422: "We couldn’t send these files. Check the email address and file availability, then try again.",
+            422: "We couldn’t send these files by email. Download them here before the deadline instead.",
             429: "Preparation is busy. Please wait a moment before trying again.",
         };
         throw new Error(

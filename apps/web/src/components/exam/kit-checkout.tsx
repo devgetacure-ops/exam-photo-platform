@@ -160,7 +160,20 @@ type Stage = "empty" | "review" | "paying" | "failed" | "delivered";
 /** The file retention window a fresh preparation gets, for the clock's bar. */
 const WINDOW_SECONDS = 30 * 60;
 
-function ExpiryClock({
+/** Each digit in a box of its own width, so the text beside the clock never moves. */
+function Digits({ value }: { value: string }) {
+    return (
+        <>
+            {value.split("").map((digit, i) => (
+                <span key={i} className="euk-clock-digit">
+                    {digit}
+                </span>
+            ))}
+        </>
+    );
+}
+
+export function ExpiryClock({
     seconds,
     at,
     delivered,
@@ -175,9 +188,9 @@ function ExpiryClock({
         <div className="euk-clock" data-urgent={seconds < 5 * 60}>
             <div className="euk-clock-row">
                 <p className="euk-clock-figure" aria-hidden="true">
-                    {String(minutes).padStart(2, "0")}
-                    <span>:</span>
-                    {String(rest).padStart(2, "0")}
+                    <Digits value={String(minutes).padStart(2, "0")} />
+                    <span className="euk-clock-colon">:</span>
+                    <Digits value={String(rest).padStart(2, "0")} />
                 </p>
                 <div className="min-w-0">
                     <p className="euk-clock-title">
@@ -251,7 +264,8 @@ function FileRow({
                     {!expired && seconds !== null && (
                         <span className="euk-order-countdown">
                             {" "}
-                            · deletes in {Math.floor(seconds / 60)}m {seconds % 60}s
+                            · deletes in {Math.floor(seconds / 60)}m{" "}
+                            {String(seconds % 60).padStart(2, "0")}s
                         </span>
                     )}
                 </p>
