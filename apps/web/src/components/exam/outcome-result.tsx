@@ -5,6 +5,13 @@ import { useEffect, useState } from "react";
 import { getApiBaseUrl } from "../../lib/api-client";
 import type { PrepareRequirementResponse } from "../../lib/types";
 import { formatBytes } from "../../lib/spec-format";
+import {
+    RETAKE_GUIDANCE,
+    ROUTINE_NOTES,
+    isRoutine,
+    issueText,
+    plainFindings,
+} from "../../lib/finding-text";
 import { FileComparison } from "../file-comparison";
 import { useLiveJob } from "./live-job-state";
 import { Cross, Tick } from "./specimen-sheet";
@@ -31,85 +38,6 @@ interface Props {
     partiallySupported?: boolean;
 }
 
-/**
- * Routine normalisation notes: things the engine *did* to the upload, not
- * things wrong with it.
- *
- * These are exactly the members of the engine's own `InputWarningCode` — EXIF
- * stripped, colour mode converted, an invalid ICC profile dropped. The API
- * reports any non-empty `findings` as `prepared_with_findings`, so a perfectly
- * ordinary JPEG comes back in the caveat state carrying
- * "INPUT_METADATA_REMOVED", which is both an internal code and not a caveat.
- *
- * Left as-is, almost every file would wear the amber badge, and a caveat state
- * that fires on everything trains candidates to ignore it — destroying the
- * mechanism the genuine ones depend on (DEC-056: a caveat nobody reads is a
- * caveat filed under success).
- *
- * The rule is fail-safe: only these recognised codes are demoted. Anything
- * else — including a code added later that this list has not learned — stays a
- * caveat, so the failure mode is showing too much rather than hiding
- * something.
- */
-const ROUTINE_NOTES: Record<string, string> = {
-    INPUT_METADATA_REMOVED:
-        "Removed the hidden data your camera saved in the file.",
-    INPUT_COLOUR_MODE_CONVERTED:
-        "Converted the colour mode for the exam's format.",
-    INPUT_ICC_PROFILE_INVALID: "Replaced a broken colour profile.",
-    INPUT_ORIENTATION_METADATA_INVALID: "Corrected the image's rotation.",
-    INPUT_EXTENSION_MISMATCH:
-        "The file extension did not match its actual format.",
-};
-
-function isRoutine(finding: string): boolean {
-    return finding in ROUTINE_NOTES;
-}
-
-/**
- * Engine issue codes, said the way a person would say them.
- *
- * The engine reports its suitability checks as `SUITABILITY_*`. The earlier
- * table only knew an older vocabulary, so a blocked photograph read as
- * "suitability no face" to the candidate.
- */
-const ISSUE_TEXT: Record<string, string> = {
-    NO_FACE_DETECTED: "We could not find a face in this photo.",
-    MULTIPLE_FACES: "There is more than one face in this photo.",
-    FACE_TOO_SMALL: "The face is too small in the frame — move closer.",
-    IMAGE_TOO_BLURRY: "The photo is too blurry to use.",
-    IMAGE_TOO_DARK: "The photo is too dark.",
-    IMAGE_TOO_BRIGHT: "The photo is too bright.",
-    EYES_CLOSED: "The eyes look closed.",
-    SUITABILITY_NO_FACE: "We could not find a face in this photo.",
-    SUITABILITY_MULTIPLE_FACES: "There is more than one face in this photo.",
-    SUITABILITY_FACE_REGION_TOO_SMALL:
-        "The face is too small in the frame. Use a photo taken closer.",
-    SUITABILITY_RESOLUTION_TOO_LOW:
-        "The photo is too small to prepare. Use the original from the camera, not a screenshot or a forwarded copy.",
-    SUITABILITY_BLUR_SEVERE: "The photo is too blurry to use.",
-    SUITABILITY_BLUR_WARNING: "The photo is slightly blurred.",
-    SUITABILITY_UNDEREXPOSED_SEVERE: "The photo is too dark.",
-    SUITABILITY_UNDEREXPOSED_WARNING: "The photo is a little dark.",
-    SUITABILITY_OVEREXPOSED_SEVERE: "The photo is too bright.",
-    SUITABILITY_OVEREXPOSED_WARNING: "The photo is a little bright.",
-    SUITABILITY_POSE_EXTREME: "The face is turned too far from the camera.",
-    SUITABILITY_POSE_WARNING: "The face is turned slightly from the camera.",
-    SUITABILITY_HEAD_TOP_CLIPPED: "The top of the head is cut off.",
-    SUITABILITY_HEAD_SIDE_CLIPPED: "The side of the head is cut off.",
-    SUITABILITY_CHIN_CLIPPED: "The chin is cut off.",
-    SUITABILITY_EYES_NOT_VISIBLE: "The eyes are not clearly visible.",
-    SUITABILITY_FACE_OCCLUDED: "Something is covering part of the face.",
-    PDF_PASSWORD_PROTECTED:
-        "This PDF is password-protected, so we can’t open it. Upload a copy of the PDF without a password.",
-};
-
-function humanIssue(code: string): string {
-    if (ISSUE_TEXT[code]) return ISSUE_TEXT[code];
-    const words = code.replace(/^SUITABILITY_/, "").toLowerCase().replace(/_/g, " ");
-    return words.charAt(0).toUpperCase() + words.slice(1);
-}
-
 function Caution() {
     return (
         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" aria-hidden="true">
@@ -134,10 +62,13 @@ export function OutcomeResult({
     const blocked =
         result.outcome === "blocked" || result.outcome === "not_produced";
 
-    const substantive = result.findings.filter(
-        (finding) => !isRoutine(finding),
-    );
-    const routine = result.findings.filter(isRoutine);
+    // Only what a candidate should read; routine changes (hidden camera data
+    // removed, colour mode converted) are listed quietly and never earn the
+    // findings state (testing notes 15, 17).
+    const substantive = plainFindings(result.findings);
+    const routine = [
+        ...new Set([...result.findings, ...(result.changes ?? [])].filter(isRoutine)),
+    ];
     const deadline = live?.expires_at ?? result.expires_at;
     const expiry = deadline ? new Date(deadline) : null;
     const expired =
@@ -176,17 +107,19 @@ export function OutcomeResult({
                     <p className="euk-outcome-title">We could not prepare this one</p>
                 </div>
                 <ul>
-                    {(result.issue_codes.length > 0
-                        ? result.issue_codes.map(humanIssue)
-                        : result.findings
-                    ).map((line) => (
+                    {(() => {
+                        const lines = plainFindings(
+                            result.issue_codes.length > 0 ? result.issue_codes : result.findings,
+                        );
+                        return lines.length > 0 ? lines : [issueText("")];
+                    })().map((line) => (
                         <li key={line}>{line}</li>
                     ))}
                 </ul>
                 <p className="euk-outcome-text">
                     Nothing has been charged.{" "}
                     {photo
-                        ? "Try a different photo and we will have another go."
+                        ? RETAKE_GUIDANCE
                         : "Try a different file and we will have another go."}
                 </p>
                 <button type="button" className="secondary-button" onClick={onReplace}>
@@ -310,8 +243,8 @@ export function OutcomeResult({
                 <div className="euk-outcome-block">
                     <p className="euk-outcome-sub">What we noticed</p>
                     <ul>
-                        {result.issue_codes.map((code) => (
-                            <li key={code}>{humanIssue(code)}</li>
+                        {plainFindings(result.issue_codes).map((line) => (
+                            <li key={line}>{line}</li>
                         ))}
                     </ul>
                 </div>

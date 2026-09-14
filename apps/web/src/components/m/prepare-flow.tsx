@@ -5,6 +5,7 @@ import Link from "next/link";
 
 import type { ExamDetail, RequirementSummary } from "../../lib/types";
 import { factAttribution, factUrl, type ExamFact } from "../exam/exam-facts";
+import { plainFindings } from "../../lib/finding-text";
 import { isOurs, kitPrice, rupees } from "../../lib/kit-pricing";
 import { useKit } from "../exam/use-kit";
 import { DocumentWorkspace } from "../exam/document-workspace";
@@ -332,7 +333,8 @@ export function PrepareFlow({
                                             <strong>{r.requirement_name}</strong>
                                             <span>
                                                 {done
-                                                    ? entry.outcome === "prepared_with_findings"
+                                                    ? entry.outcome === "prepared_with_findings" &&
+                                                      plainFindings(entry.findings).length > 0
                                                         ? "Ready, with a note to read"
                                                         : "Ready"
                                                     : "Not added yet"}

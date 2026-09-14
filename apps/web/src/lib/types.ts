@@ -231,6 +231,8 @@ export interface PrepareRequirementResponse {
   height?: number | null;
 
   findings: string[];
+  /** Routine changes made to the upload, as codes. Never a finding. */
+  changes?: string[];
   is_blank?: boolean | null;
   ceiling_was_unpublished?: boolean | null;
   exceeds_ceiling?: boolean | null;

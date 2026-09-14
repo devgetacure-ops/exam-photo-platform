@@ -1072,6 +1072,13 @@
    for a real payment page. */
 
 .euk-simpay {
+    /* Tailwind's preflight zeroes every margin, including the automatic one a
+       modal dialog centres itself with, which left this sheet in the top-left
+       corner (testing note 8). Put it back, and keep a short screen scrollable
+       inside the sheet rather than cutting its buttons off. */
+    margin: auto;
+    max-height: calc(100dvh - 32px);
+    overflow-y: auto;
     width: min(420px, calc(100vw - 32px));
     padding: 22px 22px 18px;
     border: var(--rule) dashed var(--ink);

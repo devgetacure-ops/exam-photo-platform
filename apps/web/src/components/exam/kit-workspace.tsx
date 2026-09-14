@@ -17,6 +17,7 @@ import {
 import { nextStep } from "../../lib/kit-next";
 import { photographSpecRows, requirementSpecRows } from "../../lib/spec-format";
 import { toolsReplaced } from "../../lib/value-tools";
+import { plainFindings } from "../../lib/finding-text";
 import type { ExamFact } from "./exam-facts";
 
 /**
@@ -46,9 +47,12 @@ function stateOf(
     requirement: RequirementSummary,
 ): { text: string; tone: Tone } {
     if (!entry) return { text: "Not added yet", tone: "idle" };
-    if (entry.outcome === "prepared_with_findings")
-        return { text: "Check findings", tone: "check" };
-    if (entry.outcome === "prepared")
+    if (
+        entry.outcome === "prepared_with_findings" &&
+        plainFindings(entry.findings).length > 0
+    )
+        return { text: "Worth a look", tone: "check" };
+    if (entry.outcome === "prepared" || entry.outcome === "prepared_with_findings")
         return requirement.platform_support === "partially_supported"
             ? { text: "One step yours", tone: "check" }
             : { text: "Prepared", tone: "done" };

@@ -369,7 +369,7 @@ describe("routine normalisation is not a caveat", () => {
             />,
         );
         expect(screen.getByText(/what we changed \(1\)/i)).toBeTruthy();
-        expect(screen.getByText(/hidden data your camera saved/i)).toBeTruthy();
+        expect(screen.getByText(/removed hidden camera data/i)).toBeTruthy();
         // Never the raw code.
         expect(screen.queryByText("INPUT_METADATA_REMOVED")).toBeNull();
     });

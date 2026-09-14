@@ -16,6 +16,7 @@ import { KitSuccess } from "./kit-success";
 import { SimulatedCheckout } from "./simulated-checkout";
 import type { ExamFact } from "./exam-facts";
 import { FileTypeDrawing } from "../euk/doodles";
+import { plainFindings } from "../../lib/finding-text";
 import { Note } from "../euk/note";
 
 /**
@@ -222,6 +223,7 @@ function FileRow({
 }) {
     const expired = !!job && jobExpired(job, now);
     const available = !!job && jobDownloadable(job, now);
+    const notes = plainFindings(entry.findings);
     const seconds =
         job?.expires_at && now > 0
             ? Math.max(0, Math.ceil((Date.parse(job.expires_at) - now) / 1000))
@@ -266,12 +268,12 @@ function FileRow({
                         steps. Review its instructions.
                     </p>
                 )}
-                {entry.findings.length > 0 && (
+                {notes.length > 0 && (
                     <details className="euk-order-findings">
-                        <summary>Review findings ({entry.findings.length})</summary>
+                        <summary>Worth a look ({notes.length})</summary>
                         <ul>
-                            {entry.findings.map((finding) => (
-                                <li key={finding}>{finding}</li>
+                            {notes.map((note) => (
+                                <li key={note}>{note}</li>
                             ))}
                         </ul>
                     </details>

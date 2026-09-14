@@ -278,7 +278,9 @@ export function RequirementUpload({
     if (phase === "done" && result) {
         return (
             <>
-                {photo && result.enhancement_enabled !== undefined && (
+                {photo &&
+                    result.enhancement_enabled !== undefined &&
+                    !["blocked", "not_produced"].includes(result.outcome) && (
                     <div className="euk-lighting">
                         <LightingSwitch
                             title="Intelligent lighting"
