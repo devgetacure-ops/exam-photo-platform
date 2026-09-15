@@ -144,7 +144,8 @@
         },
         "formats": {
           "allowed_formats": [
-            "jpg"
+            "jpg",
+            "jpeg"
           ],
           "preferred_format": "jpg"
         },
@@ -184,6 +185,13 @@
           "published_minimum": 50,
           "published_maximum": 100,
           "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
         }
       }
     }
@@ -220,12 +228,6 @@
       "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
       "confidence": 5,
       "approved": true
-    },
-    "requirements[1].file_spec.formats.allowed_formats": {
-      "type": "interim_default",
-      "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
-      "confidence": 1,
-      "approved": false
     }
   },
   "verification": {

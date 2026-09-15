@@ -303,17 +303,29 @@ def test_interim_default_cannot_be_approved() -> None:
 
 def test_interim_default_blocks_verified_status() -> None:
     """The enforcement half: a placeholder cannot sit inside a verified rule."""
-    for status in ("verified", "verified_with_ambiguity"):
-        rule = _base()
-        rule["status"] = status
-        rule["verification"]["verification_status"] = status
-        rule["fictional_example"] = False
-        rule["source_evidence"][0]["official_source"] = True
-        rule["provenance"]["image_requirements.file_size.maximum_bytes"] = (
-            _interim_provenance()
-        )
-        errors = _errors(rule)
-        assert any("interim placeholder values" in e for e in errors), (status, errors)
+    rule = _base()
+    rule["status"] = "verified"
+    rule["verification"]["verification_status"] = "verified"
+    rule["fictional_example"] = False
+    rule["source_evidence"][0]["official_source"] = True
+    rule["provenance"]["image_requirements.file_size.maximum_bytes"] = (
+        _interim_provenance()
+    )
+    errors = _errors(rule)
+    assert any("interim placeholder values" in e for e in errors), errors
+
+
+def test_an_estimate_for_an_unstated_value_is_verified_with_gaps() -> None:
+    """DEC-095: "verified, with gaps" is exactly a notice that leaves a value
+    unstated, with our estimate marked, so it may carry one."""
+    rule = _base()
+    rule["status"] = "verified_with_ambiguity"
+    rule["verification"]["verification_status"] = "verified_with_ambiguity"
+    rule["fictional_example"] = False
+    rule["source_evidence"][0]["official_source"] = True
+    rule["provenance"]["image_requirements.dimensions"] = _interim_provenance()
+    errors = _errors(rule)
+    assert not any("interim placeholder values" in e for e in errors), errors
 
 
 def test_interim_in_a_requirement_does_not_demote_the_photograph_rule() -> None:
@@ -434,6 +446,9 @@ def test_interim_provenance_paths_point_at_a_real_requirement() -> None:
         for path, entry in rule["provenance"].items():
             if entry.get("type") != "interim_default":
                 continue
+            if path == "image_requirements.dimensions":
+                # DEC-095's estimated photograph size, held to its own test.
+                continue
             match = pattern.match(path)
             assert match, f"{name}: unexpected interim path {path}"
             index = int(match.group(1))
@@ -446,11 +461,35 @@ def test_interim_provenance_paths_point_at_a_real_requirement() -> None:
 
 
 def test_catalogue_records_no_interim_value_in_a_photograph_rule() -> None:
+    """The only estimate a photograph rule may carry is its pixel size (DEC-095).
+
+    A file size or format the notice publishes must be the notice's, and a rule
+    carrying the size estimate is never plainly verified.
+    """
     offenders = [
-        (name, path)
+        (name, path, rule["status"])
         for name, rule in _catalogue()
         for path, entry in rule["provenance"].items()
         if entry.get("type") == "interim_default"
         and path.startswith("image_requirements")
+        and (path != "image_requirements.dimensions" or rule["status"] == "verified")
     ]
     assert not offenders, f"photograph specifications resting on a guess: {offenders}"
+
+
+def test_an_estimated_photograph_size_is_a_stated_passport_size() -> None:
+    estimated = [
+        (name, rule["image_requirements"]["dimensions"])
+        for name, rule in _catalogue()
+        if rule["provenance"].get("image_requirements.dimensions", {}).get("type")
+        == "interim_default"
+    ]
+    assert estimated, "the guard would pass vacuously"
+    for name, dimensions in estimated:
+        assert dimensions["mode"] == "exact", name
+        # 3.5 x 4.5 cm, or 3 x 4 cm where the notice says so, at 300 DPI.
+        assert (dimensions["width_px"], dimensions["height_px"]) in {
+            (413, 531),
+            (354, 472),
+        }, name
+        assert "estimate" in dimensions["fallback_reason"], name

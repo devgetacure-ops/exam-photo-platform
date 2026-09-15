@@ -940,7 +940,15 @@ class ExamRule(BaseModel):
         # specification quality is carried by its own provenance entry, which is
         # equally findable. When requirements grow a per-item status of their
         # own, this scoping is the thing to revisit.
-        if self.status in (RuleStatus.VERIFIED, RuleStatus.VERIFIED_WITH_AMBIGUITY):
+        #
+        # DEC-095 narrows this to plain ``verified``. The owner decided that a
+        # passport photograph whose notice publishes no pixel size is delivered
+        # at a stated size marked est. That estimate stands for a value the
+        # notice leaves unstated -- exactly what ``verified_with_ambiguity``
+        # means ("published instructions ... leave some values unstated; those
+        # are marked as our estimates") -- so it may carry one. A rule that
+        # claims to be fully verified still may not.
+        if self.status == RuleStatus.VERIFIED:
             interim = sorted(
                 path
                 for path, entry in self.provenance.items()

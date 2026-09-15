@@ -29,8 +29,11 @@
   ],
   "image_requirements": {
     "dimensions": {
-      "mode": "unspecified",
-      "fallback_reason": "No pixel dimensions are published by the conducting body. The output size is chosen per photograph from the crop geometry rather than from a fixed default.",
+      "mode": "exact",
+      "width_px": 413,
+      "height_px": 531,
+      "aspect_ratio": "7:9",
+      "fallback_reason": "The notice gives the photograph as 3.5 x 4.5 cm and publishes no pixel size. The photograph is delivered at 413 x 531 px, that size at 300 DPI; the pixel size is our estimate, not the body's.",
       "permitted_pixel_range": "3.5 cm \u00d7 4.5 cm"
     },
     "file_size": {
@@ -104,7 +107,8 @@
         },
         "formats": {
           "allowed_formats": [
-            "jpg"
+            "jpg",
+            "jpeg"
           ],
           "preferred_format": "jpg"
         }
@@ -136,8 +140,8 @@
       "approved": true
     },
     "image_requirements.dimensions": {
-      "type": "inferred",
-      "reasoning": "The conducting body publishes no pixel dimensions. The output size is chosen per photograph from the crop geometry, so no dimension is asserted on the body's behalf.",
+      "type": "interim_default",
+      "reasoning": "The notice gives the photograph as 3.5 x 4.5 cm and publishes no pixel size. The photograph is delivered at 413 x 531 px, that size at 300 DPI; the pixel size is our estimate, not the body's.",
       "confidence": 1,
       "approved": false
     },
@@ -152,12 +156,6 @@
       "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
       "confidence": 5,
       "approved": true
-    },
-    "requirements[1].file_spec.formats.allowed_formats": {
-      "type": "interim_default",
-      "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
-      "confidence": 1,
-      "approved": false
     },
     "requirements[2].file_spec.file_size.maximum_bytes": {
       "type": "interim_default",

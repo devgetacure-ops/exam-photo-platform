@@ -83,7 +83,6 @@ and a manual edit to a rule record silently diverges from its evidence.
 | TSPSC Group IV Services | deliverables only -- no photograph rule | `exam_tspsc-group-iv-services.json` |
 | Telangana DSC Teacher Recruitment | deliverables only -- no photograph rule | `exam_telangana-dsc-teacher-recruitment.json` |
 | Telangana Teacher Eligibility Test (TG TET) | deliverables only -- no photograph rule | `exam_telangana-teacher-eligibility-test-tg-tet.json` |
-| UP B.Ed Joint Entrance Examination | deliverables only -- no photograph rule | `exam_up-b-ed-joint-entrance-examination.json` |
 | UPPSC Combined State/Upper Subordinate Services Examination (PCS) | deliverables only -- no photograph rule | `exam_uppsc-combined-state-upper-subordinate-services-examination-pcs.json` |
 | UPPSC One Time Registration | deliverables only -- no photograph rule | `exam_uppsc-one-time-registration.json` |
 | UPPSC Review Officer / Assistant Review Officer | deliverables only -- no photograph rule | `exam_uppsc-review-officer-assistant-review-officer.json` |
@@ -107,6 +106,7 @@ and a manual edit to a rule record silently diverges from its evidence.
 | RBI Assistant - Panel Year 2025 | Full specification (official dimensions, size and format) | `exam_rbi_assistant_panel_year_2025.json` |
 | RBI Officers in Grade B 2026 | Full specification (official dimensions, size and format) | `exam_rbi_officers_in_grade_b_2026.json` |
 | RRB Level-1 Posts - CEN 08/2024 | Full specification (official dimensions, size and format) | `exam_rrb_level_1_posts_cen_08_2024.json` |
+| RRB Ministerial and Isolated Categories | Full specification (official dimensions, size and format) | `exam_rrb_ministerial_and_isolated_categories.json` |
 | RRB NTPC Graduate - CEN 05/2024 | Full specification (official dimensions, size and format) | `exam_rrb_ntpc_graduate_cen_05_2024.json` |
 | SBI Junior Associates 2025 | Full specification (official dimensions, size and format) | `exam_sbi_junior_associates_2025.json` |
 | SBI Probationary Officers 2025 | Full specification (official dimensions, size and format) | `exam_sbi_probationary_officers_2025.json` |
@@ -133,8 +133,8 @@ and a manual edit to a rule record silently diverges from its evidence.
 | OSSSC Combined Recruitment Examination | Size and format only -- no pixel dimensions published | `exam_osssc_combined_recruitment_examination.json` |
 | RPF Constable | Size and format only -- no pixel dimensions published | `exam_rpf_constable.json` |
 | RPF Sub-Inspector | Size and format only -- no pixel dimensions published | `exam_rpf_sub_inspector.json` |
-| RRB Ministerial and Isolated Categories | Size and format only -- no pixel dimensions published | `exam_rrb_ministerial_and_isolated_categories.json` |
 | UGC-NET June 2026 | Size and format only -- no pixel dimensions published | `exam_ugc_net_june_2026.json` |
+| UP B.Ed Joint Entrance Examination | Size and format only -- no pixel dimensions published | `exam_up_b_ed_joint_entrance_examination.json` |
 | UPSC CAPF (Assistant Commandants) Examination 2026 | Size and format only -- no pixel dimensions published | `exam_upsc_capf_assistant_commandants_examination_2026.json` |
 | UPSC Civil Services Examination 2026 | Size and format only -- no pixel dimensions published | `exam_upsc_civil_services_examination_2026.json` |
 | UPSC Combined Defence Services Examination (II) 2026 | Size and format only -- no pixel dimensions published | `exam_upsc_combined_defence_services_examination_ii_2026.json` |
@@ -347,7 +347,6 @@ photograph specification, which is what blocks them.
 | TSPSC Group IV Services | 1 |
 | Telangana DSC Teacher Recruitment | 2 |
 | Telangana Teacher Eligibility Test (TG TET) | 1 |
-| UP B.Ed Joint Entrance Examination | 1 |
 | UPPSC Combined State/Upper Subordinate Services Examination (PCS) | 2 |
 | UPPSC One Time Registration | 2 |
 | UPPSC Review Officer / Assistant Review Officer | 2 |

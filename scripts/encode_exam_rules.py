@@ -117,6 +117,18 @@ class Field:
         return self.raw.get("value") if self.present else None
 
     @property
+    def estimate(self) -> Any:
+        """A value the platform chose because no notice gives one (DEC-095).
+
+        Never a reading: it is written with status ``estimated`` so it can
+        never be mistaken for a verified value, and every rule field built
+        from it is stamped ``interim_default`` and shown as est.
+        """
+        if self.status == "estimated":
+            return self.raw.get("value")
+        return None
+
+    @property
     def official(self) -> bool:
         return self.raw.get("official_source") is True
 
@@ -287,6 +299,28 @@ def _source_evidence(record: Record) -> list[dict[str, Any]]:
     return list(seen.values())
 
 
+#: DEC-095. Why an estimated size is what it is, when the overlay gives no
+#: reason of its own.
+_ESTIMATED_SIZE_REASON = (
+    "No pixel dimensions are published by the conducting body. The photograph "
+    "is delivered at 413 x 531 px, a 3.5 x 4.5 cm passport photograph at "
+    "300 DPI; this size is our estimate, not the body's."
+)
+
+
+def _estimated_size(record: Record) -> Optional[tuple[int, int]]:
+    """The platform's estimated pixel size for this photograph, if one is set."""
+    value = record.f("dimensions.estimated_size").estimate
+    if isinstance(value, (list, tuple)) and len(value) == 2:
+        try:
+            width, height = int(value[0]), int(value[1])
+        except (TypeError, ValueError):
+            return None
+        if width > 0 and height > 0:
+            return width, height
+    return None
+
+
 def _dimensions(record: Record) -> dict[str, Any]:
     # The researched ``dimensions.mode`` is deliberately not trusted as the
     # mode. It records what the body's wording implied, and the wording is
@@ -338,6 +372,22 @@ def _dimensions(record: Record) -> dict[str, Any]:
                 "The body publishes a preferred pixel size without mandating it, "
                 "so the size is honoured while the mode stays unspecified."
             )
+        elif _estimated_size(record):
+            # DEC-095. The owner's call: where the notice gives no pixel size,
+            # a passport photograph is delivered at a stated size marked est.,
+            # rather than at a size that changes with every photograph.
+            est_w, est_h = _estimated_size(record)
+            block["mode"] = "exact"
+            block["width_px"] = est_w
+            block["height_px"] = est_h
+            ratio = _aspect_ratio(est_w, est_h)
+            if ratio:
+                block["aspect_ratio"] = ratio
+            block["fallback_reason"] = str(
+                record.f("dimensions.estimated_size").raw.get("reasoning")
+                or _ESTIMATED_SIZE_REASON
+            )
+            block["_estimated"] = True
         else:
             block["fallback_reason"] = (
                 "No pixel dimensions are published by the conducting body. The "
@@ -552,6 +602,14 @@ def _filename(record: Record) -> dict[str, Any]:
     return block
 
 
+_SIGNATURE_ON_PHOTO_UNSUPPORTED = (
+    "The body requires the candidate's full signature on the bottom part of "
+    "the photograph. The engine cannot write a handwritten signature, so the "
+    "photograph is produced correctly sized and composed but without it, and "
+    "the candidate must add their signature before uploading."
+)
+
+
 def _exceptional(record: Record, appearance: dict[str, Any]) -> dict[str, Any]:
     block: dict[str, Any] = {}
     imprint = appearance.get("imprint") or {}
@@ -573,6 +631,11 @@ def _exceptional(record: Record, appearance: dict[str, Any]) -> dict[str, Any]:
         block["black_and_white_restriction"] = True
     if appearance.get("recency_maximum_days") is not None:
         block["recent_photo_requirement"] = True
+    if record.v("appearance.signature_on_photograph") is True:
+        # DEC-095. WBSSC asks for the full signature on the bottom part of
+        # the photograph, which the engine cannot write.
+        block["signature_inclusion"] = True
+        unsupported.append(_SIGNATURE_ON_PHOTO_UNSUPPORTED)
     block["processing_support_status"] = (
         "partially_supported" if unsupported else "supported"
     )
@@ -643,6 +706,17 @@ def _provenance(
             "reasoning": "Pixel dimensions transcribed from the cited source.",
             "confidence": dim_field.confidence,
             "approved": dim_official,
+        }
+    elif _estimated_size(record):
+        # DEC-095: the web marks anything stamped interim_default as est.
+        block["image_requirements.dimensions"] = {
+            "type": "interim_default",
+            "reasoning": str(
+                record.f("dimensions.estimated_size").raw.get("reasoning")
+                or _ESTIMATED_SIZE_REASON
+            ),
+            "confidence": 1,
+            "approved": False,
         }
     else:
         block["image_requirements.dimensions"] = {
@@ -957,7 +1031,18 @@ def _deliverable_file_spec(
         spec["file_size"] = block
 
     formats = parsed.get("formats") or {}
-    values = [f for f in (formats.get("values") or []) if f in _ENGINE_FORMATS]
+    # Research writes formats as the notice does ("JPG", "JPEG"). Read
+    # case-sensitively, every one of those was dropped and replaced by an
+    # interim default, so a format the notice published was shown as est.
+    values = list(
+        dict.fromkeys(
+            name
+            for name in (
+                str(f).strip().lower() for f in (formats.get("values") or [])
+            )
+            if name in _ENGINE_FORMATS
+        )
+    )
     if values:
         spec["formats"] = {
             "allowed_formats": values,
@@ -1331,6 +1416,12 @@ def build_rule(
     composition = _composition(record)
     dimensions = _dimensions(record)
     transposed = bool(dimensions.pop("_transposed", False))
+    estimated = bool(dimensions.pop("_estimated", False))
+    # DEC-095. An estimated size is a value the notice leaves unstated, which
+    # is what "verified, with gaps" says; it can never be plain "verified".
+    status = _STATUS_BY_TIER[tier]
+    if estimated and status == "verified":
+        status = "verified_with_ambiguity"
     exceptional = _exceptional(record, appearance)
     rejection_by_type, application_rejections = _route_rejection_conditions(
         rejection_conditions or []
@@ -1344,7 +1435,7 @@ def build_rule(
         "schema_version": "1.1",
         "rule_id": rule_id,
         "rule_version": "1.0.0",
-        "status": _STATUS_BY_TIER[tier],
+        "status": status,
         "exam": exam,
         "source_evidence": _source_evidence(record),
         "image_requirements": {
@@ -1361,7 +1452,7 @@ def build_rule(
             **_provenance(record, tier, formats_derived, dropped_formats, transposed),
             **interim_provenance,
         },
-        "verification": {"verification_status": _STATUS_BY_TIER[tier]},
+        "verification": {"verification_status": status},
         "fictional_example": False,
     }
     if application_rejections:

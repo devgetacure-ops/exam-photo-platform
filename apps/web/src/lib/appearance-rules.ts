@@ -168,6 +168,23 @@ export function appearanceGuidance(
     });
   }
 
+  // DEC-095. WBSSC wants the candidate's full signature on the bottom part of
+  // the photograph -- the other thing that makes a photograph partial, and
+  // just as easy to miss if nobody says so.
+  const exceptional = (imageRequirements.exceptional_instructions ?? {}) as Record<
+    string,
+    unknown
+  >;
+  if (exceptional.signature_inclusion === true) {
+    items.push({
+      id: "signature-on-photo",
+      verdict: "required",
+      title: "Signature on the photograph",
+      detail:
+        "This exam wants your full signature on the bottom part of the photograph. We cannot add that — you will need to before you upload.",
+    });
+  }
+
   if (appearance.monochrome_accepted === false) {
     items.push({
       id: "colour",

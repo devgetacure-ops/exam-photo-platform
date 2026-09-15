@@ -22,7 +22,7 @@
     {
       "source_type": "official_webpage",
       "official_source": true,
-      "captured_wording": "Recent color photo (3.5cm x 4.5cm)",
+      "captured_wording": "Recent color photo (3.5cm x 4.5cm); Put your full signature on the bottom part of Photo",
       "source_url": "https://www.westbengalssc.com/otr/howToApply/",
       "document_title": "WBSSC Assistant Teacher Recruitment Application Guide",
       "section_name": "Photo Upload"
@@ -38,8 +38,11 @@
   ],
   "image_requirements": {
     "dimensions": {
-      "mode": "unspecified",
-      "fallback_reason": "No pixel dimensions are published by the conducting body. The output size is chosen per photograph from the crop geometry rather than from a fixed default."
+      "mode": "exact",
+      "width_px": 413,
+      "height_px": 531,
+      "aspect_ratio": "7:9",
+      "fallback_reason": "The notice gives the photograph as 3.5 x 4.5 cm and publishes no pixel size. The photograph is delivered at 413 x 531 px, that size at 300 DPI; the pixel size is our estimate, not the body's."
     },
     "file_size": {
       "maximum_bytes": 60000,
@@ -73,7 +76,11 @@
       "case_sensitive": false
     },
     "exceptional_instructions": {
-      "processing_support_status": "supported"
+      "signature_inclusion": true,
+      "processing_support_status": "partially_supported",
+      "unsupported_requirement_reasons": [
+        "The body requires the candidate's full signature on the bottom part of the photograph. The engine cannot write a handwritten signature, so the photograph is produced correctly sized and composed but without it, and the candidate must add their signature before uploading."
+      ]
     }
   },
   "requirements": [
@@ -83,7 +90,7 @@
       "requirement_type": "photograph",
       "submission_method": "file_upload",
       "requirement_status": "mandatory",
-      "platform_support": "supported",
+      "platform_support": "partially_supported",
       "applicability": "All applicants unless the cited authority instruction states otherwise",
       "content_instructions": "JPG; 30-60 KB",
       "evidence_status": "Official completion-pass photograph evidence"
@@ -98,8 +105,8 @@
       "approved": true
     },
     "image_requirements.dimensions": {
-      "type": "inferred",
-      "reasoning": "The conducting body publishes no pixel dimensions. The output size is chosen per photograph from the crop geometry, so no dimension is asserted on the body's behalf.",
+      "type": "interim_default",
+      "reasoning": "The notice gives the photograph as 3.5 x 4.5 cm and publishes no pixel size. The photograph is delivered at 413 x 531 px, that size at 300 DPI; the pixel size is our estimate, not the body's.",
       "confidence": 1,
       "approved": false
     },

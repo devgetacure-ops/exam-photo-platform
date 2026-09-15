@@ -6254,7 +6254,7 @@
         "requirement_status": "Mandatory",
         "submission_method": "file_upload",
         "applicability": "All applicants unless the cited notice states otherwise",
-        "specification": "JPEG; 20–50 KB",
+        "specification": "JPEG; 20–50 KB; 280x80 to 560x160 px",
         "evidence_status": "Official source-qualified rule in supplied FINAL research package",
         "source_url": "https://rssb.rajasthan.gov.in/storage/guideline_item/1634728462.pdf",
         "important_note": null,
@@ -6263,12 +6263,20 @@
             "values": [
               "JPEG"
             ],
-            "source_wording": "JPEG"
+            "source_wording": "Only JPEG format will be accepted"
           },
           "file_size_kb": {
             "minimum": 20,
             "maximum": 50,
             "source_wording": "20–50 KB"
+          },
+          "dimensions_px": {
+            "mode": "range",
+            "minimum_width": 280,
+            "maximum_width": 560,
+            "minimum_height": 80,
+            "maximum_height": 160,
+            "source_wording": "The minimum pixel for JPEG should be 280 * 80 and maximum pixel should be 560*160"
           }
         }
       }
@@ -6507,7 +6515,7 @@
         "requirement_status": "Mandatory",
         "submission_method": "file_upload",
         "applicability": "All applicants unless the cited notice states otherwise",
-        "specification": "JPEG; 20–50 KB",
+        "specification": "JPEG; 20–50 KB; 280x80 to 560x160 px",
         "evidence_status": "Official source-qualified rule in supplied FINAL research package",
         "source_url": "https://rssb.rajasthan.gov.in/storage/guideline_item/1634728462.pdf",
         "important_note": null,
@@ -6516,12 +6524,20 @@
             "values": [
               "JPEG"
             ],
-            "source_wording": "JPEG"
+            "source_wording": "Only JPEG format will be accepted"
           },
           "file_size_kb": {
             "minimum": 20,
             "maximum": 50,
             "source_wording": "20–50 KB"
+          },
+          "dimensions_px": {
+            "mode": "range",
+            "minimum_width": 280,
+            "maximum_width": 560,
+            "minimum_height": 80,
+            "maximum_height": 160,
+            "source_wording": "The minimum pixel for JPEG should be 280 * 80 and maximum pixel should be 560*160"
           }
         }
       }
@@ -6878,7 +6894,7 @@
         "requirement_status": "Mandatory",
         "submission_method": "file_upload",
         "applicability": "All applicants unless the cited notice states otherwise",
-        "specification": "JPEG; 20–50 KB",
+        "specification": "JPEG; 20–50 KB; 280x80 to 560x160 px",
         "evidence_status": "Official source-qualified rule in supplied FINAL research package",
         "source_url": "https://rssb.rajasthan.gov.in/storage/guideline_item/1634728462.pdf",
         "important_note": null,
@@ -6887,12 +6903,20 @@
             "values": [
               "JPEG"
             ],
-            "source_wording": "JPEG"
+            "source_wording": "Only JPEG format will be accepted"
           },
           "file_size_kb": {
             "minimum": 20,
             "maximum": 50,
             "source_wording": "20–50 KB"
+          },
+          "dimensions_px": {
+            "mode": "range",
+            "minimum_width": 280,
+            "maximum_width": 560,
+            "minimum_height": 80,
+            "maximum_height": 160,
+            "source_wording": "The minimum pixel for JPEG should be 280 * 80 and maximum pixel should be 560*160"
           }
         }
       }
@@ -7549,7 +7573,7 @@
         "requirement_status": "Mandatory",
         "submission_method": "file_upload",
         "applicability": "All applicants unless the cited notice states otherwise",
-        "specification": "JPEG; 20–50 KB",
+        "specification": "JPEG; 20–50 KB; 280x80 to 560x160 px",
         "evidence_status": "Official source-qualified rule in supplied FINAL research package",
         "source_url": "https://rssb.rajasthan.gov.in/storage/guideline_item/1634728462.pdf",
         "important_note": null,
@@ -7558,12 +7582,20 @@
             "values": [
               "JPEG"
             ],
-            "source_wording": "JPEG"
+            "source_wording": "Only JPEG format will be accepted"
           },
           "file_size_kb": {
             "minimum": 20,
             "maximum": 50,
             "source_wording": "20–50 KB"
+          },
+          "dimensions_px": {
+            "mode": "range",
+            "minimum_width": 280,
+            "maximum_width": 560,
+            "minimum_height": 80,
+            "maximum_height": 160,
+            "source_wording": "The minimum pixel for JPEG should be 280 * 80 and maximum pixel should be 560*160"
           }
         }
       }
@@ -8720,12 +8752,23 @@
         "requirement_status": "Mandatory or portal-dependent",
         "submission_method": "file_upload",
         "applicability": "As required by the active authority application/notification",
-        "specification": "not_found",
-        "evidence_status": "Application asset identified at authority/application-family level; exact current technical specification and, where noted, conditionality were not fully established.",
-        "source_url": "https://www.bujhansi.ac.in/upbedjee.html",
+        "specification": "JPG; 50 KB; 100 DPI",
+        "evidence_status": "Official UP B.Ed JEE 2026 How to Apply",
+        "source_url": "https://cdn3.digialm.com/per/g21/pub/1936/ASM/WebPortal/19/images/How_to_Apply2026.pdf",
         "important_note": "This row is intentionally evidence-gated. No numeric value or format has been inferred from secondary sources.",
         "parsed": {
-          "specification_not_established": true
+          "specification_not_established": false,
+          "file_size_kb": {
+            "minimum": null,
+            "maximum": 50,
+            "source_wording": "Candidates must upload their scanned signature in jpg format \n(upload size is 50 KB only, of 100 DPI)"
+          },
+          "formats": {
+            "values": [
+              "JPG"
+            ],
+            "source_wording": "Candidates must upload their scanned signature in jpg format \n(upload size is 50 KB only, of 100 DPI)"
+          }
         }
       },
       {

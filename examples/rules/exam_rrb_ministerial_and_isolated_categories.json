@@ -2,7 +2,7 @@
   "schema_version": "1.1",
   "rule_id": "rrb-ministerial-and-isolated-categories",
   "rule_version": "1.0.0",
-  "status": "verified_with_ambiguity",
+  "status": "verified",
   "exam": {
     "exam_id": "rrb-ministerial-and-isolated-categories",
     "exam_name": "RRB Ministerial and Isolated Categories",
@@ -24,12 +24,25 @@
       "source_url": "https://www.rrbcdg.gov.in/uploads/2024/07-M%26I/2024-07%20-%20CEN%20Min%20%26%20Iso.pdf",
       "document_title": "CEN 07/2024 Ministerial and Isolated Categories",
       "section_name": "Mandatory scanned documents"
+    },
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "It should be of size 35mm X 45mm or 320 x 240 pixels.; minimum 100 DPI",
+      "source_url": "https://www.rrbcdg.gov.in/uploads/202407/2024-07%20-%20CEN%20Min%20%26%20Iso.pdf",
+      "document_title": "CEN 07/2024 - Ministerial and Isolated Categories",
+      "section_name": "Photograph specification"
     }
   ],
   "image_requirements": {
     "dimensions": {
-      "mode": "unspecified",
-      "fallback_reason": "No pixel dimensions are published by the conducting body. The output size is chosen per photograph from the crop geometry rather than from a fixed default."
+      "mode": "exact",
+      "width_px": 240,
+      "height_px": 320,
+      "aspect_ratio": "3:4",
+      "fallback_reason": "The published pixel figure is landscape, which contradicts the portrait physical size given in the same sentence. Recorded upright; see provenance.",
+      "dpi": 100,
+      "permitted_pixel_range": "35mm X 45mm or 320 x 240 pixels"
     },
     "file_size": {
       "maximum_bytes": 70000,
@@ -98,9 +111,9 @@
         },
         "formats": {
           "allowed_formats": [
-            "jpg"
+            "jpeg"
           ],
-          "preferred_format": "jpg"
+          "preferred_format": "jpeg"
         }
       }
     }
@@ -114,10 +127,11 @@
       "approved": true
     },
     "image_requirements.dimensions": {
-      "type": "inferred",
-      "reasoning": "The conducting body publishes no pixel dimensions. The output size is chosen per photograph from the crop geometry, so no dimension is asserted on the body's behalf.",
-      "confidence": 1,
-      "approved": false
+      "type": "official",
+      "evidence_reference": "CEN 07/2024 - Ministerial and Isolated Categories - Photograph specification (https://www.rrbcdg.gov.in/uploads/202407/2024-07%20-%20CEN%20Min%20%26%20Iso.pdf)",
+      "reasoning": "Pixel dimensions transcribed from the cited source.",
+      "confidence": 4,
+      "approved": true
     },
     "image_requirements.formats.preferred_format": {
       "type": "inferred",
@@ -125,21 +139,21 @@
       "confidence": 4,
       "approved": true
     },
+    "image_requirements.dimensions.width_px": {
+      "type": "inferred",
+      "reasoning": "The body publishes the pixel figure landscape while giving a portrait physical size in the same sentence, and the two agree in magnitude but not orientation. Recorded upright, because an examination photograph is a head-and-shoulders portrait and no body in the researched set requires a landscape one. The published figure is preserved verbatim in permitted_pixel_range so the transposition is visible.",
+      "confidence": 3,
+      "approved": true
+    },
     "image_requirements.composition.crop_profile": {
       "type": "platform_default",
       "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
       "confidence": 5,
       "approved": true
-    },
-    "requirements[1].file_spec.formats.allowed_formats": {
-      "type": "interim_default",
-      "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
-      "confidence": 1,
-      "approved": false
     }
   },
   "verification": {
-    "verification_status": "verified_with_ambiguity"
+    "verification_status": "verified"
   },
   "fictional_example": false
 }

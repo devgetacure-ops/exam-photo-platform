@@ -59,7 +59,8 @@
         },
         "formats": {
           "allowed_formats": [
-            "jpg"
+            "jpg",
+            "jpeg"
           ],
           "preferred_format": "jpg"
         }
@@ -76,12 +77,6 @@
     "requirements[1].file_spec.file_size.minimum_bytes": {
       "type": "interim_default",
       "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
-      "confidence": 1,
-      "approved": false
-    },
-    "requirements[1].file_spec.formats.allowed_formats": {
-      "type": "interim_default",
-      "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
       "confidence": 1,
       "approved": false
     }

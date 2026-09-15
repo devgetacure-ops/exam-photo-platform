@@ -2,18 +2,18 @@
 
 Written by `apps/web/scripts/build-keywords.mjs` from the examination records. Do not edit by hand; re-run `npm run seo:keywords` after the catalogue changes. The strategy that explains it is `KEYWORD_STRATEGY.md`; every row is in `keywords.csv`.
 
-**30,024 keywords.** Priority is a rule of thumb, not measured volume.
+**30,030 keywords.** Priority is a rule of thumb, not measured volume.
 
 | Coverage | Keywords |
 |---|---:|
-| explains | 20,999 |
-| prepares | 8,097 |
-| gap | 928 |
+| explains | 20,967 |
+| prepares | 8,129 |
+| gap | 934 |
 
 | Priority | Keywords |
 |---|---:|
-| P3 | 21,419 |
-| P2 | 7,099 |
+| P3 | 21,423 |
+| P2 | 7,101 |
 | P1 | 1,506 |
 
 | Cluster | Keywords |
@@ -26,7 +26,7 @@ Written by `apps/web/scripts/build-keywords.mjs` from the examination records. D
 | exam-rejection | 1,174 |
 | exam-hindi | 587 |
 | compress-image-to-size | 484 |
-| spec-value | 194 |
+| spec-value | 200 |
 | exam-family | 183 |
 | pdf-work | 41 |
 | generic-exam-form | 31 |
@@ -41,7 +41,7 @@ Written by `apps/web/scripts/build-keywords.mjs` from the examination records. D
 
 | Language | Keywords |
 |---|---:|
-| en | 28,243 |
+| en | 28,249 |
 | hi-Latn | 1,184 |
 | hi | 597 |
 
@@ -50,7 +50,7 @@ Written by `apps/web/scripts/build-keywords.mjs` from the examination records. D
 | Page | Pages | Keywords | P1 | For example |
 |---|---:|---:|---:|---|
 | `/compress-image` | 1 | 484 | 26 | `compress image to 100kb` |
-| `/resize/… (one page per published figure)` | 40 | 194 | 6 | `compress photo to 100kb` |
+| `/resize/… (one page per published figure)` | 42 | 200 | 6 | `compress photo to 100kb` |
 | `/compress-pdf` | 1 | 21 | 6 | `compress pdf to 100kb` |
 | `/exams/… (one hub per family)` | 10 | 183 | 0 | `army exam photo and signature size` |
 | `/photo-size-for-exams` | 1 | 10 | 0 | `exam photo size` |

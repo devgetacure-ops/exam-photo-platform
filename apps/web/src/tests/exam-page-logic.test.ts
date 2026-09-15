@@ -242,6 +242,16 @@ describe("photograph guidance from the exam's own record", () => {
     expect(appearanceGuidance({})).toEqual([]);
   });
 
+  test("a signature required on the photograph says plainly that we cannot add it", () => {
+    // DEC-095: WBSSC's "Put your full signature on the bottom part of Photo".
+    const items = appearanceGuidance({
+      exceptional_instructions: { signature_inclusion: true },
+    });
+    const signature = items.find((item) => item.id === "signature-on-photo");
+    expect(signature?.verdict).toBe("required");
+    expect(signature?.detail).toContain("We cannot add that");
+  });
+
   test("a required imprint says plainly that we cannot add it", () => {
     const items = appearanceGuidance({
       appearance: {

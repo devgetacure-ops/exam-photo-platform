@@ -1,0 +1,634 @@
+{
+ "_note": "The owner's research of 2026-09-15, checked by us (DEC-095). A value is here only where its passage was found on the cited page, except RRB Ministerial and Isolated, whose CEN sentence is the owner's transcription because rrbcdg.gov.in did not serve the PDF. dimensions.estimated_size is not a reading: it is the owner's decision to deliver a stated size marked est. where a notice gives no pixel size. Applied by scripts/merge_research_delivery.py.",
+ "specs": {
+  "CBSE Classes IX/XI Registration 2025-26": {
+   "dimensions.estimated_size": {
+    "status": "estimated",
+    "value": [
+     413,
+     531
+    ],
+    "reasoning": "No pixel dimensions are published by the conducting body. The photograph is delivered at 413 x 531 px, a 3.5 x 4.5 cm passport photograph at 300 DPI; this size is our estimate, not the body's.",
+    "confidence": 1,
+    "decided": "DEC-095",
+    "access_date": "2026-09-15"
+   }
+  },
+  "CUET (PG) 2026": {
+   "dimensions.estimated_size": {
+    "status": "estimated",
+    "value": [
+     413,
+     531
+    ],
+    "reasoning": "No pixel dimensions are published by the conducting body. The photograph is delivered at 413 x 531 px, a 3.5 x 4.5 cm passport photograph at 300 DPI; this size is our estimate, not the body's.",
+    "confidence": 1,
+    "decided": "DEC-095",
+    "access_date": "2026-09-15"
+   }
+  },
+  "CUET (UG) 2026": {
+   "dimensions.estimated_size": {
+    "status": "estimated",
+    "value": [
+     413,
+     531
+    ],
+    "reasoning": "No pixel dimensions are published by the conducting body. The photograph is delivered at 413 x 531 px, a 3.5 x 4.5 cm passport photograph at 300 DPI; this size is our estimate, not the body's.",
+    "confidence": 1,
+    "decided": "DEC-095",
+    "access_date": "2026-09-15"
+   }
+  },
+  "ICAI Examination Portal": {
+   "dimensions.estimated_size": {
+    "status": "estimated",
+    "value": [
+     413,
+     531
+    ],
+    "reasoning": "No pixel dimensions are published by the conducting body. The photograph is delivered at 413 x 531 px, a 3.5 x 4.5 cm passport photograph at 300 DPI; this size is our estimate, not the body's.",
+    "confidence": 1,
+    "decided": "DEC-095",
+    "access_date": "2026-09-15"
+   }
+  },
+  "ICSI Student Registration and Examination": {
+   "dimensions.estimated_size": {
+    "status": "estimated",
+    "value": [
+     413,
+     531
+    ],
+    "reasoning": "No pixel dimensions are published by the conducting body. The photograph is delivered at 413 x 531 px, a 3.5 x 4.5 cm passport photograph at 300 DPI; this size is our estimate, not the body's.",
+    "confidence": 1,
+    "decided": "DEC-095",
+    "access_date": "2026-09-15"
+   },
+   "file_size.published_minimum": {
+    "status": "verified",
+    "value": 20,
+    "captured_wording": "File size of student photo should be between 20kb to 50kb",
+    "confidence": 5,
+    "source_type": "official_webpage",
+    "official_source": true,
+    "source_url": "https://smash.icsi.edu/Scripts/Registration/Instructions.aspx?ID=R2",
+    "document_title": "ICSI student registration instructions",
+    "document_identifier": null,
+    "page_number": null,
+    "section_name": null,
+    "access_date": "2026-09-15"
+   }
+  },
+  "JEE (Main) 2026": {
+   "dimensions.estimated_size": {
+    "status": "estimated",
+    "value": [
+     413,
+     531
+    ],
+    "reasoning": "No pixel dimensions are published by the conducting body. The photograph is delivered at 413 x 531 px, a 3.5 x 4.5 cm passport photograph at 300 DPI; this size is our estimate, not the body's.",
+    "confidence": 1,
+    "decided": "DEC-095",
+    "access_date": "2026-09-15"
+   }
+  },
+  "Joint CSIR-UGC NET": {
+   "dimensions.estimated_size": {
+    "status": "estimated",
+    "value": [
+     413,
+     531
+    ],
+    "reasoning": "No pixel dimensions are published by the conducting body. The photograph is delivered at 413 x 531 px, a 3.5 x 4.5 cm passport photograph at 300 DPI; this size is our estimate, not the body's.",
+    "confidence": 1,
+    "decided": "DEC-095",
+    "access_date": "2026-09-15"
+   }
+  },
+  "Maharashtra Teacher Eligibility Test (MAHA TET)": {
+   "dimensions.estimated_size": {
+    "status": "estimated",
+    "value": [
+     413,
+     531
+    ],
+    "reasoning": "No pixel dimensions are published by the conducting body. The photograph is delivered at 413 x 531 px, a 3.5 x 4.5 cm passport photograph at 300 DPI; this size is our estimate, not the body's.",
+    "confidence": 1,
+    "decided": "DEC-095",
+    "access_date": "2026-09-15"
+   }
+  },
+  "Management Aptitude Test 2026": {
+   "dimensions.estimated_size": {
+    "status": "estimated",
+    "value": [
+     413,
+     531
+    ],
+    "reasoning": "No pixel dimensions are published by the conducting body. The photograph is delivered at 413 x 531 px, a 3.5 x 4.5 cm passport photograph at 300 DPI; this size is our estimate, not the body's.",
+    "confidence": 1,
+    "decided": "DEC-095",
+    "access_date": "2026-09-15"
+   }
+  },
+  "NEET (UG) 2026": {
+   "dimensions.estimated_size": {
+    "status": "estimated",
+    "value": [
+     413,
+     531
+    ],
+    "reasoning": "No pixel dimensions are published by the conducting body. The photograph is delivered at 413 x 531 px, a 3.5 x 4.5 cm passport photograph at 300 DPI; this size is our estimate, not the body's.",
+    "confidence": 1,
+    "decided": "DEC-095",
+    "access_date": "2026-09-15"
+   }
+  },
+  "RPF Constable": {
+   "dimensions.estimated_size": {
+    "status": "estimated",
+    "value": [
+     413,
+     531
+    ],
+    "reasoning": "No pixel dimensions are published by the conducting body. The photograph is delivered at 413 x 531 px, a 3.5 x 4.5 cm passport photograph at 300 DPI; this size is our estimate, not the body's.",
+    "confidence": 1,
+    "decided": "DEC-095",
+    "access_date": "2026-09-15"
+   }
+  },
+  "RPF Sub-Inspector": {
+   "dimensions.estimated_size": {
+    "status": "estimated",
+    "value": [
+     413,
+     531
+    ],
+    "reasoning": "No pixel dimensions are published by the conducting body. The photograph is delivered at 413 x 531 px, a 3.5 x 4.5 cm passport photograph at 300 DPI; this size is our estimate, not the body's.",
+    "confidence": 1,
+    "decided": "DEC-095",
+    "access_date": "2026-09-15"
+   }
+  },
+  "UGC-NET June 2026": {
+   "dimensions.estimated_size": {
+    "status": "estimated",
+    "value": [
+     413,
+     531
+    ],
+    "reasoning": "No pixel dimensions are published by the conducting body. The photograph is delivered at 413 x 531 px, a 3.5 x 4.5 cm passport photograph at 300 DPI; this size is our estimate, not the body's.",
+    "confidence": 1,
+    "decided": "DEC-095",
+    "access_date": "2026-09-15"
+   }
+  },
+  "UPSC CAPF (Assistant Commandants) Examination 2026": {
+   "dimensions.estimated_size": {
+    "status": "estimated",
+    "value": [
+     413,
+     531
+    ],
+    "reasoning": "No pixel dimensions are published by the conducting body. The photograph is delivered at 413 x 531 px, a 3.5 x 4.5 cm passport photograph at 300 DPI; this size is our estimate, not the body's.",
+    "confidence": 1,
+    "decided": "DEC-095",
+    "access_date": "2026-09-15"
+   }
+  },
+  "UPSC Civil Services Examination 2026": {
+   "dimensions.estimated_size": {
+    "status": "estimated",
+    "value": [
+     413,
+     531
+    ],
+    "reasoning": "No pixel dimensions are published by the conducting body. The photograph is delivered at 413 x 531 px, a 3.5 x 4.5 cm passport photograph at 300 DPI; this size is our estimate, not the body's.",
+    "confidence": 1,
+    "decided": "DEC-095",
+    "access_date": "2026-09-15"
+   }
+  },
+  "UPSC Combined Defence Services Examination (II) 2026": {
+   "dimensions.estimated_size": {
+    "status": "estimated",
+    "value": [
+     413,
+     531
+    ],
+    "reasoning": "No pixel dimensions are published by the conducting body. The photograph is delivered at 413 x 531 px, a 3.5 x 4.5 cm passport photograph at 300 DPI; this size is our estimate, not the body's.",
+    "confidence": 1,
+    "decided": "DEC-095",
+    "access_date": "2026-09-15"
+   }
+  },
+  "UPSC NDA & NA Examination (II) 2026": {
+   "dimensions.estimated_size": {
+    "status": "estimated",
+    "value": [
+     413,
+     531
+    ],
+    "reasoning": "No pixel dimensions are published by the conducting body. The photograph is delivered at 413 x 531 px, a 3.5 x 4.5 cm passport photograph at 300 DPI; this size is our estimate, not the body's.",
+    "confidence": 1,
+    "decided": "DEC-095",
+    "access_date": "2026-09-15"
+   }
+  },
+  "CTET September 2026": {
+   "dimensions.estimated_size": {
+    "status": "estimated",
+    "value": [
+     413,
+     531
+    ],
+    "reasoning": "The notice gives the photograph as 3.5 x 4.5 cm and publishes no pixel size. The photograph is delivered at 413 x 531 px, that size at 300 DPI; the pixel size is our estimate, not the body's.",
+    "confidence": 1,
+    "decided": "DEC-095",
+    "access_date": "2026-09-15"
+   }
+  },
+  "Karnataka Common Entrance Test 2026": {
+   "dimensions.estimated_size": {
+    "status": "estimated",
+    "value": [
+     413,
+     531
+    ],
+    "reasoning": "The notice gives the photograph as 3.5 x 4.5 cm and publishes no pixel size. The photograph is delivered at 413 x 531 px, that size at 300 DPI; the pixel size is our estimate, not the body's.",
+    "confidence": 1,
+    "decided": "DEC-095",
+    "access_date": "2026-09-15"
+   }
+  },
+  "MPSC Online Application": {
+   "dimensions.estimated_size": {
+    "status": "estimated",
+    "value": [
+     413,
+     531
+    ],
+    "reasoning": "The notice gives the photograph as 3.5 x 4.5 cm and publishes no pixel size. The photograph is delivered at 413 x 531 px, that size at 300 DPI; the pixel size is our estimate, not the body's.",
+    "confidence": 1,
+    "decided": "DEC-095",
+    "access_date": "2026-09-15"
+   }
+  },
+  "OSSSC Combined Recruitment Examination": {
+   "dimensions.estimated_size": {
+    "status": "estimated",
+    "value": [
+     413,
+     531
+    ],
+    "reasoning": "The notice gives the photograph as 3.5 x 4.5 cm and publishes no pixel size. The photograph is delivered at 413 x 531 px, that size at 300 DPI; the pixel size is our estimate, not the body's.",
+    "confidence": 1,
+    "decided": "DEC-095",
+    "access_date": "2026-09-15"
+   }
+  },
+  "WBJEE 2026": {
+   "dimensions.estimated_size": {
+    "status": "estimated",
+    "value": [
+     413,
+     531
+    ],
+    "reasoning": "The notice gives the photograph as 3.5 x 4.5 cm and publishes no pixel size. The photograph is delivered at 413 x 531 px, that size at 300 DPI; the pixel size is our estimate, not the body's.",
+    "confidence": 1,
+    "decided": "DEC-095",
+    "access_date": "2026-09-15"
+   }
+  },
+  "West Bengal School Service Commission SLST Assistant Teacher Recruitment": {
+   "dimensions.estimated_size": {
+    "status": "estimated",
+    "value": [
+     413,
+     531
+    ],
+    "reasoning": "The notice gives the photograph as 3.5 x 4.5 cm and publishes no pixel size. The photograph is delivered at 413 x 531 px, that size at 300 DPI; the pixel size is our estimate, not the body's.",
+    "confidence": 1,
+    "decided": "DEC-095",
+    "access_date": "2026-09-15"
+   },
+   "appearance.signature_on_photograph": {
+    "status": "verified",
+    "value": true,
+    "captured_wording": "Put your full signature on the bottom part of Photo",
+    "confidence": 5,
+    "source_type": "official_webpage",
+    "official_source": true,
+    "source_url": "https://www.westbengalssc.com/otr/howToApply/",
+    "document_title": "WBSSC OTR - How to apply",
+    "document_identifier": null,
+    "page_number": null,
+    "section_name": "Photo Upload",
+    "access_date": "2026-09-15"
+   }
+  },
+  "WBPSC / WBCS Online Application": {
+   "dimensions.estimated_size": {
+    "status": "estimated",
+    "value": [
+     354,
+     472
+    ],
+    "reasoning": "The guideline asks for a photograph within 3 x 4 cm and publishes no pixel size. The photograph is delivered at 354 x 472 px, 3 x 4 cm at 300 DPI; the pixel size is our estimate, not the body's.",
+    "confidence": 1,
+    "decided": "DEC-095",
+    "access_date": "2026-09-15"
+   }
+  },
+  "RRB Ministerial and Isolated Categories": {
+   "dimensions.width_px": {
+    "status": "verified",
+    "value": 320,
+    "captured_wording": "It should be of size 35mm X 45mm or 320 x 240 pixels.",
+    "confidence": 4,
+    "source_type": "official_pdf",
+    "official_source": true,
+    "source_url": "https://www.rrbcdg.gov.in/uploads/202407/2024-07%20-%20CEN%20Min%20%26%20Iso.pdf",
+    "document_title": "CEN 07/2024 - Ministerial and Isolated Categories",
+    "document_identifier": null,
+    "page_number": null,
+    "section_name": "Photograph specification",
+    "access_date": "2026-09-15"
+   },
+   "dimensions.height_px": {
+    "status": "verified",
+    "value": 240,
+    "captured_wording": "It should be of size 35mm X 45mm or 320 x 240 pixels.",
+    "confidence": 4,
+    "source_type": "official_pdf",
+    "official_source": true,
+    "source_url": "https://www.rrbcdg.gov.in/uploads/202407/2024-07%20-%20CEN%20Min%20%26%20Iso.pdf",
+    "document_title": "CEN 07/2024 - Ministerial and Isolated Categories",
+    "document_identifier": null,
+    "page_number": null,
+    "section_name": "Photograph specification",
+    "access_date": "2026-09-15"
+   },
+   "dpi": {
+    "status": "verified",
+    "value": 100,
+    "captured_wording": "minimum 100 DPI",
+    "confidence": 4,
+    "source_type": "official_pdf",
+    "official_source": true,
+    "source_url": "https://www.rrbcdg.gov.in/uploads/202407/2024-07%20-%20CEN%20Min%20%26%20Iso.pdf",
+    "document_title": "CEN 07/2024 - Ministerial and Isolated Categories",
+    "document_identifier": null,
+    "page_number": null,
+    "section_name": "Photograph specification",
+    "access_date": "2026-09-15"
+   },
+   "permitted_pixel_range": {
+    "status": "verified",
+    "value": "35mm X 45mm or 320 x 240 pixels",
+    "captured_wording": "It should be of size 35mm X 45mm or 320 x 240 pixels.",
+    "confidence": 4,
+    "source_type": "official_pdf",
+    "official_source": true,
+    "source_url": "https://www.rrbcdg.gov.in/uploads/202407/2024-07%20-%20CEN%20Min%20%26%20Iso.pdf",
+    "document_title": "CEN 07/2024 - Ministerial and Isolated Categories",
+    "document_identifier": null,
+    "page_number": null,
+    "section_name": "Photograph specification",
+    "access_date": "2026-09-15"
+   }
+  },
+  "UP B.Ed Joint Entrance Examination": {
+   "file_size.published_maximum": {
+    "status": "verified",
+    "value": 50,
+    "captured_wording": "Candidates must upload their recent color \npassport size photograph (JPG Format, 50KB, 100 DPI)",
+    "confidence": 5,
+    "source_type": "official_pdf",
+    "official_source": true,
+    "source_url": "https://cdn3.digialm.com/per/g21/pub/1936/ASM/WebPortal/19/images/How_to_Apply2026.pdf",
+    "document_title": "UP B.Ed JEE 2026 - How to Apply",
+    "document_identifier": null,
+    "page_number": null,
+    "section_name": null,
+    "access_date": "2026-09-15"
+   },
+   "file_size.size_unit_as_published": {
+    "status": "verified",
+    "value": "KB",
+    "captured_wording": "Candidates must upload their recent color \npassport size photograph (JPG Format, 50KB, 100 DPI)",
+    "confidence": 5,
+    "source_type": "official_pdf",
+    "official_source": true,
+    "source_url": "https://cdn3.digialm.com/per/g21/pub/1936/ASM/WebPortal/19/images/How_to_Apply2026.pdf",
+    "document_title": "UP B.Ed JEE 2026 - How to Apply",
+    "document_identifier": null,
+    "page_number": null,
+    "section_name": null,
+    "access_date": "2026-09-15"
+   },
+   "formats.allowed_formats": {
+    "status": "verified",
+    "value": [
+     "JPG"
+    ],
+    "captured_wording": "Candidates must upload their recent color \npassport size photograph (JPG Format, 50KB, 100 DPI)",
+    "confidence": 5,
+    "source_type": "official_pdf",
+    "official_source": true,
+    "source_url": "https://cdn3.digialm.com/per/g21/pub/1936/ASM/WebPortal/19/images/How_to_Apply2026.pdf",
+    "document_title": "UP B.Ed JEE 2026 - How to Apply",
+    "document_identifier": null,
+    "page_number": null,
+    "section_name": null,
+    "access_date": "2026-09-15"
+   },
+   "dpi": {
+    "status": "verified",
+    "value": 100,
+    "captured_wording": "Candidates must upload their recent color \npassport size photograph (JPG Format, 50KB, 100 DPI)",
+    "confidence": 5,
+    "source_type": "official_pdf",
+    "official_source": true,
+    "source_url": "https://cdn3.digialm.com/per/g21/pub/1936/ASM/WebPortal/19/images/How_to_Apply2026.pdf",
+    "document_title": "UP B.Ed JEE 2026 - How to Apply",
+    "document_identifier": null,
+    "page_number": null,
+    "section_name": null,
+    "access_date": "2026-09-15"
+   },
+   "dimensions.estimated_size": {
+    "status": "estimated",
+    "value": [
+     413,
+     531
+    ],
+    "reasoning": "No pixel dimensions are published by the conducting body. The photograph is delivered at 413 x 531 px, a 3.5 x 4.5 cm passport photograph at 300 DPI; this size is our estimate, not the body's.",
+    "confidence": 1,
+    "decided": "DEC-095",
+    "access_date": "2026-09-15"
+   }
+  }
+ },
+ "deliverables": {
+  "Rajasthan CET Graduate Level": [
+   {
+    "name": "Candidate signature",
+    "requirement_status": "Mandatory",
+    "submission_method": "file_upload",
+    "applicability": "All applicants unless the cited notice states otherwise",
+    "specification": "JPEG; 20–50 KB; 280x80 to 560x160 px",
+    "evidence_status": "Official source-qualified rule in supplied FINAL research package",
+    "source_url": "https://rssb.rajasthan.gov.in/storage/guideline_item/1634728462.pdf",
+    "important_note": null,
+    "parsed": {
+     "formats": {
+      "values": [
+       "JPEG"
+      ],
+      "source_wording": "Only JPEG format will be accepted"
+     },
+     "file_size_kb": {
+      "minimum": 20,
+      "maximum": 50,
+      "source_wording": "20–50 KB"
+     },
+     "dimensions_px": {
+      "mode": "range",
+      "minimum_width": 280,
+      "maximum_width": 560,
+      "minimum_height": 80,
+      "maximum_height": 160,
+      "source_wording": "The minimum pixel for JPEG should be 280 * 80 and maximum pixel should be 560*160"
+     }
+    }
+   }
+  ],
+  "Rajasthan CET Senior Secondary Level": [
+   {
+    "name": "Candidate signature",
+    "requirement_status": "Mandatory",
+    "submission_method": "file_upload",
+    "applicability": "All applicants unless the cited notice states otherwise",
+    "specification": "JPEG; 20–50 KB; 280x80 to 560x160 px",
+    "evidence_status": "Official source-qualified rule in supplied FINAL research package",
+    "source_url": "https://rssb.rajasthan.gov.in/storage/guideline_item/1634728462.pdf",
+    "important_note": null,
+    "parsed": {
+     "formats": {
+      "values": [
+       "JPEG"
+      ],
+      "source_wording": "Only JPEG format will be accepted"
+     },
+     "file_size_kb": {
+      "minimum": 20,
+      "maximum": 50,
+      "source_wording": "20–50 KB"
+     },
+     "dimensions_px": {
+      "mode": "range",
+      "minimum_width": 280,
+      "maximum_width": 560,
+      "minimum_height": 80,
+      "maximum_height": 160,
+      "source_wording": "The minimum pixel for JPEG should be 280 * 80 and maximum pixel should be 560*160"
+     }
+    }
+   }
+  ],
+  "Rajasthan Grade IV Recruitment": [
+   {
+    "name": "Candidate signature",
+    "requirement_status": "Mandatory",
+    "submission_method": "file_upload",
+    "applicability": "All applicants unless the cited notice states otherwise",
+    "specification": "JPEG; 20–50 KB; 280x80 to 560x160 px",
+    "evidence_status": "Official source-qualified rule in supplied FINAL research package",
+    "source_url": "https://rssb.rajasthan.gov.in/storage/guideline_item/1634728462.pdf",
+    "important_note": null,
+    "parsed": {
+     "formats": {
+      "values": [
+       "JPEG"
+      ],
+      "source_wording": "Only JPEG format will be accepted"
+     },
+     "file_size_kb": {
+      "minimum": 20,
+      "maximum": 50,
+      "source_wording": "20–50 KB"
+     },
+     "dimensions_px": {
+      "mode": "range",
+      "minimum_width": 280,
+      "maximum_width": 560,
+      "minimum_height": 80,
+      "maximum_height": 160,
+      "source_wording": "The minimum pixel for JPEG should be 280 * 80 and maximum pixel should be 560*160"
+     }
+    }
+   }
+  ],
+  "Rajasthan Patwari Recruitment": [
+   {
+    "name": "Candidate signature",
+    "requirement_status": "Mandatory",
+    "submission_method": "file_upload",
+    "applicability": "All applicants unless the cited notice states otherwise",
+    "specification": "JPEG; 20–50 KB; 280x80 to 560x160 px",
+    "evidence_status": "Official source-qualified rule in supplied FINAL research package",
+    "source_url": "https://rssb.rajasthan.gov.in/storage/guideline_item/1634728462.pdf",
+    "important_note": null,
+    "parsed": {
+     "formats": {
+      "values": [
+       "JPEG"
+      ],
+      "source_wording": "Only JPEG format will be accepted"
+     },
+     "file_size_kb": {
+      "minimum": 20,
+      "maximum": 50,
+      "source_wording": "20–50 KB"
+     },
+     "dimensions_px": {
+      "mode": "range",
+      "minimum_width": 280,
+      "maximum_width": 560,
+      "minimum_height": 80,
+      "maximum_height": 160,
+      "source_wording": "The minimum pixel for JPEG should be 280 * 80 and maximum pixel should be 560*160"
+     }
+    }
+   }
+  ],
+  "UP B.Ed Joint Entrance Examination": [
+   {
+    "name": "Candidate signature",
+    "requirement_status": "Mandatory or portal-dependent",
+    "submission_method": "file_upload",
+    "applicability": "As required by the active authority application/notification",
+    "specification": "JPG; 50 KB; 100 DPI",
+    "evidence_status": "Official UP B.Ed JEE 2026 How to Apply",
+    "source_url": "https://cdn3.digialm.com/per/g21/pub/1936/ASM/WebPortal/19/images/How_to_Apply2026.pdf",
+    "important_note": "This row is intentionally evidence-gated. No numeric value or format has been inferred from secondary sources.",
+    "parsed": {
+     "specification_not_established": false,
+     "file_size_kb": {
+      "minimum": null,
+      "maximum": 50,
+      "source_wording": "Candidates must upload their scanned signature in jpg format \n(upload size is 50 KB only, of 100 DPI)"
+     },
+     "formats": {
+      "values": [
+       "JPG"
+      ],
+      "source_wording": "Candidates must upload their scanned signature in jpg format \n(upload size is 50 KB only, of 100 DPI)"
+     }
+    }
+   }
+  ]
+ }
+}

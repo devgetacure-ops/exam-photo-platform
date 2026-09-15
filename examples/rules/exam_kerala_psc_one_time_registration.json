@@ -191,12 +191,6 @@
       "confidence": 5,
       "approved": true
     },
-    "requirements[1].file_spec.formats.allowed_formats": {
-      "type": "interim_default",
-      "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
-      "confidence": 1,
-      "approved": false
-    },
     "requirements[2].file_spec.file_size.maximum_bytes": {
       "type": "interim_default",
       "reasoning": "No published file size for this certificate, and none for any of the 45 certificate deliverables in the research, so no distribution exists to stand in for. 400 KB is a product-owner working ceiling pending the published figures. No minimum is set: a floor on top of an invented ceiling would compound the guess.",

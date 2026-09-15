@@ -48,21 +48,14 @@
         },
         "formats": {
           "allowed_formats": [
-            "jpg"
+            "jpeg"
           ],
-          "preferred_format": "jpg"
+          "preferred_format": "jpeg"
         }
       }
     }
   ],
-  "provenance": {
-    "requirements[0].file_spec.formats.allowed_formats": {
-      "type": "interim_default",
-      "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
-      "confidence": 1,
-      "approved": false
-    }
-  },
+  "provenance": {},
   "verification": {
     "verification_status": "provisional"
   },

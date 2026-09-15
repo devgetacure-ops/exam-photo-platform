@@ -192,5 +192,7 @@ def test_catalogue_wide_support_totals_match_the_recorded_figures():
     assert sum(totals.values()) == 405
     assert totals[PlatformSupport.SUPPORTED] == 303
     assert totals[PlatformSupport.GUIDANCE_ONLY] == 28
-    assert totals[PlatformSupport.PARTIALLY_SUPPORTED] == 3
-    assert totals[PlatformSupport.NOT_YET_SUPPORTED] == 71
+    # DEC-095: WBSSC's photograph needs the signature on it (partial), and UP
+    # B.Ed's photograph gained its published size and format (supported).
+    assert totals[PlatformSupport.PARTIALLY_SUPPORTED] == 4
+    assert totals[PlatformSupport.NOT_YET_SUPPORTED] == 70

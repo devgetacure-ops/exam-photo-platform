@@ -1,31 +1,29 @@
 {
   "schema_version": "1.1",
-  "rule_id": "icai-examination-portal",
+  "rule_id": "up-b-ed-joint-entrance-examination",
   "rule_version": "1.0.0",
   "status": "verified_with_ambiguity",
   "exam": {
-    "exam_id": "icai-examination-portal",
-    "exam_name": "ICAI Examination Portal",
-    "conducting_body": "Institute of Chartered Accountants of India",
+    "exam_id": "up-b-ed-joint-entrance-examination",
+    "exam_name": "UP B.Ed Joint Entrance Examination",
+    "conducting_body": "Bundelkhand University Jhansi",
     "examination_year": 2026,
-    "application_cycle": "current",
+    "application_cycle": "2026",
     "aliases": [
-      "ICAI",
-      "CA",
-      "CA Foundation",
-      "CA Intermediate"
+      "UP BEd JEE",
+      "UP BEd"
     ],
     "application_stage": "application",
-    "jurisdiction": "India",
-    "category": "professional_body"
+    "jurisdiction": "Uttar Pradesh",
+    "category": "teacher_education_entrance"
   },
   "source_evidence": [
     {
-      "source_type": "official_application_portal",
+      "source_type": "official_pdf",
       "official_source": true,
-      "captured_wording": "passport size; 50KB; JPEG; photo.jpeg; light/white background; colour",
-      "source_url": "https://pqc.icaiexam.icai.org/INTT/Home/ImageResize",
-      "document_title": "Image Resize - ICAI examination portal"
+      "captured_wording": "Candidates must upload their recent color \npassport size photograph (JPG Format, 50KB, 100 DPI)",
+      "source_url": "https://cdn3.digialm.com/per/g21/pub/1936/ASM/WebPortal/19/images/How_to_Apply2026.pdf",
+      "document_title": "UP B.Ed JEE 2026 - How to Apply"
     }
   ],
   "image_requirements": {
@@ -34,7 +32,8 @@
       "width_px": 413,
       "height_px": 531,
       "aspect_ratio": "7:9",
-      "fallback_reason": "No pixel dimensions are published by the conducting body. The photograph is delivered at 413 x 531 px, a 3.5 x 4.5 cm passport photograph at 300 DPI; this size is our estimate, not the body's."
+      "fallback_reason": "No pixel dimensions are published by the conducting body. The photograph is delivered at 413 x 531 px, a 3.5 x 4.5 cm passport photograph at 300 DPI; this size is our estimate, not the body's.",
+      "dpi": 100
     },
     "file_size": {
       "maximum_bytes": 50000,
@@ -43,16 +42,15 @@
     },
     "formats": {
       "allowed_formats": [
-        "jpeg"
+        "jpg"
       ],
-      "preferred_format": "jpeg",
+      "preferred_format": "jpg",
       "preserve_transparency": false,
       "strip_metadata": true,
       "colour_space": "sRGB"
     },
     "background": {
-      "mode": "plain_light",
-      "fallback_colour": "#FFFFFF"
+      "mode": "unspecified"
     },
     "composition": {
       "crop_profile": "tight_exam_portrait",
@@ -60,17 +58,13 @@
       "complete_chin_required": true,
       "ears_policy": "unspecified"
     },
-    "appearance": {
-      "monochrome_accepted": false
-    },
+    "appearance": {},
     "filename": {
-      "mode": "exact",
+      "mode": "unspecified",
       "extension_required": true,
-      "exact_filename": "photo.jpeg",
       "case_sensitive": false
     },
     "exceptional_instructions": {
-      "black_and_white_restriction": true,
       "processing_support_status": "supported"
     }
   },
@@ -80,22 +74,24 @@
       "requirement_name": "Candidate photograph",
       "requirement_type": "photograph",
       "submission_method": "file_upload",
-      "requirement_status": "conditional",
+      "requirement_status": "portal_dependent",
       "platform_support": "supported",
-      "applicability": "Candidates whose ICAI profile/exam form requires a photo",
-      "content_instructions": "Uploaded candidate photograph; format: JPEG; file size: up to 50 KB; filename: photo.jpeg; background: light or white.",
-      "evidence_status": "Current official ICAI portal scope"
+      "applicability": "As required by the active authority application/notification",
+      "content_instructions": "not_found",
+      "evidence_status": "Application asset identified at authority/application-family level; exact current technical specification and, where noted, conditionality were not fully established.",
+      "notes": "This row is intentionally evidence-gated. No numeric value or format has been inferred from secondary sources."
     },
     {
       "requirement_id": "candidate_signature",
       "requirement_name": "Candidate signature",
       "requirement_type": "signature",
       "submission_method": "file_upload",
-      "requirement_status": "mandatory",
+      "requirement_status": "portal_dependent",
       "platform_support": "supported",
-      "applicability": "Applicants whose portal profile/exam form requires signature",
-      "content_instructions": "JPEG; maximum 50 KB; candidate\u2019s own signature; black ink on white paper; not in capital letters; no minimum published",
-      "evidence_status": "Official ICAI exam portal image instructions",
+      "applicability": "As required by the active authority application/notification",
+      "content_instructions": "JPG; 50 KB; 100 DPI",
+      "evidence_status": "Official UP B.Ed JEE 2026 How to Apply",
+      "notes": "This row is intentionally evidence-gated. No numeric value or format has been inferred from secondary sources.",
       "file_spec": {
         "file_size": {
           "maximum_bytes": 50000,
@@ -104,30 +100,19 @@
         },
         "formats": {
           "allowed_formats": [
-            "jpeg"
+            "jpg"
           ],
-          "preferred_format": "jpeg"
+          "preferred_format": "jpg"
         }
       }
-    },
-    {
-      "requirement_id": "exam_form_declaration",
-      "requirement_name": "Exam-form declaration",
-      "requirement_type": "portal_declaration",
-      "submission_method": "typed_or_selected_declaration",
-      "requirement_status": "mandatory",
-      "platform_support": "guidance_only",
-      "applicability": "All applicants",
-      "content_instructions": "Confirm the examination form and profile particulars. No separate handwritten-declaration image was established.",
-      "evidence_status": "Current ICAI exam portal process"
     }
   ],
   "provenance": {
     "image_requirements.file_size": {
       "type": "official",
-      "evidence_reference": "Image Resize - ICAI examination portal (https://pqc.icaiexam.icai.org/INTT/Home/ImageResize)",
+      "evidence_reference": "UP B.Ed JEE 2026 - How to Apply (https://cdn3.digialm.com/per/g21/pub/1936/ASM/WebPortal/19/images/How_to_Apply2026.pdf)",
       "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
-      "confidence": 4,
+      "confidence": 5,
       "approved": true
     },
     "image_requirements.dimensions": {
@@ -135,6 +120,12 @@
       "reasoning": "No pixel dimensions are published by the conducting body. The photograph is delivered at 413 x 531 px, a 3.5 x 4.5 cm passport photograph at 300 DPI; this size is our estimate, not the body's.",
       "confidence": 1,
       "approved": false
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
     },
     "image_requirements.composition.crop_profile": {
       "type": "platform_default",
