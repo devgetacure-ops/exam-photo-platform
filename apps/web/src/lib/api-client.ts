@@ -12,14 +12,23 @@ import {
     KitPackage,
 } from "./types";
 
-const API_BASE_URL =
-    process.env.NEXT_PUBLIC_EXAM_PHOTO_API_BASE_URL || "http://127.0.0.1:8000";
-
 /**
- * Gets the configured base URL for the local processing API.
+ * Where the browser reaches the preparation service (DEC-097).
+ *
+ * Deployed, one proxy serves the site and the API from the same origin
+ * (DEC-065), so the variable is left unset and the page's own origin is the
+ * base. It used to fall back to 127.0.0.1:8000 whenever the variable was
+ * empty, which on a production phone meant every upload went to the phone
+ * itself. Local development without the variable keeps the engine's port.
  */
 export function getApiBaseUrl(): string {
-    return API_BASE_URL;
+    const configured = process.env.NEXT_PUBLIC_EXAM_PHOTO_API_BASE_URL?.trim();
+    if (configured) return configured;
+    if (process.env.NODE_ENV === "production") {
+        if (typeof window !== "undefined") return window.location.origin;
+        return process.env.NEXT_PUBLIC_SITE_URL || "http://127.0.0.1:3000";
+    }
+    return "http://127.0.0.1:8000";
 }
 
 /**
@@ -63,7 +72,7 @@ export async function processImage({
     formData.append("file", image);
     formData.append("rule", JSON.stringify(ruleJson));
 
-    const url = new URL("/v1/process", API_BASE_URL);
+    const url = new URL("/v1/process", getApiBaseUrl());
     url.searchParams.append("allow_invalid_output", String(allowInvalidOutput));
 
     try {
@@ -103,7 +112,7 @@ export async function processImage({
  * Queries job status and metadata.
  */
 export async function getJob(jobId: string): Promise<JobStatusResponse> {
-    const url = new URL(`/v1/jobs/${jobId}`, API_BASE_URL);
+    const url = new URL(`/v1/jobs/${jobId}`, getApiBaseUrl());
 
     try {
         const response = await fetch(url.toString());
@@ -130,7 +139,7 @@ export async function getJob(jobId: string): Promise<JobStatusResponse> {
  * Retrieves the full pipeline validation report.
  */
 export async function getReport(jobId: string): Promise<PipelineReport> {
-    const url = new URL(`/v1/jobs/${jobId}/report`, API_BASE_URL);
+    const url = new URL(`/v1/jobs/${jobId}/report`, getApiBaseUrl());
 
     try {
         const response = await fetch(url.toString());
@@ -157,7 +166,7 @@ export async function getReport(jobId: string): Promise<PipelineReport> {
  * Streams the final processed JPEG output candidate as a blob.
  */
 export async function getOutputBlob(jobId: string): Promise<Blob> {
-    const url = new URL(`/v1/jobs/${jobId}/output`, API_BASE_URL);
+    const url = new URL(`/v1/jobs/${jobId}/output`, getApiBaseUrl());
 
     try {
         const response = await fetch(url.toString());
@@ -222,7 +231,7 @@ function unreachableApiMessage(err: unknown): Error {
 
 /** Every examination the platform holds a rule for, plus the ones it does not (DEC-056). */
 export async function listExams(): Promise<ExamList> {
-    const url = new URL("/v1/exams", API_BASE_URL);
+    const url = new URL("/v1/exams", getApiBaseUrl());
     try {
         const response = await fetch(url.toString());
         if (!response.ok) {
@@ -243,7 +252,7 @@ export async function listExams(): Promise<ExamList> {
 export async function getExam(examId: string): Promise<ExamDetail> {
     const url = new URL(
         `/v1/exams/${encodeURIComponent(examId)}`,
-        API_BASE_URL,
+        getApiBaseUrl(),
     );
     try {
         const response = await fetch(url.toString());
@@ -296,7 +305,7 @@ export async function prepareRequirement({
         `/v1/exams/${encodeURIComponent(examId)}/requirements/${encodeURIComponent(
             requirementId,
         )}/prepare`,
-        API_BASE_URL,
+        getApiBaseUrl(),
     );
     url.searchParams.append("allow_invalid_output", String(allowInvalidOutput));
     url.searchParams.append("quality_mode", qualityMode);
@@ -346,7 +355,7 @@ export async function planDocument({
         `/v1/exams/${encodeURIComponent(examId)}/requirements/${encodeURIComponent(
             requirementId,
         )}/documents`,
-        API_BASE_URL,
+        getApiBaseUrl(),
     );
 
     try {
@@ -384,7 +393,7 @@ export async function assembleDocument(
 ): Promise<PrepareRequirementResponse> {
     const url = new URL(
         `/v1/documents/${encodeURIComponent(jobId)}/assemble`,
-        API_BASE_URL,
+        getApiBaseUrl(),
     );
     try {
         const response = await fetch(url.toString(), {
@@ -405,7 +414,7 @@ export async function assembleDocument(
 export async function getKitPackage(kitId: string): Promise<KitPackage> {
     const url = new URL(
         `/v1/kits/${encodeURIComponent(kitId)}/package`,
-        API_BASE_URL,
+        getApiBaseUrl(),
     );
     try {
         const response = await fetch(url.toString());
@@ -424,7 +433,7 @@ export async function getKitPackage(kitId: string): Promise<KitPackage> {
 export function kitPackageDownloadUrl(kitId: string): string {
     return new URL(
         `/v1/kits/${encodeURIComponent(kitId)}/package/download`,
-        API_BASE_URL,
+        getApiBaseUrl(),
     ).toString();
 }
 
@@ -432,7 +441,7 @@ export function kitPackageDownloadUrl(kitId: string): string {
 export function jobOutputUrl(jobId: string): string {
     return new URL(
         `/v1/jobs/${encodeURIComponent(jobId)}/output`,
-        API_BASE_URL,
+        getApiBaseUrl(),
     ).toString();
 }
 
@@ -440,7 +449,7 @@ export function jobOutputUrl(jobId: string): string {
  * Triggers backend deletion of job folder and registry tracking.
  */
 export async function deleteJob(jobId: string): Promise<void> {
-    const url = new URL(`/v1/jobs/${jobId}`, API_BASE_URL);
+    const url = new URL(`/v1/jobs/${jobId}`, getApiBaseUrl());
 
     try {
         const response = await fetch(url.toString(), {

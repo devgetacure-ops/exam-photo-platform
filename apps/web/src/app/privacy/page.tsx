@@ -33,6 +33,14 @@ export default function Privacy() {
                     text: "This browser stores kit references so you can return before expiry, your theme preference and the agreements you gave at upload. Clearing browser data can lose those references. Payment is handled through Razorpay. Order and delivery evidence may be kept separately from temporary images to investigate payment and delivery issues.",
                 },
                 {
+                    title: "Cookies and visit counts",
+                    text: `The site sets no cookies of its own. ${
+                        process.env.NEXT_PUBLIC_CF_BEACON_TOKEN
+                            ? "Visits are counted with Cloudflare Web Analytics, which sets no cookies, stores nothing on your device and builds no profile of you. "
+                            : ""
+                    }Cloudflare's security check before a preparation, and Razorpay's payment window, may set their own cookies to do those jobs.`,
+                },
+                {
                     title: "Email and requests",
                     text: "An email address entered for file delivery is used to send the attachments; the preparation service records a masked address. Exam and support requests contain the contact details and text you explicitly submit. Requests are private, queued for review and assigned a 30-day retention deadline. Do not submit identity numbers, photographs, passwords or card details through the request form.",
                 },

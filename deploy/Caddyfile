@@ -5,6 +5,13 @@
 # SITE_ADDRESS is ":80" by default for a local trial. Set it to your domain in
 # .env and Caddy obtains and renews a certificate on its own.
 
+# www.<domain> answers with a permanent redirect to <domain> (DEC-097), so a
+# search engine indexes one address and a link someone types with "www" still
+# lands. A local trial leaves WWW_ADDRESS at a name that never resolves.
+{$WWW_ADDRESS} {
+	redir {$CANONICAL_ORIGIN}{uri} permanent
+}
+
 {$SITE_ADDRESS} {
 	encode gzip
 

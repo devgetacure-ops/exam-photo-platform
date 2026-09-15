@@ -20,6 +20,28 @@ RUN npm ci
 
 COPY apps/web ./
 
+# Values Next.js reads while it builds (DEC-097). NEXT_PUBLIC_* are written
+# into the pages themselves, and the seller details and verification tags are
+# read by pages rendered once, at build. Compose passes them from deploy/.env;
+# changing one means rebuilding (`up -d --build`). Leaving them out was the
+# reason the business details and the captcha never reached a deployed site.
+ARG NEXT_PUBLIC_SITE_URL=
+ARG NEXT_PUBLIC_TURNSTILE_SITE_KEY=
+ARG NEXT_PUBLIC_CF_BEACON_TOKEN=
+ARG GOOGLE_SITE_VERIFICATION=
+ARG BING_SITE_VERIFICATION=
+ARG EUK_BUSINESS_PHONE=
+ARG EUK_BUSINESS_HOURS=
+ARG EUK_BUSINESS_PUBLIC_ADDRESS=
+ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL \
+    NEXT_PUBLIC_TURNSTILE_SITE_KEY=$NEXT_PUBLIC_TURNSTILE_SITE_KEY \
+    NEXT_PUBLIC_CF_BEACON_TOKEN=$NEXT_PUBLIC_CF_BEACON_TOKEN \
+    GOOGLE_SITE_VERIFICATION=$GOOGLE_SITE_VERIFICATION \
+    BING_SITE_VERIFICATION=$BING_SITE_VERIFICATION \
+    EUK_BUSINESS_PHONE=$EUK_BUSINESS_PHONE \
+    EUK_BUSINESS_HOURS=$EUK_BUSINESS_HOURS \
+    EUK_BUSINESS_PUBLIC_ADDRESS=$EUK_BUSINESS_PUBLIC_ADDRESS
+
 # **The catalogue is read at build time, not over the API** (WEB-003). All 39
 # exam pages are statically generated from `examples/rules/` on disk, because a
 # page whose content arrives by client-side fetch is an empty document to a
@@ -55,7 +77,12 @@ COPY --from=build /repo/apps/web/next.config.ts ./
 # than at build time resolves the same catalogue by the same relative path.
 COPY --from=build /repo/examples/rules /repo/examples/rules
 
-RUN useradd --system --uid 10002 --create-home --home-dir /home/web web
+RUN useradd --system --uid 10002 --create-home --home-dir /home/web web \
+    # Where the exam-request form keeps what candidates send (DEC-097). A
+    # named volume is mounted over it; creating it here, owned by the app's
+    # user, is what lets Docker give the empty volume that ownership.
+    && mkdir -p /data/requests \
+    && chown web:web /data/requests
 USER web
 
 EXPOSE 3000

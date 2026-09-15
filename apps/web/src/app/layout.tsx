@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import {
     Big_Shoulders,
     Anek_Latin,
@@ -17,6 +18,7 @@ import "./rules.css";
 import "./pdf.css";
 import "./hub.css";
 import "./compress.css";
+import "./resize.css";
 import "./mobile.css";
 import { InstallCard } from "../components/m/install-card";
 import { INSTALL_LISTENER_SCRIPT } from "../lib/install";
@@ -171,6 +173,17 @@ export default function RootLayout({
                 <JsonLd data={SITE_GRAPH} />
                 {children}
                 <InstallCard />
+                {/* Cloudflare Web Analytics (DEC-097): visit counts with no
+                    cookie and no profile. Nothing loads unless the token is set. */}
+                {process.env.NEXT_PUBLIC_CF_BEACON_TOKEN && (
+                    <Script
+                        strategy="afterInteractive"
+                        src="https://static.cloudflareinsights.com/beacon.min.js"
+                        data-cf-beacon={JSON.stringify({
+                            token: process.env.NEXT_PUBLIC_CF_BEACON_TOKEN,
+                        })}
+                    />
+                )}
             </body>
         </html>
     );

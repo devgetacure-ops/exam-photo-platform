@@ -79,11 +79,34 @@ services:
       context: ..
       dockerfile: deploy/web.Dockerfile
       target: runtime
+      # Read while the site builds (DEC-097); see deploy/web.Dockerfile.
+      args:
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-}
+        NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${NEXT_PUBLIC_TURNSTILE_SITE_KEY:-}
+        NEXT_PUBLIC_CF_BEACON_TOKEN: ${NEXT_PUBLIC_CF_BEACON_TOKEN:-}
+        GOOGLE_SITE_VERIFICATION: ${GOOGLE_SITE_VERIFICATION:-}
+        BING_SITE_VERIFICATION: ${BING_SITE_VERIFICATION:-}
+        EUK_BUSINESS_PHONE: ${EUK_BUSINESS_PHONE:-}
+        EUK_BUSINESS_HOURS: ${EUK_BUSINESS_HOURS:-}
+        EUK_BUSINESS_PUBLIC_ADDRESS: ${EUK_BUSINESS_PUBLIC_ADDRESS:-}
     restart: unless-stopped
+    # Named one by one rather than `env_file: [.env]`: the web container has no
+    # business holding the payment or email secrets the engine reads.
+    #
+    # Same-origin: the browser calls /v1/... on the page's own host and the
+    # proxy routes it to the engine, so NEXT_PUBLIC_EXAM_PHOTO_API_BASE_URL
+    # stays unset. (This once set NEXT_PUBLIC_API_BASE_URL, a name the app
+    # never read.)
     environment:
-      # Same-origin: the browser calls /v1/... on the page's own host and the
-      # proxy routes it to the engine. Nothing here needs the engine's address.
-      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-}
+      NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-}
+      EUK_BUSINESS_PHONE: ${EUK_BUSINESS_PHONE:-}
+      EUK_BUSINESS_HOURS: ${EUK_BUSINESS_HOURS:-}
+      EUK_BUSINESS_PUBLIC_ADDRESS: ${EUK_BUSINESS_PUBLIC_ADDRESS:-}
+      # Without it the request form refuses in production rather than writing
+      # candidates' messages into the container, where a rebuild loses them.
+      UPLOADREADY_REQUESTS_DIR: /data/requests
+    volumes:
+      - requests:/data/requests
     expose: ["3000"]
 
   # ---------------------------------------------------------------------
@@ -106,6 +129,8 @@ services:
       - "443:443"
     environment:
       SITE_ADDRESS: ${SITE_ADDRESS:-:80}
+      WWW_ADDRESS: ${WWW_ADDRESS:-http://www.localhost}
+      CANONICAL_ORIGIN: ${CANONICAL_ORIGIN:-http://localhost}
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
@@ -114,5 +139,6 @@ services:
 volumes:
   models:
   artifacts:
+  requests:
   caddy_data:
   caddy_config:
