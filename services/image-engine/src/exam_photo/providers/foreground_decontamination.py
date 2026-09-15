@@ -132,8 +132,10 @@ def decontaminate_foreground_edges(
     # when the band is genuinely wider than the search can cross and a grey
     # outline survives into the composite.
     if np.any(to_resolve):
-        unresolved_fraction = float(
-            np.count_nonzero(to_resolve) / max(1, np.count_nonzero(uncertain_mask))
+        # Plain ints: numpy 2.4's stubs type count_nonzero as intp, which mypy
+        # will not divide by the result of max() over mixed int types.
+        unresolved_fraction = int(np.count_nonzero(to_resolve)) / max(
+            1, int(np.count_nonzero(uncertain_mask))
         )
         if unresolved_fraction > max_unresolved_fraction:
             issues.append("EDGE_DECONTAMINATION_UNCERTAIN")
