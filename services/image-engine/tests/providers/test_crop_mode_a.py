@@ -305,16 +305,17 @@ def test_crop_mode_a_invalid_cases_cli(
 
     assert repo_root is not None, "Could not find repository root"
 
-    # 1. No face case: violin_test.jpg
-    violin_path = repo_root / "services" / "image-engine" / "violin_test.jpg"
-    assert violin_path.exists(), f"violin_test.jpg not found at {violin_path}"
+    # 1. No face case: a tracked synthetic fixture. This was violin_test.jpg,
+    # which only ever existed on one machine, so the test failed on every clone.
+    no_face_path = repo_root / "tests" / "fixtures" / "geometric_shapes_600x800.jpg"
+    assert no_face_path.exists(), f"no-face fixture not found at {no_face_path}"
 
-    preview_path = tmp_path / "violin_preview.png"
+    preview_path = tmp_path / "no_face_preview.png"
     exit_code = main(
         [
             "plan-crop-mode-a",
             "--input",
-            str(violin_path),
+            str(no_face_path),
             "--target-width",
             "300",
             "--target-height",

@@ -332,16 +332,16 @@ def test_crop_mode_b_cli_invalid_cases(
 
     assert repo_root is not None
 
-    # No face case
-    violin_path = repo_root / "services" / "image-engine" / "violin_test.jpg"
-    assert violin_path.exists()
+    # No face case: a tracked synthetic fixture (was the untracked violin_test.jpg)
+    no_face_path = repo_root / "tests" / "fixtures" / "geometric_shapes_600x800.jpg"
+    assert no_face_path.exists()
 
-    preview_path = tmp_path / "violin_preview.png"
+    preview_path = tmp_path / "no_face_preview.png"
     exit_code = main(
         [
             "plan-crop-mode-b",
             "--input",
-            str(violin_path),
+            str(no_face_path),
             "--save-preview",
             str(preview_path),
         ]
