@@ -1,8 +1,10 @@
 name: Engine Visual Quality Hardening CI
 
 on:
-  schedule:
-    - cron: '0 0 * * *'
+  # Manual only. The benchmark reads base portraits from
+  # tests/fixtures/engine_quality/base/, which are kept out of git by the
+  # image ban, so a scheduled run on a fresh clone can only fail. Run it by
+  # hand where those photographs are present.
   workflow_dispatch:
 
 jobs:
