@@ -286,18 +286,35 @@ class BiRefNetONNXSubjectSegmenter(SubjectSegmentationProvider):
         pass
 
 
+# Written by scripts/export_birefnet_onnx.py beside model.onnx.
+LOCAL_MANIFEST_FILENAME = "manifest.json"
+
+
 def load_manifest_defaults(
     repo_root: Path,
 ) -> tuple[Path, str, str, int]:
     """Resolve (model_dir, weights_filename, expected_sha256, inference_size)
     from model-manifests/birefnet_onnx.json, matching the pattern used for
-    the PyTorch BiRefNet and MediaPipe segmenter manifests."""
+    the PyTorch BiRefNet and MediaPipe segmenter manifests.
+
+    The ONNX graph is *derived* on the host that runs it, not downloaded, so
+    its bytes depend on the torch that exported it: a server whose model-fetch
+    installed a newer torch writes a different file from the one whose
+    checksum is committed. The export therefore also writes its manifest
+    beside the weights (``<model_dir>/manifest.json``), on the same volume,
+    and that copy wins when present. The SHA-256 check still runs, against
+    the checksum recorded when that exact file was exported and verified.
+    """
     manifest_path = repo_root / "model-manifests" / "birefnet_onnx.json"
     with manifest_path.open(encoding="utf-8") as fh:
         manifest = json.load(fh)
     model_dir = repo_root / str(
         manifest.get("local_model_dir_default", "model-assets/birefnet_onnx")
     )
+    local_manifest_path = model_dir / LOCAL_MANIFEST_FILENAME
+    if local_manifest_path.is_file():
+        with local_manifest_path.open(encoding="utf-8") as fh:
+            manifest = json.load(fh)
     return (
         model_dir,
         str(manifest["onnx_filename"]),

@@ -146,6 +146,13 @@ def test_the_gate_can_be_switched_off_for_engine_quality_work(api):
 
 
 @pytest.mark.mandatory_api
+# The pipeline is mocked, but the service still resolves a matting backend
+# first, and "auto" refuses without BiRefNet weights on disk (DEC-060). Pin
+# it so the test does not depend on a model this machine may not have.
+@patch(
+    "exam_photo.api.service.ApiProcessingService._resolve_matting_backend",
+    new=lambda self: ("mediapipe", None, ""),
+)
 @patch("exam_photo.api.service.RuleOrchestratedPipeline")
 def test_the_rule_admin_path_is_not_behind_the_gate(mock_pipeline_class, api):
     """`/v1/process` names no examination and never reaches a candidate."""

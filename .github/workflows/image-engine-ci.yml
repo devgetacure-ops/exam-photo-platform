@@ -43,7 +43,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -e services/image-engine[dev,face]
+        pip install -e "services/image-engine[dev,face,matting-onnx]"
 
     - name: Run Ruff format check
       run: |
@@ -74,12 +74,35 @@ jobs:
         python scripts/download_segmenter.py --variant selfie_bin_general --yes
         python scripts/download_segmenter.py --variant selfie_multiclass_256x256 --yes
 
+    # The pipeline's matting backend is BiRefNet (DEC-060: "auto" never falls
+    # back to MediaPipe), and its ONNX graph is derived rather than downloaded.
+    # Build it exactly as deploy/Dockerfile's model-fetch does, once, and cache
+    # it; the export's manifest.json beside the weights carries this build's
+    # checksum.
+    - name: Restore BiRefNet ONNX
+      id: birefnet-cache
+      uses: actions/cache@v4
+      with:
+        path: model-assets/birefnet_onnx
+        key: birefnet-onnx-${{ hashFiles('model-manifests/birefnet.json', 'scripts/export_birefnet_onnx.py') }}
+
+    - name: Build BiRefNet ONNX
+      if: steps.birefnet-cache.outputs.cache-hit != 'true'
+      run: |
+        pip install --extra-index-url https://download.pytorch.org/whl/cpu -e "services/image-engine[matting,matting-onnx]"
+        python scripts/download_birefnet.py --yes
+        python scripts/export_birefnet_onnx.py
+        rm -rf model-assets/birefnet
+
+    # -v names each test as it runs, and faulthandler dumps every thread's
+    # stack if one test runs past five minutes, so a hang says where it is.
     - name: Run Integration Suites
+      timeout-minutes: 45
       env:
         EXAM_PHOTO_SEGMENTER_MODEL_PATH: model-assets/selfie_segmentation.tflite
         EXAM_PHOTO_SEGMENTER_MODEL_SHA256: 9ee168ec7c8f2a16c56fe8e1cfbc514974cbbb7e434051b455635f1bd1462f5c
       run: |
-        pytest services/image-engine -m "mandatory_segmentation or mandatory_refinement or mandatory_crop or mandatory_crop_b or mandatory_background or mandatory_output_preparation or mandatory_output_compression or mandatory_rule_pipeline or mandatory_api or mandatory_rule_admin"
+        pytest services/image-engine -v -o faulthandler_timeout=300 -m "mandatory_segmentation or mandatory_refinement or mandatory_crop or mandatory_crop_b or mandatory_background or mandatory_output_preparation or mandatory_output_compression or mandatory_rule_pipeline or mandatory_api or mandatory_rule_admin"
 
     - name: Verify serve-api CLI help
       run: |

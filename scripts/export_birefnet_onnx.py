@@ -358,9 +358,16 @@ def main() -> None:
             "with scripts/export_birefnet_onnx.py."
         ),
     }
-    with _ONNX_MANIFEST_PATH.open("w", encoding="utf-8") as fh:
-        json.dump(manifest, fh, indent=2)
-        fh.write("\n")
+    # Twice: the repository copy for the record, and one beside the weights,
+    # which is what a deployed engine reads. On a server, model-fetch runs in a
+    # throwaway container whose repository copy is discarded, and a torch newer
+    # than the one that produced the committed checksum exports different
+    # bytes -- so without the copy on the model volume, every photograph job
+    # would fail its SHA-256 check.
+    for manifest_path in (_ONNX_MANIFEST_PATH, _DEFAULT_DEST_DIR / "manifest.json"):
+        with manifest_path.open("w", encoding="utf-8") as fh:
+            json.dump(manifest, fh, indent=2)
+            fh.write("\n")
 
     print(f"\nOK Export verified and manifest written: {_ONNX_MANIFEST_PATH}")
     print(f"  ONNX file: {onnx_path} ({onnx_size:,} bytes)")

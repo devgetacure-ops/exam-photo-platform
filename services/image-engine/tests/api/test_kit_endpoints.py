@@ -223,6 +223,13 @@ def test_an_undecodable_upload_does_not_produce_a_file(api):
 
 
 @pytest.mark.mandatory_api
+# The pipeline is mocked, but the service still resolves a matting backend
+# first, and "auto" refuses without BiRefNet weights on disk (DEC-060). Pin
+# it so the test does not depend on a model this machine may not have.
+@patch(
+    "exam_photo.api.service.ApiProcessingService._resolve_matting_backend",
+    new=lambda self: ("mediapipe", None, ""),
+)
 @patch("exam_photo.api.service.RuleOrchestratedPipeline")
 def test_a_photograph_requirement_dispatches_to_the_photograph_pipeline(
     mock_pipeline_class, api

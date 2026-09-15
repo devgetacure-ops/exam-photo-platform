@@ -93,6 +93,13 @@ def test_health_endpoint():
 
 
 @pytest.mark.mandatory_api
+# The pipeline is mocked, but the service still resolves a matting backend
+# first, and "auto" refuses without BiRefNet weights on disk (DEC-060). Pin
+# it so the test does not depend on a model this machine may not have.
+@patch(
+    "exam_photo.api.service.ApiProcessingService._resolve_matting_backend",
+    new=lambda self: ("mediapipe", None, ""),
+)
 @patch("exam_photo.api.service.RuleOrchestratedPipeline")
 def test_api_jobs_lifecycle(mock_pipeline_class, temp_artifact_root):
     """Test processing, status query, report, output and deletion lifecycle."""

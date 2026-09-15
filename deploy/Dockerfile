@@ -106,7 +106,9 @@ COPY services/image-engine/src ./engine/src
 # `matting` as well as `matting-onnx`: the export reads the PyTorch checkpoint,
 # and a venv missing `onnx` or `deform_conv2d_onnx_exporter` fails two
 # dependencies deep with errors naming neither.
-RUN pip install "./engine[face,matting,matting-onnx]"
+# CPU torch: the export never touches a GPU, and the default Linux wheel
+# drags in several GB of CUDA libraries a CPU server downloads for nothing.
+RUN pip install --extra-index-url https://download.pytorch.org/whl/cpu "./engine[face,matting,matting-onnx]"
 
 COPY model-manifests ./model-manifests
 COPY scripts ./scripts
