@@ -56,3 +56,84 @@ jobs:
     - name: Run Engine Visual Quality Benchmark
       run: |
         python scripts/benchmark_engine_quality.py --require-real
+
+  # Moved here from image-engine-ci.yml on 2026-09-15. These score the engine
+  # against expectations written in June (tests/fixtures/segmentation/
+  # annotations.json), before the August changes the owner has accepted as
+  # correct: head width measured from the head, and BiRefNet matting. Several
+  # now report June verdicts the current engine deliberately no longer gives,
+  # so they are kept for reference and run by hand. The labelled 40-photograph
+  # set is the specification for crop and edge quality.
+  june-fixture-benchmarks:
+    runs-on: ubuntu-latest
+    env:
+      EXAM_PHOTO_FACE_MODEL_PATH: model-assets/blaze_face_short_range.tflite
+      EXAM_PHOTO_FACE_MODEL_SHA256: b4578f35940bf5a1a655214a1cce5cab13eba73c1297cd78e1a04c2380b0152f
+      EXAM_PHOTO_SEGMENTER_MODEL_PATH: model-assets/selfie_segmentation.tflite
+      EXAM_PHOTO_SEGMENTER_MODEL_SHA256: 9ee168ec7c8f2a16c56fe8e1cfbc514974cbbb7e434051b455635f1bd1462f5c
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+
+    - name: Install system libraries
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends libgl1 libglib2.0-0 libgles2 libegl1
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e services/image-engine[dev,face]
+
+    - name: Download model assets
+      run: |
+        python scripts/download_model.py --variant short_range --yes
+        python scripts/download_segmenter.py --variant selfie_bin_general --yes
+        python scripts/download_segmenter.py --variant selfie_multiclass_256x256 --yes
+
+    # continue-on-error: each benchmark reports on its own, so one stale
+    # verdict does not hide the rest.
+    - name: Subject segmenter benchmark
+      continue-on-error: true
+      run: python scripts/benchmark_subject_segmenter.py --require-real
+    - name: Mask refinement benchmark
+      continue-on-error: true
+      run: python scripts/benchmark_mask_refinement.py --require-real
+    - name: Crop Mode A benchmark
+      continue-on-error: true
+      run: python scripts/benchmark_crop_mode_a.py --require-real
+    - name: Crop Mode B benchmark
+      continue-on-error: true
+      run: python scripts/benchmark_crop_mode_b.py --require-real
+    - name: Background composition benchmark
+      continue-on-error: true
+      run: python scripts/benchmark_background_composition.py --require-real
+    - name: Output preparation benchmark
+      continue-on-error: true
+      run: python scripts/benchmark_output_preparation.py --require-real
+    - name: Output compression benchmark
+      continue-on-error: true
+      run: python scripts/benchmark_image_compression.py --require-real
+    - name: Rule pipeline benchmark
+      continue-on-error: true
+      run: python scripts/benchmark_rule_pipeline.py --require-real
+    - name: API processing smoke test
+      continue-on-error: true
+      run: python scripts/smoke_api_processing.py --require-real
+    - name: CLI smoke checks
+      continue-on-error: true
+      run: |
+        python -m exam_photo refine-mask --input tests/fixtures/single_face_frontal.jpg
+        python -m exam_photo plan-crop-mode-a --input tests/fixtures/single_face_frontal.jpg --target-width 300 --target-height 400
+        python -m exam_photo plan-crop-mode-b --input tests/fixtures/single_face_frontal.jpg --min-width 300 --max-width 450 --min-height 400 --max-height 600
+        python -m exam_photo compose-background --input tests/fixtures/single_face_frontal.jpg
+        python -m exam_photo prepare-output --input tests/fixtures/single_face_frontal.jpg --target-width 300 --target-height 400
+        python -m exam_photo compress-output --input tests/fixtures/single_face_frontal.jpg --target-width 300 --target-height 400 --maximum-bytes 50000
+        python -m exam_photo process-rule --input tests/fixtures/single_face_frontal.jpg --rule examples/rules/sample_exact_300x400_50kb_white_bg.json --output-dir .tmp_m14 --save-output --overwrite

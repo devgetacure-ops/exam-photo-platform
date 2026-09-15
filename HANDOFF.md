@@ -272,7 +272,7 @@ Read alongside:
 | File | What it carries |
 |---|---|
 | `AGENTS.md` | The binding operating contract |
-| `docs/08_DECISION_LOG.md` | DEC-029..099. **Living** — amend an entry when implementation moves; never bend implementation to fit a stale one |
+| `docs/08_DECISION_LOG.md` | DEC-029..100. **Living** — amend an entry when implementation moves; never bend implementation to fit a stale one |
 | `HANDOFF-INVARIANTS.md` | How composition work is done here: the invariant sweep, the ratchet, the planner/validator defect class |
 | `docs/EXAM_RULE_GAP_REGISTER.md` | Generated. Which examinations are encoded, which are not, and why |
 
@@ -795,12 +795,12 @@ covers neither the eleven `mandatory_*` marker suites nor `ink_robustness`.
 cd services/image-engine && ruff format --check . && ruff check . && .venv/Scripts/python.exe -m mypy src tests
 ```
 
-Current (2026-09-13): format, lint and mypy clean across 168 files; the API
-suite 262 passing. 382 fast tests passing,
-15 skipped, and one failing **only for want of a model asset** in a checkout
-with an empty `model-assets/` (`test_crop_cli_save_preview_overwrite_protection`
-needs the face detector). `ink_robustness` (~100 synthetic captures) green as
-its own CI stage. Marker suites green in CI. Invariant sweep 0 violations of 960.
+Current (2026-09-15, DEC-100): CI runs two jobs, **engine** (format, lint, mypy,
+core unit tests, ink sweep, the ten integration marker suites, package build) and
+**web** (Node 22). The June fixture benchmarks and CLI smoke checks carry
+expectations from before the August engine changes and run by hand from
+`engine-quality-full.yml`; do not treat their verdicts as defects until the
+annotations are re-derived from the labelled 40-photograph set.
 
 Model assets are under `model-assets/`. Run marker suites from the repo root
 with `EXAM_PHOTO_FACE_MODEL_PATH` / `EXAM_PHOTO_SEGMENTER_MODEL_PATH` and their
