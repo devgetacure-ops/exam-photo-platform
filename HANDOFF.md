@@ -106,7 +106,8 @@ left alone), DEC-093 (catalogue audit, 131 examinations), DEC-094 (plain words,
 scroll, paid state, previews in review, draggable comparison, clock, email,
 ExamUploadKit, stacked logo), DEC-095 (the owner's research checked and
 imported, 413 x 531 est. where no pixel size is published, the lighting switch
-only when it changes something). See "Waiting on the owner" below for what is not
+only when it changes something), DEC-096 (eight exam family hubs, and a free
+compress-to-size tool that runs in the browser). See "Waiting on the owner" below for what is not
 done and why.
 
 **Built on 13–14 September, beyond the phone phases:**
@@ -269,7 +270,7 @@ Read alongside:
 | File | What it carries |
 |---|---|
 | `AGENTS.md` | The binding operating contract |
-| `docs/08_DECISION_LOG.md` | DEC-029..095. **Living** — amend an entry when implementation moves; never bend implementation to fit a stale one |
+| `docs/08_DECISION_LOG.md` | DEC-029..096. **Living** — amend an entry when implementation moves; never bend implementation to fit a stale one |
 | `HANDOFF-INVARIANTS.md` | How composition work is done here: the invariant sweep, the ratchet, the planner/validator defect class |
 | `docs/EXAM_RULE_GAP_REGISTER.md` | Generated. Which examinations are encoded, which are not, and why |
 
@@ -390,9 +391,9 @@ unread). What is still open:
    `EXAM_PHOTO_SMTP_PASSWORD=<the owner's Resend API key>` and
    `EXAM_PHOTO_SMTP_FROM` on a domain verified in Resend. The owner puts the key
    in; it never goes into git.
-3. **Decisions**: the exam hub groups; who reviews Hindi pages; whether the
-   compress-to-size tool is free. Explained to the owner on 15 September; hubs,
-   Hindi and the tool wait on the answers.
+3. **Decision: who reviews Hindi pages.** Hindi waits on it. The hubs and the
+   compress tool were decided and built on 15 September (DEC-096): eight family
+   hubs at `/exams/{family}`, and `/compress-image`, free and in the browser.
 4. **The rest of the research sheet**: `docs/research-requests/missing-information.csv`
    is 221 rows now. The owner's pass mostly gave values without the notice's
    passage; each still needs its passage before it can be imported.
