@@ -398,9 +398,25 @@ unread). What is still open:
    the owner, maybe a native speaker); Hindi pages are not built until someone
    can review them. The hubs and the compress tool were built on 15 September
    (DEC-096).
-6. **Going live** (DEC-097): buy the domain and an 8 GB server, and follow
-   `docs/LAUNCH_GUIDE.md`. The Resend key waits on the live domain. Ads are
-   not recommended now; the guide says why.
+6. **Going live** (DEC-097), status at the end of 16 September:
+   - **Done by the owner**: domain on Cloudflare; Resend account with the
+     domain verified; Zoho Mail with `support@` as the mailbox and `privacy@`,
+     `grievance@`, `legal@` as aliases (Cloudflare Email Routing must stay off,
+     it would replace Zoho's MX records). A Vultr account with its 30-day
+     promotional credit, which expires about 16 October.
+   - **Hosting plan**: test the whole site on a Vultr server (India region,
+     4 vCPU / 16 GB NVMe, Ubuntu 24.04), then move to Hostinger KVM 4 (India,
+     16 GB) on a 12- or 24-month plan and destroy the Vultr server by about
+     11 October. 16 GB rather than 8 because the BiRefNet export's memory peak
+     on an 8 GB box is unmeasured (DEC-101).
+   - **Next, in order**: the owner has no SSH key yet (`ssh-keygen -t ed25519`,
+     public half into Vultr → Account → SSH Keys); deploy the server with a
+     firewall allowing 22, 80, 443 only; send the IP; Cloudflare `A` records
+     for `@` and `www`, grey cloud; install Docker; clone while the repository is
+     still public (a read-only deploy key once it is private again); fill
+     `deploy/.env`; Turnstile keys; model-fetch, then `up -d --build`; test on a
+     phone; apply to Razorpay the same day. `docs/LAUNCH_GUIDE.md` has each step.
+   - **Ads**: not recommended now; the guide says why.
 4. **The rest of the research sheet**: `docs/research-requests/missing-information.csv`
    is 218 rows now. The owner's pass mostly gave values without the notice's
    passage; each still needs its passage before it can be imported. Re-read on
@@ -420,9 +436,10 @@ compile under memory pressure.
 
 1. **The four deployment blockers are fixed** (DEC-097): same-origin uploads,
    build-time settings passed to the web image, a requests volume, and a `www`
-   redirect. Still before a deploy: merge the branch to `main` and push (the
-   owner's call), and run `caddy validate` on the server, because this machine
-   could not run Docker to check the Caddyfile. **`docs/LAUNCH_GUIDE.md` is the
+   redirect. The branch is merged to `main` and pushed, and Image Engine CI
+   passed on 16 September for the first time (DEC-100, DEC-101). Still before a
+   deploy: run `caddy validate` on the server, because this machine could not
+   run Docker to check the Caddyfile. **`docs/LAUNCH_GUIDE.md` is the
    owner's step-by-step**: one 8 GB x86 server running the compose stack,
    Cloudflare DNS, Turnstile, Resend, Razorpay, Search Console and Bing.
 3. **Regional languages are not ready**, and the owner intends them soon. No
