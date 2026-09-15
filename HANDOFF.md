@@ -104,7 +104,9 @@ a small photo, file names, ZIP, prices Rs 3 / Rs 5), DEC-091 (a photograph
 uploaded as a signature is refused), DEC-092 (the landing band; impression paper
 left alone), DEC-093 (catalogue audit, 131 examinations), DEC-094 (plain words,
 scroll, paid state, previews in review, draggable comparison, clock, email,
-ExamUploadKit, stacked logo). See "Waiting on the owner" below for what is not
+ExamUploadKit, stacked logo), DEC-095 (the owner's research checked and
+imported, 413 x 531 est. where no pixel size is published, the lighting switch
+only when it changes something). See "Waiting on the owner" below for what is not
 done and why.
 
 **Built on 13–14 September, beyond the phone phases:**
@@ -267,7 +269,7 @@ Read alongside:
 | File | What it carries |
 |---|---|
 | `AGENTS.md` | The binding operating contract |
-| `docs/08_DECISION_LOG.md` | DEC-029..094. **Living** — amend an entry when implementation moves; never bend implementation to fit a stale one |
+| `docs/08_DECISION_LOG.md` | DEC-029..095. **Living** — amend an entry when implementation moves; never bend implementation to fit a stale one |
 | `HANDOFF-INVARIANTS.md` | How composition work is done here: the invariant sweep, the ratchet, the planner/validator defect class |
 | `docs/EXAM_RULE_GAP_REGISTER.md` | Generated. Which examinations are encoded, which are not, and why |
 
@@ -304,18 +306,22 @@ upload and a requirement, get back a compliant file.
 | Certificate / ID scan | Ink `PAGE` + PDF | Image→PDF, or an existing PDF restructured |
 | Multi-page document | `pdf/document.py` | Add pages, reorder, rotate, omit, repeat |
 
-**Catalogue: 132 examinations, 418 requirements.** 314 supported, 29
-guidance-only (live capture and portal declarations — correctly never ours), 3
-partially supported (need a name/date printed on the photograph, which the
-engine cannot render), 72 not yet supported. 39/155 before DEC-068 folded six
-research deliveries in additively, 52 after it, and 132 once DEC-079 let a
-record exist without a photograph specification. **80 records carry no
-photograph rule** and serve a signature or certificates alone.
+**Catalogue: 131 examinations, 405 requirements** (DEC-093, DEC-095). 303
+supported, 28 guidance-only (live capture and portal declarations — correctly
+never ours), 4 partially supported (a name/date printed on the photograph, or
+WBSSC's signature on it, which the engine cannot write), 70 not yet supported.
+39/155 before DEC-068 folded six research deliveries in additively, 52 after it,
+132 once DEC-079 let a record exist without a photograph specification, 131
+after the audit removed a duplicate. **Most records carry no photograph rule**
+and serve a signature or certificates alone.
 
-**63 interim placeholder values** are in the catalogue, all marked
-`interim_default` in provenance (86 before DEC-068). They are signature and thumb-impression sizes
-and formats, plus a 400 KB certificate ceiling set by the product owner. When
-real per-exam research lands, `type == interim_default` finds every one.
+**289 interim placeholder values** are in the catalogue, all marked
+`interim_default` in provenance: 264 in requirements (signature and
+thumb-impression sizes and formats, a 400 KB certificate ceiling set by the
+product owner) and 25 photograph sizes (413 x 531 or 354 x 472 est., the
+owner's DEC-095 decision for notices that publish none). A photograph rule
+carrying one is "Verified, with gaps", never "Verified". When real per-exam
+research lands, `type == interim_default` finds every one.
 
 ## Where to start: the web app
 
@@ -361,44 +367,39 @@ puts the product's worst failure mode back on the table.
 | Three outcome states | `components/exam/outcome-result.tsx` — clean / with-findings / blocked |
 | The watermarked preview and the purchase gate | Engine: `src/exam_photo/preview/`, `api/app.py` (`/v1/jobs/{id}/preview`, 402 on `/output`). UI already wired by Codex |
 
-### Waiting on the owner (the fixing session, 14–15 September 2026)
+### Waiting on the owner (updated 15 September 2026)
 
-Everything below needs something only the owner can supply. The rest of their
-testing notes is built (DEC-090 to DEC-094).
+The owner answered on 15 September and the answers are built (DEC-095):
+413 x 531 est. where no pixel size is published, the lighting switch only when
+it changes something, the research imported where its passage is on the page,
+and the public address `Pune, Maharashtra 411014` set in `apps/web/.env.local`
+(git-ignored; `EUK_BUSINESS_NAME` and `EUK_BUSINESS_ADDRESS` are still there,
+unread). What is still open:
 
-1. **Photographs to prove fixes on**, into
-   `C:\Users\dmbar\Downloads\errors-euk\originals\`: the SBI Junior Associates
-   original (item 1, the minimum-KB floor), the photograph that gave "crop
-   failed" and its exam (note 19), and the originals of the loosely cropped
-   photographs with their exams (note 25). Note 25's crop work is not started:
-   it must be measured stage by stage on those originals and the ten `perfect`
-   photographs before any constant moves.
-2. **Research**: the "Worth knowing" facts for 27 examinations (the prompt was
-   sent) and the pixel-size sheet for 27 photographs, both keyed by the old exam
-   ids -- map them through
-   `packages/exam-rules/research/exam_id_renames_2026_09_14.json` on import. The
-   full list of missing information is `docs/research-requests/missing-information.csv`
-   (302 rows). Open question with it: where a notice publishes no pixel size, use
-   413 x 531 marked est., or keep sizing per photograph?
-3. **Email**: a provider account and its SMTP credentials in
-   `services/image-engine/.env.local` (Amazon SES recommended for cost, Resend
-   simplest). Until then `/ready` reports `email: not_configured` and the site
-   hides the email form.
-4. **Decisions**: the eight exam hub groups; who reviews Hindi pages; whether the
-   compress-to-size tool is free. Hubs, Hindi and the tool wait on these.
-5. **A public business address**, set as `EUK_BUSINESS_PUBLIC_ADDRESS`, before
-   Razorpay review. `EUK_BUSINESS_NAME` and `EUK_BUSINESS_ADDRESS` are no longer
-   read and can be deleted from `apps/web/.env.local`.
-6. **Machine time with memory free** (about 4 GB): the timing of slow
-   photographs (note J) through the warm engine, and the full prepare-review-pay
-   walk on a phone against the running engine, which this session could not run
-   alongside the dev server.
-7. **Intelligent lighting (note K1), a decision**: measured on the 40-photo set,
-   32 need nothing and come back pixel-identical, 5 are corrected; a colour-cast
-   or contrast correction is visible (4.6-23 levels on the face), but a
-   sharpening-only correction changes the face by 0.2-0.3 levels -- invisible --
-   while the switch is still offered. Recommended: offer the switch only when the
-   change is visible.
+1. **Photographs**: the SBI Junior Associates original is not available, so the
+   minimum-KB floor (item 1) stays proven by tests only; the "crop failed"
+   photograph (note 19) was not supplied. One loosely cropped original is in
+   `C:\Users\dmbar\Downloads\errors-euk\originals\` with no exam named; its
+   450 x 600 preview is the per-photograph sizing path, which the 24
+   estimated-size examinations no longer use. Re-run it through the engine, and
+   the ten `perfect` photographs, before touching any crop constant.
+2. **Email: Resend now, SES later.** Delivery is plain SMTP, so either is six
+   settings in `services/image-engine/.env.local` and no code:
+   `EXAM_PHOTO_SMTP_HOST=smtp.resend.com`, `EXAM_PHOTO_SMTP_PORT=587`,
+   `EXAM_PHOTO_SMTP_USE_TLS=true`, `EXAM_PHOTO_SMTP_USERNAME=resend`,
+   `EXAM_PHOTO_SMTP_PASSWORD=<the owner's Resend API key>` and
+   `EXAM_PHOTO_SMTP_FROM` on a domain verified in Resend. The owner puts the key
+   in; it never goes into git.
+3. **Decisions**: the exam hub groups; who reviews Hindi pages; whether the
+   compress-to-size tool is free. Explained to the owner on 15 September; hubs,
+   Hindi and the tool wait on the answers.
+4. **The rest of the research sheet**: `docs/research-requests/missing-information.csv`
+   is 221 rows now. The owner's pass mostly gave values without the notice's
+   passage; each still needs its passage before it can be imported.
+5. **Machine time**: the owner asked this to be managed on the machine as it
+   is. It had 0.4-1 GB free on 15 September, below the engine's 2.4 GB, so the
+   slow-photograph timing (note J) and the phone walk against the engine are
+   still not run.
 
 **Not reproduced**: NEET UG's rules page (note 12) answers 200 on the dev server
 ; the owner's 404 was most likely a dev-server
