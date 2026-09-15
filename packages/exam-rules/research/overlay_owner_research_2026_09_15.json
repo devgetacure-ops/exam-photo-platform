@@ -469,6 +469,64 @@
     "decided": "DEC-095",
     "access_date": "2026-09-15"
    }
+  },
+  "NEET-PG": {
+   "file_size.published_maximum": {
+    "status": "verified",
+    "value": 80,
+    "captured_wording": "One pre-saved passport size coloured photograph (Maximum 80 Kb size, in JPG/JPEG format)",
+    "confidence": 4,
+    "source_type": "official_pdf",
+    "official_source": true,
+    "source_url": "https://www.natboard.edu.in/pdoof/User_Manual_NEETPG_2024.pdf",
+    "document_title": "NEET-PG 2024 user manual (National Board of Examinations in Medical Sciences)",
+    "document_identifier": null,
+    "page_number": null,
+    "section_name": null,
+    "access_date": "2026-09-15"
+   },
+   "file_size.size_unit_as_published": {
+    "status": "verified",
+    "value": "KB",
+    "captured_wording": "One pre-saved passport size coloured photograph (Maximum 80 Kb size, in JPG/JPEG format)",
+    "confidence": 4,
+    "source_type": "official_pdf",
+    "official_source": true,
+    "source_url": "https://www.natboard.edu.in/pdoof/User_Manual_NEETPG_2024.pdf",
+    "document_title": "NEET-PG 2024 user manual (National Board of Examinations in Medical Sciences)",
+    "document_identifier": null,
+    "page_number": null,
+    "section_name": null,
+    "access_date": "2026-09-15"
+   },
+   "formats.allowed_formats": {
+    "status": "verified",
+    "value": [
+     "JPG",
+     "JPEG"
+    ],
+    "captured_wording": "One pre-saved passport size coloured photograph (Maximum 80 Kb size, in JPG/JPEG format)",
+    "confidence": 4,
+    "source_type": "official_pdf",
+    "official_source": true,
+    "source_url": "https://www.natboard.edu.in/pdoof/User_Manual_NEETPG_2024.pdf",
+    "document_title": "NEET-PG 2024 user manual (National Board of Examinations in Medical Sciences)",
+    "document_identifier": null,
+    "page_number": null,
+    "section_name": null,
+    "access_date": "2026-09-15"
+   },
+   "dimensions.estimated_size": {
+    "status": "estimated",
+    "value": [
+     413,
+     531
+    ],
+    "reasoning": "No pixel dimensions are published by the conducting body. The photograph is delivered at 413 x 531 px, a 3.5 x 4.5 cm passport photograph at 300 DPI; this size is our estimate, not the body's.",
+    "confidence": 1,
+    "decided": "DEC-095",
+    "access_date": "2026-09-15"
+   }
   }
  },
  "deliverables": {
@@ -626,6 +684,58 @@
        "JPG"
       ],
       "source_wording": "Candidates must upload their scanned signature in jpg format \n(upload size is 50 KB only, of 100 DPI)"
+     }
+    }
+   }
+  ],
+  "NEET-PG": [
+   {
+    "name": "Candidate signature",
+    "requirement_status": "Mandatory or portal-dependent",
+    "submission_method": "file_upload",
+    "applicability": "As required by the active authority application/notification",
+    "specification": "JPG/JPEG; maximum 80 KB",
+    "evidence_status": "Official NEET-PG 2024 user manual",
+    "source_url": "https://www.natboard.edu.in/pdoof/User_Manual_NEETPG_2024.pdf",
+    "important_note": "This row is intentionally evidence-gated. No numeric value or format has been inferred from secondary sources.",
+    "parsed": {
+     "specification_not_established": false,
+     "file_size_kb": {
+      "minimum": null,
+      "maximum": 80,
+      "source_wording": "Upload your scanned signature (Maximum 80 Kb size, in JPG/JPEG format)"
+     },
+     "formats": {
+      "values": [
+       "JPG",
+       "JPEG"
+      ],
+      "source_wording": "Upload your scanned signature (Maximum 80 Kb size, in JPG/JPEG format)"
+     }
+    }
+   },
+   {
+    "name": "Left thumb impression",
+    "requirement_status": "Mandatory or portal-dependent",
+    "submission_method": "file_upload",
+    "applicability": "As required by the active authority application/notification",
+    "specification": "JPG/JPEG; maximum 80 KB",
+    "evidence_status": "Official NEET-PG 2024 user manual",
+    "source_url": "https://www.natboard.edu.in/pdoof/User_Manual_NEETPG_2024.pdf",
+    "important_note": "This row is intentionally evidence-gated. No numeric value or format has been inferred from secondary sources.",
+    "parsed": {
+     "specification_not_established": false,
+     "file_size_kb": {
+      "minimum": null,
+      "maximum": 80,
+      "source_wording": "Upload your left thumb impression (Maximum 80 Kb size, in JPG/JPEG format)"
+     },
+     "formats": {
+      "values": [
+       "JPG",
+       "JPEG"
+      ],
+      "source_wording": "Upload your left thumb impression (Maximum 80 Kb size, in JPG/JPEG format)"
      }
     }
    }

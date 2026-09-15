@@ -272,7 +272,7 @@ Read alongside:
 | File | What it carries |
 |---|---|
 | `AGENTS.md` | The binding operating contract |
-| `docs/08_DECISION_LOG.md` | DEC-029..098. **Living** — amend an entry when implementation moves; never bend implementation to fit a stale one |
+| `docs/08_DECISION_LOG.md` | DEC-029..099. **Living** — amend an entry when implementation moves; never bend implementation to fit a stale one |
 | `HANDOFF-INVARIANTS.md` | How composition work is done here: the invariant sweep, the ratchet, the planner/validator defect class |
 | `docs/EXAM_RULE_GAP_REGISTER.md` | Generated. Which examinations are encoded, which are not, and why |
 
@@ -381,11 +381,12 @@ unread). What is still open:
 
 1. **Photographs**: the SBI Junior Associates original is not available, so the
    minimum-KB floor (item 1) stays proven by tests only; the "crop failed"
-   photograph (note 19) was not supplied. One loosely cropped original is in
-   `C:\Users\dmbar\Downloads\errors-euk\originals\` with no exam named; its
-   450 x 600 preview is the per-photograph sizing path, which the 24
-   estimated-size examinations no longer use. Re-run it through the engine, and
-   the ten `perfect` photographs, before touching any crop constant.
+   photograph (note 19) was not supplied. The loosely cropped original was run
+   through the engine on 15 September (DEC-099): under the old per-photograph
+   rule it came out 900 x 1200 with the head under half the frame; under the
+   413 x 531 est. rule it came out tight (head height 0.87). No crop constant
+   was changed. The Mode B calibration still governs range and preferred-size
+   records; measure it on the ten `perfect` photographs before touching it.
 2. **Email: Resend now, SES later.** Delivery is plain SMTP, so either is six
    settings in `services/image-engine/.env.local` and no code:
    `EXAM_PHOTO_SMTP_HOST=smtp.resend.com`, `EXAM_PHOTO_SMTP_PORT=587`,
@@ -401,8 +402,11 @@ unread). What is still open:
    `docs/LAUNCH_GUIDE.md`. The Resend key waits on the live domain. Ads are
    not recommended now; the guide says why.
 4. **The rest of the research sheet**: `docs/research-requests/missing-information.csv`
-   is 221 rows now. The owner's pass mostly gave values without the notice's
-   passage; each still needs its passage before it can be imported.
+   is 218 rows now. The owner's pass mostly gave values without the notice's
+   passage; each still needs its passage before it can be imported. Re-read on
+   15 September: NEET-PG imported (DEC-099); MHT-CET and MAH-MBA/MMS-CET lack a
+   format, KVS a size, UPPSC a format; most other cited pages did not carry the
+   figure.
 5. **Machine time**: the owner asked this to be managed on the machine as it
    is. It had 0.4-1 GB free on 15 September, below the engine's 2.4 GB, so the
    slow-photograph timing (note J) and the phone walk against the engine are

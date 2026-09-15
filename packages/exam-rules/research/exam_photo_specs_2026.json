@@ -84030,46 +84030,49 @@
         "access_date": "2026-09-07"
       },
       "file_size.published_maximum": {
-        "status": "not_found",
-        "value": null,
-        "captured_wording": null,
-        "confidence": 0,
-        "source_type": null,
-        "official_source": null,
-        "source_url": null,
-        "document_title": null,
+        "status": "verified",
+        "value": 80,
+        "captured_wording": "One pre-saved passport size coloured photograph (Maximum 80 Kb size, in JPG/JPEG format)",
+        "confidence": 4,
+        "source_type": "official_pdf",
+        "official_source": true,
+        "source_url": "https://www.natboard.edu.in/pdoof/User_Manual_NEETPG_2024.pdf",
+        "document_title": "NEET-PG 2024 user manual (National Board of Examinations in Medical Sciences)",
         "document_identifier": null,
         "page_number": null,
         "section_name": null,
-        "access_date": "2026-09-07"
+        "access_date": "2026-09-15"
       },
       "file_size.size_unit_as_published": {
-        "status": "not_found",
-        "value": null,
-        "captured_wording": null,
-        "confidence": 0,
-        "source_type": null,
-        "official_source": null,
-        "source_url": null,
-        "document_title": null,
+        "status": "verified",
+        "value": "KB",
+        "captured_wording": "One pre-saved passport size coloured photograph (Maximum 80 Kb size, in JPG/JPEG format)",
+        "confidence": 4,
+        "source_type": "official_pdf",
+        "official_source": true,
+        "source_url": "https://www.natboard.edu.in/pdoof/User_Manual_NEETPG_2024.pdf",
+        "document_title": "NEET-PG 2024 user manual (National Board of Examinations in Medical Sciences)",
         "document_identifier": null,
         "page_number": null,
         "section_name": null,
-        "access_date": "2026-09-07"
+        "access_date": "2026-09-15"
       },
       "formats.allowed_formats": {
-        "status": "not_found",
-        "value": null,
-        "captured_wording": null,
-        "confidence": 0,
-        "source_type": null,
-        "official_source": null,
-        "source_url": null,
-        "document_title": null,
+        "status": "verified",
+        "value": [
+          "JPG",
+          "JPEG"
+        ],
+        "captured_wording": "One pre-saved passport size coloured photograph (Maximum 80 Kb size, in JPG/JPEG format)",
+        "confidence": 4,
+        "source_type": "official_pdf",
+        "official_source": true,
+        "source_url": "https://www.natboard.edu.in/pdoof/User_Manual_NEETPG_2024.pdf",
+        "document_title": "NEET-PG 2024 user manual (National Board of Examinations in Medical Sciences)",
         "document_identifier": null,
         "page_number": null,
         "section_name": null,
-        "access_date": "2026-09-07"
+        "access_date": "2026-09-15"
       },
       "formats.preferred_format": {
         "status": "not_found",
@@ -84588,6 +84591,17 @@
         "page_number": null,
         "section_name": null,
         "access_date": "2026-09-07"
+      },
+      "dimensions.estimated_size": {
+        "status": "estimated",
+        "value": [
+          413,
+          531
+        ],
+        "reasoning": "No pixel dimensions are published by the conducting body. The photograph is delivered at 413 x 531 px, a 3.5 x 4.5 cm passport photograph at 300 DPI; this size is our estimate, not the body's.",
+        "confidence": 1,
+        "decided": "DEC-095",
+        "access_date": "2026-09-15"
       }
     }
   },

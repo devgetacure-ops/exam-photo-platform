@@ -2,17 +2,17 @@
 
 Written by `apps/web/scripts/build-keywords.mjs` from the examination records. Do not edit by hand; re-run `npm run seo:keywords` after the catalogue changes. The strategy that explains it is `KEYWORD_STRATEGY.md`; every row is in `keywords.csv`.
 
-**30,030 keywords.** Priority is a rule of thumb, not measured volume.
+**30,033 keywords.** Priority is a rule of thumb, not measured volume.
 
 | Coverage | Keywords |
 |---|---:|
-| explains | 21,150 |
-| prepares | 8,834 |
+| explains | 21,144 |
+| prepares | 8,843 |
 | gap | 46 |
 
 | Priority | Keywords |
 |---|---:|
-| P3 | 21,421 |
+| P3 | 21,424 |
 | P2 | 7,103 |
 | P1 | 1,506 |
 
@@ -26,7 +26,7 @@ Written by `apps/web/scripts/build-keywords.mjs` from the examination records. D
 | exam-rejection | 1,174 |
 | exam-hindi | 587 |
 | compress-image-to-size | 484 |
-| spec-value | 200 |
+| spec-value | 203 |
 | exam-family | 183 |
 | pdf-work | 41 |
 | generic-exam-form | 31 |
@@ -41,7 +41,7 @@ Written by `apps/web/scripts/build-keywords.mjs` from the examination records. D
 
 | Language | Keywords |
 |---|---:|
-| en | 28,249 |
+| en | 28,252 |
 | hi-Latn | 1,184 |
 | hi | 597 |
 

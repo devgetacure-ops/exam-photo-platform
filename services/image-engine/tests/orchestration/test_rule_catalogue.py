@@ -190,9 +190,10 @@ def test_catalogue_wide_support_totals_match_the_recorded_figures():
             totals[support] += count
 
     assert sum(totals.values()) == 405
-    assert totals[PlatformSupport.SUPPORTED] == 303
+    # DEC-095 and DEC-099: NEET-PG's pre-saved photograph gained its size
+    # and format (supported), as UP B.Ed's did.
+    assert totals[PlatformSupport.SUPPORTED] == 304
     assert totals[PlatformSupport.GUIDANCE_ONLY] == 28
-    # DEC-095: WBSSC's photograph needs the signature on it (partial), and UP
-    # B.Ed's photograph gained its published size and format (supported).
+    # DEC-095: WBSSC's photograph needs the signature on it (partial).
     assert totals[PlatformSupport.PARTIALLY_SUPPORTED] == 4
-    assert totals[PlatformSupport.NOT_YET_SUPPORTED] == 70
+    assert totals[PlatformSupport.NOT_YET_SUPPORTED] == 69

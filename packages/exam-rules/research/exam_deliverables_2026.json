@@ -9425,12 +9425,24 @@
         "requirement_status": "Mandatory or portal-dependent",
         "submission_method": "file_upload",
         "applicability": "As required by the active authority application/notification",
-        "specification": "not_found",
-        "evidence_status": "Application asset identified at authority/application-family level; exact current technical specification and, where noted, conditionality were not fully established.",
-        "source_url": "https://natboard.edu.in/viewnbeexam?exam=neetpg",
+        "specification": "JPG/JPEG; maximum 80 KB",
+        "evidence_status": "Official NEET-PG 2024 user manual",
+        "source_url": "https://www.natboard.edu.in/pdoof/User_Manual_NEETPG_2024.pdf",
         "important_note": "This row is intentionally evidence-gated. No numeric value or format has been inferred from secondary sources.",
         "parsed": {
-          "specification_not_established": true
+          "specification_not_established": false,
+          "file_size_kb": {
+            "minimum": null,
+            "maximum": 80,
+            "source_wording": "Upload your scanned signature (Maximum 80 Kb size, in JPG/JPEG format)"
+          },
+          "formats": {
+            "values": [
+              "JPG",
+              "JPEG"
+            ],
+            "source_wording": "Upload your scanned signature (Maximum 80 Kb size, in JPG/JPEG format)"
+          }
         }
       },
       {
@@ -9438,12 +9450,24 @@
         "requirement_status": "Mandatory or portal-dependent",
         "submission_method": "file_upload",
         "applicability": "As required by the active authority application/notification",
-        "specification": "not_found",
-        "evidence_status": "Application asset identified at authority/application-family level; exact current technical specification and, where noted, conditionality were not fully established.",
-        "source_url": "https://natboard.edu.in/viewnbeexam?exam=neetpg",
+        "specification": "JPG/JPEG; maximum 80 KB",
+        "evidence_status": "Official NEET-PG 2024 user manual",
+        "source_url": "https://www.natboard.edu.in/pdoof/User_Manual_NEETPG_2024.pdf",
         "important_note": "This row is intentionally evidence-gated. No numeric value or format has been inferred from secondary sources.",
         "parsed": {
-          "specification_not_established": true
+          "specification_not_established": false,
+          "file_size_kb": {
+            "minimum": null,
+            "maximum": 80,
+            "source_wording": "Upload your left thumb impression (Maximum 80 Kb size, in JPG/JPEG format)"
+          },
+          "formats": {
+            "values": [
+              "JPG",
+              "JPEG"
+            ],
+            "source_wording": "Upload your left thumb impression (Maximum 80 Kb size, in JPG/JPEG format)"
+          }
         }
       },
       {

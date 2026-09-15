@@ -2737,9 +2737,25 @@
       "exam_name": "NEET-PG",
       "facts": [
         {
+          "kind": "file_size",
+          "text": "The photograph has to be no larger than 80 KB.",
+          "source": "NEET-PG 2024 user manual (National Board of Examinations in Medical Sciences) (https://www.natboard.edu.in/pdoof/User_Manual_NEETPG_2024.pdf)",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://www.natboard.edu.in/pdoof/User_Manual_NEETPG_2024.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
           "kind": "deliverables",
           "text": "This application asks for 4 files, not only a photograph — 3 more files besides it.",
-          "source": "https://natboard.edu.in/viewnbeexam?exam=neetpg",
+          "source": "https://www.natboard.edu.in/pdoof/User_Manual_NEETPG_2024.pdf",
           "requirement_id": null,
           "official": null,
           "reported_by": null

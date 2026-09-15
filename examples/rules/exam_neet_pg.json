@@ -2,7 +2,7 @@
   "schema_version": "1.1",
   "rule_id": "neet-pg",
   "rule_version": "1.0.0",
-  "status": "provisional",
+  "status": "verified_with_ambiguity",
   "exam": {
     "exam_id": "neet-pg",
     "exam_name": "NEET-PG",
@@ -11,17 +11,59 @@
     "application_cycle": "2026",
     "application_stage": "application",
     "jurisdiction": "India",
-    "category": "medical_entrance",
-    "aliases": []
+    "category": "medical_entrance"
   },
   "source_evidence": [
     {
-      "source_type": "official_webpage",
+      "source_type": "official_pdf",
       "official_source": true,
-      "captured_wording": "not_found",
-      "source_url": "https://natboard.edu.in/viewnbeexam?exam=neetpg"
+      "captured_wording": "One pre-saved passport size coloured photograph (Maximum 80 Kb size, in JPG/JPEG format)",
+      "source_url": "https://www.natboard.edu.in/pdoof/User_Manual_NEETPG_2024.pdf",
+      "document_title": "NEET-PG 2024 user manual (National Board of Examinations in Medical Sciences)"
     }
   ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "exact",
+      "width_px": 413,
+      "height_px": 531,
+      "aspect_ratio": "7:9",
+      "fallback_reason": "No pixel dimensions are published by the conducting body. The photograph is delivered at 413 x 531 px, a 3.5 x 4.5 cm passport photograph at 300 DPI; this size is our estimate, not the body's."
+    },
+    "file_size": {
+      "maximum_bytes": 80000,
+      "size_unit_as_published": "KB",
+      "published_maximum": 80.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpg",
+        "jpeg"
+      ],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "unspecified"
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "unspecified"
+    },
+    "appearance": {},
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false
+    },
+    "exceptional_instructions": {
+      "processing_support_status": "supported"
+    }
+  },
   "requirements": [
     {
       "requirement_id": "pre_saved_candidate_photograph",
@@ -29,7 +71,7 @@
       "requirement_type": "photograph",
       "submission_method": "file_upload",
       "requirement_status": "portal_dependent",
-      "platform_support": "not_yet_supported",
+      "platform_support": "supported",
       "applicability": "As required by the active authority application/notification",
       "content_instructions": "not_found",
       "evidence_status": "Application asset identified at authority/application-family level; exact current technical specification and, where noted, conditionality were not fully established.",
@@ -43,17 +85,19 @@
       "requirement_status": "portal_dependent",
       "platform_support": "supported",
       "applicability": "As required by the active authority application/notification",
-      "content_instructions": "not_found",
-      "evidence_status": "Application asset identified at authority/application-family level; exact current technical specification and, where noted, conditionality were not fully established.",
+      "content_instructions": "JPG/JPEG; maximum 80 KB",
+      "evidence_status": "Official NEET-PG 2024 user manual",
       "notes": "This row is intentionally evidence-gated. No numeric value or format has been inferred from secondary sources.",
       "file_spec": {
         "file_size": {
-          "maximum_bytes": 20000,
-          "minimum_bytes": 10000
+          "maximum_bytes": 80000,
+          "published_maximum": 80,
+          "size_unit_as_published": "KB"
         },
         "formats": {
           "allowed_formats": [
-            "jpg"
+            "jpg",
+            "jpeg"
           ],
           "preferred_format": "jpg"
         }
@@ -67,17 +111,19 @@
       "requirement_status": "portal_dependent",
       "platform_support": "supported",
       "applicability": "As required by the active authority application/notification",
-      "content_instructions": "not_found",
-      "evidence_status": "Application asset identified at authority/application-family level; exact current technical specification and, where noted, conditionality were not fully established.",
+      "content_instructions": "JPG/JPEG; maximum 80 KB",
+      "evidence_status": "Official NEET-PG 2024 user manual",
       "notes": "This row is intentionally evidence-gated. No numeric value or format has been inferred from secondary sources.",
       "file_spec": {
         "file_size": {
-          "maximum_bytes": 50000,
-          "minimum_bytes": 20000
+          "maximum_bytes": 80000,
+          "published_maximum": 80,
+          "size_unit_as_published": "KB"
         },
         "formats": {
           "allowed_formats": [
-            "jpg"
+            "jpg",
+            "jpeg"
           ],
           "preferred_format": "jpg"
         }
@@ -102,41 +148,30 @@
     }
   ],
   "provenance": {
-    "requirements[1].file_spec.file_size.maximum_bytes": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "NEET-PG 2024 user manual (National Board of Examinations in Medical Sciences) (https://www.natboard.edu.in/pdoof/User_Manual_NEETPG_2024.pdf)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
       "type": "interim_default",
-      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
+      "reasoning": "No pixel dimensions are published by the conducting body. The photograph is delivered at 413 x 531 px, a 3.5 x 4.5 cm passport photograph at 300 DPI; this size is our estimate, not the body's.",
       "confidence": 1,
       "approved": false
     },
-    "requirements[1].file_spec.file_size.minimum_bytes": {
-      "type": "interim_default",
-      "reasoning": "No published signature file size for this body. Standing in with the modal published specification across the researched set (10-20 KB), which falls inside five of the six distinct published ranges. The arithmetic mean (10.6-45.2 KB) was rejected: its ceiling exceeds five of those six, and overshooting a maximum is a hard portal rejection.",
-      "confidence": 1,
-      "approved": false
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
     },
-    "requirements[1].file_spec.formats.allowed_formats": {
-      "type": "interim_default",
-      "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
-      "confidence": 1,
-      "approved": false
-    },
-    "requirements[2].file_spec.file_size.maximum_bytes": {
-      "type": "interim_default",
-      "reasoning": "No published thumb-impression file size for this body. Standing in with 20-50 KB, which is not an average but the only specification in the researched set -- all 13 records that publish one agree on it.",
-      "confidence": 1,
-      "approved": false
-    },
-    "requirements[2].file_spec.file_size.minimum_bytes": {
-      "type": "interim_default",
-      "reasoning": "No published thumb-impression file size for this body. Standing in with 20-50 KB, which is not an average but the only specification in the researched set -- all 13 records that publish one agree on it.",
-      "confidence": 1,
-      "approved": false
-    },
-    "requirements[2].file_spec.formats.allowed_formats": {
-      "type": "interim_default",
-      "reasoning": "No published file format for this deliverable. Standing in with JPG, which is the only format any body in the researched set publishes for a signature, thumb impression or handwritten declaration.",
-      "confidence": 1,
-      "approved": false
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
     },
     "requirements[3].file_spec.file_size.maximum_bytes": {
       "type": "interim_default",
@@ -146,7 +181,7 @@
     }
   },
   "verification": {
-    "verification_status": "provisional"
+    "verification_status": "verified_with_ambiguity"
   },
   "fictional_example": false
 }

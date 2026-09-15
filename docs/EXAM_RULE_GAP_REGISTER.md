@@ -52,7 +52,6 @@ and a manual edit to a rule record silently diverges from its evidence.
 | MP Police Constable Recruitment Test | deliverables only -- no photograph rule | `exam_mp-police-constable-recruitment-test.json` |
 | MP Primary School Teacher Eligibility Test | deliverables only -- no photograph rule | `exam_mp-primary-school-teacher-eligibility-test.json` |
 | Maharashtra Police Recruitment | deliverables only -- no photograph rule | `exam_maharashtra-police-recruitment.json` |
-| NEET-PG | deliverables only -- no photograph rule | `exam_neet-pg.json` |
 | Odisha Joint Entrance Examination (OJEE) | deliverables only -- no photograph rule | `exam_odisha-joint-entrance-examination-ojee.json` |
 | RPSC Online Application | deliverables only -- no photograph rule | `exam_rpsc-online-application.json` |
 | RRB JE/DMS/CMA | deliverables only -- no photograph rule | `exam_rrb-je-dms-cma.json` |
@@ -130,6 +129,7 @@ and a manual edit to a rule record silently diverges from its evidence.
 | Maharashtra Teacher Eligibility Test (MAHA TET) | Size and format only -- no pixel dimensions published | `exam_maharashtra_teacher_eligibility_test_maha_tet.json` |
 | Management Aptitude Test 2026 | Size and format only -- no pixel dimensions published | `exam_management_aptitude_test_2026.json` |
 | NEET (UG) 2026 | Size and format only -- no pixel dimensions published | `exam_neet_ug_2026.json` |
+| NEET-PG | Size and format only -- no pixel dimensions published | `exam_neet_pg.json` |
 | OSSSC Combined Recruitment Examination | Size and format only -- no pixel dimensions published | `exam_osssc_combined_recruitment_examination.json` |
 | RPF Constable | Size and format only -- no pixel dimensions published | `exam_rpf_constable.json` |
 | RPF Sub-Inspector | Size and format only -- no pixel dimensions published | `exam_rpf_sub_inspector.json` |
@@ -316,7 +316,6 @@ photograph specification, which is what blocks them.
 | MP Police Constable Recruitment Test | 4 |
 | MP Primary School Teacher Eligibility Test | 4 |
 | Maharashtra Police Recruitment | 1 |
-| NEET-PG | 3 |
 | Odisha Joint Entrance Examination (OJEE) | 1 |
 | RPSC Online Application | 2 |
 | RRB JE/DMS/CMA | 1 |
