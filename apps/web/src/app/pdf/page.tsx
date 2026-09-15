@@ -86,6 +86,14 @@ export default function PdfPage() {
                                 <a href="#to-image" className="euk-link">
                                     Do it on this page ↓
                                 </a>
+                                {/* DEC-098: the other PDF job anybody can do free. */}
+                                <p>
+                                    Or compress a PDF under your form&rsquo;s limit,
+                                    in the same way.
+                                </p>
+                                <Link href="/compress-pdf" className="euk-link">
+                                    Compress a PDF ↗
+                                </Link>
                             </div>
                             <div>
                                 <p className="euk-label">

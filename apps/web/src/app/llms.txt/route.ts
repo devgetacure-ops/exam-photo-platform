@@ -40,6 +40,8 @@ export async function GET() {
                 `- [${family.name} exams](${SITE_URL}/exams/${family.slug}): photograph and signature sizes for every ${family.phrase} examination covered`,
         ),
         `- [Compress a photo](${SITE_URL}/compress-image): compress a photo or signature to a KB limit, free, in the browser; nothing is uploaded`,
+        `- [Compress a PDF](${SITE_URL}/compress-pdf): compress a PDF to a KB limit, free, in the browser; nothing is uploaded`,
+        `- Pages at ${SITE_URL}/resize/ answer each file size or pixel size an examination published, for example ${SITE_URL}/resize/photo-200x230`,
         `- [PDF work](${SITE_URL}/pdf): merge, reorder, compress, and PDF page to image`,
         `- [Support](${SITE_URL}/support): payment, delivery and rejection problems`,
         `- [Terms](${SITE_URL}/terms), [Privacy](${SITE_URL}/privacy), [Refunds](${SITE_URL}/refund-policy)`,

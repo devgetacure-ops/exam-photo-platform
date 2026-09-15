@@ -7,13 +7,13 @@ Written by `apps/web/scripts/build-keywords.mjs` from the examination records. D
 | Coverage | Keywords |
 |---|---:|
 | explains | 21,150 |
-| prepares | 8,613 |
-| gap | 267 |
+| prepares | 8,834 |
+| gap | 46 |
 
 | Priority | Keywords |
 |---|---:|
-| P3 | 21,423 |
-| P2 | 7,101 |
+| P3 | 21,421 |
+| P2 | 7,103 |
 | P1 | 1,506 |
 
 | Cluster | Keywords |
@@ -49,8 +49,6 @@ Written by `apps/web/scripts/build-keywords.mjs` from the examination records. D
 
 | Page | Pages | Keywords | P1 | For example |
 |---|---:|---:|---:|---|
-| `/resize/… (one page per published figure)` | 42 | 200 | 6 | `compress photo to 100kb` |
-| `/compress-pdf` | 1 | 21 | 6 | `compress pdf to 100kb` |
 | `/photo-size-for-exams` | 1 | 10 | 0 | `exam photo size` |
 | `/hi` | 1 | 10 | 0 | `ऑनलाइन फॉर्म के लिए फोटो` |
 | `/crop-photo` | 1 | 9 | 0 | `3.5 x 4.5 cm photo` |

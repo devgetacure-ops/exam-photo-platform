@@ -41,6 +41,7 @@ import type {
 } from "./types";
 
 export type { SearchEntry } from "./types";
+import { specTargets, type RawRecord, type RawRequirement, type SpecTarget } from "./seo-keywords";
 
 /**
  * The generated catalogue, relative to this file. Still named `examples/rules`
@@ -179,6 +180,24 @@ export async function loadExams(): Promise<ExamDetail[]> {
   }
 
   return exams.sort((a, b) => a.exam_name.localeCompare(b.exam_name));
+}
+
+/**
+ * Every published file size and pixel size with its /resize/ page (DEC-098),
+ * computed by the keyword map's own function so the pages and the map agree.
+ */
+export async function loadSpecTargets(): Promise<{ exams: ExamDetail[]; targets: SpecTarget[] }> {
+  const exams = await loadExams();
+  const records: RawRecord[] = exams.map((exam) => ({
+    exam: { exam_id: exam.exam_id, exam_name: exam.exam_name, category: exam.category ?? undefined },
+    image_requirements: exam.image_requirements as RawRecord["image_requirements"],
+    requirements: (exam.requirements ?? []).map((requirement) => ({
+      requirement_type: requirement.requirement_type,
+      platform_support: requirement.platform_support,
+      file_spec: requirement.file_spec as RawRequirement["file_spec"],
+    })),
+  }));
+  return { exams, targets: specTargets(records) };
 }
 
 /** One examination, or `null` when the catalogue does not encode it. */

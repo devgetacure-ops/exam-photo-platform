@@ -1,4 +1,4 @@
-import { loadExams } from "../../lib/catalogue.server";
+import { loadSpecTargets } from "../../lib/catalogue.server";
 import { SITE_URL } from "../../lib/site";
 import { EXAM_FAMILIES } from "../../lib/exam-families";
 
@@ -6,12 +6,14 @@ import { EXAM_FAMILIES } from "../../lib/exam-families";
 // came in on: behind a proxy that is an internal name.
 export async function GET() {
     const origin = SITE_URL;
-    const exams = await loadExams();
+    const { exams, targets } = await loadSpecTargets();
     const routes = [
         "/",
         "/exams",
         ...EXAM_FAMILIES.map((family) => `/exams/${family.slug}`),
         "/compress-image",
+        "/compress-pdf",
+        ...targets.map((target) => `/resize/${target.slug}`),
         "/pdf",
         "/exam-request",
         "/support",

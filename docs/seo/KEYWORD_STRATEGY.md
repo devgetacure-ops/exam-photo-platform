@@ -70,9 +70,9 @@ Three things would hurt rather than help, and are ruled out:
 3. **Hindi pages** for the examinations candidates most often search in Hindi,
    starting with the family hubs and the highest-priority examinations. The
    typeface already covers Devanagari.
-4. **A standalone PDF compressor** (`compress pdf to 100kb`) and **pages per
-   published figure** (`resize photo to 200x230`), each only where it is a
-   real, working page.
+4. ~~**A standalone PDF compressor** and **pages per published figure**~~
+   **Built** (DEC-098): `/compress-pdf`, and 42 `/resize/{size}` pages from
+   `specTargets`, each a working tool.
 5. **Background and crop tools**, only if the product decides to offer them
    outside a kit.
 

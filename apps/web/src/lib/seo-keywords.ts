@@ -284,26 +284,45 @@ function examRows(rows: Rows, record: RawRecord): void {
     }
 }
 
-/** Figures that some examination actually published, as generic searches. */
-function specValueRows(rows: Rows, records: RawRecord[]): void {
-    const sizes = new Map<string, { word: string; max: number; min?: number; unit: string; ids: Set<string> }>();
-    const dims = new Map<string, { word: string; w: number; h: number; ids: Set<string> }>();
+/** A size some examination published, and the /resize/ page that answers it (DEC-098). */
+export interface SpecTarget {
+    slug: string;
+    word: string;
+    kind: "size" | "dimensions";
+    max?: number;
+    /** Every published minimum paired with this maximum. */
+    mins?: number[];
+    unit?: string;
+    width?: number;
+    height?: number;
+    examIds: string[];
+}
+
+/**
+ * Every published file size and pixel size, one entry per page. Two records
+ * that publish 10-200 KB and 20-200 KB share the "photo-to-200kb" page, so
+ * entries are merged by slug and keep each minimum.
+ */
+export function specTargets(records: RawRecord[]): SpecTarget[] {
+    const targets = new Map<string, SpecTarget>();
 
     const note = (type: string, id: string, size?: RawFileSize, dim?: RawDimensions) => {
         const word = FILE_WORDS[type]?.[0];
         if (!word) return;
+        const stem = word.replace(/\s+/g, "-");
         const u = unit(size);
         if (u && size?.published_maximum) {
-            const key = `${word}|${size.published_minimum ?? ""}|${size.published_maximum}|${u}`;
-            const entry = sizes.get(key) ?? { word, max: size.published_maximum, min: size.published_minimum, unit: u, ids: new Set<string>() };
-            entry.ids.add(id);
-            sizes.set(key, entry);
+            const slug = `${stem}-to-${size.published_maximum}${u}`;
+            const entry = targets.get(slug) ?? { slug, word, kind: "size" as const, max: size.published_maximum, mins: [], unit: u, examIds: [] };
+            if (size.published_minimum !== undefined && !entry.mins!.includes(size.published_minimum)) entry.mins!.push(size.published_minimum);
+            if (!entry.examIds.includes(id)) entry.examIds.push(id);
+            targets.set(slug, entry);
         }
         if (dim?.width_px && dim?.height_px) {
-            const key = `${word}|${dim.width_px}x${dim.height_px}`;
-            const entry = dims.get(key) ?? { word, w: dim.width_px, h: dim.height_px, ids: new Set<string>() };
-            entry.ids.add(id);
-            dims.set(key, entry);
+            const slug = `${stem}-${dim.width_px}x${dim.height_px}`;
+            const entry = targets.get(slug) ?? { slug, word, kind: "dimensions" as const, width: dim.width_px, height: dim.height_px, examIds: [] };
+            if (!entry.examIds.includes(id)) entry.examIds.push(id);
+            targets.set(slug, entry);
         }
     };
 
@@ -319,27 +338,33 @@ function specValueRows(rows: Rows, records: RawRecord[]): void {
             }
         }
     }
+    return [...targets.values()];
+}
 
-    const used = (ids: Set<string>) => `published by ${ids.size} record${ids.size === 1 ? "" : "s"}: ${[...ids].slice(0, 6).join(", ")}${ids.size > 6 ? ", …" : ""}`;
+/** Figures that some examination actually published, as generic searches. */
+function specValueRows(rows: Rows, records: RawRecord[]): void {
+    const used = (ids: string[]) => `published by ${ids.length} record${ids.length === 1 ? "" : "s"}: ${ids.slice(0, 6).join(", ")}${ids.length > 6 ? ", …" : ""}`;
 
-    for (const { word, max, min, unit: u, ids } of sizes.values()) {
-        const target = `/resize/${word.replace(/\s+/g, "-")}-to-${max}${u}`;
-        const common = { cluster: "spec-value", intent: "tool" as const, language: "en" as const, target_url: target, coverage: "gap" as const, exam_ids: [...ids].join("|"), basis: used(ids) };
-        const p: 1 | 2 | 3 = ids.size >= 3 ? 2 : 3;
-        rows.add({ ...common, keyword: `resize ${word} to ${max} ${u}`, priority: p });
-        rows.add({ ...common, keyword: `compress ${word} to ${max}${u}`, priority: p });
-        rows.add({ ...common, keyword: `${word} ${max} ${u}`, priority: 3 });
-        if (min !== undefined) {
-            rows.add({ ...common, keyword: `${word} ${min} to ${max} ${u}`, priority: 3 });
-            rows.add({ ...common, keyword: `${word} size ${min}-${max} ${u}`, priority: 3 });
+    for (const target of specTargets(records)) {
+        const ids = target.examIds;
+        const common = { cluster: "spec-value", intent: "tool" as const, language: "en" as const, target_url: `/resize/${target.slug}`, coverage: "prepares" as const, exam_ids: ids.join("|"), basis: used(ids) };
+        const word = target.word;
+        if (target.kind === "size") {
+            const { max, unit: u } = target;
+            const p: 1 | 2 | 3 = ids.length >= 3 ? 2 : 3;
+            rows.add({ ...common, keyword: `resize ${word} to ${max} ${u}`, priority: p });
+            rows.add({ ...common, keyword: `compress ${word} to ${max}${u}`, priority: p });
+            rows.add({ ...common, keyword: `${word} ${max} ${u}`, priority: 3 });
+            for (const min of target.mins ?? []) {
+                rows.add({ ...common, keyword: `${word} ${min} to ${max} ${u}`, priority: 3 });
+                rows.add({ ...common, keyword: `${word} size ${min}-${max} ${u}`, priority: 3 });
+            }
+        } else {
+            const { width: w, height: h } = target;
+            rows.add({ ...common, keyword: `${word} ${w}x${h}`, priority: ids.length >= 3 ? 2 : 3 });
+            rows.add({ ...common, keyword: `${word} ${w} x ${h} pixels`, priority: 3 });
+            rows.add({ ...common, keyword: `resize ${word} to ${w}x${h}`, priority: 3 });
         }
-    }
-    for (const { word, w, h, ids } of dims.values()) {
-        const target = `/resize/${word.replace(/\s+/g, "-")}-${w}x${h}`;
-        const common = { cluster: "spec-value", intent: "tool" as const, language: "en" as const, target_url: target, coverage: "gap" as const, exam_ids: [...ids].join("|"), basis: used(ids) };
-        rows.add({ ...common, keyword: `${word} ${w}x${h}`, priority: ids.size >= 3 ? 2 : 3 });
-        rows.add({ ...common, keyword: `${word} ${w} x ${h} pixels`, priority: 3 });
-        rows.add({ ...common, keyword: `resize ${word} to ${w}x${h}`, priority: 3 });
     }
 }
 
@@ -391,7 +416,7 @@ function genericRows(rows: Rows): void {
     }
 
     const pdfSizes = ["50kb", "100kb", "200kb", "300kb", "500kb", "1mb", "2mb"];
-    const pdfCompress = gen("compress-pdf-to-size", "tool", "/compress-pdf", "gap", "the PDF page describes compression that runs inside a kit; a standalone tool is needed");
+    const pdfCompress = gen("compress-pdf-to-size", "tool", "/compress-pdf", "prepares", "the compress-a-PDF tool, in the browser (DEC-098)");
     for (const size of pdfSizes) {
         const p: 1 | 2 | 3 = size === "100kb" || size === "200kb" || size === "500kb" ? 1 : 2;
         pdfCompress(`compress pdf to ${size}`, p);

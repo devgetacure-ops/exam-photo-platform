@@ -1,0 +1,93 @@
+/*
+ * ExamUploadKit — the published-size pages and their crop frame (DEC-098).
+ *
+ * The pages borrow the compress page's layout (compress.css); what is theirs
+ * is the frame a photograph is placed in and the list of examinations that
+ * publish the size.
+ */
+
+.euk-crop-view {
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+    border: var(--rule) solid var(--ink);
+    background: var(--paper-2);
+    touch-action: none;
+    cursor: grab;
+}
+
+.euk-crop-view:active {
+    cursor: grabbing;
+}
+
+.euk-crop-view:focus-visible {
+    outline: 3px solid var(--signal);
+    outline-offset: 3px;
+}
+
+.euk-crop-zoom {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 12px;
+    font-size: 15px;
+    color: var(--ink-70);
+}
+
+.euk-crop-zoom input {
+    flex: 1;
+    min-width: 0;
+    min-height: 44px;
+    accent-color: var(--ink);
+}
+
+.euk .euk-resize-pdf {
+    margin: 16px 0 0;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.euk-resize-pdf a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--ink);
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-color: var(--signal-deep);
+    text-underline-offset: 4px;
+}
+
+.euk-resize-exams {
+    display: grid;
+    gap: 2px;
+    margin: 0 0 20px;
+    padding: 0;
+    list-style: none;
+}
+
+@media (min-width: 768px) {
+    .euk-resize-exams {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 2px 32px;
+    }
+}
+
+.euk .euk-resize-exams li {
+    max-width: none;
+}
+
+.euk-resize-exams a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--ink);
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: var(--hairline);
+    text-underline-offset: 4px;
+}
+
+.euk-resize-exams a:hover {
+    text-decoration-color: var(--signal-deep);
+}

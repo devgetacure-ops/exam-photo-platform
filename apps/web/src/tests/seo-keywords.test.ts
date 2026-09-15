@@ -3,7 +3,7 @@ import path from "node:path";
 
 import { describe, expect, test } from "vitest";
 
-import { buildKeywords, normalise, searchableName, toCsv, type RawRecord } from "../lib/seo-keywords";
+import { buildKeywords, normalise, searchableName, specTargets, toCsv, type RawRecord } from "../lib/seo-keywords";
 
 /**
  * The keyword map (DEC-088).
@@ -37,7 +37,7 @@ describe("the keyword map", () => {
     }, 20_000);
 
     test("a page it points at exists, or the row says it is a page to build", () => {
-        const live = /^\/($|pdf$|exams$|exams\/[a-z-]+$|compress-image$|exam-request$|exam\/[^/]+(\/rules)?$)/;
+        const live = /^\/($|pdf$|exams$|exams\/[a-z-]+$|compress-image$|compress-pdf$|resize\/[a-z0-9-]+$|exam-request$|exam\/[^/]+(\/rules)?$)/;
         for (const row of rows) {
             if (row.coverage === "gap") continue;
             expect(row.target_url, row.keyword).toMatch(live);
@@ -90,6 +90,19 @@ describe("the keyword map", () => {
         expect(searchableName("RBI Officers in Grade B 2026 - prior-cycle official fallback")).toBe("rbi officers in grade b");
         expect(searchableName("ICAI Examination Portal Photograph (current portal scope)")).toBe("icai examination");
         expect(searchableName("NEET (UG) 2026")).toBe("neet ug");
+    });
+
+    test("every published size has one page, and every page a size someone published (DEC-098)", () => {
+        const targets = specTargets(records);
+        const slugs = targets.map((target) => target.slug);
+        expect(new Set(slugs).size).toBe(slugs.length);
+        for (const target of targets) {
+            expect(target.slug).toMatch(/^[a-z0-9-]+$/);
+            expect(target.examIds.length).toBeGreaterThan(0);
+            for (const id of target.examIds) expect(ids.has(id), target.slug).toBe(true);
+        }
+        const pages = new Set(rows.filter((r) => r.cluster === "spec-value").map((r) => r.target_url));
+        expect(pages).toEqual(new Set(slugs.map((slug) => `/resize/${slug}`)));
     });
 
     test("a keyword with a comma or quote survives the CSV", () => {

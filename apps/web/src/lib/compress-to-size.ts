@@ -93,6 +93,46 @@ export async function compressToSize(
     }
 }
 
+/**
+ * Below this a JPEG at a fixed size shows blocks, but a published pixel size
+ * cannot be shrunk to make room, so the floor is lower than MIN_QUALITY. est.
+ */
+export const FIXED_SIZE_MIN_QUALITY = 0.3;
+
+/**
+ * The best quality under a limit at an exact pixel size (DEC-098). Unlike
+ * `compressToSize` the photograph is never made smaller: the size is what the
+ * notice published, so only the quality may give.
+ */
+export async function compressAtSize(
+    width: number,
+    height: number,
+    targetKb: number,
+    encode: Encoder,
+): Promise<CompressOutcome> {
+    const ceiling = ceilingBytes(targetKb);
+    const best = await encode(width, height, MAX_QUALITY);
+    if (best.size <= ceiling) {
+        return { ok: true, result: { blob: best, width, height, quality: MAX_QUALITY } };
+    }
+    const worst = await encode(width, height, FIXED_SIZE_MIN_QUALITY);
+    if (worst.size > ceiling) return { ok: false, reason: "too-small", smallestBytes: worst.size };
+    let low = FIXED_SIZE_MIN_QUALITY;
+    let high = MAX_QUALITY;
+    let found: Compressed = { blob: worst, width, height, quality: low };
+    for (let step = 0; step < QUALITY_STEPS; step++) {
+        const quality = (low + high) / 2;
+        const blob = await encode(width, height, quality);
+        if (blob.size <= ceiling) {
+            found = { blob, width, height, quality };
+            low = quality;
+        } else {
+            high = quality;
+        }
+    }
+    return { ok: true, result: found };
+}
+
 /** "passport photo.HEIC" at 20 KB -> "passport-photo_20kb.jpg". */
 export function compressedFilename(sourceName: string, targetKb: number): string {
     const stem = sourceName.replace(/\.[^.]+$/, "").trim();

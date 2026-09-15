@@ -47,9 +47,18 @@ function failureText(failure: Failure): string {
     }
 }
 
-export function CompressImage() {
-    const [targetKb, setTargetKb] = useState<number>(50);
-    const [custom, setCustom] = useState("");
+export function CompressImage({
+    initialKb = 50,
+    noun = "photo",
+}: {
+    /** A /resize/ page opens on its published limit (DEC-098). */
+    initialKb?: number;
+    /** "signature", "thumb impression": what the button asks for. */
+    noun?: string;
+} = {}) {
+    const preset = (PRESET_KB as readonly number[]).includes(initialKb);
+    const [targetKb, setTargetKb] = useState<number>(initialKb);
+    const [custom, setCustom] = useState(preset ? "" : String(initialKb));
     const [status, setStatus] = useState<"idle" | "working" | "done" | "failed">("idle");
     const [result, setResult] = useState<Result | null>(null);
     const [failure, setFailure] = useState<Failure | null>(null);
@@ -154,19 +163,22 @@ export function CompressImage() {
                 </label>
             </fieldset>
 
-            <p className="euk-cmp-label euk-cmp-step">2. Your photo</p>
+            <p className="euk-cmp-label euk-cmp-step">2. Your {noun}</p>
             <button
                 type="button"
                 className="primary-button euk-cmp-choose"
                 onClick={() => input.current?.click()}
                 disabled={working}
             >
-                {file ? "Choose another photo" : "Choose a photo"}
+                {file ? `Choose another ${noun}` : `Choose a ${noun}`}
             </button>
             <input
                 ref={input}
                 type="file"
-                accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
+                // HEIC is left out on purpose: iPhone Safari converts a HEIC
+                // photo to JPEG for a picker that asks only for these, and
+                // listing HEIC makes Safari 17+ hand over HEIC instead.
+                accept="image/jpeg,image/png,image/webp"
                 className="sr-only"
                 aria-label="Photo to compress"
                 onChange={(event) => {
