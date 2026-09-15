@@ -108,6 +108,46 @@ describe("preparing one requirement", () => {
         await waitFor(() => expect(onWorking).toHaveBeenLastCalledWith(false));
     });
 
+    test.each([
+        [true, 1],
+        [false, 0],
+    ])(
+        "the lighting switch after preparing is offered only when switching shows a difference (switchable %s)",
+        async (switchable, switches) => {
+            // DEC-095: the engine withholds the alternate when the correction
+            // is invisible, so there is nothing for the switch to show.
+            prepareRequirement.mockResolvedValue({
+                ...prepared({
+                    requirement_type: "photograph",
+                    requirement_id: "photo",
+                }),
+                enhancement_enabled: true,
+                enhancement_switchable: switchable,
+                enhancements_applied: ["Sharpened slightly"],
+            } as PrepareRequirementResponse);
+            render(
+                <RequirementUpload
+                    examId="example"
+                    examName="Example exam"
+                    requirementId="photo"
+                    requirementName="Photograph"
+                    requirementType="photograph"
+                />,
+            );
+            fireEvent.change(screen.getByLabelText("Upload for Photograph"), {
+                target: { files: [image()] },
+            });
+            await waitFor(() =>
+                expect(
+                    screen.queryByLabelText("Upload for Photograph"),
+                ).toBeNull(),
+            );
+            expect(
+                screen.queryAllByRole("switch", { name: "Intelligent lighting" }),
+            ).toHaveLength(switches);
+        },
+    );
+
     test("it offers an upload before anything has been done", () => {
         renderUpload();
         expect(screen.getByText(/add a photo of your signature/i)).toBeTruthy();

@@ -278,7 +278,11 @@ export function RequirementUpload({
     if (phase === "done" && result) {
         return (
             <>
+                {/* DEC-095: offered only where switching shows a difference
+                    a person can see; the engine withholds the alternate
+                    otherwise, so there is nothing to switch to. */}
                 {photo &&
+                    result.enhancement_switchable &&
                     result.enhancement_enabled !== undefined &&
                     !["blocked", "not_produced"].includes(result.outcome) && (
                     <div className="euk-lighting">
@@ -287,7 +291,6 @@ export function RequirementUpload({
                             checked={result.enhancement_enabled}
                             disabled={
                                 switching ||
-                                !result.enhancement_switchable ||
                                 live?.entitlement === "released"
                             }
                             onChange={async (enabled) => {

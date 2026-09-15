@@ -18,6 +18,7 @@ from exam_photo.orchestration.final_validation import (
     BELOW_MINIMUM_CODE,
     validate_final_candidate,
 )
+from exam_photo.orchestration.lighting_visibility import lighting_change_is_visible
 from exam_photo.orchestration.rule_resolver import RuleResolutionError, resolve_rule
 from exam_photo.providers.compression.deterministic_image_compressor import (
     DeterministicJpegCompressor,
@@ -1755,7 +1756,11 @@ class RuleOrchestratedPipeline:
                         alt = compressor.compress_output(
                             alternate_prepared, plan.compression_config
                         )
-                        if alt.validation.is_valid:
+                        # DEC-095: only a difference a person could see is
+                        # worth a switch; a sharpening-only correction is not.
+                        if alt.validation.is_valid and lighting_change_is_visible(
+                            prepared_image, alternate_prepared
+                        ):
                             alternate_encoded_bytes = alt.encoded_bytes
                     except Exception:  # noqa: BLE001
                         alternate_encoded_bytes = None
