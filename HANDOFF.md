@@ -107,7 +107,9 @@ scroll, paid state, previews in review, draggable comparison, clock, email,
 ExamUploadKit, stacked logo), DEC-095 (the owner's research checked and
 imported, 413 x 531 est. where no pixel size is published, the lighting switch
 only when it changes something), DEC-096 (eight exam family hubs, and a free
-compress-to-size tool that runs in the browser). See "Waiting on the owner" below for what is not
+compress-to-size tool that runs in the browser), DEC-097 (the deployment
+blockers fixed, cookieless analytics, `docs/LAUNCH_GUIDE.md`), DEC-098 (a free
+PDF compressor, an exact-size crop frame and 42 published-size pages). See "Waiting on the owner" below for what is not
 done and why.
 
 **Built on 13–14 September, beyond the phone phases:**
@@ -270,7 +272,7 @@ Read alongside:
 | File | What it carries |
 |---|---|
 | `AGENTS.md` | The binding operating contract |
-| `docs/08_DECISION_LOG.md` | DEC-029..096. **Living** — amend an entry when implementation moves; never bend implementation to fit a stale one |
+| `docs/08_DECISION_LOG.md` | DEC-029..098. **Living** — amend an entry when implementation moves; never bend implementation to fit a stale one |
 | `HANDOFF-INVARIANTS.md` | How composition work is done here: the invariant sweep, the ratchet, the planner/validator defect class |
 | `docs/EXAM_RULE_GAP_REGISTER.md` | Generated. Which examinations are encoded, which are not, and why |
 
@@ -391,9 +393,13 @@ unread). What is still open:
    `EXAM_PHOTO_SMTP_PASSWORD=<the owner's Resend API key>` and
    `EXAM_PHOTO_SMTP_FROM` on a domain verified in Resend. The owner puts the key
    in; it never goes into git.
-3. **Decision: who reviews Hindi pages.** Hindi waits on it. The hubs and the
-   compress tool were decided and built on 15 September (DEC-096): eight family
-   hubs at `/exams/{family}`, and `/compress-image`, free and in the browser.
+3. **Decision: who reviews Hindi pages.** The owner does not know yet (maybe
+   the owner, maybe a native speaker); Hindi pages are not built until someone
+   can review them. The hubs and the compress tool were built on 15 September
+   (DEC-096).
+6. **Going live** (DEC-097): buy the domain and an 8 GB server, and follow
+   `docs/LAUNCH_GUIDE.md`. The Resend key waits on the live domain. Ads are
+   not recommended now; the guide says why.
 4. **The rest of the research sheet**: `docs/research-requests/missing-information.csv`
    is 221 rows now. The owner's pass mostly gave values without the notice's
    passage; each still needs its passage before it can be imported.
@@ -408,19 +414,13 @@ compile under memory pressure.
 
 ### Open, older
 
-1. **Four deployment blockers**, found on 13 September and not fixed.
-   (a) `lib/api-client.ts` falls back to `http://127.0.0.1:8000` with `||` and
-   builds every address with `new URL(path, base)`, which throws on an empty
-   base — a same-origin deployment needs both changed, or every phone sends its
-   uploads to itself. (b) `deploy/web.Dockerfile` passes no build arguments, so
-   `EUK_BUSINESS_*`, `NEXT_PUBLIC_SITE_URL` and `NEXT_PUBLIC_TURNSTILE_SITE_KEY`
-   never reach the build, and `deploy/docker-compose.yml` sets a variable the app
-   does not read (`NEXT_PUBLIC_API_BASE_URL`); the support page also reads
-   `EUK_BUSINESS_*` at request time, so the web container needs them at runtime
-   too. (c) `/api/requests` refuses in production without
-   `UPLOADREADY_REQUESTS_DIR`, and the web container has no volume for it.
-   (d) The Caddyfile has no `www` redirect. The branch also needs merging to
-   `main` before a deploy.
+1. **The four deployment blockers are fixed** (DEC-097): same-origin uploads,
+   build-time settings passed to the web image, a requests volume, and a `www`
+   redirect. Still before a deploy: merge the branch to `main` and push (the
+   owner's call), and run `caddy validate` on the server, because this machine
+   could not run Docker to check the Caddyfile. **`docs/LAUNCH_GUIDE.md` is the
+   owner's step-by-step**: one 8 GB x86 server running the compose stack,
+   Cloudflare DNS, Turnstile, Resend, Razorpay, Search Console and Bing.
 3. **Regional languages are not ready**, and the owner intends them soon. No
    translation layer; copy is written into about 30 components; Big Shoulders
    and Petrona are Latin-only; 40 uppercase, 30 letter-spacing and 51
