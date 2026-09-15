@@ -84,6 +84,11 @@ temp/
 !apps/web/public/icon-maskable-512.png
 !apps/web/src/app/icon.png
 !apps/web/src/app/apple-icon.png
+# The stacked ExamUploadKit logo (the owner's point H, DEC-094), rendered from
+# the wordmark by apps/web/scripts/render-stacked-logo.mjs. Built on 14
+# September but never committed, because the image ban above ate it.
+!apps/web/public/brand/*.png
+!apps/web/public/brand/*.jpg
 # Ignore generated outputs
 output/
 downloads/
