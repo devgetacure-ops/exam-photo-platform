@@ -29,6 +29,7 @@ const MENU: { group: string; links: { href: string; label: string }[] }[] = [
             { href: "/exams", label: "Every examination, A to Z" },
             { href: "/about#how", label: "How it works" },
             { href: "/about#pricing", label: "What it costs" },
+            { href: "/compress-image", label: "Compress a photo to a size" },
             { href: "/pdf", label: "PDF tools" },
             { href: "/exam-request", label: "Ask for an examination" },
         ],

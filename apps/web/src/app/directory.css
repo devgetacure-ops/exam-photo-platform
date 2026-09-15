@@ -44,6 +44,18 @@
     }
 }
 
+/* The family hubs (DEC-096), just above the letter bar: the way in for a
+   candidate who knows the kind of examination but not its name. */
+.euk-directory-families {
+    padding: 0 20px 24px;
+}
+
+@media (min-width: 768px) {
+    .euk-directory-families {
+        padding: 0 48px 32px;
+    }
+}
+
 @media (min-width: 900px) {
     .euk-az {
         position: sticky;

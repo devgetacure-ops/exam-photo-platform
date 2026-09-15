@@ -63,16 +63,10 @@ Three things would hurt rather than help, and are ruled out:
 
 ## What to build, in order
 
-1. **A standalone "compress to size" tool** for photographs, signatures and
-   images (`compress photo to 20kb`, `reduce image size to 50kb`). These are
-   among the most searched tool phrases around application forms, they name no
-   examination, and today nothing on the site answers them. The engine already
-   compresses to a byte budget; the tool is a new page around it.
-2. **Hub pages by family** (SSC, banking, railways, police, teaching, state
-   commissions, defence, entrances): every examination in the family with its
-   photograph and signature figures in one table. They also pass authority to
-   the examination pages beneath them. They need the records' 29 `category`
-   values cleaned into these families first.
+1. ~~**A standalone "compress to size" tool**~~ **Built** (DEC-096):
+   `/compress-image`, free, in the candidate's browser.
+2. ~~**Hub pages by family**~~ **Built** (DEC-096): eight hubs at
+   `/exams/{family}`, grouped in `lib/exam-families.ts`.
 3. **Hindi pages** for the examinations candidates most often search in Hindi,
    starting with the family hubs and the highest-priority examinations. The
    typeface already covers Devanagari.

@@ -32,10 +32,12 @@ describe("the keyword map", () => {
             seen.add(row.keyword);
         }
         expect(rows.length).toBeGreaterThan(10_000);
-    });
+        // Three regexes over 30,000 rows: 1.7-2.5s alone, past vitest's 5s
+        // default when the machine is busy. A timeout here is not a finding.
+    }, 20_000);
 
     test("a page it points at exists, or the row says it is a page to build", () => {
-        const live = /^\/($|pdf$|exams$|exam-request$|exam\/[^/]+(\/rules)?$)/;
+        const live = /^\/($|pdf$|exams$|exams\/[a-z-]+$|compress-image$|exam-request$|exam\/[^/]+(\/rules)?$)/;
         for (const row of rows) {
             if (row.coverage === "gap") continue;
             expect(row.target_url, row.keyword).toMatch(live);

@@ -1,0 +1,179 @@
+/*
+ * ExamUploadKit — the exam family hubs (DEC-096).
+ *
+ * One examination per row: its name, then its photograph and signature sizes
+ * side by side on a wide screen and stacked on a phone. Never a table that
+ * scrolls sideways. The family links at the foot are shared with the
+ * directory and the compress page, which is why they live here.
+ */
+
+.euk-hub-top {
+    padding: 40px 20px 28px;
+}
+
+@media (min-width: 768px) {
+    .euk-hub-top {
+        padding: 72px 48px 40px;
+    }
+}
+
+.euk-hub-crumb a {
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--signal-deep);
+    text-underline-offset: 3px;
+}
+
+.euk-hub-title {
+    font-size: clamp(40px, 5.6vw, 80px);
+    line-height: 0.9;
+    text-wrap: balance;
+}
+
+.euk-hub-main {
+    padding: 0 20px 72px;
+}
+
+@media (min-width: 768px) {
+    .euk-hub-main {
+        padding: 0 48px 120px;
+    }
+}
+
+.euk-hub-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: var(--rule) solid var(--ink);
+}
+
+/* A row, not body copy: the reading measure app.css puts on every li would
+   stop it two-thirds of the way across the rule above it. */
+.euk .euk-hub-item {
+    max-width: none;
+}
+
+.euk-hub-item {
+    display: grid;
+    gap: 10px 32px;
+    padding: 20px 0;
+    border-bottom: var(--rule-thin) solid var(--hairline);
+}
+
+@media (min-width: 900px) {
+    .euk-hub-item {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr) auto;
+        align-items: center;
+    }
+}
+
+.euk-hub-name {
+    margin: 0;
+    font-size: 18px;
+    line-height: 1.3;
+    font-weight: 700;
+}
+
+.euk-hub-name a {
+    color: var(--ink);
+    text-decoration: none;
+}
+
+.euk-hub-name a:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--signal-deep);
+    text-underline-offset: 3px;
+}
+
+.euk .euk-hub-by {
+    margin: 4px 0 0;
+    font-size: 14px;
+    line-height: 1.45;
+    color: var(--ink-55);
+}
+
+.euk-hub-specs {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+}
+
+@media (min-width: 600px) {
+    .euk-hub-specs {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 20px;
+    }
+}
+
+.euk-hub-specs dt {
+    font-size: 12px;
+    line-height: 1.4;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-55);
+}
+
+.euk-hub-specs dd {
+    margin: 2px 0 0;
+    font-size: 15px;
+    line-height: 1.45;
+    color: var(--ink);
+    overflow-wrap: anywhere;
+}
+
+.euk-hub-go {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    font-weight: 700;
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--signal-deep);
+    text-underline-offset: 4px;
+    white-space: nowrap;
+    justify-self: start;
+}
+
+.euk .euk-hub-note {
+    margin: 20px 0 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--ink-55);
+}
+
+.euk-hub-families {
+    margin-top: 56px;
+}
+
+.euk-hub-families h2 {
+    margin: 0 0 16px;
+    font-size: clamp(28px, 4vw, 44px);
+    line-height: 0.95;
+}
+
+.euk-hub-families ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.euk-hub-families a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 16px;
+    border: var(--rule-thin) solid var(--ink);
+    background: var(--paper);
+    color: var(--ink);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.euk-hub-families a:hover {
+    background: var(--signal-soft);
+}

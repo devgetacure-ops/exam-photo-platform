@@ -6,9 +6,9 @@ Written by `apps/web/scripts/build-keywords.mjs` from the examination records. D
 
 | Coverage | Keywords |
 |---|---:|
-| explains | 20,967 |
-| prepares | 8,129 |
-| gap | 934 |
+| explains | 21,150 |
+| prepares | 8,613 |
+| gap | 267 |
 
 | Priority | Keywords |
 |---|---:|
@@ -49,10 +49,8 @@ Written by `apps/web/scripts/build-keywords.mjs` from the examination records. D
 
 | Page | Pages | Keywords | P1 | For example |
 |---|---:|---:|---:|---|
-| `/compress-image` | 1 | 484 | 26 | `compress image to 100kb` |
 | `/resize/… (one page per published figure)` | 42 | 200 | 6 | `compress photo to 100kb` |
 | `/compress-pdf` | 1 | 21 | 6 | `compress pdf to 100kb` |
-| `/exams/… (one hub per family)` | 10 | 183 | 0 | `army exam photo and signature size` |
 | `/photo-size-for-exams` | 1 | 10 | 0 | `exam photo size` |
 | `/hi` | 1 | 10 | 0 | `ऑनलाइन फॉर्म के लिए फोटो` |
 | `/crop-photo` | 1 | 9 | 0 | `3.5 x 4.5 cm photo` |

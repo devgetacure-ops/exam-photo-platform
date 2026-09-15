@@ -15,6 +15,8 @@ import "./states.css";
 import "./directory.css";
 import "./rules.css";
 import "./pdf.css";
+import "./hub.css";
+import "./compress.css";
 import "./mobile.css";
 import { InstallCard } from "../components/m/install-card";
 import { INSTALL_LISTENER_SCRIPT } from "../lib/install";

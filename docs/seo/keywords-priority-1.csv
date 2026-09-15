@@ -3,32 +3,32 @@ exam upload kit,brand,navigational,en,1,/,prepares,,the site itself
 exam upload kit photo resize,brand,navigational,en,1,/,prepares,,the site itself
 examuploadkit,brand,navigational,en,1,/,prepares,,the site itself
 examuploadkit.com,brand,navigational,en,1,/,prepares,,the site itself
-compress image to 100kb,compress-image-to-size,tool,en,1,/compress-image,gap,,needs a standalone compress-to-size tool
-compress image to 200kb,compress-image-to-size,tool,en,1,/compress-image,gap,,needs a standalone compress-to-size tool
-compress image to 20kb,compress-image-to-size,tool,en,1,/compress-image,gap,,needs a standalone compress-to-size tool
-compress image to 50kb,compress-image-to-size,tool,en,1,/compress-image,gap,,needs a standalone compress-to-size tool
-compress jpg to 100kb,compress-image-to-size,tool,en,1,/compress-image,gap,,needs a standalone compress-to-size tool
-compress jpg to 200kb,compress-image-to-size,tool,en,1,/compress-image,gap,,needs a standalone compress-to-size tool
-compress jpg to 20kb,compress-image-to-size,tool,en,1,/compress-image,gap,,needs a standalone compress-to-size tool
-compress jpg to 50kb,compress-image-to-size,tool,en,1,/compress-image,gap,,needs a standalone compress-to-size tool
-compress photo to 20kb,compress-image-to-size,tool,en,1,/compress-image,gap,,needs a standalone compress-to-size tool
-compress signature to 200kb,compress-image-to-size,tool,en,1,/compress-image,gap,,needs a standalone compress-to-size tool
-reduce image size to 100kb,compress-image-to-size,tool,en,1,/compress-image,gap,,needs a standalone compress-to-size tool
-reduce image size to 200kb,compress-image-to-size,tool,en,1,/compress-image,gap,,needs a standalone compress-to-size tool
-reduce image size to 20kb,compress-image-to-size,tool,en,1,/compress-image,gap,,needs a standalone compress-to-size tool
-reduce image size to 50kb,compress-image-to-size,tool,en,1,/compress-image,gap,,needs a standalone compress-to-size tool
-reduce jpg size to 100kb,compress-image-to-size,tool,en,1,/compress-image,gap,,needs a standalone compress-to-size tool
-reduce jpg size to 200kb,compress-image-to-size,tool,en,1,/compress-image,gap,,needs a standalone compress-to-size tool
-reduce jpg size to 20kb,compress-image-to-size,tool,en,1,/compress-image,gap,,needs a standalone compress-to-size tool
-reduce jpg size to 50kb,compress-image-to-size,tool,en,1,/compress-image,gap,,needs a standalone compress-to-size tool
-reduce photo size to 100kb,compress-image-to-size,tool,en,1,/compress-image,gap,,needs a standalone compress-to-size tool
-reduce photo size to 200kb,compress-image-to-size,tool,en,1,/compress-image,gap,,needs a standalone compress-to-size tool
-reduce photo size to 20kb,compress-image-to-size,tool,en,1,/compress-image,gap,,needs a standalone compress-to-size tool
-reduce photo size to 50kb,compress-image-to-size,tool,en,1,/compress-image,gap,,needs a standalone compress-to-size tool
-reduce signature size to 100kb,compress-image-to-size,tool,en,1,/compress-image,gap,,needs a standalone compress-to-size tool
-reduce signature size to 200kb,compress-image-to-size,tool,en,1,/compress-image,gap,,needs a standalone compress-to-size tool
-reduce signature size to 20kb,compress-image-to-size,tool,en,1,/compress-image,gap,,needs a standalone compress-to-size tool
-reduce signature size to 50kb,compress-image-to-size,tool,en,1,/compress-image,gap,,needs a standalone compress-to-size tool
+compress image to 100kb,compress-image-to-size,tool,en,1,/compress-image,prepares,,"the compress-to-size tool, in the browser"
+compress image to 200kb,compress-image-to-size,tool,en,1,/compress-image,prepares,,"the compress-to-size tool, in the browser"
+compress image to 20kb,compress-image-to-size,tool,en,1,/compress-image,prepares,,"the compress-to-size tool, in the browser"
+compress image to 50kb,compress-image-to-size,tool,en,1,/compress-image,prepares,,"the compress-to-size tool, in the browser"
+compress jpg to 100kb,compress-image-to-size,tool,en,1,/compress-image,prepares,,"the compress-to-size tool, in the browser"
+compress jpg to 200kb,compress-image-to-size,tool,en,1,/compress-image,prepares,,"the compress-to-size tool, in the browser"
+compress jpg to 20kb,compress-image-to-size,tool,en,1,/compress-image,prepares,,"the compress-to-size tool, in the browser"
+compress jpg to 50kb,compress-image-to-size,tool,en,1,/compress-image,prepares,,"the compress-to-size tool, in the browser"
+compress photo to 20kb,compress-image-to-size,tool,en,1,/compress-image,prepares,,"the compress-to-size tool, in the browser"
+compress signature to 200kb,compress-image-to-size,tool,en,1,/compress-image,prepares,,"the compress-to-size tool, in the browser"
+reduce image size to 100kb,compress-image-to-size,tool,en,1,/compress-image,prepares,,"the compress-to-size tool, in the browser"
+reduce image size to 200kb,compress-image-to-size,tool,en,1,/compress-image,prepares,,"the compress-to-size tool, in the browser"
+reduce image size to 20kb,compress-image-to-size,tool,en,1,/compress-image,prepares,,"the compress-to-size tool, in the browser"
+reduce image size to 50kb,compress-image-to-size,tool,en,1,/compress-image,prepares,,"the compress-to-size tool, in the browser"
+reduce jpg size to 100kb,compress-image-to-size,tool,en,1,/compress-image,prepares,,"the compress-to-size tool, in the browser"
+reduce jpg size to 200kb,compress-image-to-size,tool,en,1,/compress-image,prepares,,"the compress-to-size tool, in the browser"
+reduce jpg size to 20kb,compress-image-to-size,tool,en,1,/compress-image,prepares,,"the compress-to-size tool, in the browser"
+reduce jpg size to 50kb,compress-image-to-size,tool,en,1,/compress-image,prepares,,"the compress-to-size tool, in the browser"
+reduce photo size to 100kb,compress-image-to-size,tool,en,1,/compress-image,prepares,,"the compress-to-size tool, in the browser"
+reduce photo size to 200kb,compress-image-to-size,tool,en,1,/compress-image,prepares,,"the compress-to-size tool, in the browser"
+reduce photo size to 20kb,compress-image-to-size,tool,en,1,/compress-image,prepares,,"the compress-to-size tool, in the browser"
+reduce photo size to 50kb,compress-image-to-size,tool,en,1,/compress-image,prepares,,"the compress-to-size tool, in the browser"
+reduce signature size to 100kb,compress-image-to-size,tool,en,1,/compress-image,prepares,,"the compress-to-size tool, in the browser"
+reduce signature size to 200kb,compress-image-to-size,tool,en,1,/compress-image,prepares,,"the compress-to-size tool, in the browser"
+reduce signature size to 20kb,compress-image-to-size,tool,en,1,/compress-image,prepares,,"the compress-to-size tool, in the browser"
+reduce signature size to 50kb,compress-image-to-size,tool,en,1,/compress-image,prepares,,"the compress-to-size tool, in the browser"
 compress pdf to 100kb,compress-pdf-to-size,tool,en,1,/compress-pdf,gap,,the PDF page describes compression that runs inside a kit; a standalone tool is needed
 compress pdf to 200kb,compress-pdf-to-size,tool,en,1,/compress-pdf,gap,,the PDF page describes compression that runs inside a kit; a standalone tool is needed
 compress pdf to 500kb,compress-pdf-to-size,tool,en,1,/compress-pdf,gap,,the PDF page describes compression that runs inside a kit; a standalone tool is needed
@@ -39,7 +39,7 @@ adre grade iii photo and signature size,exam-application,informational,en,1,/exa
 adre grade iv photo and signature size,exam-application,informational,en,1,/exam/assam-direct-recruitment-grade-iv/rules,explains,assam-direct-recruitment-grade-iv,record assam-direct-recruitment-grade-iv
 agnipath photo and signature size,exam-application,informational,en,1,/exam/indian-army-agniveer-cee-2025-26-online-upload/rules,explains,indian-army-agniveer-cee-2025-26-online-upload|indian-army-agniveer-recruitment,record indian-army-agniveer-cee-2025-26-online-upload
 agniveer cee photo and signature size,exam-application,informational,en,1,/exam/indian-army-agniveer-cee-2025-26-online-upload/rules,explains,indian-army-agniveer-cee-2025-26-online-upload,record indian-army-agniveer-cee-2025-26-online-upload
-agniveer photo and signature size,exam-application,informational,en,1,/exam/indian-army-agniveer-cee-2025-26-online-upload/rules,explains,indian-army-agniveer-cee-2025-26-online-upload|indian-army-agniveer-recruitment|indian-air-force-agniveervayu-recruitment|indian-army-agniveer-cee-2025-26-online-upload|indian-army-agniveer-recruitment,record indian-army-agniveer-cee-2025-26-online-upload
+agniveer photo and signature size,exam-application,informational,en,1,/exam/indian-army-agniveer-cee-2025-26-online-upload/rules,explains,indian-army-agniveer-cee-2025-26-online-upload|indian-army-agniveer-recruitment|indian-air-force-agniveervayu-recruitment|indian-army-agniveer-cee-2025-26-online-upload|indian-army-agniveer-recruitment|upsc-combined-defence-services-examination-ii-2026|upsc-nda-na-examination-ii-2026,record indian-army-agniveer-cee-2025-26-online-upload
 agniveervayu photo and signature size,exam-application,informational,en,1,/exam/indian-air-force-agniveervayu-recruitment/rules,explains,indian-air-force-agniveervayu-recruitment,record indian-air-force-agniveervayu-recruitment
 aima mat photo and signature size,exam-application,informational,en,1,/exam/management-aptitude-test-2026/rules,explains,management-aptitude-test-2026,record management-aptitude-test-2026
 air force agniveer photo and signature size,exam-application,informational,en,1,/exam/indian-air-force-agniveervayu-recruitment/rules,explains,indian-air-force-agniveervayu-recruitment,record indian-air-force-agniveervayu-recruitment
@@ -306,7 +306,7 @@ agnipath photo resize,exam-file-prepare,tool,en,1,/exam/indian-army-agniveer-cee
 agnipath signature resize,exam-file-prepare,tool,en,1,/exam/indian-army-agniveer-cee-2025-26-online-upload,prepares,indian-army-agniveer-cee-2025-26-online-upload|indian-army-agniveer-recruitment,record indian-army-agniveer-cee-2025-26-online-upload
 agniveer cee photo resize,exam-file-prepare,tool,en,1,/exam/indian-army-agniveer-cee-2025-26-online-upload,explains,indian-army-agniveer-cee-2025-26-online-upload,record indian-army-agniveer-cee-2025-26-online-upload
 agniveer cee signature resize,exam-file-prepare,tool,en,1,/exam/indian-army-agniveer-cee-2025-26-online-upload,prepares,indian-army-agniveer-cee-2025-26-online-upload,record indian-army-agniveer-cee-2025-26-online-upload
-agniveer photo resize,exam-file-prepare,tool,en,1,/exam/indian-army-agniveer-cee-2025-26-online-upload,explains,indian-army-agniveer-cee-2025-26-online-upload|indian-army-agniveer-recruitment|indian-air-force-agniveervayu-recruitment|indian-army-agniveer-cee-2025-26-online-upload|indian-army-agniveer-recruitment,record indian-army-agniveer-cee-2025-26-online-upload
+agniveer photo resize,exam-file-prepare,tool,en,1,/exam/indian-army-agniveer-cee-2025-26-online-upload,explains,indian-army-agniveer-cee-2025-26-online-upload|indian-army-agniveer-recruitment|indian-air-force-agniveervayu-recruitment|indian-army-agniveer-cee-2025-26-online-upload|indian-army-agniveer-recruitment|upsc-combined-defence-services-examination-ii-2026|upsc-nda-na-examination-ii-2026,record indian-army-agniveer-cee-2025-26-online-upload
 agniveer signature resize,exam-file-prepare,tool,en,1,/exam/indian-army-agniveer-cee-2025-26-online-upload,prepares,indian-army-agniveer-cee-2025-26-online-upload|indian-army-agniveer-recruitment,record indian-army-agniveer-cee-2025-26-online-upload
 agniveervayu photo resize,exam-file-prepare,tool,en,1,/exam/indian-air-force-agniveervayu-recruitment,explains,indian-air-force-agniveervayu-recruitment,record indian-air-force-agniveervayu-recruitment
 agniveervayu signature resize,exam-file-prepare,tool,en,1,/exam/indian-air-force-agniveervayu-recruitment,prepares,indian-air-force-agniveervayu-recruitment,record indian-air-force-agniveervayu-recruitment
@@ -893,8 +893,8 @@ agnipath photo size,exam-file-size,informational,en,1,/exam/indian-army-agniveer
 agnipath signature size,exam-file-size,informational,en,1,/exam/indian-army-agniveer-cee-2025-26-online-upload/rules,explains,indian-army-agniveer-cee-2025-26-online-upload|indian-army-agniveer-recruitment,record indian-army-agniveer-cee-2025-26-online-upload
 agniveer cee photo size,exam-file-size,informational,en,1,/exam/indian-army-agniveer-cee-2025-26-online-upload/rules,explains,indian-army-agniveer-cee-2025-26-online-upload,record indian-army-agniveer-cee-2025-26-online-upload
 agniveer cee signature size,exam-file-size,informational,en,1,/exam/indian-army-agniveer-cee-2025-26-online-upload/rules,explains,indian-army-agniveer-cee-2025-26-online-upload,record indian-army-agniveer-cee-2025-26-online-upload
-agniveer photo size,exam-file-size,informational,en,1,/exam/indian-army-agniveer-cee-2025-26-online-upload/rules,explains,indian-army-agniveer-cee-2025-26-online-upload|indian-army-agniveer-recruitment|indian-air-force-agniveervayu-recruitment|indian-army-agniveer-cee-2025-26-online-upload|indian-army-agniveer-recruitment,record indian-army-agniveer-cee-2025-26-online-upload
-agniveer signature size,exam-file-size,informational,en,1,/exam/indian-army-agniveer-cee-2025-26-online-upload/rules,explains,indian-army-agniveer-cee-2025-26-online-upload|indian-army-agniveer-recruitment|indian-air-force-agniveervayu-recruitment|indian-army-agniveer-cee-2025-26-online-upload|indian-army-agniveer-recruitment,record indian-army-agniveer-cee-2025-26-online-upload
+agniveer photo size,exam-file-size,informational,en,1,/exam/indian-army-agniveer-cee-2025-26-online-upload/rules,explains,indian-army-agniveer-cee-2025-26-online-upload|indian-army-agniveer-recruitment|indian-air-force-agniveervayu-recruitment|indian-army-agniveer-cee-2025-26-online-upload|indian-army-agniveer-recruitment|upsc-combined-defence-services-examination-ii-2026|upsc-nda-na-examination-ii-2026,record indian-army-agniveer-cee-2025-26-online-upload
+agniveer signature size,exam-file-size,informational,en,1,/exam/indian-army-agniveer-cee-2025-26-online-upload/rules,explains,indian-army-agniveer-cee-2025-26-online-upload|indian-army-agniveer-recruitment|indian-air-force-agniveervayu-recruitment|indian-army-agniveer-cee-2025-26-online-upload|indian-army-agniveer-recruitment|upsc-combined-defence-services-examination-ii-2026|upsc-nda-na-examination-ii-2026,record indian-army-agniveer-cee-2025-26-online-upload
 agniveervayu photo size,exam-file-size,informational,en,1,/exam/indian-air-force-agniveervayu-recruitment/rules,explains,indian-air-force-agniveervayu-recruitment,record indian-air-force-agniveervayu-recruitment
 agniveervayu signature size,exam-file-size,informational,en,1,/exam/indian-air-force-agniveervayu-recruitment/rules,explains,indian-air-force-agniveervayu-recruitment,record indian-air-force-agniveervayu-recruitment
 aima mat photo size,exam-file-size,informational,en,1,/exam/management-aptitude-test-2026/rules,explains,management-aptitude-test-2026,record management-aptitude-test-2026

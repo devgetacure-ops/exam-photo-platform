@@ -255,6 +255,11 @@ export function PhoneSearch() {
                     >
                         Not on the list? Tell us which one
                     </a>
+                    {/* A plain anchor on purpose, like the one above: leaveTo
+                        closes the dialog before it navigates. The lint rule
+                        began to notice this one once /exams gained pages
+                        beneath it (DEC-096). */}
+                    {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
                     <a href="/exams" onClick={leaveTo("/exams")}>
                         Browse every examination, A to Z
                     </a>

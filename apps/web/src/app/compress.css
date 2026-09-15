@@ -1,0 +1,217 @@
+/*
+ * ExamUploadKit — compress a photo to a size (DEC-096).
+ *
+ * The tool sits beside the headline on a wide screen and under it on a
+ * phone, so it is on the first screen either way. Every control is a 44px
+ * target and the size field is 16px, so a phone does not zoom into it.
+ */
+
+.euk-cmp-top {
+    padding: 40px 20px 48px;
+}
+
+@media (min-width: 768px) {
+    .euk-cmp-top {
+        padding: 72px 48px 72px;
+    }
+}
+
+.euk-cmp-head {
+    display: grid;
+    gap: 28px;
+}
+
+@media (min-width: 1000px) {
+    .euk-cmp-head {
+        grid-template-columns: minmax(0, 1fr) minmax(320px, 440px);
+        gap: 56px;
+        align-items: start;
+    }
+}
+
+.euk-cmp-title {
+    font-size: clamp(40px, 5.6vw, 80px);
+    line-height: 0.9;
+    text-wrap: balance;
+}
+
+.euk-cmp-tool {
+    padding: 20px;
+    border: var(--rule) solid var(--ink);
+    background: var(--paper);
+}
+
+.euk-cmp-limit {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-width: 0;
+}
+
+.euk .euk-cmp-label {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.4;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-55);
+}
+
+.euk .euk-cmp-step {
+    margin-top: 24px;
+}
+
+.euk-cmp-sizes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 10px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.euk-cmp-size {
+    min-width: 72px;
+    min-height: 44px;
+    padding: 0 14px;
+    border: var(--rule-thin) solid var(--ink);
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.euk-cmp-size[aria-pressed="true"] {
+    background: var(--ink);
+    color: var(--paper);
+}
+
+.euk-cmp-size:disabled {
+    cursor: default;
+}
+
+.euk-cmp-custom {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    font-size: 15px;
+    color: var(--ink-70);
+}
+
+.euk-cmp-custom input {
+    width: 6.5em;
+    min-height: 44px;
+    padding: 0 10px;
+    border: var(--rule-thin) solid var(--ink);
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 16px;
+}
+
+.euk-cmp-choose {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.euk .euk-cmp-privacy {
+    margin: 10px 0 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--ink-55);
+}
+
+.euk .euk-cmp-status {
+    margin: 14px 0 0;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--ink);
+}
+
+.euk .euk-cmp-status:empty {
+    display: none;
+}
+
+.euk .euk-cmp-error {
+    margin: 14px 0 0;
+    padding: 12px 14px;
+    border: var(--rule-thin) solid var(--signal-deep);
+    background: var(--signal-soft);
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.euk-cmp-result {
+    display: grid;
+    gap: 14px;
+    margin-top: 16px;
+}
+
+.euk-cmp-preview {
+    justify-self: start;
+    max-width: 100%;
+    max-height: 280px;
+    width: auto;
+    border: var(--rule-thin) solid var(--ink);
+    background: var(--paper-2);
+}
+
+.euk-cmp-download {
+    width: 100%;
+    overflow-wrap: anywhere;
+}
+
+.euk-cmp-again {
+    min-height: 44px;
+    margin-top: 12px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--ink);
+    font-size: 16px;
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-color: var(--signal-deep);
+    text-underline-offset: 4px;
+    cursor: pointer;
+}
+
+.euk-cmp-more {
+    padding: 48px 20px 72px;
+    border-top: var(--rule) solid var(--ink);
+}
+
+@media (min-width: 768px) {
+    .euk-cmp-more {
+        padding: 72px 48px 120px;
+    }
+}
+
+.euk-cmp-more h2 {
+    margin: 0 0 16px;
+    font-size: clamp(30px, 4.4vw, 56px);
+    line-height: 0.95;
+}
+
+.euk .euk-cmp-more p {
+    max-width: 62ch;
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--ink-70);
+}
+
+/* Its chevron on the same line as its words, as the directory's button has. */
+.euk .euk-cmp-more .primary-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.euk-cmp-families {
+    margin-top: 28px;
+}

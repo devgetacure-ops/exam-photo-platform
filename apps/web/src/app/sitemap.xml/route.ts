@@ -1,5 +1,6 @@
 import { loadExams } from "../../lib/catalogue.server";
 import { SITE_URL } from "../../lib/site";
+import { EXAM_FAMILIES } from "../../lib/exam-families";
 
 // The host the canonicals name (DEC-087), not whichever address the request
 // came in on: behind a proxy that is an internal name.
@@ -9,6 +10,8 @@ export async function GET() {
     const routes = [
         "/",
         "/exams",
+        ...EXAM_FAMILIES.map((family) => `/exams/${family.slug}`),
+        "/compress-image",
         "/pdf",
         "/exam-request",
         "/support",

@@ -6,6 +6,7 @@ import { SiteFooter } from "../../components/site-footer";
 import { Chevron } from "../../components/euk/doodles";
 import { JsonLd } from "../../components/json-ld";
 import { absoluteUrl, breadcrumbs, pageMetadata } from "../../lib/site";
+import { EXAM_FAMILIES } from "../../lib/exam-families";
 
 export async function generateMetadata() {
     const { exams } = await loadSearchIndex();
@@ -94,6 +95,18 @@ export default async function ExamsPage() {
                         </div>
                     </div>
                 </section>
+
+                <div className="euk-wrap euk-directory-families">
+                    <nav className="euk-hub-families" aria-label="Examinations by family">
+                        <ul>
+                            {EXAM_FAMILIES.map((family) => (
+                                <li key={family.slug}>
+                                    <Link href={`/exams/${family.slug}`}>{family.name}</Link>
+                                </li>
+                            ))}
+                        </ul>
+                    </nav>
+                </div>
 
                 <nav aria-label="Jump to a letter" className="euk-az">
                     <div className="euk-wrap euk-az-row">

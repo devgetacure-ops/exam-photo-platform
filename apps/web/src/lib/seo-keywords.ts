@@ -158,35 +158,27 @@ class Rows {
     }
 }
 
-/** Which family hub an examination belongs to, from its category and body. */
-function familyOf(record: RawRecord): string | null {
-    const category = record.exam?.category ?? "";
-    const body = record.exam?.conducting_body ?? "";
-    if (/staff selection commission/i.test(body) && !/bihar|jharkhand|haryana|delhi subordinate|odisha|rajasthan|uttar pradesh/i.test(body)) return "ssc";
-    if (/union public service commission/i.test(body)) return "upsc";
-    if (category === "banking") return "banking";
-    if (category === "insurance") return "insurance";
-    if (/^rail/.test(category)) return "railway";
-    if (category === "police_recruitment") return "police";
-    if (/^teach/.test(category) || /^teacher_(eligibility|recruitment)$/.test(category)) return "teaching";
-    if (/^defence/.test(category)) return "defence";
-    if (/^state_psc/.test(category)) return "state-psc";
-    if (/entrance$/.test(category)) return "entrance";
-    return null;
-}
+/**
+ * The family hubs (DEC-096). A copy of `lib/exam-families.ts`, because this
+ * file imports nothing; `exam-families.test.ts` fails if the two ever send an
+ * examination to different hubs.
+ */
+const FAMILY_TARGETS: { slug: string; words: string[]; categories: string[] }[] = [
+    { slug: "ssc-and-upsc", words: ["ssc", "ssc exam", "upsc", "upsc exam"], categories: ["central_recruitment"] },
+    { slug: "banking-and-insurance", words: ["bank exam", "banking exam", "ibps", "bank po", "insurance exam", "lic exam"], categories: ["banking", "insurance"] },
+    { slug: "railways", words: ["railway exam", "rrb", "railway"], categories: ["railway_recruitment", "railway_security", "railways"] },
+    { slug: "police", words: ["police exam", "police constable", "police recruitment"], categories: ["police_recruitment"] },
+    { slug: "defence", words: ["defence exam", "agniveer", "army exam"], categories: ["defence", "defence_recruitment"] },
+    { slug: "teaching", words: ["tet", "teacher exam", "teacher recruitment"], categories: ["teacher_eligibility", "teacher_recruitment", "teacher_education_entrance", "teaching_eligibility", "teaching_research_eligibility", "teaching_and_non_teaching_recruitment"] },
+    { slug: "state-commissions", words: ["psc exam", "state psc"], categories: ["state_psc", "state_psc_recruitment", "state_recruitment", "state_recruitment_family", "state_common_eligibility", "state_recruitment_common_eligibility"] },
+    { slug: "entrance-exams", words: ["entrance exam", "engineering entrance", "medical entrance"], categories: ["entrance", "state_entrance", "management_entrance", "medical_entrance", "private_entrance", "school_admission_entrance"] },
+];
 
-const FAMILY_WORDS: Record<string, string[]> = {
-    ssc: ["ssc", "ssc exam"],
-    upsc: ["upsc", "upsc exam"],
-    banking: ["bank exam", "banking exam", "ibps", "bank po"],
-    insurance: ["insurance exam", "lic exam"],
-    railway: ["railway exam", "rrb", "railway"],
-    police: ["police exam", "police constable", "police recruitment"],
-    teaching: ["tet", "teacher exam", "teacher recruitment"],
-    defence: ["defence exam", "agniveer", "army exam"],
-    "state-psc": ["psc exam", "state psc"],
-    entrance: ["entrance exam", "engineering entrance", "medical entrance"],
-};
+/** Which family hub an examination belongs to, from its category. */
+export function familySlugOf(record: RawRecord): string | null {
+    const category = record.exam?.category ?? "";
+    return FAMILY_TARGETS.find((family) => family.categories.includes(category))?.slug ?? null;
+}
 
 function examRows(rows: Rows, record: RawRecord): void {
     const exam = record.exam;
@@ -383,11 +375,11 @@ function genericRows(rows: Rows): void {
         "standard photo size for exam form", "photo size for government exam", "sarkari form photo size",
     ]) info(k, 2);
 
-    // Compression to a size: a standalone tool the site does not have yet.
+    // Compression to a size: the free in-browser tool (DEC-096).
     const sizes = ["10kb", "15kb", "20kb", "25kb", "30kb", "40kb", "50kb", "60kb", "80kb", "100kb", "150kb", "200kb", "300kb", "500kb", "1mb", "2mb"];
     const common = new Set(["20kb", "50kb", "100kb", "200kb"]);
     for (const object of ["photo", "image", "jpg", "jpeg", "png", "signature", "passport size photo", "picture"]) {
-        const tool = gen("compress-image-to-size", "tool", "/compress-image", "gap", "needs a standalone compress-to-size tool");
+        const tool = gen("compress-image-to-size", "tool", "/compress-image", "prepares", "the compress-to-size tool, in the browser");
         for (const size of sizes) {
             const spaced = size.replace(/(kb|mb)$/, " $1");
             const p: 1 | 2 | 3 = common.has(size) && ["photo", "image", "signature", "jpg"].includes(object) ? 1 : object === "picture" || object === "png" ? 3 : 2;
@@ -452,14 +444,16 @@ function genericRows(rows: Rows): void {
 function familyRows(rows: Rows, records: RawRecord[]): void {
     const members = new Map<string, string[]>();
     for (const record of records) {
-        const family = familyOf(record);
+        const family = familySlugOf(record);
         const id = record.exam?.exam_id;
         if (family && id) members.set(family, [...(members.get(family) ?? []), id]);
     }
     for (const [family, ids] of members) {
         const target = `/exams/${family}`;
-        for (const f of FAMILY_WORDS[family] ?? []) {
-            const common = { cluster: "exam-family", intent: "informational" as const, language: "en" as const, target_url: target, coverage: "gap" as const, exam_ids: ids.join("|"), basis: `hub page for ${ids.length} examinations` };
+        const words = FAMILY_TARGETS.find((entry) => entry.slug === family)?.words ?? [];
+        for (const f of words) {
+            // The hub lists the sizes; the resizing itself happens on each exam page.
+            const common = { cluster: "exam-family", intent: "informational" as const, language: "en" as const, target_url: target, coverage: "explains" as const, exam_ids: ids.join("|"), basis: `hub page for ${ids.length} examinations` };
             rows.add({ ...common, keyword: `${f} photo size`, priority: 2 });
             rows.add({ ...common, keyword: `${f} signature size`, priority: 2 });
             rows.add({ ...common, keyword: `${f} photo size in kb`, priority: 3 });
