@@ -170,6 +170,84 @@
         "cycle": "2025"
       }
     ],
+    "bits-admission-test": [
+      {
+        "kind": "process",
+        "text": "BITSAT can be taken twice, and the higher of the two scores is the one considered.",
+        "source_url": "https://www.bitsadmission.com/BITSAT_LP/index.html",
+        "source_title": "BITSAT 2026 admission page",
+        "source_quote": "Take your second attempt. The higher of the two scores will be considered.",
+        "publisher": "BITS Pilani",
+        "official_source": true,
+        "as_of": "2026-09-15",
+        "confidence": 5,
+        "cycle": "2026"
+      },
+      {
+        "kind": "structure",
+        "text": "Each BITSAT-2026 session is 3 hours without a break, in four parts: Physics, Chemistry, English Proficiency and Logical Reasoning, and Mathematics or Biology.",
+        "source_url": "https://www.bitsadmission.com/FD/downloads/BITSAT-2026_brochure.pdf",
+        "source_title": "BITSAT-2026 Brochure",
+        "source_quote": "Each session of BITSAT-2026 will be of 3 hours duration (without break), comprising the following 4 parts: Part I: Physics Part II: Chemistry Part III: (a) English Proficiency and (b) Logical Reasoning Part IV: Mathematics or Biology",
+        "publisher": "BITS Pilani",
+        "official_source": true,
+        "as_of": "2026-09-15",
+        "confidence": 5,
+        "cycle": "2026"
+      }
+    ],
+    "bpsc-online-application": [
+      {
+        "kind": "history",
+        "text": "The Bihar Public Service Commission came into existence on 1 April 1949, and its headquarters moved from Ranchi to Patna on 1 March 1951.",
+        "source_url": "https://bpsc.bihar.gov.in/history/",
+        "source_title": "History of BPSC",
+        "source_quote": "The Bihar Public Service Commission came into existence from 1st April 1949 after its separation from the Commission for the States of Orissa and Madhya Pradesh, in accordance with sub-section (1) of section 261 of the Government of India Act, 1935, as adapted. Its constitutional status was pronounced with the promulgation of Constitution of India on 26th January, 1950. It is a Constitutional Body under Article 315 of the Constitution of India. The Bihar Public Service Commission initially began its functioning for the State of Bihar with its headquarters at Ranchi. The State Government decided to shift the headquarters of the Commission from Ranchi to Patna and it was finally shifted to Patna on 1st March 1951",
+        "publisher": "Bihar Public Service Commission",
+        "official_source": true,
+        "as_of": "2026-09-15",
+        "confidence": 5,
+        "cycle": null
+      },
+      {
+        "kind": "process",
+        "text": "BPSC accepts applications only online; an application sent by courier or post is not accepted.",
+        "source_url": "https://bpsc.bihar.gov.in/faqs/",
+        "source_title": "BPSC Frequently Asked Questions",
+        "source_quote": "Can I submit the applications via courier or at the counter, or through post? NO, only online applications are accepted. Any applications via courier or through post are not accepted",
+        "publisher": "Bihar Public Service Commission",
+        "official_source": true,
+        "as_of": "2026-09-15",
+        "confidence": 5,
+        "cycle": null
+      }
+    ],
+    "bpsc-teacher-recruitment-examination-tre": [
+      {
+        "kind": "history",
+        "text": "BPSC cancelled the TRE 3.0 teacher recruitment examination in March 2024 over an alleged paper leak.",
+        "source_url": "https://indianexpress.com/article/education/bpsc-tre-3-0-answer-key-out-for-school-teacher-recruitment-exam-raise-objections-9539240/",
+        "source_title": "BPSC TRE 3.0: Answer key released for school teacher recruitment exam",
+        "source_quote": "Earlier, in March 2024, BPSC had cancelled the teacher recruitment exam (TRE 3.0) exam due to an alleged paper leak.",
+        "publisher": "The Indian Express",
+        "official_source": false,
+        "as_of": "2026-09-15",
+        "confidence": 4,
+        "cycle": "TRE 3.0 (2024)"
+      },
+      {
+        "kind": "volume",
+        "text": "5,81,305 candidates applied for BPSC TRE 3.0, which was held to fill around 87,709 teacher vacancies.",
+        "source_url": "https://indianexpress.com/article/education/bpsc-tre-3-0-answer-key-out-for-school-teacher-recruitment-exam-raise-objections-9539240/",
+        "source_title": "BPSC TRE 3.0: Answer key released for school teacher recruitment exam",
+        "source_quote": "BPSC TRE 3.0 was conducted on March 15 in two shifts. The teacher recruitment drive was being conducted to fill up around 87,709 vacancies. As many as 5,81,305 candidates had applied for the recruitment exam.",
+        "publisher": "The Indian Express",
+        "official_source": false,
+        "as_of": "2026-09-15",
+        "confidence": 4,
+        "cycle": "TRE 3.0 (2024)"
+      }
+    ],
     "bssc-second-inter-level-combined-competitive-examination": [
       {
         "kind": "volume",
@@ -182,6 +260,46 @@
         "as_of": "2026-09-13",
         "confidence": 5,
         "cycle": "2023"
+      }
+    ],
+    "cbse-classes-ix-xi-registration-2025-26": [
+      {
+        "kind": "process",
+        "text": "CBSE runs registration for Classes IX and XI separately from the List of Candidates that schools submit for Classes X and XII.",
+        "source_url": "https://www.cbse.gov.in/cbsenew/documents/Prior_Intimation_LOC_2526_31072025.pdf",
+        "source_title": "Prior intimation of submission of List of Candidates (LOC) 2025-26",
+        "source_quote": "The most important activities i.e. registration process in Classes IX and XI and LOC Submission in Class X and Xll will start shotly",
+        "publisher": "Central Board of Secondary Education",
+        "official_source": true,
+        "as_of": "2026-09-15",
+        "confidence": 5,
+        "cycle": "2025-26"
+      }
+    ],
+    "cg-vyapam-pre-b-ed-entrance-examination": [
+      {
+        "kind": "structure",
+        "text": "CG Pre-B.Ed has 100 multiple-choice questions for 100 marks, answered in 2 hours.",
+        "source_url": "https://www.collegedekho.com/articles/cg-pre-bed-section-wise-preparation-tips/",
+        "source_title": "CG Pre B.Ed section-wise preparation tips",
+        "source_quote": "Duration of the Exam 2 Hours or 120 Minutes Question Type MCQs or Multiple Choice Questions Total Number of Questions 100 Maximum Marks 100",
+        "publisher": "CollegeDekho",
+        "official_source": false,
+        "as_of": "2026-09-15",
+        "confidence": 4,
+        "cycle": "2025"
+      },
+      {
+        "kind": "process",
+        "text": "In 2025, CG Vyapam let candidates object to its provisional answer key, at Rs 50 per objection.",
+        "source_url": "https://www.moneycontrol.com/education/chhattisgarh-pre-deled-pre-bed-answer-keys-2025-out-vyapamcg-cgstate-gov-in-download-here-article-13109972.html",
+        "source_title": "Chhattisgarh Pre-D.El.Ed and Pre-B.Ed answer keys 2025",
+        "source_quote": "Candidates can raise objections against any discrepancies in the answer key until June 17, 2025, by 3:00 PM. A nominal fee of Rs. 50 per objection will be charged.",
+        "publisher": "Moneycontrol",
+        "official_source": false,
+        "as_of": "2026-09-15",
+        "confidence": 4,
+        "cycle": "2025"
       }
     ],
     "common-admission-test-2025": [
@@ -220,6 +338,44 @@
         "official_source": false,
         "as_of": "2026-09-13",
         "confidence": 5
+      }
+    ],
+    "cuet-pg-2026": [
+      {
+        "kind": "history",
+        "text": "CUET (PG) was introduced in 2022 as a single window for admission to Central Universities and other participating universities.",
+        "source_url": "https://nta.ac.in/Download/Notice/Notice_20250506192324.pdf",
+        "source_title": "NTA press release on the CUET (PG) 2025 result",
+        "source_quote": "The CUET (PG) was introduced in the country for the first time in 2022. The CUET (PG) provides a single window opportunity to students seeking admission in any of the Central Universities (CUs) or other participating organizations",
+        "publisher": "National Testing Agency",
+        "official_source": true,
+        "as_of": "2026-09-15",
+        "confidence": 5,
+        "cycle": null
+      },
+      {
+        "kind": "volume",
+        "text": "CUET (PG) 2025 was held for about 6,54,019 registered candidates, with 191 universities taking part.",
+        "source_url": "https://nta.ac.in/Download/Notice/Notice_20250506192324.pdf",
+        "source_title": "NTA press release on the CUET (PG) 2025 result",
+        "source_quote": "For the Academic Session 2025-26, the Common University Entrance Test (PG) – 2025 [CUET (PG) – 2025] was conducted for about 654019 registered candidates. A total of 191 Universities (Central/State/Private and others) are participating",
+        "publisher": "National Testing Agency",
+        "official_source": true,
+        "as_of": "2026-09-15",
+        "confidence": 5,
+        "cycle": "2025"
+      },
+      {
+        "kind": "structure",
+        "text": "NTA tested CUET (PG) candidates under 157 question paper codes, across 16 days and 43 shifts.",
+        "source_url": "https://nta.ac.in/Download/Notice/Notice_20250506192324.pdf",
+        "source_title": "NTA press release on the CUET (PG) 2025 result",
+        "source_quote": "which were tested under 157 Question Paper Codes. • The total number of Question Papers was 240 in different mediums, and the number of Questions was 23624. These were used over 16 days and 43 Shifts",
+        "publisher": "National Testing Agency",
+        "official_source": true,
+        "as_of": "2026-09-15",
+        "confidence": 5,
+        "cycle": "2025"
       }
     ],
     "cuet-ug-2026": [
@@ -381,6 +537,32 @@
         "as_of": "2026-09-13",
         "confidence": 5,
         "cycle": "CRP CSA-XV"
+      }
+    ],
+    "ibps-crp-po-mt-xvi": [
+      {
+        "kind": "window",
+        "text": "IBPS's calendar set the PO/MT-XVI preliminary examination for 22 and 23 August 2026 and the main examination for 4 October 2026.",
+        "source_url": "https://www.ibps.in/wp-content/uploads/IBPS_CALENDAR_2026-27_final.pdf",
+        "source_title": "Tentative calendar of online CRPs for PSBs and RRBs 2026-27",
+        "source_quote": "Probationary Officers/ Management Trainees (PO/MT) Specialist Officers (SPL) Customer Service Associates (CSA) Preliminary Examination 22nd and 23rd August 2026 29 th August 2026 10th and 11th October 2026 Main Examination 4 th October 2026",
+        "publisher": "Institute of Banking Personnel Selection",
+        "official_source": true,
+        "as_of": "2026-09-15",
+        "confidence": 5,
+        "cycle": "XVI (2026-27)"
+      },
+      {
+        "kind": "process",
+        "text": "IBPS updated the PO/MT-XVI vacancies twice after the notification: on 20 July and again on 27 August 2026.",
+        "source_url": "https://www.ibps.in/index.php/management-trainees-xvi/",
+        "source_title": "Probationary Officers / Management Trainees XVI",
+        "source_quote": "Updated Vacancies as on 27.08.2026 for Common Recruitment Process for CRP-PO/MTs-XVI 07 Aug 2026 Important Notice dated 07.08.2026 for PwBD Category Candidates 20 Jul 2026 Corrigendum Regarding Updated Vacancies dated 20.07.2026 in connection with CRP PO/MT XVI 20 Jul 2026 Updated Vacancies as on 20.07.2026",
+        "publisher": "Institute of Banking Personnel Selection",
+        "official_source": true,
+        "as_of": "2026-09-15",
+        "confidence": 5,
+        "cycle": "XVI (2026-27)"
       }
     ],
     "ibps-crp-regional-rural-banks-xiv": [
@@ -573,6 +755,32 @@
         "as_of": "2026-09-13",
         "confidence": 5,
         "cycle": "2024"
+      }
+    ],
+    "kendriya-vidyalaya-sangathan-direct-recruitment-examination": [
+      {
+        "kind": "volume",
+        "text": "The 2022 KVS recruitment offered around 13,404 teaching and non-teaching vacancies, 6,414 of them for primary teachers.",
+        "source_url": "https://www.jagranjosh.com/articles/kendriya-vidyalaya-recruitment-2022-for-prttgtpgt-and-non-teaching-posts-1670045165-1",
+        "source_title": "Kendriya Vidyalaya Recruitment 2022",
+        "source_quote": "Kendriya Vidyalaya Recruitment 2022: Kendriya Vidyalaya Sangathan has more than 13000 vacancies for TGT, PGT, PRT, Principal, VP, AE, ASO SSA, JSA, Steno, Librarian, Translator, and Assistant Commissioner. Check How to Apply, Eligibility, Selection Criteria and Other Details. Kendriya Vidyalaya Recruitment 2022 Kendriya Vidyalaya Recruitment 2022: Kendriya Vidyalaya Sangathan (KVS) has recently published the notifications for recruitment to the post of Primary Teacher (PRT), Trained Graduate Teacher (TGT), Post Graduate Teacher (PGT) on its official website i.e. kvsangathan.nic.in. Other than this, KVS is hiring candidates for the post of Assistant Commissioner, Principal, Vice Principal, Finance Officer, Assistant Engineer (Civil), Assistant Section Officer (ASO), Hindi Translator, Senior Secretariat Assistant (SSA), Junior Secretariat Assistant (JSA), Stenographer and Librarian. Around 13404 vacancies are available for teaching and non-teaching posts. Out of the total vacancies, 6414 vacancies are available for Primary Teacher Posts.",
+        "publisher": "Jagran Josh",
+        "official_source": false,
+        "as_of": "2026-09-15",
+        "confidence": 4,
+        "cycle": "2022"
+      },
+      {
+        "kind": "structure",
+        "text": "KVS's direct recruitment notice of December 2022 covered Assistant Commissioner, Principal, Vice Principal, PGT, TGT, Librarian and non-teaching posts.",
+        "source_url": "https://kvsangathan.nic.in/en/interview-notice/page/5/?_archive=1",
+        "source_title": "KVS recruitment notice archive",
+        "source_quote": "Regarding Direct Recruitment for the posts of Assistant Commissioner, Principal, Vice Principal, PGT, TGT, Librarian and Non-teaching post in Kendriya Vidyalaya Sangathan. 05/12/2022",
+        "publisher": "Kendriya Vidyalaya Sangathan",
+        "official_source": true,
+        "as_of": "2026-09-15",
+        "confidence": 5,
+        "cycle": "2022"
       }
     ],
     "kerala-engineering-architecture-medical-entrance-examination": [
@@ -968,6 +1176,44 @@
         "cycle": "2025"
       }
     ],
+    "rbi-officers-in-grade-b-2026": [
+      {
+        "kind": "structure",
+        "text": "RBI Grade B selection in 2025 had three stages: Phase I, Phase II and a final interview.",
+        "source_url": "https://education.indianexpress.com/news/rbi-grade-b-notification-2025-out-check-vacancies-exam-dates-eligibility-application-process-2510209",
+        "source_title": "RBI Grade B Notification 2025",
+        "source_quote": "The RBI Grade B examination 2025 process involves three phases- Phase-I (preliminary), Phase-II (Mains) and final interview round.",
+        "publisher": "The Indian Express",
+        "official_source": false,
+        "as_of": "2026-09-15",
+        "confidence": 4,
+        "cycle": "2025"
+      },
+      {
+        "kind": "volume",
+        "text": "RBI's 2025 Grade B recruitment announced 120 vacancies across the General, DEPR and DSIM streams, 83 of them in General.",
+        "source_url": "https://education.indianexpress.com/news/rbi-grade-b-notification-2025-out-check-vacancies-exam-dates-eligibility-application-process-2510209",
+        "source_title": "RBI Grade B Notification 2025",
+        "source_quote": "for the panel year 2025 announcing 120 vacancies across three streams – General, DEPR (Department of Economic and Policy Research) and DSIM (Department of statistics and Information Management). The General Stream has the largest share with 83 posts",
+        "publisher": "The Indian Express",
+        "official_source": false,
+        "as_of": "2026-09-15",
+        "confidence": 4,
+        "cycle": "2025"
+      },
+      {
+        "kind": "process",
+        "text": "When two RBI Grade B candidates score the same marks, the one older by date of birth ranks higher.",
+        "source_url": "https://m.rbi.org.in/Scripts/Result_Rec_Officer_GRD_B_DR_General_PY_2026.aspx",
+        "source_title": "Officers in Grade B (DR) General PY 2025 scorecard",
+        "source_quote": "In case two or more candidates score same marks, the candidate senior by Date of Birth (Age) will be higher in order of merit.",
+        "publisher": "Reserve Bank of India",
+        "official_source": true,
+        "as_of": "2026-09-15",
+        "confidence": 5,
+        "cycle": "PY 2025"
+      }
+    ],
     "rpf-constable": [
       {
         "kind": "volume",
@@ -1132,6 +1378,44 @@
         "cycle": "2025"
       }
     ],
+    "ssc-combined-graduate-level-examination-2026-live-capture": [
+      {
+        "kind": "volume",
+        "text": "More than 28 lakh candidates applied for SSC CGL 2026 in its first application window, from 21 May to 22 June 2026.",
+        "source_url": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/CGLE_Reopen_23062026.pdf",
+        "source_title": "Reopening of the online application window, CGL 2026",
+        "source_quote": "The Notice of the Combined Graduate Level Examination, 2026 was published on 21.05.2026 and the online application window was kept open from 21.05.2026 to 22.06.2026. During this period, more than 28 lakh candidates have successfully submitted their applications",
+        "publisher": "Staff Selection Commission",
+        "official_source": true,
+        "as_of": "2026-09-15",
+        "confidence": 5,
+        "cycle": "2026"
+      },
+      {
+        "kind": "volume",
+        "text": "SSC CGL 2026 was notified for approximately 12,256 Group B and Group C vacancies across the Government of India.",
+        "source_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2264316&lang=2&reg=48",
+        "source_title": "SSC publishes notification for CGL 2026",
+        "source_quote": "has published the official notification for the \"Combined Graduate Level Examination, 2026\" on May 21, 2026. This open competitive examination aims to fill approximately 12,256 vacancies for Group “B” and Group “C” posts across various Ministries, Departments, and Organizations of the Government of India.",
+        "publisher": "Press Information Bureau",
+        "official_source": true,
+        "as_of": "2026-09-15",
+        "confidence": 5,
+        "cycle": "2026"
+      },
+      {
+        "kind": "process",
+        "text": "Candidates could apply for SSC CGL on ssc.gov.in or through the mySSC Android app.",
+        "source_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2264316&lang=2&reg=48",
+        "source_title": "SSC publishes notification for CGL 2026",
+        "source_quote": "Prospective applicants can submit their applications online via the Commission’s official website, ssc.gov.in , or through the ‘mySSC’ Android application.",
+        "publisher": "Press Information Bureau",
+        "official_source": true,
+        "as_of": "2026-09-15",
+        "confidence": 5,
+        "cycle": "2026"
+      }
+    ],
     "ssc-combined-higher-secondary-10-2-level-examination-2025-live-capture": [
       {
         "kind": "structure",
@@ -1196,6 +1480,32 @@
         "as_of": "2026-09-13",
         "confidence": 5,
         "cycle": "2024"
+      }
+    ],
+    "ssc-multi-tasking-staff-and-havaldar-examination-2025-live-capture": [
+      {
+        "kind": "volume",
+        "text": "SSC revised the 2025 tentative vacancies to 4,375 for MTS and 1,089 for Havaldar, up from 1,075.",
+        "source_url": "https://timesofindia.indiatimes.com/education/news/ssc-mts-havaldar-exam-2025-tentative-vacancies-updated-havaldar-posts-increased-check-official-notice-here/articleshow/122956497.cms",
+        "source_title": "SSC MTS and Havaldar Exam 2025: tentative vacancies updated",
+        "source_quote": "Examination, 2025 published by the Commission on 26.06.2025. The tentative vacancies for MTS mentioned in para 2.1 of the Notice of Examination may be read as 4375 and vacancy of Havaldar may be read as 1089 instead of 1075.",
+        "publisher": "The Times of India",
+        "official_source": false,
+        "as_of": "2026-09-15",
+        "confidence": 4,
+        "cycle": "2025"
+      },
+      {
+        "kind": "process",
+        "text": "For the MTS and Havaldar Examination 2025, SSC let candidates choose their own slot for the computer-based examination.",
+        "source_url": "https://www.sscsr.gov.in/",
+        "source_title": "SSC Southern Region notices",
+        "source_quote": "Self-Slot Selection by the candidates for Computer Based Examination of Multi-Tasking Non-Technical Staff and Havaldar-CBIC and CBN Examination 2025",
+        "publisher": "Staff Selection Commission (Southern Region)",
+        "official_source": true,
+        "as_of": "2026-09-15",
+        "confidence": 5,
+        "cycle": "2025"
       }
     ],
     "ssc-selection-post-phase-xiii": [
@@ -1446,6 +1756,32 @@
         "cycle": "2025"
       }
     ],
+    "upsc-capf-assistant-commandants-examination-2026": [
+      {
+        "kind": "window",
+        "text": "CAPF (ACs) 2026 was a one-day examination, held on 19 July 2026.",
+        "source_url": "https://www.upsc.gov.in/examinations/Central%20Armed%20Police%20Forces%20%28ACs%29%20Examination%2C%202026",
+        "source_title": "Central Armed Police Forces (ACs) Examination, 2026",
+        "source_quote": "Date of Commencement of Examination 19/07/2026 Duration of Examination One Day",
+        "publisher": "Union Public Service Commission",
+        "official_source": true,
+        "as_of": "2026-09-15",
+        "confidence": 5,
+        "cycle": "2026"
+      },
+      {
+        "kind": "window",
+        "text": "CAPF (ACs) 2026 had two papers, General Ability and Intelligence, and General Studies, Essay and Comprehension; the written result came out on 25 August 2026.",
+        "source_url": "https://www.upsc.gov.in/examinations/Central%20Armed%20Police%20Forces%20%28ACs%29%20Examination%2C%202026",
+        "source_title": "Central Armed Police Forces (ACs) Examination, 2026",
+        "source_quote": "Question Paper General Ability and Intelligence , General Studies, Essay and Comprehension 20/07/2026 Written Result WR-CAPF-2026-Roll-Engl-250826.pdf 25/08/2026",
+        "publisher": "Union Public Service Commission",
+        "official_source": true,
+        "as_of": "2026-09-15",
+        "confidence": 5,
+        "cycle": "2026"
+      }
+    ],
     "upsc-civil-services-examination-2026": [
       {
         "kind": "process",
@@ -1492,6 +1828,44 @@
         "official_source": false,
         "as_of": "2026-09-13",
         "confidence": 5
+      }
+    ],
+    "upsc-engineering-services-examination": [
+      {
+        "kind": "structure",
+        "text": "The ESE (Main) 2026 written part was held on 21 June 2026; candidates who cleared it went on to the Interview/Personality Test.",
+        "source_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2289098&lang=1&reg=3",
+        "source_title": "UPSC Engineering Services (Main) Examination, 2026",
+        "source_quote": "On the basis of the result of the written part of the Engineering Services (Main) Examination, 2026 held by U.P.S.C. on 21 st June 2026, the candidates with the under mentioned Roll Numbers have qualified for Interview/ Personality Test.",
+        "publisher": "Press Information Bureau",
+        "official_source": true,
+        "as_of": "2026-09-15",
+        "confidence": 5,
+        "cycle": "2026"
+      },
+      {
+        "kind": "structure",
+        "text": "ESE (Preliminary) 2026 had a common Paper I, General Studies and Engineering Aptitude, and a Paper II in the candidate's branch: Civil, Mechanical, Electrical, or Electronics and Telecommunication Engineering.",
+        "source_url": "https://www.upsc.gov.in/examinations/previous-question-papers",
+        "source_title": "UPSC previous question papers",
+        "source_quote": "Engineering Services (Preliminary) Examination, 2026 Paper - I General Studies and Engineering Aptitude (17.53 MB) Paper - II Electrical Engineering (18.5 MB) Paper - II Electronics and Telecommunication Engineering (18.91 MB) Paper - II Mechanical Engineering (16.73 MB) Paper - II Civil Engineering",
+        "publisher": "Union Public Service Commission",
+        "official_source": true,
+        "as_of": "2026-09-15",
+        "confidence": 5,
+        "cycle": "2026"
+      },
+      {
+        "kind": "structure",
+        "text": "ESE (Main) sets two papers in each of four branches: Civil, Mechanical, Electrical, and Electronics and Telecommunication Engineering.",
+        "source_url": "https://www.upsc.gov.in/examinations/Engineering%20Services%20%28Main%29%20Examination%2C%202026",
+        "source_title": "Engineering Services (Main) Examination, 2026",
+        "source_quote": "Question Paper Civil Engineering Paper - I , Civil Engineering Paper - II , Mechanical Engineering Paper - I , Mechanical Engineering Paper - II , Electrical Engineering Paper - I , Electrical Engineering Paper - II , Electronics and Telecommunication Engineering Paper - I , Electronics and Telecommunication Engineering Paper - II",
+        "publisher": "Union Public Service Commission",
+        "official_source": true,
+        "as_of": "2026-09-15",
+        "confidence": 5,
+        "cycle": "2026"
       }
     ],
     "upsc-nda-na-examination-ii-2026": [
@@ -1574,6 +1948,46 @@
         "cycle": "2026"
       }
     ],
+    "wbpsc-wbcs-online-application": [
+      {
+        "kind": "process",
+        "text": "WBPSC's website is where candidates download admit cards and interview call letters, upload documents and respond to answer keys.",
+        "source_url": "https://psc.wb.gov.in/",
+        "source_title": "West Bengal Public Service Commission",
+        "source_quote": "Admit-Card (For Written/ Screening Test) Download Call Letter (For Interview/ Personality Test) Documents Upload ICDS Supervisior (FEMALE ONLY) Recuritment Exam 2019 (Advt.No.8/2019) Current Applications Proactive Disclosure ---> Answer Key Response",
+        "publisher": "West Bengal Public Service Commission",
+        "official_source": true,
+        "as_of": "2026-09-15",
+        "confidence": 5,
+        "cycle": null
+      }
+    ],
+    "west-bengal-primary-teacher-eligibility-test": [
+      {
+        "kind": "structure",
+        "text": "The Primary TET paper had 150 multiple-choice questions for 150 marks, 30 in each of five parts, over 150 minutes with no negative marking.",
+        "source_url": "https://wbbpe.wb.gov.in/file/INFORMATION_PART-WISE_MODEL_QUESTIONS_TET-2023_16102023.pdf",
+        "source_title": "Relevant information and part-wise model questions for TET-2023",
+        "source_quote": "A Child Development and Pedagogy 30 30 B Language I (Bengali/Hindi/Oriya/Telugu/Nepali/Santhali/Urdu) 30 30 C Language II (English) 30 30 D Mathematics 30 30 E Environmental Studies 30 30 Total 150 150  There will be no negative marking.  The question paper will be bilingual (Bengali & English) except Language I & II Papers.  Duration of the examination : 150 minutes (2:30 Hrs.)",
+        "publisher": "West Bengal Board of Primary Education",
+        "official_source": true,
+        "as_of": "2026-09-15",
+        "confidence": 5,
+        "cycle": "2023"
+      },
+      {
+        "kind": "process",
+        "text": "A West Bengal TET qualifying certificate is valid for life, and there is no limit on how many times a candidate may sit the TET.",
+        "source_url": "https://wbbpe.wb.gov.in/file/INFORMATION_PART-WISE_MODEL_QUESTIONS_TET-2023_16102023.pdf",
+        "source_title": "Relevant information and part-wise model questions for TET-2023",
+        "source_quote": "The validity period of TET qualifying certificate for appointment will be for lifetime for all categories. There is no restriction on the number of attempts a candidate can take part for acquiring a TET certificate.",
+        "publisher": "West Bengal Board of Primary Education",
+        "official_source": true,
+        "as_of": "2026-09-15",
+        "confidence": 5,
+        "cycle": "2023"
+      }
+    ],
     "west-bengal-school-service-commission-slst-assistant-teacher-recruitment": [
       {
         "kind": "volume",
@@ -1653,6 +2067,46 @@
         "official_source": true,
         "as_of": "2026-09-13",
         "confidence": 5
+      }
+    ],
+    "mp-police-constable-recruitment-test": [
+      {
+        "kind": "window",
+        "text": "The MP Police Constable Recruitment Test 2025 ran from 30 October to 15 December 2025.",
+        "source_url": "https://esb.mp.gov.in/Student_dashboard_ESB26.htm",
+        "source_title": "MP ESB student dashboard",
+        "source_quote": "Police Constable Recruitment Test - 2025 Type Exam Advertisement & Online Form Rule Book / Revised Rule Book Start Date of Forms End Date of Forms Rectification End Date Exam Date TAC Download TAC Hosted Date/Time Model Answer Result Download Result Hosted Date/Time Final Answer Result Note Important Update / Notice Recruitment�Test Online Form ; Advertisement Rulebook ; Rulebook Updated Page-7 15/09/2025 Revised 16/10/2025 29/09/2025 Revised 06/10/2025 Revised 22/10/2025 04/10/2025 Revised 08/10/2025 Revised 23/10/202 5 30/10/2025 to 15/12/2025",
+        "publisher": "Madhya Pradesh Employees Selection Board",
+        "official_source": true,
+        "as_of": "2026-09-15",
+        "confidence": 5,
+        "cycle": "2025"
+      },
+      {
+        "kind": "process",
+        "text": "ESB published the 2025 constable results in stages: the first stage on 25 January 2026, the final stage on 9 April 2026, and unit allotment by Police Headquarters on 30 April 2026.",
+        "source_url": "https://esb.mp.gov.in/results/results_n_ESB26.htm",
+        "source_title": "MP ESB results 2026",
+        "source_quote": "Police Constable Recruitment Test - 2025 (Unit Allotment by PHQ Dated - 30/04/2026) Apr. 30, 2026 at 06:30 PM -- -- 3. Police Constable Recruitment Test - 2025 FINAL STAGE Apr. 09, 2026 at 05:10 PM Result Note ; Cut_off(FINAL) ; Cut_off(FIRST) Top10 ; Updated Seat Matrix Key committee recommendation ; Merit List ; Waiting List ; Marks Details ; Result Press Note 4. Subedar & Sub-Inspector Recruitment Test -2025 FIRST STAGE Mar. 12, 2026 at 06:51 PM Result Note ; Cut_off ; Top10 Key committee recommendation ; Qualified List For 87%; Qualified List For UR 13%; Qualified List For OBC 13%; Marks Details 5. Primary School Teacher Selection Test - 2025 Feb. 27, 2026 at 05:28 PM Result Note ; Cut_off ; Top10 Updated Seat Matrix Key committee recommendation ; Merit List ; Waiting List , Marks Details ; Result Press Note 6. Subedar (Stenographer) & Asst. Sub-Inspector Recruitment Test -2025 FIRST STAGE Feb. 17, 2026 at 06:10 PM Result Note Eligible Candidates for Second Phase ; 7. Police Constable Recruitment Test - 2025 FIRST STAGE Jan. 25, 2026",
+        "publisher": "Madhya Pradesh Employees Selection Board",
+        "official_source": true,
+        "as_of": "2026-09-15",
+        "confidence": 5,
+        "cycle": "2025"
+      }
+    ],
+    "mp-primary-school-teacher-eligibility-test": [
+      {
+        "kind": "process",
+        "text": "MP ESB publishes past question papers, including the 2024 Primary School Teacher Eligibility Test.",
+        "source_url": "https://esb.mp.gov.in/Old_Question_Papers/old_question_papers.htm",
+        "source_title": "MP ESB old question papers",
+        "source_quote": "2024 S.No. Name of Exam 1. Excise Constable Direct and Backlog Recruitment Test -2024 2. Primary School Teacher Eligibility Test - 2024",
+        "publisher": "Madhya Pradesh Employees Selection Board",
+        "official_source": true,
+        "as_of": "2026-09-15",
+        "confidence": 5,
+        "cycle": "2024"
       }
     ],
     "mpsc-online-application": [

@@ -72,8 +72,16 @@ describe("worth knowing shows researched facts only", () => {
     });
 
     test("an examination with only rule facts shows no card", () => {
+        // RRB NTPC's researched facts were all dropped on 2026-09-15: its
+        // schedule PDF is not served (DEC-095). BPSC gained two that day.
+        const rrb = sidecar.exams["rrb-ntpc-graduate-cen-05-2024"];
+        expect(rrb).toBeDefined();
+        expect(rrb.facts.length).toBeGreaterThan(0);
+        expect(rrb.facts.filter(isResearchedFact)).toEqual([]);
+    });
+
+    test("an examination whose researched facts were checked shows them", () => {
         const bpsc = sidecar.exams["bpsc-online-application"];
-        expect(bpsc).toBeDefined();
-        expect(bpsc.facts.filter(isResearchedFact)).toEqual([]);
+        expect(bpsc.facts.filter(isResearchedFact).length).toBe(2);
     });
 });

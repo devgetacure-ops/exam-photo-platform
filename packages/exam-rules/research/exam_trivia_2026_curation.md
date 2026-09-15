@@ -58,3 +58,41 @@ browser; those passages are the rendered page text.
 | `wbpsc-wbcs-online-application` | page unavailable |
 | `wbpsc-wbcs-online-application` | page unavailable |
 | `west-bengal-primary-teacher-eligibility-test` | no publisher mapping for wbbpe.wb.gov.in |
+
+## The 2026-09-15 delivery (the 27 examinations with nothing to show)
+
+The owner's research held 65 facts for the 27 examinations the first curation
+left empty, keyed by their pre-audit ids (mapped through
+`exam_id_renames_2026_09_14.json`). It carried a summary of each source but no
+passage, so every page was downloaded and read again (DEC-095).
+
+- **Published: 35 facts for 17 examinations**, each cut from its page between a
+  start and an end phrase and checked by `scripts/verify_fact_passages.py`
+  (`--as-of 2026-09-15`: 35 checked, 0 failed). Each keeps a kind the card
+  shows (volume, process, structure, history, window).
+- **Corrected**: BPSC TRE 3.0's vacancies are 87,709 on the page, not "roughly
+  87,700".
+- **Merged: 2**: WBPSC's two portal facts are one sentence from one page, and
+  West Bengal TET's format and structure facts are one sentence from one table.
+- **Dropped: 28.** Ten examinations still have nothing to show.
+
+| Examination | Reason |
+|---|---|
+| `all-india-sainik-schools-entrance-examination` (2) | the cited bulletin returns 404 |
+| `bpsc-online-application` | the portal page shows only a registration form, not the claim |
+| `cbse-classes-ix-xi-registration-2025-26` | the circular is a scanned image with no text |
+| `gujarat-police-lokrakshak-recruitment` (2) | the cited rules PDF returns 404 |
+| `gujarat-police-psi-recruitment` | the 472 figure is not on the page; it matched only inside 12472 |
+| `gujarat-police-psi-recruitment` | the publisher refused the request (403) |
+| `icsi-student-registration-and-examination` (2) | the cited FAQ returns 404 |
+| `jawahar-navodaya-vidyalaya-selection-test-class-vi` (3) | the cited annual report returns 404 |
+| `jharkhand-police-constable-recruitment` | the publisher refused the request |
+| `jharkhand-police-constable-recruitment` | confidence 3, an aggregator's summary |
+| `karnataka-psc-online-application` | a notice mirrored on a file host, not a publisher |
+| `karnataka-psc-online-application` | confidence 3, an aggregator's summary |
+| `mp-primary-school-teacher-eligibility-test` (2) | the publisher refused the request (403) |
+| `rrb-ntpc-graduate-cen-05-2024` (3) | rrbcdg.gov.in serves its home page for the PDF |
+| `tnpsc-combined-civil-services-examination-i-group-i` (2) | the press releases' Tamil text extracts garbled; only the figures can be read |
+| `tnpsc-combined-civil-services-examination-i-group-i` | Group I cannot be picked out of the results table |
+| `tnpsc-combined-technical-services-examination-2025` (2) | the 2025 streams and dates are not on the cited pages |
+| `upsc-capf-assistant-commandants-examination-2026` | the cited notification URL serves UPSC's home page |
