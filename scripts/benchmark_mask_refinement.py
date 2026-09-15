@@ -139,6 +139,7 @@ def main() -> int:
 
         # 3. Run Refinement
         ref_res = refiner.refine_mask(
+            image=img,
             coarse_mask=seg_res.coarse_mask,
             probability_mask=seg_res.probability_mask,
             face=faces,

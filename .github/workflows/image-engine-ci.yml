@@ -9,6 +9,12 @@ on:
 jobs:
   check-format-lint-test:
     runs-on: ubuntu-latest
+    # Every pytest step collects the whole suite, and the mediapipe detector
+    # tests refuse to import in CI without this model path. The file is
+    # downloaded before the first pytest step, so it is safe job-wide.
+    env:
+      EXAM_PHOTO_FACE_MODEL_PATH: model-assets/blaze_face_short_range.tflite
+      EXAM_PHOTO_FACE_MODEL_SHA256: b4578f35940bf5a1a655214a1cce5cab13eba73c1297cd78e1a04c2380b0152f
 
     steps:
     - name: Checkout repository

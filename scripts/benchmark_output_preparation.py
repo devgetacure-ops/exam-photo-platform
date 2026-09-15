@@ -133,7 +133,9 @@ def run_benchmark():
 
     for entry in entries:
         fixture_name = entry["source_fixture"]
-        img_path = fixtures_dir / "images" / fixture_name
+        # The tracked fixture, as every other benchmark reads it. This used
+        # segmentation/images/, an untracked copy present on one machine only.
+        img_path = repo_root / "tests" / "fixtures" / fixture_name
 
         prep_exp = entry.get("output_preparation_expectation", {})
         if not prep_exp:
@@ -169,6 +171,7 @@ def run_benchmark():
                         )
                     refiner = MorphologicalForegroundRefiner()
                     ref_res = refiner.refine_mask(
+                        image=current_image,
                         coarse_mask=seg_res.coarse_mask,
                         probability_mask=seg_res.probability_mask,
                         face=face,

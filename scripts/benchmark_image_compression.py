@@ -186,6 +186,7 @@ def run_benchmark():
                         seg_res = segmenter.segment_subject(current_image, face=face)
                     refiner = MorphologicalForegroundRefiner()
                     ref_res = refiner.refine_mask(
+                        image=current_image,
                         coarse_mask=seg_res.coarse_mask,
                         probability_mask=seg_res.probability_mask,
                         face=face,

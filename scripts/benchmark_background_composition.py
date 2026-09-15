@@ -155,6 +155,7 @@ def main() -> int:
                 with segmenter:
                     seg_res = segmenter.segment_subject(img, face=face)
                 ref_res = refiner.refine_mask(
+                    image=img,
                     coarse_mask=seg_res.coarse_mask,
                     probability_mask=seg_res.probability_mask,
                     face=face,
