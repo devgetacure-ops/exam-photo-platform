@@ -69,7 +69,10 @@ clean on 16 GB). The options first considered:
    `www`, set to **DNS only (grey cloud)** for now, so Caddy can obtain its
    certificate directly.
 3. On the server: install Docker (<https://docs.docker.com/engine/install/ubuntu/>),
-   clone the repository, then from its root:
+   then clone the repository. It is private: create a key on the server
+   (`ssh-keygen -t ed25519 -f /root/.ssh/github_deploy`), add its public half in
+   GitHub → Settings → Deploy keys **without** write access, point `github.com`
+   at it in `/root/.ssh/config`, and clone over SSH. Then from its root:
 
    ```bash
    cp deploy/.env.example deploy/.env

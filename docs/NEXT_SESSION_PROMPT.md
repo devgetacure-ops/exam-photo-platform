@@ -77,11 +77,18 @@ and proxy. `pip-audit` and `npm audit`, and CI's unpinned dependencies (DEC-100)
 the server; that `_orders/` has no retention rule yet (DEC-071); what the logs
 keep and for how long (IP addresses, kit ids); the `requests` volume's 30-day
 promise; and whether Vultr automatic backups are on, since a backup would
-capture candidates' files inside their window.
+capture candidates' files inside their window. How long Resend keeps sent
+messages and their attachments (candidates' files) in its own logs, and whether
+that can be shortened. And a gap found on launch day: exam requests from the
+site's form are saved to the `requests` volume, but nothing reads them or tells
+me one arrived.
 
-**The repository.** It is public so the server could clone it. Consider making
-it private with a read-only deploy key on the server, GitHub secret scanning,
-and branch protection on `main`.
+**The repository.** Made private on 16 September; the server pulls with a
+read-only deploy key. A history search found no committed secrets or `.env`
+files, but 207 commits carry the owner's full name and two personal email
+addresses, and `docs/source/` holds a PDF with the name. Consider GitHub secret
+scanning, branch protection on `main`, and whether CI's Actions minutes last on
+a private repository.
 
 **Monitoring.** Nothing tells me the site is down, the engine is unhealthy, the
 disk is full, or payments have stopped releasing. Propose the smallest thing

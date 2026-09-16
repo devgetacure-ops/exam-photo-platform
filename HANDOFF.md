@@ -13,7 +13,8 @@ for its reasoning, and where it disagrees with this section, this section wins.
 | Plan for the host | Move to **Hostinger KVM 4** (India, 16 GB); **destroy the Vultr server by 11 October** (owner holds the reminder) |
 | Access | `ssh root@65.20.73.233` with the owner's key `C:\Users\dmbar\.ssh\id_ed25519` (ed25519, no passphrase). Password and keyboard-interactive login are off in `/etc/ssh/sshd_config.d/01-hardening.conf`, which must sort **before** `50-cloud-init.conf` (sshd keeps the first value it reads) |
 | Firewall | Vultr firewall group `examuploadkit`: inbound TCP 22, 80, 443 from anywhere; everything else dropped |
-| Code | `/opt/exam-photo-platform`, branch `main`, deployed at `2ec6fcc` (DEC-102) |
+| Code | `/opt/exam-photo-platform`, branch `main`, running the images built from `2ec6fcc` (DEC-102); the checkout is at `533aa44` (docs and a test since) |
+| Repository | **Private** since 16 September. The server reads it over SSH with a read-only deploy key, `/root/.ssh/github_deploy`, registered in GitHub → Settings → Deploy keys as `vultr-server (read-only)`, and wired in `/root/.ssh/config`. GitHub's host key was checked against its published fingerprint. The key cannot push |
 | Stack | Compose project `exam-upload`: `engine`, `web`, `proxy` (Caddy). Volumes `models`, `artifacts`, `requests`, `caddy_data`, `caddy_config` |
 | Secrets | **Only** in `/opt/exam-photo-platform/deploy/.env`, mode 600, gitignored. Earlier copies in `/root/env.before-live.bak` (test Razorpay keys) and `/root/env.before-dec102.bak`, both mode 600 and holding secrets: delete them once the site has run clean for a while |
 | DNS and TLS | Cloudflare, **proxied (orange cloud)** for `@` and `www`, SSL/TLS **Full (strict)**. Caddy holds a Let's Encrypt certificate for `examuploadkit.com`, issued 16 September, expiring 15 December, renewed by Caddy itself |
@@ -50,6 +51,7 @@ docker compose -f deploy/docker-compose.yml logs --since 30m engine
 - **A change in `deploy/.env`**: engine-only settings (payments, email, Turnstile secret, retention) need `up -d engine`. Anything read while the site builds (`NEXT_PUBLIC_*`, `EUK_BUSINESS_*`, the Google and Bing verification tags) needs `up -d --build web`.
 - **Orders** are JSON files in the `artifacts` volume under `_orders/`, and are never swept. The refund question is answered by `GET /v1/orders/{order_id}/evidence` with `Authorization: Bearer <EXAM_PHOTO_OPERATOR_TOKEN>`.
 - **Rolling back**: `git checkout <previous commit>` on the server, then `up -d --build`; an older `.env` is in `/root` as above.
+- **When the Vultr server is destroyed**, delete its deploy key in GitHub → Settings → Deploy keys.
 - The three test-mode orders from launch day are set aside in `/root/removed-test-orders/`; only the real order remains in the app.
 
 ## Not yet verified on the live site
@@ -61,7 +63,7 @@ docker compose -f deploy/docker-compose.yml logs --since 30m engine
 ## Waiting on the owner
 
 - **Google Search Console** (Domain property, TXT record in Cloudflare), **Bing Webmaster Tools** (import from Search Console), **Cloudflare Web Analytics** (the token goes in `NEXT_PUBLIC_CF_BEACON_TOKEN`, then `up -d --build web`). `docs/LAUNCH_GUIDE.md` has each step.
-- **Moving to Hostinger** before 11 October: the same compose deploy on the new box, `model-fetch` again (or copy the `models` volume), carry `deploy/.env` across by hand, point the Cloudflare `A` records at the new IP. The Razorpay webhook URL does not change, because the domain does not.
+- **Moving to Hostinger** before 11 October: a new read-only deploy key on the new box (the repository is private), the same compose deploy, `model-fetch` again (or copy the `models` volume), carry `deploy/.env` across by hand, point the Cloudflare `A` records at the new IP. The Razorpay webhook URL does not change, because the domain does not.
 
 ## Next: security hardening (when the owner says)
 
