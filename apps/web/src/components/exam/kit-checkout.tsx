@@ -158,6 +158,9 @@ interface Receipt {
 
 type Stage = "empty" | "review" | "paying" | "failed" | "delivered";
 
+/** How long the success moment holds before the page moves on to the downloads. */
+const DOWNLOADS_AFTER_MS = 2000;
+
 /** The file retention window a fresh preparation gets, for the clock's bar. */
 const WINDOW_SECONDS = 30 * 60;
 
@@ -366,6 +369,7 @@ export function KitCheckout({
     const revision = useRef(0);
     const mounted = useRef(true);
     const headingRef = useRef<HTMLHeadingElement>(null);
+    const downloadsRef = useRef<HTMLHeadingElement>(null);
     const kitId = files.length ? getKit(exam.exam_id)?.kitId : undefined;
     const pendingKey = kitId ? `uploadready:pending:${kitId}` : null;
     const receiptKey = kitId ? `uploadready:receipt:${kitId}` : null;
@@ -500,15 +504,40 @@ export function KitCheckout({
     // Focus moves without the browser's own scroll, which put the section's
     // top under the sticky bar; the section is then brought to just under the
     // bar, and only if it is not already in view (testing notes 9, 11).
+    //
+    // Payment confirmed while the candidate watches: the success moment plays
+    // (about a second), and two seconds in the page carries them on to the
+    // downloads, which are what they came for. Arriving at an already-paid kit
+    // is not a change, so it never pulls anyone down. Any touch, wheel or key
+    // in those two seconds means they are reading, and the move is dropped.
     const shownStage = useRef<Stage | null>(null);
     useEffect(() => {
         publishCheckoutStage(exam.exam_id, stage);
-        if (shownStage.current !== null && shownStage.current !== stage) {
-            const heading = headingRef.current;
-            focusQuietly(heading);
-            bringIntoView(heading?.closest("section") ?? heading, { onlyIfNeeded: true });
-        }
+        const previous = shownStage.current;
+        const changed = previous !== null && previous !== stage;
         shownStage.current = stage;
+        if (!changed) return;
+        const heading = headingRef.current;
+        focusQuietly(heading);
+        bringIntoView(heading?.closest("section") ?? heading, { onlyIfNeeded: true });
+        // Only a confirmation the candidate waited for. A paid kit that is
+        // still loading passes through another stage on its way to delivered,
+        // and that is arriving, not paying.
+        if (stage !== "delivered" || previous !== "paying") return;
+        const intents = ["wheel", "touchstart", "pointerdown", "keydown"] as const;
+        const stop = () => {
+            clearTimeout(timer);
+            for (const name of intents) window.removeEventListener(name, stop);
+        };
+        const timer = setTimeout(() => {
+            stop();
+            const downloads = downloadsRef.current;
+            bringIntoView(downloads?.parentElement ?? downloads);
+            focusQuietly(downloads);
+        }, DOWNLOADS_AFTER_MS);
+        for (const name of intents)
+            window.addEventListener(name, stop, { passive: true, once: true });
+        return stop;
     }, [stage, exam.exam_id]);
 
     // One set of outcomes, whichever window took the payment: Razorpay's, or
@@ -813,7 +842,9 @@ export function KitCheckout({
                     <div className="min-w-0">
                         {clockBlock}
                         <div className="euk-delivered-head">
-                            <h3>Your downloads</h3>
+                            <h3 id="kit-downloads" ref={downloadsRef} tabIndex={-1}>
+                                Your downloads
+                            </h3>
                             {completeKitSelected && kitId && (
                                 <a className="primary-button" href={kitPackageDownloadUrl(kitId)}>
                                     Download everything (ZIP)

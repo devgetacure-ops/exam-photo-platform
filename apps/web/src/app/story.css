@@ -477,6 +477,9 @@
    photograph and a wide signature read as a matching pair. */
 .euk-wipe-frame {
     --wipe: 50;
+    /* `cqw` below is a hundredth of this frame's width, so the sweep can move
+       by transform, in the frame's own units, and never by layout. */
+    container-type: inline-size;
     position: relative;
     overflow: hidden;
     border: var(--rule-thin) solid var(--ink);
@@ -511,19 +514,33 @@
 }
 
 /* The only thing the sweep touches, driven by a custom property so a running
-   loop re-renders no React and lays out nothing. */
+   loop re-renders no React. The upload is revealed by sliding a window over
+   it and the image back the other way by the same distance, so it stands
+   still while its edge moves: two transforms, no layout and no repaint, which
+   is what keeps it smooth on a phone. (It was a `clip-path`, which repainted
+   a whole photograph every frame.) */
 .euk-wipe-clip {
-    clip-path: inset(0 calc((100 - var(--wipe)) * 1%) 0 0);
+    overflow: hidden;
+    transform: translateX(calc((var(--wipe) - 100) * 1cqw));
+    will-change: transform;
+}
+
+.euk-wipe-clip > .euk-wipe-img {
+    position: absolute;
+    inset: 0;
+    transform: translateX(calc((100 - var(--wipe)) * 1cqw));
+    will-change: transform;
 }
 
 .euk-wipe-line {
     position: absolute;
     top: 0;
     bottom: 0;
+    left: 0;
     width: 3px;
     background: var(--signal);
-    left: calc(var(--wipe) * 1%);
-    transform: translateX(-50%);
+    transform: translateX(calc(var(--wipe) * 1cqw - 50%));
+    will-change: transform;
     pointer-events: none;
 }
 
@@ -532,8 +549,14 @@
 .euk-wipe-handle {
     position: absolute;
     top: 50%;
-    left: clamp(24px, calc(var(--wipe) * 1%), calc(100% - 24px));
-    transform: translate(-50%, -50%);
+    left: 0;
+    /* Kept inside the frame while the line reaches the border, as before, and
+       moved by transform like the line. */
+    transform: translate(
+        calc(clamp(24px, var(--wipe) * 1cqw, 100cqw - 24px) - 50%),
+        -50%
+    );
+    will-change: transform;
     display: flex;
     align-items: center;
     justify-content: center;

@@ -63,13 +63,21 @@ function showing(container: HTMLElement, which: number): string {
     return images.find((image) => image.alt !== "")?.alt ?? "";
 }
 
-function grab(container: HTMLElement, which: number, clientX: number) {
+/** A touch on a frame: down at `clientX`, then lifted unless `keepDown`. */
+function grab(
+    container: HTMLElement,
+    which: number,
+    clientX: number,
+    { keepDown = false }: { keepDown?: boolean } = {},
+) {
     const frame = container.querySelectorAll<HTMLElement>(".euk-wipe-frame")[which];
     frame.setPointerCapture = () => {};
     frame.hasPointerCapture = () => true;
     frame.getBoundingClientRect = () =>
         ({ left: 0, width: 400, top: 0, height: 500 }) as DOMRect;
     fireEvent.pointerDown(frame, { pointerId: 1, clientX });
+    if (!keepDown) fireEvent.pointerUp(frame, { pointerId: 1, clientX });
+    return frame;
 }
 
 function renderBand() {
@@ -233,6 +241,39 @@ describe("the before-and-after band", () => {
         wait(1200);
         step(1800);
         step(2700);
+        expect(wipeOf(container, 0)).not.toBeCloseTo(25, 0);
+    });
+
+    test("a finger still on the frame keeps it held, however long it stays", () => {
+        const { container } = renderBand();
+        step(0);
+        const frame = grab(container, 0, 100, { keepDown: true });
+
+        wait(5000);
+        step(900);
+        step(1800);
+        expect(wipeOf(container, 0)).toBeCloseTo(25, 0);
+
+        // Dragged further while down: follows the finger, measured once.
+        fireEvent.pointerMove(frame, { pointerId: 1, clientX: 200 });
+        expect(wipeOf(container, 0)).toBeCloseTo(50, 0);
+
+        fireEvent.pointerUp(frame, { pointerId: 1, clientX: 200 });
+        wait(3200);
+        step(2700);
+        step(3600);
+        expect(wipeOf(container, 0)).not.toBeCloseTo(50, 0);
+    });
+
+    test("a drag the browser takes for a scroll lets the frame go, rather than freezing it", () => {
+        const { container } = renderBand();
+        step(0);
+        const frame = grab(container, 0, 100, { keepDown: true });
+
+        fireEvent.pointerCancel(frame, { pointerId: 1 });
+        wait(3200);
+        step(900);
+        step(1800);
         expect(wipeOf(container, 0)).not.toBeCloseTo(25, 0);
     });
 

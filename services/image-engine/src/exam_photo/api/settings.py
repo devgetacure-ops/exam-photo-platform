@@ -121,6 +121,14 @@ class ApiSettings(BaseModel):
     smtp_password: str = ""
     smtp_from_address: str = ""
     smtp_use_tls: bool = True
+    #: The name an inbox shows beside the sender address (DEC-102).
+    smtp_from_name: str = "ExamUploadKit"
+    #: Where a candidate's reply goes, and the support address the email
+    #: names. Empty sends no Reply-To and names no address.
+    smtp_reply_to: str = ""
+    #: The public site, linked from the email's header and footer. Empty links
+    #: nothing.
+    site_url: str = ""
 
     razorpay_key_id: str = ""
     razorpay_key_secret: str = ""
@@ -292,6 +300,9 @@ def get_settings() -> ApiSettings:
         ("EXAM_PHOTO_SMTP_USERNAME", "smtp_username"),
         ("EXAM_PHOTO_SMTP_PASSWORD", "smtp_password"),
         ("EXAM_PHOTO_SMTP_FROM", "smtp_from_address"),
+        ("EXAM_PHOTO_SMTP_FROM_NAME", "smtp_from_name"),
+        ("EXAM_PHOTO_SMTP_REPLY_TO", "smtp_reply_to"),
+        ("EXAM_PHOTO_SITE_URL", "site_url"),
     ):
         if var in os.environ:
             kwargs[field] = os.environ[var]

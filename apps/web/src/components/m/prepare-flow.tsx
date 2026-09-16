@@ -11,6 +11,7 @@ import { useKit } from "../exam/use-kit";
 import { DocumentWorkspace } from "../exam/document-workspace";
 import { RequirementUpload } from "../exam/requirement-upload";
 import { KitCheckout } from "../exam/kit-checkout";
+import { SelectAllToggle } from "../exam/select-all-toggle";
 import { AppBar } from "./app-bar";
 import { ActionBar } from "./action-bar";
 import { Sheet } from "./sheet";
@@ -257,6 +258,22 @@ export function PrepareFlow({
                         doesn&rsquo;t want, and the price follows.
                     </p>
 
+                    {ours.length > 0 && (
+                        <div className="euk-m-selectrow">
+                            <p>
+                                {included.length} of {ours.length} ticked
+                            </p>
+                            <SelectAllToggle
+                                className="euk-m-selectall"
+                                selected={included.length}
+                                onClear={() => setIncluded([])}
+                                onSelectAll={() =>
+                                    setIncluded(ours.map((r) => r.requirement_id))
+                                }
+                            />
+                        </div>
+                    )}
+
                     <ul className="euk-m-files">
                         {ours.map((r) => {
                             const on = included.includes(r.requirement_id);
@@ -320,8 +337,22 @@ export function PrepareFlow({
                         {chosen.map((r) => {
                             const entry = entries[r.requirement_id];
                             const done =
-                                entry &&
+                                !!entry &&
                                 ["prepared", "prepared_with_findings"].includes(entry.outcome);
+                            const note =
+                                done &&
+                                entry.outcome === "prepared_with_findings" &&
+                                plainFindings(entry.findings).length > 0;
+                            // An entry is written only once a preparation has
+                            // finished, so one that is not prepared failed and
+                            // wants another go, as the desktop row says.
+                            const tone = !entry
+                                ? undefined
+                                : done
+                                  ? note
+                                      ? "check"
+                                      : "done"
+                                  : "retry";
                             return (
                                 <li key={r.requirement_id}>
                                     <button
@@ -332,17 +363,18 @@ export function PrepareFlow({
                                         <span className="euk-m-file-body">
                                             <strong>{r.requirement_name}</strong>
                                             <span>
-                                                {done
-                                                    ? entry.outcome === "prepared_with_findings" &&
-                                                      plainFindings(entry.findings).length > 0
-                                                        ? "Ready, with a note to read"
-                                                        : "Ready"
-                                                    : "Not added yet"}
+                                                {tone === "check"
+                                                    ? "Ready, with a note to read"
+                                                    : tone === "done"
+                                                      ? "Ready"
+                                                      : tone === "retry"
+                                                        ? "Try again"
+                                                        : "Not added yet"}
                                             </span>
                                         </span>
                                         <span
                                             className="euk-m-file-state"
-                                            data-done={done || undefined}
+                                            data-tone={tone}
                                             aria-hidden="true"
                                         />
                                     </button>

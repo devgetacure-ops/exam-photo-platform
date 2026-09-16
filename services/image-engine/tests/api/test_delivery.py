@@ -38,7 +38,7 @@ class FakeSender:
         self.sent: list[dict] = []
         self.fail = fail
 
-    def send(self, to_address, subject, body, attachments):
+    def send(self, to_address, subject, body, attachments, html=None):
         if self.fail:
             raise EmailRejectedError("SMTP send failed: connection refused")
         self.sent.append(
@@ -46,6 +46,7 @@ class FakeSender:
                 "to": to_address,
                 "subject": subject,
                 "body": body,
+                "html": html,
                 "filenames": [item.filename for item in attachments],
                 "bytes": sum(len(item.content) for item in attachments),
             }
@@ -200,8 +201,183 @@ def test_the_message_names_the_deadline_so_the_candidate_keeps_the_email(api):
     client.post(f"/v1/kits/{KIT}/email", json={"address": "candidate@example.com"})
 
     body = api.email_sender.sent[0]["body"]
-    assert "deleted at" in body
-    assert "save it" in body
+    assert "Save this email" in body
+    assert "is deleted" in body
+    assert "IST" in body
+
+
+# ----------------------------------------------------------------------
+# How the message reads (DEC-102)
+# ----------------------------------------------------------------------
+
+
+def test_the_deadline_is_written_for_a_person_in_indian_time():
+    from exam_photo.api.delivery import human_deadline
+
+    assert (
+        human_deadline("2026-09-16T12:29:37.616392+00:00")
+        == "16 September 2026, 5:59 pm IST"
+    )
+    assert (
+        human_deadline("2026-09-16T00:05:00+00:00") == "16 September 2026, 5:35 am IST"
+    )
+    assert human_deadline("2026-09-16T06:30:00Z") == "16 September 2026, 12:00 pm IST"
+    # Never the raw value: unreadable is left out, not printed.
+    assert human_deadline("not a time") is None
+
+
+def test_the_message_uses_the_examination_name_and_describes_each_file():
+    from exam_photo.api.delivery import DeliveredFile, Delivery, compose
+
+    email = compose(
+        Delivery(
+            exam_names=["NEET (UG) 2026"],
+            files=[
+                DeliveredFile(
+                    label="Candidate photograph",
+                    filename="neet-ug_photo.jpg",
+                    size_bytes=124_600,
+                    media_type="image/jpeg",
+                    width=413,
+                    height=531,
+                )
+            ],
+            expires_at="2026-09-16T12:29:37+00:00",
+            order_id="order_TchUYmPbD9Irz2",
+            amount_paise=300,
+            payment_reference="pay_TchUfQ2g3gW6gY",
+            site_url="https://examuploadkit.com",
+            support_address="support@examuploadkit.com",
+        )
+    )
+
+    assert email.subject == "Your NEET (UG) 2026 file is ready"
+    for part in (email.text, email.html):
+        assert "neet-ug-2026" not in part
+        assert "+00:00" not in part
+        assert "Candidate photograph" in part
+        assert "neet-ug_photo.jpg" in part
+        assert "413 × 531 px · 125 KB · JPEG" in part
+        assert "16 September 2026, 5:59 pm IST" in part
+        assert "order_TchUYmPbD9Irz2" in part
+        assert "₹3" in part
+        assert "support@examuploadkit.com" in part
+        assert "did not store it" in part
+    assert email.html.startswith("<!doctype html>")
+    assert "http://" not in email.html and "<img" not in email.html
+
+
+def test_what_a_candidate_typed_is_never_markup_in_the_message():
+    from exam_photo.api.delivery import DeliveredFile, Delivery, compose
+
+    email = compose(
+        Delivery(
+            exam_names=["<script>alert(1)</script>"],
+            files=[
+                DeliveredFile(
+                    label="Photo",
+                    filename='x"><b>.jpg',
+                    size_bytes=1,
+                    media_type="image/jpeg",
+                )
+            ],
+        )
+    )
+    assert "<script>" not in email.html
+    assert '"><b>' not in email.html
+
+
+def test_a_kit_that_was_not_paid_for_carries_no_receipt():
+    from exam_photo.api.delivery import DeliveredFile, Delivery, compose
+
+    email = compose(
+        Delivery(
+            exam_names=["CTET"],
+            files=[
+                DeliveredFile(
+                    label="Signature",
+                    filename="s.jpg",
+                    size_bytes=9000,
+                    media_type="image/jpeg",
+                ),
+                DeliveredFile(
+                    label="Photograph",
+                    filename="p.jpg",
+                    size_bytes=90000,
+                    media_type="image/jpeg",
+                ),
+            ],
+        )
+    )
+    assert email.subject == "Your CTET files are ready"
+    assert "Receipt" not in email.html and "RECEIPT" not in email.text
+    assert "9.0 KB" in email.text and "90 KB" in email.text
+
+
+def test_the_wire_message_has_a_named_sender_a_reply_address_and_both_bodies():
+    from exam_photo.api.delivery import Attachment, build_message
+
+    message = build_message(
+        from_address="files@examuploadkit.com",
+        from_name="ExamUploadKit",
+        reply_to="support@examuploadkit.com",
+        to_address="candidate@example.com",
+        subject="Your CTET file is ready",
+        body="text version",
+        html="<!doctype html><p>html version</p>",
+        attachments=[Attachment("p.jpg", b"\xff\xd8\xff", "image/jpeg")],
+    )
+    assert message["From"] == "ExamUploadKit <files@examuploadkit.com>"
+    assert message["Reply-To"] == "support@examuploadkit.com"
+    assert message["Message-ID"].endswith("@examuploadkit.com>")
+    assert message["Date"]
+    assert message.get_content_type() == "multipart/mixed"
+    kinds = [part.get_content_type() for part in message.walk()]
+    assert kinds.index("text/plain") < kinds.index("text/html")
+    assert "image/jpeg" in kinds
+    assert [part.get_filename() for part in message.iter_attachments()] == ["p.jpg"]
+
+
+def test_a_configured_display_name_is_kept_as_it_is():
+    from exam_photo.api.delivery import build_message
+
+    message = build_message(
+        from_address="Exam Files <files@examuploadkit.com>",
+        from_name="ExamUploadKit",
+        reply_to="",
+        to_address="c@example.com",
+        subject="s",
+        body="b",
+        attachments=[],
+    )
+    assert message["From"] == "Exam Files <files@examuploadkit.com>"
+    assert message["Reply-To"] is None
+
+
+def test_the_email_names_the_examination_and_the_order_that_paid_for_it(api):
+    from exam_photo.api.orders import OrderRegistry
+
+    record = _job(api, "job_named")
+    record.requirement_id = "candidate_photograph"
+    record.output_width, record.output_height = 413, 531
+    api.registry.update_job(record)
+    orders: OrderRegistry = api.orders
+    orders.create(
+        order_id="order_named1",
+        kit_id=KIT,
+        job_ids=["job_named"],
+        amount_paise=300,
+        currency="INR",
+    )
+    orders.mark_paid("order_named1", "pay_named1")
+
+    client.post(f"/v1/kits/{KIT}/email", json={"address": "candidate@example.com"})
+
+    sent = api.email_sender.sent[0]
+    assert sent["subject"] == "Your CTET September 2026 file is ready"
+    assert "Candidate photograph" in sent["body"]
+    assert "order_named1" in sent["body"] and "pay_named1" in sent["html"]
+    assert "413 × 531 px" in sent["body"]
 
 
 # ----------------------------------------------------------------------

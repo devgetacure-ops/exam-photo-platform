@@ -161,4 +161,64 @@ describe("the phone flow", () => {
         expect(stored).toBeTruthy();
         expect(JSON.parse(stored as string)).not.toContain("sign");
     });
+
+    test("one button clears the whole selection, and the same button selects everything again", () => {
+        render(<PrepareFlow exam={exam} />);
+        const boxes = () =>
+            screen.getAllByRole("checkbox").map((box) => (box as HTMLInputElement).checked);
+
+        fireEvent.click(screen.getByRole("button", { name: "Clear all" }));
+        expect(boxes().every((on) => !on)).toBe(true);
+        expect(screen.getByText("0 of 4 ticked")).toBeInTheDocument();
+        expect(JSON.parse(window.localStorage.getItem("uploadready:selection:test-exam")!)).toEqual([]);
+
+        fireEvent.click(screen.getByRole("button", { name: "Select all" }));
+        // Every file we prepare, the optional one included: "all" means all.
+        expect(boxes().every((on) => on)).toBe(true);
+        expect(screen.getByText("4 of 4 ticked")).toBeInTheDocument();
+        expect(screen.getByRole("button", { name: "Clear all" })).toBeInTheDocument();
+    });
+
+    test("a ready file is shown ticked, and a failed one asks for another go", () => {
+        const toneExam = { ...exam, exam_id: "tone-exam" } as ExamDetail;
+        const done = (id: string, type: string, outcome: string) => ({
+            jobId: `job_${id}`,
+            requirementId: id,
+            requirementType: type,
+            status: "SUCCEEDED",
+            outcome,
+            findings: [],
+            updatedAt: "2026-09-16",
+        });
+        window.localStorage.setItem(
+            "exam-photo:kits:v1",
+            JSON.stringify({
+                "tone-exam": {
+                    kitId: "kit_tone",
+                    examId: "tone-exam",
+                    createdAt: "2026-09-16",
+                    updatedAt: "2026-09-16",
+                    requirements: {
+                        photo: done("photo", "photograph", "prepared"),
+                        sign: done("sign", "signature", "not_produced"),
+                    },
+                },
+            }),
+        );
+        render(<PrepareFlow exam={toneExam} />);
+        fireEvent.click(screen.getByRole("button", { name: "Add your files" }));
+
+        const row = (name: RegExp) => screen.getByRole("button", { name });
+        const photo = row(/Recent photograph/);
+        expect(within(photo).getByText("Ready")).toBeInTheDocument();
+        expect(photo.querySelector(".euk-m-file-state")).toHaveAttribute("data-tone", "done");
+
+        const sign = row(/Candidate signature/);
+        expect(within(sign).getByText("Try again")).toBeInTheDocument();
+        expect(sign.querySelector(".euk-m-file-state")).toHaveAttribute("data-tone", "retry");
+
+        const marks = row(/Class 10 certificate/);
+        expect(within(marks).getByText("Not added yet")).toBeInTheDocument();
+        expect(marks.querySelector(".euk-m-file-state")).not.toHaveAttribute("data-tone");
+    });
 });

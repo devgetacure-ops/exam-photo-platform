@@ -235,6 +235,68 @@ describe("payment and retention boundaries", () => {
         );
         await screen.findByRole("button", { name: "Pay ₹5" });
     });
+    describe("after payment is confirmed", () => {
+        const payAndConfirm = async () => {
+            show();
+            const pay = await screen.findByRole("button", { name: "Pay ₹5" });
+            fireEvent.click(
+                screen.getByRole("checkbox", { name: /I have reviewed/ }),
+            );
+            await waitFor(() => expect(pay).toBeEnabled());
+            fireEvent.click(pay);
+            await screen.findByText(/Payment submitted/);
+            released = true;
+            fireEvent.click(screen.getByRole("button", { name: "Refresh status" }));
+            await screen.findByRole("heading", { name: "Your downloads" });
+        };
+        const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
+        let scrollTo: ReturnType<typeof vi.fn>;
+        beforeEach(() => {
+            scrollTo = vi.fn();
+            vi.stubGlobal("scrollTo", scrollTo);
+        });
+
+        it("shows the success moment, then carries the candidate to the downloads two seconds later", async () => {
+            await payAndConfirm();
+            expect(
+                screen.getByRole("heading", { name: /We’ve prepared the files/ }),
+            ).toHaveFocus();
+            const before = scrollTo.mock.calls.length;
+            await wait(1500);
+            expect(scrollTo.mock.calls.length).toBe(before);
+            await waitFor(
+                () =>
+                    expect(
+                        screen.getByRole("heading", { name: "Your downloads" }),
+                    ).toHaveFocus(),
+                { timeout: 2000 },
+            );
+            expect(scrollTo.mock.calls.length).toBe(before + 1);
+        });
+
+        it("a touch during the success moment keeps the candidate where they are", async () => {
+            await payAndConfirm();
+            const before = scrollTo.mock.calls.length;
+            window.dispatchEvent(new Event("touchstart"));
+            await wait(2400);
+            expect(scrollTo.mock.calls.length).toBe(before);
+            expect(
+                screen.getByRole("heading", { name: "Your downloads" }),
+            ).not.toHaveFocus();
+        });
+
+        it("arriving at a kit that is already paid does not move the page", async () => {
+            released = true;
+            show();
+            const downloads = await screen.findByRole("heading", {
+                name: "Your downloads",
+            });
+            const settled = scrollTo.mock.calls.length;
+            await wait(2400);
+            expect(scrollTo.mock.calls.length).toBe(settled);
+            expect(downloads).not.toHaveFocus();
+        });
+    });
     it("fails closed when the quote cannot be fetched", async () => {
         failQuote = true;
         show();

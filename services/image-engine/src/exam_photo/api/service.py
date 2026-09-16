@@ -17,7 +17,10 @@ from PIL import Image, ImageOps
 
 from exam_photo.api.contracts import ApiJobStatus, JobEntitlement
 from exam_photo.api.delivery import (
+    TYPE_LABELS,
     Attachment,
+    DeliveredFile,
+    Delivery,
     EmailRejectedError,
     EmailSender,
     check_attachment_budget,
@@ -1076,6 +1079,8 @@ class ApiProcessingService:
                 self.settings.smtp_password,
                 self.settings.smtp_from_address,
                 self.settings.smtp_use_tls,
+                from_name=self.settings.smtp_from_name,
+                reply_to=self.settings.smtp_reply_to,
             )
         return self._email_sender
 
@@ -1140,6 +1145,16 @@ class ApiProcessingService:
         self.registry.update_job(record)
         self.orders.mark_delivered(record.job_id, "download")
 
+    def _requirement_label(self, record: ProcessingJobRecord) -> str:
+        """What the file is, in the examination's own words where it has them."""
+        entry = self.catalogue.get(record.exam_id) if record.exam_id else None
+        if entry is not None and record.requirement_id:
+            for requirement in entry.rule.requirements or []:
+                if requirement.requirement_id == record.requirement_id:
+                    return str(requirement.requirement_name)
+        kind = record.requirement_type or ""
+        return TYPE_LABELS.get(kind, kind.replace("_", " ").capitalize() or "File")
+
     def email_jobs(
         self, records: List[ProcessingJobRecord], address: str
     ) -> Dict[str, Any]:
@@ -1168,6 +1183,7 @@ class ApiProcessingService:
             raise EmailRejectedError("there is nothing released to send")
 
         attachments = []
+        described = []
         for record in deliverable:
             try:
                 content = self.store.read_file(
@@ -1175,27 +1191,56 @@ class ApiProcessingService:
                 )
             except (FileNotFoundError, ValueError):
                 continue
-            attachments.append(
-                Attachment(
-                    filename=str(record.output_filename),
-                    content=content,
-                    media_type=record.output_media_type or "image/jpeg",
+            attachment = Attachment(
+                filename=str(record.output_filename),
+                content=content,
+                media_type=record.output_media_type or "image/jpeg",
+            )
+            attachments.append(attachment)
+            described.append(
+                DeliveredFile(
+                    label=self._requirement_label(record),
+                    filename=attachment.filename,
+                    size_bytes=len(content),
+                    media_type=attachment.media_type,
+                    width=record.output_width,
+                    height=record.output_height,
                 )
             )
         if not attachments:
             raise EmailRejectedError("the prepared files are no longer on disk")
         check_attachment_budget(attachments)
 
-        exam_names = list(dict.fromkeys(r.exam_id for r in deliverable if r.exam_id))
-        subject, body = compose(
-            exam_names,
-            [item.filename for item in attachments],
-            deliverable[0].expires_at,
+        # The examination by its own name, never its catalogue id (DEC-102).
+        exam_names: List[str] = []
+        for exam_id in dict.fromkeys(r.exam_id for r in deliverable if r.exam_id):
+            entry = self.catalogue.get(exam_id)
+            name = entry.rule.exam.exam_name if entry is not None else None
+            if name and name not in exam_names:
+                exam_names.append(name)
+        # The earliest deadline among what was sent: that is when the first of
+        # these files leaves our side.
+        deadlines = sorted(r.expires_at for r in deliverable if r.expires_at)
+        order = self.orders.paid_order_for([r.job_id for r in deliverable])
+        email = compose(
+            Delivery(
+                exam_names=exam_names,
+                files=described,
+                expires_at=deadlines[0] if deadlines else None,
+                order_id=order.order_id if order else None,
+                amount_paise=order.amount_paise if order else None,
+                payment_reference=order.payment_reference if order else None,
+                paid_at=order.paid_at if order else None,
+                site_url=self.settings.site_url,
+                support_address=self.settings.smtp_reply_to,
+            )
         )
 
         sent_at = datetime.now(timezone.utc).isoformat()
         try:
-            self.email_sender.send(address, subject, body, attachments)
+            self.email_sender.send(
+                address, email.subject, email.text, attachments, html=email.html
+            )
         except EmailRejectedError as err:
             for record in deliverable:
                 record.email_attempts.append(

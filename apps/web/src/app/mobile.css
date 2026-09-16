@@ -368,20 +368,79 @@
 
 .euk-m-file-tick,
 .euk-m-file-state {
+    position: relative;
     flex: none;
     width: 26px;
     height: 26px;
     border: var(--rule-thin) solid var(--ink-40);
 }
 
+/* A filled square alone read as an empty box on a phone (owner's note, 16
+   September), so every "yes" is drawn as a tick: a mask painted in `color`,
+   so it follows the theme like text does. */
+.euk-m-file input:checked ~ .euk-m-file-tick::after,
+.euk-m-file-state[data-tone="done"]::after,
+.euk-m-file-state[data-tone="check"]::after {
+    content: "";
+    position: absolute;
+    inset: 3px;
+    background: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%23000' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 10.5 L8.2 14.5 L16 5.5'/%3E%3C/svg%3E") center / contain no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%23000' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 10.5 L8.2 14.5 L16 5.5'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
 .euk-m-file input:checked ~ .euk-m-file-tick {
     border-color: var(--ink);
     background: var(--signal);
+    color: var(--signal-ink);
 }
 
-.euk-m-file-state[data-done] {
+.euk-m-file-state[data-tone="done"] {
     border-color: var(--ok-line);
-    background: var(--ok-fill);
+    background: var(--ok-line);
+    color: var(--paper);
+}
+
+.euk-m-file-state[data-tone="check"] {
+    border-color: var(--partial-line);
+    background: var(--partial-line);
+    color: var(--paper);
+}
+
+.euk-m-file-state[data-tone="retry"] {
+    border-color: var(--signal-deep);
+    background: var(--signal-soft);
+}
+
+.euk-m-selectrow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.euk .euk-m-selectrow p {
+    font-size: 14px;
+    color: var(--ink-55);
+    font-variant-numeric: tabular-nums;
+}
+
+.euk-m-selectall {
+    min-height: 44px;
+    padding: 0 14px;
+    border: var(--rule-thin) solid var(--ink);
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-shoulders), "Arial Narrow", sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.euk-m-selectall:active {
+    background: var(--paper-2);
 }
 
 .euk-m-yours {

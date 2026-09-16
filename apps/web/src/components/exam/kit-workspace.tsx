@@ -21,6 +21,7 @@ import { plainFindings } from "../../lib/finding-text";
 import { bringIntoView } from "../../lib/scroll";
 import { useCheckoutStage } from "./live-job-state";
 import type { ExamFact } from "./exam-facts";
+import { SelectAllToggle } from "./select-all-toggle";
 
 /**
  * The kit: every file this application asks for, what it costs, and the file
@@ -256,9 +257,22 @@ export function KitWorkspace({
                             {ours.length ? "Your kit" : "What it asks for"}
                         </h2>
                         {ours.length > 0 && (
-                            <p className="euk-kit-progress">
-                                {ready} of {ours.length} prepared
-                            </p>
+                            <div className="euk-kit-head-meta">
+                                <p className="euk-kit-progress">
+                                    {ready} of {ours.length} prepared
+                                </p>
+                                {!paid && (
+                                    <SelectAllToggle
+                                        className="euk-kit-selectall"
+                                        selected={included.length}
+                                        disabled={busy}
+                                        onClear={() => choose([])}
+                                        onSelectAll={() =>
+                                            choose(ours.map((r) => r.requirement_id))
+                                        }
+                                    />
+                                )}
+                            </div>
                         )}
                     </div>
 

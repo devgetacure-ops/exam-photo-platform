@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import Image, { getImageProps } from "next/image";
 import { type CSSProperties, useCallback, useEffect, useRef, useState } from "react";
 
 /**
@@ -26,6 +26,18 @@ import { type CSSProperties, useCallback, useEffect, useRef, useState } from "re
  *
  * The sweep writes a CSS custom property on the frame rather than React state,
  * so the loop re-renders nothing except at the two phase changes of a cycle.
+ *
+ * Smooth on a phone (owner's note, 16 September). Three things made it stutter
+ * there. The partition moved by `left` and the reveal by `clip-path`, so every
+ * frame laid out the line and handle and repainted a whole photograph; they
+ * now move by `transform` alone, which the compositor does without either.
+ * The next example was preloaded at its raw path while `next/image` shows an
+ * optimised URL, so every handover fetched and decoded a new file mid-sweep;
+ * it is now preloaded and decoded at the exact URL that will be drawn. And a
+ * drag re-measured the frame and restarted a timer on every move, and froze
+ * when the browser took a slanted swipe for a scroll; the frame is measured
+ * once per drag, the timer starts on release, and a cancelled drag counts as
+ * a release.
  */
 
 export interface WipePair {
@@ -58,6 +70,24 @@ const RESUME_AFTER_MS = 3000;
 
 const ease = (x: number) => 0.5 - 0.5 * Math.cos(Math.PI * Math.min(1, Math.max(0, x)));
 
+/** Stacked full width on a phone, side by side from 900px. Shared by every
+ * image in a frame and by the preload, so all of them choose the same file. */
+const SIZES = "(min-width: 900px) 46vw, 100vw";
+
+/** Fetch and decode an image at the URL `next/image` will actually draw. */
+function warm(src: string, width: number, height: number) {
+    const { props } = getImageProps({ src, alt: "", width, height, sizes: SIZES });
+    const image = new window.Image();
+    // `sizes` before `srcset`, so the browser chooses once, and chooses as the
+    // frame will.
+    if (props.sizes) image.sizes = props.sizes;
+    if (props.srcSet) image.srcset = props.srcSet;
+    image.src = props.src;
+    image.decode?.().catch(() => {
+        /* A preload that fails costs nothing: the frame loads it as before. */
+    });
+}
+
 interface SetProps {
     title: string;
     pairs: WipePair[];
@@ -80,13 +110,21 @@ function WipeSet({ title, pairs, checks, width, height, allowed }: SetProps) {
     const pctRef = useRef(START);
     const passedRef = useRef(0);
     const resumeRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    /** The frame's box, measured once when a drag starts rather than per move. */
+    const boxRef = useRef<{ left: number; width: number } | null>(null);
+    const shownValueRef = useRef(START);
 
     const apply = useCallback(
         (next: number) => {
             const pct = Math.min(100, Math.max(0, next));
             pctRef.current = pct;
             frameRef.current?.style.setProperty("--wipe", pct.toFixed(2));
-            sliderRef.current?.setAttribute("aria-valuenow", String(Math.round(pct)));
+            // Assistive technology hears whole steps, not sixty updates a second.
+            const shown = Math.round(pct);
+            if (shown !== shownValueRef.current) {
+                shownValueRef.current = shown;
+                sliderRef.current?.setAttribute("aria-valuenow", String(shown));
+            }
             // Counted from the prepared side, which is the side that grows: a
             // check is ticked once the prepared file has covered its place.
             const covered = 100 - pct;
@@ -105,13 +143,25 @@ function WipeSet({ title, pairs, checks, width, height, allowed }: SetProps) {
         apply(pctRef.current);
     }, [apply]);
 
-    /** Any touch holds this frame, on the example it is showing now. */
-    const hold = useCallback(() => {
+    /** A touch takes this frame, on the example it is showing now. */
+    const grab = useCallback(() => {
         setHeld(true);
         setIncoming(false);
         if (resumeRef.current) clearTimeout(resumeRef.current);
+    }, []);
+
+    /** Let go: the frame picks itself up three seconds after the last touch. */
+    const letGo = useCallback(() => {
+        boxRef.current = null;
+        if (resumeRef.current) clearTimeout(resumeRef.current);
         resumeRef.current = setTimeout(() => setHeld(false), RESUME_AFTER_MS);
     }, []);
+
+    /** A single action (a key, a dot): take the frame and let go at once. */
+    const hold = useCallback(() => {
+        grab();
+        letGo();
+    }, [grab, letGo]);
 
     useEffect(
         () => () => {
@@ -174,22 +224,24 @@ function WipeSet({ title, pairs, checks, width, height, allowed }: SetProps) {
         return () => cancelAnimationFrame(frame);
     }, [running, pairs.length, apply]);
 
-    // Fetch the next pair before it is wanted, so a handover never shows a gap.
+    // Fetch and decode the next pair before it is wanted, at the URL the frame
+    // will draw, so a handover never waits on the network or the decoder.
     useEffect(() => {
         const next = pairs[(index + 1) % pairs.length];
         if (!next || typeof window === "undefined") return;
-        for (const src of [next.before, next.after]) {
-            const image = new window.Image();
-            image.src = src;
-        }
-    }, [index, pairs]);
+        warm(next.before, width, height);
+        warm(next.after, width, height);
+    }, [index, pairs, width, height]);
 
     const fromClientX = useCallback(
         (clientX: number) => {
-            const el = frameRef.current;
-            if (!el) return;
-            const box = el.getBoundingClientRect();
-            if (box.width === 0) return;
+            let box = boxRef.current;
+            if (!box) {
+                const rect = frameRef.current?.getBoundingClientRect();
+                if (!rect || rect.width === 0) return;
+                box = { left: rect.left, width: rect.width };
+                boxRef.current = box;
+            }
             apply(((clientX - box.left) / box.width) * 100);
         },
         [apply],
@@ -230,15 +282,19 @@ function WipeSet({ title, pairs, checks, width, height, allowed }: SetProps) {
                 style={{ "--wipe-ratio": `${width} / ${height}` } as CSSProperties}
                 onPointerDown={(event) => {
                     event.currentTarget.setPointerCapture(event.pointerId);
-                    hold();
+                    boxRef.current = null;
+                    grab();
                     fromClientX(event.clientX);
                 }}
                 onPointerMove={(event) => {
                     if (!event.currentTarget.hasPointerCapture(event.pointerId)) return;
-                    hold();
                     fromClientX(event.clientX);
                 }}
-                onPointerUp={hold}
+                onPointerUp={letGo}
+                // The browser took the gesture for a scroll: that is a release
+                // too, or the frame would stay held with nothing to let it go.
+                onPointerCancel={letGo}
+                onLostPointerCapture={letGo}
             >
                 <Image
                     className="euk-wipe-img"
@@ -246,6 +302,7 @@ function WipeSet({ title, pairs, checks, width, height, allowed }: SetProps) {
                     alt={pair.alt}
                     width={width}
                     height={height}
+                    sizes={SIZES}
                     priority={index === 0}
                     draggable={false}
                 />
@@ -256,6 +313,7 @@ function WipeSet({ title, pairs, checks, width, height, allowed }: SetProps) {
                         alt=""
                         width={width}
                         height={height}
+                        sizes={SIZES}
                         priority={index === 0}
                         draggable={false}
                     />

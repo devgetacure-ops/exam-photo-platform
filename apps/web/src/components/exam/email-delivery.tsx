@@ -12,10 +12,20 @@ import { getReadiness } from "../../lib/api-client";
  * review screen giving way to the delivery screen, which remounts this form.
  * It is held in memory for that, and only for that: never in browser storage,
  * gone on reload, and cleared once the email is sent.
+ *
+ * Typing an address into a box that says what it is for is the consent; there
+ * is no tick (owner, 16 September 2026). The tick also said "I have finished
+ * typing", and that job is kept by where the address was typed. Before
+ * payment, it is sent by itself once payment is confirmed: by then the
+ * candidate has gone to pay. After payment, only the button sends it, so a
+ * half-typed address that already looks valid ("name@gmail.co") never goes.
  */
+const LOOKS_LIKE_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 interface Draft {
     address: string;
-    consent: boolean;
+    /** Typed before payment, so it is sent by itself once payment is confirmed. */
+    auto: boolean;
     attempted: string;
 }
 
@@ -41,13 +51,15 @@ export function EmailDelivery({
 }) {
     const saved = drafts.get(kitId);
     const [address, setAddress] = useState(saved?.address ?? "");
-    const [consent, setConsent] = useState(saved?.consent ?? false);
+    const [auto, setAuto] = useState(saved?.auto ?? false);
     const [state, setState] = useState<"idle" | "sending" | "sent" | "error">(
         "idle",
     );
     const [message, setMessage] = useState("");
     const attempted = useRef(saved?.attempted ?? "");
     const signature = [...jobIds].sort().join(",");
+    const trimmed = address.trim();
+    const valid = LOOKS_LIKE_EMAIL.test(trimmed);
     // Offered only where this host can actually send (testing note 18): a
     // form that always fails, and then blames the address, is worse than no
     // form. Unknown -- the engine unreachable or silent -- keeps the form.
@@ -65,19 +77,19 @@ export function EmailDelivery({
     const remember = (patch: Partial<Draft>) => {
         const current = drafts.get(kitId) ?? {
             address: "",
-            consent: false,
+            auto: false,
             attempted: "",
         };
         drafts.set(kitId, { ...current, ...patch });
     };
 
     async function send() {
-        if (!released || !consent || !address || state === "sending") return;
-        attempted.current = `${signature}:${address}`;
+        if (!released || !valid || state === "sending") return;
+        attempted.current = `${signature}:${trimmed}`;
         remember({ attempted: attempted.current });
         setState("sending");
         try {
-            const receipt = await emailKit(kitId, address, jobIds);
+            const receipt = await emailKit(kitId, trimmed, jobIds);
             if (!receipt.sent)
                 throw new Error(
                     "Email was not sent. Your downloads are still available.",
@@ -96,23 +108,19 @@ export function EmailDelivery({
             );
         }
     }
-    // This is an explicitly consented, one-attempt convenience while the page is open.
-    // A failed request never retries silently (its provider outcome may be uncertain).
+    // One attempt, only for an address given before payment, while the page is
+    // open. A failed request never retries silently (its provider outcome may
+    // be uncertain).
     const sendRef = useRef(send);
     useEffect(() => {
         sendRef.current = send;
     });
     useEffect(() => {
-        if (
-            !released ||
-            !consent ||
-            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(address)
-        )
-            return;
-        if (attempted.current === `${signature}:${address}`) return;
+        if (!released || !auto || !valid) return;
+        if (attempted.current === `${signature}:${trimmed}`) return;
         const timer = setTimeout(() => void sendRef.current(), 0);
         return () => clearTimeout(timer);
-    }, [released, consent, address, signature]);
+    }, [released, auto, valid, trimmed, signature]);
 
     if (unavailable) return null;
 
@@ -136,7 +144,7 @@ export function EmailDelivery({
                     <p>
                         {released
                             ? "Keep the files after ours are deleted."
-                            : "Leave your address and they are sent the moment payment is confirmed."}
+                            : "Leave your address and they are sent the moment payment is confirmed on this page."}
                     </p>
                 </div>
             </div>
@@ -154,8 +162,10 @@ export function EmailDelivery({
                     disabled={state === "sending"}
                     onChange={(event) => {
                         setAddress(event.target.value);
-                        setConsent(false);
-                        remember({ address: event.target.value, consent: false });
+                        // Before payment the address waits for confirmation;
+                        // after it, only the button sends.
+                        setAuto(!released);
+                        remember({ address: event.target.value, auto: !released });
                         setState("idle");
                         setMessage("");
                     }}
@@ -165,32 +175,21 @@ export function EmailDelivery({
                     <button
                         type="submit"
                         className="secondary-button"
-                        disabled={!consent || !address || state === "sending"}
+                        // Sent stays sent until the address changes: a second
+                        // tap sent the same files twice (owner's inbox, 16
+                        // September).
+                        disabled={!valid || state === "sending" || state === "sent"}
                     >
                         {state === "sending"
                             ? "Sending…"
-                            : state === "error"
-                              ? "Try email again"
-                              : "Email my files"}
+                            : state === "sent"
+                              ? "Sent"
+                              : state === "error"
+                                ? "Try email again"
+                                : "Email my files"}
                     </button>
                 )}
             </div>
-            <label className="euk-consent">
-                <input
-                    type="checkbox"
-                    checked={consent}
-                    disabled={!address || state === "sending"}
-                    onChange={(event) => {
-                        setConsent(event.target.checked);
-                        remember({ consent: event.target.checked });
-                    }}
-                />
-                <span>
-                    Email these files to me once they are released. Keep this
-                    page open for sending; this address is not saved in my
-                    browser.
-                </span>
-            </label>
             {message && (
                 <p
                     className="euk-email-message"

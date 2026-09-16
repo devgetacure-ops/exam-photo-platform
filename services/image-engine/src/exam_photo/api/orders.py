@@ -136,6 +136,29 @@ class OrderRegistry:
             path.write_text(record.model_dump_json(indent=2), encoding="utf-8")
             return
 
+    def paid_order_for(self, job_ids: List[str]) -> Optional[OrderRecord]:
+        """The settled order that paid for any of these jobs, if there is one.
+
+        For the receipt in the delivery email (DEC-102). The most recently paid
+        wins, so a file bought twice shows the payment that released it.
+        """
+        if not self.root.is_dir() or not job_ids:
+            return None
+        wanted = set(job_ids)
+        found: Optional[OrderRecord] = None
+        for path in self.root.glob("order_*.json"):
+            try:
+                record = OrderRecord.model_validate_json(
+                    path.read_text(encoding="utf-8")
+                )
+            except Exception:
+                continue
+            if record.paid_at is None or not wanted.intersection(record.job_ids):
+                continue
+            if found is None or (record.paid_at or "") > (found.paid_at or ""):
+                found = record
+        return found
+
     def mark_paid(self, order_id: str, payment_reference: Optional[str]) -> None:
         """Record that a verified payment settled this order.
 

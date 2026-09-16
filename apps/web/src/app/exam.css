@@ -289,6 +289,40 @@
     white-space: nowrap;
 }
 
+.euk-kit-head-meta {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+}
+
+/* The whole selection in one move: a quiet underlined word beside the count,
+   because it is a correction to the list, never the next step. */
+.euk-kit-selectall {
+    padding: 6px 0;
+    border: 0;
+    background: none;
+    color: var(--ink);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: var(--signal-deep);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.euk-kit-selectall:hover {
+    text-decoration-color: var(--ink);
+}
+
+.euk-kit-selectall:disabled {
+    color: var(--ink-40);
+    text-decoration-color: var(--ink-40);
+    cursor: not-allowed;
+}
+
 .euk-kit-fieldset,
 .euk-kit-panelset,
 .euk-kit-panel-inner {
@@ -461,6 +495,22 @@
 .euk-kit-state[data-tone="done"] {
     color: var(--ok-line);
     background: var(--ok-fill);
+}
+
+/* A finished file says so with a tick as well as a word, the same tick the
+   phone draws in its boxes (owner's note, 16 September). Not a second
+   checkbox: the row's checkbox already means "in my kit". */
+.euk-kit-state[data-tone="done"]::before,
+.euk-kit-state[data-tone="check"]::before {
+    content: "";
+    display: inline-block;
+    width: 0.95em;
+    height: 0.95em;
+    margin-right: 5px;
+    vertical-align: -0.12em;
+    background: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%23000' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 10.5 L8.2 14.5 L16 5.5'/%3E%3C/svg%3E") center / contain no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%23000' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 10.5 L8.2 14.5 L16 5.5'/%3E%3C/svg%3E") center / contain no-repeat;
 }
 
 .euk-kit-state[data-tone="check"] {
