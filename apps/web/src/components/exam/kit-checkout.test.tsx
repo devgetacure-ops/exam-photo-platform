@@ -291,6 +291,12 @@ describe("payment and retention boundaries", () => {
             const downloads = await screen.findByRole("heading", {
                 name: "Your downloads",
             });
+            // Let arrival finish first: a paid kit that is still loading passes
+            // through another stage, and bringing the success moment into view
+            // can land a moment after the heading renders (it did on CI's
+            // slower runner). What must never follow is the move to the
+            // downloads, which would come two seconds after that change.
+            await wait(500);
             const settled = scrollTo.mock.calls.length;
             await wait(2400);
             expect(scrollTo.mock.calls.length).toBe(settled);
