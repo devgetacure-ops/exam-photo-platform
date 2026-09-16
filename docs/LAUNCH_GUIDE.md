@@ -4,6 +4,14 @@ Written 15 September 2026 for the owner (DEC-097). Prices move; each one here
 says where to check it. Nothing in this guide goes live by itself: every step
 that creates an account, spends money or publishes the site is yours.
 
+> **Status, 16 September 2026: live.** Deployed on Vultr (Mumbai, 8 vCPU / 16 GB,
+> on the promotional credit) with Cloudflare proxying, Turnstile, Resend and live
+> Razorpay payments; the move to Hostinger KVM 4 comes before 11 October. What
+> runs where, and what is still open, is in *Live Operations* at the top of
+> `HANDOFF.md`. Still to do from this guide: Search Console, Bing and Web
+> Analytics. The steps below are kept for the Hostinger move, with what launch
+> day taught added where it applies.
+
 ## What runs where, and why not Vercel alone
 
 The site has two halves:
@@ -24,7 +32,10 @@ own.
 **Size: 8 GB of memory, x86.** `deploy/README.md` shows why: a 4 GB box was
 killed mid-photograph.
 
-**Where** (check prices on the day):
+**Where** (check prices on the day). **Chosen on launch day**: Vultr on its
+promotional credit for the first month, then Hostinger KVM 4 (India, 16 GB) for
+the long run. 16 GB rather than 8 so the one-off model export has room (it ran
+clean on 16 GB). The options first considered:
 
 - **Hetzner Cloud, Singapore, CPX31 (4 vCPU, 8 GB)**: the cheapest reliable
   8 GB box near India. Hetzner raised prices several times in 2026, and its
@@ -48,8 +59,12 @@ killed mid-photograph.
 
 ## Deploying, step by step
 
-1. Create the server: Ubuntu 24.04, your SSH key, and a firewall allowing only
-   ports 22, 80 and 443.
+1. Create the server: **Ubuntu 24.04** (not a newer release; everything here is
+   tested on 24.04), your SSH key, and a firewall allowing only ports 22, 80
+   and 443. Then turn off password login for SSH in a file under
+   `/etc/ssh/sshd_config.d/` whose name sorts **before** the cloud provider's
+   own (for example `01-hardening.conf`), because sshd keeps the first value it
+   reads.
 2. In Cloudflare DNS add two `A` records to the server's IP address, `@` and
    `www`, set to **DNS only (grey cloud)** for now, so Caddy can obtain its
    certificate directly.
@@ -79,9 +94,12 @@ killed mid-photograph.
    docker compose -f deploy/docker-compose.yml up -d --build
    ```
 
-6. The engine warms for a minute or two. Then open the domain on your phone and
-   prepare a file. Any `NEXT_PUBLIC_*` or business change later needs
+6. The engine warms (12 seconds on the Vultr box). Then open the domain on your
+   phone and prepare a file. Any `NEXT_PUBLIC_*` or business change later needs
    `up -d --build`, because those are written into the pages when they build.
+7. **Once the certificate is issued, turn on Cloudflare's proxy** (orange cloud)
+   for both records. **First** set Cloudflare → SSL/TLS to **Full (strict)**:
+   on the default "Flexible" setting the site loops between HTTP and HTTPS.
 
 ## The free services, in the order you need them
 
@@ -107,9 +125,20 @@ key in `NEXT_PUBLIC_TURNSTILE_SITE_KEY` and the secret in
    EXAM_PHOTO_SMTP_FROM=files@yourdomain.com
    ```
 
+   And how the message presents itself (DEC-102):
+
+   ```
+   EXAM_PHOTO_SMTP_FROM_NAME=ExamUploadKit
+   EXAM_PHOTO_SMTP_REPLY_TO=support@yourdomain.com
+   EXAM_PHOTO_SITE_URL=https://yourdomain.com
+   ```
+
+   The sending address should be a real mailbox or alias at your mail provider,
+   so a candidate's reply does not bounce.
+
 4. `docker compose -f deploy/docker-compose.yml up -d`. The email box appears on
    the site once the engine reports email configured. Moving to Amazon SES later
-   changes these six lines and nothing else.
+   changes the SMTP lines and nothing else.
 
 ### Razorpay (payments)
 
@@ -120,6 +149,11 @@ After approval, put the key id and secret in `deploy/.env`, create a webhook to
 `order.paid`, and put its secret in `EXAM_PHOTO_RAZORPAY_WEBHOOK_SECRET`.
 **The payment simulator must be off** (`EXAM_PHOTO_PAYMENT_SIMULATOR` unset) on
 this server.
+
+Learned on launch day: **Razorpay keeps a separate webhook list for Test Mode and
+Live Mode.** A webhook made in Live Mode never fires for a test payment, so a
+test payment takes the money and releases nothing. Test keys need a test-mode
+webhook; live keys need a live-mode one. The same secret can serve both.
 
 ### Visit counts: Cloudflare Web Analytics (free, no cookies)
 

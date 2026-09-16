@@ -14,6 +14,14 @@ These are measured on this codebase, not estimated:
 | Second and subsequent inferences | **~7.7 s** |
 | Per photograph, end to end, warm | **~10 s** |
 
+**Measured on the production VPS** (Vultr `vhp-8c-16gb`, 8 vCPU, 16 GB NVMe, 16
+September 2026): container warmup to `/ready` **12.2 s**; `model-fetch`'s ONNX
+export completed on 16 GB with an equivalence difference of `0.00000000`; a
+`process-rule` run in a fresh process inside the container, models loaded cold,
+**16–17 s**. The 186–316 s container warmup recorded in `HANDOFF.md` was a
+development machine reading the model off a Docker Desktop volume; NVMe does not
+have that cost.
+
 **Workers are processes and each holds its own BiRefNet session, so memory is
 per worker and not shared.**
 

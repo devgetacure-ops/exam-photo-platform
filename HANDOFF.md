@@ -1,3 +1,76 @@
+# Live Operations
+
+**Last updated: 2026-09-16, end of launch day.** `https://examuploadkit.com` is
+live and taking real payments. **This section is the current truth for running
+the site**; everything from *Platform State* down is the build history, kept
+for its reasoning, and where it disagrees with this section, this section wins.
+
+## What is running
+
+| Piece | State |
+|---|---|
+| Host | Vultr Cloud Compute, High Performance `vhp-8c-16gb`, **Mumbai**: 8 vCPU, 16 GB, 350 GB NVMe, Ubuntu 24.04. Paid from the $250 promotional credit, which expires about **16 October 2026** |
+| Plan for the host | Move to **Hostinger KVM 4** (India, 16 GB); **destroy the Vultr server by 11 October** (owner holds the reminder) |
+| Access | `ssh root@65.20.73.233` with the owner's key `C:\Users\dmbar\.ssh\id_ed25519` (ed25519, no passphrase). Password and keyboard-interactive login are off in `/etc/ssh/sshd_config.d/01-hardening.conf`, which must sort **before** `50-cloud-init.conf` (sshd keeps the first value it reads) |
+| Firewall | Vultr firewall group `examuploadkit`: inbound TCP 22, 80, 443 from anywhere; everything else dropped |
+| Code | `/opt/exam-photo-platform`, branch `main`, deployed at `2ec6fcc` (DEC-102) |
+| Stack | Compose project `exam-upload`: `engine`, `web`, `proxy` (Caddy). Volumes `models`, `artifacts`, `requests`, `caddy_data`, `caddy_config` |
+| Secrets | **Only** in `/opt/exam-photo-platform/deploy/.env`, mode 600, gitignored. Earlier copies in `/root/env.before-live.bak` (test Razorpay keys) and `/root/env.before-dec102.bak`, both mode 600 and holding secrets: delete them once the site has run clean for a while |
+| DNS and TLS | Cloudflare, **proxied (orange cloud)** for `@` and `www`, SSL/TLS **Full (strict)**. Caddy holds a Let's Encrypt certificate for `examuploadkit.com`, issued 16 September, expiring 15 December, renewed by Caddy itself |
+| Payments | Razorpay **live** keys. One **live-mode** webhook to `https://examuploadkit.com/v1/payments/razorpay/webhook`, events `payment.captured` and `order.paid` only. Test mode has **no** webhook: Razorpay keeps separate webhook lists per mode, which is why the day's test payments never released |
+| Email | Resend over SMTP. `ExamUploadKit <files@examuploadkit.com>` (a real Zoho mailbox, so replies do not bounce), `Reply-To: support@examuploadkit.com`. Cloudflare Email Routing must stay **off**: it would replace Zoho's MX records |
+| Bot check | Cloudflare Turnstile widget `examuploadkit`, Managed mode, both hostnames |
+| Models | Filled by `model-fetch` on the server. BiRefNet ONNX `940,792,905` bytes, SHA-256 `d592e635aeb091e6f65e5fb3e858a2972601bc8bdbd27b88efa1ad4be8d7cd23`, with its manifest beside it on the volume (DEC-101) |
+| `/ready` | `ready`, `purchase_gate: enabled`, `operator_surface: authenticated`, `payments: configured`, `email: configured`. Answered only from private addresses; `/ready` and `/health` are 404 from the internet |
+
+## Measured on the server, 16 September
+
+- **Engine warmup 12.2 s.** `deploy/README.md` expected 186–316 s in a container; NVMe and 16 GB removed the difference.
+- **`model-fetch` ran clean on 16 GB**: the ONNX export's equivalence check came back at a mean absolute difference of `0.00000000`, and nothing was killed. DEC-101's open risk is closed.
+- **Caddyfile validated** (`caddy validate`: `Valid configuration`), the check DEC-097 left for the server.
+- **A photograph runs inside the container.** `process-rule` in a fresh process, models loaded cold, took 16–17 s and every stage executed. Both committed portrait fixtures are refused, correctly: Freud is black and white against a colour rule, and `single_face_frontal.jpg` is the stale June case DEC-100 describes. Warm per-photograph time on this box through the site is not measured yet.
+- **The first live payment**: order `order_TchUYmPbD9Irz2`, ₹3 computed by the server, paid 22 s after the order, both webhooks accepted, the file emailed 14 s later and downloaded.
+
+## Running it
+
+```bash
+ssh root@65.20.73.233
+cd /opt/exam-photo-platform
+
+# Deploy what is on main
+git pull --ff-only
+docker compose -f deploy/docker-compose.yml up -d --build engine web   # or just the one that changed
+
+# Is it well?
+docker compose -f deploy/docker-compose.yml ps
+docker compose -f deploy/docker-compose.yml exec -T engine python -c "import urllib.request,json;print(json.loads(urllib.request.urlopen('http://127.0.0.1:8000/ready').read()))"
+docker compose -f deploy/docker-compose.yml logs --since 30m engine
+```
+
+- **A change in `deploy/.env`**: engine-only settings (payments, email, Turnstile secret, retention) need `up -d engine`. Anything read while the site builds (`NEXT_PUBLIC_*`, `EUK_BUSINESS_*`, the Google and Bing verification tags) needs `up -d --build web`.
+- **Orders** are JSON files in the `artifacts` volume under `_orders/`, and are never swept. The refund question is answered by `GET /v1/orders/{order_id}/evidence` with `Authorization: Bearer <EXAM_PHOTO_OPERATOR_TOKEN>`.
+- **Rolling back**: `git checkout <previous commit>` on the server, then `up -d --build`; an older `.env` is in `/root` as above.
+- The three test-mode orders from launch day are set aside in `/root/removed-test-orders/`; only the real order remains in the app.
+
+## Not yet verified on the live site
+
+1. **A payment through Cloudflare's proxy, with DEC-102 deployed.** The one live payment happened before the orange cloud and before DEC-102. The next one should show: no tick under the email field, the success moment and then the move to the downloads, **one** email in the new design, and a release. If a payment does not release, look at **Cloudflare → Security → Events** first: Bot Fight Mode or a WAF rule challenging Razorpay's webhook POSTs would look exactly like that.
+2. **The before-and-after band on a real phone** (DEC-102 moved it to transforms; the preview pane cannot time frames).
+3. **The delivery email in Outlook and the Gmail app.**
+
+## Waiting on the owner
+
+- **Google Search Console** (Domain property, TXT record in Cloudflare), **Bing Webmaster Tools** (import from Search Console), **Cloudflare Web Analytics** (the token goes in `NEXT_PUBLIC_CF_BEACON_TOKEN`, then `up -d --build web`). `docs/LAUNCH_GUIDE.md` has each step.
+- **Moving to Hostinger** before 11 October: the same compose deploy on the new box, `model-fetch` again (or copy the `models` volume), carry `deploy/.env` across by hand, point the Cloudflare `A` records at the new IP. The Razorpay webhook URL does not change, because the domain does not.
+
+## Next: security hardening (when the owner says)
+
+The owner wants a deep hardening pass before anything else is built. It is
+planned read-only first, then fixed in one pass on the owner's word. The prompt
+and a starting list are in `docs/NEXT_SESSION_PROMPT.md`.
+
+---
+
 ### Testing the engine locally
 
 `model-assets/` is gitignored, so a fresh clone starts empty and every
@@ -86,7 +159,7 @@ into the delivered photograph. Do not take it to hit a latency number.
 
 # Platform State
 
-**Last updated: 2026-09-15.** Branch `feat/upload-kit-ui`, with no pull request
+**Last updated: 2026-09-15** (build history; the site's current state is *Live Operations* at the top). Branch `feat/upload-kit-ui`, with no pull request
 yet. `b9eaa3f` and everything before it are on `origin`; **the fixing session's
 commits after it are local and not pushed** (the owner pushes). The whole
 candidate path works locally on a desktop and on a real phone, across **131
@@ -387,36 +460,16 @@ unread). What is still open:
    413 x 531 est. rule it came out tight (head height 0.87). No crop constant
    was changed. The Mode B calibration still governs range and preferred-size
    records; measure it on the ten `perfect` photographs before touching it.
-2. **Email: Resend now, SES later.** Delivery is plain SMTP, so either is six
-   settings in `services/image-engine/.env.local` and no code:
-   `EXAM_PHOTO_SMTP_HOST=smtp.resend.com`, `EXAM_PHOTO_SMTP_PORT=587`,
-   `EXAM_PHOTO_SMTP_USE_TLS=true`, `EXAM_PHOTO_SMTP_USERNAME=resend`,
-   `EXAM_PHOTO_SMTP_PASSWORD=<the owner's Resend API key>` and
-   `EXAM_PHOTO_SMTP_FROM` on a domain verified in Resend. The owner puts the key
-   in; it never goes into git.
+2. ~~**Email: Resend now, SES later.**~~ **Done (16 September).** Resend is
+   configured on the server, and the message was redesigned the same day
+   (DEC-102). Moving to SES later is still only the SMTP settings.
 3. **Decision: who reviews Hindi pages.** The owner does not know yet (maybe
    the owner, maybe a native speaker); Hindi pages are not built until someone
    can review them. The hubs and the compress tool were built on 15 September
    (DEC-096).
-6. **Going live** (DEC-097), status at the end of 16 September:
-   - **Done by the owner**: domain on Cloudflare; Resend account with the
-     domain verified; Zoho Mail with `support@` as the mailbox and `privacy@`,
-     `grievance@`, `legal@` as aliases (Cloudflare Email Routing must stay off,
-     it would replace Zoho's MX records). A Vultr account with its 30-day
-     promotional credit, which expires about 16 October.
-   - **Hosting plan**: test the whole site on a Vultr server (India region,
-     4 vCPU / 16 GB NVMe, Ubuntu 24.04), then move to Hostinger KVM 4 (India,
-     16 GB) on a 12- or 24-month plan and destroy the Vultr server by about
-     11 October. 16 GB rather than 8 because the BiRefNet export's memory peak
-     on an 8 GB box is unmeasured (DEC-101).
-   - **Next, in order**: the owner has no SSH key yet (`ssh-keygen -t ed25519`,
-     public half into Vultr → Account → SSH Keys); deploy the server with a
-     firewall allowing 22, 80, 443 only; send the IP; Cloudflare `A` records
-     for `@` and `www`, grey cloud; install Docker; clone while the repository is
-     still public (a read-only deploy key once it is private again); fill
-     `deploy/.env`; Turnstile keys; model-fetch, then `up -d --build`; test on a
-     phone; apply to Razorpay the same day. `docs/LAUNCH_GUIDE.md` has each step.
-   - **Ads**: not recommended now; the guide says why.
+6. ~~**Going live** (DEC-097).~~ **Live on 16 September**: see *Live
+   Operations* at the top of this file for what runs where and what is left.
+   **Ads**: still not recommended; `docs/LAUNCH_GUIDE.md` says why.
 4. **The rest of the research sheet**: `docs/research-requests/missing-information.csv`
    is 218 rows now. The owner's pass mostly gave values without the notice's
    passage; each still needs its passage before it can be imported. Re-read on
@@ -437,9 +490,8 @@ compile under memory pressure.
 1. **The four deployment blockers are fixed** (DEC-097): same-origin uploads,
    build-time settings passed to the web image, a requests volume, and a `www`
    redirect. The branch is merged to `main` and pushed, and Image Engine CI
-   passed on 16 September for the first time (DEC-100, DEC-101). Still before a
-   deploy: run `caddy validate` on the server, because this machine could not
-   run Docker to check the Caddyfile. **`docs/LAUNCH_GUIDE.md` is the
+   passed on 16 September for the first time (DEC-100, DEC-101). The Caddyfile
+   was validated on the server and the site deployed the same day. **`docs/LAUNCH_GUIDE.md` is the
    owner's step-by-step**: one 8 GB x86 server running the compose stack,
    Cloudflare DNS, Turnstile, Resend, Razorpay, Search Console and Bing.
 3. **Regional languages are not ready**, and the owner intends them soon. No
@@ -869,9 +921,9 @@ survived on the retries. Too short means a crash loop, not a slow start.
 **Verified working end to end**: engine image 1.21 GB with torch correctly
 absent, web image generating **39 exam pages and 39 rules pages**, Caddyfile
 `Valid configuration`, same-origin routing, the operator gate (401/200), and
-the proxy holding until the engine reported *ready*. **Not verified**: a
-photograph completing inside the container — it needs 3.1 GB and this machine
-cannot give it. That belongs on the VPS.
+the proxy holding until the engine reported *ready*. **Verified on the server (16 September)**: a photograph completing inside the
+container, every stage executed, 16–17 s in a fresh process with the models
+loaded cold. The container warmup there was 12.2 s, not 186–316 s.
 
 Three things the shape depends on, none of them obvious from the files:
 
