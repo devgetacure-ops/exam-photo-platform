@@ -74,6 +74,28 @@ describe("preparing one requirement", () => {
     });
     afterEach(() => vi.clearAllMocks());
 
+    test("offers the phone camera without replacing the normal file picker", () => {
+        render(
+            <RequirementUpload
+                examId="example"
+                examName="Example exam"
+                requirementId="photo"
+                requirementName="Photograph"
+                requirementType="photograph"
+            />,
+        );
+
+        expect(
+            screen.getByRole("button", { name: "Take a photo now" }),
+        ).toBeTruthy();
+        expect(
+            screen.getByLabelText("Upload for Photograph").hasAttribute("capture"),
+        ).toBe(false);
+        expect(
+            document.querySelector('input[type="file"][capture="user"]'),
+        ).toBeTruthy();
+    });
+
     test("honors the candidate's lighting choice and clears the checkout lock", async () => {
         prepareRequirement.mockResolvedValue(
             prepared({

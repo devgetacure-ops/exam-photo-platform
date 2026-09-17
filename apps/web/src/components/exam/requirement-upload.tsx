@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { prepareRequirement } from "../../lib/api-client";
 import { validateImageFile } from "../../lib/file-validation";
+import { prepareUpload, uploadRefusal } from "../../lib/upload-image";
 import { isPasswordLocked, lockedPdfMessage } from "../../lib/pdfjs";
 import { startKit } from "../../lib/kit-state";
 import { useKit } from "./use-kit";
@@ -139,6 +140,7 @@ export function RequirementUpload({
         [],
     );
     const inputRef = useRef<HTMLInputElement>(null);
+    const cameraRef = useRef<HTMLInputElement>(null);
     const { record, forget } = useKit(examId);
     const documents = ["certificate_scan", "identity_document"].includes(
         requirementType,
@@ -147,15 +149,24 @@ export function RequirementUpload({
     const consent = useUploadConsent();
 
     const submit = useCallback(
-        async (file: File) => {
+        async (chosen: File) => {
             if (challengeKey && !challengeToken) {
                 setMessage("Complete the verification before uploading.");
                 setPhase("error");
                 return;
             }
+            // A phone photograph of any size, or a WebP, is made into a JPEG the
+            // engine takes before it is uploaded (DEC-103). PDFs pass untouched.
+            const prepared = await prepareUpload(chosen);
+            if (!prepared.ok) {
+                setPhase("error");
+                setMessage(uploadRefusal(prepared.reason));
+                return;
+            }
+            const file = prepared.file;
             if (file.size > 5 * 1024 * 1024) {
                 setPhase("error");
-                setMessage("Choose a file smaller than 5 MB.");
+                setMessage("Choose a PDF smaller than 5 MB.");
                 return;
             }
             if (
@@ -390,9 +401,38 @@ export function RequirementUpload({
                 >
                     {PROMPT[requirementType] ?? "Add your file"}
                 </button>
+                {/* The camera, directly (owner's note, 16 September). An installed
+                    app hands the picker to Android, which offers the camera only
+                    when asked for one: a list of exact image types gets files
+                    alone. `capture` asks for it; the front camera for a photo of
+                    yourself, the back one for paper. Hidden where there is a
+                    mouse, because a desktop has no camera to open this way. */}
+                <button
+                    type="button"
+                    onClick={() => {
+                        if (consent.allow()) cameraRef.current?.click();
+                    }}
+                    className="secondary-button euk-drop-camera"
+                >
+                    {photo ? "Take a photo now" : "Use the camera"}
+                </button>
+                <input
+                    ref={cameraRef}
+                    type="file"
+                    accept="image/*"
+                    capture={photo ? "user" : "environment"}
+                    className="sr-only"
+                    tabIndex={-1}
+                    aria-hidden="true"
+                    onChange={(event) => {
+                        const file = event.target.files?.[0];
+                        if (file && consent.allow()) void submit(file);
+                        event.target.value = "";
+                    }}
+                />
                 <p className="euk-drop-hint">
-                    or drop it here: JPEG, PNG, WebP{documents ? " or PDF" : ""},
-                    up to 5&nbsp;MB
+                    or drop it here: JPEG, PNG, WebP up to 40&nbsp;MB
+                    {documents ? "; PDF up to 5 MB" : ""}
                 </p>
                 <input
                     ref={inputRef}

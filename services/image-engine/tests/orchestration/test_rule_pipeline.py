@@ -164,10 +164,14 @@ def test_rule_resolver_honours_a_published_preferred_size():
     data["image_requirements"]["dimensions"]["preferred_height_px"] = 230
     rule = ExamRule.model_validate(data)
 
-    prep = resolve_rule(rule).output_preparation_config
+    plan = resolve_rule(rule)
+    prep = plan.output_preparation_config
 
-    assert prep.resize_mode == ResizeMode.RANGE_SELECT
-    assert prep.preferred_width == 200 and prep.preferred_height == 230
+    assert plan.crop_mode == "a"
+    assert plan.crop_config.target_width == 200
+    assert plan.crop_config.target_height == 230
+    assert prep.resize_mode == ResizeMode.EXACT
+    assert prep.target_width == 200 and prep.target_height == 230
     assert prep.min_width == 200 and prep.max_width == 200
     assert prep.min_height == 230 and prep.max_height == 230
 

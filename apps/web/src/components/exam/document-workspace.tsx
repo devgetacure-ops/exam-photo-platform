@@ -14,6 +14,7 @@ import { OutcomeResult } from "./outcome-result";
 import { PreparationLoader } from "./preparation-loader";
 import { Tick } from "./specimen-sheet";
 import { PdfToImage } from "./pdf-to-image";
+import { prepareUpload, uploadRefusal } from "../../lib/upload-image";
 
 /**
  * Documents: the page work candidates otherwise do in three free tools, done
@@ -119,8 +120,9 @@ export function DocumentWorkspace({
                     {plan ? "Choose different source files" : "Add images or PDFs"}
                 </button>
                 <p className="euk-drop-hint">
-                    Up to 10 files, 5&nbsp;MB each. PDF pages are listed in
-                    order, without a picture of each page yet.
+                    Up to 10 files: photos up to 40&nbsp;MB, PDFs up to
+                    5&nbsp;MB. PDF pages are listed in order, without a
+                    picture of each page yet.
                 </p>
                 <input
                     className="sr-only"
@@ -130,17 +132,29 @@ export function DocumentWorkspace({
                     multiple
                     accept="image/jpeg,image/png,image/webp,application/pdf"
                     onChange={async (event) => {
-                        const files = Array.from(event.target.files ?? []);
+                        const chosen = Array.from(event.target.files ?? []);
                         event.target.value = "";
-                        if (!files.length) return;
+                        if (!chosen.length) return;
                         if (!consent.allow()) return;
-                        if (
-                            files.length > 10 ||
-                            files.some((file) => file.size > 5 * 1024 * 1024)
-                        ) {
-                            setError(
-                                "Choose up to 10 files, each no larger than 5 MB.",
-                            );
+                        if (chosen.length > 10) {
+                            setError("Choose up to 10 files.");
+                            return;
+                        }
+                        // Photographs of certificates are made into JPEGs the
+                        // engine takes (DEC-103). Do them one at a time: ten
+                        // decoded phone photographs at once can exhaust a
+                        // phone's memory before any upload begins.
+                        const files: File[] = [];
+                        for (const file of chosen) {
+                            const prepared = await prepareUpload(file);
+                            if (!prepared.ok) {
+                                setError(uploadRefusal(prepared.reason));
+                                return;
+                            }
+                            files.push(prepared.file);
+                        }
+                        if (files.some((file) => file.size > 5 * 1024 * 1024)) {
+                            setError("Choose PDFs no larger than 5 MB each.");
                             return;
                         }
                         setBusy(true);

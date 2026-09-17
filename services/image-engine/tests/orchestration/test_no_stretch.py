@@ -61,27 +61,29 @@ def test_fit_trims_a_tall_box_from_the_bottom() -> None:
     assert fitted.width / fitted.height == pytest.approx(200 / 230)
 
 
-def test_a_preferred_size_locks_the_crop_to_its_shape() -> None:
-    locked = 0
+def test_a_preferred_size_is_planned_and_delivered_as_an_exact_size() -> None:
+    """DEC-103. A preferred-only size goes through Crop Mode A at exactly its
+    shape and is delivered at exactly its pixels. Pinning Mode B's aspect range
+    to one value (DEC-090) failed every real photograph for these examinations,
+    because a whole-pixel crop cannot hit it within the planner's tolerance."""
+    planned = 0
     for rule in PHOTOGRAPH_RULES:
         assert rule.image_requirements is not None
         dim = rule.image_requirements.dimensions
-        if not (dim.preferred_width_px and dim.preferred_height_px):
+        if dim.mode.value != "unspecified" or not (
+            dim.preferred_width_px and dim.preferred_height_px
+        ):
             continue
-        try:
-            plan = resolve_rule(rule)
-        except RuleResolutionError:
-            continue
-        if not isinstance(plan.crop_config, CropModeBConfig):
-            continue
-        aspect = dim.preferred_width_px / dim.preferred_height_px
-        config = plan.crop_config
-        assert config.preferred_aspect_ratio == pytest.approx(aspect)
-        assert config.min_aspect_ratio == pytest.approx(aspect)
-        assert config.max_aspect_ratio == pytest.approx(aspect)
-        locked += 1
+        plan = resolve_rule(rule)
+        assert plan.crop_mode == "a"
+        assert not isinstance(plan.crop_config, CropModeBConfig)
+        assert plan.crop_config.target_width == dim.preferred_width_px
+        assert plan.crop_config.target_height == dim.preferred_height_px
+        assert plan.output_preparation_config.target_width == dim.preferred_width_px
+        assert plan.output_preparation_config.target_height == dim.preferred_height_px
+        planned += 1
     # Twelve since DEC-093 removed the RBI Assistant duplicate record.
-    assert locked >= 12
+    assert planned >= 12
 
 
 @pytest.mark.parametrize("box_aspect", [0.55, 0.65, 0.70, 0.75, 0.80, 0.87, 0.95, 1.1])

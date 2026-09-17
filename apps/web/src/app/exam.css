@@ -1503,6 +1503,20 @@
     font-size: 16px;
 }
 
+/* Opens the camera on a phone. Where the main pointer is a mouse there is no
+   camera to open this way, so the button is not offered. */
+.euk .euk-drop-camera {
+    min-height: 44px;
+    padding: 10px 20px;
+    font-size: 15px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .euk .euk-drop-camera {
+        display: none;
+    }
+}
+
 .euk .euk-drop-hint {
     font-size: 13px;
     line-height: 1.5;

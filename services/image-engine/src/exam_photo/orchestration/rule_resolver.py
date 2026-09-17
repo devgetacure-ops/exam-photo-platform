@@ -219,9 +219,26 @@ def resolve_rule(
         explicit = getattr(comp, field_name, None)
         return hard_default if explicit is None else float(explicit)
 
-    if dim.mode == DimensionMode.EXACT:
+    # DEC-103. A published preferred size ("200 x 230 pixels (preferred)", the
+    # IBPS, SBI, RBI, LIC, NABARD, NIACL and XAT records) is delivered at exactly
+    # that size, so it is planned as one: Crop Mode A, which frames the head in
+    # a box of the published shape and composes onto the background where the
+    # photograph is short. It was Mode B with the aspect range pinned to the
+    # single value 200/230 (DEC-090) and a tolerance of 1e-4. A crop measured
+    # in whole pixels misses that by more than the tolerance on almost any real
+    # photograph, and Mode B may not pad, so every photograph for those twelve
+    # examinations failed with CROP_B_ASPECT_OUT_OF_RANGE on the live site.
+    preferred_exact = (
+        dim.mode == DimensionMode.UNSPECIFIED
+        and dim.preferred_width_px is not None
+        and dim.preferred_height_px is not None
+    )
+    exact_width = dim.preferred_width_px if preferred_exact else dim.width_px
+    exact_height = dim.preferred_height_px if preferred_exact else dim.height_px
+
+    if dim.mode == DimensionMode.EXACT or preferred_exact:
         crop_mode = "a"
-        if dim.width_px is None or dim.height_px is None:
+        if exact_width is None or exact_height is None:
             raise RuleResolutionError(
                 "PIPELINE_CROP_MODE_UNSUPPORTED",
                 "Exact dimension mode is missing width_px or height_px.",
@@ -291,9 +308,9 @@ def resolve_rule(
             complete_beard = comp.beard_boundary_visible
 
         crop_config = CropConfig(
-            target_width=dim.width_px,
-            target_height=dim.height_px,
-            target_aspect_ratio=dim.width_px / dim.height_px,
+            target_width=exact_width,
+            target_height=exact_height,
+            target_aspect_ratio=exact_width / exact_height,
             allow_padding=allow_padding,
             allow_subject_clipping=allow_subject_clipping,
             # Passed through for reporting only. It no longer selects geometry
@@ -366,15 +383,10 @@ def resolve_rule(
     elif dim.mode == DimensionMode.UNSPECIFIED:
         crop_mode = "b"
         defaults = EXAM_COMPOSITION_DEFAULTS
+        # Nothing published at all: a published preferred size resolves to
+        # Mode A above (DEC-103), so this is only the size-from-the-photograph
+        # path, with the planner's own range.
         preferred_aspect, min_aspect, max_aspect = 0.75, 0.65, 0.90
-        if dim.preferred_width_px and dim.preferred_height_px:
-            # A published preferred size is delivered at exactly that size
-            # (below), so the crop is planned at exactly its shape. Leaving the
-            # planner on its own 3:4 while the output was forced to 200 x 230
-            # squeezed every IBPS, SBI, RBI, LIC, NABARD, NIACL and XAT
-            # photograph about 16% wider than the candidate's face.
-            preferred_aspect = dim.preferred_width_px / dim.preferred_height_px
-            min_aspect = max_aspect = preferred_aspect
         crop_config = CropModeBConfig(
             preferred_aspect_ratio=preferred_aspect,
             min_aspect_ratio=min_aspect,
@@ -425,15 +437,17 @@ def resolve_rule(
     )
 
     # 4. Resolve Output Preparation Config
-    if dim.mode == DimensionMode.EXACT:
+    if dim.mode == DimensionMode.EXACT or preferred_exact:
+        # A preferred size is the examination's own number, delivered exactly
+        # (DEC-103); the crop above already has its shape.
         prep_config = OutputPreparationConfig(
             resize_mode=ResizeMode.EXACT,
-            target_width=dim.width_px,
-            target_height=dim.height_px,
-            min_width=dim.width_px,
-            max_width=dim.width_px,
-            min_height=dim.height_px,
-            max_height=dim.height_px,
+            target_width=exact_width,
+            target_height=exact_height,
+            min_width=exact_width,
+            max_width=exact_width,
+            min_height=exact_height,
+            max_height=exact_height,
         )
     elif dim.mode == DimensionMode.RANGE:
         prep_config = OutputPreparationConfig(
@@ -444,29 +458,6 @@ def resolve_rule(
             max_height=dim.maximum_height_px,
             preferred_width=dim.preferred_width_px or 300,
             preferred_height=dim.preferred_height_px or 400,
-        )
-    elif dim.preferred_width_px is not None and dim.preferred_height_px is not None:
-        # The body published a preferred size without mandating it. Honour it:
-        # it is the examination's own number, and ignoring it in favour of a
-        # platform default substitutes our guess for their statement.
-        #
-        # This branch was previously absent, and the omission was not cosmetic.
-        # Twelve records in the 48-examination set sit here -- IBPS, SBI, LIC,
-        # RBI, NABARD and NIACL all publish "200 x 230 pixels (preferred)" --
-        # and every one of them was being resized to the platform default
-        # instead, so the largest single group of encodable examinations
-        # received dimensions their own notification does not name.
-        #
-        # RANGE_SELECT rather than EXACT so the delivered aspect follows the
-        # crop rather than being forced onto it; see the note below.
-        prep_config = OutputPreparationConfig(
-            resize_mode=ResizeMode.RANGE_SELECT,
-            min_width=dim.preferred_width_px,
-            max_width=dim.preferred_width_px,
-            min_height=dim.preferred_height_px,
-            max_height=dim.preferred_height_px,
-            preferred_width=dim.preferred_width_px,
-            preferred_height=dim.preferred_height_px,
         )
     else:
         # Nothing published at all. The size is ours to choose, and it is chosen
