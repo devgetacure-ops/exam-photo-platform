@@ -1,6 +1,6 @@
 # Live Operations
 
-**Last updated: 2026-09-16, end of launch day.** `https://examuploadkit.com` is
+**Last updated: 2026-09-17.** `https://examuploadkit.com` is
 live and taking real payments. **This section is the current truth for running
 the site**; everything from *Platform State* down is the build history, kept
 for its reasoning, and where it disagrees with this section, this section wins.
@@ -13,7 +13,7 @@ for its reasoning, and where it disagrees with this section, this section wins.
 | Plan for the host | Move to **Hostinger KVM 4** (India, 16 GB); **destroy the Vultr server by 11 October** (owner holds the reminder) |
 | Access | `ssh root@65.20.73.233` with the owner's key `C:\Users\dmbar\.ssh\id_ed25519` (ed25519, no passphrase). Password and keyboard-interactive login are off in `/etc/ssh/sshd_config.d/01-hardening.conf`, which must sort **before** `50-cloud-init.conf` (sshd keeps the first value it reads) |
 | Firewall | Vultr firewall group `examuploadkit`: inbound TCP 22, 80, 443 from anywhere; everything else dropped |
-| Code | `/opt/exam-photo-platform`, branch `main`, running the images built from `2ec6fcc` (DEC-102); the checkout is at `533aa44` (docs and a test since) |
+| Code | `/opt/exam-photo-platform`, branch `main`, running engine and web images built from `cc5e579` (DEC-103) |
 | Repository | **Private** since 16 September. The server reads it over SSH with a read-only deploy key, `/root/.ssh/github_deploy`, registered in GitHub → Settings → Deploy keys as `vultr-server (read-only)`, and wired in `/root/.ssh/config`. GitHub's host key was checked against its published fingerprint. The key cannot push |
 | Stack | Compose project `exam-upload`: `engine`, `web`, `proxy` (Caddy). Volumes `models`, `artifacts`, `requests`, `caddy_data`, `caddy_config` |
 | Secrets | **Only** in `/opt/exam-photo-platform/deploy/.env`, mode 600, gitignored. Earlier copies in `/root/env.before-live.bak` (test Razorpay keys) and `/root/env.before-dec102.bak`, both mode 600 and holding secrets: delete them once the site has run clean for a while |
@@ -23,6 +23,14 @@ for its reasoning, and where it disagrees with this section, this section wins.
 | Bot check | Cloudflare Turnstile widget `examuploadkit`, Managed mode, both hostnames |
 | Models | Filled by `model-fetch` on the server. BiRefNet ONNX `940,792,905` bytes, SHA-256 `d592e635aeb091e6f65e5fb3e858a2972601bc8bdbd27b88efa1ad4be8d7cd23`, with its manifest beside it on the volume (DEC-101) |
 | `/ready` | `ready`, `purchase_gate: enabled`, `operator_surface: authenticated`, `payments: configured`, `email: configured`. Answered only from private addresses; `/ready` and `/health` are 404 from the internet |
+
+## Photograph incident, 17 September
+
+- Four valid SBI Junior Associates camera/gallery photographs all failed after face detection. The live reports showed 0.94–0.98 face confidence and the same primary finding, `CROP_B_ASPECT_OUT_OF_RANGE`; this was not bad photography.
+- Root cause: preferred-only `200 x 230` rules were sent to whole-pixel Crop Mode B with an effectively exact aspect-ratio tolerance. Real crops almost never equal that fraction closely enough, and Mode B could not pad to the required shape.
+- `cc5e579` (DEC-103) routes all twelve preferred-size records through Crop Mode A at their published exact size. The four retained inputs passed this path diagnostically before their temporary copies were removed. On the deployed container, SBI resolves to `a 200 230 exact`.
+- The browser now accepts source photographs up to 40 MiB, applies orientation, strips metadata, caps the long edge at 3200 px and sends at most 5 MiB. The server's 5 MiB abuse boundary remains. A dedicated front-camera button is shown on touch/mobile devices; the normal gallery picker remains.
+- Deployment evidence: both rebuilt containers healthy; private `/ready` returned ready with all four operational flags configured; public home and SBI prepare routes returned HTTP 200. **Still required:** one real-phone camera upload and one gallery upload on SBI after clearing/refreshing the installed app.
 
 ## Measured on the server, 16 September
 
@@ -59,6 +67,7 @@ docker compose -f deploy/docker-compose.yml logs --since 30m engine
 1. **A payment through Cloudflare's proxy, with DEC-102 deployed.** The one live payment happened before the orange cloud and before DEC-102. The next one should show: no tick under the email field, the success moment and then the move to the downloads, **one** email in the new design, and a release. If a payment does not release, look at **Cloudflare → Security → Events** first: Bot Fight Mode or a WAF rule challenging Razorpay's webhook POSTs would look exactly like that.
 2. **The before-and-after band on a real phone** (DEC-102 moved it to transforms; the preview pane cannot time frames).
 3. **The delivery email in Outlook and the Gmail app.**
+4. **DEC-103 on the owner's phone:** one fresh SBI photograph from the front camera and one from the gallery, including a source over 5 MiB if available. Both should prepare; the source-over-5-MiB case should no longer be rejected before upload.
 
 ## Waiting on the owner
 
