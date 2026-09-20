@@ -62,6 +62,29 @@ docker compose -f deploy/docker-compose.yml logs --since 30m engine
 - **When the Vultr server is destroyed**, delete its deploy key in GitHub → Settings → Deploy keys.
 - The three test-mode orders from launch day are set aside in `/root/removed-test-orders/`; only the real order remains in the app.
 
+## Checking every examination (DEC-104)
+
+`scripts/smoke_catalogue_photographs.py` puts real photographs through every
+examination's own photograph rule. **Run it before any deploy that touches the
+engine or the rules**, on the server, in its own container so the live engine
+keeps its memory:
+
+```bash
+# the portraits are not in git (DEC-100); copy four of them to /tmp/portraits first
+docker compose -f deploy/docker-compose.yml run --rm --no-deps \
+  -v "$PWD/examples:/app/examples:ro" -v /tmp/smoke-scripts:/app/scripts:ro \
+  -v /tmp/portraits:/portraits:ro -v /tmp/smoke:/out \
+  engine python /app/scripts/smoke_catalogue_photographs.py
+```
+
+It exits non-zero if any examination refuses every portrait, and writes a per
+examination record to `/out/smoke.json`. Delete the portraits from the server
+afterwards. **19 September**: 53 examinations, 49 accepted all four portraits,
+**four accepted only two** -- Andhra Pradesh TET, BSSC, GATE 2026 and Karnataka
+PSC, which are the whole of Crop Mode B. Their fix is open: Mode B refuses to
+compose onto the background, so it turns away a head near an edge that Mode A
+accepts. Signatures and thumb impressions have no sweep of this kind yet.
+
 ## Not yet verified on the live site
 
 1. **A payment through Cloudflare's proxy, with DEC-102 deployed.** The one live payment happened before the orange cloud and before DEC-102. The next one should show: no tick under the email field, the success moment and then the move to the downloads, **one** email in the new design, and a release. If a payment does not release, look at **Cloudflare → Security → Events** first: Bot Fight Mode or a WAF rule challenging Razorpay's webhook POSTs would look exactly like that.
