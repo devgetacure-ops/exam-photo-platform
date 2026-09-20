@@ -8,7 +8,7 @@ Indian Exam-Photo Compliance Platform: candidates select an exam, upload a sourc
 
 Binding product principles (from AGENTS.md, do not violate):
 - **Exam First, Tool Second** — the exam rule record drives the whole pipeline.
-- **Two crop modes**: Mode A (exact dimensions — build the aspect frame, position head naturally, never stretch/distort) and Mode B (dimension range/unspecified — crop tightly around the head with natural margins).
+- **Two crop modes**: Mode A (exact dimensions — build the aspect frame, position head naturally, never stretch/distort) and Mode B (dimension range/unspecified — crop tightly around the head with natural margins). **Selection superseded by DEC-105**: every record now resolves to a concrete size and so to Mode A, which is the framing the owner's reviewed outputs show; Mode B stays implemented and tested but nothing selects it.
 - **Identity preservation** — only exposure/contrast/color/sharpening/mild noise reduction is allowed. No reshaping, skin whitening, cosmetic retouching, or AI identity modification.
 - **No silent assumptions** — material ambiguities go in `docs/08_DECISION_LOG.md` with an explicit recommendation before implementation.
 - **No fictional successes** — unimplemented behavior raises `NotImplementedError`, never a mocked "success".

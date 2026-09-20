@@ -111,3 +111,52 @@ def test_no_rule_composites_a_box_into_a_different_shape(box_aspect: float) -> N
             assert box.top >= crop.top - 1e-6 and box.bottom <= crop.bottom + 1e-6
             swept += 1
     assert swept > 0
+
+
+def test_every_examination_resolves_to_a_size_it_publishes() -> None:
+    """DEC-105. No record is left without a size, and none takes Crop Mode B.
+
+    Mode B framed against its preservation box and would not compose onto the
+    background: it delivered a looser photograph than the owner's reviewed set
+    and refused one already cropped close to the head (DEC-104's sweep).
+    """
+    seen = 0
+    for rule in PHOTOGRAPH_RULES:
+        assert rule.image_requirements is not None
+        dim = rule.image_requirements.dimensions
+        plan = resolve_rule(rule)
+        config = plan.crop_config
+        assert plan.crop_mode == "a", rule.exam.exam_id
+        assert not isinstance(config, CropModeBConfig), rule.exam.exam_id
+        width, height = config.target_width, config.target_height
+        assert width and height, rule.exam.exam_id
+        assert plan.output_preparation_config.target_width == width
+        assert plan.output_preparation_config.target_height == height
+        if dim.mode.value == "exact":
+            assert (width, height) == (dim.width_px, dim.height_px)
+        elif dim.mode.value == "range":
+            # Inside what the examination published, or its own largest size
+            # when the range is too narrow to hold a passport shape.
+            assert dim.minimum_width_px <= width <= dim.maximum_width_px
+            assert dim.minimum_height_px <= height <= dim.maximum_height_px
+        elif dim.preferred_width_px and dim.preferred_height_px:
+            assert (width, height) == (dim.preferred_width_px, dim.preferred_height_px)
+        else:
+            assert (width, height) == (413, 531)
+        seen += 1
+    assert seen >= 53
+
+
+def test_a_range_takes_the_passport_shape_that_fits_inside_it() -> None:
+    from exam_photo.orchestration.rule_resolver import size_within_range
+
+    # GATE: the passport shape fits as it is.
+    assert size_within_range(200, 530, 260, 690) == (413, 531)
+    # Karnataka PSC: scaled down to the range's ceiling, shape kept.
+    assert size_within_range(100, 150, 100, 150) == (117, 150)
+    # A published preferred size inside the range wins over the default.
+    assert size_within_range(100, 600, 100, 800, 350, 450) == (350, 450)
+    # A preferred size outside the range is not honoured.
+    assert size_within_range(100, 150, 100, 150, 900, 1200) == (117, 150)
+    # A range too narrow for the shape takes its own largest size.
+    assert size_within_range(300, 320, 300, 320) == (320, 320)

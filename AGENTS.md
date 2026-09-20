@@ -15,7 +15,7 @@ The **Indian Exam-Photo Compliance Platform** allows candidates to select an exa
 1. **Exam First, Tool Second**: The chosen examination record configures the entire processing pipeline.
 2. **Two Cropping Modes**:
    - **Crop Mode A (Exact Dimensions)**: Build required aspect ratio frame, position head naturally, keep face visually centered, and preserve hair/ears/chin/beard before resizing. Never stretch or distort the subject.
-   - **Crop Mode B (Dimension Range/Unspecified)**: Crop tightly around head, leave natural margins, choose suitable output size.
+   - **Crop Mode B (Dimension Range/Unspecified)**: Crop tightly around head, leave natural margins, choose suitable output size. **No record selects this since DEC-105**: a range or an unpublished size now resolves to a concrete size and Crop Mode A, which is the framing the owner's reviewed outputs show. The mode stays implemented and tested.
 3. **Face Coverage**: Approximately 75–80% face coverage is an expected result of correct natural cropping and a diagnostic indicator, not a rigid mathematical rejection threshold.
 4. **Identity Preservation**: Image correction is strictly limited to exposure, contrast, color balance, sharpening, and mild noise reduction. Reshaping, skin whitening, cosmetic retouching, or AI-generated identity modification are strictly prohibited.
 5. **No Silent Assumptions**: Material ambiguities, architectural updates, or design questions must be documented in the Decision Log with explicit recommendations before implementation. Never invent silent defaults.

@@ -115,6 +115,43 @@ _UNSPECIFIED_PREFERRED_WIDTH_PX = 413
 _UNSPECIFIED_PREFERRED_HEIGHT_PX = 531
 
 
+def size_within_range(
+    minimum_width: int,
+    maximum_width: int,
+    minimum_height: int,
+    maximum_height: int,
+    preferred_width: Optional[int] = None,
+    preferred_height: Optional[int] = None,
+) -> tuple[int, int]:
+    """A concrete size to deliver for a rule that publishes a range (DEC-105).
+
+    The examination's own preferred size when it named one inside its range;
+    otherwise the platform's passport shape scaled to fit, which is the shape
+    the crop calibration and the owner's reviewed outputs are built on. A range
+    too narrow to hold that shape gets its own largest size, and the crop is
+    framed to that shape rather than squeezed into it.
+    """
+    if (
+        preferred_width
+        and preferred_height
+        and minimum_width <= preferred_width <= maximum_width
+        and minimum_height <= preferred_height <= maximum_height
+    ):
+        return preferred_width, preferred_height
+
+    width = _UNSPECIFIED_PREFERRED_WIDTH_PX
+    height = _UNSPECIFIED_PREFERRED_HEIGHT_PX
+    largest = min(maximum_width / width, maximum_height / height)
+    smallest = max(minimum_width / width, minimum_height / height)
+    if smallest > largest:
+        return maximum_width, maximum_height
+    scale = min(max(1.0, smallest), largest)
+    return (
+        max(minimum_width, min(maximum_width, round(width * scale))),
+        max(minimum_height, min(maximum_height, round(height * scale))),
+    )
+
+
 class RuleResolutionError(Exception):
     def __init__(self, code: str, message: str):
         super().__init__(message)
@@ -228,6 +265,16 @@ def resolve_rule(
     # in whole pixels misses that by more than the tolerance on almost any real
     # photograph, and Mode B may not pad, so every photograph for those twelve
     # examinations failed with CROP_B_ASPECT_OUT_OF_RANGE on the live site.
+    #
+    # DEC-105 carries that further: **every** rule now resolves to a size and
+    # so to Mode A. A published range takes a size inside it, and a rule that
+    # publishes nothing takes the platform's passport shape. Mode B framed the
+    # head against its preservation box and refused to compose onto the
+    # background, which made it both looser than the owner's reviewed outputs
+    # and unable to accept a photograph already cropped close to the head --
+    # the sweep of DEC-104 found it refusing two of four portraits on all four
+    # examinations that still used it, and accepting the rest with the head at
+    # 0.74 of the frame against the reviewed 0.9.
     preferred_exact = (
         dim.mode == DimensionMode.UNSPECIFIED
         and dim.preferred_width_px is not None
@@ -236,7 +283,32 @@ def resolve_rule(
     exact_width = dim.preferred_width_px if preferred_exact else dim.width_px
     exact_height = dim.preferred_height_px if preferred_exact else dim.height_px
 
-    if dim.mode == DimensionMode.EXACT or preferred_exact:
+    if dim.mode == DimensionMode.RANGE:
+        if (
+            dim.minimum_width_px is None
+            or dim.maximum_width_px is None
+            or dim.minimum_height_px is None
+            or dim.maximum_height_px is None
+        ):
+            raise RuleResolutionError(
+                "PIPELINE_CROP_MODE_UNSUPPORTED",
+                "Range dimension mode is missing range boundary pixels.",
+            )
+        exact_width, exact_height = size_within_range(
+            dim.minimum_width_px,
+            dim.maximum_width_px,
+            dim.minimum_height_px,
+            dim.maximum_height_px,
+            dim.preferred_width_px,
+            dim.preferred_height_px,
+        )
+    elif dim.mode == DimensionMode.UNSPECIFIED and not preferred_exact:
+        # Nothing published at all: the passport shape, as DEC-095 settled for
+        # every other record that publishes no size.
+        exact_width = _UNSPECIFIED_PREFERRED_WIDTH_PX
+        exact_height = _UNSPECIFIED_PREFERRED_HEIGHT_PX
+
+    if exact_width is not None and exact_height is not None:
         crop_mode = "a"
         if exact_width is None or exact_height is None:
             raise RuleResolutionError(
@@ -348,61 +420,6 @@ def resolve_rule(
             complete_chin_required=complete_chin,
             complete_beard_boundary_required=complete_beard,
         )
-    elif dim.mode == DimensionMode.RANGE:
-        crop_mode = "b"
-        if (
-            dim.minimum_width_px is None
-            or dim.maximum_width_px is None
-            or dim.minimum_height_px is None
-            or dim.maximum_height_px is None
-        ):
-            raise RuleResolutionError(
-                "PIPELINE_CROP_MODE_UNSUPPORTED",
-                "Range dimension mode is missing range boundary pixels.",
-            )
-
-        min_aspect = dim.minimum_width_px / dim.maximum_height_px
-        max_aspect = dim.maximum_width_px / dim.minimum_height_px
-        defaults = EXAM_COMPOSITION_DEFAULTS
-
-        crop_config = CropModeBConfig(
-            min_aspect_ratio=min_aspect,
-            max_aspect_ratio=max_aspect,
-            target_head_height_ratio=resolve_mode_b_ratio(
-                "target_head_height_ratio", 0.76
-            ),
-            min_head_height_ratio=resolve_mode_b_ratio(
-                "minimum_head_height_ratio", 0.68
-            ),
-            max_head_height_ratio=resolve_mode_b_ratio(
-                "maximum_head_height_ratio", 0.84
-            ),
-            allow_padding=allow_padding,
-            allow_subject_clipping=allow_subject_clipping,
-        )
-    elif dim.mode == DimensionMode.UNSPECIFIED:
-        crop_mode = "b"
-        defaults = EXAM_COMPOSITION_DEFAULTS
-        # Nothing published at all: a published preferred size resolves to
-        # Mode A above (DEC-103), so this is only the size-from-the-photograph
-        # path, with the planner's own range.
-        preferred_aspect, min_aspect, max_aspect = 0.75, 0.65, 0.90
-        crop_config = CropModeBConfig(
-            preferred_aspect_ratio=preferred_aspect,
-            min_aspect_ratio=min_aspect,
-            max_aspect_ratio=max_aspect,
-            target_head_height_ratio=resolve_mode_b_ratio(
-                "target_head_height_ratio", 0.76
-            ),
-            min_head_height_ratio=resolve_mode_b_ratio(
-                "minimum_head_height_ratio", 0.68
-            ),
-            max_head_height_ratio=resolve_mode_b_ratio(
-                "maximum_head_height_ratio", 0.84
-            ),
-            allow_padding=allow_padding,
-            allow_subject_clipping=allow_subject_clipping,
-        )
     else:
         raise RuleResolutionError(
             "PIPELINE_CROP_MODE_UNSUPPORTED",
@@ -437,9 +454,11 @@ def resolve_rule(
     )
 
     # 4. Resolve Output Preparation Config
-    if dim.mode == DimensionMode.EXACT or preferred_exact:
-        # A preferred size is the examination's own number, delivered exactly
-        # (DEC-103); the crop above already has its shape.
+    if exact_width is not None and exact_height is not None:
+        # The size resolved above, delivered exactly: the examination's own
+        # number where it published one (DEC-103), a size inside its range, or
+        # the platform's passport shape (DEC-105). The crop already has that
+        # shape, so nothing here resizes against it.
         prep_config = OutputPreparationConfig(
             resize_mode=ResizeMode.EXACT,
             target_width=exact_width,
