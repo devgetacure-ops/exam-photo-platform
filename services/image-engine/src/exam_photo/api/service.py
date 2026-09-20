@@ -71,6 +71,7 @@ from exam_photo.orchestration.rule_pipeline import (
     RulePipelineConfig,
 )
 from exam_photo.pdf import (
+    MAX_DOCUMENT_PAGES,
     DocumentPlan,
     DocumentResult,
     PageRef,
@@ -273,6 +274,9 @@ class ApiProcessingService:
         #: test ever reaches api.razorpay.com (DEC-070).
         self._order_gateway: Optional[OrderGateway] = None
         self._email_sender: Optional[EmailSender] = None
+        # Serialises taking email delivery slots (not the send) inside this
+        # process; the exclusive slot files do the same across processes.
+        self._email_lock = threading.Lock()
         # Note 23: the face detector that tells a photograph from ink, built
         # on first use. None with `_not_ink_unavailable` set means it could
         # not be loaded, and then nothing is ever refused on its word.
@@ -1171,6 +1175,13 @@ class ApiProcessingService:
         address = validate_address(address)
         masked = mask_address(address)
 
+        return self._email_jobs_admitted(records, address, masked)
+
+    def _email_jobs_admitted(
+        self, records: List[ProcessingJobRecord], address: str, masked: str
+    ) -> Dict[str, Any]:
+        """Send once admitted by the atomic per-job delivery budget."""
+
         deliverable = [
             record
             for record in records
@@ -1211,6 +1222,22 @@ class ApiProcessingService:
             raise EmailRejectedError("the prepared files are no longer on disk")
         check_attachment_budget(attachments)
 
+        # Only taking the slots is serialised. The send itself runs outside
+        # the lock, so one slow SMTP exchange never queues every other
+        # candidate's email behind it on a deadline day; each slot file is
+        # created exclusively, which is what keeps the budget exact.
+        reservations: list[tuple[ProcessingJobRecord, Path]] = []
+        with self._email_lock:
+            try:
+                for record in deliverable:
+                    reservations.append(
+                        (record, self._reserve_email_attempt(record, masked))
+                    )
+            except EmailRejectedError:
+                for _record, marker in reservations:
+                    marker.unlink(missing_ok=True)
+                raise
+
         # The examination by its own name, never its catalogue id (DEC-102).
         exam_names: List[str] = []
         for exam_id in dict.fromkeys(r.exam_id for r in deliverable if r.exam_id):
@@ -1242,6 +1269,9 @@ class ApiProcessingService:
                 address, email.subject, email.text, attachments, html=email.html
             )
         except EmailRejectedError as err:
+            self._finalize_email_reservations(
+                reservations, succeeded=False, error=str(err)[:200]
+            )
             for record in deliverable:
                 record.email_attempts.append(
                     EmailAttempt(
@@ -1254,6 +1284,7 @@ class ApiProcessingService:
                 self.registry.update_job(record)
             raise
 
+        self._finalize_email_reservations(reservations, succeeded=True)
         for record in deliverable:
             record.email_attempts.append(
                 EmailAttempt(at=sent_at, masked_address=masked, succeeded=True)
@@ -1267,6 +1298,63 @@ class ApiProcessingService:
             "job_ids": [record.job_id for record in deliverable],
             "filenames": [item.filename for item in attachments],
         }
+
+    def _reserve_email_attempt(self, record: ProcessingJobRecord, masked: str) -> Path:
+        """Durably consume one delivery slot before contacting SMTP.
+
+        Exclusive marker creation is atomic on the shared artifact volume, so
+        separate Uvicorn workers cannot both spend the same slot. A pending
+        marker remains consumed after a crash because SMTP acceptance may have
+        happened before the process stopped.
+        """
+        legacy_attempts = len(record.email_attempts)
+        for number in range(1, self.settings.max_email_delivery_attempts_per_job + 1):
+            if number <= legacy_attempts:
+                continue
+            marker = self.store.get_file_path(
+                record.job_id, f"email_attempt_{number}.json"
+            )
+            try:
+                marker.parent.mkdir(parents=True, exist_ok=True)
+                with marker.open("x", encoding="utf-8") as handle:
+                    json.dump(
+                        {
+                            "at": datetime.now(timezone.utc).isoformat(),
+                            "masked_address": masked,
+                            "status": "pending",
+                        },
+                        handle,
+                    )
+                return marker
+            except FileExistsError:
+                continue
+        raise EmailRejectedError(
+            "the email delivery limit for these files has been reached"
+        )
+
+    @staticmethod
+    def _finalize_email_reservations(
+        reservations: list[tuple[ProcessingJobRecord, Path]],
+        *,
+        succeeded: bool,
+        error: Optional[str] = None,
+    ) -> None:
+        """Record the outcome; the pre-send marker already consumed the slot."""
+        for _record, marker in reservations:
+            try:
+                marker.write_text(
+                    json.dumps(
+                        {
+                            "status": "succeeded" if succeeded else "failed",
+                            "error": error,
+                        }
+                    ),
+                    encoding="utf-8",
+                )
+            except OSError:
+                # The durable reservation was written before SMTP. Losing
+                # outcome detail must not refund a possibly consumed slot.
+                continue
 
     def check_upload_limit(self, size_bytes: int) -> None:
         """Raise an error if the uploaded content size exceeds setting limits."""
@@ -1652,6 +1740,13 @@ class ApiProcessingService:
         total = sum(len(data) for data, _ in uploads)
         self.check_upload_limit(total)
 
+        plan = plan_document([(data, name) for data, name in uploads])
+        if len(plan.pages) > MAX_DOCUMENT_PAGES:
+            raise ValueError(
+                f"A document may contain at most {MAX_DOCUMENT_PAGES} pages; "
+                f"{len(plan.pages)} were supplied."
+            )
+
         record = self.registry.create_job(job_id, self.settings.job_ttl_seconds)
         record.status = ApiJobStatus.PROCESSING
         record.kit_id = kit_id
@@ -1671,8 +1766,6 @@ class ApiProcessingService:
 
         record.document_sources = stored
         record.artifact_names = list(stored)
-
-        plan = plan_document([(data, name) for data, name in uploads])
         self.store.write_file(
             job_id,
             "plan.json",

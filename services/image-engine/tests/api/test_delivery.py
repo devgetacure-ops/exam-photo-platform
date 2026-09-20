@@ -423,6 +423,47 @@ def test_a_failed_send_is_recorded_as_a_failure(api):
     assert "connection refused" in attempts[0].error
 
 
+def test_a_paid_kit_cannot_be_used_as_an_unbounded_mail_relay(api):
+    _job(api, "job_a")
+    api.settings = api.settings.model_copy(
+        update={"max_email_delivery_attempts_per_job": 2}
+    )
+
+    for address in ("first@example.com", "second@example.com"):
+        assert (
+            client.post(f"/v1/kits/{KIT}/email", json={"address": address}).status_code
+            == 200
+        )
+
+    refused = client.post(
+        f"/v1/kits/{KIT}/email", json={"address": "victim@example.com"}
+    )
+
+    assert refused.status_code == 422
+    assert "delivery limit" in refused.json()["detail"]
+    assert len(api.email_sender.sent) == 2
+    assert (
+        len(list((api.settings.artifact_root / "job_a").glob("email_attempt_*.json")))
+        == 2
+    )
+
+
+def test_delivery_slots_are_atomic_across_stale_worker_records(api):
+    """Exclusive files enforce the cap even when worker caches disagree."""
+    from exam_photo.api.delivery import EmailRejectedError
+
+    record = _job(api, "job_a")
+    stale_copy = record.model_copy(deep=True)
+    api.settings = api.settings.model_copy(
+        update={"max_email_delivery_attempts_per_job": 1}
+    )
+
+    api._reserve_email_attempt(record, "c***@example.com")
+
+    with pytest.raises(EmailRejectedError, match="delivery limit"):
+        api._reserve_email_attempt(stale_copy, "v***@example.com")
+
+
 def test_the_order_records_that_something_reached_the_candidate(api):
     api.orders.create("order_ABC", KIT, ["job_a"], 300, "INR")
     _job(api, "job_a")

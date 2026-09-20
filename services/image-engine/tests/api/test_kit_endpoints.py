@@ -1,6 +1,7 @@
 """API tests for kit preparation, documents and packaging (DEC-055..058)."""
 
 import io
+import threading
 import zipfile
 from unittest.mock import MagicMock, patch
 
@@ -14,6 +15,7 @@ from exam_photo.api.jobs import JobRegistry
 from exam_photo.api.settings import ApiSettings
 from exam_photo.api.storage import LocalArtifactStore
 from exam_photo.orchestration.rule_pipeline import RulePipelineResult
+from exam_photo.pdf import MAX_DOCUMENT_PAGES
 
 client = TestClient(app, raise_server_exceptions=False)
 
@@ -390,6 +392,35 @@ def test_assembly_without_an_order_takes_every_page(api):
 
     assert response.status_code == 200
     assert response.json()["output_filename"].endswith(".pdf")
+
+
+@pytest.mark.mandatory_api
+def test_assembly_order_has_a_page_budget_before_job_lookup(api):
+    page = {
+        "source_index": 0,
+        "page_index": 0,
+        "origin": "photograph",
+        "rotation": 0,
+    }
+
+    response = client.post(
+        "/v1/documents/job_nonexistent/assemble",
+        json={"order": [page] * (MAX_DOCUMENT_PAGES + 1)},
+    )
+
+    assert response.status_code == 422
+
+
+@pytest.mark.mandatory_api
+def test_document_assembly_uses_the_shared_capacity_limit(api):
+    plan = _plan_document(api, [("page.jpg", _page_photo())]).json()
+    api._preparation_slots = threading.BoundedSemaphore(1)
+
+    with api.preparation_slot():
+        response = client.post(f"/v1/documents/{plan['job_id']}/assemble", json={})
+
+    assert response.status_code == 429
+    assert response.headers["Retry-After"] == "15"
 
 
 @pytest.mark.mandatory_api

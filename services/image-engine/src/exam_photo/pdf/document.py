@@ -32,8 +32,18 @@ from PIL import Image
 from pypdf import PasswordType, PdfReader, PdfWriter
 
 from exam_photo.pdf.assembly import _DEFAULT_DPI, _QUALITY_LADDER, _SCALE_LADDER
-from exam_photo.pdf.inspection import PdfPageKind, inspect_pdf
+from exam_photo.pdf.inspection import (
+    PdfPageKind,
+    PdfPageLimitExceededError,
+    inspect_pdf,
+)
 from exam_photo.pdf.preparation import _recompress_page_images
+
+# A document may legitimately repeat pages, but the output list is also a
+# work multiplier: every entry is decoded, copied and potentially rebuilt for
+# every quality/scale attempt. Keep the budget separate from the upload-file
+# limit because one PDF can contain many pages.
+MAX_DOCUMENT_PAGES = 100
 
 
 class PageOrigin(str, Enum):
@@ -87,7 +97,10 @@ class DocumentResult:
     findings: list[str]
 
 
-def plan_document(sources: list[tuple[bytes, str]]) -> DocumentPlan:
+def plan_document(
+    sources: list[tuple[bytes, str]],
+    maximum_pages: int = MAX_DOCUMENT_PAGES,
+) -> DocumentPlan:
     """Flatten uploads into the list of pages a candidate can reorder.
 
     An upload that cannot be read is recorded rather than raised: one damaged
@@ -100,7 +113,9 @@ def plan_document(sources: list[tuple[bytes, str]]) -> DocumentPlan:
     for index, (data, name) in enumerate(sources):
         if data.startswith(b"%PDF-"):
             try:
-                inspection = inspect_pdf(data)
+                inspection = inspect_pdf(data, maximum_pages=maximum_pages - len(pages))
+            except PdfPageLimitExceededError:
+                raise
             except Exception as error:
                 unreadable[index] = f"{name}: {error}"
                 continue
@@ -130,6 +145,10 @@ def plan_document(sources: list[tuple[bytes, str]]) -> DocumentPlan:
         except Exception as error:
             unreadable[index] = f"{name}: {error}"
             continue
+        if len(pages) >= maximum_pages:
+            raise PdfPageLimitExceededError(
+                f"A document may contain at most {maximum_pages} pages."
+            )
         pages.append(
             PageRef(source_index=index, page_index=0, origin=PageOrigin.PHOTOGRAPH)
         )
@@ -204,7 +223,18 @@ def assemble_document(
     one is allowed and simply duplicates it, which is occasionally what a
     candidate wants when a portal asks for the same page twice.
     """
+    if order is not None and len(order) > MAX_DOCUMENT_PAGES:
+        raise ValueError(
+            f"A document may contain at most {MAX_DOCUMENT_PAGES} pages; "
+            f"{len(order)} were requested."
+        )
+
     plan = plan_document(sources)
+    if len(plan.pages) > MAX_DOCUMENT_PAGES:
+        raise ValueError(
+            f"A document may contain at most {MAX_DOCUMENT_PAGES} pages; "
+            f"{len(plan.pages)} were supplied."
+        )
     findings = [reason for reason in plan.unreadable.values()]
 
     available = {ref.key: ref for ref in plan.pages}

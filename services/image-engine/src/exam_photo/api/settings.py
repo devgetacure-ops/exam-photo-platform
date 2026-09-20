@@ -147,6 +147,11 @@ class ApiSettings(BaseModel):
     #: more than a handful of pages.
     max_document_files: int = 20
 
+    #: Bound paid-kit email delivery as an external side effect. Failed and
+    #: successful sends both count so a broken or adversarial recipient cannot
+    #: consume an SMTP provider indefinitely during the retention window.
+    max_email_delivery_attempts_per_job: int = 3
+
     #: How many preparations may run at once.  The pipeline is ~10 s of CPU
     #: per photograph, so this is what actually protects the box.  There is no
     #: per-IP limit by design: carrier-grade NAT puts thousands of candidates
@@ -184,12 +189,12 @@ class ApiSettings(BaseModel):
             raise ValueError("cleanup_interval_seconds must be greater than 0")
         return v
 
-    @field_validator("max_document_files")
+    @field_validator("max_document_files", "max_email_delivery_attempts_per_job")
     @classmethod
     def validate_max_document_files(cls, v: int) -> int:
-        """Ensure at least one file can be sent."""
+        """Ensure resource budgets cannot be disabled with zero."""
         if v < 1:
-            raise ValueError("max_document_files must be at least 1")
+            raise ValueError("resource limits must be at least 1")
         return v
 
     @field_validator("max_concurrent_preparations")
@@ -321,6 +326,10 @@ def get_settings() -> ApiSettings:
         ]
     if "EXAM_PHOTO_MAX_DOCUMENT_FILES" in os.environ:
         kwargs["max_document_files"] = int(os.environ["EXAM_PHOTO_MAX_DOCUMENT_FILES"])
+    if "EXAM_PHOTO_MAX_EMAIL_DELIVERY_ATTEMPTS_PER_JOB" in os.environ:
+        kwargs["max_email_delivery_attempts_per_job"] = int(
+            os.environ["EXAM_PHOTO_MAX_EMAIL_DELIVERY_ATTEMPTS_PER_JOB"]
+        )
     if "EXAM_PHOTO_MAX_CONCURRENT_PREPARATIONS" in os.environ:
         kwargs["max_concurrent_preparations"] = int(
             os.environ["EXAM_PHOTO_MAX_CONCURRENT_PREPARATIONS"]

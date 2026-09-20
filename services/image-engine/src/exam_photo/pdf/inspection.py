@@ -37,6 +37,10 @@ class PdfPageKind(str, Enum):
     UNKNOWN = "unknown"
 
 
+class PdfPageLimitExceededError(ValueError):
+    """A PDF exceeds the caller's page-processing budget."""
+
+
 @dataclass(frozen=True)
 class PdfInspection:
     """What an uploaded PDF is."""
@@ -64,7 +68,7 @@ class PdfInspection:
 _SCAN_AREA_SHARE = 0.6
 
 
-def inspect_pdf(data: bytes) -> PdfInspection:
+def inspect_pdf(data: bytes, maximum_pages: int | None = None) -> PdfInspection:
     """Read an uploaded PDF's structure without altering it.
 
     Raises :class:`ImageInspectionError` when the file cannot be read at all,
@@ -87,7 +91,7 @@ def inspect_pdf(data: bytes) -> PdfInspection:
                 encrypted = reader.decrypt("") == PasswordType.NOT_DECRYPTED
             except Exception:
                 encrypted = True
-        pages = list(reader.pages) if not encrypted else []
+        page_count = len(reader.pages) if not encrypted else 0
     except PdfReadError as error:
         raise ImageInspectionError(
             InputErrorCode.INPUT_DECODE_FAILED,
@@ -101,6 +105,13 @@ def inspect_pdf(data: bytes) -> PdfInspection:
             "The file may be damaged. Try exporting or downloading it again.",
         ) from error
 
+    if maximum_pages is not None and page_count > maximum_pages:
+        raise PdfPageLimitExceededError(
+            f"A document may contain at most {maximum_pages} more pages; "
+            f"this PDF contains {page_count}."
+        )
+
+    pages = list(reader.pages) if not encrypted else []
     kinds: list[PdfPageKind] = []
     sizes: list[tuple[float, float]] = []
     for page in pages:

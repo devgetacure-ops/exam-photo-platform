@@ -12,7 +12,7 @@
     "seo:keywords": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/build-keywords.mjs"
   },
   "dependencies": {
-    "next": "16.2.9",
+    "next": "16.3.5",
     "pdfjs-dist": "^6.3.289",
     "react": "19.2.4",
     "react-dom": "19.2.4",
@@ -22,15 +22,15 @@
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
-    "@types/node": "^20",
+    "@types/node": "^22.20.3",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.2.9",
+    "eslint-config-next": "16.3.5",
     "jsdom": "^29.1.1",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vite": "^6.0.0",
-    "vitest": "^3.0.0"
+    "vitest": "5.0.1"
   }
 }

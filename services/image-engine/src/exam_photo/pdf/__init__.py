@@ -22,6 +22,7 @@ to say so.
 
 from exam_photo.pdf.assembly import PdfAssemblyResult, build_pdf_from_images
 from exam_photo.pdf.document import (
+    MAX_DOCUMENT_PAGES,
     DocumentPlan,
     DocumentResult,
     PageOrigin,
@@ -42,6 +43,7 @@ __all__ = [
     "PdfPageKind",
     "PdfPreparationResult",
     "assemble_document",
+    "MAX_DOCUMENT_PAGES",
     "build_pdf_from_images",
     "inspect_pdf",
     "plan_document",

@@ -5,6 +5,8 @@ from typing import Any, List, Optional
 
 from pydantic import BaseModel, Field
 
+from exam_photo.pdf import MAX_DOCUMENT_PAGES
+
 
 class ApiJobStatus(str, Enum):
     """Execution status of a processing job."""
@@ -453,7 +455,9 @@ class DocumentAssembleRequest(BaseModel):
     deliberate, and available here and nowhere else (DEC-053).
     """
 
-    order: Optional[List[DocumentPageResponse]] = None
+    order: Optional[List[DocumentPageResponse]] = Field(
+        default=None, max_length=MAX_DOCUMENT_PAGES
+    )
 
 
 class KitPackageItem(BaseModel):

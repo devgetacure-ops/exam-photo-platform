@@ -720,14 +720,20 @@ async def plan_requirement_document(
         uploads.append((await _read_upload(upload), upload.filename or "upload"))
 
     job_id = service.generate_job_id()
-    record, plan = service.plan_document_job(
-        job_id=job_id,
-        uploads=uploads,
-        rule=_rule,
-        requirement=requirement,
-        exam_id=exam_id,
-        kit_id=kit,
-    )
+    try:
+        with service.preparation_slot():
+            record, plan = service.plan_document_job(
+                job_id=job_id,
+                uploads=uploads,
+                rule=_rule,
+                requirement=requirement,
+                exam_id=exam_id,
+                kit_id=kit,
+            )
+    except ServiceBusyError as err:
+        raise _busy(err) from err
+    except ValueError as err:
+        raise HTTPException(status_code=413, detail=str(err)) from err
 
     return DocumentPlanResponse(
         job_id=record.job_id,
@@ -786,7 +792,10 @@ def assemble_requirement_document(
         ]
 
     try:
-        updated, _result = service.assemble_document_job(record, order, requirement)
+        with service.preparation_slot():
+            updated, _result = service.assemble_document_job(record, order, requirement)
+    except ServiceBusyError as err:
+        raise _busy(err) from err
     except ValueError as err:
         # "No readable pages" is the one hard error: an empty PDF is not a
         # deliverable.

@@ -18,6 +18,7 @@ from PIL import Image
 from pypdf import PdfReader
 
 from exam_photo.pdf import (
+    MAX_DOCUMENT_PAGES,
     PageOrigin,
     PageRef,
     assemble_document,
@@ -153,6 +154,29 @@ def test_a_page_may_be_repeated() -> None:
     plan = plan_document(sources)
     result = assemble_document(sources, order=plan.pages + plan.pages)
     assert result.page_count == 2
+
+
+def test_repeated_pages_cannot_multiply_work_without_bound(monkeypatch) -> None:
+    """Reject the work multiplier before any PDF build attempt starts."""
+    sources = [(_photo_bytes(width=40, height=40), "page.jpg")]
+    page = plan_document(sources).pages[0]
+    monkeypatch.setattr(
+        "exam_photo.pdf.document.plan_document",
+        lambda *_args, **_kwargs: pytest.fail("over-budget order was replanned"),
+    )
+
+    with pytest.raises(ValueError, match="at most 100 pages"):
+        assemble_document(sources, order=[page] * (MAX_DOCUMENT_PAGES + 1))
+
+
+def test_an_oversized_pdf_is_rejected_before_page_classification(monkeypatch) -> None:
+    monkeypatch.setattr(
+        "exam_photo.pdf.inspection._classify",
+        lambda *_args, **_kwargs: pytest.fail("oversized PDF page was classified"),
+    )
+
+    with pytest.raises(ValueError, match="at most 100"):
+        plan_document([(_scanned_pdf(pages=MAX_DOCUMENT_PAGES + 1), "many.pdf")])
 
 
 def test_an_unknown_page_is_reported_and_skipped() -> None:
