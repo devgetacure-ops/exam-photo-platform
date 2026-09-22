@@ -10,6 +10,16 @@
 
 name: exam-upload
 
+# Container logs are unbounded by default: the readiness check alone wrote
+# 11,000 lines in two days (DEC-106). Set here rather than in the daemon's
+# configuration, because that needs Docker itself restarted, which takes the
+# site down; this applies the next time a container is recreated.
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
 services:
   # ---------------------------------------------------------------------
   # One-shot: fill the model volume. Not part of `up`.
@@ -34,6 +44,7 @@ services:
   # The engine
   # ---------------------------------------------------------------------
   engine:
+    logging: *logging
     build:
       context: ..
       dockerfile: deploy/Dockerfile
@@ -75,6 +86,7 @@ services:
   # The candidate app
   # ---------------------------------------------------------------------
   web:
+    logging: *logging
     build:
       context: ..
       dockerfile: deploy/web.Dockerfile
@@ -113,6 +125,7 @@ services:
   # The proxy: TLS, and one origin for both halves
   # ---------------------------------------------------------------------
   proxy:
+    logging: *logging
     image: caddy:2-alpine
     restart: unless-stopped
     depends_on:
