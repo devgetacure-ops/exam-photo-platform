@@ -565,6 +565,24 @@ def _preparation_response(
     )
 
 
+def _visitor_ip(request: Optional[Request]) -> Optional[str]:
+    """The candidate's address, not the proxy's (DEC-106).
+
+    Turnstile is asked to validate a token against the address that solved it,
+    and behind Cloudflare and Caddy `request.client` is the proxy container, so
+    every check was sent an address that never solved anything. Cloudflare puts
+    the visitor in `CF-Connecting-IP`, and the origin now accepts connections
+    from Cloudflare alone, so nothing else can set it. Direct runs -- a
+    development machine, a container on its own -- keep the socket address.
+    """
+    if request is None:
+        return None
+    forwarded = request.headers.get("cf-connecting-ip")
+    if forwarded:
+        return forwarded.strip()[:64] or None
+    return request.client.host if request.client else None
+
+
 @app.post(
     "/v1/exams/{exam_id}/requirements/{requirement_id}/prepare",
     response_model=PrepareRequirementResponse,
@@ -600,7 +618,7 @@ async def prepare_requirement(
         verify_turnstile(
             cf_turnstile_response or "",
             service.settings.turnstile_secret,
-            request.client.host if request and request.client else None,
+            _visitor_ip(request),
         )
     except ChallengeFailedError as err:
         print(f"turnstile rejected a preparation: {err}")

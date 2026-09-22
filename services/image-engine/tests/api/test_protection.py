@@ -229,3 +229,25 @@ def test_a_corrupt_counter_file_does_not_break_the_summary(usage):
     (usage.root / "kit_broken.json").write_text("{not json", encoding="utf-8")
 
     assert usage.summary()["kits"] == 1
+
+
+def test_the_challenge_is_checked_against_the_candidates_address(monkeypatch):
+    """DEC-106. Behind Cloudflare and Caddy, `request.client` is the proxy, so
+    Turnstile was asked to validate a token against an address that never
+    solved it. Cloudflare names the visitor in `CF-Connecting-IP`, and the
+    origin accepts connections from Cloudflare alone."""
+    from exam_photo.api.app import _visitor_ip
+
+    class Client:
+        host = "172.18.0.4"
+
+    class Request:
+        def __init__(self, headers):
+            self.headers = headers
+            self.client = Client()
+
+    assert _visitor_ip(Request({"cf-connecting-ip": "49.36.12.7"})) == "49.36.12.7"
+    assert _visitor_ip(Request({})) == "172.18.0.4"
+    assert _visitor_ip(None) is None
+    # A header long enough to be an attack on the log is cut, not trusted whole.
+    assert len(_visitor_ip(Request({"cf-connecting-ip": "9" * 500})) or "") == 64

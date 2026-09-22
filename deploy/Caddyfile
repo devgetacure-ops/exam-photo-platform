@@ -28,6 +28,22 @@
 		Referrer-Policy "strict-origin-when-cross-origin"
 		X-Content-Type-Options "nosniff"
 		X-Frame-Options "DENY"
+		# A candidate who has once arrived over HTTPS never tries port 80
+		# again, so a network between them and us cannot offer them a
+		# plain-text version of a page they are about to pay on. Two years,
+		# subdomains included; not submitted to the preload list, which is
+		# far harder to leave than to join (DEC-106).
+		Strict-Transport-Security "max-age=63072000; includeSubDomains"
+		# Nothing here needs a microphone, a location or a payment handler of
+		# its own: Razorpay's window brings its own. The camera stays for the
+		# file picker's capture.
+		Permissions-Policy "accelerometer=(), camera=(self), geolocation=(), gyroscope=(), microphone=(), payment=(), usb=()"
+		# Reported, not enforced, until the live pages are watched for a week:
+		# a wrong rule here would break checkout, which is worse than the
+		# injection it guards against. The list is what the site actually
+		# loads -- Razorpay's checkout, Turnstile, Cloudflare's counter and
+		# Google's fonts.
+		Content-Security-Policy-Report-Only "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://checkout.razorpay.com https://challenges.cloudflare.com https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://*.razorpay.com; connect-src 'self' https://*.razorpay.com https://challenges.cloudflare.com https://cloudflareinsights.com; frame-src https://*.razorpay.com https://challenges.cloudflare.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
 	}
 
 	# --- probes, first ----------------------------------------------------

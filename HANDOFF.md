@@ -62,6 +62,21 @@ docker compose -f deploy/docker-compose.yml logs --since 30m engine
 - **When the Vultr server is destroyed**, delete its deploy key in GitHub → Settings → Deploy keys.
 - The three test-mode orders from launch day are set aside in `/root/removed-test-orders/`; only the real order remains in the app.
 
+## What guards the server (DEC-106)
+
+| Piece | Where | Note |
+|---|---|---|
+| Cloudflare-only origin | `deploy/ops/cf-origin-firewall.sh`, `cf-origin-firewall.timer` | Writes Cloudflare's ranges into `DOCKER-USER`; refreshed daily. **Port 22 is ufw's and is deliberately not in here.** If the site ever answers Cloudflare with 5xx after a Cloudflare range change, run the script by hand |
+| Health watch | `deploy/ops/euk-watch.py`, `euk-watch.timer` | Every five minutes; one email to `support@` when something breaks and one when it recovers. State in `/var/lib/euk-watch.json` |
+| SSH | key-only, `fail2ban` | 5 failures in 10 minutes earns an hour's ban |
+| Docker logs | `/etc/docker/daemon.json` | 10 MB x 3 per container |
+| Headers | `deploy/Caddyfile` | HSTS (2 years, not preloaded), Permissions-Policy, and **CSP in report-only** — watch the browser console for a week before enforcing it |
+
+**Still the owner's, and worth doing:** rotate the Razorpay, Resend and Turnstile
+credentials (they passed through two chat sessions); check Cloudflare's own
+settings, including a rule that never challenges
+`/v1/payments/razorpay/webhook`; and decide on Vultr's automatic backups.
+
 ## Checking every examination (DEC-104)
 
 `scripts/smoke_catalogue_photographs.py` puts real photographs through every
