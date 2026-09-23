@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import type { ExamDetail, RequirementSummary } from "../../lib/types";
 import type { KitEntry } from "../../lib/kit-state";
@@ -14,7 +14,7 @@ import {
     kitPrice,
     rupees,
 } from "../../lib/kit-pricing";
-import { nextStep } from "../../lib/kit-next";
+import { nextStep, waitingFile } from "../../lib/kit-next";
 import { photographSpecRows, requirementSpecRows } from "../../lib/spec-format";
 import { toolsReplaced } from "../../lib/value-tools";
 import { plainFindings } from "../../lib/finding-text";
@@ -55,7 +55,10 @@ function stateOf(
         plainFindings(entry.findings).length > 0
     )
         return { text: "Worth a look", tone: "check" };
-    if (entry.outcome === "prepared" || entry.outcome === "prepared_with_findings")
+    if (
+        entry.outcome === "prepared" ||
+        entry.outcome === "prepared_with_findings"
+    )
         return requirement.platform_support === "partially_supported"
             ? { text: "One step yours", tone: "check" }
             : { text: "Prepared", tone: "done" };
@@ -210,6 +213,32 @@ export function KitWorkspace({
             ),
         )
         .map((r) => r.requirement_id);
+    // Whatever the candidate is looking at, this is what is still to do. The
+    // floating bar, the list marker and the panel all take it from here.
+    const waiting = waitingFile({
+        kit: ours.map((r) => ({
+            requirementId: r.requirement_id,
+            name: r.requirement_name,
+        })),
+        included,
+        prepared: preparedIds,
+    });
+    // A file has just been prepared: bring what follows into view, so the
+    // next step arrives rather than waiting at the bottom of a long panel to
+    // be found. Only when it is not already on screen, and never on arrival.
+    const shownReady = useRef<number | null>(null);
+    useEffect(() => {
+        const previous = shownReady.current;
+        shownReady.current = ready;
+        if (previous === null || ready <= previous) return;
+        const frame = requestAnimationFrame(() =>
+            bringIntoView(document.getElementById("kit-onward"), {
+                onlyIfNeeded: true,
+            }),
+        );
+        return () => cancelAnimationFrame(frame);
+    }, [ready]);
+
     const onward = nextStep({
         kit: ours.map((r) => ({
             requirementId: r.requirement_id,
@@ -226,11 +255,13 @@ export function KitWorkspace({
         : `${price.chosen} of ${price.kitFiles} file${price.kitFiles === 1 ? "" : "s"}`;
     let note: string;
     if (price.kitChargeable === 0) {
-        note = "Every file here is document work, which we do alongside a prepared photograph or signature. This application has none for us to prepare.";
+        note =
+            "Every file here is document work, which we do alongside a prepared photograph or signature. This application has none for us to prepare.";
     } else if (price.chosen === 0) {
         note = "Tick the files you want prepared.";
     } else if (price.chargeable === 0) {
-        note = "Documents are free with a photograph, signature, thumb impression or declaration in the kit.";
+        note =
+            "Documents are free with a photograph, signature, thumb impression or declaration in the kit.";
     } else if (everything) {
         note =
             price.kitFree > 0
@@ -268,7 +299,11 @@ export function KitWorkspace({
                                         disabled={busy}
                                         onClear={() => choose([])}
                                         onSelectAll={() =>
-                                            choose(ours.map((r) => r.requirement_id))
+                                            choose(
+                                                ours.map(
+                                                    (r) => r.requirement_id,
+                                                ),
+                                            )
                                         }
                                     />
                                 )}
@@ -308,7 +343,10 @@ export function KitWorkspace({
                                                 checked={on}
                                                 aria-label={`Include ${r.requirement_name} in your kit`}
                                                 onChange={(event) =>
-                                                    toggle(id, event.target.checked)
+                                                    toggle(
+                                                        id,
+                                                        event.target.checked,
+                                                    )
                                                 }
                                             />
                                             <button
@@ -317,7 +355,9 @@ export function KitWorkspace({
                                                 onClick={() => open(id)}
                                                 aria-controls={`panel-${id}`}
                                                 aria-current={
-                                                    selectedId === id ? "step" : undefined
+                                                    selectedId === id
+                                                        ? "step"
+                                                        : undefined
                                                 }
                                             >
                                                 <FileTypeDrawing
@@ -334,6 +374,13 @@ export function KitWorkspace({
                                                         </span>
                                                     )}
                                                 </span>
+                                                {waiting?.requirementId ===
+                                                    id &&
+                                                    !paid && (
+                                                        <span className="euk-kit-next">
+                                                            Next
+                                                        </span>
+                                                    )}
                                                 {state.tone !== "idle" && (
                                                     <span
                                                         className="euk-kit-state"
@@ -381,11 +428,15 @@ export function KitWorkspace({
                                 {yours.map((r) => (
                                     <li
                                         key={r.requirement_id}
-                                        data-active={selectedId === r.requirement_id}
+                                        data-active={
+                                            selectedId === r.requirement_id
+                                        }
                                     >
                                         <button
                                             type="button"
-                                            onClick={() => open(r.requirement_id)}
+                                            onClick={() =>
+                                                open(r.requirement_id)
+                                            }
                                             aria-controls={`panel-${r.requirement_id}`}
                                             aria-current={
                                                 selectedId === r.requirement_id
@@ -393,7 +444,10 @@ export function KitWorkspace({
                                                     : undefined
                                             }
                                         >
-                                            <span className="euk-kit-dash" aria-hidden="true" />
+                                            <span
+                                                className="euk-kit-dash"
+                                                aria-hidden="true"
+                                            />
                                             <span className="euk-kit-name">
                                                 {r.requirement_name}
                                             </span>
@@ -409,11 +463,17 @@ export function KitWorkspace({
                 </section>
 
                 {ours.length > 0 && (
-                    <aside className="euk-kit-side" aria-label="What your kit costs">
+                    <aside
+                        className="euk-kit-side"
+                        aria-label="What your kit costs"
+                    >
                         <div className="euk-kit-price">
                             <p className="euk-kit-price-name">{priceName}</p>
                             <p className="euk-kit-price-row">
-                                <span key={price.amount} className="euk-kit-price-figure">
+                                <span
+                                    key={price.amount}
+                                    className="euk-kit-price-figure"
+                                >
                                     {rupees(price.amount)}
                                 </span>
                                 {price.list > price.amount && (
@@ -427,7 +487,9 @@ export function KitWorkspace({
                                     className="primary-button euk-kit-push"
                                     disabled={busy}
                                     onClick={() =>
-                                        choose(ours.map((r) => r.requirement_id))
+                                        choose(
+                                            ours.map((r) => r.requirement_id),
+                                        )
                                     }
                                 >
                                     {push}
@@ -443,12 +505,15 @@ export function KitWorkspace({
                             <div className="euk-kit-without">
                                 <h3>The other way</h3>
                                 <p>
-                                    These files would take {tools.length} separate
-                                    tools, usually on separate sites:
+                                    These files would take {tools.length}{" "}
+                                    separate tools, usually on separate sites:
                                 </p>
                                 <ul className="euk-chips">
                                     {tools.map((tool) => (
-                                        <li key={tool.id} className="euk-chip euk-chip--gone">
+                                        <li
+                                            key={tool.id}
+                                            className="euk-chip euk-chip--gone"
+                                        >
                                             {tool.label}
                                         </li>
                                     ))}
@@ -467,10 +532,13 @@ export function KitWorkspace({
             {requirements.length > 0 && (
                 <div className="euk-wrap euk-kit-panels">
                     <fieldset className="euk-kit-panelset" disabled={busy}>
-                        <legend className="sr-only">The file you are working on</legend>
+                        <legend className="sr-only">
+                            The file you are working on
+                        </legend>
                         {requirements.map((r, i) => {
                             const id = r.requirement_id;
-                            const excluded = isOurs(r) && !included.includes(id);
+                            const excluded =
+                                isOurs(r) && !included.includes(id);
                             return (
                                 <div
                                     key={id}
@@ -490,7 +558,10 @@ export function KitWorkspace({
                                             </button>
                                         </div>
                                     )}
-                                    <fieldset className="euk-kit-panel-inner" disabled={excluded}>
+                                    <fieldset
+                                        className="euk-kit-panel-inner"
+                                        disabled={excluded}
+                                    >
                                         <RequirementPanel
                                             requirement={r}
                                             index={i}
@@ -500,11 +571,15 @@ export function KitWorkspace({
                                     </fieldset>
                                     {selectedId === id &&
                                         onward.kind !== "none" && (
-                                            <div className="euk-kit-onward">
+                                            <div
+                                                className="euk-kit-onward"
+                                                id="kit-onward"
+                                            >
                                                 <p className="euk-kit-onward-say">
                                                     {paid
                                                         ? "Paid. Your downloads are below"
-                                                        : onward.kind === "review"
+                                                        : onward.kind ===
+                                                            "review"
                                                           ? `All ${onward.total} file${onward.total === 1 ? "" : "s"} in your kit are prepared`
                                                           : `${onward.prepared} of ${onward.total} prepared`}
                                                 </p>
@@ -532,7 +607,7 @@ export function KitWorkspace({
                                                 ) : (
                                                     <button
                                                         type="button"
-                                                        className="secondary-button euk-kit-onward-go"
+                                                        className="primary-button euk-kit-onward-go"
                                                         onClick={() =>
                                                             open(
                                                                 onward.requirementId,
@@ -553,7 +628,9 @@ export function KitWorkspace({
             )}
 
             <div className="euk-wrap euk-kit-links">
-                <Link href={`/exam/${exam.exam_id}/rules`}>Rules and sources</Link>
+                <Link href={`/exam/${exam.exam_id}/rules`}>
+                    Rules and sources
+                </Link>
                 <ReportIssue
                     examName={exam.exam_name}
                     requirementName={selected?.requirement_name}
@@ -580,19 +657,47 @@ export function KitWorkspace({
                     data-hidden={reviewInView || undefined}
                 >
                     <span className="euk-kit-bar-name">
-                        {paid ? "Paid" : priceName}
+                        {paid
+                            ? "Paid"
+                            : waiting
+                              ? `${ready} of ${included.length} prepared`
+                              : priceName}
                     </span>
-                    {!paid && (
-                        <strong className="euk-kit-bar-figure">{rupees(price.amount)}</strong>
+                    {!paid && !waiting && (
+                        <strong className="euk-kit-bar-figure">
+                            {rupees(price.amount)}
+                        </strong>
+                    )}
+                    {/* While anything is still to do, the one loud control is
+                        the next file, not the payment: a candidate who had
+                        prepared one of four was offered "Review and pay" and
+                        nothing else, and could not find where to carry on
+                        (owner, 23 September, DEC-107). Review stays one quiet
+                        word away. */}
+                    {!paid && waiting && (
+                        <button
+                            type="button"
+                            className="euk-kit-bar-go"
+                            onClick={() => open(waiting.requirementId, true)}
+                        >
+                            Next: {waiting.name}
+                        </button>
                     )}
                     <a
                         href="#kit-review"
+                        className={
+                            !paid && waiting ? "euk-kit-bar-quiet" : undefined
+                        }
                         onClick={(event) => {
                             event.preventDefault();
                             goTo("kit-review");
                         }}
                     >
-                        {paid ? "Downloads" : ready > 0 ? "Review and pay" : "Review"}
+                        {paid
+                            ? "Downloads"
+                            : waiting
+                              ? "Review"
+                              : "Review and pay"}
                     </a>
                 </div>
             )}

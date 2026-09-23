@@ -734,15 +734,31 @@
         font-size: 30px;
         line-height: 1;
     }
-    .euk-kit-bar[data-ready] a {
+    .euk-kit-bar[data-ready] a,
+    .euk-kit-bar[data-ready] .euk-kit-bar-go {
         background: var(--signal);
         color: var(--signal-ink);
+        border: 0;
         padding: 12px 18px;
         min-height: 44px;
         display: inline-flex;
         align-items: center;
         font-size: 15px;
         font-weight: 700;
+        cursor: pointer;
+        font-family: inherit;
+    }
+    /* Review is still one word away while files remain, but it does not
+       compete with the next step (DEC-107). */
+    .euk-kit-bar[data-ready] a.euk-kit-bar-quiet {
+        background: none;
+        color: var(--ink);
+        padding: 12px 4px;
+        text-decoration: underline;
+        text-decoration-color: var(--signal-deep);
+        text-decoration-thickness: 2px;
+        text-underline-offset: 4px;
+        font-weight: 600;
     }
 }
 
@@ -846,6 +862,19 @@
 
 .euk-kit-onward-go {
     min-height: 46px;
+}
+
+/* The row the candidate should open next, marked where they are already
+   looking (DEC-107). */
+.euk-kit-next {
+    padding: 3px 8px 2px;
+    border: 2px solid var(--signal-deep);
+    color: var(--signal-deep);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    white-space: nowrap;
 }
 
 

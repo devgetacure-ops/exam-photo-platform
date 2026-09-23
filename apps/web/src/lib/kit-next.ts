@@ -26,6 +26,31 @@ export type NextStep =
       }
     | { kind: "review"; total: number };
 
+/**
+ * The next file in the kit that still has nothing prepared.
+ *
+ * `nextStep` answers "what follows the file I am looking at"; this answers
+ * "what is left", whatever is on screen. The floating bar and the list both
+ * point at this one, so the two never disagree (DEC-107).
+ */
+export function waitingFile({
+    kit,
+    included,
+    prepared,
+}: {
+    kit: KitFile[];
+    included: readonly string[];
+    prepared: readonly string[];
+}): KitFile | null {
+    return (
+        kit.find(
+            (file) =>
+                included.includes(file.requirementId) &&
+                !prepared.includes(file.requirementId),
+        ) ?? null
+    );
+}
+
 export function nextStep({
     kit,
     included,

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { nextStep, type KitFile } from "../lib/kit-next";
+import { nextStep, waitingFile, type KitFile } from "../lib/kit-next";
 
 const KIT: KitFile[] = [
     { requirementId: "photo", name: "Photograph" },
@@ -99,5 +99,36 @@ describe("what comes next in the kit", () => {
                 current: "photo",
             }),
         ).toEqual({ kind: "review", total: 2 });
+    });
+});
+
+describe("what is still waiting", () => {
+    it("is the first file in the kit with nothing prepared", () => {
+        expect(
+            waitingFile({ kit: KIT, included: ["photo", "sign"], prepared: [] }),
+        ).toEqual({ requirementId: "photo", name: "Photograph" });
+        expect(
+            waitingFile({
+                kit: KIT,
+                included: ["photo", "sign"],
+                prepared: ["photo"],
+            }),
+        ).toEqual({ requirementId: "sign", name: "Signature" });
+    });
+
+    it("ignores files the candidate unticked", () => {
+        expect(
+            waitingFile({ kit: KIT, included: ["sign"], prepared: ["sign"] }),
+        ).toBeNull();
+    });
+
+    it("is nothing once every chosen file is prepared", () => {
+        expect(
+            waitingFile({
+                kit: KIT,
+                included: ["photo", "sign"],
+                prepared: ["photo", "sign"],
+            }),
+        ).toBeNull();
     });
 });
