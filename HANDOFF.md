@@ -1,6 +1,6 @@
 # Live Operations
 
-**Last updated: 2026-09-17.** `https://examuploadkit.com` is
+**Last updated: 2026-09-23.** `https://examuploadkit.com` is
 live and taking real payments. **This section is the current truth for running
 the site**; everything from *Platform State* down is the build history, kept
 for its reasoning, and where it disagrees with this section, this section wins.
@@ -13,24 +13,29 @@ for its reasoning, and where it disagrees with this section, this section wins.
 | Plan for the host | Move to **Hostinger KVM 4** (India, 16 GB); **destroy the Vultr server by 11 October** (owner holds the reminder) |
 | Access | `ssh root@65.20.73.233` with the owner's key `C:\Users\dmbar\.ssh\id_ed25519` (ed25519, no passphrase). Password and keyboard-interactive login are off in `/etc/ssh/sshd_config.d/01-hardening.conf`, which must sort **before** `50-cloud-init.conf` (sshd keeps the first value it reads) |
 | Firewall | Vultr firewall group `examuploadkit`: inbound TCP 22, 80, 443 from anywhere; everything else dropped |
-| Code | `/opt/exam-photo-platform`, branch `main`, running engine and web images built from `cc5e579` (DEC-103) |
-| Repository | **Private** since 16 September. The server reads it over SSH with a read-only deploy key, `/root/.ssh/github_deploy`, registered in GitHub → Settings → Deploy keys as `vultr-server (read-only)`, and wired in `/root/.ssh/config`. GitHub's host key was checked against its published fingerprint. The key cannot push |
+| Code | `/opt/exam-photo-platform`, branch `main`, images built from `216083e` (DEC-107) |
+| Repository | **Public** again (23 September). The server still reads it over SSH with a read-only deploy key, `/root/.ssh/github_deploy`, registered in GitHub → Settings → Deploy keys as `vultr-server (read-only)`, and wired in `/root/.ssh/config`. GitHub's host key was checked against its published fingerprint. The key cannot push |
 | Stack | Compose project `exam-upload`: `engine`, `web`, `proxy` (Caddy). Volumes `models`, `artifacts`, `requests`, `caddy_data`, `caddy_config` |
-| Secrets | **Only** in `/opt/exam-photo-platform/deploy/.env`, mode 600, gitignored. Earlier copies in `/root/env.before-live.bak` (test Razorpay keys) and `/root/env.before-dec102.bak`, both mode 600 and holding secrets: delete them once the site has run clean for a while |
+| Secrets | **Only** in `/opt/exam-photo-platform/deploy/.env`, mode 600, gitignored. The two `/root` copies were shredded on 22 September (DEC-106). The operator token was rotated the same day; its current value is also in `/root/operator-token.txt`, mode 600. Razorpay, Resend and Turnstile credentials were checked live on 22 September and all three still work; the owner decided not to rotate them |
 | DNS and TLS | Cloudflare, **proxied (orange cloud)** for `@` and `www`, SSL/TLS **Full (strict)**. Caddy holds a Let's Encrypt certificate for `examuploadkit.com`, issued 16 September, expiring 15 December, renewed by Caddy itself |
 | Payments | Razorpay **live** keys. One **live-mode** webhook to `https://examuploadkit.com/v1/payments/razorpay/webhook`, events `payment.captured` and `order.paid` only. Test mode has **no** webhook: Razorpay keeps separate webhook lists per mode, which is why the day's test payments never released |
 | Email | Resend over SMTP. `ExamUploadKit <files@examuploadkit.com>` (a real Zoho mailbox, so replies do not bounce), `Reply-To: support@examuploadkit.com`. Cloudflare Email Routing must stay **off**: it would replace Zoho's MX records |
-| Bot check | Cloudflare Turnstile widget `examuploadkit`, Managed mode, both hostnames |
+| Bot check | Cloudflare Turnstile widget `examuploadkit`, Managed mode, both hostnames. The engine validates the token against `CF-Connecting-IP` (DEC-106), which is only trustworthy because the origin answers Cloudflare alone |
+| Cloudflare | Minimum TLS 1.2, Always Use HTTPS, SSL/TLS **Full (strict)**. A custom rule, `Never challenge the Razorpay webhook`, skips every WAF component including **Browser Integrity Check** for `/v1/payments/razorpay/webhook` — without it a bot rule silently stops payments releasing files. Verified 22 September: that path answers `400 {"detail":"Webhook rejected"}` from the application, not 403 from Cloudflare |
+| CI | **Blocked at GitHub, not by this repository.** Every run since 16 September fails before starting with *"recent account payments have failed or your spending limit needs to be increased"*. Making the repository public did not clear it; it is an account-level billing block. Until it is cleared at GitHub → Settings → Billing and plans, **verification is local only** (`npx vitest run`, and the engine's ruff/mypy/pytest) |
 | Models | Filled by `model-fetch` on the server. BiRefNet ONNX `940,792,905` bytes, SHA-256 `d592e635aeb091e6f65e5fb3e858a2972601bc8bdbd27b88efa1ad4be8d7cd23`, with its manifest beside it on the volume (DEC-101) |
 | `/ready` | `ready`, `purchase_gate: enabled`, `operator_surface: authenticated`, `payments: configured`, `email: configured`. Answered only from private addresses; `/ready` and `/health` are 404 from the internet |
 
-## Photograph incident, 17 September
+## What changed since launch
 
-- Four valid SBI Junior Associates camera/gallery photographs all failed after face detection. The live reports showed 0.94–0.98 face confidence and the same primary finding, `CROP_B_ASPECT_OUT_OF_RANGE`; this was not bad photography.
-- Root cause: preferred-only `200 x 230` rules were sent to whole-pixel Crop Mode B with an effectively exact aspect-ratio tolerance. Real crops almost never equal that fraction closely enough, and Mode B could not pad to the required shape.
-- `cc5e579` (DEC-103) routes all twelve preferred-size records through Crop Mode A at their published exact size. The four retained inputs passed this path diagnostically before their temporary copies were removed. On the deployed container, SBI resolves to `a 200 230 exact`.
-- The browser now accepts source photographs up to 40 MiB, applies orientation, strips metadata, caps the long edge at 3200 px and sends at most 5 MiB. The server's 5 MiB abuse boundary remains. A dedicated front-camera button is shown on touch/mobile devices; the normal gallery picker remains.
-- Deployment evidence: both rebuilt containers healthy; private `/ready` returned ready with all four operational flags configured; public home and SBI prepare routes returned HTTP 200. **Still required:** one real-phone camera upload and one gallery upload on SBI after clearing/refreshing the installed app.
+| When | What | Where |
+|---|---|---|
+| 16 Sep | Launch-day fixes from the owner's own walk: email without a consent tick, the move to the downloads after payment, Clear all / Select all, ticks that mean *ready*, a smooth before-and-after band, and a delivery email worth receiving | DEC-102 |
+| 17 Sep | **The photograph incident.** Four valid SBI photographs failed after face detection with `CROP_B_ASPECT_OUT_OF_RANGE`: preferred-only `200 x 230` records went to Crop Mode B, whose aspect gate a whole-pixel crop can almost never satisfy, and which may not pad. All twelve preferred-size records now take Crop Mode A at their published size. The browser also shrinks a photograph up to 40 MB to 3200 px and under 5 MB, applies orientation, drops EXIF, converts WebP and HEIC, and offers a camera button on touch devices | DEC-103 |
+| 19 Sep | Every examination is now proved with real photographs before a deploy, because nothing had ever done that. First run: 53 records, 49 accepted all four portraits, four accepted two | DEC-104 |
+| 21 Sep | Those four were the whole of Crop Mode B, and were wrong twice: they refused a head close to an edge, and framed at 0.74 of the frame against the reviewed set's 0.9. Every record now resolves to a size it publishes and so to Mode A; GATE takes 413 x 531, Karnataka PSC 117 x 150. **Verified against the owner's approved outputs before deploying** | DEC-105 |
+| 17 & 22 Sep | Security: a 100-page document cap, three email sends per file, Next.js 16.3.5 and Vitest 5.0.1 (both audits clean); then the origin closed to everything but Cloudflare, the bot check given the real visitor, a health watch, `fail2ban`, log rotation, HSTS and a report-only CSP | DEC-106 |
+| 23 Sep | A candidate could not find how to carry on after preparing a file. The next file is now the loud button, the floating bar follows progress, the page moves to what follows, and the waiting row is marked | DEC-107 |
 
 ## Measured on the server, 16 September
 
@@ -102,21 +107,23 @@ accepts. Signatures and thumb impressions have no sweep of this kind yet.
 
 ## Not yet verified on the live site
 
-1. **A payment through Cloudflare's proxy, with DEC-102 deployed.** The one live payment happened before the orange cloud and before DEC-102. The next one should show: no tick under the email field, the success moment and then the move to the downloads, **one** email in the new design, and a release. If a payment does not release, look at **Cloudflare → Security → Events** first: Bot Fight Mode or a WAF rule challenging Razorpay's webhook POSTs would look exactly like that.
-2. **The before-and-after band on a real phone** (DEC-102 moved it to transforms; the preview pane cannot time frames).
+1. **A real candidate journey since 17 September.** The engine log shows **no preparation at all** since then: the crop fix (DEC-105), the browser's shrink-before-upload and camera button (DEC-103), and the next-step changes (DEC-107) have never been exercised by a real upload. One phone journey — take a photograph, prepare, pay Rs 3 — would settle all three.
+2. **The full sweep after DEC-105.** It was stopped after one examination on the owner's instruction; the fix itself was verified on the owner's ten labelled photographs and against their approved outputs. Rerun with `scripts/smoke_catalogue_photographs.py` (about 70 minutes, no effect on the live site).
 3. **The delivery email in Outlook and the Gmail app.**
-4. **DEC-103 on the owner's phone:** one fresh SBI photograph from the front camera and one from the gallery, including a source over 5 MiB if available. Both should prepare; the source-over-5-MiB case should no longer be rejected before upload.
+4. **The report-only CSP.** It reports nowhere yet: watch the browser console on the live pages for a week before enforcing it.
 
 ## Waiting on the owner
 
 - **Google Search Console** (Domain property, TXT record in Cloudflare), **Bing Webmaster Tools** (import from Search Console), **Cloudflare Web Analytics** (the token goes in `NEXT_PUBLIC_CF_BEACON_TOKEN`, then `up -d --build web`). `docs/LAUNCH_GUIDE.md` has each step.
 - **Moving to Hostinger** before 11 October: a new read-only deploy key on the new box (the repository is private), the same compose deploy, `model-fetch` again (or copy the `models` volume), carry `deploy/.env` across by hand, point the Cloudflare `A` records at the new IP. The Razorpay webhook URL does not change, because the domain does not.
 
-## Next: security hardening (when the owner says)
+## Next: the operator page
 
-The owner wants a deep hardening pass before anything else is built. It is
-planned read-only first, then fixed in one pass on the owner's word. The prompt
-and a starting list are in `docs/NEXT_SESSION_PROMPT.md`.
+The hardening pass is done (DEC-106). What is missing now is a way for the
+owner to see their own business without a terminal: orders and refund
+evidence, the exam requests candidates send through the form (**saved to the
+`requests` volume and read by nothing**), conversion, and health. The prompt is
+in `docs/NEXT_SESSION_PROMPT.md`.
 
 ---
 
