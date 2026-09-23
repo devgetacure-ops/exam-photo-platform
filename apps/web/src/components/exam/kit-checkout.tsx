@@ -59,6 +59,10 @@ interface Quote {
     payment_mode?: string;
     included_free_count: number;
     lines: { job_id: string; reason: string }[];
+    /** DEC-111: what a coupon took off, and whether it applied. */
+    discount_paise?: number;
+    coupon_code?: string | null;
+    coupon_status?: "applied" | "invalid" | "no_effect" | null;
 }
 interface Order {
     order_id: string;
@@ -366,6 +370,9 @@ export function KitCheckout({
     const [now, setNow] = useState(0);
     const [extending, setExtending] = useState<string | null>(null);
     const [receipt, setReceipt] = useState<Receipt | null>(null);
+    // A partner's code, applied by the server to the quote and the order alike.
+    const [coupon, setCoupon] = useState("");
+    const [couponDraft, setCouponDraft] = useState("");
     const revision = useRef(0);
     const mounted = useRef(true);
     const headingRef = useRef<HTMLHeadingElement>(null);
@@ -397,7 +404,7 @@ export function KitCheckout({
         else setError("");
         try {
             const value = await request<Quote>(
-                `/v1/kits/${encodeURIComponent(kitId)}/quote?${new URLSearchParams(ids.map((id) => ["job_ids", id])).toString()}`,
+                `/v1/kits/${encodeURIComponent(kitId)}/quote?${new URLSearchParams([...ids.map((id) => ["job_ids", id]), ...(coupon ? [["coupon", coupon]] : [])]).toString()}`,
             );
             if (mounted.current && version === revision.current)
                 setQuote(value);
@@ -409,7 +416,7 @@ export function KitCheckout({
                 );
             }
         }
-    }, [kitId, signature]);
+    }, [kitId, signature, coupon]);
     useEffect(() => {
         mounted.current = true;
         return () => {
@@ -589,7 +596,7 @@ export function KitCheckout({
             // The test sheet needs no script; the live site always loads Razorpay.
             if (!simulated) await loadCheckout();
             const order = await request<Order>(
-                `/v1/kits/${encodeURIComponent(kitId)}/order?${new URLSearchParams(files.map((file) => ["job_ids", file.jobId])).toString()}`,
+                `/v1/kits/${encodeURIComponent(kitId)}/order?${new URLSearchParams([...files.map((file) => ["job_ids", file.jobId]), ...(coupon ? [["coupon", coupon]] : [])]).toString()}`,
                 "POST",
             );
             if (
@@ -982,6 +989,44 @@ export function KitCheckout({
                             </span>
                         )}
                     </p>
+                    {quote && (quote.discount_paise ?? 0) > 0 && (
+                        <p className="euk-total-free">
+                            Code {quote.coupon_code}: {money(quote.discount_paise ?? 0)} off
+                        </p>
+                    )}
+                    <form
+                        className="euk-coupon"
+                        onSubmit={(event) => {
+                            event.preventDefault();
+                            setCoupon(couponDraft.trim().toUpperCase());
+                        }}
+                    >
+                        <label htmlFor="euk-coupon-code">Have a code?</label>
+                        <span className="euk-coupon-row">
+                            <input
+                                id="euk-coupon-code"
+                                value={couponDraft}
+                                onChange={(event) => setCouponDraft(event.target.value)}
+                                maxLength={32}
+                                autoComplete="off"
+                                autoCapitalize="characters"
+                                disabled={busy}
+                            />
+                            <button type="submit" className="quiet-link" disabled={busy || !couponDraft.trim()}>
+                                Apply
+                            </button>
+                        </span>
+                        {coupon && quote?.coupon_status === "invalid" && (
+                            <span className="euk-coupon-note" role="status">
+                                That code isn’t valid.
+                            </span>
+                        )}
+                        {coupon && quote?.coupon_status === "no_effect" && (
+                            <span className="euk-coupon-note" role="status">
+                                That code doesn’t lower this total.
+                            </span>
+                        )}
+                    </form>
                     {quote && quote.included_free_count > 0 && (
                         <p className="euk-total-free">
                             {quote.included_free_count} document file

@@ -239,3 +239,47 @@
         transition: none;
     }
 }
+
+/* "Did it work?" (DEC-111): one short form on a quiet page. */
+.euk-feedback {
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 40px 16px 64px;
+}
+
+.euk-feedback-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin: 20px 0 0;
+}
+
+.euk-feedback-form fieldset {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.euk-feedback-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.euk-feedback-form fieldset label {
+    flex-direction: row;
+    align-items: center;
+    min-height: 44px;
+}
+
+.euk-feedback-form textarea {
+    padding: 10px;
+    border: var(--rule-thin) solid var(--hairline);
+    border-radius: 6px;
+    background: var(--paper);
+    color: var(--ink);
+    font: inherit;
+}

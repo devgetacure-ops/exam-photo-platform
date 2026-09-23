@@ -61,5 +61,62 @@ export function actionFor(kind: string, id: string | undefined, form: FormData, 
             body: { actor, reference: text(form, "reference", 80) || null, undo: text(form, "undo", 5) === "true" },
         };
     }
+    // --- Releases 2 and 3 (DEC-110, DEC-111) ------------------------------
+    if (kind === "deadline") {
+        if (!id || !/^[a-z0-9][a-z0-9_-]{1,120}$/.test(id)) return { error: "invalid examination" };
+        const closesOn = text(form, "closes_on", 10);
+        if (closesOn && !/^\d{4}-\d{2}-\d{2}$/.test(closesOn)) return { error: "invalid date" };
+        return {
+            path: `/v1/operator/deadlines/${id}`,
+            body: { actor, closes_on: closesOn || null, note: text(form, "note", 300), auto_remind: text(form, "auto_remind", 5) === "yes" },
+        };
+    }
+    if (kind === "coupon") {
+        const code = text(form, "code", 32).toUpperCase();
+        const couponKind = text(form, "kind", 10);
+        const raw = Number(text(form, "value", 10));
+        if (!/^[A-Z0-9_-]{2,32}$/.test(code) || !["percent", "flat"].includes(couponKind) || !Number.isFinite(raw))
+            return { error: "invalid coupon" };
+        const maxUses = text(form, "max_uses", 7);
+        const expires = text(form, "expires_on", 10);
+        return {
+            path: "/v1/operator/coupons",
+            body: {
+                actor,
+                code,
+                kind: couponKind,
+                // The form asks for rupees; the engine counts paise.
+                value: couponKind === "flat" ? Math.round(raw * 100) : Math.round(raw),
+                partner: text(form, "partner", 120),
+                max_uses: maxUses ? Number(maxUses) : null,
+                expires_on: /^\d{4}-\d{2}-\d{2}$/.test(expires) ? expires : null,
+            },
+        };
+    }
+    if (kind === "coupon-active") {
+        if (!id || !/^[A-Z0-9_-]{2,32}$/.test(id)) return { error: "invalid coupon" };
+        return { path: `/v1/operator/coupons/${id}/active`, body: { actor, active: text(form, "active", 5) === "true" } };
+    }
+    if (kind === "campaign" || kind === "campaign-test" || kind === "exam-added") {
+        const subject = text(form, "subject", 200);
+        const body = text(form, "body", 20000);
+        if (!subject || !body) return { error: "a subject and a message are needed" };
+        if (kind === "campaign-test") {
+            const to = text(form, "to", 254);
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(to)) return { error: "invalid test address" };
+            return { path: "/v1/operator/campaigns/test", body: { actor, to, subject, body } };
+        }
+        const segment = kind === "exam-added" ? "asked_exam" : text(form, "segment", 40);
+        if (!["all", "paid", "never_paid", "checkout_failed", "paid_exam", "asked_exam"].includes(segment)) return { error: "invalid segment" };
+        if (text(form, "confirm", 5) !== "yes") return { error: "tick the box to confirm the send" };
+        return {
+            path: kind === "exam-added" ? "/v1/operator/exam-requests/notify" : "/v1/operator/campaigns",
+            body: { actor, segment, target: text(form, "target", 200), subject, body },
+        };
+    }
+    if (kind === "publish") {
+        if (!id || !/^order_[A-Za-z0-9_-]{1,64}$/.test(id)) return { error: "invalid order" };
+        return { path: `/v1/operator/feedback/${id}/publish`, body: { actor, published: text(form, "published", 5) === "true" } };
+    }
     return { error: "unknown action" };
 }

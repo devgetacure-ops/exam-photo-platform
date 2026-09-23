@@ -15,6 +15,10 @@ export default async function TicketPage({ params }: { params: Promise<{ ticketI
     const loaded = await engineJson<TicketDetail>(`/v1/operator/tickets/${ticketId}`);
     if (!loaded.ok) notFound();
     const ticket = loaded.value;
+    const template =
+        ticket.kind === "exam" && ticket.exam
+            ? await engineJson<{ subject: string; body: string }>(`/v1/operator/exam-requests/template?exam=${encodeURIComponent(ticket.exam)}`)
+            : null;
     const back = `/admin/inbox/${ticket.id}`;
     const action = `/admin/actions/ticket/${ticket.id}`;
     const templates = replies({
@@ -86,6 +90,28 @@ export default async function TicketPage({ params }: { params: Promise<{ ticketI
                             {ticket.added_at ? "Undo: examination added" : "Examination is added"}
                         </button>
                     </ActionForm>
+                )}
+                {ticket.kind === "exam" && ticket.exam && template?.ok && (
+                    <details>
+                        <summary>Email everyone who asked for {ticket.exam} ({ticket.same_exam ?? 1})</summary>
+                        <ActionForm action="/admin/actions/exam-added" back={back}>
+                            <input type="hidden" name="target" value={ticket.exam} />
+                            <label>
+                                <span className="euk-label">Subject</span>
+                                <input name="subject" maxLength={200} required defaultValue={template.value.subject} />
+                            </label>
+                            <label>
+                                <span className="euk-label">Message</span>
+                                <textarea name="body" rows={6} maxLength={20000} required defaultValue={template.value.body} />
+                            </label>
+                            <label className="euk-op-check">
+                                <input type="checkbox" name="confirm" value="yes" required /> It is added: email them all and close their requests
+                            </label>
+                            <button type="submit" className="euk-op-button">
+                                Send
+                            </button>
+                        </ActionForm>
+                    </details>
                 )}
                 {ticket.kind !== "exam" && (
                     <ActionForm action={action} back={back}>

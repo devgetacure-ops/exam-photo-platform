@@ -142,6 +142,12 @@ class KitQuoteResponse(BaseModel):
     already_released_count: int
     is_payable: bool
     lines: List[QuoteLineResponse] = Field(default_factory=list)
+    #: DEC-110/111. `coupon_status` is "applied", "invalid", "no_effect" or
+    #: absent when no code was given.
+    price_variant: str = "A"
+    coupon_code: Optional[str] = None
+    discount_paise: int = 0
+    coupon_status: Optional[str] = None
     #: "razorpay", or "simulator" on a test machine (DEC-089), which tells the
     #: browser to open the test sheet instead of loading Razorpay Checkout.
     payment_mode: str = "razorpay"

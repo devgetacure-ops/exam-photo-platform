@@ -24,5 +24,18 @@ export async function POST(request: Request, { params }: { params: Promise<{ act
     } catch {
         return new Response("The engine could not be reached.", { status: 502 });
     }
-    return new Response(null, { status: 303, headers: { Location: back } });
+    // A test send returns to the composer with what was typed still in it.
+    let location = back;
+    if (form.get("keep_draft") === "yes") {
+        const subject = String(form.get("subject") ?? "");
+        const text = String(form.get("body") ?? "");
+        if (subject.length + text.length < 4000) {
+            const url = new URL(back, "http://operator.local");
+            url.searchParams.set("subject", subject);
+            url.searchParams.set("body", text);
+            url.searchParams.set("tested", "1");
+            location = `${url.pathname}${url.search}`;
+        }
+    }
+    return new Response(null, { status: 303, headers: { Location: location } });
 }

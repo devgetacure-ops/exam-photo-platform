@@ -39,7 +39,7 @@ from datetime import datetime, timedelta, timezone
 from email.message import EmailMessage
 from email.utils import formataddr, formatdate, make_msgid, parseaddr
 from html import escape
-from typing import List, Optional, Protocol, Sequence
+from typing import Dict, List, Optional, Protocol, Sequence
 
 #: Deliberately permissive. This is a sanity check before handing a string to
 #: an SMTP server, not an attempt to decide which addresses exist -- that
@@ -99,6 +99,9 @@ class Delivery:
     paid_at: Optional[str] = None
     site_url: str = ""
     support_address: str = ""
+    #: DEC-111: "did this work?" links, signed per order. Absent, no question.
+    feedback_yes_url: Optional[str] = None
+    feedback_no_url: Optional[str] = None
 
 
 @dataclass(frozen=True)
@@ -132,6 +135,7 @@ class EmailSender(Protocol):
         body: str,
         attachments: Sequence[Attachment],
         html: Optional[str] = None,
+        headers: Optional[Dict[str, str]] = None,
     ) -> None: ...
 
 
@@ -151,6 +155,7 @@ class UnconfiguredEmailSender:
         body: str,
         attachments: Sequence[Attachment],
         html: Optional[str] = None,
+        headers: Optional[Dict[str, str]] = None,
     ) -> None:
         raise EmailRejectedError("email delivery is not configured on this host")
 
@@ -165,6 +170,7 @@ def build_message(
     body: str,
     attachments: Sequence[Attachment],
     html: Optional[str] = None,
+    headers: Optional[Dict[str, str]] = None,
 ) -> EmailMessage:
     """The message as it goes on the wire. Pure, so its headers can be tested.
 
@@ -190,6 +196,9 @@ def build_message(
     # Transactional, sent because the candidate asked: an out-of-office
     # should not answer it.
     message["Auto-Submitted"] = "auto-generated"
+    # DEC-111: marketing adds List-Unsubscribe and Precedence here.
+    for name, value in (headers or {}).items():
+        message[name] = value
     message.set_content(body)
     if html:
         message.add_alternative(html, subtype="html")
@@ -236,6 +245,7 @@ class SmtpEmailSender:
         body: str,
         attachments: Sequence[Attachment],
         html: Optional[str] = None,
+        headers: Optional[Dict[str, str]] = None,
     ) -> None:
         message = build_message(
             from_address=self._from,
@@ -246,6 +256,7 @@ class SmtpEmailSender:
             body=body,
             attachments=attachments,
             html=html,
+            headers=headers,
         )
 
         try:
@@ -421,6 +432,13 @@ def compose(delivery: Delivery) -> ComposedEmail:
             lines.append(f"Paid: {rupees(int(delivery.amount_paise or 0))}")
         if delivery.payment_reference:
             lines.append(f"Payment: {delivery.payment_reference}")
+    if delivery.feedback_yes_url and delivery.feedback_no_url:
+        lines += [
+            "",
+            "DID IT WORK?",
+            f"Yes, the portal accepted it: {delivery.feedback_yes_url}",
+            f"No, there was a problem: {delivery.feedback_no_url}",
+        ]
     lines += [
         "",
         f"All the best for {exam}." if exam else "All the best for your examination.",
@@ -458,6 +476,20 @@ FONT = (
     "Arial,sans-serif"
 )
 MONO = "ui-monospace,SFMono-Regular,Menlo,Consolas,'Liberation Mono',monospace"
+
+
+def _feedback_block(delivery: Delivery) -> str:
+    if not (delivery.feedback_yes_url and delivery.feedback_no_url):
+        return ""
+    e = escape
+    button = (
+        "display:inline-block;padding:10px 16px;margin:6px 8px 0 0;border:2px solid "
+        f"{INK};border-radius:999px;font:600 14px/1 {FONT};color:{INK};text-decoration:none;"
+    )
+    return f"""<tr><td style="padding:22px 32px 0;">
+<div style="font:700 11px/1 {FONT};letter-spacing:.12em;text-transform:uppercase;color:{MUTED};padding-bottom:4px;">Did it work?</div>
+<a href="{e(delivery.feedback_yes_url)}" style="{button}">Yes, it was accepted</a><a href="{e(delivery.feedback_no_url)}" style="{button}">No, there was a problem</a>
+</td></tr>"""
 
 
 def _html(
@@ -565,6 +597,7 @@ def _html(
 </td></tr>
 {deadline_block}
 {receipt_block}
+{_feedback_block(delivery)}
 <tr><td style="padding:26px 32px 30px;">
 <p style="margin:0;font:700 16px/1.4 {FONT};color:{INK};">{wish}</p>
 </td></tr>

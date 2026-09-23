@@ -533,6 +533,32 @@ def pending_alerts(service: "ApiService") -> List[Dict[str, str]]:
                 }
             )
 
+    from exam_photo.api.growth import reconcile
+
+    for problem in reconcile(service).get("problems", []):
+        why = (
+            "we have no such order"
+            if problem.get("kind") == "unknown_order"
+            else "our order is not marked paid"
+        )
+        amount = (problem.get("amount_paise") or 0) / 100
+        alerts.append(
+            {
+                "key": f"reconcile:{problem.get('payment_id')}",
+                "subject": (
+                    f"Razorpay captured {problem.get('payment_id')} "
+                    "but no file was released"
+                ),
+                "body": (
+                    f"Payment {problem.get('payment_id')} for order "
+                    f"{problem.get('order_id')} (Rs {amount:g}, "
+                    f"{problem.get('email') or 'no email'}) is captured at "
+                    f"Razorpay; {why}.\n"
+                    "https://examuploadkit.com/admin/growth#reconcile"
+                ),
+            }
+        )
+
     local = now.astimezone(IST)
     if local.hour >= DIGEST_HOUR_IST:
         alerts.append({"key": f"digest:{local.date().isoformat()}", **digest(service)})

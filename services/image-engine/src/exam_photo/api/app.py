@@ -24,6 +24,8 @@ from fastapi import (
 from fastapi.responses import JSONResponse, Response
 from pydantic import BaseModel
 
+from exam_photo.api import growth as growth_views
+from exam_photo.api import marketing
 from exam_photo.api import operator as operator_views
 from exam_photo.api.contracts import (
     ApiJobStatus,
@@ -56,14 +58,25 @@ from exam_photo.api.contracts import (
 )
 from exam_photo.api.delivery import EmailRejectedError
 from exam_photo.api.jobs import KIT_ID_REGEX, ProcessingJobRecord
-from exam_photo.api.ledger import TICKET_KINDS, TICKET_STATES, stage_timings
+from exam_photo.api.ledger import (
+    TICKET_KINDS,
+    TICKET_STATES,
+    normalise_email,
+    stage_timings,
+)
 from exam_photo.api.payments import (
     SIGNATURE_HEADER,
     WebhookRejectedError,
     read_failed_payment,
     verify_and_read,
 )
-from exam_photo.api.pricing import quote_for
+from exam_photo.api.pricing import (
+    PRICE_LADDER_PAISE,
+    Discount,
+    parse_ladder,
+    price_variant,
+    quote_for,
+)
 from exam_photo.api.progress import json_safe
 from exam_photo.api.protection import (
     AllowanceExceededError,
@@ -1186,7 +1199,9 @@ def _selected_kit_records(
 
 @app.get("/v1/kits/{kit_id}/quote", response_model=KitQuoteResponse)
 def get_kit_quote(
-    kit_id: str, job_ids: Annotated[Optional[List[str]], Query()] = None
+    kit_id: str,
+    job_ids: Annotated[Optional[List[str]], Query()] = None,
+    coupon: Optional[str] = None,
 ) -> KitQuoteResponse:
     """What this kit costs, itemised (DEC-070).
 
@@ -1197,10 +1212,16 @@ def get_kit_quote(
     if not KIT_ID_REGEX.match(kit_id):
         raise HTTPException(status_code=400, detail="Invalid kit ID format")
 
-    quote = quote_for(_selected_kit_records(kit_id, job_ids))
+    quote, coupon_status = _priced(
+        kit_id, _selected_kit_records(kit_id, job_ids), coupon
+    )
     return KitQuoteResponse(
         kit_id=kit_id,
         amount_paise=quote.amount_paise,
+        price_variant=quote.price_variant,
+        coupon_code=quote.coupon_code,
+        discount_paise=quote.discount_paise,
+        coupon_status=coupon_status,
         list_amount_paise=quote.list_amount_paise,
         currency=quote.currency,
         chargeable_count=quote.chargeable_count,
@@ -1223,9 +1244,63 @@ def get_kit_quote(
     )
 
 
+def _priced(
+    kit_id: str, records: List[ProcessingJobRecord], coupon: Optional[str]
+) -> tuple[Any, Optional[str]]:
+    """The quote with the price test and any coupon applied (DEC-110, DEC-111).
+
+    Both the quote and the order come through here, so the amount the
+    candidate saw is the amount the order is created for.
+    """
+    ladder = parse_ladder(service.settings.price_test_ladder)
+    variant = (
+        price_variant(kit_id, service.settings.price_test_share) if ladder else "A"
+    )
+    status: Optional[str] = None
+    discount: Optional[Discount] = None
+    if coupon:
+        found = _valid_coupon(coupon)
+        if found is None:
+            status = "invalid"
+        else:
+            discount = Discount(found["code"], found["kind"], int(found["value"]))
+            status = "applied"
+    quote = quote_for(
+        records,
+        ladder=ladder if variant == "B" and ladder else PRICE_LADDER_PAISE,
+        variant=variant,
+        discount=discount,
+    )
+    if status == "applied" and not quote.discount_paise:
+        status = "no_effect"
+    return quote, status
+
+
+def _valid_coupon(code: str) -> Optional[dict[str, Any]]:
+    normalised = code.strip().upper()
+    if not re.fullmatch(r"[A-Z0-9_-]{2,32}", normalised):
+        return None
+    try:
+        found = service.ledger.coupon(normalised)
+    except Exception:  # noqa: BLE001 - a broken ledger never blocks a sale
+        return None
+    if not found or not found["active"]:
+        return None
+    if found["max_uses"] is not None and found["uses"] >= found["max_uses"]:
+        return None
+    if (
+        found["expires_on"]
+        and found["expires_on"] < datetime.now(timezone.utc).date().isoformat()
+    ):
+        return None
+    return found
+
+
 @app.post("/v1/kits/{kit_id}/order", response_model=KitOrderResponse)
 def create_kit_order(
-    kit_id: str, job_ids: Annotated[Optional[List[str]], Query()] = None
+    kit_id: str,
+    job_ids: Annotated[Optional[List[str]], Query()] = None,
+    coupon: Optional[str] = None,
 ) -> KitOrderResponse:
     """Create a Razorpay order for this kit, at a price we computed (DEC-070).
 
@@ -1238,7 +1313,7 @@ def create_kit_order(
         raise HTTPException(status_code=400, detail="Invalid kit ID format")
 
     records = _selected_kit_records(kit_id, job_ids)
-    quote = quote_for(records)
+    quote, _coupon_status = _priced(kit_id, records, coupon)
     if not quote.is_payable:
         # Nothing to charge for: an empty kit, one already paid, or one that
         # holds only document work, which is free. Sending a zero-amount order
@@ -1277,6 +1352,9 @@ def create_kit_order(
             items=service.order_items(
                 [record for record in records if record.job_id in priced]
             ),
+            price_variant=quote.price_variant,
+            coupon_code=quote.coupon_code,
+            discount_paise=quote.discount_paise,
         )
     except (ValueError, OSError) as err:
         # The order exists at Razorpay but we could not record it. Refusing is
@@ -1805,6 +1883,424 @@ def operator_export(what: str) -> Response:
             "Cache-Control": "no-store, private",
         },
     )
+
+
+# --- Release 2: visits, growth, calendar, reconciliation (DEC-110) ----------
+
+
+class VisitEvent(BaseModel):
+    session_id: str
+    type: str
+    path: Optional[str] = None
+    kit_id: Optional[str] = None
+    seconds: Optional[int] = None
+    referrer_host: Optional[str] = None
+    utm_source: Optional[str] = None
+    utm_medium: Optional[str] = None
+    utm_campaign: Optional[str] = None
+    device: Optional[str] = None
+    browser: Optional[str] = None
+    connection: Optional[str] = None
+    query: Optional[str] = None
+
+
+class VisitBatch(BaseModel):
+    events: List[VisitEvent]
+
+
+_SESSION_ID = re.compile(r"^[A-Za-z0-9_-]{8,64}$")
+
+
+def _short(value: Optional[str], limit: int) -> Optional[str]:
+    return value.strip()[:limit] or None if isinstance(value, str) else None
+
+
+@app.post("/v1/operator/events", dependencies=_OPERATOR)
+def operator_events(batch: VisitBatch) -> dict[str, Any]:
+    """The site's own visit beacon, relayed by the web server (DEC-110)."""
+    accepted = 0
+    for event in batch.events[:50]:
+        if not _SESSION_ID.match(event.session_id):
+            continue
+        if event.type == "search_empty":
+            if event.query:
+                service.ledger.record_empty_search(event.query)
+                accepted += 1
+            continue
+        if event.type not in ("view", "ping"):
+            continue
+        kit = (
+            event.kit_id if event.kit_id and KIT_ID_REGEX.match(event.kit_id) else None
+        )
+        service.ledger.record_visit_event(
+            {
+                "session_id": event.session_id,
+                "type": event.type,
+                "path": _short(event.path, 300),
+                "kit_id": kit,
+                "seconds": event.seconds,
+                "referrer_host": _short(event.referrer_host, 120),
+                "utm_source": _short(event.utm_source, 60),
+                "utm_medium": _short(event.utm_medium, 60),
+                "utm_campaign": _short(event.utm_campaign, 80),
+                "device": _short(event.device, 20),
+                "browser": _short(event.browser, 30),
+                "connection": _short(event.connection, 10),
+            }
+        )
+        accepted += 1
+    return {"accepted": accepted}
+
+
+@app.get("/v1/operator/growth", dependencies=_OPERATOR)
+def operator_growth(
+    days: int = Query(default=30, ge=1, le=366),  # noqa: B008
+) -> dict[str, Any]:
+    return growth_views.growth(service, days)
+
+
+@app.get("/v1/operator/reconcile", dependencies=_OPERATOR)
+def operator_reconcile(force: bool = False) -> dict[str, Any]:
+    return growth_views.reconcile(service, force=force)
+
+
+@app.get("/v1/operator/calendar", dependencies=_OPERATOR)
+def operator_calendar() -> dict[str, Any]:
+    return {"exams": growth_views.calendar(service)}
+
+
+class DeadlineIn(BaseModel):
+    actor: str = "operator"
+    closes_on: Optional[str] = None
+    note: str = ""
+    auto_remind: bool = False
+
+
+@app.post("/v1/operator/deadlines/{exam_id}", dependencies=_OPERATOR)
+def operator_set_deadline(exam_id: str, deadline: DeadlineIn) -> dict[str, Any]:
+    if service.catalogue.get(exam_id) is None:
+        raise HTTPException(status_code=404, detail="Unknown examination")
+    if deadline.closes_on:
+        try:
+            datetime.strptime(deadline.closes_on, "%Y-%m-%d")
+        except ValueError:
+            raise HTTPException(status_code=422, detail="Use YYYY-MM-DD") from None
+    service.ledger.set_deadline(
+        exam_id, deadline.closes_on, deadline.note, deadline.auto_remind, deadline.actor
+    )
+    service.ledger.log(
+        deadline.actor,
+        f"deadline {deadline.closes_on or 'cleared'}"
+        + (" with reminder" if deadline.auto_remind else ""),
+        f"exam:{exam_id}",
+    )
+    return {"ok": True}
+
+
+# --- Release 3: coupons, campaigns, unsubscribe, feedback (DEC-111) ---------
+
+
+class CouponIn(BaseModel):
+    actor: str = "operator"
+    code: str
+    kind: str
+    value: int
+    partner: str = ""
+    max_uses: Optional[int] = None
+    expires_on: Optional[str] = None
+
+
+@app.get("/v1/operator/coupons", dependencies=_OPERATOR)
+def operator_coupons() -> dict[str, Any]:
+    usage: dict[str, dict[str, int]] = {}
+    for order in service.orders.recent(500000):
+        if order.coupon_code and order.paid_at:
+            row = usage.setdefault(
+                order.coupon_code,
+                {"orders": 0, "revenue_paise": 0, "discount_paise": 0},
+            )
+            row["orders"] += 1
+            row["revenue_paise"] += order.amount_paise
+            row["discount_paise"] += order.discount_paise
+    coupons = service.ledger.coupons()
+    for coupon in coupons:
+        coupon.update(
+            usage.get(
+                coupon["code"], {"orders": 0, "revenue_paise": 0, "discount_paise": 0}
+            )
+        )
+    return {"coupons": coupons}
+
+
+@app.post("/v1/operator/coupons", dependencies=_OPERATOR)
+def operator_save_coupon(coupon: CouponIn) -> dict[str, Any]:
+    code = coupon.code.strip().upper()
+    if not re.fullmatch(r"[A-Z0-9_-]{2,32}", code):
+        raise HTTPException(
+            status_code=422, detail="Codes are 2-32 letters, digits, - or _"
+        )
+    if coupon.kind == "percent" and not 1 <= coupon.value <= 90:
+        raise HTTPException(status_code=422, detail="A percentage is 1 to 90")
+    if coupon.kind == "flat" and not 100 <= coupon.value <= 100000:
+        raise HTTPException(
+            status_code=422, detail="A flat discount is 100 to 100000 paise"
+        )
+    if coupon.kind not in ("percent", "flat"):
+        raise HTTPException(status_code=422, detail="kind is percent or flat")
+    service.ledger.save_coupon(
+        code,
+        coupon.kind,
+        coupon.value,
+        coupon.partner,
+        coupon.max_uses,
+        coupon.expires_on,
+    )
+    service.ledger.log(coupon.actor, f"saved coupon {code}", f"coupon:{code}")
+    return {"ok": True, "code": code}
+
+
+class ActiveIn(BaseModel):
+    actor: str = "operator"
+    active: bool
+
+
+@app.post("/v1/operator/coupons/{code}/active", dependencies=_OPERATOR)
+def operator_coupon_active(code: str, change: ActiveIn) -> dict[str, Any]:
+    if service.ledger.coupon(code) is None:
+        raise HTTPException(status_code=404, detail="Unknown coupon")
+    service.ledger.set_coupon_active(code, change.active)
+    service.ledger.log(
+        change.actor,
+        f"coupon {'enabled' if change.active else 'disabled'}",
+        f"coupon:{code}",
+    )
+    return {"ok": True}
+
+
+class SegmentIn(BaseModel):
+    segment: str
+    target: str = ""
+
+
+class CampaignIn(SegmentIn):
+    actor: str = "operator"
+    subject: str
+    body: str
+
+
+class TestSendIn(BaseModel):
+    actor: str = "operator"
+    to: str
+    subject: str
+    body: str
+
+
+@app.get("/v1/operator/campaigns", dependencies=_OPERATOR)
+def operator_campaigns() -> dict[str, Any]:
+    asked = sorted(
+        {
+            (t.get("exam") or "").strip()
+            for t in service.ledger.tickets(kinds=["exam"], limit=100000)
+            if (t.get("exam") or "").strip()
+        }
+    )
+    return {
+        "campaigns": service.ledger.campaigns(),
+        "segments": marketing.SEGMENTS,
+        "exams": [
+            {"exam_id": entry.exam_id, "exam_name": entry.rule.exam.exam_name}
+            for entry in service.catalogue.listed()
+        ],
+        "asked_exams": asked,
+        "unsubscribed": len(service.ledger.suppressed()),
+        "links_signed": bool(marketing.sign(service, "unsubscribe", "x")),
+    }
+
+
+@app.get("/v1/operator/campaigns/{campaign_id}", dependencies=_OPERATOR)
+def operator_campaign(campaign_id: str) -> dict[str, Any]:
+    campaign = service.ledger.campaign(campaign_id)
+    if campaign is None:
+        raise HTTPException(status_code=404, detail="Campaign not found")
+    return campaign
+
+
+@app.post("/v1/operator/campaigns/preview", dependencies=_OPERATOR)
+def operator_campaign_preview(segment: SegmentIn) -> dict[str, Any]:
+    try:
+        found = marketing.recipients(service, segment.segment, segment.target)
+    except ValueError as err:
+        raise HTTPException(status_code=422, detail=str(err)) from None
+    return {"count": len(found), "sample": found[:10]}
+
+
+@app.post("/v1/operator/campaigns", dependencies=_OPERATOR)
+def operator_start_campaign(campaign: CampaignIn) -> dict[str, Any]:
+    if not marketing.sign(service, "unsubscribe", "x"):
+        raise HTTPException(
+            status_code=409, detail="No link secret: unsubscribe links cannot be signed"
+        )
+    try:
+        return marketing.start_campaign(
+            service,
+            campaign.actor,
+            campaign.segment,
+            campaign.target,
+            campaign.subject,
+            campaign.body,
+        )
+    except ValueError as err:
+        raise HTTPException(status_code=422, detail=str(err)) from None
+
+
+@app.post("/v1/operator/campaigns/test", dependencies=_OPERATOR)
+def operator_test_send(test: TestSendIn) -> dict[str, Any]:
+    try:
+        marketing.send_test(service, test.to, test.subject, test.body)
+    except EmailRejectedError as err:
+        raise HTTPException(status_code=502, detail=str(err)) from None
+    service.ledger.log(test.actor, "sent a test campaign email", None)
+    return {"ok": True}
+
+
+@app.post("/v1/operator/exam-requests/notify", dependencies=_OPERATOR)
+def operator_notify_exam_added(segment: CampaignIn) -> dict[str, Any]:
+    """Tell everyone who asked for an examination that it is added (DEC-111)."""
+    wanted = segment.target.strip().lower()
+    try:
+        started = marketing.start_campaign(
+            service,
+            segment.actor,
+            "asked_exam",
+            segment.target,
+            segment.subject,
+            segment.body,
+        )
+    except ValueError as err:
+        raise HTTPException(status_code=422, detail=str(err)) from None
+    for ticket in service.ledger.tickets(kinds=["exam"], limit=100000):
+        if (ticket.get("exam") or "").strip().lower() == wanted and not ticket.get(
+            "added_at"
+        ):
+            service.ledger.set_ticket(ticket["id"], added=True, status="resolved")
+    return started
+
+
+@app.get("/v1/operator/exam-requests/template", dependencies=_OPERATOR)
+def operator_exam_added_template(exam: str) -> dict[str, str]:
+    subject, body = marketing.exam_added_message(exam, marketing._site(service))
+    return {"subject": subject, "body": body}
+
+
+_UNSUBSCRIBED_PAGE = """<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<title>Unsubscribed</title></head><body style="font-family:Arial,sans-serif;max-width:480px;margin:48px auto;padding:0 16px;line-height:1.5;color:#111;background:#faf9f6">
+<h1 style="font-size:24px">{title}</h1><p>{text}</p><p><a href="/">ExamUploadKit</a></p></body></html>"""
+
+
+def _unsubscribe(e: str, t: str) -> Response:
+    address = normalise_email(e)
+    if not address or not marketing.verify(service, "unsubscribe", e, t):
+        return Response(
+            _UNSUBSCRIBED_PAGE.format(
+                title="That link did not work",
+                text="Reply to any of our emails and we will take you off the list by hand.",
+            ),
+            media_type="text/html",
+            status_code=400,
+        )
+    service.ledger.suppress(address, "unsubscribe link")
+    return Response(
+        _UNSUBSCRIBED_PAGE.format(
+            title="You are unsubscribed",
+            text="We will not send you these emails again. Emails about a file you prepare still reach you.",
+        ),
+        media_type="text/html",
+    )
+
+
+@app.get("/v1/unsubscribe")
+def unsubscribe_page(e: str = "", t: str = "") -> Response:
+    """The footer link. Public, and valid only with our signature (DEC-111)."""
+    return _unsubscribe(e, t)
+
+
+@app.post("/v1/unsubscribe")
+def unsubscribe_one_click(e: str = "", t: str = "") -> Response:
+    """RFC 8058 one-click unsubscribe, as Gmail and Yahoo send it."""
+    return _unsubscribe(e, t)
+
+
+class FeedbackIn(BaseModel):
+    order_id: str
+    token: str
+    worked: bool
+    comment: str = ""
+    may_publish: bool = False
+
+
+@app.post("/v1/feedback")
+def record_feedback(feedback: FeedbackIn) -> dict[str, Any]:
+    """The delivery email's "did it work?" answer. Public, signed per order."""
+    if not marketing.verify(service, "feedback", feedback.order_id, feedback.token):
+        raise HTTPException(status_code=403, detail="This link is not valid.")
+    if service.orders.get(feedback.order_id) is None:
+        raise HTTPException(status_code=404, detail="Order not found")
+    service.ledger.record_feedback(
+        feedback.order_id,
+        feedback.worked,
+        feedback.comment.strip(),
+        feedback.may_publish,
+    )
+    return {"ok": True}
+
+
+@app.get("/v1/operator/feedback", dependencies=_OPERATOR)
+def operator_feedback() -> dict[str, Any]:
+    rows = service.ledger.feedback()
+    for row in rows:
+        order = service.orders.get(row["order_id"])
+        row["exam_names"] = (
+            list(dict.fromkeys(i.exam_name for i in order.items if i.exam_name))
+            if order
+            else []
+        )
+        row["emails"] = operator_views.order_emails(order) if order else []
+    worked = sum(1 for row in rows if row["worked"])
+    return {"feedback": rows, "worked": worked, "total": len(rows)}
+
+
+class PublishIn(BaseModel):
+    actor: str = "operator"
+    published: bool
+
+
+@app.post("/v1/operator/feedback/{order_id}/publish", dependencies=_OPERATOR)
+def operator_publish_feedback(order_id: str, change: PublishIn) -> dict[str, Any]:
+    service.ledger.set_feedback_published(order_id, change.published)
+    service.ledger.log(
+        change.actor,
+        "testimonial " + ("published" if change.published else "withdrawn"),
+        f"order:{order_id}",
+    )
+    return {"ok": True}
+
+
+@app.get("/v1/testimonials")
+def testimonials() -> dict[str, Any]:
+    """Comments the candidate allowed and the owner chose to show. Public."""
+    shown = []
+    for row in service.ledger.feedback(published_only=True)[:20]:
+        if not row.get("comment"):
+            continue
+        order = service.orders.get(row["order_id"])
+        exam = (
+            next((i.exam_name for i in order.items if i.exam_name), None)
+            if order
+            else None
+        )
+        shown.append({"comment": row["comment"], "exam": exam, "at": row["at"][:10]})
+    return {"testimonials": shown}
 
 
 def _operator_job(record: ProcessingJobRecord) -> dict[str, Any]:

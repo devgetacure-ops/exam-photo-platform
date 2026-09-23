@@ -133,6 +133,14 @@ class ApiSettings(BaseModel):
     razorpay_key_id: str = ""
     razorpay_key_secret: str = ""
 
+    #: DEC-110. A price test: the second arm's ladder in paise ("400,700") and
+    #: the share of kits, 0-100, that see it. Empty or 0 means no test.
+    price_test_ladder: str = ""
+    price_test_share: int = 0
+    #: DEC-111. Signs unsubscribe and feedback links. Falls back to the
+    #: operator token; with neither, those links are refused.
+    link_secret: str = ""
+
     #: DEC-089. A stand-in for Razorpay, for walking the whole checkout on a
     #: machine with no payment account. Off by default. It refuses to create or
     #: settle anything beside real Razorpay credentials, and `GET /ready`
@@ -320,6 +328,12 @@ def get_settings() -> ApiSettings:
         kwargs["razorpay_key_id"] = os.environ["EXAM_PHOTO_RAZORPAY_KEY_ID"]
     if "EXAM_PHOTO_RAZORPAY_KEY_SECRET" in os.environ:
         kwargs["razorpay_key_secret"] = os.environ["EXAM_PHOTO_RAZORPAY_KEY_SECRET"]
+    if "EXAM_PHOTO_PRICE_TEST_LADDER" in os.environ:
+        kwargs["price_test_ladder"] = os.environ["EXAM_PHOTO_PRICE_TEST_LADDER"]
+    if "EXAM_PHOTO_PRICE_TEST_SHARE" in os.environ:
+        kwargs["price_test_share"] = int(os.environ["EXAM_PHOTO_PRICE_TEST_SHARE"])
+    if "EXAM_PHOTO_LINK_SECRET" in os.environ:
+        kwargs["link_secret"] = os.environ["EXAM_PHOTO_LINK_SECRET"]
     if "EXAM_PHOTO_RAZORPAY_WEBHOOK_SECRET" in os.environ:
         kwargs["razorpay_webhook_secret"] = os.environ[
             "EXAM_PHOTO_RAZORPAY_WEBHOOK_SECRET"

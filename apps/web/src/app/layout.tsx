@@ -21,6 +21,7 @@ import "./compress.css";
 import "./resize.css";
 import "./mobile.css";
 import { InstallCard } from "../components/m/install-card";
+import { VisitBeacon } from "../components/visit-beacon";
 import { INSTALL_LISTENER_SCRIPT } from "../lib/install";
 import { JsonLd } from "../components/json-ld";
 import { CONTACT_EMAILS, ORGANIZATION_ID, SITE_NAME, SITE_URL } from "../lib/site";
@@ -173,6 +174,8 @@ export default function RootLayout({
                 <JsonLd data={SITE_GRAPH} />
                 {children}
                 <InstallCard />
+                {/* The site's own visit counter (DEC-110); draws nothing. */}
+                <VisitBeacon />
                 {/* Cloudflare Web Analytics (DEC-097): visit counts with no
                     cookie and no profile. Nothing loads unless the token is set. */}
                 {process.env.NEXT_PUBLIC_CF_BEACON_TOKEN && (

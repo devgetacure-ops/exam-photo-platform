@@ -119,6 +119,102 @@ CREATE TABLE IF NOT EXISTS alerts_sent (
     key TEXT PRIMARY KEY,
     at TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS kv (
+    key TEXT PRIMARY KEY,
+    value TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS visits (
+    session_id TEXT PRIMARY KEY,
+    first_at TEXT NOT NULL,
+    last_at TEXT NOT NULL,
+    active_seconds INTEGER NOT NULL DEFAULT 0,
+    pages INTEGER NOT NULL DEFAULT 0,
+    landing TEXT,
+    referrer_host TEXT,
+    utm_source TEXT,
+    utm_medium TEXT,
+    utm_campaign TEXT,
+    device TEXT,
+    browser TEXT,
+    connection TEXT,
+    kit_ids TEXT NOT NULL DEFAULT '[]',
+    exam_pages INTEGER NOT NULL DEFAULT 0
+);
+CREATE INDEX IF NOT EXISTS visits_first ON visits(first_at);
+
+CREATE TABLE IF NOT EXISTS pageviews (
+    session_id TEXT NOT NULL,
+    at TEXT NOT NULL,
+    path TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS pageviews_at ON pageviews(at);
+
+CREATE TABLE IF NOT EXISTS searches (
+    at TEXT NOT NULL,
+    query TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS searches_at ON searches(at);
+
+CREATE TABLE IF NOT EXISTS deadlines (
+    exam_id TEXT PRIMARY KEY,
+    closes_on TEXT NOT NULL,
+    note TEXT,
+    auto_remind INTEGER NOT NULL DEFAULT 0,
+    set_by TEXT,
+    set_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS coupons (
+    code TEXT PRIMARY KEY,
+    kind TEXT NOT NULL,
+    value INTEGER NOT NULL,
+    partner TEXT,
+    active INTEGER NOT NULL DEFAULT 1,
+    max_uses INTEGER,
+    uses INTEGER NOT NULL DEFAULT 0,
+    expires_on TEXT,
+    created_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS suppressions (
+    email TEXT PRIMARY KEY,
+    at TEXT NOT NULL,
+    reason TEXT
+);
+
+CREATE TABLE IF NOT EXISTS campaigns (
+    id TEXT PRIMARY KEY,
+    created_at TEXT NOT NULL,
+    actor TEXT NOT NULL,
+    segment TEXT NOT NULL,
+    subject TEXT NOT NULL,
+    body TEXT NOT NULL,
+    status TEXT NOT NULL,
+    total INTEGER NOT NULL DEFAULT 0,
+    sent INTEGER NOT NULL DEFAULT 0,
+    failed INTEGER NOT NULL DEFAULT 0,
+    finished_at TEXT
+);
+
+CREATE TABLE IF NOT EXISTS campaign_recipients (
+    campaign_id TEXT NOT NULL,
+    email TEXT NOT NULL,
+    status TEXT NOT NULL,
+    at TEXT,
+    error TEXT,
+    PRIMARY KEY (campaign_id, email)
+);
+
+CREATE TABLE IF NOT EXISTS feedback (
+    order_id TEXT PRIMARY KEY,
+    at TEXT NOT NULL,
+    worked INTEGER NOT NULL,
+    comment TEXT,
+    may_publish INTEGER NOT NULL DEFAULT 0,
+    published INTEGER NOT NULL DEFAULT 0
+);
 """
 
 
@@ -526,6 +622,275 @@ class Ledger:
             "INSERT OR REPLACE INTO alerts_sent (key, at) VALUES (?,?)",
             (key, now_iso()),
         )
+
+    # --- key/value -------------------------------------------------------
+
+    def get_value(self, key: str) -> Optional[str]:
+        rows = self._rows("SELECT value FROM kv WHERE key=?", (key,))
+        return str(rows[0]["value"]) if rows else None
+
+    def set_value(self, key: str, value: str) -> None:
+        self._write("INSERT OR REPLACE INTO kv (key, value) VALUES (?,?)", (key, value))
+
+    # --- visits (Release 2) ---------------------------------------------
+
+    def record_visit_event(self, event: Dict[str, Any]) -> None:
+        """One page view or heartbeat from the site's own beacon (DEC-110)."""
+        session = str(event["session_id"])
+        stamp = now_iso()
+        kind = event.get("type")
+        with self._lock, self._db() as db:
+            row = db.execute(
+                "SELECT kit_ids FROM visits WHERE session_id=?", (session,)
+            ).fetchone()
+            if row is None:
+                db.execute(
+                    "INSERT INTO visits (session_id, first_at, last_at, landing, "
+                    "referrer_host, utm_source, utm_medium, utm_campaign, device, "
+                    "browser, connection) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+                    (
+                        session,
+                        stamp,
+                        stamp,
+                        event.get("path"),
+                        event.get("referrer_host"),
+                        event.get("utm_source"),
+                        event.get("utm_medium"),
+                        event.get("utm_campaign"),
+                        event.get("device"),
+                        event.get("browser"),
+                        event.get("connection"),
+                    ),
+                )
+                kits: List[str] = []
+            else:
+                kits = json.loads(row["kit_ids"])
+            kit = event.get("kit_id")
+            if kit and kit not in kits:
+                kits.append(kit)
+            seconds = int(event.get("seconds") or 0) if kind == "ping" else 0
+            is_view = kind == "view"
+            is_exam = bool(
+                is_view and str(event.get("path") or "").startswith("/exam/")
+            )
+            db.execute(
+                "UPDATE visits SET last_at=?, active_seconds=active_seconds+?, "
+                "pages=pages+?, exam_pages=exam_pages+?, kit_ids=?, "
+                "connection=COALESCE(?, connection) WHERE session_id=?",
+                (
+                    stamp,
+                    max(0, min(seconds, 120)),
+                    1 if is_view else 0,
+                    1 if is_exam else 0,
+                    json.dumps(kits[:20]),
+                    event.get("connection"),
+                    session,
+                ),
+            )
+            if is_view:
+                db.execute(
+                    "INSERT INTO pageviews (session_id, at, path) VALUES (?,?,?)",
+                    (session, stamp, str(event.get("path") or "/")[:300]),
+                )
+
+    def record_empty_search(self, query: str) -> None:
+        text = " ".join(query.split())[:120]
+        if len(text) >= 2:
+            self._write(
+                "INSERT INTO searches (at, query) VALUES (?,?)", (now_iso(), text)
+            )
+
+    def visits(self, since: str) -> List[Dict[str, Any]]:
+        rows = self._rows("SELECT * FROM visits WHERE first_at >= ?", (since,))
+        for row in rows:
+            row["kit_ids"] = json.loads(row["kit_ids"])
+        return rows
+
+    def empty_searches(self, since: str) -> List[Dict[str, Any]]:
+        return self._rows(
+            "SELECT lower(query) AS query, COUNT(*) AS count, MAX(at) AS last_at "
+            "FROM searches WHERE at >= ? GROUP BY lower(query) ORDER BY count DESC LIMIT 200",
+            (since,),
+        )
+
+    def prune_visits(self, keep_days: int = 400) -> None:
+        cutoff = (datetime.now(timezone.utc) - timedelta(days=keep_days)).isoformat()
+        self._write("DELETE FROM pageviews WHERE at < ?", (cutoff,))
+
+    # --- deadlines -------------------------------------------------------
+
+    def set_deadline(
+        self,
+        exam_id: str,
+        closes_on: Optional[str],
+        note: str,
+        auto_remind: bool,
+        actor: str,
+    ) -> None:
+        if not closes_on:
+            self._write("DELETE FROM deadlines WHERE exam_id=?", (exam_id,))
+            return
+        self._write(
+            "INSERT OR REPLACE INTO deadlines (exam_id, closes_on, note, auto_remind, "
+            "set_by, set_at) VALUES (?,?,?,?,?,?)",
+            (exam_id, closes_on, note[:300], 1 if auto_remind else 0, actor, now_iso()),
+        )
+
+    def deadlines(self) -> Dict[str, Dict[str, Any]]:
+        return {row["exam_id"]: row for row in self._rows("SELECT * FROM deadlines")}
+
+    # --- coupons (Release 3) --------------------------------------------
+
+    def save_coupon(
+        self,
+        code: str,
+        kind: str,
+        value: int,
+        partner: str = "",
+        max_uses: Optional[int] = None,
+        expires_on: Optional[str] = None,
+    ) -> None:
+        self._write(
+            "INSERT INTO coupons (code, kind, value, partner, max_uses, expires_on, "
+            "created_at) VALUES (?,?,?,?,?,?,?) ON CONFLICT(code) DO UPDATE SET "
+            "kind=excluded.kind, value=excluded.value, partner=excluded.partner, "
+            "max_uses=excluded.max_uses, expires_on=excluded.expires_on, active=1",
+            (code, kind, value, partner[:120], max_uses, expires_on, now_iso()),
+        )
+
+    def set_coupon_active(self, code: str, active: bool) -> None:
+        self._write(
+            "UPDATE coupons SET active=? WHERE code=?", (1 if active else 0, code)
+        )
+
+    def coupon(self, code: str) -> Optional[Dict[str, Any]]:
+        rows = self._rows("SELECT * FROM coupons WHERE code=?", (code,))
+        return rows[0] if rows else None
+
+    def coupons(self) -> List[Dict[str, Any]]:
+        return self._rows("SELECT * FROM coupons ORDER BY created_at DESC")
+
+    def coupon_used(self, code: str) -> None:
+        self._write("UPDATE coupons SET uses=uses+1 WHERE code=?", (code,))
+
+    # --- marketing (Release 3) ------------------------------------------
+
+    def suppress(self, email: str, reason: str) -> None:
+        address = normalise_email(email)
+        if address:
+            self._write(
+                "INSERT OR REPLACE INTO suppressions (email, at, reason) VALUES (?,?,?)",
+                (address, now_iso(), reason[:120]),
+            )
+
+    def suppressed(self) -> set[str]:
+        return {row["email"] for row in self._rows("SELECT email FROM suppressions")}
+
+    def create_campaign(
+        self, actor: str, segment: str, subject: str, body: str, recipients: List[str]
+    ) -> str:
+        campaign_id = f"c_{uuid.uuid4().hex[:12]}"
+        with self._lock, self._db() as db:
+            db.execute(
+                "INSERT INTO campaigns (id, created_at, actor, segment, subject, body, "
+                "status, total) VALUES (?,?,?,?,?,?,?,?)",
+                (
+                    campaign_id,
+                    now_iso(),
+                    actor,
+                    segment,
+                    subject,
+                    body,
+                    "sending",
+                    len(recipients),
+                ),
+            )
+            db.executemany(
+                "INSERT OR IGNORE INTO campaign_recipients (campaign_id, email, status) "
+                "VALUES (?,?,?)",
+                [(campaign_id, email, "queued") for email in recipients],
+            )
+        return campaign_id
+
+    def campaign_result(
+        self, campaign_id: str, email: str, ok: bool, error: Optional[str] = None
+    ) -> None:
+        with self._lock, self._db() as db:
+            db.execute(
+                "UPDATE campaign_recipients SET status=?, at=?, error=? "
+                "WHERE campaign_id=? AND email=?",
+                (
+                    "sent" if ok else "failed",
+                    now_iso(),
+                    (error or "")[:200] or None,
+                    campaign_id,
+                    email,
+                ),
+            )
+            column = "sent" if ok else "failed"
+            db.execute(
+                f"UPDATE campaigns SET {column}={column}+1 WHERE id=?", (campaign_id,)
+            )
+
+    def finish_campaign(self, campaign_id: str, status: str = "finished") -> None:
+        self._write(
+            "UPDATE campaigns SET status=?, finished_at=? WHERE id=?",
+            (status, now_iso(), campaign_id),
+        )
+
+    def campaigns(self) -> List[Dict[str, Any]]:
+        return self._rows("SELECT * FROM campaigns ORDER BY created_at DESC LIMIT 200")
+
+    def campaign(self, campaign_id: str) -> Optional[Dict[str, Any]]:
+        rows = self._rows("SELECT * FROM campaigns WHERE id=?", (campaign_id,))
+        if not rows:
+            return None
+        campaign = rows[0]
+        campaign["recipients"] = self._rows(
+            "SELECT email, status, at, error FROM campaign_recipients WHERE campaign_id=? "
+            "ORDER BY email",
+            (campaign_id,),
+        )
+        return campaign
+
+    def queued_recipients(self, campaign_id: str) -> List[str]:
+        return [
+            row["email"]
+            for row in self._rows(
+                "SELECT email FROM campaign_recipients WHERE campaign_id=? AND status='queued'",
+                (campaign_id,),
+            )
+        ]
+
+    # --- feedback (Release 3) -------------------------------------------
+
+    def record_feedback(
+        self, order_id: str, worked: bool, comment: str = "", may_publish: bool = False
+    ) -> None:
+        self._write(
+            "INSERT INTO feedback (order_id, at, worked, comment, may_publish) "
+            "VALUES (?,?,?,?,?) ON CONFLICT(order_id) DO UPDATE SET at=excluded.at, "
+            "worked=excluded.worked, "
+            "comment=CASE WHEN excluded.comment != '' THEN excluded.comment ELSE comment END, "
+            "may_publish=MAX(may_publish, excluded.may_publish)",
+            (
+                order_id,
+                now_iso(),
+                1 if worked else 0,
+                comment[:1000],
+                1 if may_publish else 0,
+            ),
+        )
+
+    def set_feedback_published(self, order_id: str, published: bool) -> None:
+        self._write(
+            "UPDATE feedback SET published=? WHERE order_id=? AND may_publish=1",
+            (1 if published else 0, order_id),
+        )
+
+    def feedback(self, published_only: bool = False) -> List[Dict[str, Any]]:
+        where = "WHERE published=1" if published_only else ""
+        return self._rows(f"SELECT * FROM feedback {where} ORDER BY at DESC LIMIT 500")
 
 
 def _with_clock(row: Dict[str, Any]) -> Dict[str, Any]:

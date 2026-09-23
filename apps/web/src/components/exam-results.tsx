@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect } from "react";
 import type { ExamPicker } from "../lib/use-exam-picker";
+import { reportEmptySearch } from "../lib/visit-beacon";
 
 /**
  * What the picker found, drawn once for both places it is shown.
@@ -28,6 +30,14 @@ export function ExamResults({
         query,
         requestHref,
     } = picker;
+
+    // A search that finds nothing is demand for an examination we lack
+    // (DEC-110). Reported once the candidate stops typing.
+    useEffect(() => {
+        if (hasResults || query.trim().length < 3) return;
+        const timer = window.setTimeout(() => reportEmptySearch(query), 1500);
+        return () => window.clearTimeout(timer);
+    }, [hasResults, query]);
 
     return (
         <div

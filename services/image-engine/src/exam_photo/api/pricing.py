@@ -18,6 +18,7 @@ the one part that is not ours.
 
 from __future__ import annotations
 
+import hashlib
 from dataclasses import dataclass
 from typing import Iterable, List, Optional, Sequence
 
@@ -61,6 +62,28 @@ class QuoteLine:
     reason: str
 
 
+#: Razorpay will not take less than a rupee, so no discount goes below it.
+MINIMUM_CHARGE_PAISE = 100
+
+
+@dataclass(frozen=True)
+class Discount:
+    """A coupon, already found valid, as pricing needs it (DEC-111)."""
+
+    code: str
+    kind: str  # "percent" or "flat"
+    value: int  # percent 1-90, or paise
+
+    def off(self, amount_paise: int) -> int:
+        if amount_paise <= 0:
+            return 0
+        if self.kind == "percent":
+            cut = amount_paise * max(0, min(self.value, 90)) // 100
+        else:
+            cut = max(0, self.value)
+        return max(0, min(cut, amount_paise - MINIMUM_CHARGE_PAISE))
+
+
 @dataclass(frozen=True)
 class Quote:
     """What a candidate owes for a kit, and why."""
@@ -72,6 +95,11 @@ class Quote:
     included_free_count: int
     already_released_count: int
     lines: List[QuoteLine]
+    #: DEC-110: which price-test arm priced this kit ("A" is the standard).
+    price_variant: str = "A"
+    #: DEC-111: the coupon applied, and what it took off.
+    coupon_code: Optional[str] = None
+    discount_paise: int = 0
 
     @property
     def is_payable(self) -> bool:
@@ -112,7 +140,12 @@ def _classify(record: ProcessingJobRecord) -> QuoteLine:
     return QuoteLine(record.job_id, record.requirement_id, kind, True, "charged")
 
 
-def quote_for(records: Iterable[ProcessingJobRecord]) -> Quote:
+def quote_for(
+    records: Iterable[ProcessingJobRecord],
+    ladder: Sequence[int] = PRICE_LADDER_PAISE,
+    variant: str = "A",
+    discount: Optional[Discount] = None,
+) -> Quote:
     """Price a kit from the jobs it holds.
 
     Every job is reported, charged or not, with the reason. A candidate being
@@ -130,12 +163,40 @@ def quote_for(records: Iterable[ProcessingJobRecord]) -> Quote:
     released = [line for line in lines if line.reason == "already_released"]
 
     count = len(chargeable)
+    base = _tier(count, ladder)
+    cut = discount.off(base) if discount else 0
     return Quote(
-        amount_paise=_tier(count, PRICE_LADDER_PAISE),
+        amount_paise=base - cut,
         list_amount_paise=_tier(count, LIST_LADDER_PAISE),
         currency=CURRENCY,
         chargeable_count=count,
         included_free_count=len(free),
         already_released_count=len(released),
         lines=lines,
+        price_variant=variant,
+        coupon_code=discount.code if discount and cut else None,
+        discount_paise=cut,
     )
+
+
+def price_variant(kit_id: str, share_percent: int) -> str:
+    """Which arm of a price test a kit falls in, the same every time (DEC-110).
+
+    A hash, not a coin toss, so a candidate who reloads sees the same price,
+    and the quote and the order always agree.
+    """
+    if share_percent <= 0:
+        return "A"
+    digest = hashlib.sha256(kit_id.encode("utf-8")).digest()
+    return "B" if digest[0] * 100 // 256 < min(share_percent, 100) else "A"
+
+
+def parse_ladder(text: str) -> Optional[List[int]]:
+    """`"400,700"` → `[400, 700]`; anything unusable → `None` (test off)."""
+    try:
+        values = [int(part) for part in text.split(",") if part.strip()]
+    except ValueError:
+        return None
+    if not values or any(v < MINIMUM_CHARGE_PAISE or v > 100_000 for v in values):
+        return None
+    return values

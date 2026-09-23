@@ -117,7 +117,7 @@ accepts. Signatures and thumb impressions have no sweep of this kind yet.
 - **Google Search Console** (Domain property, TXT record in Cloudflare), **Bing Webmaster Tools** (import from Search Console), **Cloudflare Web Analytics** (the token goes in `NEXT_PUBLIC_CF_BEACON_TOKEN`, then `up -d --build web`). `docs/LAUNCH_GUIDE.md` has each step.
 - **Moving to Hostinger** before 11 October: a new read-only deploy key on the new box (the repository is private), the same compose deploy, `model-fetch` again (or copy the `models` volume), carry `deploy/.env` across by hand, point the Cloudflare `A` records at the new IP. The Razorpay webhook URL does not change, because the domain does not.
 
-## The operator page (DEC-108, DEC-109) — built, not yet deployed
+## The operator page (DEC-108 to DEC-111) — built, not yet deployed
 
 `https://examuploadkit.com/admin` is the back office: **Overview** (money,
 charts, time to prepare, per-examination revenue and conversion, needs
@@ -126,7 +126,14 @@ detail, timeline, refund mark, reply templates, notes), **Uploads** (every
 preparation kept after erasure; the photograph while it is held),
 **Customers** (full addresses, spend), **Inbox** (complaints and grievances
 matched to orders, with the 48-hour and one-month clocks; exam requests grouped
-by demand), **Activity**, search, and CSV exports. `/admin/rules` is unchanged.
+by demand), **Growth** (funnel, time on site, sources, devices, empty
+searches, price test, repeat customers, Razorpay reconciliation),
+**Calendar** (closing dates, with an optional reminder email), **Marketing**
+(campaigns with one-click unsubscribe, coupon codes, "did it work?" answers),
+**Activity**, search, and CSV exports. `/admin/rules` is unchanged. The
+candidate site gains a visit counter of its own, a "Have a code?" field at
+checkout, a support form that asks what the message is about, and a
+`/feedback` page linked from the delivery email.
 
 The history lives in `_ledger/ledger.sqlite3` on the `artifacts` volume
 (SQLite, no images). Back it up with the orders; nothing sweeps it except the
@@ -153,6 +160,13 @@ The history lives in `_ledger/ledger.sqlite3` on the `artifacts` volume
    event **`payment.failed`**. Without it the *checkouts that did not pay*
    list stays empty. The Cloudflare rule that never challenges the webhook
    path already covers it.
+6. **Cloudflare** → the custom rule *Never challenge the Razorpay webhook*: add
+   the path **`/v1/unsubscribe`**. Gmail's one-click unsubscribe is a POST from
+   Google's servers, which a bot rule would otherwise block.
+7. Optional, in `deploy/.env`: `EXAM_PHOTO_LINK_SECRET` (`openssl rand -hex 32`)
+   so unsubscribe and feedback links do not depend on the operator token, and
+   `EXAM_PHOTO_PRICE_TEST_LADDER` / `EXAM_PHOTO_PRICE_TEST_SHARE` to run a price
+   test. Both are engine settings (`up -d engine`).
 
 Engine routes behind the operator token (`X-Operator-Token` header) are all
 under `/v1/operator/…` plus `GET /v1/orders`. Order records are kept **eight
@@ -160,10 +174,10 @@ years with their addresses** (DEC-109 withdrew DEC-108's 180-day removal). The
 three orders from before these changes show "not recorded" for the examination
 and address; addresses exist only from the day this is deployed.
 
-**Next**: Release 2 (time on site and the funnel, traffic sources, device and
-network, demand from empty searches, Razorpay reconciliation, deadline
-calendar, price testing, repeat customers), then Release 3 (marketing sends
-with unsubscribe, automatic emails, coupon codes, testimonials).
+**Not built yet**: showing published testimonials on the candidate site (the
+engine serves them at `GET /v1/testimonials`). **Still saying the old thing**:
+the delivery email's footer (address not stored) and the request form's consent
+tick (deleted after 30 days).
 
 ---
 

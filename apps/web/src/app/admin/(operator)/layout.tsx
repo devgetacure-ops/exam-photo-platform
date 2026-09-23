@@ -20,6 +20,9 @@ export default function OperatorLayout({ children }: { children: ReactNode }) {
                     <Link href="/admin/uploads">Uploads</Link>
                     <Link href="/admin/customers">Customers</Link>
                     <Link href="/admin/inbox">Inbox</Link>
+                    <Link href="/admin/growth">Growth</Link>
+                    <Link href="/admin/calendar">Calendar</Link>
+                    <Link href="/admin/marketing">Marketing</Link>
                     <Link href="/admin/activity">Activity</Link>
                 </nav>
                 <form action="/admin/search" method="get" className="euk-op-search" role="search">

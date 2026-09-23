@@ -758,6 +758,13 @@ class ApiProcessingService:
             except Exception:  # noqa: BLE001 - one bad sweep is not the last
                 pass
             self.sample_health()
+            try:
+                from exam_photo.api.marketing import run_automations
+
+                run_automations(self)
+                self.ledger.prune_visits()
+            except Exception as err:  # noqa: BLE001 - never stops the sweeper
+                print(f"automations failed: {err}")
 
     def sample_health(self) -> None:
         """One point of the health history the operator page charts (DEC-109)."""
@@ -925,7 +932,13 @@ class ApiProcessingService:
         # than by timing.
         order = self.orders.get(instruction.order_id or "")
         if order is not None:
+            first_payment = order.paid_at is None
             self.orders.mark_paid(order.order_id, instruction.payment_id)
+            if first_payment and order.coupon_code:
+                try:
+                    self.ledger.coupon_used(order.coupon_code)
+                except Exception as err:  # noqa: BLE001
+                    print(f"ledger: coupon use not recorded: {err}")
             self.orders.record_payer(
                 order.order_id,
                 instruction.payer_email,
@@ -1196,6 +1209,17 @@ class ApiProcessingService:
             self._ledgers[key] = Ledger(self.settings.artifact_root)
         return self._ledgers[key]
 
+    def _feedback_links(self, order_id: Optional[str]) -> Dict[str, Optional[str]]:
+        """The delivery email's "did it work?" links, for a paid order (DEC-111)."""
+        if not order_id:
+            return {}
+        from exam_photo.api.marketing import feedback_urls
+
+        urls = feedback_urls(self, order_id)
+        if not urls:
+            return {}
+        return {"feedback_yes_url": urls["yes"], "feedback_no_url": urls["no"]}
+
     def exam_name(self, record: ProcessingJobRecord) -> Optional[str]:
         """The examination's own name for this job, where the catalogue has it."""
         entry = self.catalogue.get(record.exam_id) if record.exam_id else None
@@ -1325,6 +1349,7 @@ class ApiProcessingService:
                 paid_at=order.paid_at if order else None,
                 site_url=self.settings.site_url,
                 support_address=self.settings.smtp_reply_to,
+                **self._feedback_links(order.order_id if order else None),
             )
         )
 

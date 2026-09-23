@@ -442,3 +442,60 @@
     padding: 4px 0;
     overflow-wrap: anywhere;
 }
+
+/* --- Releases 2 and 3 (DEC-110, DEC-111) ----------------------------------- */
+
+.euk-op-funnel {
+    list-style: none;
+    margin: 12px 0 0;
+    padding: 0;
+}
+
+.euk-op-funnel li {
+    position: relative;
+    margin: 0 0 6px;
+    padding: 10px 12px;
+    border: 1px solid var(--hairline);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.euk-op-funnel-bar {
+    position: absolute;
+    inset: 0 auto 0 0;
+    background: var(--signal-soft);
+}
+
+.euk-op-funnel .euk-op-row {
+    position: relative;
+}
+
+.euk-op-section form select {
+    min-height: 44px;
+    padding: 8px 10px;
+    border: var(--rule-thin) solid var(--hairline);
+    border-radius: 6px;
+    background: var(--paper);
+    color: var(--ink);
+    font: inherit;
+}
+
+.euk-op-section form label.euk-op-check {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+}
+
+.euk-op-section details > summary {
+    cursor: pointer;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+}
+
+.euk-op-table thead th {
+    font-weight: 600;
+    color: var(--ink-55);
+}

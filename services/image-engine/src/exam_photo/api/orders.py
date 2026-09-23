@@ -96,6 +96,10 @@ class OrderRecord(BaseModel):
     payer_email: Optional[str] = None
     payer_contact: Optional[str] = None
     payment_method: Optional[str] = None
+    #: DEC-110/111: the price-test arm, and any coupon and what it took off.
+    price_variant: str = "A"
+    coupon_code: Optional[str] = None
+    discount_paise: int = 0
     #: Attempts Razorpay reported as failed (`payment.failed`), newest last.
     failed_payments: List[Dict[str, Optional[str]]] = Field(default_factory=list)
 
@@ -124,6 +128,9 @@ class OrderRegistry:
         amount_paise: int,
         currency: str,
         items: Optional[List[OrderItem]] = None,
+        price_variant: str = "A",
+        coupon_code: Optional[str] = None,
+        discount_paise: int = 0,
     ) -> OrderRecord:
         if not ORDER_ID_REGEX.match(order_id):
             raise ValueError(f"Invalid order_id format: {order_id!r}")
@@ -135,6 +142,9 @@ class OrderRegistry:
             currency=currency,
             created_at=datetime.now(timezone.utc).isoformat(),
             items=list(items or []),
+            price_variant=price_variant,
+            coupon_code=coupon_code,
+            discount_paise=discount_paise,
         )
         self.root.mkdir(parents=True, exist_ok=True)
         self._path(order_id).write_text(

@@ -1217,3 +1217,35 @@
     min-height: 44px;
 }
 
+
+/* A partner's code (DEC-111): quiet, below the total, never in the way. */
+.euk .euk-coupon {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 10px 0 0;
+    font-size: 14px;
+}
+
+.euk .euk-coupon-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.euk .euk-coupon input {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 44px;
+    padding: 8px 10px;
+    border: var(--rule-thin) solid var(--hairline);
+    border-radius: 6px;
+    background: var(--paper);
+    color: var(--ink);
+    font: inherit;
+    text-transform: uppercase;
+}
+
+.euk .euk-coupon-note {
+    color: var(--signal-deep);
+}

@@ -18,7 +18,7 @@ from __future__ import annotations
 import json
 import secrets
 from dataclasses import dataclass
-from typing import Any, Dict, Optional, Protocol
+from typing import Any, Dict, List, Optional, Protocol
 
 RAZORPAY_ORDERS_URL = "https://api.razorpay.com/v1/orders"
 
@@ -211,3 +211,38 @@ def order_notes(kit_id: str, job_ids: Optional[list[str]] = None) -> Dict[str, s
     if job_ids:
         notes["job_ids"] = ",".join(job_ids)
     return notes
+
+
+RAZORPAY_PAYMENTS_URL = "https://api.razorpay.com/v1/payments"
+
+
+def fetch_payments(
+    key_id: str,
+    key_secret: str,
+    since_unix: int,
+    until_unix: int,
+    timeout: float = 15.0,
+) -> List[Dict[str, Any]]:
+    """Every payment Razorpay holds in a window, for reconciliation (DEC-110).
+
+    Read-only. Paged at Razorpay's maximum of 100 and capped at 2,000, which
+    is weeks of this business; a window that large is a sign to narrow it.
+    """
+    import httpx
+
+    found: List[Dict[str, Any]] = []
+    skip = 0
+    while skip < 2000:
+        response = httpx.get(
+            RAZORPAY_PAYMENTS_URL,
+            params={"from": since_unix, "to": until_unix, "count": 100, "skip": skip},
+            auth=(key_id, key_secret),
+            timeout=timeout,
+        )
+        response.raise_for_status()
+        items = response.json().get("items") or []
+        found.extend(item for item in items if isinstance(item, dict))
+        if len(items) < 100:
+            break
+        skip += 100
+    return found
