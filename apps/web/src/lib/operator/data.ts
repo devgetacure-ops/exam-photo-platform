@@ -9,6 +9,8 @@ export interface OrderDelivery {
     method: string;
     succeeded: boolean;
     masked_address?: string | null;
+    /** DEC-109: the full address, kept on the owner's decision. */
+    address?: string | null;
     error?: string | null;
 }
 
@@ -188,4 +190,158 @@ export function pictureFiles(job: OperatorJob): string[] {
 /** Only a job id and a plain file name may reach the engine's file route. */
 export function safeFileRequest(jobId: string, name: string): boolean {
     return /^job_[A-Za-z0-9_-]+$/.test(jobId) && /^[A-Za-z0-9_.-]{1,200}$/.test(name) && !name.includes("..");
+}
+
+// --- Release 1 (DEC-109) ------------------------------------------------------
+
+export interface OrderView extends Order {
+    state: string;
+    emails: string[];
+    exam_names: string[];
+    refund?: { at: string; actor: string; reference?: string | null; amount_paise?: number | null } | null;
+    payer_email?: string | null;
+    payer_contact?: string | null;
+    payment_method?: string | null;
+    failed_payments?: {
+        at?: string | null;
+        error?: string | null;
+        email?: string | null;
+        contact?: string | null;
+        method?: string | null;
+    }[];
+}
+
+export interface UploadRow {
+    job_id: string;
+    kit_id?: string | null;
+    exam_id?: string | null;
+    exam_name?: string | null;
+    requirement_name?: string | null;
+    requirement_type?: string | null;
+    started_at: string;
+    finished_at?: string | null;
+    status: string;
+    outcome?: string | null;
+    findings?: string[] | null;
+    issue_codes?: string[] | null;
+    input_bytes?: number | null;
+    output_width?: number | null;
+    output_height?: number | null;
+    output_bytes?: number | null;
+    processing_seconds?: number | null;
+    stage_ms?: Record<string, number> | null;
+    error?: string | null;
+    live?: boolean;
+}
+
+export interface Ticket {
+    id: string;
+    reference?: string | null;
+    kind: string;
+    exam?: string | null;
+    email?: string | null;
+    message?: string | null;
+    payment_reference?: string | null;
+    order_id?: string | null;
+    created_at: string;
+    status: string;
+    acknowledged_at?: string | null;
+    resolved_at?: string | null;
+    added_at?: string | null;
+    ack_overdue: boolean;
+    resolve_overdue: boolean;
+}
+
+export interface Note {
+    at: string;
+    actor: string;
+    text: string;
+}
+
+export interface OrderDetail extends OrderView {
+    uploads: UploadRow[];
+    kit_uploads: UploadRow[];
+    tickets: Ticket[];
+    notes: Note[];
+    timeline: { at: string; what: string }[];
+}
+
+export interface Customer {
+    email: string;
+    phone?: string | null;
+    first_seen: string;
+    last_seen: string;
+    sources: string[];
+    spent_paise?: number;
+    paid_orders?: number;
+}
+
+export interface CustomerDetail {
+    email: string;
+    contact: Customer | null;
+    orders: OrderView[];
+    tickets: Ticket[];
+    uploads: UploadRow[];
+    spent_paise: number;
+    notes: Note[];
+}
+
+export interface ExamStats {
+    exam: string;
+    uploads: number;
+    prepared: number;
+    failed: number;
+    kits: number;
+    kits_paid: number;
+    conversion: number | null;
+    revenue_paise: number;
+    top_reasons: [string, number][];
+}
+
+export interface Overview {
+    days: number;
+    money: {
+        all_time_paise: number;
+        period_paise: number;
+        today_paise: number;
+        paid_orders: number;
+        refunded_paise: number;
+        refunded_orders: number;
+        average_order_paise: number;
+    };
+    series: { day: string; revenue_paise: number; orders: number; uploads: number }[];
+    uploads_by_hour_ist: number[];
+    preparation_seconds: {
+        count: number;
+        median: number | null;
+        p95: number | null;
+        max: number | null;
+        stages_median_ms: Record<string, number>;
+    };
+    uploads: { total: number; prepared: number; failed: number; busy: number };
+    exams: ExamStats[];
+    customers: { payers: number; repeat_payers: number; contacts: number };
+    refund_due: OrderView[];
+    refund_review: OrderView[];
+    stuck: UploadRow[];
+    followups: OrderView[];
+    unpaid_kits: number;
+    tickets: { open: number; overdue: Ticket[]; exam_requests_open: number };
+    health: { at: string; status: string; disk_free_bytes: number | null; busy_refusals: number }[];
+}
+
+export function seconds(value: number | null | undefined): string {
+    return value == null ? "—" : `${value.toFixed(1)} s`;
+}
+
+export function percent(value: number | null | undefined): string {
+    return value == null ? "—" : `${(value * 100).toFixed(1)}%`;
+}
+
+/** Only paths inside the operator page may be redirected back to. */
+export function safeBack(value: unknown, fallback = "/admin"): string {
+    const text = typeof value === "string" ? value : "";
+    return /^\/admin(\/|\?|#|$)/.test(text) && !text.startsWith("//") && !text.includes("\\")
+        ? text
+        : fallback;
 }

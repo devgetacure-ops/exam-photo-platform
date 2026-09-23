@@ -7,6 +7,10 @@ nothing. This runs every five minutes and sends one email when something
 breaks and one when it recovers -- never a stream, because an alarm nobody can
 bear to read is an alarm nobody reads.
 
+It also emails the operator page's alerts (DEC-109): a paid order not delivered
+within 15 minutes, a run of failed preparations, a complaint unanswered for
+48 hours, and a digest of yesterday at 08:00 IST.
+
 Checks, in the order that matters:
   * the public site answers through Cloudflare
   * the engine is ready, with payments and email configured
@@ -139,6 +143,53 @@ def new_requests(seen: set[str]) -> list[dict[str, str]]:
     return sorted(found, key=lambda item: item["created_at"])
 
 
+def engine_call(config: dict[str, str], path: str, body: object = None) -> object:
+    """Ask the engine's operator surface, from inside its own container.
+
+    The token is read from the container's own environment, so it never
+    appears on a command line where `ps` would show it.
+    """
+    del config
+    script = (
+        "import os,sys,urllib.request;"
+        "body=sys.stdin.read();"
+        f"req=urllib.request.Request('http://127.0.0.1:8000{path}',"
+        "data=body.encode() if body else None,"
+        "headers={'X-Operator-Token':os.environ['EXAM_PHOTO_OPERATOR_TOKEN'],'Content-Type':'application/json'});"
+        "print(urllib.request.urlopen(req,timeout=60).read().decode())"
+    )
+    result = subprocess.run(
+        COMPOSE + ["exec", "-T", "engine", "python", "-c", script],
+        input=json.dumps(body) if body is not None else "",
+        capture_output=True, text=True, timeout=120,
+    )
+    if result.returncode != 0:
+        raise RuntimeError(result.stderr.strip()[-300:] or "engine call failed")
+    return json.loads(result.stdout.strip().splitlines()[-1])
+
+
+def send_alerts(config: dict[str, str]) -> int:
+    """Refund-due orders, failure runs, late replies and the 08:00 digest (DEC-109)."""
+    try:
+        alerts = engine_call(config, "/v1/operator/alerts").get("alerts", [])  # type: ignore[union-attr]
+    except Exception as error:
+        print(f"alerts unavailable: {error}")
+        return 0
+    sent = []
+    for alert in alerts:
+        try:
+            notify(f"ExamUploadKit: {alert['subject']}", alert["body"], config)
+            sent.append(alert["key"])
+        except Exception as error:
+            print(f"could not send alert {alert.get('key')}: {error}")
+    if sent:
+        try:
+            engine_call(config, "/v1/operator/alerts/sent", sent)
+        except Exception as error:
+            print(f"could not mark alerts sent: {error}")
+    return len(sent)
+
+
 def request_email(requests: list[dict[str, str]]) -> tuple[str, str]:
     """One email for everything that arrived since the last run."""
     parts = []
@@ -210,6 +261,11 @@ def main() -> int:
             seen.update(item["reference"] for item in arrived)
         except Exception as error:
             print(f"could not forward {len(arrived)} request(s): {error}")
+
+    if not found:
+        alerted = send_alerts(config)
+        if alerted:
+            print(f"alerts: {alerted} sent")
 
     STATE.write_text(
         json.dumps({"broken": bool(found), "detail": found, "requests_seen": sorted(seen)}),

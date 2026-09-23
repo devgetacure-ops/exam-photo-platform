@@ -43,6 +43,8 @@ credentials.json
 # Image Platform Specific Exclusions
 # Never commit real, uploaded, intermediate, or processed photographs
 uploads/
+# ...but the operator page has a route of that name, which holds code, not photographs (DEC-109).
+!apps/web/src/app/admin/(operator)/uploads/
 tmp/
 temp/
 *test_uploads/

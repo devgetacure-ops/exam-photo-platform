@@ -117,11 +117,20 @@ accepts. Signatures and thumb impressions have no sweep of this kind yet.
 - **Google Search Console** (Domain property, TXT record in Cloudflare), **Bing Webmaster Tools** (import from Search Console), **Cloudflare Web Analytics** (the token goes in `NEXT_PUBLIC_CF_BEACON_TOKEN`, then `up -d --build web`). `docs/LAUNCH_GUIDE.md` has each step.
 - **Moving to Hostinger** before 11 October: a new read-only deploy key on the new box (the repository is private), the same compose deploy, `model-fetch` again (or copy the `models` volume), carry `deploy/.env` across by hand, point the Cloudflare `A` records at the new IP. The Razorpay webhook URL does not change, because the domain does not.
 
-## The operator page (DEC-108) — built, not yet deployed
+## The operator page (DEC-108, DEC-109) — built, not yet deployed
 
-`https://examuploadkit.com/admin`: money, orders (with *Paid, not delivered*),
-every upload still held with its photographs and full record, exam requests,
-usage and health. Read-only. `/admin/rules` is unchanged.
+`https://examuploadkit.com/admin` is the back office: **Overview** (money,
+charts, time to prepare, per-examination revenue and conversion, needs
+attention, checkouts that did not pay, health history), **Orders** (every
+detail, timeline, refund mark, reply templates, notes), **Uploads** (every
+preparation kept after erasure; the photograph while it is held),
+**Customers** (full addresses, spend), **Inbox** (complaints and grievances
+matched to orders, with the 48-hour and one-month clocks; exam requests grouped
+by demand), **Activity**, search, and CSV exports. `/admin/rules` is unchanged.
+
+The history lives in `_ledger/ledger.sqlite3` on the `artifacts` volume
+(SQLite, no images). Back it up with the orders; nothing sweeps it except the
+90-day health samples.
 
 **It answers 404 to everyone until all of this is done**, in this order:
 
@@ -138,14 +147,23 @@ usage and health. Read-only. `/admin/rules` is unchanged.
    between payment and release first. The proxy is not touched.
 4. `install -m 755 deploy/ops/euk-watch.py /usr/local/sbin/euk-watch.py` — the
    timer runs the installed copy, not the repository's. From then on each new
-   request is emailed once to support@ with the candidate's address.
+   request is emailed once to support@ with the candidate's address, and the
+   alerts and the 08:00 IST digest arrive by email.
+5. **Razorpay dashboard** → Settings → Webhooks → the live webhook → add the
+   event **`payment.failed`**. Without it the *checkouts that did not pay*
+   list stays empty. The Cloudflare rule that never challenges the webhook
+   path already covers it.
 
-Engine routes behind the operator token (`X-Operator-Token` header): `GET
-/v1/orders`, `/v1/operator/jobs`, `/v1/operator/jobs/{id}`,
-`/v1/operator/jobs/{id}/files/{name}`, `/v1/operator/health`. Order records
-are now kept **eight years**, with the masked addresses in them removed after
-**180 days**. The three orders from before this change show "not recorded" for
-the examination and address.
+Engine routes behind the operator token (`X-Operator-Token` header) are all
+under `/v1/operator/…` plus `GET /v1/orders`. Order records are kept **eight
+years with their addresses** (DEC-109 withdrew DEC-108's 180-day removal). The
+three orders from before these changes show "not recorded" for the examination
+and address; addresses exist only from the day this is deployed.
+
+**Next**: Release 2 (time on site and the funnel, traffic sources, device and
+network, demand from empty searches, Razorpay reconciliation, deadline
+calendar, price testing, repeat customers), then Release 3 (marketing sends
+with unsubscribe, automatic emails, coupon codes, testimonials).
 
 ---
 

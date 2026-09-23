@@ -173,23 +173,22 @@ def test_orders_list_newest_first(api):
     assert [o["order_id"] for o in listed] == ["order_B", "order_A"]
 
 
-def test_order_retention_drops_addresses_then_records(api):
+def test_order_retention_keeps_eight_years_with_addresses(api):
     orders: OrderRegistry = api.orders
     now = datetime.now(timezone.utc)
-    for order_id, days in (("order_new", 1), ("order_mid", 200), ("order_old", 3000)):
+    for order_id, days in (("order_mid", 200), ("order_old", 3000)):
         orders.create(order_id, KIT, ["job_a"], 300, "INR")
         record = orders.get(order_id)
         assert record is not None
         record.created_at = (now - timedelta(days=days)).isoformat()
         orders._path(order_id).write_text(record.model_dump_json(), encoding="utf-8")
-    orders.mark_delivered("job_a", "email", "c***@example.com")
+    orders.mark_delivered("job_a", "email", "c***@example.com", "cand@example.com")
 
     assert orders.sweep(now) == 1
     assert orders.get("order_old") is None
-    mid, new = orders.get("order_mid"), orders.get("order_new")
-    assert mid is not None and new is not None
-    assert mid.deliveries[0].masked_address is None
-    assert new.deliveries[0].masked_address == "c***@example.com"
+    mid = orders.get("order_mid")
+    assert mid is not None
+    assert mid.deliveries[0].address == "cand@example.com"
 
 
 def test_health_reports_readiness_and_disk(api):

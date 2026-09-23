@@ -2,12 +2,18 @@ import { createHash, randomUUID } from "node:crypto";
 import { mkdir, open, readFile, readdir, unlink } from "node:fs/promises";
 import path from "node:path";
 
+export type SupportTopic = "question" | "complaint" | "grievance";
+
 export interface CandidateRequest {
     kind: "exam" | "support";
     exam: string;
     email: string;
     message: string;
     consent: true;
+    /** Support only (DEC-109): what the message is, for the operator's inbox. */
+    topic?: SupportTopic;
+    /** Support only: the UPI reference or payment ID, to find the order. */
+    payment_reference?: string;
 }
 export function validateRequest(raw: unknown): CandidateRequest | null {
     if (!raw || typeof raw !== "object") return null;
@@ -34,13 +40,25 @@ export function validateRequest(raw: unknown): CandidateRequest | null {
         (value.kind === "support" && !message)
     )
         return null;
-    return {
+    const request: CandidateRequest = {
         kind: value.kind as CandidateRequest["kind"],
         exam,
         email,
         message,
         consent: true,
     };
+    if (value.kind === "support") {
+        const topic = String(value.topic ?? "question");
+        request.topic = (["question", "complaint", "grievance"].includes(topic)
+            ? topic
+            : "question") as SupportTopic;
+        const reference =
+            typeof value.payment_reference === "string"
+                ? value.payment_reference.trim().slice(0, 80)
+                : "";
+        if (reference) request.payment_reference = reference;
+    }
+    return request;
 }
 
 /** Single-host durable queue; no public read endpoint. Configure a persistent volume in production. */

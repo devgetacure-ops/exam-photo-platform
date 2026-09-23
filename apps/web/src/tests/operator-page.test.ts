@@ -1,6 +1,4 @@
 // @vitest-environment node
-import { mkdtemp, writeFile } from "node:fs/promises";
-import { tmpdir } from "node:os";
 import path from "node:path";
 import { beforeEach, describe, expect, it } from "vitest";
 import {
@@ -10,7 +8,7 @@ import {
     verifyAccessAssertion,
 } from "../lib/operator/access";
 import { orderState, pictureFiles, revenue, rupees, safeFileRequest, type Order } from "../lib/operator/data";
-import { maskEmail, readRequests } from "../lib/operator/requests";
+
 
 const TEAM = "https://examuploadkit.cloudflareaccess.com";
 const AUD = "aud-tag-123";
@@ -180,37 +178,5 @@ describe("uploads", () => {
         expect(safeFileRequest("job_abc", "../job_b/input.jpg")).toBe(false);
         expect(safeFileRequest("job_abc", "..")).toBe(false);
         expect(safeFileRequest("kit_abc", "input.jpg")).toBe(false);
-    });
-});
-
-describe("requests", () => {
-    it("masks the address and drops expired requests", async () => {
-        const dir = await mkdtemp(path.join(tmpdir(), "req-"));
-        const now = Date.parse("2026-09-23T00:00:00Z");
-        const write = (name: string, value: object) =>
-            writeFile(path.join(dir, `${name.repeat(64)}.json`), JSON.stringify(value));
-        await write("a", {
-            kind: "exam",
-            exam: "Bihar Police",
-            email: "candidate@example.com",
-            message: "Please add it",
-            reference: "EUK-1",
-            created_at: "2026-09-22T00:00:00Z",
-            expires_at: "2026-10-22T00:00:00Z",
-        });
-        await write("b", {
-            kind: "support",
-            exam: "",
-            email: "old@example.com",
-            message: "old",
-            reference: "EUK-2",
-            created_at: "2026-08-01T00:00:00Z",
-            expires_at: "2026-08-31T00:00:00Z",
-        });
-        const found = await readRequests(dir, now);
-        expect(found).toHaveLength(1);
-        expect(found[0].maskedEmail).toBe("c***@example.com");
-        expect(JSON.stringify(found)).not.toContain("candidate@");
-        expect(maskEmail("nope")).toBe("***");
     });
 });

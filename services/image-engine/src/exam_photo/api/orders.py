@@ -20,7 +20,7 @@ from __future__ import annotations
 import re
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from pydantic import BaseModel, Field
 
@@ -30,11 +30,9 @@ from pydantic import BaseModel, Field
 ORDER_ID_REGEX = re.compile(r"^order_[A-Za-z0-9_-]{1,64}$")
 
 
-#: How long an order record is kept, and how long the masked address in it
-#: survives (DEC-108). The record is the business's own account of a sale; the
-#: address only matters while a delivery can still be disputed.
+#: How long an order record is kept (DEC-108). DEC-109: the owner keeps the
+#: addresses in it for as long as the record, so they are no longer stripped.
 ORDER_RETENTION = timedelta(days=8 * 365)
-ADDRESS_RETENTION = timedelta(days=180)
 #: A file downloaded a hundred times is still one answer to "did it arrive".
 MAX_DELIVERIES = 50
 
@@ -61,8 +59,10 @@ class OrderDelivery(BaseModel):
     #: `download` or `email`.
     method: str
     succeeded: bool = True
-    #: Email only, masked as the delivery module masks it; never the address.
+    #: Email only. The masked form is kept for display; DEC-109 keeps the
+    #: address itself too, on the owner's decision.
     masked_address: Optional[str] = None
+    address: Optional[str] = None
     error: Optional[str] = None
 
 
@@ -91,6 +91,13 @@ class OrderRecord(BaseModel):
     #: says "not recorded" rather than guessing.
     items: List[OrderItem] = Field(default_factory=list)
     deliveries: List[OrderDelivery] = Field(default_factory=list)
+    #: DEC-109. What Razorpay told us about the payer, from the verified
+    #: webhook: the email and phone they typed into checkout, and the method.
+    payer_email: Optional[str] = None
+    payer_contact: Optional[str] = None
+    payment_method: Optional[str] = None
+    #: Attempts Razorpay reported as failed (`payment.failed`), newest last.
+    failed_payments: List[Dict[str, Optional[str]]] = Field(default_factory=list)
 
 
 class OrderRegistry:
@@ -178,7 +185,11 @@ class OrderRegistry:
         return records[: max(0, limit)]
 
     def mark_delivered(
-        self, job_id: str, method: str, masked_address: Optional[str] = None
+        self,
+        job_id: str,
+        method: str,
+        masked_address: Optional[str] = None,
+        address: Optional[str] = None,
     ) -> None:
         """Record a delivery of anything an order covers.
 
@@ -195,11 +206,17 @@ class OrderRegistry:
                 job_id=job_id,
                 method=method,
                 masked_address=masked_address,
+                address=address,
             ),
         )
 
     def mark_delivery_failed(
-        self, job_id: str, method: str, masked_address: Optional[str], error: str
+        self,
+        job_id: str,
+        method: str,
+        masked_address: Optional[str],
+        error: str,
+        address: Optional[str] = None,
     ) -> None:
         """Record a delivery that did not happen, so a claim can be read."""
         self._record(
@@ -210,6 +227,7 @@ class OrderRegistry:
                 method=method,
                 succeeded=False,
                 masked_address=masked_address,
+                address=address,
                 error=error[:200],
             ),
         )
@@ -228,25 +246,49 @@ class OrderRegistry:
             path.write_text(record.model_dump_json(indent=2), encoding="utf-8")
 
     def sweep(self, now: Optional[datetime] = None) -> int:
-        """Apply DEC-108: drop old addresses, then old orders. Returns removals."""
+        """Apply DEC-108's eight years. Returns the number removed."""
         now = now or datetime.now(timezone.utc)
         removed = 0
         for path, record in self._all():
             created = _parse(record.created_at)
-            if created is None:
-                continue
-            age = now - created
-            if age >= ORDER_RETENTION:
+            if created is not None and now - created >= ORDER_RETENTION:
                 path.unlink(missing_ok=True)
                 removed += 1
-                continue
-            if age >= ADDRESS_RETENTION and any(
-                d.masked_address for d in record.deliveries
-            ):
-                for delivery in record.deliveries:
-                    delivery.masked_address = None
-                path.write_text(record.model_dump_json(indent=2), encoding="utf-8")
         return removed
+
+    def record_payer(
+        self,
+        order_id: str,
+        email: Optional[str],
+        contact: Optional[str],
+        method: Optional[str],
+    ) -> None:
+        """Keep who paid, as Razorpay's checkout collected it (DEC-109)."""
+        record = self.get(order_id)
+        if record is None:
+            return
+        record.payer_email = email or record.payer_email
+        record.payer_contact = contact or record.payer_contact
+        record.payment_method = method or record.payment_method
+        self._path(order_id).write_text(
+            record.model_dump_json(indent=2), encoding="utf-8"
+        )
+
+    def record_failed_payment(
+        self, order_id: str, attempt: Dict[str, Optional[str]]
+    ) -> None:
+        """A checkout that did not go through, for the follow-up list."""
+        record = self.get(order_id)
+        if record is None or len(record.failed_payments) >= 20:
+            return
+        record.failed_payments.append(attempt)
+        if attempt.get("email") and not record.payer_email:
+            record.payer_email = attempt.get("email")
+        if attempt.get("contact") and not record.payer_contact:
+            record.payer_contact = attempt.get("contact")
+        self._path(order_id).write_text(
+            record.model_dump_json(indent=2), encoding="utf-8"
+        )
 
     def paid_order_for(self, job_ids: List[str]) -> Optional[OrderRecord]:
         """The settled order that paid for any of these jobs, if there is one.

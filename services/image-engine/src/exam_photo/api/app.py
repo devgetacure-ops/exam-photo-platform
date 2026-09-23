@@ -4,7 +4,9 @@ import json
 import re
 import secrets
 import shutil
+import time
 from contextlib import asynccontextmanager
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Annotated, Any, AsyncIterator, List, Optional
 
@@ -20,7 +22,9 @@ from fastapi import (
     UploadFile,
 )
 from fastapi.responses import JSONResponse, Response
+from pydantic import BaseModel
 
+from exam_photo.api import operator as operator_views
 from exam_photo.api.contracts import (
     ApiJobStatus,
     DocumentAssembleRequest,
@@ -52,9 +56,11 @@ from exam_photo.api.contracts import (
 )
 from exam_photo.api.delivery import EmailRejectedError
 from exam_photo.api.jobs import KIT_ID_REGEX, ProcessingJobRecord
+from exam_photo.api.ledger import TICKET_KINDS, TICKET_STATES, stage_timings
 from exam_photo.api.payments import (
     SIGNATURE_HEADER,
     WebhookRejectedError,
+    read_failed_payment,
     verify_and_read,
 )
 from exam_photo.api.pricing import quote_for
@@ -654,6 +660,8 @@ async def prepare_requirement(
     # Bounded concurrency, not a per-IP quota (DEC-064). The slot is taken
     # after the support gate and the upload read, so a refused requirement or
     # an oversized file never occupies one.
+    _ledger_started(job_id, kit, exam_id, requirement, len(upload))
+    started = time.perf_counter()
     try:
         with service.preparation_slot():
             if requirement.requirement_type == RequirementType.PHOTOGRAPH:
@@ -685,10 +693,12 @@ async def prepare_requirement(
     except ServiceBusyError as err:
         if progress_token:
             service.progress.finish(progress_token, failed=True)
+        _ledger_failed(job_id, "busy", started, "all preparation slots busy")
         raise _busy(err) from err
-    except Exception:
+    except Exception as err:
         if progress_token:
             service.progress.finish(progress_token, failed=True)
+        _ledger_failed(job_id, "error", started, f"{type(err).__name__}: {err}")
         raise
     finally:
         # Closed on every path, so a poller is never left watching a bar that
@@ -696,7 +706,75 @@ async def prepare_requirement(
         if progress_token:
             service.progress.finish(progress_token)
 
+    _ledger_finished(record, started)
     return _preparation_response(record, exam_id, requirement)
+
+
+# --- The history ledger (DEC-109) --------------------------------------------
+#
+# Best effort by design: a candidate's preparation never fails because the
+# operator's analytics could not be written.
+
+
+def _ledger_started(
+    job_id: str, kit: Optional[str], exam_id: str, requirement: Any, size: int
+) -> None:
+    try:
+        entry = service.catalogue.get(exam_id)
+        service.ledger.upload_started(
+            job_id,
+            kit_id=kit,
+            exam_id=exam_id,
+            exam_name=entry.rule.exam.exam_name if entry is not None else None,
+            requirement_id=requirement.requirement_id,
+            requirement_name=str(requirement.requirement_name),
+            requirement_type=str(
+                getattr(
+                    requirement.requirement_type, "value", requirement.requirement_type
+                )
+            ),
+            input_bytes=size,
+        )
+    except Exception as err:  # noqa: BLE001
+        print(f"ledger: upload start not recorded: {err}")
+
+
+def _ledger_failed(job_id: str, status: str, started: float, error: str) -> None:
+    try:
+        service.ledger.upload_finished(
+            job_id,
+            status=status,
+            processing_seconds=time.perf_counter() - started,
+            error=error,
+        )
+    except Exception as err:  # noqa: BLE001
+        print(f"ledger: upload failure not recorded: {err}")
+
+
+def _ledger_finished(record: ProcessingJobRecord, started: float) -> None:
+    try:
+        stages: dict[str, float] = {}
+        if service.store.file_exists(record.job_id, "report.json"):
+            try:
+                stages = stage_timings(
+                    json.loads(service.store.read_file(record.job_id, "report.json"))
+                )
+            except (ValueError, OSError):
+                stages = {}
+        service.ledger.upload_finished(
+            record.job_id,
+            status=str(getattr(record.status, "value", record.status)).lower(),
+            processing_seconds=time.perf_counter() - started,
+            outcome=record.outcome,
+            findings=list(record.findings),
+            issue_codes=list(record.issue_codes),
+            output_width=record.output_width,
+            output_height=record.output_height,
+            output_bytes=record.output_byte_size,
+            stage_ms=stages,
+        )
+    except Exception as err:  # noqa: BLE001
+        print(f"ledger: upload result not recorded: {err}")
 
 
 @app.post(
@@ -1415,6 +1493,320 @@ def get_operator_health() -> dict[str, Any]:
     return state
 
 
+# --- The operator page, Release 1 (DEC-109) ---------------------------------
+#
+# Reads compute from the records; writes change only the operator's own
+# bookkeeping (ticket status, notes, a refund *mark*) and never move money.
+# `actor` is the Access-verified email the web server passes through.
+
+
+class TicketIn(BaseModel):
+    kind: str
+    email: Optional[str] = None
+    message: str = ""
+    exam: str = ""
+    reference: Optional[str] = None
+    payment_reference: Optional[str] = None
+    created_at: Optional[str] = None
+
+
+class TicketChange(BaseModel):
+    actor: str = "operator"
+    status: Optional[str] = None
+    order_id: Optional[str] = None
+    added: Optional[bool] = None
+    note: Optional[str] = None
+
+
+class RefundMark(BaseModel):
+    actor: str = "operator"
+    reference: Optional[str] = None
+    undo: bool = False
+
+
+class NoteIn(BaseModel):
+    actor: str = "operator"
+    text: str
+
+
+class ActivityIn(BaseModel):
+    actor: str = "operator"
+    action: str
+    target: Optional[str] = None
+
+
+_OPERATOR = [Depends(require_operator)]
+_NOTE_TARGET = re.compile(r"^(order|customer|ticket|upload):\S{1,300}$")
+
+
+@app.get("/v1/operator/overview", dependencies=_OPERATOR)
+def operator_overview(
+    days: int = Query(default=30, ge=1, le=366),  # noqa: B008
+) -> dict[str, Any]:
+    return operator_views.overview(service, days)
+
+
+@app.get("/v1/operator/orders", dependencies=_OPERATOR)
+def operator_orders(q: str = "") -> dict[str, Any]:
+    return {"orders": operator_views.orders(service, q)}
+
+
+@app.get("/v1/operator/orders/{order_id}", dependencies=_OPERATOR)
+def operator_order(order_id: str) -> dict[str, Any]:
+    detail = operator_views.order_detail(service, order_id)
+    if detail is None:
+        raise HTTPException(status_code=404, detail="Order not found")
+    return detail
+
+
+@app.post("/v1/operator/orders/{order_id}/refund", dependencies=_OPERATOR)
+def operator_mark_refund(order_id: str, mark: RefundMark) -> dict[str, Any]:
+    order = service.orders.get(order_id)
+    if order is None:
+        raise HTTPException(status_code=404, detail="Order not found")
+    if mark.undo:
+        service.ledger.unmark_refunded(order_id)
+        service.ledger.log(mark.actor, "refund unmarked", f"order:{order_id}")
+    else:
+        service.ledger.mark_refunded(
+            order_id, mark.actor, mark.reference, order.amount_paise
+        )
+        service.ledger.log(mark.actor, "marked refunded", f"order:{order_id}")
+    return {"ok": True}
+
+
+@app.post("/v1/operator/notes/{target}", dependencies=_OPERATOR)
+def operator_add_note(target: str, note: NoteIn) -> dict[str, Any]:
+    if not _NOTE_TARGET.match(target) or not note.text.strip():
+        raise HTTPException(status_code=422, detail="Invalid note")
+    service.ledger.add_note(target, note.actor, note.text.strip())
+    service.ledger.log(note.actor, "note added", target)
+    return {"ok": True}
+
+
+@app.get("/v1/operator/uploads", dependencies=_OPERATOR)
+def operator_uploads(
+    q: str = "",
+    days: int = Query(default=30, ge=1, le=3650),  # noqa: B008
+) -> dict[str, Any]:
+    since = (datetime.now(timezone.utc) - timedelta(days=days)).isoformat()
+    rows = service.ledger.uploads(query=q, since=since, limit=2000)
+    for row in rows:
+        live = service.registry.get_job(row["job_id"])
+        row["live"] = bool(
+            live and not live.is_expired() and live.status != ApiJobStatus.DELETED
+        )
+    return {"uploads": rows}
+
+
+@app.get("/v1/operator/history/{job_id}", dependencies=_OPERATOR)
+def operator_upload_history(job_id: str) -> dict[str, Any]:
+    row = service.ledger.upload(job_id)
+    if row is None:
+        raise HTTPException(status_code=404, detail="Upload not found")
+    row["notes"] = service.ledger.notes(f"upload:{job_id}")
+    return row
+
+
+@app.get("/v1/operator/customers", dependencies=_OPERATOR)
+def operator_customers(q: str = "") -> dict[str, Any]:
+    return {"customers": operator_views.customers(service, q)}
+
+
+@app.get("/v1/operator/customers/{email}", dependencies=_OPERATOR)
+def operator_customer(email: str) -> dict[str, Any]:
+    detail = operator_views.customer_detail(service, email)
+    if detail is None:
+        raise HTTPException(status_code=404, detail="Customer not found")
+    return detail
+
+
+@app.get("/v1/operator/search", dependencies=_OPERATOR)
+def operator_search(q: str = "") -> dict[str, Any]:
+    return operator_views.search(service, q)
+
+
+@app.post("/v1/operator/tickets", dependencies=_OPERATOR)
+def operator_ticket_intake(ticket: TicketIn) -> dict[str, Any]:
+    """Called by the web app when the request form saves (DEC-109)."""
+    if ticket.kind not in TICKET_KINDS:
+        raise HTTPException(status_code=422, detail="Unknown kind")
+    order_id = (
+        operator_views.match_ticket_order(
+            service, ticket.email, ticket.payment_reference
+        )
+        if ticket.kind != "exam"
+        else None
+    )
+    return service.ledger.add_ticket(
+        kind=ticket.kind,
+        email=ticket.email,
+        message=ticket.message,
+        exam=ticket.exam,
+        reference=ticket.reference,
+        payment_reference=ticket.payment_reference,
+        order_id=order_id,
+        created_at=ticket.created_at,
+    )
+
+
+@app.get("/v1/operator/tickets", dependencies=_OPERATOR)
+def operator_tickets(kind: str = "", status: str = "") -> dict[str, Any]:
+    kinds = [k for k in kind.split(",") if k in TICKET_KINDS] or None
+    return {
+        "tickets": service.ledger.tickets(
+            kinds=kinds, status=status if status in TICKET_STATES else None
+        )
+    }
+
+
+@app.get("/v1/operator/tickets/{ticket_id}", dependencies=_OPERATOR)
+def operator_ticket(ticket_id: str) -> dict[str, Any]:
+    ticket = service.ledger.ticket(ticket_id)
+    if ticket is None:
+        raise HTTPException(status_code=404, detail="Ticket not found")
+    ticket["notes"] = service.ledger.notes(f"ticket:{ticket_id}")
+    ticket["order"] = (
+        operator_views.order_detail(service, ticket["order_id"])
+        if ticket.get("order_id")
+        else None
+    )
+    if ticket["kind"] == "exam":
+        wanted = (ticket.get("exam") or "").strip().lower()
+        ticket["same_exam"] = sum(
+            1
+            for other in service.ledger.tickets(kinds=["exam"])
+            if (other.get("exam") or "").strip().lower() == wanted
+        )
+    return ticket
+
+
+@app.post("/v1/operator/tickets/{ticket_id}", dependencies=_OPERATOR)
+def operator_change_ticket(ticket_id: str, change: TicketChange) -> dict[str, Any]:
+    if change.order_id and service.orders.get(change.order_id) is None:
+        raise HTTPException(status_code=422, detail="No such order")
+    try:
+        updated = service.ledger.set_ticket(
+            ticket_id,
+            status=change.status,
+            order_id=change.order_id,
+            added=change.added,
+        )
+    except ValueError as err:
+        raise HTTPException(status_code=422, detail=str(err)) from None
+    if updated is None:
+        raise HTTPException(status_code=404, detail="Ticket not found")
+    if change.note and change.note.strip():
+        service.ledger.add_note(
+            f"ticket:{ticket_id}", change.actor, change.note.strip()
+        )
+    parts = []
+    if change.status:
+        parts.append(f"status {change.status}")
+    if change.order_id:
+        parts.append(f"linked {change.order_id}")
+    if change.added is not None:
+        parts.append("marked added" if change.added else "unmarked added")
+    if change.note:
+        parts.append("note")
+    service.ledger.log(
+        change.actor, "ticket changed: " + ", ".join(parts), f"ticket:{ticket_id}"
+    )
+    return updated
+
+
+@app.get("/v1/operator/activity", dependencies=_OPERATOR)
+def operator_activity() -> dict[str, Any]:
+    return {"activity": service.ledger.activity()}
+
+
+@app.post("/v1/operator/activity", dependencies=_OPERATOR)
+def operator_log(entry: ActivityIn) -> dict[str, Any]:
+    service.ledger.log(entry.actor, entry.action, entry.target)
+    return {"ok": True}
+
+
+@app.get("/v1/operator/alerts", dependencies=_OPERATOR)
+def operator_alerts() -> dict[str, Any]:
+    """Unsent alerts and the morning digest, for `euk-watch` to email."""
+    return {"alerts": operator_views.pending_alerts(service)}
+
+
+@app.post("/v1/operator/alerts/sent", dependencies=_OPERATOR)
+def operator_alerts_sent(keys: List[str]) -> dict[str, Any]:
+    for key in keys[:500]:
+        service.ledger.mark_alert_sent(str(key)[:300])
+    return {"ok": True}
+
+
+@app.get("/v1/operator/export/{what}.csv", dependencies=_OPERATOR)
+def operator_export(what: str) -> Response:
+    rows: List[dict[str, Any]]
+    if what == "orders":
+        rows = operator_views.orders(service, limit=1000000)
+        for row in rows:
+            row["amount_rupees"] = row["amount_paise"] / 100
+            row["refund_reference"] = (row.get("refund") or {}).get("reference")
+        columns = [
+            "order_id",
+            "created_at",
+            "paid_at",
+            "amount_rupees",
+            "currency",
+            "payment_reference",
+            "payment_method",
+            "state",
+            "exam_names",
+            "emails",
+            "payer_contact",
+            "delivered_at",
+            "delivery_method",
+            "refund_reference",
+            "kit_id",
+        ]
+    elif what == "customers":
+        rows = operator_views.customers(service)
+        columns = [
+            "email",
+            "phone",
+            "first_seen",
+            "last_seen",
+            "sources",
+            "paid_orders",
+            "spent_paise",
+        ]
+    elif what == "uploads":
+        rows = service.ledger.uploads(limit=1000000)
+        columns = [
+            "job_id",
+            "started_at",
+            "finished_at",
+            "exam_name",
+            "requirement_name",
+            "status",
+            "outcome",
+            "processing_seconds",
+            "findings",
+            "issue_codes",
+            "input_bytes",
+            "output_width",
+            "output_height",
+            "output_bytes",
+            "kit_id",
+            "error",
+        ]
+    else:
+        raise HTTPException(status_code=404, detail="Unknown export")
+    return Response(
+        content=operator_views.csv_text(rows, columns),
+        media_type="text/csv; charset=utf-8",
+        headers={
+            "Content-Disposition": f'attachment; filename="{what}.csv"',
+            "Cache-Control": "no-store, private",
+        },
+    )
+
+
 def _operator_job(record: ProcessingJobRecord) -> dict[str, Any]:
     job = record.model_dump(mode="json")
     job["exam_name"] = service.exam_name(record)
@@ -1484,7 +1876,18 @@ async def razorpay_webhook(request: Request) -> JSONResponse:
 
     if instruction is None:
         # A real event this service does not act on. Acknowledged, because
-        # Razorpay retries anything it is not told arrived.
+        # Razorpay retries anything it is not told arrived. A failed payment
+        # is still worth remembering: it is the follow-up list (DEC-109).
+        failed = read_failed_payment(body)
+        if failed and failed.get("order_id"):
+            service.orders.record_failed_payment(str(failed["order_id"]), failed)
+            try:
+                service.ledger.contact_seen(
+                    failed.get("email"), "checkout_failed", failed.get("contact")
+                )
+            except Exception as err:  # noqa: BLE001
+                print(f"ledger: failed payer not recorded: {err}")
+            return JSONResponse({"status": "recorded"})
         return JSONResponse({"status": "ignored"})
 
     if instruction.names_nothing:

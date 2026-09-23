@@ -4,6 +4,7 @@ import io
 import json
 import os
 import secrets
+import shutil
 import threading
 import time
 import zipfile
@@ -35,6 +36,7 @@ from exam_photo.api.jobs import (
     ProcessingJobRecord,
     parse_manifest_timestamp,
 )
+from exam_photo.api.ledger import Ledger
 from exam_photo.api.orders import OrderItem, OrderRegistry
 from exam_photo.api.payments import ReleaseInstruction
 from exam_photo.api.progress import ProgressRegistry
@@ -266,6 +268,10 @@ class ApiProcessingService:
         self.registry = JobRegistry(settings.artifact_root)
         #: Orders outlive the files they paid for (DEC-071).
         self.orders = OrderRegistry(settings.artifact_root)
+        self._ledgers: Dict[str, Ledger] = {}
+        #: Preparations refused because every slot was busy, since the last
+        #: health sample (DEC-109).
+        self.busy_refusals = 0
         #: Per-kit counters, surviving retention (DEC-073).
         self.usage = UsageRegistry(settings.artifact_root)
         #: Ephemeral per-preparation progress (DEC-075).
@@ -623,6 +629,7 @@ class ApiProcessingService:
         actually scarce without ever penalising a candidate for their network.
         """
         if not self._preparation_slots.acquire(blocking=False):
+            self.busy_refusals += 1
             raise ServiceBusyError(
                 "The service is preparing as many files as it can at once."
             )
@@ -749,7 +756,23 @@ class ApiProcessingService:
             try:
                 self.cleanup_expired_jobs()
             except Exception:  # noqa: BLE001 - one bad sweep is not the last
-                continue
+                pass
+            self.sample_health()
+
+    def sample_health(self) -> None:
+        """One point of the health history the operator page charts (DEC-109)."""
+        try:
+            usage = shutil.disk_usage(self.settings.artifact_root)
+            free: Optional[int] = usage.free
+        except OSError:
+            free = None
+        try:
+            self.ledger.sample_health(
+                str(self.readiness().get("status")), free, self.busy_refusals
+            )
+            self.busy_refusals = 0
+        except Exception as err:  # noqa: BLE001 - history is never worth a crash
+            print(f"ledger: health sample failed: {err}")
 
     # ------------------------------------------------------------------
     # The purchase gate and its preview (DEC-063)
@@ -903,6 +926,18 @@ class ApiProcessingService:
         order = self.orders.get(instruction.order_id or "")
         if order is not None:
             self.orders.mark_paid(order.order_id, instruction.payment_id)
+            self.orders.record_payer(
+                order.order_id,
+                instruction.payer_email,
+                instruction.payer_contact,
+                instruction.method,
+            )
+            try:
+                self.ledger.contact_seen(
+                    instruction.payer_email, "payment", instruction.payer_contact
+                )
+            except Exception as err:  # noqa: BLE001
+                print(f"ledger: payer not recorded: {err}")
             self.usage.record_purchase(order.kit_id)
             for job_id in order.job_ids:
                 try:
@@ -1149,6 +1184,18 @@ class ApiProcessingService:
         self.registry.update_job(record)
         self.orders.mark_delivered(record.job_id, "download")
 
+    @property
+    def ledger(self) -> Ledger:
+        """The history store for the current artifact root (DEC-109).
+
+        Resolved per root rather than built once, because tests replace the
+        settings wholesale and must never write into a real ledger.
+        """
+        key = str(self.settings.artifact_root)
+        if key not in self._ledgers:
+            self._ledgers[key] = Ledger(self.settings.artifact_root)
+        return self._ledgers[key]
+
     def exam_name(self, record: ProcessingJobRecord) -> Optional[str]:
         """The examination's own name for this job, where the catalogue has it."""
         entry = self.catalogue.get(record.exam_id) if record.exam_id else None
@@ -1301,7 +1348,7 @@ class ApiProcessingService:
                 )
                 self.registry.update_job(record)
                 self.orders.mark_delivery_failed(
-                    record.job_id, "email", masked, str(err)
+                    record.job_id, "email", masked, str(err), address=address
                 )
             raise
 
@@ -1311,7 +1358,11 @@ class ApiProcessingService:
                 EmailAttempt(at=sent_at, masked_address=masked, succeeded=True)
             )
             self.registry.update_job(record)
-            self.orders.mark_delivered(record.job_id, "email", masked)
+            self.orders.mark_delivered(record.job_id, "email", masked, address=address)
+        try:
+            self.ledger.contact_seen(address, "delivery")
+        except Exception as ledger_err:  # noqa: BLE001
+            print(f"ledger: contact not recorded: {ledger_err}")
 
         return {
             "sent": True,

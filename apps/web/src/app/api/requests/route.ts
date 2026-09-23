@@ -1,6 +1,7 @@
 import path from "node:path";
 import { saveRequest, validateRequest } from "../../../lib/request-store";
 import { isSameOrigin } from "../../../lib/request-origin";
+import { forwardToInbox } from "../../../lib/operator/intake";
 
 export const runtime = "nodejs";
 export async function POST(request: Request) {
@@ -63,6 +64,7 @@ export async function POST(request: Request) {
             value,
             directory ?? path.join(process.cwd(), ".data", "requests"),
         );
+        await forwardToInbox(value, reference);
         return Response.json(
             { reference },
             { status: 201, headers: { "Cache-Control": "no-store" } },

@@ -19,6 +19,7 @@ import hashlib
 import hmac
 import json
 from dataclasses import dataclass, field
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 #: Razorpay signs the webhook body and sends the digest in this header.
@@ -61,6 +62,10 @@ class ReleaseInstruction:
     currency: Optional[str]
     job_ids: List[str] = field(default_factory=list)
     kit_ids: List[str] = field(default_factory=list)
+    #: DEC-109. What the payer typed into Razorpay's checkout.
+    payer_email: Optional[str] = None
+    payer_contact: Optional[str] = None
+    method: Optional[str] = None
 
     @property
     def names_nothing(self) -> bool:
@@ -172,4 +177,39 @@ def verify_and_read(
         currency=str(payment.get("currency") or order.get("currency") or "") or None,
         job_ids=list(dict.fromkeys(job_ids)),
         kit_ids=list(dict.fromkeys(kit_ids)),
+        payer_email=_text(payment.get("email")),
+        payer_contact=_text(payment.get("contact")),
+        method=_text(payment.get("method")),
     )
+
+
+def _text(value: Any) -> Optional[str]:
+    return str(value)[:254] if isinstance(value, (str, int)) and str(value) else None
+
+
+def read_failed_payment(body: bytes) -> Optional[Dict[str, Optional[str]]]:
+    """The facts of a `payment.failed` event, from an already verified body.
+
+    Only called after `verify_and_read` accepted the signature and returned
+    `None` for an event it does not release on (DEC-109).
+    """
+    try:
+        payload = json.loads(body.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError):
+        return None
+    if not isinstance(payload, dict) or payload.get("event") != "payment.failed":
+        return None
+    container = payload.get("payload")
+    container = container if isinstance(container, dict) else {}
+    payment = ((container.get("payment") or {}).get("entity")) or {}
+    if not isinstance(payment, dict) or not payment.get("order_id"):
+        return None
+    return {
+        "order_id": _text(payment.get("order_id")),
+        "payment_id": _text(payment.get("id")),
+        "email": _text(payment.get("email")),
+        "contact": _text(payment.get("contact")),
+        "method": _text(payment.get("method")),
+        "error": _text(payment.get("error_description") or payment.get("error_code")),
+        "at": datetime.now(timezone.utc).isoformat(),
+    }

@@ -35,3 +35,14 @@ export async function engineJson<T>(path: string): Promise<Loaded<T>> {
         return { ok: false, error: error instanceof Error ? error.message : String(error) };
     }
 }
+
+/** A write to the engine's operator surface (DEC-109). Throws on failure. */
+export async function enginePost(path: string, body: unknown): Promise<Response> {
+    return fetch(`${engineBase()}${path}`, {
+        method: "POST",
+        headers: { "X-Operator-Token": token(), "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+        cache: "no-store",
+        signal: AbortSignal.timeout(10_000),
+    });
+}
