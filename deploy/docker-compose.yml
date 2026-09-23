@@ -117,6 +117,12 @@ services:
       # Without it the request form refuses in production rather than writing
       # candidates' messages into the container, where a rebuild loses them.
       UPLOADREADY_REQUESTS_DIR: /data/requests
+      # The operator page (DEC-108). The token is read on the server only and
+      # sent to the engine inside this network; it is never built into the
+      # page. Without both Access values the page answers 404 to everyone.
+      EXAM_PHOTO_OPERATOR_TOKEN: ${EXAM_PHOTO_OPERATOR_TOKEN:-}
+      EUK_ACCESS_TEAM_DOMAIN: ${EUK_ACCESS_TEAM_DOMAIN:-}
+      EUK_ACCESS_AUD: ${EUK_ACCESS_AUD:-}
     volumes:
       - requests:/data/requests
     expose: ["3000"]

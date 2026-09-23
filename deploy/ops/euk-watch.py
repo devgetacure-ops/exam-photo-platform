@@ -32,6 +32,9 @@ COMPOSE = [
     "docker", "compose", "-f", "/opt/exam-photo-platform/deploy/docker-compose.yml",
 ]
 DISK_FLOOR_GB = 10
+#: The web app's request queue (DEC-108): forwarded to support@ once each, with
+#: the candidate's own address so the owner can reply.
+REQUESTS_VOLUME = "exam-upload_requests"
 
 
 def settings() -> dict[str, str]:
@@ -109,7 +112,54 @@ def failures() -> list[str]:
     return found
 
 
-def notify(subject: str, body: str, config: dict[str, str]) -> None:
+def new_requests(seen: set[str]) -> list[dict[str, str]]:
+    """Requests in the web app's volume that have not been forwarded yet."""
+    try:
+        where = subprocess.run(
+            ["docker", "volume", "inspect", "-f", "{{.Mountpoint}}", REQUESTS_VOLUME],
+            capture_output=True, text=True, timeout=20,
+        )
+    except Exception:
+        return []
+    directory = Path(where.stdout.strip())
+    if where.returncode != 0 or not directory.is_dir():
+        return []
+    found = []
+    for path in directory.glob("*.json"):
+        try:
+            record = json.loads(path.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        reference = str(record.get("reference") or path.stem)
+        if reference not in seen:
+            item = {key: str(record.get(key) or "") for key in (
+                "kind", "exam", "email", "message", "created_at")}
+            item["reference"] = reference
+            found.append(item)
+    return sorted(found, key=lambda item: item["created_at"])
+
+
+def request_email(requests: list[dict[str, str]]) -> tuple[str, str]:
+    """One email for everything that arrived since the last run."""
+    parts = []
+    for item in requests:
+        heading = item["exam"] if item["kind"] == "exam" else "Support"
+        parts.append(
+            f"{heading}  ({item['reference']}, {item['created_at']})\n"
+            f"From: {item['email']}\n\n"
+            f"{item['message'] or '(no message)'}\n"
+        )
+    if len(requests) == 1:
+        subject = f"New request: {requests[0]['exam'] or 'support'}"
+    else:
+        subject = f"{len(requests)} new requests on ExamUploadKit"
+    divider = "\n" + "-" * 40 + "\n\n"
+    return subject, divider.join(parts) + f"\nAll of them: {SITE}/admin#requests\n"
+
+
+def notify(
+    subject: str, body: str, config: dict[str, str], reply_to: str = ""
+) -> None:
     host = config.get("EXAM_PHOTO_SMTP_HOST", "")
     sender = config.get("EXAM_PHOTO_SMTP_FROM", "")
     to = config.get("EXAM_PHOTO_SMTP_REPLY_TO") or sender
@@ -119,6 +169,8 @@ def notify(subject: str, body: str, config: dict[str, str]) -> None:
     message["From"] = f"ExamUploadKit watch <{sender}>"
     message["To"] = to
     message["Subject"] = subject
+    if reply_to:
+        message["Reply-To"] = reply_to
     message.set_content(body)
     with smtplib.SMTP(host, int(config.get("EXAM_PHOTO_SMTP_PORT", "587")), timeout=30) as server:
         server.starttls()
@@ -130,12 +182,13 @@ def notify(subject: str, body: str, config: dict[str, str]) -> None:
 def main() -> int:
     config = settings()
     found = failures()
-    was_broken = False
+    state: dict = {}
     if STATE.is_file():
         try:
-            was_broken = bool(json.loads(STATE.read_text(encoding="utf-8")).get("broken"))
+            state = json.loads(STATE.read_text(encoding="utf-8"))
         except Exception:
-            was_broken = False
+            state = {}
+    was_broken = bool(state.get("broken"))
 
     if found and not was_broken:
         notify(
@@ -146,8 +199,25 @@ def main() -> int:
     elif not found and was_broken:
         notify("ExamUploadKit: back to normal", f"Everything answers again.\n\n{SITE}\n", config)
 
-    STATE.write_text(json.dumps({"broken": bool(found), "detail": found}), encoding="utf-8")
+    seen = set(state.get("requests_seen") or [])
+    arrived = new_requests(seen)
+    if arrived:
+        subject, body = request_email(arrived)
+        # One sender, so a reply goes straight back to them.
+        single = arrived[0]["email"] if len(arrived) == 1 else ""
+        try:
+            notify(subject, body, config, reply_to=single)
+            seen.update(item["reference"] for item in arrived)
+        except Exception as error:
+            print(f"could not forward {len(arrived)} request(s): {error}")
+
+    STATE.write_text(
+        json.dumps({"broken": bool(found), "detail": found, "requests_seen": sorted(seen)}),
+        encoding="utf-8",
+    )
     print("broken:" if found else "well:", "; ".join(found) or "site, engine and disk all answer")
+    if arrived:
+        print(f"requests: {len(arrived)} new")
     return 1 if found else 0
 
 

@@ -203,6 +203,10 @@ class OrderEvidenceResponse(BaseModel):
     #: thirty minutes (DEC-066), so this is usually empty by the time a claim
     #: arrives -- which is why the order-level fields above are the evidence.
     jobs: List[dict[str, Any]] = Field(default_factory=list)
+    #: DEC-108: what the order was for and every delivery attempt, kept on the
+    #: order itself so they outlive the jobs.
+    items: List[dict[str, Any]] = Field(default_factory=list)
+    deliveries: List[dict[str, Any]] = Field(default_factory=list)
 
 
 class RequirementSummary(BaseModel):

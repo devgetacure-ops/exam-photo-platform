@@ -62,7 +62,7 @@ docker compose -f deploy/docker-compose.yml logs --since 30m engine
 ```
 
 - **A change in `deploy/.env`**: engine-only settings (payments, email, Turnstile secret, retention) need `up -d engine`. Anything read while the site builds (`NEXT_PUBLIC_*`, `EUK_BUSINESS_*`, the Google and Bing verification tags) needs `up -d --build web`.
-- **Orders** are JSON files in the `artifacts` volume under `_orders/`, and are never swept. The refund question is answered by `GET /v1/orders/{order_id}/evidence` with `Authorization: Bearer <EXAM_PHOTO_OPERATOR_TOKEN>`.
+- **Orders** are JSON files in the `artifacts` volume under `_orders/`, kept eight years (DEC-108). The operator page at `/admin` shows them; by hand, `GET /v1/orders/{order_id}/evidence` with the header `X-Operator-Token: <EXAM_PHOTO_OPERATOR_TOKEN>` (not a Bearer token).
 - **Rolling back**: `git checkout <previous commit>` on the server, then `up -d --build`; an older `.env` is in `/root` as above.
 - **When the Vultr server is destroyed**, delete its deploy key in GitHub → Settings → Deploy keys.
 - The three test-mode orders from launch day are set aside in `/root/removed-test-orders/`; only the real order remains in the app.
@@ -117,13 +117,35 @@ accepts. Signatures and thumb impressions have no sweep of this kind yet.
 - **Google Search Console** (Domain property, TXT record in Cloudflare), **Bing Webmaster Tools** (import from Search Console), **Cloudflare Web Analytics** (the token goes in `NEXT_PUBLIC_CF_BEACON_TOKEN`, then `up -d --build web`). `docs/LAUNCH_GUIDE.md` has each step.
 - **Moving to Hostinger** before 11 October: a new read-only deploy key on the new box (the repository is private), the same compose deploy, `model-fetch` again (or copy the `models` volume), carry `deploy/.env` across by hand, point the Cloudflare `A` records at the new IP. The Razorpay webhook URL does not change, because the domain does not.
 
-## Next: the operator page
+## The operator page (DEC-108) — built, not yet deployed
 
-The hardening pass is done (DEC-106). What is missing now is a way for the
-owner to see their own business without a terminal: orders and refund
-evidence, the exam requests candidates send through the form (**saved to the
-`requests` volume and read by nothing**), conversion, and health. The prompt is
-in `docs/NEXT_SESSION_PROMPT.md`.
+`https://examuploadkit.com/admin`: money, orders (with *Paid, not delivered*),
+every upload still held with its photographs and full record, exam requests,
+usage and health. Read-only. `/admin/rules` is unchanged.
+
+**It answers 404 to everyone until all of this is done**, in this order:
+
+1. **Cloudflare Zero Trust** → Access → Applications → *Self-hosted*: domain
+   `examuploadkit.com`, path `admin` (it covers everything under `/admin`).
+   Policy *Allow*, include *Emails* = the owner's address; login method
+   *One-time PIN*. Copy the application's **Audience (AUD) tag**, and note the
+   team domain (`https://<team>.cloudflareaccess.com`).
+2. In `deploy/.env` on the server: `EUK_ACCESS_TEAM_DOMAIN=https://<team>.cloudflareaccess.com`
+   and `EUK_ACCESS_AUD=<the tag>`. `EXAM_PHOTO_OPERATOR_TOKEN` is already there;
+   compose now passes it to the web container too, at run time only.
+3. `git pull --ff-only`, then `docker compose -f deploy/docker-compose.yml up -d --build engine web`.
+   **This restarts the engine** (about 12 s of warmup); check that no order is
+   between payment and release first. The proxy is not touched.
+4. `install -m 755 deploy/ops/euk-watch.py /usr/local/sbin/euk-watch.py` — the
+   timer runs the installed copy, not the repository's. From then on each new
+   request is emailed once to support@ with the candidate's address.
+
+Engine routes behind the operator token (`X-Operator-Token` header): `GET
+/v1/orders`, `/v1/operator/jobs`, `/v1/operator/jobs/{id}`,
+`/v1/operator/jobs/{id}/files/{name}`, `/v1/operator/health`. Order records
+are now kept **eight years**, with the masked addresses in them removed after
+**180 days**. The three orders from before this change show "not recorded" for
+the examination and address.
 
 ---
 

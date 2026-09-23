@@ -35,7 +35,7 @@ from exam_photo.api.jobs import (
     ProcessingJobRecord,
     parse_manifest_timestamp,
 )
-from exam_photo.api.orders import OrderRegistry
+from exam_photo.api.orders import OrderItem, OrderRegistry
 from exam_photo.api.payments import ReleaseInstruction
 from exam_photo.api.progress import ProgressRegistry
 from exam_photo.api.protection import UsageRegistry
@@ -1149,6 +1149,24 @@ class ApiProcessingService:
         self.registry.update_job(record)
         self.orders.mark_delivered(record.job_id, "download")
 
+    def exam_name(self, record: ProcessingJobRecord) -> Optional[str]:
+        """The examination's own name for this job, where the catalogue has it."""
+        entry = self.catalogue.get(record.exam_id) if record.exam_id else None
+        return str(entry.rule.exam.exam_name) if entry is not None else None
+
+    def order_items(self, records: List[ProcessingJobRecord]) -> List[OrderItem]:
+        """What an order is for, named while the jobs still exist (DEC-108)."""
+        return [
+            OrderItem(
+                job_id=record.job_id,
+                exam_id=record.exam_id,
+                exam_name=self.exam_name(record),
+                requirement_name=self._requirement_label(record),
+                requirement_type=record.requirement_type,
+            )
+            for record in records
+        ]
+
     def _requirement_label(self, record: ProcessingJobRecord) -> str:
         """What the file is, in the examination's own words where it has them."""
         entry = self.catalogue.get(record.exam_id) if record.exam_id else None
@@ -1282,6 +1300,9 @@ class ApiProcessingService:
                     )
                 )
                 self.registry.update_job(record)
+                self.orders.mark_delivery_failed(
+                    record.job_id, "email", masked, str(err)
+                )
             raise
 
         self._finalize_email_reservations(reservations, succeeded=True)
@@ -1290,7 +1311,7 @@ class ApiProcessingService:
                 EmailAttempt(at=sent_at, masked_address=masked, succeeded=True)
             )
             self.registry.update_job(record)
-            self.orders.mark_delivered(record.job_id, "email")
+            self.orders.mark_delivered(record.job_id, "email", masked)
 
         return {
             "sent": True,
@@ -1990,6 +2011,8 @@ class ApiProcessingService:
         # existing sweeper rather than needing a retention decision of their
         # own the way `_orders/` and `_usage/` do.
         self.progress.sweep()
+        # DEC-108: order records keep their own, much longer, clock.
+        self.orders.sweep()
 
         records = self.registry.scan_manifests()
         deleted_count = 0

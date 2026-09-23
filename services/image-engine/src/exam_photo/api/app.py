@@ -3,6 +3,7 @@
 import json
 import re
 import secrets
+import shutil
 from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Annotated, Any, AsyncIterator, List, Optional
@@ -1187,13 +1188,17 @@ def create_kit_order(
     # set and not whatever the kit holds when the webhook arrives. Every live
     # job is recorded, not only the charged ones -- document work is free
     # *with* a purchase, so it is delivered by the same payment.
+    priced = [line.job_id for line in quote.lines]
     try:
         service.orders.create(
             order_id=order.order_id,
             kit_id=kit_id,
-            job_ids=[line.job_id for line in quote.lines],
+            job_ids=priced,
             amount_paise=order.amount_paise,
             currency=order.currency,
+            items=service.order_items(
+                [record for record in records if record.job_id in priced]
+            ),
         )
     except (ValueError, OSError) as err:
         # The order exists at Razorpay but we could not record it. Refusing is
@@ -1285,6 +1290,8 @@ def get_order_evidence(order_id: str) -> OrderEvidenceResponse:
         delivery_method=order.delivery_method,
         job_ids=order.job_ids,
         jobs=jobs,
+        items=[item.model_dump() for item in order.items],
+        deliveries=[delivery.model_dump() for delivery in order.deliveries],
     )
 
 
@@ -1301,6 +1308,128 @@ def get_usage_metrics() -> dict[str, object]:
     one script and a thousand candidates describes neither.
     """
     return service.usage.summary()
+
+
+# --- The operator page (DEC-108) --------------------------------------------
+#
+# Read-only, and every route behind the operator token. The token lives in the
+# web server, which calls these from inside the compose network on behalf of a
+# visitor Cloudflare Access has already admitted; no browser ever holds it.
+
+#: Files the operator page may show for a live job. Anything else in the
+#: directory (reservation markers, sources of a document) is not a picture.
+_OPERATOR_MEDIA = {
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".png": "image/png",
+    ".webp": "image/webp",
+    ".pdf": "application/pdf",
+    ".json": "application/json",
+}
+
+
+@app.get("/v1/orders", dependencies=[Depends(require_operator)])
+def list_orders(
+    limit: int = Query(default=500, ge=1, le=5000),  # noqa: B008
+) -> dict[str, Any]:
+    """Every order, newest first, with what became of it (DEC-108)."""
+    return {
+        "orders": [
+            record.model_dump(mode="json") for record in service.orders.recent(limit)
+        ]
+    }
+
+
+@app.get("/v1/operator/jobs", dependencies=[Depends(require_operator)])
+def list_operator_jobs() -> dict[str, Any]:
+    """Every upload still inside its retention window, with all it records."""
+    jobs = []
+    for record in service.registry.scan_manifests():
+        if record.status == ApiJobStatus.DELETED or record.is_expired():
+            continue
+        jobs.append(_operator_job(record))
+    jobs.sort(key=lambda job: str(job["created_at"]), reverse=True)
+    return {"jobs": jobs}
+
+
+@app.get("/v1/operator/jobs/{job_id}", dependencies=[Depends(require_operator)])
+def get_operator_job(job_id: str) -> dict[str, Any]:
+    """One upload in full, including its report, while it still exists."""
+    if not JOB_ID_REGEX.match(job_id):
+        raise HTTPException(status_code=400, detail="Invalid job ID format")
+    record = _job_or_expired(job_id)
+    if not record or record.status == ApiJobStatus.DELETED:
+        raise HTTPException(status_code=404, detail="Job not found")
+    detail = _operator_job(record)
+    if service.store.file_exists(job_id, "report.json"):
+        try:
+            detail["report"] = json.loads(
+                service.store.read_file(job_id, "report.json")
+            )
+        except (ValueError, OSError):
+            detail["report"] = None
+    return detail
+
+
+@app.get(
+    "/v1/operator/jobs/{job_id}/files/{filename}",
+    dependencies=[Depends(require_operator)],
+)
+def get_operator_job_file(job_id: str, filename: str) -> Response:
+    """A file of a live job, for the operator's eyes, past the purchase gate.
+
+    Deliberately not a download: it is not counted as a delivery, so looking
+    at a candidate's file never answers the refund question for them.
+    """
+    if not JOB_ID_REGEX.match(job_id):
+        raise HTTPException(status_code=400, detail="Invalid job ID format")
+    record = _job_or_expired(job_id)
+    if not record or record.status == ApiJobStatus.DELETED:
+        raise HTTPException(status_code=404, detail="Job not found")
+    media = _OPERATOR_MEDIA.get(Path(filename).suffix.lower())
+    if media is None or filename == "job.json":
+        raise HTTPException(status_code=404, detail="File not found")
+    try:
+        if not service.store.file_exists(job_id, filename):
+            raise HTTPException(status_code=404, detail="File not found")
+        content = service.store.read_file(job_id, filename)
+    except ValueError:
+        raise HTTPException(status_code=404, detail="File not found") from None
+    return Response(
+        content=content,
+        media_type=media,
+        headers={"Cache-Control": "no-store, private"},
+    )
+
+
+@app.get("/v1/operator/health", dependencies=[Depends(require_operator)])
+def get_operator_health() -> dict[str, Any]:
+    """`/ready`, plus the disk the artifacts live on (DEC-108)."""
+    state = dict(service.readiness())
+    root = service.settings.artifact_root
+    try:
+        usage = shutil.disk_usage(root if root.exists() else root.parent)
+        state["disk"] = {"free_bytes": usage.free, "total_bytes": usage.total}
+    except OSError:
+        state["disk"] = None
+    return state
+
+
+def _operator_job(record: ProcessingJobRecord) -> dict[str, Any]:
+    job = record.model_dump(mode="json")
+    job["exam_name"] = service.exam_name(record)
+    job["requirement_name"] = service._requirement_label(record)
+    job["released"] = service.output_is_released(record)
+    files = []
+    directory = service.settings.artifact_root / record.job_id
+    if directory.is_dir():
+        for path in sorted(directory.iterdir()):
+            if path.is_file() and path.suffix.lower() in _OPERATOR_MEDIA:
+                if path.name == "job.json":
+                    continue
+                files.append({"name": path.name, "bytes": path.stat().st_size})
+    job["files"] = files
+    return job
 
 
 @app.post("/v1/jobs/{job_id}/enhancement", response_model=JobStatusResponse)
