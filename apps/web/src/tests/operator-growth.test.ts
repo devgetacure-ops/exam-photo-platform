@@ -91,11 +91,22 @@ describe("operator actions, Releases 2 and 3", () => {
         expect("error" in actionFor("deadline", "../x", form({}), "o")).toBe(true);
     });
 
-    it("publishes a testimonial only by order id", () => {
-        expect(actionFor("publish", "order_A1", form({ published: "true" }), "o")).toEqual({
-            path: "/v1/operator/feedback/order_A1/publish",
-            body: { actor: "o", published: true },
+    it("approves or rejects a review by order id, and nothing else", () => {
+        expect(actionFor("review", "order_A1", form({ status: "approved" }), "o")).toEqual({
+            path: "/v1/operator/reviews/order_A1/status",
+            body: { actor: "o", status: "approved" },
         });
-        expect("error" in actionFor("publish", "job_x", form({}), "o")).toBe(true);
+        expect("error" in actionFor("review", "order_A1", form({ status: "published" }), "o")).toBe(true);
+        expect("error" in actionFor("review", "job_x", form({ status: "approved" }), "o")).toBe(true);
+    });
+
+    it("starts and stops the review offer, and saves free codes", () => {
+        expect(actionFor("offer", undefined, form({ on: "false" }), "o")).toEqual({
+            path: "/v1/operator/offers/review_reward",
+            body: { actor: "o", on: false },
+        });
+        expect(actionFor("coupon", undefined, form({ code: "friend", kind: "free", value: "" }), "o")).toMatchObject({
+            body: { code: "FRIEND", kind: "free", value: 100 },
+        });
     });
 });

@@ -174,8 +174,11 @@ years with their addresses** (DEC-109 withdrew DEC-108's 180-day removal). The
 three orders from before these changes show "not recorded" for the examination
 and address; addresses exist only from the day this is deployed.
 
-**Not built yet**: showing published testimonials on the candidate site (the
-engine serves them at `GET /v1/testimonials`). **Still saying the old thing**:
+**Reviews and the free-files offer (DEC-112)**: candidates review under their
+downloads; you approve on **Reviews**; the offer is started and stopped on
+**Coupons**, where you also make your own codes (percent, rupees or free).
+**Not built yet**: showing approved reviews on the candidate site (the engine
+serves them, with the average and counts, at `GET /v1/testimonials`). **Still saying the old thing**:
 the delivery email's footer (address not stored) and the request form's consent
 tick (deleted after 30 days).
 

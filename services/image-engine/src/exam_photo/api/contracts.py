@@ -148,6 +148,8 @@ class KitQuoteResponse(BaseModel):
     coupon_code: Optional[str] = None
     discount_paise: int = 0
     coupon_status: Optional[str] = None
+    #: DEC-112: a code made this kit free; claim it rather than paying.
+    free_with_coupon: bool = False
     #: "razorpay", or "simulator" on a test machine (DEC-089), which tells the
     #: browser to open the test sheet instead of loading Razorpay Checkout.
     payment_mode: str = "razorpay"

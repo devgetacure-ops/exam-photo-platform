@@ -22,6 +22,8 @@ export default function OperatorLayout({ children }: { children: ReactNode }) {
                     <Link href="/admin/inbox">Inbox</Link>
                     <Link href="/admin/growth">Growth</Link>
                     <Link href="/admin/calendar">Calendar</Link>
+                    <Link href="/admin/reviews">Reviews</Link>
+                    <Link href="/admin/coupons">Coupons</Link>
                     <Link href="/admin/marketing">Marketing</Link>
                     <Link href="/admin/activity">Activity</Link>
                 </nav>

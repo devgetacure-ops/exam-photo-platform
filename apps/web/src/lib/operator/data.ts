@@ -328,6 +328,8 @@ export interface Overview {
     unpaid_kits: number;
     tickets: { open: number; overdue: Ticket[]; exam_requests_open: number };
     health: { at: string; status: string; disk_free_bytes: number | null; busy_refusals: number }[];
+    reviews: { count: number; average: number | null; pending: number; approved: number };
+    low_reviews: { order_id: string; rating: number; comment: string | null }[];
 }
 
 export function seconds(value: number | null | undefined): string {

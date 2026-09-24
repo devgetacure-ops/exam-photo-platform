@@ -499,3 +499,13 @@
     font-weight: 600;
     color: var(--ink-55);
 }
+
+.euk-op-inline {
+    display: inline;
+}
+
+@media (min-width: 720px) {
+    .euk-op-tiles {
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+    }
+}

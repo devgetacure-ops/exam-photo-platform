@@ -71,12 +71,15 @@ class Discount:
     """A coupon, already found valid, as pricing needs it (DEC-111)."""
 
     code: str
-    kind: str  # "percent" or "flat"
+    kind: str  # "percent", "flat" or "free" (DEC-112: the whole amount)
     value: int  # percent 1-90, or paise
 
     def off(self, amount_paise: int) -> int:
         if amount_paise <= 0:
             return 0
+        if self.kind == "free":
+            # Settled without Razorpay by `claim-free`, so it may reach zero.
+            return amount_paise
         if self.kind == "percent":
             cut = amount_paise * max(0, min(self.value, 90)) // 100
         else:

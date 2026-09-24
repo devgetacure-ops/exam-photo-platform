@@ -75,7 +75,7 @@ export function actionFor(kind: string, id: string | undefined, form: FormData, 
         const code = text(form, "code", 32).toUpperCase();
         const couponKind = text(form, "kind", 10);
         const raw = Number(text(form, "value", 10));
-        if (!/^[A-Z0-9_-]{2,32}$/.test(code) || !["percent", "flat"].includes(couponKind) || !Number.isFinite(raw))
+        if (!/^[A-Z0-9_-]{2,32}$/.test(code) || !["percent", "flat", "free"].includes(couponKind) || !Number.isFinite(raw))
             return { error: "invalid coupon" };
         const maxUses = text(form, "max_uses", 7);
         const expires = text(form, "expires_on", 10);
@@ -86,7 +86,7 @@ export function actionFor(kind: string, id: string | undefined, form: FormData, 
                 code,
                 kind: couponKind,
                 // The form asks for rupees; the engine counts paise.
-                value: couponKind === "flat" ? Math.round(raw * 100) : Math.round(raw),
+                value: couponKind === "flat" ? Math.round(raw * 100) : couponKind === "free" ? 100 : Math.round(raw),
                 partner: text(form, "partner", 120),
                 max_uses: maxUses ? Number(maxUses) : null,
                 expires_on: /^\d{4}-\d{2}-\d{2}$/.test(expires) ? expires : null,
@@ -114,9 +114,14 @@ export function actionFor(kind: string, id: string | undefined, form: FormData, 
             body: { actor, segment, target: text(form, "target", 200), subject, body },
         };
     }
-    if (kind === "publish") {
+    if (kind === "review") {
         if (!id || !/^order_[A-Za-z0-9_-]{1,64}$/.test(id)) return { error: "invalid order" };
-        return { path: `/v1/operator/feedback/${id}/publish`, body: { actor, published: text(form, "published", 5) === "true" } };
+        const status = text(form, "status", 10);
+        if (!["pending", "approved", "rejected"].includes(status)) return { error: "invalid status" };
+        return { path: `/v1/operator/reviews/${id}/status`, body: { actor, status } };
+    }
+    if (kind === "offer") {
+        return { path: "/v1/operator/offers/review_reward", body: { actor, on: text(form, "on", 5) === "true" } };
     }
     return { error: "unknown action" };
 }

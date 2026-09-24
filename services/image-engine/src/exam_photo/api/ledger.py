@@ -218,6 +218,60 @@ CREATE TABLE IF NOT EXISTS feedback (
 """
 
 
+#: Columns added after a table first shipped (DEC-112). SQLite cannot add a
+#: column in `CREATE TABLE IF NOT EXISTS`, so a ledger created before these
+#: existed is brought up to date here, once, when it is first opened.
+_ADDED_COLUMNS = {
+    "feedback": {
+        "rating": "INTEGER",
+        "tags": "TEXT",
+        "name": "TEXT",
+        "status": "TEXT NOT NULL DEFAULT 'pending'",
+        "reviewed_at": "TEXT",
+        "reviewed_by": "TEXT",
+        "reward_code": "TEXT",
+        "source": "TEXT",
+        "kit_id": "TEXT",
+    },
+    "coupons": {
+        "source": "TEXT NOT NULL DEFAULT 'manual'",
+        "issued_for_order": "TEXT",
+        "issued_to": "TEXT",
+    },
+}
+
+
+def _upgrade(connection: sqlite3.Connection) -> None:
+    for table, columns in _ADDED_COLUMNS.items():
+        present = {row[1] for row in connection.execute(f"PRAGMA table_info({table})")}
+        for name, kind in columns.items():
+            if name not in present:
+                connection.execute(f"ALTER TABLE {table} ADD COLUMN {name} {kind}")
+    # DEC-111 had "published"; DEC-112 has an approval status.
+    connection.execute(
+        "UPDATE feedback SET status='approved' WHERE published=1 AND status='pending'"
+    )
+
+
+REVIEW_TAGS = {
+    "good": (
+        "Accepted first time",
+        "Fast",
+        "Easy to use",
+        "Good price",
+        "Clear instructions",
+    ),
+    "bad": (
+        "Portal rejected it",
+        "Too slow",
+        "Confusing",
+        "Payment trouble",
+        "Price",
+    ),
+}
+REVIEW_STATES = ("pending", "approved", "rejected")
+
+
 def now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
@@ -276,6 +330,7 @@ class Ledger:
             if not self._ready:
                 connection.execute("PRAGMA journal_mode=WAL")
                 connection.executescript(_SCHEMA)
+                _upgrade(connection)
                 self._ready = True
             yield connection
             connection.commit()
@@ -862,35 +917,159 @@ class Ledger:
             )
         ]
 
-    # --- feedback (Release 3) -------------------------------------------
+    # --- reviews (DEC-111, DEC-112) --------------------------------------
 
-    def record_feedback(
-        self, order_id: str, worked: bool, comment: str = "", may_publish: bool = False
-    ) -> None:
+    def record_review(
+        self,
+        order_id: str,
+        *,
+        rating: int,
+        tags: List[str],
+        comment: str = "",
+        name: str = "",
+        may_publish: bool = False,
+        source: str = "checkout",
+        kit_id: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        """One review per order; sending again replaces it and asks for approval again."""
+        rating = max(1, min(5, int(rating)))
+        allowed = set(REVIEW_TAGS["good"] + REVIEW_TAGS["bad"])
+        chosen = [tag for tag in dict.fromkeys(tags) if tag in allowed][:10]
         self._write(
-            "INSERT INTO feedback (order_id, at, worked, comment, may_publish) "
-            "VALUES (?,?,?,?,?) ON CONFLICT(order_id) DO UPDATE SET at=excluded.at, "
-            "worked=excluded.worked, "
-            "comment=CASE WHEN excluded.comment != '' THEN excluded.comment ELSE comment END, "
-            "may_publish=MAX(may_publish, excluded.may_publish)",
+            "INSERT INTO feedback (order_id, at, worked, comment, may_publish, rating, "
+            "tags, name, status, source, kit_id) VALUES (?,?,?,?,?,?,?,?,'pending',?,?) "
+            "ON CONFLICT(order_id) DO UPDATE SET at=excluded.at, worked=excluded.worked, "
+            "comment=excluded.comment, may_publish=excluded.may_publish, "
+            "rating=excluded.rating, tags=excluded.tags, name=excluded.name, "
+            "status='pending', reviewed_at=NULL, reviewed_by=NULL, published=0, "
+            "source=excluded.source, kit_id=COALESCE(excluded.kit_id, kit_id)",
             (
                 order_id,
                 now_iso(),
-                1 if worked else 0,
-                comment[:1000],
+                1 if rating >= 3 else 0,
+                comment.strip()[:500],
                 1 if may_publish else 0,
+                rating,
+                json.dumps(chosen),
+                name.strip()[:40],
+                source,
+                kit_id,
             ),
         )
+        return self.review(order_id) or {}
 
-    def set_feedback_published(self, order_id: str, published: bool) -> None:
+    def review(self, order_id: str) -> Optional[Dict[str, Any]]:
+        rows = self._rows("SELECT * FROM feedback WHERE order_id=?", (order_id,))
+        return _review_row(rows[0]) if rows else None
+
+    def reviews(
+        self, status: Optional[str] = None, limit: int = 1000
+    ) -> List[Dict[str, Any]]:
+        if status:
+            rows = self._rows(
+                "SELECT * FROM feedback WHERE status=? ORDER BY at DESC LIMIT ?",
+                (status, limit),
+            )
+        else:
+            rows = self._rows(
+                "SELECT * FROM feedback ORDER BY at DESC LIMIT ?", (limit,)
+            )
+        return [_review_row(row) for row in rows]
+
+    def set_review_status(self, order_id: str, status: str, actor: str) -> bool:
+        if status not in REVIEW_STATES:
+            raise ValueError(f"unknown review status {status!r}")
+        with self._lock, self._db() as db:
+            changed = db.execute(
+                "UPDATE feedback SET status=?, reviewed_at=?, reviewed_by=? WHERE order_id=?",
+                (status, now_iso(), actor[:200], order_id),
+            ).rowcount
+        return bool(changed)
+
+    def review_summary(self) -> Dict[str, Any]:
+        rows = self._rows(
+            "SELECT rating, status FROM feedback WHERE rating IS NOT NULL"
+        )
+        ratings = [int(r["rating"]) for r in rows]
+        return {
+            "count": len(ratings),
+            "average": round(sum(ratings) / len(ratings), 2) if ratings else None,
+            "by_star": {star: ratings.count(star) for star in range(5, 0, -1)},
+            "pending": sum(1 for r in rows if r["status"] == "pending"),
+            "approved": sum(1 for r in rows if r["status"] == "approved"),
+        }
+
+    def public_reviews(self, limit: int = 20) -> List[Dict[str, Any]]:
+        """Only what the candidate allowed and the owner approved."""
+        return [
+            _review_row(row)
+            for row in self._rows(
+                "SELECT * FROM feedback WHERE status='approved' AND may_publish=1 "
+                "ORDER BY at DESC LIMIT ?",
+                (limit,),
+            )
+        ]
+
+    def set_reward_code(self, order_id: str, code: str) -> None:
         self._write(
-            "UPDATE feedback SET published=? WHERE order_id=? AND may_publish=1",
-            (1 if published else 0, order_id),
+            "UPDATE feedback SET reward_code=? WHERE order_id=?", (code, order_id)
         )
 
-    def feedback(self, published_only: bool = False) -> List[Dict[str, Any]]:
-        where = "WHERE published=1" if published_only else ""
-        return self._rows(f"SELECT * FROM feedback {where} ORDER BY at DESC LIMIT 500")
+    # --- the review reward (DEC-112) -------------------------------------
+
+    def reward_already_given(self, order_id: str, emails: List[str]) -> Optional[str]:
+        """The code this order or any of these addresses already received."""
+        for row in self._rows(
+            "SELECT code, issued_for_order, issued_to FROM coupons WHERE source='reward'"
+        ):
+            if row["issued_for_order"] == order_id:
+                return str(row["code"])
+            given = set(json.loads(row["issued_to"] or "[]"))
+            if given & set(emails):
+                return str(row["code"])
+        return None
+
+    def issue_reward(self, order_id: str, emails: List[str]) -> str:
+        code = f"THANKS-{uuid.uuid4().hex[:8].upper()}"
+        self._write(
+            "INSERT INTO coupons (code, kind, value, partner, max_uses, created_at, "
+            "source, issued_for_order, issued_to) VALUES (?,?,?,?,?,?,?,?,?)",
+            (
+                code,
+                "free",
+                100,
+                "Review reward",
+                1,
+                now_iso(),
+                "reward",
+                order_id,
+                json.dumps(emails),
+            ),
+        )
+        return code
+
+    def claim_coupon(self, code: str) -> bool:
+        """Take one use of a code, atomically. False when none is left."""
+        today = datetime.now(timezone.utc).date().isoformat()
+        with self._lock, self._db() as db:
+            taken = db.execute(
+                "UPDATE coupons SET uses=uses+1 WHERE code=? AND active=1 "
+                "AND (max_uses IS NULL OR uses < max_uses) "
+                "AND (expires_on IS NULL OR expires_on >= ?)",
+                (code, today),
+            ).rowcount
+        return bool(taken)
+
+    def offer_on(self, name: str) -> bool:
+        return self.get_value(f"offer:{name}") == "on"
+
+    def set_offer(self, name: str, on: bool) -> None:
+        self.set_value(f"offer:{name}", "on" if on else "off")
+
+
+def _review_row(row: Dict[str, Any]) -> Dict[str, Any]:
+    row["tags"] = json.loads(row["tags"]) if row.get("tags") else []
+    return row
 
 
 def _with_clock(row: Dict[str, Any]) -> Dict[str, Any]:

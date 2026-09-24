@@ -22,7 +22,7 @@ from fastapi import (
     UploadFile,
 )
 from fastapi.responses import JSONResponse, Response
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from exam_photo.api import growth as growth_views
 from exam_photo.api import marketing
@@ -59,6 +59,8 @@ from exam_photo.api.contracts import (
 from exam_photo.api.delivery import EmailRejectedError
 from exam_photo.api.jobs import KIT_ID_REGEX, ProcessingJobRecord
 from exam_photo.api.ledger import (
+    REVIEW_STATES,
+    REVIEW_TAGS,
     TICKET_KINDS,
     TICKET_STATES,
     normalise_email,
@@ -66,6 +68,7 @@ from exam_photo.api.ledger import (
 )
 from exam_photo.api.payments import (
     SIGNATURE_HEADER,
+    ReleaseInstruction,
     WebhookRejectedError,
     read_failed_payment,
     verify_and_read,
@@ -1222,6 +1225,11 @@ def get_kit_quote(
         coupon_code=quote.coupon_code,
         discount_paise=quote.discount_paise,
         coupon_status=coupon_status,
+        free_with_coupon=bool(
+            coupon_status == "applied"
+            and quote.amount_paise == 0
+            and quote.chargeable_count
+        ),
         list_amount_paise=quote.list_amount_paise,
         currency=quote.currency,
         chargeable_count=quote.chargeable_count,
@@ -1314,6 +1322,11 @@ def create_kit_order(
 
     records = _selected_kit_records(kit_id, job_ids)
     quote, _coupon_status = _priced(kit_id, records, coupon)
+    if not quote.is_payable and quote.discount_paise:
+        raise HTTPException(
+            status_code=409,
+            detail="This code makes the kit free: claim it instead of paying.",
+        )
     if not quote.is_payable:
         # Nothing to charge for: an empty kit, one already paid, or one that
         # holds only document work, which is free. Sending a zero-amount order
@@ -2039,14 +2052,16 @@ def operator_save_coupon(coupon: CouponIn) -> dict[str, Any]:
         raise HTTPException(
             status_code=422, detail="Codes are 2-32 letters, digits, - or _"
         )
+    if coupon.kind == "free":
+        coupon.value = 100
     if coupon.kind == "percent" and not 1 <= coupon.value <= 90:
         raise HTTPException(status_code=422, detail="A percentage is 1 to 90")
     if coupon.kind == "flat" and not 100 <= coupon.value <= 100000:
         raise HTTPException(
             status_code=422, detail="A flat discount is 100 to 100000 paise"
         )
-    if coupon.kind not in ("percent", "flat"):
-        raise HTTPException(status_code=422, detail="kind is percent or flat")
+    if coupon.kind not in ("percent", "flat", "free"):
+        raise HTTPException(status_code=422, detail="kind is percent, flat or free")
     service.ledger.save_coupon(
         code,
         coupon.kind,
@@ -2231,33 +2246,101 @@ def unsubscribe_one_click(e: str = "", t: str = "") -> Response:
     return _unsubscribe(e, t)
 
 
-class FeedbackIn(BaseModel):
+class ReviewIn(BaseModel):
     order_id: str
-    token: str
-    worked: bool
+    rating: int = Field(ge=1, le=5)
+    tags: List[str] = Field(default_factory=list)
     comment: str = ""
+    name: str = ""
     may_publish: bool = False
 
 
+class SignedReviewIn(ReviewIn):
+    token: str
+
+
+def _save_review(
+    review: ReviewIn, source: str, kit_id: Optional[str]
+) -> dict[str, Any]:
+    """Store a review and, while the offer runs, hand back a free-files code (DEC-112)."""
+    order = service.orders.get(review.order_id)
+    if order is None or not order.paid_at:
+        raise HTTPException(status_code=404, detail="Paid order not found")
+    saved = service.ledger.record_review(
+        order.order_id,
+        rating=review.rating,
+        tags=review.tags,
+        comment=review.comment,
+        name=review.name,
+        may_publish=review.may_publish,
+        source=source,
+        kit_id=kit_id or order.kit_id,
+    )
+    reward = saved.get("reward_code")
+    # A free order never earns another free order, and each person earns one.
+    if (
+        not reward
+        and service.ledger.offer_on("review_reward")
+        and order.amount_paise > 0
+    ):
+        emails = operator_views.order_emails(order)
+        if not service.ledger.reward_already_given(order.order_id, emails):
+            reward = service.ledger.issue_reward(order.order_id, emails)
+            service.ledger.set_reward_code(order.order_id, reward)
+    return {"ok": True, "review": saved, "reward_code": reward}
+
+
+@app.get("/v1/kits/{kit_id}/review")
+def get_kit_review(kit_id: str, order_id: str) -> dict[str, Any]:
+    """The review box's state for a paid order in this kit (DEC-112)."""
+    if not KIT_ID_REGEX.match(kit_id):
+        raise HTTPException(status_code=400, detail="Invalid kit ID format")
+    order = service.orders.get(order_id)
+    if order is None or order.kit_id != kit_id or not order.paid_at:
+        raise HTTPException(status_code=404, detail="Paid order not found")
+    existing = service.ledger.review(order_id)
+    return {
+        "review": existing,
+        "reward_code": existing.get("reward_code") if existing else None,
+        "offer": service.ledger.offer_on("review_reward") and order.amount_paise > 0,
+        "tags": REVIEW_TAGS,
+    }
+
+
+@app.post("/v1/kits/{kit_id}/review")
+def post_kit_review(kit_id: str, review: ReviewIn) -> dict[str, Any]:
+    """A review from the downloads screen. The kit id is the proof of purchase:
+    only the browser that paid holds it, and the order must belong to it."""
+    if not KIT_ID_REGEX.match(kit_id):
+        raise HTTPException(status_code=400, detail="Invalid kit ID format")
+    order = service.orders.get(review.order_id)
+    if order is None or order.kit_id != kit_id:
+        raise HTTPException(status_code=404, detail="Paid order not found")
+    return _save_review(review, "checkout", kit_id)
+
+
 @app.post("/v1/feedback")
-def record_feedback(feedback: FeedbackIn) -> dict[str, Any]:
-    """The delivery email's "did it work?" answer. Public, signed per order."""
+def record_feedback(feedback: SignedReviewIn) -> dict[str, Any]:
+    """The delivery email's "did it work?" link, signed per order (DEC-111)."""
     if not marketing.verify(service, "feedback", feedback.order_id, feedback.token):
         raise HTTPException(status_code=403, detail="This link is not valid.")
-    if service.orders.get(feedback.order_id) is None:
-        raise HTTPException(status_code=404, detail="Order not found")
-    service.ledger.record_feedback(
-        feedback.order_id,
-        feedback.worked,
-        feedback.comment.strip(),
-        feedback.may_publish,
-    )
-    return {"ok": True}
+    return _save_review(feedback, "email", None)
 
 
-@app.get("/v1/operator/feedback", dependencies=_OPERATOR)
-def operator_feedback() -> dict[str, Any]:
-    rows = service.ledger.feedback()
+@app.get("/v1/offers")
+def public_offers() -> dict[str, bool]:
+    """Which offers the site should mention. Public."""
+    return {"review_reward": service.ledger.offer_on("review_reward")}
+
+
+@app.get("/v1/review-options")
+def review_options() -> dict[str, Any]:
+    return {"tags": REVIEW_TAGS}
+
+
+@app.get("/v1/operator/reviews", dependencies=_OPERATOR)
+def operator_reviews(status: str = "") -> dict[str, Any]:
+    rows = service.ledger.reviews(status if status in REVIEW_STATES else None)
     for row in rows:
         order = service.orders.get(row["order_id"])
         row["exam_names"] = (
@@ -2266,41 +2349,129 @@ def operator_feedback() -> dict[str, Any]:
             else []
         )
         row["emails"] = operator_views.order_emails(order) if order else []
-    worked = sum(1 for row in rows if row["worked"])
-    return {"feedback": rows, "worked": worked, "total": len(rows)}
+        row["amount_paise"] = order.amount_paise if order else None
+    return {
+        "reviews": rows,
+        "summary": service.ledger.review_summary(),
+        "offer_on": service.ledger.offer_on("review_reward"),
+    }
 
 
-class PublishIn(BaseModel):
+class ReviewStatusIn(BaseModel):
     actor: str = "operator"
-    published: bool
+    status: str
 
 
-@app.post("/v1/operator/feedback/{order_id}/publish", dependencies=_OPERATOR)
-def operator_publish_feedback(order_id: str, change: PublishIn) -> dict[str, Any]:
-    service.ledger.set_feedback_published(order_id, change.published)
+@app.post("/v1/operator/reviews/{order_id}/status", dependencies=_OPERATOR)
+def operator_review_status(order_id: str, change: ReviewStatusIn) -> dict[str, Any]:
+    try:
+        found = service.ledger.set_review_status(order_id, change.status, change.actor)
+    except ValueError as err:
+        raise HTTPException(status_code=422, detail=str(err)) from None
+    if not found:
+        raise HTTPException(status_code=404, detail="Review not found")
+    service.ledger.log(change.actor, f"review {change.status}", f"order:{order_id}")
+    return {"ok": True}
+
+
+class OfferIn(BaseModel):
+    actor: str = "operator"
+    on: bool
+
+
+@app.post("/v1/operator/offers/review_reward", dependencies=_OPERATOR)
+def operator_set_review_offer(change: OfferIn) -> dict[str, Any]:
+    service.ledger.set_offer("review_reward", change.on)
     service.ledger.log(
         change.actor,
-        "testimonial " + ("published" if change.published else "withdrawn"),
-        f"order:{order_id}",
+        "review reward offer " + ("started" if change.on else "stopped"),
+        None,
     )
-    return {"ok": True}
+    return {"ok": True, "on": change.on}
 
 
 @app.get("/v1/testimonials")
 def testimonials() -> dict[str, Any]:
-    """Comments the candidate allowed and the owner chose to show. Public."""
+    """Reviews the candidate allowed and the owner approved. Public, no address."""
     shown = []
-    for row in service.ledger.feedback(published_only=True)[:20]:
-        if not row.get("comment"):
-            continue
+    for row in service.ledger.public_reviews():
         order = service.orders.get(row["order_id"])
         exam = (
             next((i.exam_name for i in order.items if i.exam_name), None)
             if order
             else None
         )
-        shown.append({"comment": row["comment"], "exam": exam, "at": row["at"][:10]})
-    return {"testimonials": shown}
+        shown.append(
+            {
+                "rating": row.get("rating"),
+                "tags": row.get("tags") or [],
+                "comment": row.get("comment") or "",
+                "name": row.get("name") or None,
+                "exam": exam,
+                "at": row["at"][:10],
+            }
+        )
+    return {"testimonials": shown, "summary": service.ledger.review_summary()}
+
+
+@app.post("/v1/kits/{kit_id}/claim-free")
+def claim_free_kit(
+    kit_id: str,
+    coupon: str,
+    job_ids: Annotated[Optional[List[str]], Query()] = None,
+) -> dict[str, Any]:
+    """Release a kit whose code makes it free, without Razorpay (DEC-112).
+
+    Razorpay cannot take nothing, so a free order is settled here. The code is
+    taken atomically before anything is released: two tabs racing the same
+    single-use code release once.
+    """
+    if not KIT_ID_REGEX.match(kit_id):
+        raise HTTPException(status_code=400, detail="Invalid kit ID format")
+    records = _selected_kit_records(kit_id, job_ids)
+    quote, status = _priced(kit_id, records, coupon)
+    if status != "applied" or quote.amount_paise != 0 or not quote.chargeable_count:
+        raise HTTPException(
+            status_code=409, detail="This code does not make this kit free."
+        )
+    code = str(quote.coupon_code)
+    if not service.ledger.claim_coupon(code):
+        raise HTTPException(status_code=409, detail="This code has already been used.")
+    order_id = f"order_free_{secrets.token_hex(8)}"
+    priced = [line.job_id for line in quote.lines]
+    service.orders.create(
+        order_id=order_id,
+        kit_id=kit_id,
+        job_ids=priced,
+        amount_paise=0,
+        currency=quote.currency,
+        items=service.order_items([r for r in records if r.job_id in priced]),
+        price_variant=quote.price_variant,
+        coupon_code=code,
+        discount_paise=quote.discount_paise,
+    )
+    instruction = ReleaseInstruction(
+        event="coupon.free",
+        payment_id=f"coupon:{code}",
+        order_id=order_id,
+        amount=0,
+        currency=quote.currency,
+        kit_ids=[kit_id],
+    )
+    service.orders.mark_paid(order_id, instruction.payment_id)
+    service.orders.record_payer(order_id, None, None, "coupon")
+    service.usage.record_purchase(kit_id)
+    released = []
+    for job_id in priced:
+        try:
+            service.release_job(job_id, payment=instruction)
+            released.append(job_id)
+        except KeyError:
+            continue
+    service.ledger.log(
+        "candidate", f"claimed free kit with {code}", f"order:{order_id}"
+    )
+    return {"order_id": order_id, "released": released}
 
 
 def _operator_job(record: ProcessingJobRecord) -> dict[str, Any]:

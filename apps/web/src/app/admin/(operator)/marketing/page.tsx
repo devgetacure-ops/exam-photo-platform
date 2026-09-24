@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ActionForm, Badge, Failure } from "../../../../components/operator/ui";
-import { rupees, when } from "../../../../lib/operator/data";
+import { when } from "../../../../lib/operator/data";
 import { engineJson, enginePost } from "../../../../lib/operator/engine";
 import { requireOperator } from "../../../../lib/operator/guard";
 
@@ -25,31 +25,6 @@ interface CampaignsData {
     links_signed: boolean;
 }
 
-interface Coupon {
-    code: string;
-    kind: string;
-    value: number;
-    partner: string | null;
-    active: number;
-    max_uses: number | null;
-    uses: number;
-    expires_on: string | null;
-    orders: number;
-    revenue_paise: number;
-    discount_paise: number;
-}
-
-interface Feedback {
-    order_id: string;
-    at: string;
-    worked: number;
-    comment: string | null;
-    may_publish: number;
-    published: number;
-    exam_names: string[];
-    emails: string[];
-}
-
 const NEEDS_TARGET = new Set(["paid_exam", "asked_exam"]);
 
 export default async function MarketingPage({
@@ -59,11 +34,7 @@ export default async function MarketingPage({
 }) {
     const operator = await requireOperator();
     const draft = await searchParams;
-    const [campaigns, coupons, feedback] = await Promise.all([
-        engineJson<CampaignsData>("/v1/operator/campaigns"),
-        engineJson<{ coupons: Coupon[] }>("/v1/operator/coupons"),
-        engineJson<{ feedback: Feedback[]; worked: number; total: number }>("/v1/operator/feedback"),
-    ]);
+    const campaigns = await engineJson<CampaignsData>("/v1/operator/campaigns");
     if (!campaigns.ok) return <Failure what="campaigns" error={campaigns.error} />;
     const segment = draft.segment && draft.segment in campaigns.value.segments ? draft.segment : "";
     let preview: { count: number; sample: string[] } | null = null;
@@ -178,105 +149,10 @@ export default async function MarketingPage({
                 </ul>
             </section>
 
-            <section className="euk-op-section">
-                <h2>Coupon codes</h2>
-                {!coupons.ok && <Failure what="coupons" error={coupons.error} />}
-                {coupons.ok && (
-                    <ul className="euk-op-list">
-                        {coupons.value.coupons.map((coupon) => (
-                            <li key={coupon.code} className="euk-op-card" data-state={coupon.active ? undefined : "unpaid"}>
-                                <p className="euk-op-row">
-                                    <strong>{coupon.code}</strong>
-                                    <span>{coupon.kind === "percent" ? `${coupon.value}% off` : `${rupees(coupon.value)} off`}</span>
-                                </p>
-                                <p className="euk-op-quiet">
-                                    {coupon.partner || "no partner"} · used {coupon.uses}
-                                    {coupon.max_uses != null ? ` of ${coupon.max_uses}` : ""} · {coupon.orders} paid orders · {rupees(coupon.revenue_paise)} revenue ·{" "}
-                                    {rupees(coupon.discount_paise)} given away{coupon.expires_on ? ` · until ${coupon.expires_on}` : ""}
-                                </p>
-                                <ActionForm action={`/admin/actions/coupon-active/${coupon.code}`} back="/admin/marketing">
-                                    <input type="hidden" name="active" value={coupon.active ? "false" : "true"} />
-                                    <button type="submit" className="euk-op-button">
-                                        {coupon.active ? "Switch off" : "Switch on"}
-                                    </button>
-                                </ActionForm>
-                            </li>
-                        ))}
-                    </ul>
-                )}
-                <details>
-                    <summary>New code</summary>
-                    <ActionForm action="/admin/actions/coupon" back="/admin/marketing">
-                        <label>
-                            <span className="euk-label">Code</span>
-                            <input name="code" required pattern="[A-Za-z0-9_-]{2,32}" placeholder="COACHING10" />
-                        </label>
-                        <label>
-                            <span className="euk-label">Kind</span>
-                            <select name="kind" defaultValue="percent">
-                                <option value="percent">Percent off (1–90)</option>
-                                <option value="flat">Rupees off</option>
-                            </select>
-                        </label>
-                        <label>
-                            <span className="euk-label">Amount</span>
-                            <input name="value" type="number" min={1} max={1000} required />
-                        </label>
-                        <label>
-                            <span className="euk-label">Partner</span>
-                            <input name="partner" maxLength={120} placeholder="Who you gave it to" />
-                        </label>
-                        <label>
-                            <span className="euk-label">Most uses (optional)</span>
-                            <input name="max_uses" type="number" min={1} />
-                        </label>
-                        <label>
-                            <span className="euk-label">Last day (optional)</span>
-                            <input name="expires_on" type="date" />
-                        </label>
-                        <p className="euk-op-quiet">No discount takes a total below ₹1, which is Razorpay&rsquo;s smallest charge.</p>
-                        <button type="submit" className="euk-op-button">
-                            Save code
-                        </button>
-                    </ActionForm>
-                </details>
-            </section>
-
-            <section className="euk-op-section">
-                <h2>Did it work?</h2>
-                {!feedback.ok && <Failure what="feedback" error={feedback.error} />}
-                {feedback.ok && (
-                    <>
-                        <p>
-                            {feedback.value.total === 0
-                                ? "No answers yet. The delivery email asks every paying candidate."
-                                : `${feedback.value.worked} of ${feedback.value.total} said the portal accepted their file.`}
-                        </p>
-                        <ul className="euk-op-list">
-                            {feedback.value.feedback.map((row) => (
-                                <li key={row.order_id} className="euk-op-card" data-state={row.worked ? undefined : "refund-due"}>
-                                    <p className="euk-op-row">
-                                        <Link href={`/admin/orders/${row.order_id}`}>{row.exam_names.join(", ") || row.order_id}</Link>
-                                        <Badge state={row.worked ? "resolved" : "open"} />
-                                    </p>
-                                    {row.comment && <p className="euk-op-message">{row.comment}</p>}
-                                    <p className="euk-op-quiet">
-                                        {when(row.at)} · {row.emails.join(", ")} · {row.may_publish ? "may be shown on the site" : "private"}
-                                    </p>
-                                    {row.may_publish && row.comment ? (
-                                        <ActionForm action={`/admin/actions/publish/${row.order_id}`} back="/admin/marketing">
-                                            <input type="hidden" name="published" value={row.published ? "false" : "true"} />
-                                            <button type="submit" className="euk-op-button">
-                                                {row.published ? "Stop showing it" : "Show it on the site"}
-                                            </button>
-                                        </ActionForm>
-                                    ) : null}
-                                </li>
-                            ))}
-                        </ul>
-                    </>
-                )}
-            </section>
+            <p className="euk-op-quiet">
+                Coupon codes and the review offer are on <Link href="/admin/coupons">Coupons</Link>; reviews on{" "}
+                <Link href="/admin/reviews">Reviews</Link>.
+            </p>
         </>
     );
 }

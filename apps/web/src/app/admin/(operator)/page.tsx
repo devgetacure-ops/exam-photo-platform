@@ -62,6 +62,12 @@ export default async function OverviewPage({ searchParams }: { searchParams: Pro
                     href="/admin/inbox"
                 />
                 <Tile
+                    label="Rating"
+                    value={data.reviews.average == null ? "—" : `${data.reviews.average}★ · ${data.reviews.count}`}
+                    alarm={data.reviews.pending > 0 && data.low_reviews.length > 0}
+                    href="/admin/reviews"
+                />
+                <Tile
                     label="Engine"
                     value={health.ok ? health.value.status : "unreachable"}
                     alarm={!health.ok || health.value.status !== "ready"}
@@ -205,6 +211,12 @@ function Attention({ data }: { data: Overview }) {
             href: `/admin/inbox/${ticket.id}`,
             state: "open",
             text: `${ticket.kind} from ${ticket.email ?? "unknown"} is ${ticket.ack_overdue ? "unanswered after 48 hours" : "unresolved after a month"}`,
+        })),
+        ...data.low_reviews.map((review) => ({
+            key: `v-${review.order_id}`,
+            href: "/admin/reviews",
+            state: "open",
+            text: `${review.rating}★ review waiting${review.comment ? `: “${review.comment.slice(0, 60)}”` : ""}`,
         })),
         ...data.stuck.slice(0, 10).map((row) => ({
             key: `s-${row.job_id}`,

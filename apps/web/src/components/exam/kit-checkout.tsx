@@ -14,6 +14,7 @@ import { bringIntoView, focusQuietly } from "../../lib/scroll";
 import { EmailDelivery } from "./email-delivery";
 import { PaymentScene } from "./payment-scene";
 import { KitSuccess } from "./kit-success";
+import { ReviewPanel } from "./review-panel";
 import { SimulatedCheckout } from "./simulated-checkout";
 import type { ExamFact } from "./exam-facts";
 import { FileTypeDrawing } from "../euk/doodles";
@@ -63,6 +64,8 @@ interface Quote {
     discount_paise?: number;
     coupon_code?: string | null;
     coupon_status?: "applied" | "invalid" | "no_effect" | null;
+    /** DEC-112: the code makes this kit free, so it is claimed, not paid. */
+    free_with_coupon?: boolean;
 }
 interface Order {
     order_id: string;
@@ -373,6 +376,7 @@ export function KitCheckout({
     // A partner's code, applied by the server to the quote and the order alike.
     const [coupon, setCoupon] = useState("");
     const [couponDraft, setCouponDraft] = useState("");
+    const [claiming, setClaiming] = useState(false);
     const revision = useRef(0);
     const mounted = useRef(true);
     const headingRef = useRef<HTMLHeadingElement>(null);
@@ -647,6 +651,40 @@ export function KitCheckout({
             onBusy(false);
         }
     };
+    // A code that makes the kit free is settled by our server, not Razorpay,
+    // which cannot take nothing (DEC-112). The files unlock only once the
+    // server has released them, exactly as after a payment.
+    const claimFree = async () => {
+        if (!kitId || !quote?.free_with_coupon || !quoteCovered || !ack || !allLive || busy || preparationBusy)
+            return;
+        setBusy(true);
+        setClaiming(true);
+        onBusy(true);
+        setError("");
+        setNote("");
+        try {
+            const claimed = await request<{ order_id: string }>(
+                `/v1/kits/${encodeURIComponent(kitId)}/claim-free?${new URLSearchParams([...files.map((file) => ["job_ids", file.jobId]), ["coupon", coupon]]).toString()}`,
+                "POST",
+            );
+            const nextReceipt = { orderId: claimed.order_id, amountPaise: 0 };
+            setReceipt(nextReceipt);
+            try {
+                if (receiptKey) sessionStorage.setItem(receiptKey, JSON.stringify(nextReceipt));
+            } catch {
+                /* Optional. */
+            }
+            setPending(true);
+            await refresh();
+        } catch (err) {
+            setError(err instanceof Error ? err.message : "That code could not be used.");
+            setPending(false);
+        } finally {
+            setBusy(false);
+            setClaiming(false);
+            onBusy(false);
+        }
+    };
     const extend = async (id: string) => {
         setExtending(id);
         setError("");
@@ -738,7 +776,7 @@ export function KitCheckout({
                 examName={exam.exam_name}
                 facts={facts}
                 headingRef={headingRef}
-                title={pending ? "Payment sent. Confirming it." : simOrder ? "Finish paying in the test payment window." : "Finish paying in the Razorpay window."}
+                title={claiming ? "Unlocking your files." : pending ? "Payment sent. Confirming it." : simOrder ? "Finish paying in the test payment window." : "Finish paying in the Razorpay window."}
                 note={
                     note ||
                     (pending
@@ -863,6 +901,9 @@ export function KitCheckout({
                             Save them somewhere you will find on the day you
                             upload, not only in Downloads.
                         </Note>
+                        {kitId && receipt && (
+                            <ReviewPanel kitId={kitId} orderId={receipt.orderId} />
+                        )}
                     </div>
                     <aside className="euk-delivered-side" aria-label="Delivery and receipt">
                         {kitId && (
@@ -1049,9 +1090,9 @@ export function KitCheckout({
                     <button
                         className="primary-button euk-total-pay"
                         type="button"
-                        onClick={() => void pay()}
+                        onClick={() => void (quote?.free_with_coupon ? claimFree() : pay())}
                         disabled={
-                            !quote?.is_payable ||
+                            !(quote?.is_payable || quote?.free_with_coupon) ||
                             !quoteCovered ||
                             !ack ||
                             !allLive ||
@@ -1061,15 +1102,21 @@ export function KitCheckout({
                         }
                     >
                         {busy
-                            ? "Opening checkout…"
-                            : quote?.is_payable
-                              ? `Pay ${money(quote.amount_paise)}`
-                              : "Checkout unavailable"}
+                            ? quote?.free_with_coupon
+                                ? "Unlocking…"
+                                : "Opening checkout…"
+                            : quote?.free_with_coupon
+                              ? "Get my files free"
+                              : quote?.is_payable
+                                ? `Pay ${money(quote.amount_paise)}`
+                                : "Checkout unavailable"}
                     </button>
                     <p className="euk-total-fine">
-                        Payment through Razorpay. No account needed.
+                        {quote?.free_with_coupon
+                            ? "Your code covers these files. No payment needed."
+                            : "Payment through Razorpay. No account needed."}
                     </p>
-                    {quote && !quote.is_payable && (
+                    {quote && !quote.is_payable && !quote.free_with_coupon && (
                         <p className="euk-total-note">
                             No payable items in this quote. Free documents
                             require a chargeable prepared image in the same

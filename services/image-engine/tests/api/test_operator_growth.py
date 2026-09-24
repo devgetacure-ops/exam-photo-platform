@@ -370,7 +370,7 @@ def test_a_coupon_is_counted_once_paid_and_then_runs_out(api):
         {"code": "x", "kind": "percent", "value": 10},
         {"code": "OK", "kind": "percent", "value": 95},
         {"code": "OK", "kind": "flat", "value": 5},
-        {"code": "OK", "kind": "free", "value": 10},
+        {"code": "OK", "kind": "gift", "value": 10},
     ],
 )
 def test_bad_coupons_are_refused(api, bad):
@@ -477,50 +477,31 @@ def test_deadline_reminders_go_once_three_days_before(api, monkeypatch):
     assert api.email_sender.sent[0]["to"] == "past@example.com"
 
 
-def test_feedback_is_signed_per_order_and_published_only_with_permission(api):
+def test_email_feedback_is_signed_per_order_and_shown_only_when_approved(api):
     _paid(api, "order_FB", "f@example.com")
     urls = marketing.feedback_urls(api, "order_FB")
     token = urls["yes"].split("t=")[1].split("&")[0]
-    assert (
-        client.post(
-            "/v1/feedback",
-            json={"order_id": "order_FB", "token": "forged", "worked": True},
-        ).status_code
-        == 403
-    )
-    assert (
-        client.post(
-            "/v1/feedback",
-            json={
-                "order_id": "order_FB",
-                "token": token,
-                "worked": True,
-                "comment": "Accepted first time",
-                "may_publish": False,
-            },
-        ).status_code
-        == 200
-    )
-    client.post(
-        "/v1/operator/feedback/order_FB/publish", headers=AUTH, json={"published": True}
-    )
+    forged = {"order_id": "order_FB", "token": "forged", "rating": 5}
+    assert client.post("/v1/feedback", json=forged).status_code == 403
+    body = {
+        "order_id": "order_FB",
+        "token": token,
+        "rating": 5,
+        "tags": ["Fast", "Not a real option"],
+        "comment": "Accepted first time",
+        "may_publish": True,
+    }
+    saved = client.post("/v1/feedback", json=body).json()["review"]
+    assert saved["tags"] == ["Fast"] and saved["status"] == "pending"
     assert client.get("/v1/testimonials").json()["testimonials"] == []
     client.post(
-        "/v1/feedback",
-        json={
-            "order_id": "order_FB",
-            "token": token,
-            "worked": True,
-            "may_publish": True,
-        },
-    )
-    client.post(
-        "/v1/operator/feedback/order_FB/publish", headers=AUTH, json={"published": True}
+        "/v1/operator/reviews/order_FB/status",
+        headers=AUTH,
+        json={"status": "approved"},
     )
     [shown] = client.get("/v1/testimonials").json()["testimonials"]
-    assert shown["comment"] == "Accepted first time" and "f@example.com" not in str(
-        shown
-    )
+    assert shown["comment"] == "Accepted first time" and shown["rating"] == 5
+    assert "f@example.com" not in str(shown)
 
 
 def test_the_delivery_email_asks_whether_it_worked():
@@ -543,7 +524,7 @@ def test_the_delivery_email_asks_whether_it_worked():
         "/v1/operator/reconcile",
         "/v1/operator/coupons",
         "/v1/operator/campaigns",
-        "/v1/operator/feedback",
+        "/v1/operator/reviews",
     ],
 )
 def test_release23_routes_refuse_without_the_token(api, path):

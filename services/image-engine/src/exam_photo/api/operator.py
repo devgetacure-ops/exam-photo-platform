@@ -482,6 +482,11 @@ def overview(service: "ApiService", days: int = 30) -> Dict[str, Any]:
             ),
         },
         "health": service.ledger.health((now - timedelta(days=7)).isoformat()),
+        # DEC-112: how candidates rate us, and bad ratings still waiting.
+        "reviews": service.ledger.review_summary(),
+        "low_reviews": [
+            r for r in service.ledger.reviews("pending") if (r.get("rating") or 5) <= 2
+        ][:20],
     }
 
 

@@ -6,10 +6,12 @@ import { factAttribution, type ExamFact } from "./exam-facts";
 /**
  * The wait between paying and receiving.
  *
- * A rubber stamp presses the application form, lifts, and presses again, and
- * the word PAID inks in where it lands: the one image every candidate
- * associates with a form being accepted. It loops only while we are genuinely
- * waiting on the payment provider, and a Pause stops it along with the tips.
+ * A rubber stamp hovers over the application form, inked and ready, and does
+ * not press. Nothing here may say PAID: this screen shows while Razorpay's
+ * window is open and while the payment is unconfirmed, and a candidate who
+ * sees "PAID" before we know it is true has been told something false. The
+ * stamp lands only on the success screen, once the server has released the
+ * files. A Pause stops it along with the tips.
  *
  * Beside it, the examination's own facts, one every seven seconds. The wait
  * is often a few seconds, sometimes longer; either way the candidate reads
@@ -72,12 +74,6 @@ export function PaymentScene({
                     <path className="euk-pay-sheet" d="M28 78 H 172 V 162 H 28 Z" />
                     <path d="M44 96 H 94 M44 110 H 88 M44 124 H 96 M44 138 H 82 M44 150 H 70" />
                     <ellipse className="euk-pay-shadow" cx="132" cy="100" rx="30" ry="5" />
-                    <g className="euk-pay-mark">
-                        <rect x="104" y="104" width="56" height="30" />
-                        <text x="132" y="126" textAnchor="middle">
-                            PAID
-                        </text>
-                    </g>
                     <g className="euk-pay-stamp">
                         <circle cx="132" cy="14" r="10" />
                         <path d="M126 24 V 42 H 138 V 24" />

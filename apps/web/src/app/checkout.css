@@ -602,88 +602,46 @@
     fill: var(--signal-deep);
 }
 
-.euk-pay-mark {
-    color: var(--signal-deep);
-    stroke: var(--signal-deep);
-    opacity: 0;
-    animation: euk-pay-ink 1800ms ease-out infinite;
-}
-
-.euk-pay-mark text {
-    fill: var(--signal-deep);
-    stroke: none;
-    font-family: var(--font-shoulders), "Arial Narrow", sans-serif;
-    font-weight: 900;
-    font-size: 17px;
-    letter-spacing: 0.04em;
-}
-
 .euk-pay-shadow {
     fill: var(--ink);
     stroke: none;
     transform-box: fill-box;
     transform-origin: center;
     opacity: 0.2;
-    animation: euk-pay-shadow 1800ms cubic-bezier(0.45, 0, 0.55, 1) infinite;
+    animation: euk-pay-shadow 2400ms ease-in-out infinite;
 }
 
 .euk-pay-stamp {
     fill: var(--paper);
     transform-box: view-box;
-    animation: euk-pay-press 1800ms cubic-bezier(0.45, 0, 0.55, 1) infinite;
+    animation: euk-pay-hover 2400ms ease-in-out infinite;
 }
 
-/* Anticipation up, a quick drop, a short hold on the paper, a slower lift. */
-@keyframes euk-pay-press {
+/* Waiting, not pressing: the stamp lands only once the payment is confirmed. */
+@keyframes euk-pay-hover {
     0%,
-    18% {
-        transform: translateY(0);
-    }
-    40% {
-        transform: translateY(-6px);
-    }
-    52%,
-    64% {
-        transform: translateY(40px);
-    }
-    92%,
     100% {
         transform: translateY(0);
+    }
+    50% {
+        transform: translateY(8px);
     }
 }
 
 @keyframes euk-pay-shadow {
     0%,
-    18%,
-    92%,
     100% {
         transform: scale(0.55);
         opacity: 0.15;
     }
-    52%,
-    64% {
-        transform: scale(1);
-        opacity: 0.35;
-    }
-}
-
-@keyframes euk-pay-ink {
-    0%,
-    52% {
-        opacity: 0;
-    }
-    58%,
-    86% {
-        opacity: 1;
-    }
-    100% {
-        opacity: 0;
+    50% {
+        transform: scale(0.7);
+        opacity: 0.22;
     }
 }
 
 .euk-pay[data-paused="true"] .euk-pay-stamp,
 .euk-pay[data-paused="true"] .euk-pay-shadow,
-.euk-pay[data-paused="true"] .euk-pay-mark,
 .euk-pay[data-paused="true"] .euk-pay-dots span {
     animation-play-state: paused;
 }
@@ -1132,10 +1090,6 @@
     .euk .euk-pay-tip-text {
         animation: none;
     }
-    .euk-pay-mark {
-        animation: none;
-        opacity: 1;
-    }
     .euk-done-tick,
     .euk-done-spark {
         animation: none;
@@ -1248,4 +1202,153 @@
 
 .euk .euk-coupon-note {
     color: var(--signal-deep);
+}
+
+/* "How did we do?" under the downloads (DEC-112). */
+.euk .euk-rate {
+    margin: 28px 0 0;
+    padding: 18px 16px;
+    border: var(--rule-thin) solid var(--hairline);
+    border-radius: 10px;
+    background: var(--paper-2);
+}
+
+.euk .euk-rate h3 {
+    font-size: 20px;
+    margin: 0 0 8px;
+}
+
+.euk .euk-rate fieldset {
+    border: 0;
+    margin: 12px 0 0;
+    padding: 0;
+}
+
+.euk .euk-rate legend {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0 0 6px;
+}
+
+.euk .euk-rate-offer {
+    font-weight: 600;
+    color: var(--signal-deep);
+}
+
+.euk .euk-rate-stars {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 2px;
+}
+
+.euk .euk-rate-stars legend {
+    width: 100%;
+}
+
+.euk .euk-rate-stars label {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    cursor: pointer;
+    font-size: 30px;
+    line-height: 1;
+    color: var(--hairline);
+}
+
+.euk .euk-rate-stars label[data-on="true"] {
+    color: var(--signal);
+}
+
+.euk .euk-rate-stars input,
+.euk .euk-rate-tags input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+}
+
+.euk .euk-rate-stars label:has(input:focus-visible),
+.euk .euk-rate-tags label:has(input:focus-visible) {
+    outline: 2px solid var(--ink);
+    outline-offset: 2px;
+    border-radius: 6px;
+}
+
+.euk .euk-rate-word {
+    margin-left: 8px;
+    font-weight: 600;
+}
+
+.euk .euk-rate-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.euk .euk-rate-tags legend {
+    width: 100%;
+}
+
+.euk .euk-rate-tags label {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 6px 14px;
+    border: var(--rule-thin) solid var(--hairline);
+    border-radius: 999px;
+    background: var(--paper);
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.euk .euk-rate-tags label[data-on="true"] {
+    border-color: var(--ink);
+    background: var(--ink);
+    color: var(--paper);
+}
+
+.euk .euk-rate-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 14px 0 0;
+    font-size: 14px;
+}
+
+.euk .euk-rate-field textarea,
+.euk .euk-rate-field input {
+    min-height: 44px;
+    padding: 8px 10px;
+    border: var(--rule-thin) solid var(--hairline);
+    border-radius: 6px;
+    background: var(--paper);
+    color: var(--ink);
+    font: inherit;
+}
+
+.euk .euk-rate .primary-button {
+    margin-top: 14px;
+}
+
+.euk .euk-rate-reward {
+    margin: 8px 0;
+    padding: 12px;
+    border: var(--rule-thin) dashed var(--signal);
+    border-radius: 8px;
+    background: var(--paper);
+}
+
+.euk .euk-rate-code {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 20px;
+    letter-spacing: 0.04em;
+}
+
+.euk .euk-rate-fine {
+    font-size: 13px;
+    color: var(--ink-55);
 }
