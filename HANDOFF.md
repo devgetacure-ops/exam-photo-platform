@@ -117,7 +117,8 @@ accepts. Signatures and thumb impressions have no sweep of this kind yet.
 
 - **The live phone journey** in *Not yet verified*, item 1.
 
-- **Google Search Console** (Domain property, TXT record in Cloudflare), **Bing Webmaster Tools** (import from Search Console), **Cloudflare Web Analytics** (the token goes in `NEXT_PUBLIC_CF_BEACON_TOKEN`, then `up -d --build web`). `docs/LAUNCH_GUIDE.md` has each step.
+- **Bing Webmaster Tools** (import from Search Console) and **Cloudflare Web Analytics** (the token goes in `NEXT_PUBLIC_CF_BEACON_TOKEN`, then `up -d --build web`). `docs/LAUNCH_GUIDE.md` has each step.
+- **Google Search Console is done** (24 September): domain property verified by TXT, `sitemap.xml` processed, 323 pages discovered. The first submissions read as *Sitemap could not be read*; the sitemap itself was always valid, and the failed fetches landed during container rebuilds. A Cloudflare **cache rule** now holds `/sitemap.xml`, `/robots.txt` and `/llms.txt` at the edge for an hour, so a crawl survives a deploy.
 - **Moving to Hostinger** before 11 October: a new read-only deploy key on the new box (the repository is private), the same compose deploy, `model-fetch` again (or copy the `models` volume), carry `deploy/.env` across by hand, point the Cloudflare `A` records at the new IP. The Razorpay webhook URL does not change, because the domain does not.
 
 ## The operator console (DEC-108 to DEC-113) — live since 24 September
