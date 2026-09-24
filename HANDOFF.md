@@ -13,15 +13,15 @@ for its reasoning, and where it disagrees with this section, this section wins.
 | Plan for the host | Move to **Hostinger KVM 4** (India, 16 GB); **destroy the Vultr server by 11 October** (owner holds the reminder) |
 | Access | `ssh root@65.20.73.233` with the owner's key `C:\Users\dmbar\.ssh\id_ed25519` (ed25519, no passphrase). Password and keyboard-interactive login are off in `/etc/ssh/sshd_config.d/01-hardening.conf`, which must sort **before** `50-cloud-init.conf` (sshd keeps the first value it reads) |
 | Firewall | Vultr firewall group `examuploadkit`: inbound TCP 22, 80, 443 from anywhere; everything else dropped |
-| Code | `/opt/exam-photo-platform`, branch `main`, images built from `6748f3e` (DEC-108 to DEC-111, deployed 24 September) |
+| Code | `/opt/exam-photo-platform`, branch `main`, images built from `2f22d7c` (DEC-108 to DEC-113, the operator console, deployed 24 September) |
 | Repository | **Public** again (23 September). The server still reads it over SSH with a read-only deploy key, `/root/.ssh/github_deploy`, registered in GitHub → Settings → Deploy keys as `vultr-server (read-only)`, and wired in `/root/.ssh/config`. GitHub's host key was checked against its published fingerprint. The key cannot push |
 | Stack | Compose project `exam-upload`: `engine`, `web`, `proxy` (Caddy). Volumes `models`, `artifacts`, `requests`, `caddy_data`, `caddy_config` |
 | Secrets | **Only** in `/opt/exam-photo-platform/deploy/.env`, mode 600, gitignored. The two `/root` copies were shredded on 22 September (DEC-106). The operator token was rotated the same day; its current value is also in `/root/operator-token.txt`, mode 600. Razorpay, Resend and Turnstile credentials were checked live on 22 September and all three still work; the owner decided not to rotate them |
 | DNS and TLS | Cloudflare, **proxied (orange cloud)** for `@` and `www`, SSL/TLS **Full (strict)**. Caddy holds a Let's Encrypt certificate for `examuploadkit.com`, issued 16 September, expiring 15 December, renewed by Caddy itself |
-| Payments | Razorpay **live** keys. One **live-mode** webhook to `https://examuploadkit.com/v1/payments/razorpay/webhook`, events `payment.captured` and `order.paid` only. Test mode has **no** webhook: Razorpay keeps separate webhook lists per mode, which is why the day's test payments never released |
+| Payments | Razorpay **live** keys. One **live-mode** webhook to `https://examuploadkit.com/v1/payments/razorpay/webhook`, events `payment.captured`, `order.paid` and `payment.failed` (the last feeds *checkouts that did not pay*, DEC-109). Test mode has **no** webhook: Razorpay keeps separate webhook lists per mode, which is why the day's test payments never released |
 | Email | Resend over SMTP. `ExamUploadKit <files@examuploadkit.com>` (a real Zoho mailbox, so replies do not bounce), `Reply-To: support@examuploadkit.com`. Cloudflare Email Routing must stay **off**: it would replace Zoho's MX records |
 | Bot check | Cloudflare Turnstile widget `examuploadkit`, Managed mode, both hostnames. The engine validates the token against `CF-Connecting-IP` (DEC-106), which is only trustworthy because the origin answers Cloudflare alone |
-| Cloudflare | Minimum TLS 1.2, Always Use HTTPS, SSL/TLS **Full (strict)**. A custom rule, `Never challenge the Razorpay webhook`, skips every WAF component including **Browser Integrity Check** for `/v1/payments/razorpay/webhook` — without it a bot rule silently stops payments releasing files. Verified 22 September: that path answers `400 {"detail":"Webhook rejected"}` from the application, not 403 from Cloudflare |
+| Cloudflare | Minimum TLS 1.2, Always Use HTTPS, SSL/TLS **Full (strict)**. **Zero Trust** team `summer-limit-4301` guards `/admin` (DEC-108). A custom rule, `Never challenge the Razorpay webhook`, skips every WAF component including **Browser Integrity Check** for `/v1/payments/razorpay/webhook` and `/v1/unsubscribe` — without it a bot rule silently stops payments releasing files. Verified 22 September: that path answers `400 {"detail":"Webhook rejected"}` from the application, not 403 from Cloudflare |
 | CI | **Blocked at GitHub, not by this repository.** Every run since 16 September fails before starting with *"recent account payments have failed or your spending limit needs to be increased"*. Making the repository public did not clear it; it is an account-level billing block. Until it is cleared at GitHub → Settings → Billing and plans, **verification is local only** (`npx vitest run`, and the engine's ruff/mypy/pytest) |
 | Models | Filled by `model-fetch` on the server. BiRefNet ONNX `940,792,905` bytes, SHA-256 `d592e635aeb091e6f65e5fb3e858a2972601bc8bdbd27b88efa1ad4be8d7cd23`, with its manifest beside it on the volume (DEC-101) |
 | `/ready` | `ready`, `purchase_gate: enabled`, `operator_surface: authenticated`, `payments: configured`, `email: configured`. Answered only from private addresses; `/ready` and `/health` are 404 from the internet |
@@ -36,6 +36,7 @@ for its reasoning, and where it disagrees with this section, this section wins.
 | 21 Sep | Those four were the whole of Crop Mode B, and were wrong twice: they refused a head close to an edge, and framed at 0.74 of the frame against the reviewed set's 0.9. Every record now resolves to a size it publishes and so to Mode A; GATE takes 413 x 531, Karnataka PSC 117 x 150. **Verified against the owner's approved outputs before deploying** | DEC-105 |
 | 17 & 22 Sep | Security: a 100-page document cap, three email sends per file, Next.js 16.3.5 and Vitest 5.0.1 (both audits clean); then the origin closed to everything but Cloudflare, the bot check given the real visitor, a health watch, `fail2ban`, log rotation, HSTS and a report-only CSP | DEC-106 |
 | 23 Sep | A candidate could not find how to carry on after preparing a file. The next file is now the loud button, the floating bar follows progress, the page moves to what follows, and the waiting row is marked | DEC-107 |
+| 24 Sep | **The operator console** at `/admin`, behind Cloudflare Access: orders and refunds, every upload (photo while held), customers with full addresses, an inbox matched to orders, growth analytics from a first-party visit counter, Razorpay reconciliation, a deadline calendar, marketing emails with unsubscribe, coupon codes, reviews with owner approval and a free-files reward, alerts and an 08:00 digest by email. Rebuilt the same day as a full-screen console (shadcn/ui, TanStack Table, Recharts). The waiting screen no longer shows PAID before a payment is confirmed | DEC-108 to DEC-113 |
 
 ## Measured on the server, 16 September
 
@@ -65,7 +66,8 @@ docker compose -f deploy/docker-compose.yml logs --since 30m engine
 - **Orders** are JSON files in the `artifacts` volume under `_orders/`, kept eight years (DEC-108). The operator page at `/admin` shows them; by hand, `GET /v1/orders/{order_id}/evidence` with the header `X-Operator-Token: <EXAM_PHOTO_OPERATOR_TOKEN>` (not a Bearer token).
 - **Rolling back**: `git checkout <previous commit>` on the server, then `up -d --build`; an older `.env` is in `/root` as above.
 - **When the Vultr server is destroyed**, delete its deploy key in GitHub → Settings → Deploy keys.
-- The three test-mode orders from launch day are set aside in `/root/removed-test-orders/`; only the real order remains in the app.
+- **The data is clean (24 September).** The console holds only real business: two paid live orders (16 Sep, Rs 3 each, both delivered), one unpaid live checkout (17 Sep), and the eight sessions after launch. Removed: one test visit from a deploy check and four launch-morning test sessions; the three test-mode orders were already set aside in `/root/removed-test-orders/`. Backup of everything before the clean-up: `/root/cleanup-backup-20260924-0753`.
+- **The history store** (`_ledger/ledger.sqlite3` on the `artifacts` volume) holds every preparation, contact, message, review, coupon, visit and campaign. Back it up with `_orders/`; carry both across on the Hostinger move.
 
 ## What guards the server (DEC-106)
 
@@ -78,9 +80,8 @@ docker compose -f deploy/docker-compose.yml logs --since 30m engine
 | Headers | `deploy/Caddyfile` | HSTS (2 years, not preloaded), Permissions-Policy, and **CSP in report-only** — watch the browser console for a week before enforcing it |
 
 **Still the owner's, and worth doing:** rotate the Razorpay, Resend and Turnstile
-credentials (they passed through two chat sessions); check Cloudflare's own
-settings, including a rule that never challenges
-`/v1/payments/razorpay/webhook`; and decide on Vultr's automatic backups.
+credentials (they passed through several chat sessions); decide on Vultr's
+automatic backups. Cloudflare account 2FA is on (24 September).
 
 ## Checking every examination (DEC-104)
 
@@ -107,80 +108,59 @@ accepts. Signatures and thumb impressions have no sweep of this kind yet.
 
 ## Not yet verified on the live site
 
-1. **A real candidate journey since 17 September.** The engine log shows **no preparation at all** since then: the crop fix (DEC-105), the browser's shrink-before-upload and camera button (DEC-103), and the next-step changes (DEC-107) have never been exercised by a real upload. One phone journey — take a photograph, prepare, pay Rs 3 — would settle all three.
+1. **A real candidate journey since 17 September.** No preparation has run on the live site since then: the crop fix (DEC-105), shrink-before-upload and the camera button (DEC-103), the next-step changes (DEC-107), the new waiting and success screens, the review box, and a free code at checkout (DEC-112) have never been exercised live. One phone journey settles all of them: prepare, pay Rs 3, review, then use the code on a second examination. The owner said on 24 September they would do this.
 2. **The full sweep after DEC-105.** It was stopped after one examination on the owner's instruction; the fix itself was verified on the owner's ten labelled photographs and against their approved outputs. Rerun with `scripts/smoke_catalogue_photographs.py` (about 70 minutes, no effect on the live site).
 3. **The delivery email in Outlook and the Gmail app.**
 4. **The report-only CSP.** It reports nowhere yet: watch the browser console on the live pages for a week before enforcing it.
 
 ## Waiting on the owner
 
+- **The live phone journey** in *Not yet verified*, item 1.
+
 - **Google Search Console** (Domain property, TXT record in Cloudflare), **Bing Webmaster Tools** (import from Search Console), **Cloudflare Web Analytics** (the token goes in `NEXT_PUBLIC_CF_BEACON_TOKEN`, then `up -d --build web`). `docs/LAUNCH_GUIDE.md` has each step.
 - **Moving to Hostinger** before 11 October: a new read-only deploy key on the new box (the repository is private), the same compose deploy, `model-fetch` again (or copy the `models` volume), carry `deploy/.env` across by hand, point the Cloudflare `A` records at the new IP. The Razorpay webhook URL does not change, because the domain does not.
 
 ## The operator console (DEC-108 to DEC-113) — live since 24 September
 
-`https://examuploadkit.com/admin` is the back office, a full-screen console (DEC-113: sidebar or phone tab bar, Ctrl K search, tables with side panels, light and dark): **Overview** (money,
-charts, time to prepare, per-examination revenue and conversion, needs
-attention, checkouts that did not pay, health history), **Orders** (every
-detail, timeline, refund mark, reply templates, notes), **Uploads** (every
-preparation kept after erasure; the photograph while it is held),
-**Customers** (full addresses, spend), **Inbox** (complaints and grievances
-matched to orders, with the 48-hour and one-month clocks; exam requests grouped
-by demand), **Growth** (funnel, time on site, sources, devices, empty
-searches, price test, repeat customers, Razorpay reconciliation),
-**Calendar** (closing dates, with an optional reminder email), **Marketing**
-(campaigns with one-click unsubscribe, coupon codes, "did it work?" answers),
-**Activity**, search, and CSV exports. `/admin/rules` is unchanged. The
-candidate site gains a visit counter of its own, a "Have a code?" field at
-checkout, a support form that asks what the message is about, and a
-`/feedback` page linked from the delivery email.
+`https://examuploadkit.com/admin`, behind Cloudflare Access (team
+`summer-limit-4301`, policy *Owner only* = `examuploadkit@gmail.com`, One-time
+PIN or the Cloudflare login). The web app checks Access's signed assertion
+again, so anything forged gets 404. A full-screen console: sidebar with counts
+on a laptop, a tab bar on a phone, Ctrl K search, sortable tables whose rows
+open in a side panel (`?open=…`), toasts after every action, light or dark by
+device. `/admin/rules` is unchanged.
 
-The history lives in `_ledger/ledger.sqlite3` on the `artifacts` volume
-(SQLite, no images). Back it up with the orders; nothing sweeps it except the
-90-day health samples.
+| Page | What it is for |
+|---|---|
+| Overview | Money and orders against the period before, visitors who paid, rating, revenue and upload charts, **To do**, examinations, system health |
+| Orders | Every checkout; the panel has payer, files, timeline, **Mark refunded** (after refunding in Razorpay), saved replies, notes |
+| Uploads | Every preparation with time per step; the photograph only while the file is held; opening one is logged |
+| Customers | Every full address, where it came from, spend, orders, messages |
+| Inbox | Support-form questions, complaints and grievances matched to their order, with the 48-hour and one-month clocks; exam requests with *Most wanted* and one-click "it is added" email |
+| Reviews | Stars, options and words from the downloads screen and the delivery email; nothing is public until the candidate allowed it and the owner approves |
+| Growth | Funnel, time on site, sources (`?ref=name` links), devices, empty searches, price test, repeat customers, Razorpay check |
+| Marketing | Group, count, test, send; every email has a signed one-click unsubscribe |
+| Coupons | The **free-files review offer** switch (running since 24 Sep) and the owner's codes: % off, Rs off, or free |
+| Calendar | Closing dates entered by hand; optional reminder to past customers 3 days before |
+| Activity | Every change, and every opening of an upload or a customer |
 
-**Done on 24 September** (kept as the record of how; repeat on the Hostinger move). Cloudflare Access application `Operator page` on `examuploadkit.com/admin`, team `summer-limit-4301`, policy *Owner only* (`examuploadkit@gmail.com`), login by One-time PIN or the Cloudflare account. `deploy/.env` holds `EUK_ACCESS_TEAM_DOMAIN`, `EUK_ACCESS_AUD` and a generated `EXAM_PHOTO_LINK_SECRET`; the previous `.env` is in `/root/env-backup-*.env`. Verified live: `/admin` redirects to Access, a forged assertion gets 404, the operator API refuses without the token, reconciliation reached Razorpay, the watch sent its first digest.
+Settings in `deploy/.env` (engine unless noted): `EUK_ACCESS_TEAM_DOMAIN`,
+`EUK_ACCESS_AUD` and `EXAM_PHOTO_OPERATOR_TOKEN` (web too, run time only);
+`EXAM_PHOTO_LINK_SECRET` signs unsubscribe and feedback links (rotating it breaks
+links already sent); `EXAM_PHOTO_PRICE_TEST_LADDER` / `_SHARE` run a price test
+(off). `euk-watch` (installed at `/usr/local/sbin/euk-watch.py`, not run from the
+repository) emails new requests, alerts and the 08:00 IST digest to support@.
+Engine routes are under `/v1/operator/…` with the `X-Operator-Token` header.
 
-1. **Cloudflare Zero Trust** → Access → Applications → *Self-hosted*: domain
-   `examuploadkit.com`, path `admin` (it covers everything under `/admin`).
-   Policy *Allow*, include *Emails* = the owner's address; login method
-   *One-time PIN*. Copy the application's **Audience (AUD) tag**, and note the
-   team domain (`https://<team>.cloudflareaccess.com`).
-2. In `deploy/.env` on the server: `EUK_ACCESS_TEAM_DOMAIN=https://<team>.cloudflareaccess.com`
-   and `EUK_ACCESS_AUD=<the tag>`. `EXAM_PHOTO_OPERATOR_TOKEN` is already there;
-   compose now passes it to the web container too, at run time only.
-3. `git pull --ff-only`, then `docker compose -f deploy/docker-compose.yml up -d --build engine web`.
-   **This restarts the engine** (about 12 s of warmup); check that no order is
-   between payment and release first. The proxy is not touched.
-4. `install -m 755 deploy/ops/euk-watch.py /usr/local/sbin/euk-watch.py` — the
-   timer runs the installed copy, not the repository's. From then on each new
-   request is emailed once to support@ with the candidate's address, and the
-   alerts and the 08:00 IST digest arrive by email.
-5. **Razorpay dashboard** → Settings → Webhooks → the live webhook → add the
-   event **`payment.failed`**. Without it the *checkouts that did not pay*
-   list stays empty. The Cloudflare rule that never challenges the webhook
-   path already covers it.
-6. **Cloudflare** → the custom rule *Never challenge the Razorpay webhook*: add
-   the path **`/v1/unsubscribe`**. Gmail's one-click unsubscribe is a POST from
-   Google's servers, which a bot rule would otherwise block.
-7. Optional, in `deploy/.env`: `EXAM_PHOTO_LINK_SECRET` (`openssl rand -hex 32`)
-   so unsubscribe and feedback links do not depend on the operator token, and
-   `EXAM_PHOTO_PRICE_TEST_LADDER` / `EXAM_PHOTO_PRICE_TEST_SHARE` to run a price
-   test. Both are engine settings (`up -d engine`).
+**On the Hostinger move**, repeat: the Access application stays as it is (it is
+bound to the domain); copy `.env` including the three Access and link values;
+install `euk-watch.py`; copy the `artifacts` volume (orders, ledger, usage).
 
-Engine routes behind the operator token (`X-Operator-Token` header) are all
-under `/v1/operator/…` plus `GET /v1/orders`. Order records are kept **eight
-years with their addresses** (DEC-109 withdrew DEC-108's 180-day removal). The
-three orders from before these changes show "not recorded" for the examination
-and address; addresses exist only from the day this is deployed.
-
-**Reviews and the free-files offer (DEC-112)**: candidates review under their
-downloads; you approve on **Reviews**; the offer is started and stopped on
-**Coupons**, where you also make your own codes (percent, rupees or free).
-**Not built yet**: showing approved reviews on the candidate site (the engine
-serves them, with the average and counts, at `GET /v1/testimonials`). **Still saying the old thing**:
-the delivery email's footer (address not stored) and the request form's consent
-tick (deleted after 30 days).
+**Decided by the owner, do not reopen**: full email addresses are kept for
+marketing (DEC-109); the delivery email's footer and the request form's consent
+ticks keep their old wording. **Not built**: showing approved reviews on the
+candidate site (`GET /v1/testimonials` serves them with the average and counts;
+where and how to show them is the owner's to decide once there are reviews).
 
 ---
 
