@@ -117,7 +117,8 @@ accepts. Signatures and thumb impressions have no sweep of this kind yet.
 
 - **The live phone journey** in *Not yet verified*, item 1.
 
-- **Bing Webmaster Tools** (import from Search Console) and **Cloudflare Web Analytics** (the token goes in `NEXT_PUBLIC_CF_BEACON_TOKEN`, then `up -d --build web`). `docs/LAUNCH_GUIDE.md` has each step.
+- **Bing Webmaster Tools**: <https://www.bing.com/webmasters> -> *Import from Google Search Console*. `docs/LAUNCH_GUIDE.md` has the step.
+- **Cloudflare Web Analytics is on** (24 September): site `examuploadkit.com`, RUM set to *Enable with JS Snippet installation* so Cloudflare does not inject at the edge and the site's own tag is the only one. The token lives in `deploy/.env` as `NEXT_PUBLIC_CF_BEACON_TOKEN`; it is a build argument, so changing it needs `up -d --build web`. It is not a secret, it ships in the page. The privacy page states it automatically once the token is set. It counts everyone, by page, referrer, country and device; the console's own beacon (DEC-110) tracks journeys. Both are wanted.
 - **Google Search Console is done** (24 September): domain property verified by TXT, `sitemap.xml` processed, 323 pages discovered. The first submissions read as *Sitemap could not be read*; the sitemap itself was always valid, and the failed fetches landed during container rebuilds. A Cloudflare **cache rule** now holds `/sitemap.xml`, `/robots.txt` and `/llms.txt` at the edge for an hour, so a crawl survives a deploy.
 - **Moving to Hostinger** before 11 October: a new read-only deploy key on the new box (the repository is private), the same compose deploy, `model-fetch` again (or copy the `models` volume), carry `deploy/.env` across by hand, point the Cloudflare `A` records at the new IP. The Razorpay webhook URL does not change, because the domain does not.
 

@@ -8,8 +8,8 @@ that creates an account, spends money or publishes the site is yours.
 > on the promotional credit) with Cloudflare proxying, Turnstile, Resend and live
 > Razorpay payments; the move to Hostinger KVM 4 comes before 11 October. What
 > runs where, and what is still open, is in *Live Operations* at the top of
-> `HANDOFF.md`. Still to do from this guide: Search Console, Bing and Web
-> Analytics. The steps below are kept for the Hostinger move, with what launch
+> `HANDOFF.md`. Still to do from this guide: Bing. Search Console and Web
+> Analytics were finished on 24 September. The steps below are kept for the Hostinger move, with what launch
 > day taught added where it applies.
 
 ## What runs where, and why not Vercel alone
