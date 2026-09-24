@@ -1,6 +1,6 @@
 # Live Operations
 
-**Last updated: 2026-09-23.** `https://examuploadkit.com` is
+**Last updated: 2026-09-24.** `https://examuploadkit.com` is
 live and taking real payments. **This section is the current truth for running
 the site**; everything from *Platform State* down is the build history, kept
 for its reasoning, and where it disagrees with this section, this section wins.
@@ -13,7 +13,7 @@ for its reasoning, and where it disagrees with this section, this section wins.
 | Plan for the host | Move to **Hostinger KVM 4** (India, 16 GB); **destroy the Vultr server by 11 October** (owner holds the reminder) |
 | Access | `ssh root@65.20.73.233` with the owner's key `C:\Users\dmbar\.ssh\id_ed25519` (ed25519, no passphrase). Password and keyboard-interactive login are off in `/etc/ssh/sshd_config.d/01-hardening.conf`, which must sort **before** `50-cloud-init.conf` (sshd keeps the first value it reads) |
 | Firewall | Vultr firewall group `examuploadkit`: inbound TCP 22, 80, 443 from anywhere; everything else dropped |
-| Code | `/opt/exam-photo-platform`, branch `main`, images built from `216083e` (DEC-107) |
+| Code | `/opt/exam-photo-platform`, branch `main`, images built from `6748f3e` (DEC-108 to DEC-111, deployed 24 September) |
 | Repository | **Public** again (23 September). The server still reads it over SSH with a read-only deploy key, `/root/.ssh/github_deploy`, registered in GitHub → Settings → Deploy keys as `vultr-server (read-only)`, and wired in `/root/.ssh/config`. GitHub's host key was checked against its published fingerprint. The key cannot push |
 | Stack | Compose project `exam-upload`: `engine`, `web`, `proxy` (Caddy). Volumes `models`, `artifacts`, `requests`, `caddy_data`, `caddy_config` |
 | Secrets | **Only** in `/opt/exam-photo-platform/deploy/.env`, mode 600, gitignored. The two `/root` copies were shredded on 22 September (DEC-106). The operator token was rotated the same day; its current value is also in `/root/operator-token.txt`, mode 600. Razorpay, Resend and Turnstile credentials were checked live on 22 September and all three still work; the owner decided not to rotate them |
@@ -117,7 +117,7 @@ accepts. Signatures and thumb impressions have no sweep of this kind yet.
 - **Google Search Console** (Domain property, TXT record in Cloudflare), **Bing Webmaster Tools** (import from Search Console), **Cloudflare Web Analytics** (the token goes in `NEXT_PUBLIC_CF_BEACON_TOKEN`, then `up -d --build web`). `docs/LAUNCH_GUIDE.md` has each step.
 - **Moving to Hostinger** before 11 October: a new read-only deploy key on the new box (the repository is private), the same compose deploy, `model-fetch` again (or copy the `models` volume), carry `deploy/.env` across by hand, point the Cloudflare `A` records at the new IP. The Razorpay webhook URL does not change, because the domain does not.
 
-## The operator page (DEC-108 to DEC-111) — built, not yet deployed
+## The operator page (DEC-108 to DEC-111) — live since 24 September
 
 `https://examuploadkit.com/admin` is the back office: **Overview** (money,
 charts, time to prepare, per-examination revenue and conversion, needs
@@ -139,7 +139,7 @@ The history lives in `_ledger/ledger.sqlite3` on the `artifacts` volume
 (SQLite, no images). Back it up with the orders; nothing sweeps it except the
 90-day health samples.
 
-**It answers 404 to everyone until all of this is done**, in this order:
+**Done on 24 September** (kept as the record of how; repeat on the Hostinger move). Cloudflare Access application `Operator page` on `examuploadkit.com/admin`, team `summer-limit-4301`, policy *Owner only* (`examuploadkit@gmail.com`), login by One-time PIN or the Cloudflare account. `deploy/.env` holds `EUK_ACCESS_TEAM_DOMAIN`, `EUK_ACCESS_AUD` and a generated `EXAM_PHOTO_LINK_SECRET`; the previous `.env` is in `/root/env-backup-*.env`. Verified live: `/admin` redirects to Access, a forged assertion gets 404, the operator API refuses without the token, reconciliation reached Razorpay, the watch sent its first digest.
 
 1. **Cloudflare Zero Trust** → Access → Applications → *Self-hosted*: domain
    `examuploadkit.com`, path `admin` (it covers everything under `/admin`).
