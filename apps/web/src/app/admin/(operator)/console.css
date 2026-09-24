@@ -1,0 +1,159 @@
+/*
+ * The operator console (DEC-113). Its own look, apart from the candidate site:
+ * warm neutrals, the brand orange only for emphasis, red for problems, amber
+ * for waiting, green for done. Light or dark follows the device unless the
+ * owner picks one (`data-theme` on `.op-root`).
+ *
+ * Colours are tokens; components use them through Tailwind's arbitrary
+ * values, e.g. `bg-[var(--op-card)]`.
+ */
+
+.op-root {
+    --op-bg: #fafaf9;
+    --op-card: #ffffff;
+    --op-muted-bg: #f5f5f4;
+    --op-hover: #f0efed;
+    --op-border: #e7e5e4;
+    --op-border-strong: #d6d3d1;
+    --op-text: #1c1917;
+    --op-muted: #6b6560;
+    --op-faint: #a8a29e;
+    --op-accent: #d9431f;
+    --op-accent-soft: #fbe3db;
+    --op-accent-text: #b33413;
+    --op-primary: #1c1917;
+    --op-primary-text: #ffffff;
+    --op-good: #15803d;
+    --op-good-bg: #f0fdf4;
+    --op-warn: #b45309;
+    --op-warn-bg: #fffbeb;
+    --op-bad: #b91c1c;
+    --op-bad-bg: #fef2f2;
+    --op-info: #1d4ed8;
+    --op-info-bg: #eff6ff;
+    --op-shadow: 0 1px 2px rgb(28 25 23 / 0.06), 0 1px 3px rgb(28 25 23 / 0.04);
+    --op-shadow-lg: 0 16px 40px rgb(28 25 23 / 0.14);
+    --op-chart-1: #d9431f;
+    --op-chart-2: #f2a48f;
+
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    display: flex;
+    overflow: hidden;
+    background: var(--op-bg);
+    color: var(--op-text);
+    font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+    color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+    .op-root:not([data-theme="light"]) {
+        --op-bg: #0c0a09;
+        --op-card: #161412;
+        --op-muted-bg: #1d1a18;
+        --op-hover: #24211e;
+        --op-border: #2a2623;
+        --op-border-strong: #3a3531;
+        --op-text: #fafaf9;
+        --op-muted: #a8a29e;
+        --op-faint: #78716c;
+        --op-accent: #f26a4b;
+        --op-accent-soft: #3d1f17;
+        --op-accent-text: #f8a58f;
+        --op-primary: #fafaf9;
+        --op-primary-text: #0c0a09;
+        --op-good: #4ade80;
+        --op-good-bg: #0f2a19;
+        --op-warn: #fbbf24;
+        --op-warn-bg: #2b2108;
+        --op-bad: #f87171;
+        --op-bad-bg: #331313;
+        --op-info: #93c5fd;
+        --op-info-bg: #0f1e38;
+        --op-shadow: 0 1px 2px rgb(0 0 0 / 0.4);
+        --op-shadow-lg: 0 16px 40px rgb(0 0 0 / 0.5);
+        --op-chart-1: #f26a4b;
+        --op-chart-2: #6b3325;
+        color-scheme: dark;
+    }
+}
+
+.op-root[data-theme="dark"] {
+    --op-bg: #0c0a09;
+    --op-card: #161412;
+    --op-muted-bg: #1d1a18;
+    --op-hover: #24211e;
+    --op-border: #2a2623;
+    --op-border-strong: #3a3531;
+    --op-text: #fafaf9;
+    --op-muted: #a8a29e;
+    --op-faint: #78716c;
+    --op-accent: #f26a4b;
+    --op-accent-soft: #3d1f17;
+    --op-accent-text: #f8a58f;
+    --op-primary: #fafaf9;
+    --op-primary-text: #0c0a09;
+    --op-good: #4ade80;
+    --op-good-bg: #0f2a19;
+    --op-warn: #fbbf24;
+    --op-warn-bg: #2b2108;
+    --op-bad: #f87171;
+    --op-bad-bg: #331313;
+    --op-info: #93c5fd;
+    --op-info-bg: #0f1e38;
+    --op-shadow: 0 1px 2px rgb(0 0 0 / 0.4);
+    --op-shadow-lg: 0 16px 40px rgb(0 0 0 / 0.5);
+    --op-chart-1: #f26a4b;
+    --op-chart-2: #6b3325;
+    color-scheme: dark;
+}
+
+.op-root *,
+.op-root *::before,
+.op-root *::after {
+    box-sizing: border-box;
+}
+
+.op-root a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.op-root :focus-visible {
+    outline: 2px solid var(--op-accent);
+    outline-offset: 2px;
+}
+
+.op-root ::selection {
+    background: var(--op-accent-soft);
+}
+
+.op-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: var(--op-border-strong) transparent;
+}
+
+.op-root .op-num {
+    font-variant-numeric: tabular-nums;
+}
+
+/* Recharts draws with these, so the charts follow the theme too. */
+.op-root .recharts-cartesian-axis-tick-value {
+    fill: var(--op-muted);
+    font-size: 12px;
+}
+
+.op-root .recharts-cartesian-grid line {
+    stroke: var(--op-border);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .op-root * {
+        animation: none !important;
+        transition: none !important;
+    }
+}

@@ -202,6 +202,9 @@ export interface OrderView extends Order {
     payer_email?: string | null;
     payer_contact?: string | null;
     payment_method?: string | null;
+    coupon_code?: string | null;
+    discount_paise?: number;
+    price_variant?: string;
     failed_payments?: {
         at?: string | null;
         error?: string | null;

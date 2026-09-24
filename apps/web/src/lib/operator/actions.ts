@@ -125,3 +125,40 @@ export function actionFor(kind: string, id: string | undefined, form: FormData, 
     }
     return { error: "unknown action" };
 }
+
+/** What the toast says after an action succeeds (DEC-113). */
+export function doneMessage(kind: string, form: FormData): string {
+    const value = (name: string) => {
+        const raw = form.get(name);
+        return typeof raw === "string" ? raw.trim() : "";
+    };
+    switch (kind) {
+        case "note":
+            return "Note saved.";
+        case "ticket":
+            if (value("status")) return `Marked ${value("status")}.`;
+            if (value("order_id")) return `Linked to ${value("order_id")}.`;
+            if (value("added")) return value("added") === "true" ? "Marked as added." : "No longer marked as added.";
+            return "Saved.";
+        case "refund":
+            return value("undo") === "true" ? "Refund mark removed." : "Marked refunded.";
+        case "deadline":
+            return value("closes_on") ? `Closing date set to ${value("closes_on")}.` : "Closing date cleared.";
+        case "coupon":
+            return `Code ${value("code").toUpperCase()} saved.`;
+        case "coupon-active":
+            return value("active") === "true" ? "Code switched on." : "Code switched off.";
+        case "campaign":
+            return "Sending started. Progress shows below.";
+        case "campaign-test":
+            return `Test sent to ${value("to")}.`;
+        case "exam-added":
+            return "Everyone who asked is being emailed.";
+        case "review":
+            return value("status") === "approved" ? "Review approved." : value("status") === "rejected" ? "Review rejected." : "Review updated.";
+        case "offer":
+            return value("on") === "true" ? "Review offer started." : "Review offer stopped.";
+        default:
+            return "Saved.";
+    }
+}

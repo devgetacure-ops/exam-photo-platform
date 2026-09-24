@@ -1,8 +1,11 @@
+import type { Metadata } from "next";
 import Link from "next/link";
-import { ActionForm, Badge, Failure } from "../../../../components/operator/ui";
-import { when } from "../../../../lib/operator/data";
+import { when } from "../../../../lib/operator/format";
+import { ActionForm, Badge, Button, Card, CardHeader, Check, Empty, Field, Input, PageHeader, Problem, Select, Textarea } from "../../../../components/console/ui";
 import { engineJson, enginePost } from "../../../../lib/operator/engine";
 import { requireOperator } from "../../../../lib/operator/guard";
+
+export const metadata: Metadata = { title: "Marketing" };
 
 interface Campaign {
     id: string;
@@ -27,147 +30,154 @@ interface CampaignsData {
 
 const NEEDS_TARGET = new Set(["paid_exam", "asked_exam"]);
 
-export default async function MarketingPage({
-    searchParams,
-}: {
-    searchParams: Promise<{ segment?: string; target?: string; subject?: string; body?: string; tested?: string }>;
-}) {
+export default async function MarketingPage({ searchParams }: { searchParams: Promise<{ segment?: string; target?: string; subject?: string; body?: string }> }) {
     const operator = await requireOperator();
     const draft = await searchParams;
-    const campaigns = await engineJson<CampaignsData>("/v1/operator/campaigns");
-    if (!campaigns.ok) return <Failure what="campaigns" error={campaigns.error} />;
-    const segment = draft.segment && draft.segment in campaigns.value.segments ? draft.segment : "";
+    const loaded = await engineJson<CampaignsData>("/v1/operator/campaigns");
+    if (!loaded.ok) return <Problem what="campaigns" error={loaded.error} />;
+    const data = loaded.value;
+    const segment = draft.segment && draft.segment in data.segments ? draft.segment : "";
+    const target = draft.target ?? "";
     let preview: { count: number; sample: string[] } | null = null;
-    if (segment) {
-        const response = await enginePost("/v1/operator/campaigns/preview", { segment, target: draft.target ?? "" }).catch(() => null);
+    if (segment && (!NEEDS_TARGET.has(segment) || target)) {
+        const response = await enginePost("/v1/operator/campaigns/preview", { segment, target }).catch(() => null);
         preview = response?.ok ? ((await response.json()) as { count: number; sample: string[] }) : { count: 0, sample: [] };
     }
+    const here = `/admin/marketing?${new URLSearchParams({ ...(segment ? { segment } : {}), ...(target ? { target } : {}) })}`;
 
     return (
         <>
-            <h1>Marketing</h1>
+            <PageHeader title="Marketing" description={`Email a group of customers. Every email has a one-click unsubscribe; ${data.unsubscribed} have unsubscribed and are never sent one.`} />
+            {!data.links_signed && <Problem what="sending" error="Unsubscribe links cannot be signed: set EXAM_PHOTO_LINK_SECRET on the server." />}
 
-            <section className="euk-op-section">
-                <h2>Send an email</h2>
-                {!campaigns.value.links_signed && (
-                    <p className="euk-op-failure">Sending is off: set EXAM_PHOTO_LINK_SECRET (or the operator token) so unsubscribe links can be signed.</p>
-                )}
-                <p className="euk-op-quiet">
-                    Every email carries a one-click unsubscribe. {campaigns.value.unsubscribed} address
-                    {campaigns.value.unsubscribed === 1 ? " has" : "es have"} unsubscribed and are never sent a campaign.
-                </p>
-                <form method="get" className="euk-op-form">
-                    <label>
-                        <span className="euk-label">Who</span>
-                        <select name="segment" defaultValue={segment}>
-                            <option value="">Choose…</option>
-                            {Object.entries(campaigns.value.segments).map(([value, label]) => (
-                                <option key={value} value={value}>
-                                    {label}
-                                </option>
-                            ))}
-                        </select>
-                    </label>
-                    <label>
-                        <span className="euk-label">Examination (for the two per-examination groups)</span>
-                        <select name="target" defaultValue={draft.target ?? ""}>
-                            <option value="">—</option>
-                            <optgroup label="Paid for">
-                                {campaigns.value.exams.map((exam) => (
-                                    <option key={exam.exam_id} value={exam.exam_id}>
-                                        {exam.exam_name}
+            <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+                <Card>
+                    <CardHeader title="1. Who" description="Choose a group, then count it." />
+                    <form method="get" className="flex flex-col gap-4 p-5">
+                        <Field label="Group">
+                            <Select name="segment" defaultValue={segment}>
+                                <option value="">Choose…</option>
+                                {Object.entries(data.segments).map(([value, label]) => (
+                                    <option key={value} value={value}>
+                                        {label}
                                     </option>
                                 ))}
-                            </optgroup>
-                            <optgroup label="Asked for">
-                                {campaigns.value.asked_exams.map((exam) => (
-                                    <option key={exam} value={exam}>
-                                        {exam}
-                                    </option>
+                            </Select>
+                        </Field>
+                        <Field label="Examination" hint="Only for “paid for” and “asked for” one examination.">
+                            <Select name="target" defaultValue={target}>
+                                <option value="">—</option>
+                                <optgroup label="Paid for">
+                                    {data.exams.map((exam) => (
+                                        <option key={exam.exam_id} value={exam.exam_id}>
+                                            {exam.exam_name}
+                                        </option>
+                                    ))}
+                                </optgroup>
+                                <optgroup label="Asked for">
+                                    {data.asked_exams.map((exam) => (
+                                        <option key={exam} value={exam}>
+                                            {exam}
+                                        </option>
+                                    ))}
+                                </optgroup>
+                            </Select>
+                        </Field>
+                        <input type="hidden" name="subject" value={draft.subject ?? ""} />
+                        <input type="hidden" name="body" value={draft.body ?? ""} />
+                        <Button type="submit" className="self-start">
+                            Count them
+                        </Button>
+                        {preview && (
+                            <div className="rounded-lg bg-[var(--op-muted-bg)] px-4 py-3 text-sm">
+                                <strong className="op-num text-lg">{preview.count}</strong> {preview.count === 1 ? "person" : "people"}
+                                {preview.sample.length > 0 && <div className="mt-1 truncate text-xs text-[var(--op-muted)]">{preview.sample.slice(0, 4).join(", ")}{preview.count > 4 ? "…" : ""}</div>}
+                            </div>
+                        )}
+                        {segment && NEEDS_TARGET.has(segment) && !target && <p className="m-0 text-sm text-[var(--op-warn)]">Choose an examination for this group.</p>}
+                    </form>
+                </Card>
+
+                <Card>
+                    <CardHeader title="2. What" description="Plain text. A blank line starts a new paragraph." />
+                    {!preview ? (
+                        <Empty title="Choose who first">Count a group, then write the email here.</Empty>
+                    ) : (
+                        <div className="flex flex-col gap-4 p-5">
+                            <ActionForm action="/admin/actions/campaign-test" back={here} className="flex flex-col gap-4">
+                                <input type="hidden" name="keep_draft" value="yes" />
+                                <Field label="Subject">
+                                    <Input name="subject" maxLength={200} required defaultValue={draft.subject ?? ""} />
+                                </Field>
+                                <Field label="Message">
+                                    <Textarea name="body" rows={8} maxLength={20000} required defaultValue={draft.body ?? ""} />
+                                </Field>
+                                <div className="flex flex-wrap items-end gap-2">
+                                    <Field label="Send a test to" className="min-w-0 flex-1">
+                                        <Input name="to" type="email" defaultValue={operator.includes("@") ? operator : ""} required />
+                                    </Field>
+                                    <Button type="submit">Send me a test</Button>
+                                </div>
+                            </ActionForm>
+                            {draft.subject && draft.body && (
+                                <ActionForm action="/admin/actions/campaign" back="/admin/marketing" className="flex flex-col gap-3 rounded-lg border border-[var(--op-border)] p-4">
+                                    <input type="hidden" name="segment" value={segment} />
+                                    <input type="hidden" name="target" value={target} />
+                                    <input type="hidden" name="subject" value={draft.subject} />
+                                    <input type="hidden" name="body" value={draft.body} />
+                                    <p className="m-0 text-sm">
+                                        Ready: <strong>{draft.subject}</strong> to <strong className="op-num">{preview.count}</strong> {preview.count === 1 ? "person" : "people"}.
+                                    </p>
+                                    <Check name="confirm" value="yes" required>
+                                        Send it to all {preview.count} now
+                                    </Check>
+                                    <Button type="submit" variant="accent" size="lg" disabled={!preview.count || !data.links_signed} className="self-start">
+                                        Send
+                                    </Button>
+                                </ActionForm>
+                            )}
+                            {!(draft.subject && draft.body) && <p className="m-0 text-xs text-[var(--op-muted)]">Send yourself a test first; the Send button appears after it.</p>}
+                        </div>
+                    )}
+                </Card>
+            </div>
+
+            <Card>
+                <CardHeader title="Sent" action={<Link href="/admin/coupons" className="text-[13px] text-[var(--op-muted)]">Coupons →</Link>} />
+                {data.campaigns.length === 0 ? (
+                    <Empty title="Nothing sent yet" />
+                ) : (
+                    <div className="op-scroll overflow-x-auto">
+                        <table className="w-full min-w-[640px] border-collapse text-sm">
+                            <thead>
+                                <tr className="border-b border-[var(--op-border)] bg-[var(--op-muted-bg)] text-left text-xs text-[var(--op-muted)]">
+                                    <th scope="col" className="px-5 py-2.5 font-medium">Subject</th>
+                                    <th scope="col" className="px-3 py-2.5 font-medium">Group</th>
+                                    <th scope="col" className="px-3 py-2.5 text-right font-medium">Sent</th>
+                                    <th scope="col" className="px-3 py-2.5 font-medium">When</th>
+                                    <th scope="col" className="px-5 py-2.5 font-medium">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {data.campaigns.map((campaign) => (
+                                    <tr key={campaign.id} className="border-b border-[var(--op-border)] last:border-0">
+                                        <td className="px-5 py-3 font-medium">{campaign.subject}</td>
+                                        <td className="px-3 py-3 text-[var(--op-muted)]">{campaign.segment.replace(/_/g, " ")}</td>
+                                        <td className="op-num px-3 py-3 text-right">
+                                            {campaign.sent}/{campaign.total}
+                                            {campaign.failed ? <span className="text-[var(--op-bad)]"> · {campaign.failed} failed</span> : null}
+                                        </td>
+                                        <td className="px-3 py-3 text-[var(--op-muted)]">{when(campaign.created_at)}</td>
+                                        <td className="px-5 py-3">
+                                            <Badge tone={campaign.status === "finished" ? "good" : "info"}>{campaign.status === "finished" ? "Finished" : "Sending"}</Badge>
+                                        </td>
+                                    </tr>
                                 ))}
-                            </optgroup>
-                        </select>
-                    </label>
-                    <input type="hidden" name="subject" value={draft.subject ?? ""} />
-                    <input type="hidden" name="body" value={draft.body ?? ""} />
-                    <button type="submit" className="euk-op-button">
-                        Count them
-                    </button>
-                </form>
-                {preview && (
-                    <p>
-                        <strong>{preview.count}</strong> recipient{preview.count === 1 ? "" : "s"}
-                        {preview.sample.length > 0 ? `: ${preview.sample.slice(0, 5).join(", ")}${preview.count > 5 ? "…" : ""}` : ""}
-                        {NEEDS_TARGET.has(segment) && !draft.target ? " (choose an examination)" : ""}
-                    </p>
+                            </tbody>
+                        </table>
+                    </div>
                 )}
-                {draft.tested && <p role="status">Test sent. Check your inbox, then send it below.</p>}
-                {segment && (
-                    <>
-                        <ActionForm action="/admin/actions/campaign-test" back={`/admin/marketing?segment=${segment}&target=${encodeURIComponent(draft.target ?? "")}`}>
-                            <input type="hidden" name="keep_draft" value="yes" />
-                            <Compose subject={draft.subject} body={draft.body} />
-                            <label>
-                                <span className="euk-label">Send a test to</span>
-                                <input name="to" type="email" defaultValue={operator.includes("@") ? operator : ""} required />
-                            </label>
-                            <button type="submit" className="euk-op-button">
-                                Send me a test
-                            </button>
-                        </ActionForm>
-                        <ActionForm action="/admin/actions/campaign" back="/admin/marketing">
-                            <input type="hidden" name="segment" value={segment} />
-                            <input type="hidden" name="target" value={draft.target ?? ""} />
-                            <Compose subject={draft.subject} body={draft.body} />
-                            <label className="euk-op-check">
-                                <input type="checkbox" name="confirm" value="yes" required /> Send this to {preview?.count ?? 0} people now
-                            </label>
-                            <button type="submit" className="euk-op-button" disabled={!preview?.count || !campaigns.value.links_signed}>
-                                Send
-                            </button>
-                        </ActionForm>
-                    </>
-                )}
-            </section>
-
-            <section className="euk-op-section">
-                <h2>Sent</h2>
-                {campaigns.value.campaigns.length === 0 && <p className="euk-op-quiet">Nothing sent yet.</p>}
-                <ul className="euk-op-list">
-                    {campaigns.value.campaigns.map((campaign) => (
-                        <li key={campaign.id} className="euk-op-card">
-                            <p className="euk-op-row">
-                                <strong>{campaign.subject}</strong>
-                                <Badge state={campaign.status === "finished" ? "resolved" : "answered"} />
-                            </p>
-                            <p className="euk-op-quiet">
-                                {when(campaign.created_at)} · {campaign.segment} · {campaign.sent} of {campaign.total} sent
-                                {campaign.failed ? ` · ${campaign.failed} failed` : ""} · by {campaign.actor}
-                            </p>
-                        </li>
-                    ))}
-                </ul>
-            </section>
-
-            <p className="euk-op-quiet">
-                Coupon codes and the review offer are on <Link href="/admin/coupons">Coupons</Link>; reviews on{" "}
-                <Link href="/admin/reviews">Reviews</Link>.
-            </p>
-        </>
-    );
-}
-
-function Compose({ subject, body }: { subject?: string; body?: string }) {
-    return (
-        <>
-            <label>
-                <span className="euk-label">Subject</span>
-                <input name="subject" maxLength={200} required defaultValue={subject ?? ""} />
-            </label>
-            <label>
-                <span className="euk-label">Message (plain text; a blank line starts a paragraph)</span>
-                <textarea name="body" rows={8} maxLength={20000} required defaultValue={body ?? ""} />
-            </label>
+            </Card>
         </>
     );
 }

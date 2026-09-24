@@ -1630,6 +1630,31 @@ _OPERATOR = [Depends(require_operator)]
 _NOTE_TARGET = re.compile(r"^(order|customer|ticket|upload):\S{1,300}$")
 
 
+@app.get("/v1/operator/badges", dependencies=_OPERATOR)
+def operator_badges() -> dict[str, int]:
+    """The counts beside the console's menu (DEC-113). Cheap: no analytics."""
+    refunds = service.ledger.refunds()
+    refund_due = sum(
+        1
+        for order in service.orders.recent(100000)
+        if order.paid_at and not order.delivered_at and order.order_id not in refunds
+    )
+    tickets = service.ledger.tickets(limit=100000)
+    return {
+        "refund_due": refund_due,
+        "inbox_open": sum(
+            1 for t in tickets if t["kind"] != "exam" and t["status"] != "resolved"
+        ),
+        "inbox_overdue": sum(
+            1 for t in tickets if t["ack_overdue"] or t["resolve_overdue"]
+        ),
+        "exam_requests": sum(
+            1 for t in tickets if t["kind"] == "exam" and not t.get("added_at")
+        ),
+        "reviews_pending": service.ledger.review_summary()["pending"],
+    }
+
+
 @app.get("/v1/operator/overview", dependencies=_OPERATOR)
 def operator_overview(
     days: int = Query(default=30, ge=1, le=366),  # noqa: B008

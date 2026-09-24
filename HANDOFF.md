@@ -117,9 +117,9 @@ accepts. Signatures and thumb impressions have no sweep of this kind yet.
 - **Google Search Console** (Domain property, TXT record in Cloudflare), **Bing Webmaster Tools** (import from Search Console), **Cloudflare Web Analytics** (the token goes in `NEXT_PUBLIC_CF_BEACON_TOKEN`, then `up -d --build web`). `docs/LAUNCH_GUIDE.md` has each step.
 - **Moving to Hostinger** before 11 October: a new read-only deploy key on the new box (the repository is private), the same compose deploy, `model-fetch` again (or copy the `models` volume), carry `deploy/.env` across by hand, point the Cloudflare `A` records at the new IP. The Razorpay webhook URL does not change, because the domain does not.
 
-## The operator page (DEC-108 to DEC-111) — live since 24 September
+## The operator console (DEC-108 to DEC-113) — live since 24 September
 
-`https://examuploadkit.com/admin` is the back office: **Overview** (money,
+`https://examuploadkit.com/admin` is the back office, a full-screen console (DEC-113: sidebar or phone tab bar, Ctrl K search, tables with side panels, light and dark): **Overview** (money,
 charts, time to prepare, per-examination revenue and conversion, needs
 attention, checkouts that did not pay, health history), **Orders** (every
 detail, timeline, refund mark, reply templates, notes), **Uploads** (every

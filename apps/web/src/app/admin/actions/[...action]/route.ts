@@ -1,11 +1,21 @@
 import { operatorFromHeaders } from "../../../../lib/operator/access";
-import { actionFor, postedFromHere } from "../../../../lib/operator/actions";
+import { actionFor, doneMessage, postedFromHere } from "../../../../lib/operator/actions";
 import { safeBack } from "../../../../lib/operator/data";
 import { enginePost } from "../../../../lib/operator/engine";
 
 export const runtime = "nodejs";
 
-/** `/admin/actions/{note|ticket|refund}[/{id}]`, posted by operator forms. */
+function back(to: string, params: Record<string, string>): Response {
+    const url = new URL(to, "http://operator.local");
+    for (const [key, value] of Object.entries(params)) url.searchParams.set(key, value);
+    return new Response(null, { status: 303, headers: { Location: `${url.pathname}${url.search}` } });
+}
+
+/**
+ * `/admin/actions/{kind}[/{id}]`, posted by the console's forms (DEC-109,
+ * DEC-113). Returns to the page it came from with a `done` or `failed`
+ * message, which the console shows as a toast.
+ */
 export async function POST(request: Request, { params }: { params: Promise<{ action: string[] }> }) {
     const actor = await operatorFromHeaders(request.headers);
     if (!actor) return new Response("Not found", { status: 404 });
@@ -14,28 +24,29 @@ export async function POST(request: Request, { params }: { params: Promise<{ act
 
     const [kind, id] = (await params).action;
     const form = await request.formData();
-    const back = safeBack(form.get("back"));
+    const to = safeBack(form.get("back"));
     const planned = actionFor(kind, id, form, actor);
-    if ("error" in planned) return new Response(planned.error, { status: 422 });
+    if ("error" in planned) return back(to, { failed: `Not saved: ${planned.error}.` });
 
     try {
         const response = await enginePost(planned.path, planned.body);
-        if (!response.ok) return new Response(`The engine refused: ${response.status}`, { status: 502 });
+        if (!response.ok) {
+            const detail = await response
+                .json()
+                .then((body: { detail?: unknown }) => (typeof body.detail === "string" ? body.detail : ""))
+                .catch(() => "");
+            return back(to, { failed: detail || `The engine refused (${response.status}).` });
+        }
     } catch {
-        return new Response("The engine could not be reached.", { status: 502 });
+        return back(to, { failed: "The engine could not be reached. Nothing was changed." });
     }
+
+    const extra: Record<string, string> = { done: doneMessage(kind, form) };
     // A test send returns to the composer with what was typed still in it.
-    let location = back;
     if (form.get("keep_draft") === "yes") {
         const subject = String(form.get("subject") ?? "");
         const text = String(form.get("body") ?? "");
-        if (subject.length + text.length < 4000) {
-            const url = new URL(back, "http://operator.local");
-            url.searchParams.set("subject", subject);
-            url.searchParams.set("body", text);
-            url.searchParams.set("tested", "1");
-            location = `${url.pathname}${url.search}`;
-        }
+        if (subject.length + text.length < 4000) Object.assign(extra, { subject, body: text });
     }
-    return new Response(null, { status: 303, headers: { Location: location } });
+    return back(to, extra);
 }

@@ -238,3 +238,19 @@ def test_a_ledger_from_before_reviews_is_upgraded_in_place(tmp_path):
     assert ledger.review("order_OLD")["status"] == "approved"
     ledger.save_coupon("X1", "free", 100)
     assert ledger.coupon("X1")["source"] == "manual"
+
+
+def test_badges_count_what_is_waiting(api):
+    _paid(api)
+    _review(rating=2)
+    api.ledger.add_ticket(kind="complaint", email="a@b.co", message="m")
+    api.ledger.add_ticket(kind="exam", email="a@b.co", message="", exam="X")
+    badges = client.get("/v1/operator/badges", headers=AUTH).json()
+    assert badges == {
+        "refund_due": 1,
+        "inbox_open": 1,
+        "inbox_overdue": 0,
+        "exam_requests": 1,
+        "reviews_pending": 1,
+    }
+    assert client.get("/v1/operator/badges").status_code == 401
