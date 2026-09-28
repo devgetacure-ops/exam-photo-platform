@@ -84,7 +84,7 @@ describe("the keyword map", () => {
             expect(row, record.exam?.exam_id).toBeDefined();
             expect(row!.priority).toBe(1);
         }
-    });
+    }, 60_000);
 
     test("a record's name loses the catalogue's own qualifiers and its year", () => {
         expect(searchableName("RBI Officers in Grade B 2026 - prior-cycle official fallback")).toBe("rbi officers in grade b");

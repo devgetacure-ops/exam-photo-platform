@@ -26,7 +26,7 @@
 
 import "server-only";
 
-import { readFile, readdir } from "node:fs/promises";
+import { readFile, readdir, stat } from "node:fs/promises";
 import path from "node:path";
 
 import type {
@@ -158,6 +158,25 @@ function toDetail(raw: RawRule): ExamDetail | null {
  * take down the whole site.
  */
 export async function loadExams(): Promise<ExamDetail[]> {
+  // 748 records since DEC-114, and every examination page asks for one of
+  // them through this list: read them once per catalogue state, not once per
+  // request. The directory's modification time moves whenever a record is
+  // added or removed, and a regenerated catalogue arrives with a redeploy.
+  let stamp: number;
+  try {
+    stamp = (await stat(CATALOGUE_DIR)).mtimeMs;
+  } catch {
+    return [];
+  }
+  if (cachedExams && cachedExams.stamp === stamp) return cachedExams.exams;
+  const exams = await readExams();
+  cachedExams = { stamp, exams };
+  return exams;
+}
+
+let cachedExams: { stamp: number; exams: ExamDetail[] } | null = null;
+
+async function readExams(): Promise<ExamDetail[]> {
   let names: string[];
   try {
     names = await readdir(CATALOGUE_DIR);

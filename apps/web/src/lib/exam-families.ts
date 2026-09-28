@@ -111,6 +111,15 @@ export const EXAM_FAMILIES: readonly ExamFamily[] = [
             "school_admission_entrance",
         ],
     },
+    {
+        slug: "government-and-institution-jobs",
+        name: "Government and institution jobs",
+        phrase: "government and institution",
+        blurb: "Recruitment by public sector companies, ports, research institutes, universities, courts, hospitals and district offices.",
+        searchWords: ["government job", "psu recruitment", "sarkari naukri", "recruitment form"],
+        // DEC-114: the 2026-09-27 delivery's single-notice recruitments.
+        categories: ["psu_recruitment", "institutional_recruitment"],
+    },
 ];
 
 /** Categories deliberately in no family, and why. */

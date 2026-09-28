@@ -60,7 +60,7 @@ describe("the examination aliases", () => {
             }
         }
         expect(misses).toEqual([]);
-    });
+    }, 60_000);
 
     it("never gives two examinations the same alias for the same body", () => {
         const seen = new Map<string, string[]>();

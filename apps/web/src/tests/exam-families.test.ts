@@ -31,7 +31,7 @@ describe("exam families", () => {
         }
     });
 
-    test("the eight families the owner agreed, each with examinations", () => {
+    test("the eight families the owner agreed, and DEC-114's ninth, each with examinations", () => {
         expect(EXAM_FAMILIES.map((family) => family.slug)).toEqual([
             "ssc-and-upsc",
             "banking-and-insurance",
@@ -41,6 +41,7 @@ describe("exam families", () => {
             "teaching",
             "state-commissions",
             "entrance-exams",
+            "government-and-institution-jobs",
         ]);
         for (const family of EXAM_FAMILIES) {
             const members = records.filter((r) => familyOf(r.exam?.category)?.slug === family.slug);

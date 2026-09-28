@@ -9,9 +9,12 @@
     "conducting_body": "Department of Health Haryana (Civil Hospital Ambala Cantt)",
     "examination_year": 2026,
     "application_cycle": "Need-based",
+    "aliases": [
+      "Civil Hospital Ambala Medical Physicist"
+    ],
     "application_stage": "application",
     "jurisdiction": "Haryana",
-    "category": "recruitment"
+    "category": "institutional_recruitment"
   },
   "source_evidence": [
     {

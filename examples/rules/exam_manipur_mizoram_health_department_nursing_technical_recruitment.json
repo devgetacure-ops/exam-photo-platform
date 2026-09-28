@@ -9,9 +9,12 @@
     "conducting_body": "Directorate of Health Services Manipur & Mizoram",
     "examination_year": 2026,
     "application_cycle": "Annual / Need-based",
+    "aliases": [
+      "Manipur"
+    ],
     "application_stage": "application",
     "jurisdiction": "Manipur, Mizoram",
-    "category": "recruitment"
+    "category": "institutional_recruitment"
   },
   "source_evidence": [
     {

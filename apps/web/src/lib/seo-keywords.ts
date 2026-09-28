@@ -172,6 +172,7 @@ const FAMILY_TARGETS: { slug: string; words: string[]; categories: string[] }[] 
     { slug: "teaching", words: ["tet", "teacher exam", "teacher recruitment"], categories: ["teacher_eligibility", "teacher_recruitment", "teacher_education_entrance", "teaching_eligibility", "teaching_research_eligibility", "teaching_and_non_teaching_recruitment"] },
     { slug: "state-commissions", words: ["psc exam", "state psc"], categories: ["state_psc", "state_psc_recruitment", "state_recruitment", "state_recruitment_family", "state_common_eligibility", "state_recruitment_common_eligibility"] },
     { slug: "entrance-exams", words: ["entrance exam", "engineering entrance", "medical entrance"], categories: ["entrance", "state_entrance", "management_entrance", "medical_entrance", "private_entrance", "school_admission_entrance"] },
+    { slug: "government-and-institution-jobs", words: ["government job", "psu recruitment", "sarkari naukri", "recruitment form"], categories: ["psu_recruitment", "institutional_recruitment"] },
 ];
 
 /** Which family hub an examination belongs to, from its category. */

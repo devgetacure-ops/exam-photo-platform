@@ -121,17 +121,42 @@ def _recency_days(text: str) -> Optional[int]:
     return None
 
 
-def _category(text: str) -> str:
+def _category(text: str, name: str = "") -> str:
+    """The delivery's category, spelled as the site's exam families know it
+    (``apps/web/src/lib/exam-families.ts``)."""
     low = (text or "").lower()
-    if "entrance" in low or "admission" in low:
-        return "entrance"
-    if "eligib" in low:
-        return "eligibility"
+    both = f"{low} {(name or '').lower()}"
     if "professional" in low:
         return "professional_body"
-    if "board" in low:
+    if "board exam" in low or "board registration" in low:
         return "board_registration"
-    return "recruitment"
+    if re.search(r"\btet\b|teacher eligib|eligibility test / teacher", both):
+        return "teacher_eligibility"
+    if "teach" in low or "teacher" in low:
+        return "teacher_recruitment"
+    if "management" in low:
+        return "management_entrance"
+    if "state entrance" in low:
+        return "state_entrance"
+    if "private" in low:
+        return "private_entrance"
+    if "entrance" in low or "admission" in low:
+        return "entrance"
+    if "police" in low:
+        return "police_recruitment"
+    if "defence" in low or "paramilitary" in low:
+        return "defence_recruitment"
+    if "railway" in low:
+        return "railway_recruitment"
+    if "bank" in low or "finance" in low or "insurance" in low:
+        return "banking"
+    if "state psc" in low or "ssb" in low:
+        return "state_psc"
+    if "central government" in low:
+        return "central_recruitment"
+    if "psu" in low or "port" in low:
+        return "psu_recruitment"
+    return "institutional_recruitment"
 
 
 def _year(text: str) -> Optional[int]:
@@ -235,7 +260,7 @@ def _spec_record(exam: Dict[str, str], photo: Dict[str, str]) -> Dict[str, Any]:
         "application_stage": "application",
         "photo_role": "candidate_photograph",
         "jurisdiction": exam.get("state") or "India",
-        "category": _category(exam.get("category", "")),
+        "category": _category(exam.get("category", ""), exam.get("exam_name", "")),
         "primary_source_id": "delivery_2026_09_27",
         "fields": fields,
     }
@@ -247,6 +272,16 @@ def _aliases(exam: Dict[str, str]) -> List[str]:
         alias = alias.strip()
         if alias and alias != exam["exam_name"] and alias not in out and len(alias) <= 80:
             out.append(alias)
+    if not out:
+        # A record with no short form cannot be found by what candidates type.
+        # The name before its "&" or trailing "Recruitment" is what they type.
+        short = re.split(r"\s+&\s+|\s+\(", exam["exam_name"])[0]
+        short = re.sub(r"\s+(Recruitments?|Examinations?|Exams?)$", "", short).strip()
+        if short == exam["exam_name"]:
+            # Nothing to trim: the name without its last word still finds it.
+            short = short.rsplit(" ", 1)[0]
+        if short and short != exam["exam_name"]:
+            out.append(short)
     return out[:12]
 
 
