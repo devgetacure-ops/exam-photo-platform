@@ -1,0 +1,262 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "common-entrance-examination-for-design-ceed",
+  "rule_version": "1.0.0",
+  "status": "verified",
+  "exam": {
+    "exam_id": "common-entrance-examination-for-design-ceed",
+    "exam_name": "Common Entrance Examination for Design (CEED)",
+    "conducting_body": "Indian Institute of Technology Bombay (IIT Bombay)",
+    "examination_year": 2025,
+    "application_cycle": "CEED 2025",
+    "aliases": [
+      "CEED",
+      "IIT CEED",
+      "IIT Bombay CEED",
+      "M.Des Entrance Exam"
+    ],
+    "application_stage": "application",
+    "jurisdiction": "All India",
+    "category": "entrance"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "A recent colour photograph (taken within the last six months) in .jpg format as per dimensions mentioned on registration portal (file size 5 KB to 100 KB)... Poor quality photograph may lead to rejection of registration.",
+      "source_url": "https://www.ceed.iitb.ac.in/2025/assets/downloads/CEED2025_Brochure.pdf",
+      "document_title": "Information Brochure - Common Entrance Examination for Design (CEED 2025)",
+      "section_name": "Section 5.1: Registration Procedure"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "unspecified",
+      "preferred_width_px": 240,
+      "preferred_height_px": 320,
+      "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified.",
+      "dpi": 200,
+      "permitted_pixel_range": "Preferred / Aspect Ratio 3.5:4.5 (approx 240x320 to 350x450 px)"
+    },
+    "file_size": {
+      "maximum_bytes": 100000,
+      "minimum_bytes": 5000,
+      "size_unit_as_published": "KB",
+      "published_maximum": 100.0,
+      "published_minimum": 5.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpg"
+      ],
+      "preferred_format": "jpg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "plain_light",
+      "fallback_colour": "#FFFFFF"
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "unspecified",
+      "face_coverage_minimum": 70.0
+    },
+    "appearance": {
+      "spectacles": {
+        "policy": "prohibited",
+        "source_wording": "Clear glasses allowed; no glare, no tinted lenses or sunglasses"
+      },
+      "headwear": {
+        "policy": "conditional",
+        "condition": "Caps, hats, dark glasses strictly prohibited; religious headgear allowed if face is uncovered",
+        "source_wording": "Caps, hats, dark glasses strictly prohibited; religious headgear allowed if face is uncovered"
+      },
+      "face_mask": {
+        "policy": "prohibited",
+        "source_wording": "Not permitted"
+      },
+      "monochrome_accepted": false,
+      "recency_maximum_days": 180
+    },
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false,
+      "instructions": "photo.jpg"
+    },
+    "exceptional_instructions": {
+      "spectacles_restriction": true,
+      "headwear_restriction": true,
+      "black_and_white_restriction": true,
+      "recent_photo_requirement": true,
+      "processing_support_status": "supported"
+    }
+  },
+  "requirements": [
+    {
+      "requirement_id": "passport_size_photograph",
+      "requirement_name": "Passport Size Photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG; Preferred / Aspect Ratio 3.5:4.5 (approx 240x320 to 350x450 px); 3.5 cm x 4.5 cm; Clean white or light-coloured background; Admit Card and Score Card bear this photo. Submission of poor-quality or cropped selfie leads to registration rejection.",
+      "evidence_status": "OFFICIAL",
+      "notes": "Online Registration"
+    },
+    {
+      "requirement_id": "signature",
+      "requirement_name": "Signature",
+      "requirement_type": "signature",
+      "submission_method": "handwritten_then_uploaded",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG; Preferred / Rectangular signature crop; ~ 5.0 cm x 2.0 cm; Plain white unruled paper; Clear image of candidate's signature on white paper using black ink. SIGNATURE IN CAPITAL LETTERS NOT ACCEPTABLE.; Image clarity and legibility verified; will be printed on score card.",
+      "evidence_status": "OFFICIAL",
+      "notes": "Online Registration",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 100000,
+          "minimum_bytes": 5000,
+          "published_minimum": 5.0,
+          "published_maximum": 100.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg"
+          ],
+          "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "unspecified",
+          "preferred_width_px": 280,
+          "preferred_height_px": 100,
+          "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified."
+        }
+      }
+    },
+    {
+      "requirement_id": "qualifying_degree_diploma_certificate_or_markshe",
+      "requirement_name": "Qualifying Degree / Diploma Certificate or Marksheet",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "PDF; Standard document page; A4; Document scan; If final degree not received, provisional certificate or final year mark sheet required; if final year not completed, certificate from Principal/HOD in Appendix-1 required.",
+      "evidence_status": "OFFICIAL",
+      "notes": "Online Registration",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 500000,
+          "minimum_bytes": 10000,
+          "published_minimum": 10.0,
+          "published_maximum": 500.0,
+          "size_unit_as_published": "KB"
+        }
+      }
+    },
+    {
+      "requirement_id": "category_certificate_gen_ews_obc_ncl_sc_st",
+      "requirement_name": "Category Certificate (GEN-EWS / OBC-NCL / SC / ST)",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Conditional (Mandatory for reserved category candidates)",
+      "content_instructions": "PDF; Standard document page; A4; Document scan; OBC-NCL and EWS certificates must be issued on or after April 01, 2024 (as per Govt. of India format).",
+      "evidence_status": "OFFICIAL",
+      "notes": "Online Registration",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 500000,
+          "minimum_bytes": 10000,
+          "published_minimum": 10.0,
+          "published_maximum": 500.0,
+          "size_unit_as_published": "KB"
+        }
+      }
+    },
+    {
+      "requirement_id": "disability_certificate_pwd_dyslexic_certificate",
+      "requirement_name": "Disability Certificate (PwD) / Dyslexic Certificate",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Conditional (Mandatory for PwD / Dyslexic candidates)",
+      "content_instructions": "PDF; Standard document page; A4; Document scan; Must be a valid UDID card or Medical Certificate as per Appendix-2 / Appendix-3.",
+      "evidence_status": "OFFICIAL",
+      "notes": "Online Registration",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 500000,
+          "minimum_bytes": 10000,
+          "published_minimum": 10.0,
+          "published_maximum": 500.0,
+          "size_unit_as_published": "KB"
+        }
+      }
+    },
+    {
+      "requirement_id": "proof_of_name_change_gazette_marriage_certificat",
+      "requirement_name": "Proof of Name Change (Gazette / Marriage Certificate / Passport)",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Conditional (Mandatory if name differs from degree certificate)",
+      "content_instructions": "PDF; Standard document page; A4; Document scan; Name change legal verification.",
+      "evidence_status": "OFFICIAL",
+      "notes": "Online Registration",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 500000,
+          "minimum_bytes": 10000,
+          "published_minimum": 10.0,
+          "published_maximum": 500.0,
+          "size_unit_as_published": "KB"
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "Information Brochure - Common Entrance Examination for Design (CEED 2025) - Section 5.1: Registration Procedure (https://www.ceed.iitb.ac.in/2025/assets/downloads/CEED2025_Brochure.pdf)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "official",
+      "evidence_reference": "Information Brochure - Common Entrance Examination for Design (CEED 2025) - Section 5.1: Registration Procedure (https://www.ceed.iitb.ac.in/2025/assets/downloads/CEED2025_Brochure.pdf)",
+      "reasoning": "Pixel dimensions transcribed from the cited source.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "verified"
+  },
+  "fictional_example": false
+}

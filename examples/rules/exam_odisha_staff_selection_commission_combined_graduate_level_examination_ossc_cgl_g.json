@@ -1,0 +1,148 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "odisha-staff-selection-commission-combined-graduate-level-examination-ossc-cgl-g",
+  "rule_version": "1.0.0",
+  "status": "verified",
+  "exam": {
+    "exam_id": "odisha-staff-selection-commission-combined-graduate-level-examination-ossc-cgl-g",
+    "exam_name": "Odisha Staff Selection Commission Combined Graduate Level Examination (OSSC CGL / Group B & C Specialist & Executive Posts)",
+    "conducting_body": "Odisha Staff Selection Commission (OSSC), Bhubaneswar",
+    "examination_year": 2024,
+    "application_cycle": "Combined Graduate Level Recruitment Examination (CGLRE) 2023 / 2024 (Advt No. II",
+    "aliases": [
+      "OSSC CGL",
+      "Odisha CGL",
+      "OSSC Combined Graduate Level Exam",
+      "Odisha Auditor",
+      "Inspector"
+    ],
+    "application_stage": "application",
+    "jurisdiction": "Odisha",
+    "category": "recruitment"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_webpage",
+      "official_source": true,
+      "captured_wording": "Candidates must upload scanned photo (20-100 KB), signature (20-50 KB) and left thumb impression (20-50 KB) in JPG/JPEG format.",
+      "source_url": "https://www.ossc.gov.in",
+      "document_title": "Detailed Advertisement for Combined Graduate Level Recruitment Examination (CGLRE) 2023",
+      "section_name": "General Instructions, Clause 8"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "unspecified",
+      "preferred_width_px": 350,
+      "preferred_height_px": 450,
+      "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified.",
+      "dpi": 200,
+      "permitted_pixel_range": "Proportional to 3.5 cm x 4.5 cm; 20 KB to 100 KB"
+    },
+    "file_size": {
+      "maximum_bytes": 100000,
+      "minimum_bytes": 20000,
+      "size_unit_as_published": "KB",
+      "published_maximum": 100.0,
+      "published_minimum": 20.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpg",
+        "jpeg"
+      ],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "exact_colour",
+      "required_colour": "#FFFFFF",
+      "tolerance": 3.0
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "unspecified",
+      "face_coverage_minimum": 75.0
+    },
+    "appearance": {
+      "spectacles": {
+        "policy": "prohibited",
+        "source_wording": "Clear glasses allowed; no dark glasses"
+      },
+      "headwear": {
+        "policy": "conditional",
+        "condition": "Religious permitted",
+        "source_wording": "Religious permitted"
+      },
+      "face_mask": {
+        "policy": "prohibited",
+        "source_wording": "Prohibited"
+      },
+      "monochrome_accepted": false,
+      "recency_maximum_days": 90
+    },
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false,
+      "instructions": "photo.jpg"
+    },
+    "exceptional_instructions": {
+      "spectacles_restriction": true,
+      "headwear_restriction": true,
+      "black_and_white_restriction": true,
+      "recent_photo_requirement": true,
+      "processing_support_status": "supported"
+    }
+  },
+  "requirements": [
+    {
+      "requirement_id": "photograph",
+      "requirement_name": "Photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG, JPEG; Proportional to 3.5 cm x 4.5 cm; 20 KB to 100 KB; 3.5 cm x 4.5 cm; Plain white background; OSSC portal validates size 20 KB to 100 KB",
+      "evidence_status": "Official Notification",
+      "notes": "Online Application Stage"
+    }
+  ],
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "Detailed Advertisement for Combined Graduate Level Recruitment Examination (CGLRE) 2023 - General Instructions, Clause 8 (https://www.ossc.gov.in)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "official",
+      "evidence_reference": "Detailed Advertisement for Combined Graduate Level Recruitment Examination (CGLRE) 2023 - General Instructions, Clause 8 (https://www.ossc.gov.in)",
+      "reasoning": "Pixel dimensions transcribed from the cited source.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "verified"
+  },
+  "fictional_example": false
+}

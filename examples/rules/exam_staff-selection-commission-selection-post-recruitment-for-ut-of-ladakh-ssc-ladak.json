@@ -1,0 +1,85 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "staff-selection-commission-selection-post-recruitment-for-ut-of-ladakh-ssc-ladak",
+  "rule_version": "1.0.0",
+  "status": "provisional",
+  "exam": {
+    "exam_id": "staff-selection-commission-selection-post-recruitment-for-ut-of-ladakh-ssc-ladak",
+    "exam_name": "Staff Selection Commission Selection Post Recruitment for UT of Ladakh (SSC Ladakh Selection Posts Phase-XI / Phase-XII)",
+    "conducting_body": "Staff Selection Commission (SSC, Northern Region) & Administration of UT of Ladakh",
+    "examination_year": 2024,
+    "application_cycle": "Selection Posts / Ladakh / 2024 (Advt. No. Selection Posts/Ladakh/2024)",
+    "application_stage": "application",
+    "jurisdiction": "Ladakh",
+    "category": "recruitment",
+    "aliases": [
+      "SSC Ladakh",
+      "Ladakh Selection Post",
+      "SSC Phase XII Ladakh",
+      "UT of Ladakh Non-Gazetted Posts"
+    ]
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_webpage",
+      "official_source": true,
+      "captured_wording": "Candidates are required to capture live photograph through the webcam or mobile app. The candidates should ensure that they do not wear cap, spectacles or dark glasses while capturing live photograph.",
+      "source_url": "https://ssc.gov.in",
+      "document_title": "Notice of Selection Posts for Union Territory of Ladakh (Phase-XII / 2024)",
+      "section_name": "Annexure-IV: Guidelines for Live Photograph and Signature"
+    }
+  ],
+  "requirements": [
+    {
+      "requirement_id": "live_webcam_photo_capture_myssc_app_portal",
+      "requirement_name": "Live Webcam Photo Capture (MySSC App / Portal)",
+      "requirement_type": "photograph",
+      "submission_method": "official_live_capture",
+      "requirement_status": "mandatory",
+      "platform_support": "guidance_only",
+      "applicability": "Mandatory",
+      "content_instructions": "Real-Time Webcam Stream / JPEG; Real-time live capture against plain white/light background; pre-scanned photo uploads eliminated; Live frontal webcam capture; Plain white or light-coloured wall; AI facial recognition checks for live human presence, lighting, and absence of spectacles",
+      "evidence_status": "Official Examination Notice",
+      "notes": "Online Application Stage"
+    },
+    {
+      "requirement_id": "signature",
+      "requirement_name": "Signature",
+      "requirement_type": "signature",
+      "submission_method": "handwritten_then_uploaded",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG, JPEG; 4.0 cm width x 2.0 cm height; strictly 10 KB to 20 KB; 4.0 cm x 2.0 cm; Plain white paper; Signature in running hand; capital letters rejected; File size 10 KB to 20 KB verified",
+      "evidence_status": "Official Notice",
+      "notes": "Online Application Stage",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 20000,
+          "minimum_bytes": 10000,
+          "published_minimum": 10.0,
+          "published_maximum": 20.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "unspecified",
+          "preferred_width_px": 140,
+          "preferred_height_px": 60,
+          "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified."
+        }
+      }
+    }
+  ],
+  "provenance": {},
+  "verification": {
+    "verification_status": "provisional"
+  },
+  "fictional_example": false
+}

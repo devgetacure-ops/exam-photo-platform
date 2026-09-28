@@ -1,0 +1,180 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "gujarat-teacher-eligibility-test-gujarat-tet-i-tet-ii",
+  "rule_version": "1.0.0",
+  "status": "verified",
+  "exam": {
+    "exam_id": "gujarat-teacher-eligibility-test-gujarat-tet-i-tet-ii",
+    "exam_name": "Gujarat Teacher Eligibility Test (Gujarat TET-I & TET-II)",
+    "conducting_body": "State Examination Board (SEB), Gandhinagar, Gujarat",
+    "examination_year": 2025,
+    "application_cycle": "2024-2025",
+    "aliases": [
+      "Gujarat TET-I (Classes 1-5)",
+      "Gujarat TET-II (Classes 6-8)",
+      "SEB Gujarat TET Examination"
+    ],
+    "application_stage": "application",
+    "jurisdiction": "Gujarat",
+    "category": "eligibility"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "\u0a89\u0aae\u0ac7\u0aa6\u0ab5\u0abe\u0ab0\u0ac7 \u0aaa\u0acb\u0aa4\u0abe\u0aa8\u0acb \u0aa4\u0abe\u0a9c\u0ac7\u0aa4\u0ab0\u0aa8\u0acb \u0aaa\u0abe\u0ab8\u0aaa\u0acb\u0ab0\u0acd\u0a9f \u0ab8\u0abe\u0a87\u0a9d\u0aa8\u0acb \u0aab\u0acb\u0a9f\u0acb\u0a97\u0acd\u0ab0\u0abe\u0aab (\u0ab8\u0abe\u0a87\u0a9d 5 \u0ab8\u0ac7\u0aae\u0ac0 \u0ab2\u0a82\u0aac\u0abe\u0a87 \u0a85\u0aa8\u0ac7 3.6 \u0ab8\u0ac7\u0aae\u0ac0 \u0aaa\u0ab9\u0acb\u0ab3\u0abe\u0a87) \u0a85\u0aa8\u0ac7 15 KB \u0aa5\u0ac0 \u0ab5\u0aa7\u0ac1 \u0aa8 \u0ab9\u0acb\u0aaf \u0aa4\u0ac7\u0ab5\u0abe JPG \u0aab\u0acb\u0ab0\u0acd\u0aae\u0ac7\u0a9f\u0aae\u0abe\u0a82 \u0a85\u0aaa\u0ab2\u0acb\u0aa1 \u0a95\u0ab0\u0ab5\u0abe\u0aa8\u0acb \u0ab0\u0ab9\u0ac7\u0ab6\u0ac7.",
+      "source_url": "https://sebexam.org/NoticeFiles/TET_I_II_Notification_2024.pdf",
+      "document_title": "Notification for Conducting Teacher Eligibility Test-I (TET-I) and Teacher Eligibility Test-II (TET-II)",
+      "section_name": "Section 6 (Online Application Guidelines)"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "unspecified",
+      "preferred_width_px": 130,
+      "preferred_height_px": 180,
+      "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified.",
+      "dpi": 150,
+      "permitted_pixel_range": "Height 5 cm (180 px) x width 3.6 cm (130 px); file size STRICTLY not exceeding 15 KB"
+    },
+    "file_size": {
+      "maximum_bytes": 15000,
+      "minimum_bytes": 5000,
+      "size_unit_as_published": "KB",
+      "published_maximum": 15.0,
+      "published_minimum": 5.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpg",
+        "jpeg"
+      ],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "plain_light",
+      "fallback_colour": "#FFFFFF"
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "unspecified",
+      "face_coverage_minimum": 75.0
+    },
+    "appearance": {
+      "spectacles": {
+        "policy": "conditional",
+        "condition": "Spectacles permitted without glare; sunglasses prohibited",
+        "source_wording": "Spectacles permitted without glare; sunglasses prohibited"
+      },
+      "headwear": {
+        "policy": "conditional",
+        "condition": "Not allowed except religious headwear",
+        "source_wording": "Not allowed except religious headwear"
+      },
+      "face_mask": {
+        "policy": "prohibited",
+        "source_wording": "Prohibited"
+      },
+      "monochrome_accepted": false,
+      "recency_maximum_days": 90
+    },
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false,
+      "instructions": "photo.jpg"
+    },
+    "exceptional_instructions": {
+      "spectacles_restriction": true,
+      "headwear_restriction": true,
+      "black_and_white_restriction": true,
+      "recent_photo_requirement": true,
+      "processing_support_status": "supported"
+    }
+  },
+  "requirements": [
+    {
+      "requirement_id": "candidate_photograph",
+      "requirement_name": "Candidate Photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG, JPEG; Height 5 cm (180 px) x width 3.6 cm (130 px); file size STRICTLY not exceeding 15 KB; 3.6 cm x 5.0 cm; Plain white/light background; Strict OJAS Gujarat validation: Files exceeding 15 KB are rejected by the server",
+      "evidence_status": "Official Notification",
+      "notes": "Application"
+    },
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate Signature",
+      "requirement_type": "signature",
+      "submission_method": "handwritten_then_uploaded",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG, JPEG; Height 2.5 cm (90 px) x width 7.5 cm (275 px); file size STRICTLY not exceeding 15 KB; 7.5 cm x 2.5 cm; Plain white paper; Sign with black/dark blue pen on white paper; capital block letters strictly prohibited; Server rejects any file > 15 KB",
+      "evidence_status": "Official Notification",
+      "notes": "Application",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 15000,
+          "minimum_bytes": 5000,
+          "published_minimum": 5.0,
+          "published_maximum": 15.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "unspecified",
+          "preferred_width_px": 275,
+          "preferred_height_px": 90,
+          "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified."
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "Notification for Conducting Teacher Eligibility Test-I (TET-I) and Teacher Eligibility Test-II (TET-II) - Section 6 (Online Application Guidelines) (https://sebexam.org/NoticeFiles/TET_I_II_Notification_2024.pdf)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "official",
+      "evidence_reference": "Notification for Conducting Teacher Eligibility Test-I (TET-I) and Teacher Eligibility Test-II (TET-II) - Section 6 (Online Application Guidelines) (https://sebexam.org/NoticeFiles/TET_I_II_Notification_2024.pdf)",
+      "reasoning": "Pixel dimensions transcribed from the cited source.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "verified"
+  },
+  "fictional_example": false
+}

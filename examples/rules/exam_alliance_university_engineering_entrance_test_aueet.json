@@ -1,0 +1,145 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "alliance-university-engineering-entrance-test-aueet",
+  "rule_version": "1.0.0",
+  "status": "verified",
+  "exam": {
+    "exam_id": "alliance-university-engineering-entrance-test-aueet",
+    "exam_name": "Alliance University Engineering Entrance Test (AUEET)",
+    "conducting_body": "Alliance College of Engineering and Design, Alliance University, Bengaluru",
+    "examination_year": 2025,
+    "application_cycle": "AUEET 2024 / AUEET 2025",
+    "aliases": [
+      "AUEET",
+      "Alliance Engineering Entrance"
+    ],
+    "application_stage": "application",
+    "jurisdiction": "All India",
+    "category": "entrance"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_webpage",
+      "official_source": true,
+      "captured_wording": "Upload recent passport size photograph (maximum 100 KB) in JPG/JPEG format.",
+      "source_url": "https://www.alliance.edu.in",
+      "document_title": "AUEET 2024 Information Handout: B.Tech Admissions",
+      "section_name": "Application Instructions"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "unspecified",
+      "preferred_width_px": 150,
+      "preferred_height_px": 200,
+      "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified.",
+      "dpi": 150,
+      "permitted_pixel_range": "Aspect ratio 3:4"
+    },
+    "file_size": {
+      "maximum_bytes": 100000,
+      "minimum_bytes": 10000,
+      "size_unit_as_published": "KB",
+      "published_maximum": 100.0,
+      "published_minimum": 10.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpg",
+        "jpeg"
+      ],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "plain_light",
+      "fallback_colour": "#FFFFFF"
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "unspecified",
+      "face_coverage_minimum": 75.0
+    },
+    "appearance": {
+      "spectacles": {
+        "policy": "conditional",
+        "condition": "Allowed without reflections",
+        "source_wording": "Allowed without reflections"
+      },
+      "headwear": {
+        "policy": "conditional",
+        "condition": "Religious coverings permitted",
+        "source_wording": "Religious coverings permitted"
+      },
+      "face_mask": {
+        "policy": "prohibited",
+        "source_wording": "Prohibited"
+      },
+      "monochrome_accepted": false,
+      "recency_maximum_days": 90
+    },
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false,
+      "instructions": "photo.jpg"
+    },
+    "exceptional_instructions": {
+      "spectacles_restriction": true,
+      "headwear_restriction": true,
+      "black_and_white_restriction": true,
+      "recent_photo_requirement": true,
+      "processing_support_status": "supported"
+    }
+  },
+  "requirements": [
+    {
+      "requirement_id": "candidate_passport_photograph",
+      "requirement_name": "Candidate Passport Photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG / JPEG; Aspect ratio 3:4; 3.5 cm x 4.5 cm; Light or white background; Clear portrait",
+      "evidence_status": "Official Handout",
+      "notes": "Registration"
+    }
+  ],
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "AUEET 2024 Information Handout: B.Tech Admissions - Application Instructions (https://www.alliance.edu.in)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "official",
+      "evidence_reference": "AUEET 2024 Information Handout: B.Tech Admissions - Application Instructions (https://www.alliance.edu.in)",
+      "reasoning": "Pixel dimensions transcribed from the cited source.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "verified"
+  },
+  "fictional_example": false
+}

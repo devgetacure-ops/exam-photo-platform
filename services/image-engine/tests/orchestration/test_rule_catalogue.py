@@ -29,7 +29,7 @@ def test_loads_the_real_catalogue():
     catalogue = load_catalogue(CATALOGUE_ROOT)
 
     assert catalogue.unreadable == {}
-    assert len(catalogue.entries) == 131
+    assert len(catalogue.entries) == 748
     entry = catalogue.get("ibps-crp-customer-service-associates-xv")
     assert entry is not None
     assert entry.rule.exam.exam_name == "IBPS CRP Customer Service Associates-XV"
@@ -152,7 +152,7 @@ def test_the_sidecar_is_never_mistaken_for_a_rule_record():
     catalogue = load_catalogue(CATALOGUE_ROOT)
 
     assert "unavailable_examinations.json" not in catalogue.unreadable
-    assert len(catalogue.entries) == 131
+    assert len(catalogue.entries) == 748
 
 
 def test_a_catalogue_without_the_sidecar_still_serves(tmp_path, real_record):
@@ -181,7 +181,10 @@ def test_a_broken_sidecar_is_reported_rather_than_ignored(tmp_path, real_record)
 
 
 def test_catalogue_wide_support_totals_match_the_recorded_figures():
-    """DEC-056 quotes these; if the catalogue moves, the entry must be amended."""
+    """DEC-056 quotes these; if the catalogue moves, the entry must be amended.
+
+    DEC-114: the 2026-09-27 delivery added 617 examinations (131 -> 748).
+    """
     catalogue = load_catalogue(CATALOGUE_ROOT)
 
     totals = {support: 0 for support in PlatformSupport}
@@ -189,11 +192,11 @@ def test_catalogue_wide_support_totals_match_the_recorded_figures():
         for support, count in support_counts(entry.rule).items():
             totals[support] += count
 
-    assert sum(totals.values()) == 405
+    assert sum(totals.values()) == 1921
     # DEC-095 and DEC-099: NEET-PG's pre-saved photograph gained its size
     # and format (supported), as UP B.Ed's did.
-    assert totals[PlatformSupport.SUPPORTED] == 304
-    assert totals[PlatformSupport.GUIDANCE_ONLY] == 28
+    assert totals[PlatformSupport.SUPPORTED] == 1728
+    assert totals[PlatformSupport.GUIDANCE_ONLY] == 49
     # DEC-095: WBSSC's photograph needs the signature on it (partial).
-    assert totals[PlatformSupport.PARTIALLY_SUPPORTED] == 4
-    assert totals[PlatformSupport.NOT_YET_SUPPORTED] == 69
+    assert totals[PlatformSupport.PARTIALLY_SUPPORTED] == 20
+    assert totals[PlatformSupport.NOT_YET_SUPPORTED] == 124

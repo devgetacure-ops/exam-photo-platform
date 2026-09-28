@@ -1,0 +1,215 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "bihar-staff-selection-commission-3rd-4th-graduate-level-combined-competitive-exa",
+  "rule_version": "1.0.0",
+  "status": "verified",
+  "exam": {
+    "exam_id": "bihar-staff-selection-commission-3rd-4th-graduate-level-combined-competitive-exa",
+    "exam_name": "Bihar Staff Selection Commission 3rd / 4th Graduate Level Combined Competitive Examination (BSSC CGL)",
+    "conducting_body": "Bihar Staff Selection Commission (BSSC), Patna",
+    "examination_year": 2024,
+    "application_cycle": "3rd Graduate Level Combined Competitive Exam (Advt 01/22) / 4th CGL 2024",
+    "aliases": [
+      "BSSC CGL",
+      "Bihar CGL",
+      "BSSC 3rd CGL",
+      "BSSC 4th CGL",
+      "Bihar Secretariat Assistant"
+    ],
+    "application_stage": "application",
+    "jurisdiction": "Bihar",
+    "category": "recruitment"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_webpage",
+      "official_source": true,
+      "captured_wording": "\u0905\u092d\u094d\u092f\u0930\u094d\u0925\u0940 \u0905\u092a\u0928\u093e \u0939\u093e\u0932 \u0915\u093e \u0930\u0902\u0917\u0940\u0928 \u092a\u093e\u0938\u092a\u094b\u0930\u094d\u091f \u0938\u093e\u0907\u091c \u092b\u094b\u091f\u094b\u0917\u094d\u0930\u093e\u092b (20 \u0938\u0947 50 \u0915\u0947\u092c\u0940 \u0915\u0947 \u092c\u0940\u091a) \u091c\u0947\u092a\u0940\u091c\u0940 \u092b\u0949\u0930\u094d\u092e\u0947\u091f \u092e\u0947\u0902 \u0938\u094d\u0915\u0948\u0928 \u0915\u0930 \u0905\u092a\u0932\u094b\u0921 \u0915\u0930\u0947\u0902\u0917\u0947\u0964",
+      "source_url": "https://onlinebssc.com",
+      "document_title": "Advertisement for 3rd Graduate Level Combined Competitive Examination for Secretariat Assistant, Planning Assistant & Other Posts",
+      "section_name": "Advt No. 01/22, Clause 10"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "unspecified",
+      "preferred_width_px": 200,
+      "preferred_height_px": 230,
+      "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified.",
+      "dpi": 200,
+      "permitted_pixel_range": "200 x 230 pixels recommended; size 20 KB to 50 KB"
+    },
+    "file_size": {
+      "maximum_bytes": 50000,
+      "minimum_bytes": 20000,
+      "size_unit_as_published": "KB",
+      "published_maximum": 50.0,
+      "published_minimum": 20.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpg",
+        "jpeg"
+      ],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "plain_light",
+      "fallback_colour": "#FFFFFF"
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "unspecified",
+      "face_coverage_minimum": 70.0
+    },
+    "appearance": {
+      "spectacles": {
+        "policy": "conditional",
+        "condition": "Transparent spectacles without reflection permitted; no sunglasses",
+        "source_wording": "Transparent spectacles without reflection permitted; no sunglasses"
+      },
+      "headwear": {
+        "policy": "prohibited",
+        "source_wording": "Caps/hats prohibited"
+      },
+      "face_mask": {
+        "policy": "prohibited",
+        "source_wording": "Prohibited"
+      },
+      "monochrome_accepted": false,
+      "recency_maximum_days": 30
+    },
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false,
+      "instructions": "photo.jpg / passport.jpg"
+    },
+    "exceptional_instructions": {
+      "spectacles_restriction": true,
+      "headwear_restriction": true,
+      "black_and_white_restriction": true,
+      "recent_photo_requirement": true,
+      "processing_support_status": "supported"
+    }
+  },
+  "requirements": [
+    {
+      "requirement_id": "photograph",
+      "requirement_name": "Photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG, JPEG; 200 x 230 pixels recommended; size 20 KB to 50 KB; 3.5 cm x 4.5 cm; Plain white or light background; Portal checks size 20 KB - 50 KB and JPEG format",
+      "evidence_status": "Official Notification",
+      "notes": "Online Application Stage"
+    },
+    {
+      "requirement_id": "hindi_signature",
+      "requirement_name": "Hindi Signature",
+      "requirement_type": "signature",
+      "submission_method": "handwritten_then_uploaded",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG, JPEG; 200 x 60 pixels; file size 10 KB to 20 KB; 3.5 cm x 1.5 cm; White background; Signature strictly in Hindi / Devnagari script; Portal validates size 10-20 KB",
+      "evidence_status": "Official Notification",
+      "notes": "Online Application Stage",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 20000,
+          "minimum_bytes": 10000,
+          "published_minimum": 10.0,
+          "published_maximum": 20.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "unspecified",
+          "preferred_width_px": 200,
+          "preferred_height_px": 60,
+          "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified."
+        }
+      }
+    },
+    {
+      "requirement_id": "english_signature",
+      "requirement_name": "English Signature",
+      "requirement_type": "signature",
+      "submission_method": "handwritten_then_uploaded",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG, JPEG; 200 x 60 pixels; file size 10 KB to 20 KB; 3.5 cm x 1.5 cm; White background; Signature in English running hand; Portal validates size 10-20 KB",
+      "evidence_status": "Official Notification",
+      "notes": "Online Application Stage",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 20000,
+          "minimum_bytes": 10000,
+          "published_minimum": 10.0,
+          "published_maximum": 20.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "unspecified",
+          "preferred_width_px": 200,
+          "preferred_height_px": 60,
+          "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified."
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "Advertisement for 3rd Graduate Level Combined Competitive Examination for Secretariat Assistant, Planning Assistant & Other Posts - Advt No. 01/22, Clause 10 (https://onlinebssc.com)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "official",
+      "evidence_reference": "Advertisement for 3rd Graduate Level Combined Competitive Examination for Secretariat Assistant, Planning Assistant & Other Posts - Advt No. 01/22, Clause 10 (https://onlinebssc.com)",
+      "reasoning": "Pixel dimensions transcribed from the cited source.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "verified"
+  },
+  "fictional_example": false
+}

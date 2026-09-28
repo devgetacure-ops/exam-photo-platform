@@ -1,0 +1,194 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "cbse-class-10-12-board-examinations-private-candidates-list-of-candidates-loc",
+  "rule_version": "1.0.0",
+  "status": "verified",
+  "exam": {
+    "exam_id": "cbse-class-10-12-board-examinations-private-candidates-list-of-candidates-loc",
+    "exam_name": "CBSE Class 10 & 12 Board Examinations - Private Candidates & List of Candidates (LOC)",
+    "conducting_body": "Central Board of Secondary Education (CBSE), New Delhi",
+    "examination_year": 2025,
+    "application_cycle": "CBSE Board Examinations 2024 / 2025",
+    "aliases": [
+      "CBSE Private Candidate Examination",
+      "CBSE LOC Class X",
+      "XII"
+    ],
+    "application_stage": "application",
+    "jurisdiction": "All India & Overseas affiliated schools",
+    "category": "professional_body"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_webpage",
+      "official_source": true,
+      "captured_wording": "Upload recent scanned colour photograph in JPG format (size up to 40 KB). The photograph should have the candidate's name and date of photo printed at the bottom and show 80% face coverage.",
+      "source_url": "https://www.cbse.gov.in",
+      "document_title": "Submission of Examination Forms by Private Candidates for Class X & XII Examinations",
+      "section_name": "Annexure - Photo Specifications"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "unspecified",
+      "preferred_width_px": 200,
+      "preferred_height_px": 250,
+      "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified.",
+      "dpi": 200,
+      "permitted_pixel_range": "Aspect ratio 4:5"
+    },
+    "file_size": {
+      "maximum_bytes": 40000,
+      "minimum_bytes": 10000,
+      "size_unit_as_published": "KB",
+      "published_maximum": 40.0,
+      "published_minimum": 10.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpg",
+        "jpeg"
+      ],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "plain_light",
+      "fallback_colour": "#FFFFFF"
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "required_visible",
+      "face_coverage_minimum": 80.0,
+      "ears_visible": true
+    },
+    "appearance": {
+      "spectacles": {
+        "policy": "conditional",
+        "condition": "Spectacles allowed if regularly worn, without reflection or dark tint",
+        "source_wording": "Spectacles allowed if regularly worn, without reflection or dark tint"
+      },
+      "headwear": {
+        "policy": "conditional",
+        "condition": "Caps/hats not permitted; religious headwear permitted without shadowing face",
+        "source_wording": "Caps/hats not permitted; religious headwear permitted without shadowing face"
+      },
+      "face_mask": {
+        "policy": "prohibited",
+        "source_wording": "Strictly prohibited"
+      },
+      "monochrome_accepted": false,
+      "recency_maximum_days": 90,
+      "imprint": {
+        "policy": "required",
+        "fields": [
+          "candidate_name",
+          "photograph_date"
+        ],
+        "position": "bottom"
+      }
+    },
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false,
+      "instructions": "candidate_photo.jpg"
+    },
+    "exceptional_instructions": {
+      "printed_name": true,
+      "printed_date": true,
+      "spectacles_restriction": true,
+      "headwear_restriction": true,
+      "black_and_white_restriction": true,
+      "recent_photo_requirement": true,
+      "processing_support_status": "partially_supported",
+      "unsupported_requirement_reasons": [
+        "The body requires the candidate's name and/or the photograph date printed on the image. The engine has no text-rendering capability, so the photograph is produced correctly sized and composed but without the imprint, which the candidate must add before uploading."
+      ]
+    }
+  },
+  "requirements": [
+    {
+      "requirement_id": "candidate_passport_photograph_with_name_and_date",
+      "requirement_name": "Candidate Passport Photograph with Name and Date",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "partially_supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG / JPEG; Aspect ratio 4:5; 3.5 cm x 4.5 cm; Light or white background; Must match appearance on admit card and identity card",
+      "evidence_status": "Official Board Circular",
+      "notes": "Online Form Filling"
+    },
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate Signature",
+      "requirement_type": "signature",
+      "submission_method": "handwritten_then_uploaded",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG / JPEG; Aspect ratio ~7:3; 3.5 cm x 1.5 cm; Plain white paper; Running handwriting; signatures in ALL CAPITAL LETTERS are invalid; Printed on admit card and verified during examination hall entry",
+      "evidence_status": "Official Board Circular",
+      "notes": "Online Form Filling",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 20000,
+          "minimum_bytes": 5000,
+          "published_minimum": 5.0,
+          "published_maximum": 20.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "unspecified",
+          "preferred_width_px": 140,
+          "preferred_height_px": 60,
+          "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified."
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "Submission of Examination Forms by Private Candidates for Class X & XII Examinations - Annexure - Photo Specifications (https://www.cbse.gov.in)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "official",
+      "evidence_reference": "Submission of Examination Forms by Private Candidates for Class X & XII Examinations - Annexure - Photo Specifications (https://www.cbse.gov.in)",
+      "reasoning": "Pixel dimensions transcribed from the cited source.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "verified"
+  },
+  "fictional_example": false
+}

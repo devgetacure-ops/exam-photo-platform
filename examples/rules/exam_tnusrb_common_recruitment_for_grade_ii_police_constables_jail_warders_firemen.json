@@ -1,0 +1,219 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "tnusrb-common-recruitment-for-grade-ii-police-constables-jail-warders-firemen",
+  "rule_version": "1.0.0",
+  "status": "verified",
+  "exam": {
+    "exam_id": "tnusrb-common-recruitment-for-grade-ii-police-constables-jail-warders-firemen",
+    "exam_name": "TNUSRB Common Recruitment for Grade II Police Constables, Jail Warders & Firemen",
+    "conducting_body": "Tamil Nadu Uniformed Services Recruitment Board (TNUSRB)",
+    "examination_year": 2025,
+    "application_cycle": "2024-2025",
+    "aliases": [
+      "TNUSRB Constable Exam",
+      "Tamil Nadu Uniformed Services Grade II Recruitment"
+    ],
+    "application_stage": "application",
+    "jurisdiction": "Tamil Nadu",
+    "category": "recruitment"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "Photograph must be taken on or after the date of notification. The candidate name and date on which photo was taken should be clearly printed at the bottom of the photograph. File size should be 20 KB to 50 KB in JPG format.",
+      "source_url": "https://tnusrb.tn.gov.in/pdf/CR2024_Notification.pdf",
+      "document_title": "Notification for Common Recruitment of Gr. II Police Constables, Gr. II Jail Warders & Firemen",
+      "section_name": "Section 9 (Instructions to Candidates)"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "unspecified",
+      "preferred_width_px": 350,
+      "preferred_height_px": 450,
+      "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified.",
+      "dpi": 200,
+      "permitted_pixel_range": "Aspect ratio 3.5 cm x 4.5 cm; 20 KB to 50 KB JPG"
+    },
+    "file_size": {
+      "maximum_bytes": 50000,
+      "minimum_bytes": 20000,
+      "size_unit_as_published": "KB",
+      "published_maximum": 50.0,
+      "published_minimum": 20.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpg",
+        "jpeg"
+      ],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "exact_colour",
+      "required_colour": "#FFFFFF",
+      "tolerance": 3.0
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "unspecified",
+      "face_coverage_minimum": 75.0
+    },
+    "appearance": {
+      "spectacles": {
+        "policy": "conditional",
+        "condition": "Spectacles permitted if clear untinted lenses; dark glasses or reflection strictly rejected",
+        "source_wording": "Spectacles permitted if clear untinted lenses; dark glasses or reflection strictly rejected"
+      },
+      "headwear": {
+        "policy": "conditional",
+        "condition": "Not allowed except religious head coverings",
+        "source_wording": "Not allowed except religious head coverings"
+      },
+      "face_mask": {
+        "policy": "prohibited",
+        "source_wording": "Prohibited"
+      },
+      "monochrome_accepted": false,
+      "imprint": {
+        "policy": "required",
+        "fields": [
+          "candidate_name",
+          "photograph_date"
+        ],
+        "position": "bottom"
+      }
+    },
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false,
+      "instructions": "photo.jpg"
+    },
+    "exceptional_instructions": {
+      "printed_name": true,
+      "printed_date": true,
+      "spectacles_restriction": true,
+      "headwear_restriction": true,
+      "black_and_white_restriction": true,
+      "processing_support_status": "partially_supported",
+      "unsupported_requirement_reasons": [
+        "The body requires the candidate's name and/or the photograph date printed on the image. The engine has no text-rendering capability, so the photograph is produced correctly sized and composed but without the imprint, which the candidate must add before uploading."
+      ]
+    }
+  },
+  "requirements": [
+    {
+      "requirement_id": "candidate_photograph_with_name_date_printed",
+      "requirement_name": "Candidate Photograph with Name & Date Printed",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "partially_supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG, JPEG; Aspect ratio 3.5 cm x 4.5 cm; 20 KB to 50 KB JPG; 3.5 cm x 4.5 cm; Plain white background; Crucial TNUSRB rule: Photo without name and date printed at bottom will lead to summary rejection",
+      "evidence_status": "Official Notification",
+      "notes": "Application"
+    },
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate Signature",
+      "requirement_type": "signature",
+      "submission_method": "handwritten_then_uploaded",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG, JPEG; Aspect ratio 3.5 cm x 1.5 cm; 10 KB to 20 KB JPG; 3.5 cm x 1.5 cm; Plain white paper; Full running signature in blue or black pen; capital block letters strictly prohibited; Signatures must be sharp and legible without pixelation",
+      "evidence_status": "Official Notification",
+      "notes": "Application",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 20000,
+          "minimum_bytes": 10000,
+          "published_minimum": 10.0,
+          "published_maximum": 20.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "unspecified",
+          "preferred_width_px": 350,
+          "preferred_height_px": 150,
+          "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified."
+        }
+      }
+    },
+    {
+      "requirement_id": "sslc_10th_marksheet_tamil_language_subject_proof",
+      "requirement_name": "SSLC / 10th Marksheet (Tamil Language Subject Proof)",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "PDF, JPG, JPEG; 100 KB to 400 KB PDF/JPG; A4 original document; Applicant must have studied Tamil as a subject in 10th standard or must qualify Tamil Eligibility Test",
+      "evidence_status": "Official Notification",
+      "notes": "Application",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 400000,
+          "minimum_bytes": 100000,
+          "published_minimum": 100.0,
+          "published_maximum": 400.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "Notification for Common Recruitment of Gr. II Police Constables, Gr. II Jail Warders & Firemen - Section 9 (Instructions to Candidates) (https://tnusrb.tn.gov.in/pdf/CR2024_Notification.pdf)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "official",
+      "evidence_reference": "Notification for Common Recruitment of Gr. II Police Constables, Gr. II Jail Warders & Firemen - Section 9 (Instructions to Candidates) (https://tnusrb.tn.gov.in/pdf/CR2024_Notification.pdf)",
+      "reasoning": "Pixel dimensions transcribed from the cited source.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "verified"
+  },
+  "fictional_example": false
+}

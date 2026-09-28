@@ -1,0 +1,246 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "uttar-pradesh-combined-agriculture-and-technology-entrance-test-upcatet",
+  "rule_version": "1.0.0",
+  "status": "verified",
+  "exam": {
+    "exam_id": "uttar-pradesh-combined-agriculture-and-technology-entrance-test-upcatet",
+    "exam_name": "Uttar Pradesh Combined Agriculture and Technology Entrance Test (UPCATET)",
+    "conducting_body": "Sardar Vallabhbhai Patel University of Agriculture & Technology (SVPUAT), Meerut",
+    "examination_year": 2025,
+    "application_cycle": "UPCATET 2024 / UPCATET 2025",
+    "aliases": [
+      "UPCATET",
+      "UP Agriculture Entrance Exam"
+    ],
+    "application_stage": "application",
+    "jurisdiction": "Uttar Pradesh",
+    "category": "entrance"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_webpage",
+      "official_source": true,
+      "captured_wording": "Candidate must upload photograph holding a placard/slate with Candidate Name and Date of snapping clearly written. File size must be between 40 KB and 100 KB in JPG format.",
+      "source_url": "https://upcatet.org",
+      "document_title": "UPCATET-2024 Information Brochure for Admission into UG, PG and Ph.D. Programmes",
+      "section_name": "Guidelines for Online Form Submission"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "unspecified",
+      "preferred_width_px": 200,
+      "preferred_height_px": 250,
+      "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified.",
+      "dpi": 150,
+      "permitted_pixel_range": "Aspect ratio 4:5"
+    },
+    "file_size": {
+      "maximum_bytes": 100000,
+      "minimum_bytes": 40000,
+      "size_unit_as_published": "KB",
+      "published_maximum": 100.0,
+      "published_minimum": 40.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpg",
+        "jpeg"
+      ],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "exact_colour",
+      "required_colour": "#FFFFFF",
+      "tolerance": 3.0
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "unspecified",
+      "face_coverage_minimum": 75.0
+    },
+    "appearance": {
+      "spectacles": {
+        "policy": "conditional",
+        "condition": "Allowed without reflection; sunglasses prohibited",
+        "source_wording": "Allowed without reflection; sunglasses prohibited"
+      },
+      "headwear": {
+        "policy": "prohibited",
+        "source_wording": "Caps prohibited"
+      },
+      "face_mask": {
+        "policy": "prohibited",
+        "source_wording": "Prohibited"
+      },
+      "monochrome_accepted": false,
+      "imprint": {
+        "policy": "required",
+        "fields": [
+          "candidate_name",
+          "photograph_date"
+        ],
+        "position": "bottom"
+      }
+    },
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false,
+      "instructions": "photo.jpg"
+    },
+    "exceptional_instructions": {
+      "printed_name": true,
+      "printed_date": true,
+      "spectacles_restriction": true,
+      "headwear_restriction": true,
+      "black_and_white_restriction": true,
+      "processing_support_status": "partially_supported",
+      "unsupported_requirement_reasons": [
+        "The body requires the candidate's name and/or the photograph date printed on the image. The engine has no text-rendering capability, so the photograph is produced correctly sized and composed but without the imprint, which the candidate must add before uploading."
+      ]
+    }
+  },
+  "requirements": [
+    {
+      "requirement_id": "candidate_passport_photograph_with_placard_name_",
+      "requirement_name": "Candidate Passport Photograph with Placard (Name, Aadhaar & Date)",
+      "requirement_type": "identity_document",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG / JPEG; Aspect ratio 4:5; 3.5 cm x 4.5 cm; White background; UPCATET strictly requires Aadhaar number or name/date printed on the photograph",
+      "evidence_status": "Official Information Brochure",
+      "notes": "Online Application",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 100000,
+          "minimum_bytes": 40000,
+          "published_minimum": 40.0,
+          "published_maximum": 100.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "unspecified",
+          "preferred_width_px": 200,
+          "preferred_height_px": 250,
+          "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified."
+        }
+      }
+    },
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate Signature",
+      "requirement_type": "signature",
+      "submission_method": "handwritten_then_uploaded",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG / JPEG; Aspect ratio ~7:3; 3.5 cm x 1.5 cm; White background; Running handwriting signature with black ballpoint pen; Printed on UPCATET Admit Card",
+      "evidence_status": "Official Information Brochure",
+      "notes": "Online Application",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 50000,
+          "minimum_bytes": 20000,
+          "published_minimum": 20.0,
+          "published_maximum": 50.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "unspecified",
+          "preferred_width_px": 140,
+          "preferred_height_px": 60,
+          "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified."
+        }
+      }
+    },
+    {
+      "requirement_id": "candidate_right_hand_index_finger_impression",
+      "requirement_name": "Candidate Right Hand Index Finger Impression",
+      "requirement_type": "thumb_impression",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG / JPEG; Aspect ratio ~7:3; 3.5 cm x 1.5 cm; White background; Clear impression of right hand index finger (or thumb) with unsmudged ridge patterns; Verified during counseling and physical reporting",
+      "evidence_status": "Official Information Brochure",
+      "notes": "Online Application",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 50000,
+          "minimum_bytes": 20000,
+          "published_minimum": 20.0,
+          "published_maximum": 50.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "unspecified",
+          "preferred_width_px": 140,
+          "preferred_height_px": 60,
+          "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified."
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "UPCATET-2024 Information Brochure for Admission into UG, PG and Ph.D. Programmes - Guidelines for Online Form Submission (https://upcatet.org)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "official",
+      "evidence_reference": "UPCATET-2024 Information Brochure for Admission into UG, PG and Ph.D. Programmes - Guidelines for Online Form Submission (https://upcatet.org)",
+      "reasoning": "Pixel dimensions transcribed from the cited source.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "verified"
+  },
+  "fictional_example": false
+}

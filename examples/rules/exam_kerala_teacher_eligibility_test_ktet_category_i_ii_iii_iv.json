@@ -1,0 +1,192 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "kerala-teacher-eligibility-test-ktet-category-i-ii-iii-iv",
+  "rule_version": "1.0.0",
+  "status": "verified",
+  "exam": {
+    "exam_id": "kerala-teacher-eligibility-test-ktet-category-i-ii-iii-iv",
+    "exam_name": "Kerala Teacher Eligibility Test (KTET - Category I, II, III & IV)",
+    "conducting_body": "Office of Commissioner for Government Examinations, Pareeksha Bhavan, Thiruvananthapuram",
+    "examination_year": 2024,
+    "application_cycle": "2024 (October)",
+    "aliases": [
+      "K-TET Examination",
+      "Kerala Pareeksha Bhavan Teacher Eligibility Test"
+    ],
+    "application_stage": "application",
+    "jurisdiction": "Kerala",
+    "category": "eligibility"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "Upload recent passport size photograph with candidate name and date of photo printed at the bottom. Image dimensions must be 150 px width x 200 px height, and file size between 20 KB and 30 KB in JPG format.",
+      "source_url": "https://ktet.kerala.gov.in/doc/ktet_prospectus_oct_2024.pdf",
+      "document_title": "Notification & Prospectus for Kerala Teacher Eligibility Test (K-TET)",
+      "section_name": "Section 8 (How to Apply)"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "unspecified",
+      "preferred_width_px": 150,
+      "preferred_height_px": 200,
+      "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified.",
+      "dpi": 150,
+      "permitted_pixel_range": "Dimensions 200 px height x 150 px width; file size between 20 KB and 30 KB JPG"
+    },
+    "file_size": {
+      "maximum_bytes": 30000,
+      "minimum_bytes": 20000,
+      "size_unit_as_published": "KB",
+      "published_maximum": 30.0,
+      "published_minimum": 20.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpg",
+        "jpeg"
+      ],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "plain_light",
+      "fallback_colour": "#FFFFFF"
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "unspecified",
+      "face_coverage_minimum": 75.0
+    },
+    "appearance": {
+      "spectacles": {
+        "policy": "conditional",
+        "condition": "Permitted without reflections or tint; goggles prohibited",
+        "source_wording": "Permitted without reflections or tint; goggles prohibited"
+      },
+      "headwear": {
+        "policy": "conditional",
+        "condition": "Not allowed except religious head coverings",
+        "source_wording": "Not allowed except religious head coverings"
+      },
+      "face_mask": {
+        "policy": "prohibited",
+        "source_wording": "Prohibited"
+      },
+      "monochrome_accepted": false,
+      "recency_maximum_days": 180,
+      "imprint": {
+        "policy": "required",
+        "fields": [
+          "candidate_name",
+          "photograph_date"
+        ],
+        "position": "bottom"
+      }
+    },
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false,
+      "instructions": "ktet_photo.jpg"
+    },
+    "exceptional_instructions": {
+      "printed_name": true,
+      "printed_date": true,
+      "spectacles_restriction": true,
+      "headwear_restriction": true,
+      "black_and_white_restriction": true,
+      "recent_photo_requirement": true,
+      "processing_support_status": "partially_supported",
+      "unsupported_requirement_reasons": [
+        "The body requires the candidate's name and/or the photograph date printed on the image. The engine has no text-rendering capability, so the photograph is produced correctly sized and composed but without the imprint, which the candidate must add before uploading."
+      ]
+    }
+  },
+  "requirements": [
+    {
+      "requirement_id": "candidate_photograph_with_name_date",
+      "requirement_name": "Candidate Photograph with Name & Date",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "partially_supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG, JPEG; Dimensions 200 px height x 150 px width; file size between 20 KB and 30 KB JPG; 150 x 200 px aspect ratio; Plain white or light background; Kerala Pareeksha Bhavan standard: Photos without printed name and date are rejected",
+      "evidence_status": "Official Prospectus",
+      "notes": "Application"
+    },
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate Signature",
+      "requirement_type": "signature",
+      "submission_method": "handwritten_then_uploaded",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG, JPEG; Dimensions 100 px height x 150 px width; file size between 10 KB and 20 KB JPG; 150 x 100 px aspect ratio; Plain white paper; Full running signature; capital block letters strictly prohibited; Crop cleanly without border shadows",
+      "evidence_status": "Official Prospectus",
+      "notes": "Application",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 20000,
+          "minimum_bytes": 10000,
+          "published_minimum": 10.0,
+          "published_maximum": 20.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "unspecified",
+          "preferred_width_px": 150,
+          "preferred_height_px": 100,
+          "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified."
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "Notification & Prospectus for Kerala Teacher Eligibility Test (K-TET) - Section 8 (How to Apply) (https://ktet.kerala.gov.in/doc/ktet_prospectus_oct_2024.pdf)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "official",
+      "evidence_reference": "Notification & Prospectus for Kerala Teacher Eligibility Test (K-TET) - Section 8 (How to Apply) (https://ktet.kerala.gov.in/doc/ktet_prospectus_oct_2024.pdf)",
+      "reasoning": "Pixel dimensions transcribed from the cited source.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "verified"
+  },
+  "fictional_example": false
+}

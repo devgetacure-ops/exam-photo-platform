@@ -1,0 +1,180 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "himachal-pradesh-teacher-eligibility-test-hp-tet-jbt-tgt-arts-non-med-med-shastr",
+  "rule_version": "1.0.0",
+  "status": "verified",
+  "exam": {
+    "exam_id": "himachal-pradesh-teacher-eligibility-test-hp-tet-jbt-tgt-arts-non-med-med-shastr",
+    "exam_name": "Himachal Pradesh Teacher Eligibility Test (HP TET - JBT / TGT Arts / Non-Med / Med / Shastri / Urdu / Punjabi)",
+    "conducting_body": "Himachal Pradesh Board of School Education (HPBOSE), Dharamshala",
+    "examination_year": 2024,
+    "application_cycle": "2024 (November)",
+    "aliases": [
+      "HP TET Examination",
+      "HPBOSE HP TET (June",
+      "November Sessions)"
+    ],
+    "application_stage": "application",
+    "jurisdiction": "Himachal Pradesh",
+    "category": "eligibility"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "Scanned image of latest passport size photograph must be in JPG/JPEG format, file size strictly between 15 KB and 20 KB and dimensions 135 x 175 pixels. Any other file size will be rejected by the portal.",
+      "source_url": "https://hpbose.org/OnlineServices/TET/TET_Prospectus_Nov_2024.pdf",
+      "document_title": "Prospectus-cum-Information Bulletin for HP Teacher Eligibility Test (HPTET)",
+      "section_name": "Section 9 (Instructions for Uploads)"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "unspecified",
+      "preferred_width_px": 135,
+      "preferred_height_px": 175,
+      "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified.",
+      "dpi": 150,
+      "permitted_pixel_range": "Dimensions 135 x 175 px (3.5 cm x 4.5 cm); strictly between 15 KB and 20 KB JPG"
+    },
+    "file_size": {
+      "maximum_bytes": 20000,
+      "minimum_bytes": 15000,
+      "size_unit_as_published": "KB",
+      "published_maximum": 20.0,
+      "published_minimum": 15.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpg",
+        "jpeg"
+      ],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "plain_light",
+      "fallback_colour": "#FFFFFF"
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "unspecified",
+      "face_coverage_minimum": 75.0
+    },
+    "appearance": {
+      "spectacles": {
+        "policy": "conditional",
+        "condition": "Allowed without tinted glass or reflections",
+        "source_wording": "Allowed without tinted glass or reflections"
+      },
+      "headwear": {
+        "policy": "conditional",
+        "condition": "Not permitted unless religious",
+        "source_wording": "Not permitted unless religious"
+      },
+      "face_mask": {
+        "policy": "prohibited",
+        "source_wording": "Prohibited"
+      },
+      "monochrome_accepted": false,
+      "recency_maximum_days": 90
+    },
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false,
+      "instructions": "photo.jpg"
+    },
+    "exceptional_instructions": {
+      "spectacles_restriction": true,
+      "headwear_restriction": true,
+      "black_and_white_restriction": true,
+      "recent_photo_requirement": true,
+      "processing_support_status": "supported"
+    }
+  },
+  "requirements": [
+    {
+      "requirement_id": "candidate_photograph",
+      "requirement_name": "Candidate Photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG, JPEG; Dimensions 135 x 175 px (3.5 cm x 4.5 cm); strictly between 15 KB and 20 KB JPG; 3.5 cm x 4.5 cm; Plain white/light background; HPBOSE narrow file size band: Server rejects photo if < 15 KB or > 20 KB",
+      "evidence_status": "Official Prospectus",
+      "notes": "Application"
+    },
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate Signature",
+      "requirement_type": "signature",
+      "submission_method": "handwritten_then_uploaded",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG, JPEG; Dimensions 135 x 55 px; strictly between 10 KB and 15 KB JPG; 3.5 cm x 1.5 cm; Plain white paper; Running handwriting with blue or black ballpoint pen; capital block letters strictly prohibited; Strict HPBOSE size range: 10 KB to 15 KB",
+      "evidence_status": "Official Prospectus",
+      "notes": "Application",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 15000,
+          "minimum_bytes": 10000,
+          "published_minimum": 10.0,
+          "published_maximum": 15.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "unspecified",
+          "preferred_width_px": 135,
+          "preferred_height_px": 55,
+          "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified."
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "Prospectus-cum-Information Bulletin for HP Teacher Eligibility Test (HPTET) - Section 9 (Instructions for Uploads) (https://hpbose.org/OnlineServices/TET/TET_Prospectus_Nov_2024.pdf)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "official",
+      "evidence_reference": "Prospectus-cum-Information Bulletin for HP Teacher Eligibility Test (HPTET) - Section 9 (Instructions for Uploads) (https://hpbose.org/OnlineServices/TET/TET_Prospectus_Nov_2024.pdf)",
+      "reasoning": "Pixel dimensions transcribed from the cited source.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "verified"
+  },
+  "fictional_example": false
+}

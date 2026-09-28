@@ -71,6 +71,21 @@ ALLOWED: dict[tuple[str, str, str], str] = {
         "'350-500 pixels' names no axis.",
     ("unread_pixels", "upsc-nda-na-examination-ii-2026", "triple_signature_image"):
         "'350-500 pixels' names no axis.",
+    # DEC-114: the 2026-09-27 delivery, taken as delivered.
+    ("duplicate", "jawahar-navodaya-vidyalaya-lateral-entry-selection-test-for-class-ix-jnv-lest-cl", "Candidate Signature | Parent / Guardian Signature"):
+        "Different signatories.",
+    ("duplicate", "jawahar-navodaya-vidyalaya-lateral-entry-selection-test-for-class-xi-jnv-lest-cl", "Candidate Signature | Parent / Guardian Signature"):
+        "Different signatories.",
+    ("unread_pixels", "kerala-high-court-registrar-office-attendant-recruitments", "sslc_10th_pass_book_kerala_identity_proof"):
+        "A scanned certificate: the pixel figure describes the scan, and a document is never re-rendered (DEC-052).",
+    ("unread_pixels", "madras-high-court-data-entry-operator-technical-staff-recruitment", "tamil_english_typewriting_higher_certificate"):
+        "A scanned certificate; see DEC-052.",
+    ("unread_pixels", "national-ayush-mission-kerala-deo-paramedical-recruitment", "kgte_typewriting_malayalam_english_certificate"):
+        "A scanned certificate; see DEC-052.",
+    ("unread_pixels", "vadodara-municipal-corporation-vmc-draftsman-work-assistant", "iti_civil_draftsman_ccc_computer_certificate"):
+        "A scanned certificate; see DEC-052.",
+    ("scope_name", "tamil-nadu-family-welfare-department-contractual-medical-posts", "Tamil Nadu Family Welfare Department Contractual Medical Posts"):
+        "The department recruits these posts under one notice; the delivery names it so.",
 }
 
 

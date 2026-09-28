@@ -1,0 +1,225 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "graduate-pharmacy-aptitude-test-gpat",
+  "rule_version": "1.0.0",
+  "status": "verified",
+  "exam": {
+    "exam_id": "graduate-pharmacy-aptitude-test-gpat",
+    "exam_name": "Graduate Pharmacy Aptitude Test (GPAT)",
+    "conducting_body": "National Board of Examinations in Medical Sciences (NBEMS)",
+    "examination_year": 2025,
+    "application_cycle": "GPAT 2024 / GPAT 2025",
+    "aliases": [
+      "GPAT",
+      "NBEMS GPAT"
+    ],
+    "application_stage": "application",
+    "jurisdiction": "All India",
+    "category": "entrance"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_webpage",
+      "official_source": true,
+      "captured_wording": "The photograph should be a recent passport size colour photograph with white background... size should be less than 80 KB in JPG/JPEG format.",
+      "source_url": "https://natboard.edu.in",
+      "document_title": "Information Bulletin for Graduate Pharmacy Aptitude Test (GPAT 2024)",
+      "section_name": "Annexure on Image Upload Guidelines, Sec 2"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "exact",
+      "width_px": 350,
+      "height_px": 450,
+      "aspect_ratio": "7:9",
+      "dpi": 300,
+      "permitted_pixel_range": "Exact / Preferred (35 mm x 45 mm at 300 DPI)"
+    },
+    "file_size": {
+      "maximum_bytes": 80000,
+      "minimum_bytes": 20000,
+      "size_unit_as_published": "KB",
+      "published_maximum": 80.0,
+      "published_minimum": 20.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpg",
+        "jpeg"
+      ],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "exact_colour",
+      "required_colour": "#FFFFFF",
+      "tolerance": 3.0
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "unspecified",
+      "face_coverage_minimum": 75.0
+    },
+    "appearance": {
+      "spectacles": {
+        "policy": "prohibited",
+        "source_wording": "Transparent spectacles allowed if worn regularly; no tinted lenses, reflections, or thick frames obscuring eyes"
+      },
+      "headwear": {
+        "policy": "conditional",
+        "condition": "Headwear permitted strictly for religious reasons; face from forehead to chin and both ears must be clearly visible",
+        "source_wording": "Headwear permitted strictly for religious reasons; face from forehead to chin and both ears must be clearly visible"
+      },
+      "face_mask": {
+        "policy": "prohibited",
+        "source_wording": "No face mask permitted in photograph"
+      },
+      "monochrome_accepted": false,
+      "recency_maximum_days": 90
+    },
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false,
+      "instructions": "Candidate_Photo.jpg"
+    },
+    "exceptional_instructions": {
+      "spectacles_restriction": true,
+      "headwear_restriction": true,
+      "black_and_white_restriction": true,
+      "recent_photo_requirement": true,
+      "processing_support_status": "supported"
+    }
+  },
+  "requirements": [
+    {
+      "requirement_id": "candidate_passport_photograph",
+      "requirement_name": "Candidate Passport Photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG / JPEG; Exact / Preferred (35 mm x 45 mm at 300 DPI); 3.5 cm x 4.5 cm; Plain white background; Formal clothing; direct gaze into camera; neutral expression; no red-eye or facial shadows",
+      "evidence_status": "Official Information Bulletin",
+      "notes": "Registration"
+    },
+    {
+      "requirement_id": "real_time_photograph_webcam_capture",
+      "requirement_name": "Real-Time Photograph (Webcam Capture)",
+      "requirement_type": "photograph",
+      "submission_method": "official_live_capture",
+      "requirement_status": "mandatory",
+      "platform_support": "guidance_only",
+      "applicability": "Mandatory",
+      "content_instructions": "Captured directly via web browser / camera interface; Auto-captured via webcam stream; Screen portrait capture; Plain white background behind candidate; Must sit in bright lighting; avoid light source directly behind candidate; neutral expression",
+      "evidence_status": "Official Information Bulletin",
+      "notes": "Registration"
+    },
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate Signature",
+      "requirement_type": "signature",
+      "submission_method": "handwritten_then_uploaded",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG / JPEG; Box dimension 3.5 cm x 1.5 cm; 3.5 cm x 1.5 cm; Plain white paper; Signed with black or dark blue ink pen within 3.5 x 1.5 cm box; running hand only; CAPITAL LETTERS REJECTED; Crop strictly around signature box without excessive white margins",
+      "evidence_status": "Official Information Bulletin",
+      "notes": "Registration",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 80000,
+          "minimum_bytes": 20000,
+          "published_minimum": 20.0,
+          "published_maximum": 80.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "unspecified",
+          "preferred_width_px": 350,
+          "preferred_height_px": 150,
+          "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified."
+        }
+      }
+    },
+    {
+      "requirement_id": "left_thumb_impression",
+      "requirement_name": "Left Thumb Impression",
+      "requirement_type": "thumb_impression",
+      "submission_method": "handwritten_then_uploaded",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG / JPEG; Box dimension 3.5 cm x 1.5 cm; 3.5 cm x 1.5 cm; Plain white paper; Left thumb impressed horizontally on white paper using blue or black stamp pad; clear ridge lines without smudging; If left thumb is missing, right thumb or other finger impression may be uploaded with medical certificate",
+      "evidence_status": "Official Information Bulletin",
+      "notes": "Registration",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 80000,
+          "minimum_bytes": 20000,
+          "published_minimum": 20.0,
+          "published_maximum": 80.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "unspecified",
+          "preferred_width_px": 350,
+          "preferred_height_px": 150,
+          "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified."
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "Information Bulletin for Graduate Pharmacy Aptitude Test (GPAT 2024) - Annexure on Image Upload Guidelines, Sec 2 (https://natboard.edu.in)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "official",
+      "evidence_reference": "Information Bulletin for Graduate Pharmacy Aptitude Test (GPAT 2024) - Annexure on Image Upload Guidelines, Sec 2 (https://natboard.edu.in)",
+      "reasoning": "Pixel dimensions transcribed from the cited source.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "verified"
+  },
+  "fictional_example": false
+}

@@ -1,0 +1,180 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "gujarat-teacher-aptitude-test-gujarat-tat-secondary-higher-secondary",
+  "rule_version": "1.0.0",
+  "status": "verified",
+  "exam": {
+    "exam_id": "gujarat-teacher-aptitude-test-gujarat-tat-secondary-higher-secondary",
+    "exam_name": "Gujarat Teacher Aptitude Test (Gujarat TAT - Secondary & Higher Secondary)",
+    "conducting_body": "State Examination Board (SEB), Gandhinagar, Gujarat",
+    "examination_year": 2024,
+    "application_cycle": "2024",
+    "aliases": [
+      "Gujarat TAT (Secondary)",
+      "Gujarat TAT (Higher Secondary)",
+      "SEB Gujarat TAT Examination"
+    ],
+    "application_stage": "application",
+    "jurisdiction": "Gujarat",
+    "category": "eligibility"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "Upload passport size photograph in JPG format with size not exceeding 15 KB and dimensions 130 x 180 px.",
+      "source_url": "https://sebexam.org/NoticeFiles/TAT_Secondary_HS_Notice_2024.pdf",
+      "document_title": "Notification for Teacher Aptitude Test (Secondary & Higher Secondary) Examination",
+      "section_name": "Section 7"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "unspecified",
+      "preferred_width_px": 130,
+      "preferred_height_px": 180,
+      "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified.",
+      "dpi": 150,
+      "permitted_pixel_range": "130 x 180 px; max 15 KB JPG"
+    },
+    "file_size": {
+      "maximum_bytes": 15000,
+      "minimum_bytes": 5000,
+      "size_unit_as_published": "KB",
+      "published_maximum": 15.0,
+      "published_minimum": 5.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpg",
+        "jpeg"
+      ],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "plain_light",
+      "fallback_colour": "#FFFFFF"
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "unspecified",
+      "face_coverage_minimum": 75.0
+    },
+    "appearance": {
+      "spectacles": {
+        "policy": "conditional",
+        "condition": "Allowed without glare",
+        "source_wording": "Allowed without glare"
+      },
+      "headwear": {
+        "policy": "conditional",
+        "condition": "Not permitted unless religious",
+        "source_wording": "Not permitted unless religious"
+      },
+      "face_mask": {
+        "policy": "prohibited",
+        "source_wording": "Prohibited"
+      },
+      "monochrome_accepted": false,
+      "recency_maximum_days": 90
+    },
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false,
+      "instructions": "photo.jpg"
+    },
+    "exceptional_instructions": {
+      "spectacles_restriction": true,
+      "headwear_restriction": true,
+      "black_and_white_restriction": true,
+      "recent_photo_requirement": true,
+      "processing_support_status": "supported"
+    }
+  },
+  "requirements": [
+    {
+      "requirement_id": "candidate_photograph",
+      "requirement_name": "Candidate Photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG, JPEG; 130 x 180 px; max 15 KB JPG; 3.6 cm x 5.0 cm; Plain white/light background; Strict OJAS / SEB 15 KB limit",
+      "evidence_status": "Official Notification",
+      "notes": "Application"
+    },
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate Signature",
+      "requirement_type": "signature",
+      "submission_method": "handwritten_then_uploaded",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG, JPEG; 275 x 90 px; max 15 KB JPG; 7.5 cm x 2.5 cm; Plain white paper; Running handwriting; max 15 KB; Legible scan",
+      "evidence_status": "Official Notification",
+      "notes": "Application",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 15000,
+          "minimum_bytes": 5000,
+          "published_minimum": 5.0,
+          "published_maximum": 15.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "unspecified",
+          "preferred_width_px": 275,
+          "preferred_height_px": 90,
+          "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified."
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "Notification for Teacher Aptitude Test (Secondary & Higher Secondary) Examination - Section 7 (https://sebexam.org/NoticeFiles/TAT_Secondary_HS_Notice_2024.pdf)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "official",
+      "evidence_reference": "Notification for Teacher Aptitude Test (Secondary & Higher Secondary) Examination - Section 7 (https://sebexam.org/NoticeFiles/TAT_Secondary_HS_Notice_2024.pdf)",
+      "reasoning": "Pixel dimensions transcribed from the cited source.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "verified"
+  },
+  "fictional_example": false
+}

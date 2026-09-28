@@ -1,0 +1,305 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "institute-of-national-importance-super-specialty-entrance-test-ini-ss",
+  "rule_version": "1.0.0",
+  "status": "verified",
+  "exam": {
+    "exam_id": "institute-of-national-importance-super-specialty-entrance-test-ini-ss",
+    "exam_name": "Institute of National Importance Super-Specialty Entrance Test (INI-SS)",
+    "conducting_body": "All India Institute of Medical Sciences (AIIMS), New Delhi (Examination Section)",
+    "examination_year": 2025,
+    "application_cycle": "January 2025 Session / July 2025 Session",
+    "aliases": [
+      "INI-SS",
+      "INISS",
+      "AIIMS DM",
+      "M.Ch Entrance",
+      "Super-Specialty Combined Entrance Test",
+      "DM",
+      "MCh(3yrs)",
+      "MD(HA) Entrance"
+    ],
+    "application_stage": "application",
+    "jurisdiction": "All India",
+    "category": "entrance"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "Upload recent colour photograph with white background, 3.5cm x 4.5cm, 50KB to 100KB in JPG/JPEG/PNG format.",
+      "source_url": "https://www.aiimsexams.ac.in/pdf/Prospectus_INISS_Jan_2025.pdf",
+      "document_title": "Admission Notice No. 163/2024: INI-SS for Admission to DM/M.Ch.(3 years) & MD(Hospital Administration) Courses for January 2025 Session",
+      "section_name": "Section 4: Online Application Procedure"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "unspecified",
+      "preferred_width_px": 350,
+      "preferred_height_px": 450,
+      "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified.",
+      "dpi": 200,
+      "permitted_pixel_range": "Preferred / Aspect Ratio 3.5:4.5"
+    },
+    "file_size": {
+      "maximum_bytes": 100000,
+      "minimum_bytes": 50000,
+      "size_unit_as_published": "KB",
+      "published_maximum": 100.0,
+      "published_minimum": 50.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpg",
+        "jpeg",
+        "png"
+      ],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "exact_colour",
+      "required_colour": "#FFFFFF",
+      "tolerance": 3.0
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "required_visible",
+      "face_coverage_minimum": 80.0,
+      "ears_visible": true
+    },
+    "appearance": {
+      "spectacles": {
+        "policy": "conditional",
+        "condition": "Allowed if used regularly, clear glass without glare/tint",
+        "source_wording": "Allowed if used regularly, clear glass without glare/tint"
+      },
+      "headwear": {
+        "policy": "conditional",
+        "condition": "Not allowed except religious headwear",
+        "source_wording": "Not allowed except religious headwear"
+      },
+      "face_mask": {
+        "policy": "prohibited",
+        "source_wording": "Not allowed"
+      },
+      "monochrome_accepted": false,
+      "recency_maximum_days": 180
+    },
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false,
+      "instructions": "Photograph.jpg"
+    },
+    "exceptional_instructions": {
+      "spectacles_restriction": true,
+      "headwear_restriction": true,
+      "black_and_white_restriction": true,
+      "recent_photo_requirement": true,
+      "processing_support_status": "supported"
+    }
+  },
+  "requirements": [
+    {
+      "requirement_id": "digital_photograph",
+      "requirement_name": "Digital Photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG, JPEG, GIF, PNG; Preferred / Aspect Ratio 3.5:4.5; 3.5 cm x 4.5 cm; White background; Automated aspect ratio and resolution checks. Informal mobile portraits rejected.",
+      "evidence_status": "OFFICIAL",
+      "notes": "Registration & Basic Information"
+    },
+    {
+      "requirement_id": "live_real_time_photograph_webcam_capture",
+      "requirement_name": "Live Real-time Photograph (Webcam Capture)",
+      "requirement_type": "photograph",
+      "submission_method": "official_live_capture",
+      "requirement_status": "mandatory",
+      "platform_support": "guidance_only",
+      "applicability": "Mandatory",
+      "content_instructions": "Direct browser / webcam digital capture; Browser stream capture; Not specified; White or light background behind candidate; Browser webcam liveness and face capture validation.",
+      "evidence_status": "OFFICIAL",
+      "notes": "Registration & Basic Information"
+    },
+    {
+      "requirement_id": "signature",
+      "requirement_name": "Signature",
+      "requirement_type": "signature",
+      "submission_method": "handwritten_then_uploaded",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG, JPEG, GIF, PNG; Preferred / Aspect Ratio 2:1; 6.0 cm x 3.0 cm; White paper background; Sign in black/blue pen inside drawn 6cm x 3cm box. CAPITAL LETTERS PROHIBITED.; Scrutiny check against capital letters and smudged scans.",
+      "evidence_status": "OFFICIAL",
+      "notes": "Registration & Basic Information",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 100000,
+          "minimum_bytes": 20000,
+          "published_minimum": 20.0,
+          "published_maximum": 100.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg",
+            "png"
+          ],
+          "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "unspecified",
+          "preferred_width_px": 600,
+          "preferred_height_px": 300,
+          "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified."
+        }
+      }
+    },
+    {
+      "requirement_id": "left_thumb_impression_lti",
+      "requirement_name": "Left Thumb Impression (LTI)",
+      "requirement_type": "thumb_impression",
+      "submission_method": "handwritten_then_uploaded",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG, JPEG, GIF, PNG; Preferred / Aspect Ratio 4:3; 4.0 cm x 3.0 cm; White paper background; Left thumb horizontal print inside 4cm x 3cm box on white paper using blue/black stamp pad.; Clarity check of papillary ridges.",
+      "evidence_status": "OFFICIAL",
+      "notes": "Registration & Basic Information",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 100000,
+          "minimum_bytes": 20000,
+          "published_minimum": 20.0,
+          "published_maximum": 100.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg",
+            "png"
+          ],
+          "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "unspecified",
+          "preferred_width_px": 400,
+          "preferred_height_px": 300,
+          "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified."
+        }
+      }
+    },
+    {
+      "requirement_id": "md_ms_dnb_passing_degree_certificate",
+      "requirement_name": "MD / MS / DNB Passing / Degree Certificate",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "PDF; Standard document page; A4; Document scan; Scrutiny of qualifying degree eligibility and cut-off date of completion.",
+      "evidence_status": "OFFICIAL",
+      "notes": "Online Application Form",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 1000000,
+          "minimum_bytes": 100000,
+          "published_minimum": 100.0,
+          "published_maximum": 1000.0,
+          "size_unit_as_published": "KB"
+        }
+      }
+    },
+    {
+      "requirement_id": "permanent_provisional_medical_council_registrati",
+      "requirement_name": "Permanent / Provisional Medical Council Registration Certificate (NMC / SMC)",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "PDF; Standard document page; A4; Document scan; Verification of registration validity under NMC or State Medical Council.",
+      "evidence_status": "OFFICIAL",
+      "notes": "Online Application Form",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 1000000,
+          "minimum_bytes": 100000,
+          "published_minimum": 100.0,
+          "published_maximum": 1000.0,
+          "size_unit_as_published": "KB"
+        }
+      }
+    },
+    {
+      "requirement_id": "sponsorship_certificate_noc",
+      "requirement_name": "Sponsorship Certificate / NOC",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Conditional (Mandatory for Sponsored / Deputed candidates)",
+      "content_instructions": "PDF; Standard document page; A4; Document scan; Signed by competent sponsoring authority as per prescribed Appendix.",
+      "evidence_status": "OFFICIAL",
+      "notes": "Online Application Form",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 1000000,
+          "minimum_bytes": 100000,
+          "published_minimum": 100.0,
+          "published_maximum": 1000.0,
+          "size_unit_as_published": "KB"
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "Admission Notice No. 163/2024: INI-SS for Admission to DM/M.Ch.(3 years) & MD(Hospital Administration) Courses for January 2025 Session - Section 4: Online Application Procedure (https://www.aiimsexams.ac.in/pdf/Prospectus_INISS_Jan_2025.pdf)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "official",
+      "evidence_reference": "Admission Notice No. 163/2024: INI-SS for Admission to DM/M.Ch.(3 years) & MD(Hospital Administration) Courses for January 2025 Session - Section 4: Online Application Procedure (https://www.aiimsexams.ac.in/pdf/Prospectus_INISS_Jan_2025.pdf)",
+      "reasoning": "Pixel dimensions transcribed from the cited source.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.formats.allowed_formats": {
+      "type": "inferred",
+      "reasoning": "The body also permits GIF, which this engine cannot produce. The list here is the intersection of what the body accepts and what the engine emits; the narrowing loses nothing for the candidate, since the delivered format is permitted.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "verified"
+  },
+  "fictional_example": false
+}

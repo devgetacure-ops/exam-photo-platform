@@ -1,0 +1,243 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "joint-admission-test-for-masters-iit-jam",
+  "rule_version": "1.0.0",
+  "status": "verified",
+  "exam": {
+    "exam_id": "joint-admission-test-for-masters-iit-jam",
+    "exam_name": "Joint Admission test for Masters (IIT JAM)",
+    "conducting_body": "Indian Institute of Technology Delhi (IIT Delhi) - Organising Institute rotates annually among IITs",
+    "examination_year": 2025,
+    "application_cycle": "JAM 2025",
+    "aliases": [
+      "IIT JAM",
+      "JAM 2025",
+      "Joint Admission test for M.Sc.",
+      "JAM Entrance Examination"
+    ],
+    "application_stage": "application",
+    "jurisdiction": "All India",
+    "category": "entrance"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "A recent good quality COLOUR photograph (3.5 cm width \u00d7 4.5 cm height) taken after 01 August 2024 in a professional studio... white or a very light colour background... face must occupy at least 50% of the photograph... minimum 240 \u00d7 320 pixels, maximum 480 \u00d7 640 pixels, file size 50 kB to 200 kB.",
+      "source_url": "https://jam2025.iitd.ac.in/doc/JAM2025_Information_Brochure.pdf",
+      "document_title": "Information Brochure - Joint Admission test for Masters (JAM 2025)",
+      "section_name": "Section 5.3: Photograph Requirements"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "range",
+      "minimum_width_px": 240,
+      "maximum_width_px": 480,
+      "minimum_height_px": 320,
+      "maximum_height_px": 640,
+      "dpi": 200,
+      "permitted_pixel_range": "Range / Minimum 240x320 px, Maximum 480x640 px (width 240-480, height 320-640)"
+    },
+    "file_size": {
+      "maximum_bytes": 200000,
+      "minimum_bytes": 50000,
+      "size_unit_as_published": "kB",
+      "published_maximum": 200.0,
+      "published_minimum": 50.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpeg",
+        "jpg"
+      ],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "plain_light",
+      "fallback_colour": "#FFFFFF"
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "unspecified",
+      "face_coverage_minimum": 50.0
+    },
+    "appearance": {
+      "spectacles": {
+        "policy": "prohibited",
+        "source_wording": "Clear glasses allowed; no glare or reflection on lenses; tinted glasses/sunglasses strictly prohibited"
+      },
+      "headwear": {
+        "policy": "conditional",
+        "condition": "Caps, hats, coloured glasses NOT allowed; religious headwear allowed provided forehead, eyes, nose and chin are clearly visible",
+        "source_wording": "Caps, hats, coloured glasses NOT allowed; religious headwear allowed provided forehead, eyes, nose and chin are clearly visible"
+      },
+      "face_mask": {
+        "policy": "prohibited",
+        "source_wording": "Not allowed"
+      },
+      "monochrome_accepted": false
+    },
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false,
+      "instructions": "photo.jpg (alphanumeric, no spaces or symbols)"
+    },
+    "exceptional_instructions": {
+      "spectacles_restriction": true,
+      "headwear_restriction": true,
+      "black_and_white_restriction": true,
+      "processing_support_status": "supported"
+    }
+  },
+  "requirements": [
+    {
+      "requirement_id": "passport_size_photograph",
+      "requirement_name": "Passport Size Photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPEG, JPG; Range / Minimum 240x320 px, Maximum 480x640 px (width 240-480, height 320-640); 3.5 cm x 4.5 cm (width 3.5 cm, height 4.5 cm); White or very light colour background; JOAPS portal validates dimensions and file size upon upload. Defective photographs marked 'DEFECTIVE' during scrutiny.",
+      "evidence_status": "OFFICIAL",
+      "notes": "Application Submission on JOAPS"
+    },
+    {
+      "requirement_id": "signature",
+      "requirement_name": "Signature",
+      "requirement_type": "signature",
+      "submission_method": "handwritten_then_uploaded",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPEG, JPG; Range / Minimum 280x80 px, Maximum 560x160 px (width 280-560, height 80-160); 7.0 cm x 2.0 cm (width 7.0 cm, height 2.0 cm); White paper background; Must sign with black or dark blue ink pen within a rectangular box of size 7 cm width x 2 cm height on white paper. SIGNATURES IN ALL CAPITAL LETTERS OR INITIALS ONLY ARE NOT ACCEPTABLE.; Scrutiny flags capital letters, initials only, or unclear scans as DEFECTIVE.",
+      "evidence_status": "OFFICIAL",
+      "notes": "Application Submission on JOAPS",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 150000,
+          "minimum_bytes": 50000,
+          "published_minimum": 50.0,
+          "published_maximum": 150.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpeg",
+            "jpg"
+          ],
+          "preferred_format": "jpeg"
+        },
+        "dimensions": {
+          "mode": "range",
+          "minimum_width_px": 280,
+          "maximum_width_px": 560,
+          "minimum_height_px": 80,
+          "maximum_height_px": 160
+        }
+      }
+    },
+    {
+      "requirement_id": "category_certificate_obc_ncl_ews_sc_st",
+      "requirement_name": "Category Certificate (OBC-NCL / EWS / SC / ST)",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Conditional (Mandatory for candidates claiming category reservation)",
+      "content_instructions": "PDF; Standard document page; A4; Document scan; OBC-NCL and EWS certificates must be issued on or after April 01 of preceding year (April 1, 2024 for JAM 2025).",
+      "evidence_status": "OFFICIAL",
+      "notes": "Application Submission on JOAPS",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 300000,
+          "minimum_bytes": 10000,
+          "published_minimum": 10.0,
+          "published_maximum": 300.0,
+          "size_unit_as_published": "KB"
+        }
+      }
+    },
+    {
+      "requirement_id": "physical_disability_certificate_pwd_udid_card",
+      "requirement_name": "Physical Disability Certificate (PwD) / UDID Card",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Conditional (Mandatory for PwD candidates)",
+      "content_instructions": "PDF; Standard document page; A4; Document scan; Minimum 40% permanent disability certificate or valid UDID card.",
+      "evidence_status": "OFFICIAL",
+      "notes": "Application Submission on JOAPS",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 300000,
+          "minimum_bytes": 10000,
+          "published_minimum": 10.0,
+          "published_maximum": 300.0,
+          "size_unit_as_published": "KB"
+        }
+      }
+    },
+    {
+      "requirement_id": "certificate_of_physical_limitation_to_write_appe",
+      "requirement_name": "Certificate of Physical Limitation to Write (Appendix-II / Scribe Form)",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Conditional (For PwD candidates with physical limitation to write)",
+      "content_instructions": "PDF; Standard document page; A4; Document scan; Must be issued by Chief Medical Officer/Civil Surgeon/Medical Superintendent of a Govt. healthcare institution.",
+      "evidence_status": "OFFICIAL",
+      "notes": "Application Submission on JOAPS",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 300000,
+          "minimum_bytes": 10000,
+          "published_minimum": 10.0,
+          "published_maximum": 300.0,
+          "size_unit_as_published": "KB"
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "Information Brochure - Joint Admission test for Masters (JAM 2025) - Section 5.3: Photograph Requirements (https://jam2025.iitd.ac.in/doc/JAM2025_Information_Brochure.pdf)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "official",
+      "evidence_reference": "Information Brochure - Joint Admission test for Masters (JAM 2025) - Section 5.3: Photograph Requirements (https://jam2025.iitd.ac.in/doc/JAM2025_Information_Brochure.pdf)",
+      "reasoning": "Pixel dimensions transcribed from the cited source.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "verified"
+  },
+  "fictional_example": false
+}

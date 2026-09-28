@@ -1,0 +1,146 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "kerala-psc-police-constable-civil-police-officer-cpo-sub-inspector-of-police-rec",
+  "rule_version": "1.0.0",
+  "status": "verified",
+  "exam": {
+    "exam_id": "kerala-psc-police-constable-civil-police-officer-cpo-sub-inspector-of-police-rec",
+    "exam_name": "Kerala PSC Police Constable (Civil Police Officer - CPO) & Sub-Inspector of Police Recruitment (Kerala PSC CPO / SI)",
+    "conducting_body": "Kerala Public Service Commission (Kerala PSC), Thiruvananthapuram",
+    "examination_year": 2023,
+    "application_cycle": "Civil Police Officer (Category No. 530/2023) & Sub-Inspector of Police (Category",
+    "aliases": [
+      "Kerala PSC CPO",
+      "Kerala Police Constable",
+      "Kerala Police SI",
+      "Kerala Armed Police Battalion Exam"
+    ],
+    "application_stage": "application",
+    "jurisdiction": "Kerala",
+    "category": "recruitment"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_webpage",
+      "official_source": true,
+      "captured_wording": "The photograph uploaded must be taken within 10 years. Name of the candidate and date of photograph must be printed at the bottom portion (150x200 px, max 30 KB).",
+      "source_url": "https://thulasi.psc.kerala.gov.in",
+      "document_title": "Gazette Notification for Civil Police Officer (Police Constable) in Police Department (India Reserve Battalion / Armed Police)",
+      "section_name": "General Conditions"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "unspecified",
+      "preferred_width_px": 150,
+      "preferred_height_px": 200,
+      "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified.",
+      "dpi": 150,
+      "permitted_pixel_range": "150 x 200 px; max 30 KB"
+    },
+    "file_size": {
+      "maximum_bytes": 30000,
+      "minimum_bytes": 15000,
+      "size_unit_as_published": "KB",
+      "published_maximum": 30.0,
+      "published_minimum": 15.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpg",
+        "jpeg"
+      ],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "exact_colour",
+      "required_colour": "#FFFFFF",
+      "tolerance": 3.0
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "unspecified",
+      "face_coverage_minimum": 75.0
+    },
+    "appearance": {
+      "spectacles": {
+        "policy": "conditional",
+        "condition": "Clear glasses only",
+        "source_wording": "Clear glasses only"
+      },
+      "headwear": {
+        "policy": "conditional",
+        "condition": "Religious permitted",
+        "source_wording": "Religious permitted"
+      },
+      "face_mask": {
+        "policy": "prohibited",
+        "source_wording": "Prohibited"
+      },
+      "monochrome_accepted": false
+    },
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false,
+      "instructions": "photo.jpg"
+    },
+    "exceptional_instructions": {
+      "spectacles_restriction": true,
+      "headwear_restriction": true,
+      "black_and_white_restriction": true,
+      "processing_support_status": "supported"
+    }
+  },
+  "requirements": [
+    {
+      "requirement_id": "photograph_with_name_and_date_printed",
+      "requirement_name": "Photograph (with Name and Date printed)",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG, JPEG; 150 x 200 px; max 30 KB; 3.5 cm x 4.5 cm; White background; Validated by Kerala PSC Thulasi portal",
+      "evidence_status": "Official Gazette Notification",
+      "notes": "OTR Profile on Thulasi Portal"
+    }
+  ],
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "Gazette Notification for Civil Police Officer (Police Constable) in Police Department (India Reserve Battalion / Armed Police) - General Conditions (https://thulasi.psc.kerala.gov.in)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "official",
+      "evidence_reference": "Gazette Notification for Civil Police Officer (Police Constable) in Police Department (India Reserve Battalion / Armed Police) - General Conditions (https://thulasi.psc.kerala.gov.in)",
+      "reasoning": "Pixel dimensions transcribed from the cited source.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "verified"
+  },
+  "fictional_example": false
+}

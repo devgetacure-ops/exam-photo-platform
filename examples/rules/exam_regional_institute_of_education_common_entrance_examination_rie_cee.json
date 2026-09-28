@@ -1,0 +1,237 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "regional-institute-of-education-common-entrance-examination-rie-cee",
+  "rule_version": "1.0.0",
+  "status": "verified",
+  "exam": {
+    "exam_id": "regional-institute-of-education-common-entrance-examination-rie-cee",
+    "exam_name": "Regional Institute of Education Common Entrance Examination (RIE CEE)",
+    "conducting_body": "National Council of Educational Research and Training (NCERT)",
+    "examination_year": 2025,
+    "application_cycle": "CEE-2024 / CEE-2025",
+    "aliases": [
+      "RIE CEE",
+      "NCERT CEE",
+      "Regional Institute of Education Entrance Exam",
+      "NCERT B.Ed",
+      "M.Ed Entrance"
+    ],
+    "application_stage": "application",
+    "jurisdiction": "All India",
+    "category": "entrance"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "Upload recent passport size colour photograph with light background in JPG/JPEG format... file size between 40 KB and 200 KB.",
+      "source_url": "https://cee.ncert.gov.in/doc/CEE2024_Information_Brochure.pdf",
+      "document_title": "Information Brochure: Common Entrance Examination (CEE) 2024 for Admission to Various Teacher Education Programmes in RIEs",
+      "section_name": "Section 4: Online Application Procedure"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "unspecified",
+      "preferred_width_px": 600,
+      "preferred_height_px": 600,
+      "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified.",
+      "dpi": 200,
+      "permitted_pixel_range": "Preferred / Aspect Ratio 1:1 or 3.5:4.5 (approx 600x600 px)"
+    },
+    "file_size": {
+      "maximum_bytes": 200000,
+      "minimum_bytes": 40000,
+      "size_unit_as_published": "KB",
+      "published_maximum": 200.0,
+      "published_minimum": 40.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpg",
+        "jpeg"
+      ],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "plain_light",
+      "fallback_colour": "#FFFFFF"
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "required_visible",
+      "ears_visible": true
+    },
+    "appearance": {
+      "spectacles": {
+        "policy": "conditional",
+        "condition": "Clear spectacles allowed without glare",
+        "source_wording": "Clear spectacles allowed without glare"
+      },
+      "headwear": {
+        "policy": "conditional",
+        "condition": "Caps/hats not permitted except religious headwear",
+        "source_wording": "Caps/hats not permitted except religious headwear"
+      },
+      "face_mask": {
+        "policy": "prohibited",
+        "source_wording": "Not permitted"
+      },
+      "monochrome_accepted": false,
+      "recency_maximum_days": 90
+    },
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false,
+      "instructions": "photo.jpg"
+    },
+    "exceptional_instructions": {
+      "spectacles_restriction": true,
+      "headwear_restriction": true,
+      "black_and_white_restriction": true,
+      "recent_photo_requirement": true,
+      "processing_support_status": "supported"
+    }
+  },
+  "requirements": [
+    {
+      "requirement_id": "candidate_photograph",
+      "requirement_name": "Candidate Photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG, JPEG; Preferred / Aspect Ratio 1:1 or 3.5:4.5 (approx 600x600 px); 3.5 cm x 4.5 cm; Light or white background; Admit card photo clarity check; poor scans lead to exam hall disqualification.",
+      "evidence_status": "OFFICIAL",
+      "notes": "Online Application Form (cee.ncert.gov.in)"
+    },
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate Signature",
+      "requirement_type": "signature",
+      "submission_method": "handwritten_then_uploaded",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG, JPEG; Preferred / Aspect Ratio 2:1; ~ 3.5 cm x 1.5 cm; Plain white paper; Clear signature of candidate using black or blue pen on white paper; capital letters prohibited.; File size validator (40 KB to 200 KB).",
+      "evidence_status": "OFFICIAL",
+      "notes": "Online Application Form",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 200000,
+          "minimum_bytes": 40000,
+          "published_minimum": 40.0,
+          "published_maximum": 200.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "unspecified",
+          "preferred_width_px": 600,
+          "preferred_height_px": 300,
+          "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified."
+        }
+      }
+    },
+    {
+      "requirement_id": "qualifying_examination_marksheet",
+      "requirement_name": "Qualifying Examination Marksheet",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG, JPEG, PDF; Standard document page; A4; Document scan; Marksheet of Class 12 (for B.Sc. B.Ed/B.A. B.Ed) or Degree (for B.Ed/M.Ed). 60% weightage given to CEE score and 40% weightage to qualifying marks.",
+      "evidence_status": "OFFICIAL",
+      "notes": "Marks Submission Window (Post Board/University Results)",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 500000,
+          "minimum_bytes": 50000,
+          "published_minimum": 50.0,
+          "published_maximum": 500.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    },
+    {
+      "requirement_id": "category_certificate_gen_ews_obc_ncl_sc_st",
+      "requirement_name": "Category Certificate (GEN-EWS / OBC-NCL / SC / ST)",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Conditional (Mandatory for reserved category candidates)",
+      "content_instructions": "PDF, JPG; Standard document page; A4; Document scan; OBC-NCL and EWS certificates must be valid for the current academic year as per Central Government format.",
+      "evidence_status": "OFFICIAL",
+      "notes": "Online Application Form",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 500000,
+          "minimum_bytes": 50000,
+          "published_minimum": 50.0,
+          "published_maximum": 500.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "Information Brochure: Common Entrance Examination (CEE) 2024 for Admission to Various Teacher Education Programmes in RIEs - Section 4: Online Application Procedure (https://cee.ncert.gov.in/doc/CEE2024_Information_Brochure.pdf)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "official",
+      "evidence_reference": "Information Brochure: Common Entrance Examination (CEE) 2024 for Admission to Various Teacher Education Programmes in RIEs - Section 4: Online Application Procedure (https://cee.ncert.gov.in/doc/CEE2024_Information_Brochure.pdf)",
+      "reasoning": "Pixel dimensions transcribed from the cited source.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "verified"
+  },
+  "fictional_example": false
+}

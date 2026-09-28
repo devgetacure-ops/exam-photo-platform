@@ -1,0 +1,180 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "kerala-law-entrance-examination-klee-3-year-5-year-ll-b",
+  "rule_version": "1.0.0",
+  "status": "verified",
+  "exam": {
+    "exam_id": "kerala-law-entrance-examination-klee-3-year-5-year-ll-b",
+    "exam_name": "Kerala Law Entrance Examination (KLEE 3-Year & 5-Year LL.B.)",
+    "conducting_body": "Commissioner for Entrance Examinations (CEE), Government of Kerala, Thiruvananthapuram",
+    "examination_year": 2025,
+    "application_cycle": "KLEE 2024 / KLEE 2025",
+    "aliases": [
+      "KLEE",
+      "CEE Kerala Law Entrance",
+      "Kerala LL.B Entrance"
+    ],
+    "application_stage": "application",
+    "jurisdiction": "Kerala",
+    "category": "entrance"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_webpage",
+      "official_source": true,
+      "captured_wording": "Photograph must be in JPG format with dimensions 150 x 200 pixels and file size between 15 KB and 100 KB.",
+      "source_url": "https://cee.kerala.gov.in",
+      "document_title": "Prospectus for Admission to 3-Year LL.B. & 5-Year Integrated LL.B. Courses 2024-25",
+      "section_name": "Photo and Signature Guidelines"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "unspecified",
+      "preferred_width_px": 150,
+      "preferred_height_px": 200,
+      "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified.",
+      "dpi": 150,
+      "permitted_pixel_range": "150 x 200 pixels"
+    },
+    "file_size": {
+      "maximum_bytes": 100000,
+      "minimum_bytes": 15000,
+      "size_unit_as_published": "KB",
+      "published_maximum": 100.0,
+      "published_minimum": 15.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpg",
+        "jpeg"
+      ],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "plain_light",
+      "fallback_colour": "#FFFFFF"
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "unspecified",
+      "face_coverage_minimum": 75.0
+    },
+    "appearance": {
+      "spectacles": {
+        "policy": "conditional",
+        "condition": "Allowed without glare or reflection",
+        "source_wording": "Allowed without glare or reflection"
+      },
+      "headwear": {
+        "policy": "conditional",
+        "condition": "Religious coverings permitted",
+        "source_wording": "Religious coverings permitted"
+      },
+      "face_mask": {
+        "policy": "prohibited",
+        "source_wording": "Prohibited"
+      },
+      "monochrome_accepted": false,
+      "recency_maximum_days": 180
+    },
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false,
+      "instructions": "photo.jpg"
+    },
+    "exceptional_instructions": {
+      "spectacles_restriction": true,
+      "headwear_restriction": true,
+      "black_and_white_restriction": true,
+      "recent_photo_requirement": true,
+      "processing_support_status": "supported"
+    }
+  },
+  "requirements": [
+    {
+      "requirement_id": "candidate_passport_photograph",
+      "requirement_name": "Candidate Passport Photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG / JPEG; 150 x 200 pixels; 3.5 cm x 4.5 cm; Light or white background; Printed on KLEE Admit Card",
+      "evidence_status": "Official Prospectus",
+      "notes": "Online Application"
+    },
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate Signature",
+      "requirement_type": "signature",
+      "submission_method": "handwritten_then_uploaded",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG / JPEG; 150 x 100 pixels; 3.5 cm x 1.5 cm; White background; Running handwriting signature in black/blue ink; Printed on KLEE Admit Card",
+      "evidence_status": "Official Prospectus",
+      "notes": "Online Application",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 100000,
+          "minimum_bytes": 10000,
+          "published_minimum": 10.0,
+          "published_maximum": 100.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "unspecified",
+          "preferred_width_px": 150,
+          "preferred_height_px": 100,
+          "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified."
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "Prospectus for Admission to 3-Year LL.B. & 5-Year Integrated LL.B. Courses 2024-25 - Photo and Signature Guidelines (https://cee.kerala.gov.in)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "official",
+      "evidence_reference": "Prospectus for Admission to 3-Year LL.B. & 5-Year Integrated LL.B. Courses 2024-25 - Photo and Signature Guidelines (https://cee.kerala.gov.in)",
+      "reasoning": "Pixel dimensions transcribed from the cited source.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "verified"
+  },
+  "fictional_example": false
+}

@@ -1,0 +1,181 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "assam-combined-entrance-examination-assam-cee",
+  "rule_version": "1.0.0",
+  "status": "verified",
+  "exam": {
+    "exam_id": "assam-combined-entrance-examination-assam-cee",
+    "exam_name": "Assam Combined Entrance Examination (Assam CEE)",
+    "conducting_body": "Assam Science and Technology University (ASTU), Guwahati",
+    "examination_year": 2025,
+    "application_cycle": "Assam CEE 2024 / Assam CEE 2025",
+    "aliases": [
+      "Assam CEE",
+      "ASTU CEE",
+      "Assam Engineering Entrance"
+    ],
+    "application_stage": "application",
+    "jurisdiction": "Assam",
+    "category": "entrance"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_webpage",
+      "official_source": true,
+      "captured_wording": "Upload recent good quality passport photograph in JPG format with file size between 20 KB and 35 KB.",
+      "source_url": "https://astu.ac.in",
+      "document_title": "Information Brochure: Combined Entrance Examination (CEE-2024) for Admission to B.Tech. Programmes in Assam",
+      "section_name": "Application Procedure Section 5"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "unspecified",
+      "preferred_width_px": 200,
+      "preferred_height_px": 250,
+      "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified.",
+      "dpi": 150,
+      "permitted_pixel_range": "Width 200-300 px, Height 250-350 px"
+    },
+    "file_size": {
+      "maximum_bytes": 35000,
+      "minimum_bytes": 20000,
+      "size_unit_as_published": "KB",
+      "published_maximum": 35.0,
+      "published_minimum": 20.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpg",
+        "jpeg"
+      ],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "exact_colour",
+      "required_colour": "#FFFFFF",
+      "tolerance": 3.0
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "unspecified",
+      "face_coverage_minimum": 75.0
+    },
+    "appearance": {
+      "spectacles": {
+        "policy": "conditional",
+        "condition": "Allowed without glare",
+        "source_wording": "Allowed without glare"
+      },
+      "headwear": {
+        "policy": "conditional",
+        "condition": "Religious coverings permitted",
+        "source_wording": "Religious coverings permitted"
+      },
+      "face_mask": {
+        "policy": "prohibited",
+        "source_wording": "Prohibited"
+      },
+      "monochrome_accepted": false,
+      "recency_maximum_days": 90
+    },
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false,
+      "instructions": "photo.jpg"
+    },
+    "exceptional_instructions": {
+      "spectacles_restriction": true,
+      "headwear_restriction": true,
+      "black_and_white_restriction": true,
+      "recent_photo_requirement": true,
+      "processing_support_status": "supported"
+    }
+  },
+  "requirements": [
+    {
+      "requirement_id": "candidate_passport_photograph",
+      "requirement_name": "Candidate Passport Photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG / JPEG; Width 200-300 px, Height 250-350 px; 3.5 cm x 4.5 cm; White background; Printed on Assam CEE Admit Card",
+      "evidence_status": "Official Brochure",
+      "notes": "Online Application"
+    },
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate Signature",
+      "requirement_type": "signature",
+      "submission_method": "handwritten_then_uploaded",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG / JPEG; Aspect ratio 2:1; 3.5 cm x 1.5 cm; White background; Running handwriting signature with black ballpoint pen; capital letters rejected; Printed on Assam CEE Admit Card",
+      "evidence_status": "Official Brochure",
+      "notes": "Online Application",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 30000,
+          "minimum_bytes": 15000,
+          "published_minimum": 15.0,
+          "published_maximum": 30.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "unspecified",
+          "preferred_width_px": 200,
+          "preferred_height_px": 100,
+          "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified."
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "Information Brochure: Combined Entrance Examination (CEE-2024) for Admission to B.Tech. Programmes in Assam - Application Procedure Section 5 (https://astu.ac.in)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "official",
+      "evidence_reference": "Information Brochure: Combined Entrance Examination (CEE-2024) for Admission to B.Tech. Programmes in Assam - Application Procedure Section 5 (https://astu.ac.in)",
+      "reasoning": "Pixel dimensions transcribed from the cited source.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "verified"
+  },
+  "fictional_example": false
+}

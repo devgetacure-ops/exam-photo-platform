@@ -1,0 +1,179 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "madhya-pradesh-pre-nursing-selection-test-general-nursing-training-test-mp-pnst-",
+  "rule_version": "1.0.0",
+  "status": "verified",
+  "exam": {
+    "exam_id": "madhya-pradesh-pre-nursing-selection-test-general-nursing-training-test-mp-pnst-",
+    "exam_name": "Madhya Pradesh Pre-Nursing Selection Test & General Nursing Training Test (MP PNST / GNMTST)",
+    "conducting_body": "Madhya Pradesh Employees Selection Board (MPESB), Bhopal",
+    "examination_year": 2025,
+    "application_cycle": "MP PNST / GNMTST 2024 / 2025",
+    "aliases": [
+      "MP PNST",
+      "MP GNMTST",
+      "MP Nursing Entrance Exam"
+    ],
+    "application_stage": "application",
+    "jurisdiction": "Madhya Pradesh",
+    "category": "entrance"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "Candidate profile template must be scanned between 200 KB and 220 KB in JPG format with photograph showing candidate name and date of photo taken.",
+      "source_url": "https://esb.mp.gov.in/Rulebooks/RB_2024/PNST_GNMTST_2024_Rulebook.pdf",
+      "document_title": "Rulebook for Pre-Nursing Selection Test (PNST) and General Nursing & Midwifery Training Selection Test (GNMTST) 2024",
+      "section_name": "Profile Registration Annexure"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "unspecified",
+      "preferred_width_px": 500,
+      "preferred_height_px": 700,
+      "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified.",
+      "dpi": 200,
+      "permitted_pixel_range": "Standard MPESB official template"
+    },
+    "file_size": {
+      "maximum_bytes": 220000,
+      "minimum_bytes": 200000,
+      "size_unit_as_published": "KB",
+      "published_maximum": 220.0,
+      "published_minimum": 200.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpg",
+        "jpeg"
+      ],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "exact_colour",
+      "required_colour": "#FFFFFF",
+      "tolerance": 3.0
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "unspecified",
+      "face_coverage_minimum": 80.0
+    },
+    "appearance": {
+      "spectacles": {
+        "policy": "permitted",
+        "source_wording": "Clear glasses allowed"
+      },
+      "headwear": {
+        "policy": "conditional",
+        "condition": "Cap prohibited; religious headwear allowed",
+        "source_wording": "Cap prohibited; religious headwear allowed"
+      },
+      "face_mask": {
+        "policy": "prohibited",
+        "source_wording": "Prohibited"
+      },
+      "recency_maximum_days": 90,
+      "imprint": {
+        "policy": "required",
+        "fields": [
+          "candidate_name",
+          "photograph_date"
+        ],
+        "position": "bottom"
+      }
+    },
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false,
+      "instructions": "mpesb_template.jpg"
+    },
+    "exceptional_instructions": {
+      "printed_name": true,
+      "printed_date": true,
+      "spectacles_restriction": false,
+      "headwear_restriction": true,
+      "recent_photo_requirement": true,
+      "processing_support_status": "partially_supported",
+      "unsupported_requirement_reasons": [
+        "The body requires the candidate's name and/or the photograph date printed on the image. The engine has no text-rendering capability, so the photograph is produced correctly sized and composed but without the imprint, which the candidate must add before uploading."
+      ]
+    }
+  },
+  "requirements": [
+    {
+      "requirement_id": "mpesb_composite_profile_template_photo_signature",
+      "requirement_name": "MPESB Composite Profile Template (Photo + Signature + Self Declaration)",
+      "requirement_type": "handwritten_declaration",
+      "submission_method": "handwritten_then_uploaded",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG / JPEG; Standard MPESB official template; Single A4 sheet scanned template; White background template; Signature inside designated box on template; Candidate must be female domicile of Madhya Pradesh; verified against MP Online Profile",
+      "evidence_status": "Official Rulebook",
+      "notes": "Candidate Profile Registration (Profile ID)",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 220000,
+          "minimum_bytes": 200000,
+          "published_minimum": 200.0,
+          "published_maximum": 220.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "unspecified",
+          "preferred_width_px": 500,
+          "preferred_height_px": 700,
+          "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified."
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "Rulebook for Pre-Nursing Selection Test (PNST) and General Nursing & Midwifery Training Selection Test (GNMTST) 2024 - Profile Registration Annexure (https://esb.mp.gov.in/Rulebooks/RB_2024/PNST_GNMTST_2024_Rulebook.pdf)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "official",
+      "evidence_reference": "Rulebook for Pre-Nursing Selection Test (PNST) and General Nursing & Midwifery Training Selection Test (GNMTST) 2024 - Profile Registration Annexure (https://esb.mp.gov.in/Rulebooks/RB_2024/PNST_GNMTST_2024_Rulebook.pdf)",
+      "reasoning": "Pixel dimensions transcribed from the cited source.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "verified"
+  },
+  "fictional_example": false
+}

@@ -1,0 +1,83 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "delhi-police-head-constable-ministerial-awo-tpo-examination",
+  "rule_version": "1.0.0",
+  "status": "provisional",
+  "exam": {
+    "exam_id": "delhi-police-head-constable-ministerial-awo-tpo-examination",
+    "exam_name": "Delhi Police Head Constable (Ministerial & AWO / TPO) Examination",
+    "conducting_body": "Staff Selection Commission (SSC) on behalf of Delhi Police",
+    "examination_year": 2025,
+    "application_cycle": "2024-2025",
+    "application_stage": "application",
+    "jurisdiction": "Delhi",
+    "category": "recruitment",
+    "aliases": [
+      "SSC Delhi Police Head Constable",
+      "DP Head Constable Ministerial & Assistant Wireless Operator Exam"
+    ]
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "Candidates are required to capture live photograph using a webcam or mobile phone through the official MySSC app. Scanned photograph upload has been discontinued. Spectacles and caps are strictly prohibited during photo capture.",
+      "source_url": "https://ssc.gov.in/api/assets/uploads/notice_dp_hc_2024.pdf",
+      "document_title": "Notice of Examination for Head Constable (Ministerial) and Head Constable (AWO/TPO) in Delhi Police",
+      "section_name": "Section 9.1 (Capture of Live Photograph)"
+    }
+  ],
+  "requirements": [
+    {
+      "requirement_id": "live_photograph_real_time_webcam_myssc_app_captu",
+      "requirement_name": "Live Photograph (Real-time Webcam / MySSC App Capture)",
+      "requirement_type": "photograph",
+      "submission_method": "official_live_capture",
+      "requirement_status": "mandatory",
+      "platform_support": "guidance_only",
+      "applicability": "Mandatory",
+      "content_instructions": "Direct Digital Capture via Browser / MySSC App; Frontal webcam or mobile camera live capture; candidate positioned within on-screen bounding box; Live capture frame; Plain white or light plain background without patterns/shadows; Crucial SSC rule effective 2024: Pre-scanned photo uploads eliminated across all SSC exams; candidates must capture live face",
+      "evidence_status": "Official Notification",
+      "notes": "Application"
+    },
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate Signature",
+      "requirement_type": "signature",
+      "submission_method": "handwritten_then_uploaded",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG, JPEG; Width 4.0 cm x height 2.0 cm; file size 10 KB to 20 KB; 4.0 cm x 2.0 cm; Plain white paper; Running handwriting in black ink only; signatures in capital block letters will be rejected; Cropped horizontally without dark scanning shadows",
+      "evidence_status": "Official Notification",
+      "notes": "Application",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 20000,
+          "minimum_bytes": 10000,
+          "published_minimum": 10.0,
+          "published_maximum": 20.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "unspecified",
+          "preferred_width_px": 400,
+          "preferred_height_px": 200,
+          "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified."
+        }
+      }
+    }
+  ],
+  "provenance": {},
+  "verification": {
+    "verification_status": "provisional"
+  },
+  "fictional_example": false
+}

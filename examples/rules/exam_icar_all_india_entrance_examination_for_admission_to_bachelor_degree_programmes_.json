@@ -1,0 +1,257 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "icar-all-india-entrance-examination-for-admission-to-bachelor-degree-programmes-",
+  "rule_version": "1.0.0",
+  "status": "verified",
+  "exam": {
+    "exam_id": "icar-all-india-entrance-examination-for-admission-to-bachelor-degree-programmes-",
+    "exam_name": "ICAR All India Entrance Examination for Admission to Bachelor Degree Programmes via CUET (UG) [CUET (ICAR-UG)]",
+    "conducting_body": "National Testing Agency (NTA) / Indian Council of Agricultural Research (ICAR)",
+    "examination_year": 2025,
+    "application_cycle": "CUET (ICAR-UG) 2024 / 2025",
+    "aliases": [
+      "CUET (ICAR-UG)",
+      "ICAR CUET UG",
+      "ICAR UG Entrance",
+      "AIEEA-UG (now via CUET-UG)",
+      "ICAR Agriculture UG Admission"
+    ],
+    "application_stage": "application",
+    "jurisdiction": "All India",
+    "category": "entrance"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "The recent photograph should be either in colour or black and white with 80% face (without mask) visible including ears against a white background... file size between 10 KB to 200 KB in JPG/JPEG format.",
+      "source_url": "https://exams.nta.ac.in/CUET-UG/doc/Information_Bulletin_CUET_UG_2024.pdf",
+      "document_title": "Information Bulletin: ICAR-AIEEA (UG) through Common University Entrance Test CUET (UG)-2024",
+      "section_name": "Section 4.1: Uploading Scanned Images"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "unspecified",
+      "preferred_width_px": 140,
+      "preferred_height_px": 180,
+      "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified.",
+      "dpi": 200,
+      "permitted_pixel_range": "Preferred / Aspect Ratio 3.5:4.5"
+    },
+    "file_size": {
+      "maximum_bytes": 200000,
+      "minimum_bytes": 10000,
+      "size_unit_as_published": "KB",
+      "published_maximum": 200.0,
+      "published_minimum": 10.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpg",
+        "jpeg"
+      ],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "exact_colour",
+      "required_colour": "#FFFFFF",
+      "tolerance": 3.0
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "required_visible",
+      "face_coverage_minimum": 80.0,
+      "ears_visible": true
+    },
+    "appearance": {
+      "spectacles": {
+        "policy": "prohibited",
+        "source_wording": "Spectacles allowed if used regularly; no glare on lenses; sunglasses/tinted spectacles strictly prohibited"
+      },
+      "headwear": {
+        "policy": "conditional",
+        "condition": "Caps, hats, dark glasses not allowed; religious headwear allowed provided face is completely uncovered",
+        "source_wording": "Caps, hats, dark glasses not allowed; religious headwear allowed provided face is completely uncovered"
+      },
+      "face_mask": {
+        "policy": "prohibited",
+        "source_wording": "Not permitted"
+      },
+      "monochrome_accepted": true,
+      "recency_maximum_days": 180
+    },
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false,
+      "instructions": "photo.jpg"
+    },
+    "exceptional_instructions": {
+      "spectacles_restriction": true,
+      "headwear_restriction": true,
+      "recent_photo_requirement": true,
+      "processing_support_status": "supported"
+    }
+  },
+  "requirements": [
+    {
+      "requirement_id": "passport_size_photograph",
+      "requirement_name": "Passport Size Photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG, JPEG; Preferred / Aspect Ratio 3.5:4.5; 3.5 cm x 4.5 cm; Plain white background; Automated facial scrutiny on CUET-UG portal.",
+      "evidence_status": "OFFICIAL",
+      "notes": "CUET (UG) Online Application Form"
+    },
+    {
+      "requirement_id": "live_real_time_photograph_webcam_capture",
+      "requirement_name": "Live Real-time Photograph (Webcam Capture)",
+      "requirement_type": "photograph",
+      "submission_method": "official_live_capture",
+      "requirement_status": "mandatory",
+      "platform_support": "guidance_only",
+      "applicability": "Mandatory",
+      "content_instructions": "Direct browser / webcam digital capture; Webcam capture stream; Not specified; Plain white background behind candidate; Real-time webcam liveness check on NTA portal.",
+      "evidence_status": "OFFICIAL",
+      "notes": "CUET (UG) Online Application Form"
+    },
+    {
+      "requirement_id": "signature",
+      "requirement_name": "Signature",
+      "requirement_type": "signature",
+      "submission_method": "handwritten_then_uploaded",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG, JPEG; Preferred / Aspect Ratio 3.5:1.5; ~ 3.5 cm x 1.5 cm; Plain white unruled paper; Running hand signature on white paper in black or dark blue ink. CAPITAL LETTERS STRICTLY FORBIDDEN.; File size check 4 KB to 30 KB.",
+      "evidence_status": "OFFICIAL",
+      "notes": "CUET (UG) Online Application Form",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 30000,
+          "minimum_bytes": 4000,
+          "published_minimum": 4.0,
+          "published_maximum": 30.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "unspecified",
+          "preferred_width_px": 140,
+          "preferred_height_px": 60,
+          "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified."
+        }
+      }
+    },
+    {
+      "requirement_id": "category_certificate_gen_ews_sc_st_obc_ncl",
+      "requirement_name": "Category Certificate (GEN-EWS / SC / ST / OBC-NCL)",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Conditional (Mandatory for candidates claiming reservation)",
+      "content_instructions": "PDF; Standard document page; A4; Document scan; OBC-NCL and EWS certificates must be issued on or after April 01 of preceding year as per Central Government list.",
+      "evidence_status": "OFFICIAL",
+      "notes": "CUET-UG Form & ICAR Counselling Portal",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 300000,
+          "minimum_bytes": 50000,
+          "published_minimum": 50.0,
+          "published_maximum": 300.0,
+          "size_unit_as_published": "KB"
+        }
+      }
+    },
+    {
+      "requirement_id": "pwd_certificate",
+      "requirement_name": "PwD Certificate",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Conditional (Mandatory for PwD candidates)",
+      "content_instructions": "PDF; Standard document page; A4; Document scan; Disability certificate (40% or more) from competent medical authority.",
+      "evidence_status": "OFFICIAL",
+      "notes": "CUET-UG Form & ICAR Counselling Portal",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 300000,
+          "minimum_bytes": 50000,
+          "published_minimum": 50.0,
+          "published_maximum": 300.0,
+          "size_unit_as_published": "KB"
+        }
+      }
+    },
+    {
+      "requirement_id": "class_10_class_12_certificates_and_domicile_cert",
+      "requirement_name": "Class 10 & Class 12 Certificates and Domicile Certificate",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "PDF; Standard document page; A4; Document scan; Proof of date of birth, qualifying subject marks, and state of domicile for National Talent Scholarship (NTS).",
+      "evidence_status": "OFFICIAL",
+      "notes": "ICAR Online Counselling & Seat Allotment (icaradmission.in)",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 500000,
+          "minimum_bytes": 50000,
+          "published_minimum": 50.0,
+          "published_maximum": 500.0,
+          "size_unit_as_published": "KB"
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "Information Bulletin: ICAR-AIEEA (UG) through Common University Entrance Test CUET (UG)-2024 - Section 4.1: Uploading Scanned Images (https://exams.nta.ac.in/CUET-UG/doc/Information_Bulletin_CUET_UG_2024.pdf)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "official",
+      "evidence_reference": "Information Bulletin: ICAR-AIEEA (UG) through Common University Entrance Test CUET (UG)-2024 - Section 4.1: Uploading Scanned Images (https://exams.nta.ac.in/CUET-UG/doc/Information_Bulletin_CUET_UG_2024.pdf)",
+      "reasoning": "Pixel dimensions transcribed from the cited source.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "verified"
+  },
+  "fictional_example": false
+}

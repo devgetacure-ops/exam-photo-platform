@@ -1,0 +1,247 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "national-eligibility-cum-entrance-test-for-super-specialty-neet-ss",
+  "rule_version": "1.0.0",
+  "status": "verified",
+  "exam": {
+    "exam_id": "national-eligibility-cum-entrance-test-for-super-specialty-neet-ss",
+    "exam_name": "National Eligibility cum Entrance Test for Super Specialty (NEET-SS)",
+    "conducting_body": "National Board of Examinations in Medical Sciences (NBEMS)",
+    "examination_year": 2025,
+    "application_cycle": "NEET-SS 2024 / NEET-SS 2025",
+    "aliases": [
+      "NEET-SS",
+      "NEET Super Specialty"
+    ],
+    "application_stage": "application",
+    "jurisdiction": "All India",
+    "category": "entrance"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_webpage",
+      "official_source": true,
+      "captured_wording": "Upload recent passport size colour photograph with white background... file size must be less than 80 KB in JPG/JPEG format.",
+      "source_url": "https://natboard.edu.in",
+      "document_title": "Information Bulletin for National Eligibility cum Entrance Test (Super Specialty) NEET-SS",
+      "section_name": "Appendix: Instructions for Image Upload"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "unspecified",
+      "preferred_width_px": 350,
+      "preferred_height_px": 450,
+      "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified.",
+      "dpi": 300,
+      "permitted_pixel_range": "35 mm x 45 mm"
+    },
+    "file_size": {
+      "maximum_bytes": 80000,
+      "minimum_bytes": 20000,
+      "size_unit_as_published": "KB",
+      "published_maximum": 80.0,
+      "published_minimum": 20.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpg",
+        "jpeg"
+      ],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "exact_colour",
+      "required_colour": "#FFFFFF",
+      "tolerance": 3.0
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "unspecified",
+      "face_coverage_minimum": 75.0
+    },
+    "appearance": {
+      "spectacles": {
+        "policy": "conditional",
+        "condition": "Allowed without tinted glass or flash reflection on lenses",
+        "source_wording": "Allowed without tinted glass or flash reflection on lenses"
+      },
+      "headwear": {
+        "policy": "conditional",
+        "condition": "Only religious coverings allowed; face outline from top of forehead to bottom of chin clearly visible",
+        "source_wording": "Only religious coverings allowed; face outline from top of forehead to bottom of chin clearly visible"
+      },
+      "face_mask": {
+        "policy": "prohibited",
+        "source_wording": "Prohibited"
+      },
+      "monochrome_accepted": false,
+      "recency_maximum_days": 90
+    },
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false,
+      "instructions": "NEET_SS_Photo.jpg"
+    },
+    "exceptional_instructions": {
+      "spectacles_restriction": true,
+      "headwear_restriction": true,
+      "black_and_white_restriction": true,
+      "recent_photo_requirement": true,
+      "processing_support_status": "supported"
+    }
+  },
+  "requirements": [
+    {
+      "requirement_id": "candidate_passport_photograph",
+      "requirement_name": "Candidate Passport Photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG / JPEG; 35 mm x 45 mm; 3.5 cm x 4.5 cm; Plain white background; Professional medical/formal dress; neutral expression; sharp focus",
+      "evidence_status": "Official Information Bulletin",
+      "notes": "Registration"
+    },
+    {
+      "requirement_id": "real_time_photograph_webcam_capture",
+      "requirement_name": "Real-Time Photograph (Webcam Capture)",
+      "requirement_type": "photograph",
+      "submission_method": "official_live_capture",
+      "requirement_status": "mandatory",
+      "platform_support": "guidance_only",
+      "applicability": "Mandatory",
+      "content_instructions": "Browser webcam capture; Auto-captured live portrait; Direct camera capture; White plain wall/screen; Candidate must sit upright facing camera; proper lighting on face",
+      "evidence_status": "Official Information Bulletin",
+      "notes": "Registration"
+    },
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate Signature",
+      "requirement_type": "signature",
+      "submission_method": "handwritten_then_uploaded",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG / JPEG; 3.5 cm x 1.5 cm box; 3.5 cm x 1.5 cm; Plain white unruled paper; Sign in running handwriting using blue or black ink inside 3.5 x 1.5 cm box; signature in ALL CAPITAL LETTERS is not permitted; Signature must match the one affixed during exam at test centre",
+      "evidence_status": "Official Information Bulletin",
+      "notes": "Registration",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 80000,
+          "minimum_bytes": 20000,
+          "published_minimum": 20.0,
+          "published_maximum": 80.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "unspecified",
+          "preferred_width_px": 350,
+          "preferred_height_px": 150,
+          "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified."
+        }
+      }
+    },
+    {
+      "requirement_id": "left_thumb_impression",
+      "requirement_name": "Left Thumb Impression",
+      "requirement_type": "thumb_impression",
+      "submission_method": "handwritten_then_uploaded",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG / JPEG; 3.5 cm x 1.5 cm box; 3.5 cm x 1.5 cm; Plain white paper; Clear horizontal roll of left thumb impression; ridges must be crisp and un-smudged; Box size 3.5 cm x 1.5 cm strictly maintained",
+      "evidence_status": "Official Information Bulletin",
+      "notes": "Registration",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 80000,
+          "minimum_bytes": 20000,
+          "published_minimum": 20.0,
+          "published_maximum": 80.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "unspecified",
+          "preferred_width_px": 350,
+          "preferred_height_px": 150,
+          "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified."
+        }
+      }
+    },
+    {
+      "requirement_id": "smc_mci_nmc_permanent_registration_certificate",
+      "requirement_name": "SMC / MCI / NMC Permanent Registration Certificate",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "PDF; Standard A4 document scan; A4; Document scan; Permanent registration certificate issued by State Medical Council or National Medical Commission must show registration number clearly",
+      "evidence_status": "Official Information Bulletin",
+      "notes": "Registration",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 500000,
+          "minimum_bytes": 50000,
+          "published_minimum": 50.0,
+          "published_maximum": 500.0,
+          "size_unit_as_published": "KB"
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "Information Bulletin for National Eligibility cum Entrance Test (Super Specialty) NEET-SS - Appendix: Instructions for Image Upload (https://natboard.edu.in)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "official",
+      "evidence_reference": "Information Bulletin for National Eligibility cum Entrance Test (Super Specialty) NEET-SS - Appendix: Instructions for Image Upload (https://natboard.edu.in)",
+      "reasoning": "Pixel dimensions transcribed from the cited source.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "verified"
+  },
+  "fictional_example": false
+}

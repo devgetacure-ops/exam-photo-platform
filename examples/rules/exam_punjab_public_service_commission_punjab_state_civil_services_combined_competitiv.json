@@ -1,0 +1,181 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "punjab-public-service-commission-punjab-state-civil-services-combined-competitiv",
+  "rule_version": "1.0.0",
+  "status": "verified",
+  "exam": {
+    "exam_id": "punjab-public-service-commission-punjab-state-civil-services-combined-competitiv",
+    "exam_name": "Punjab Public Service Commission Punjab State Civil Services Combined Competitive Examination (PPSC PSCSCCE)",
+    "conducting_body": "Punjab Public Service Commission (PPSC), Patiala",
+    "examination_year": 2024,
+    "application_cycle": "Punjab State Civil Services Combined Competitive Examination (PSCSCCE) 2020-2024",
+    "aliases": [
+      "PPSC PCS",
+      "Punjab Civil Services Exam",
+      "PPSC PSCSCCE",
+      "Punjab Executive Branch",
+      "DSP"
+    ],
+    "application_stage": "application",
+    "jurisdiction": "Punjab",
+    "category": "recruitment"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_webpage",
+      "official_source": true,
+      "captured_wording": "Candidates are required to upload the scanned photograph and signature in JPG/JPEG format with file size between 10 KB to 40 KB each.",
+      "source_url": "https://ppsc.gov.in",
+      "document_title": "General Information for the Candidates for Punjab State Civil Services Combined Competitive Examination (PSCSCCE)",
+      "section_name": "General Information for Candidates, Section 8"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "unspecified",
+      "preferred_width_px": 140,
+      "preferred_height_px": 180,
+      "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified.",
+      "dpi": 200,
+      "permitted_pixel_range": "Proportional to 3.5 cm x 4.5 cm; 10 KB to 40 KB"
+    },
+    "file_size": {
+      "maximum_bytes": 40000,
+      "minimum_bytes": 10000,
+      "size_unit_as_published": "KB",
+      "published_maximum": 40.0,
+      "published_minimum": 10.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpg",
+        "jpeg"
+      ],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "plain_light",
+      "fallback_colour": "#FFFFFF"
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "unspecified",
+      "face_coverage_minimum": 75.0
+    },
+    "appearance": {
+      "spectacles": {
+        "policy": "prohibited",
+        "source_wording": "Clear spectacles allowed; no dark or reflective glasses"
+      },
+      "headwear": {
+        "policy": "conditional",
+        "condition": "Turbans / religious headwear permitted; face completely visible",
+        "source_wording": "Turbans / religious headwear permitted; face completely visible"
+      },
+      "face_mask": {
+        "policy": "prohibited",
+        "source_wording": "Prohibited"
+      },
+      "monochrome_accepted": false,
+      "recency_maximum_days": 90
+    },
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false,
+      "instructions": "photo.jpg / candidate_photo.jpeg"
+    },
+    "exceptional_instructions": {
+      "spectacles_restriction": true,
+      "headwear_restriction": true,
+      "black_and_white_restriction": true,
+      "recent_photo_requirement": true,
+      "processing_support_status": "supported"
+    }
+  },
+  "requirements": [
+    {
+      "requirement_id": "photograph",
+      "requirement_name": "Photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG, JPEG; Proportional to 3.5 cm x 4.5 cm; 10 KB to 40 KB; 3.5 cm x 4.5 cm; Plain white or light background; PPSC portal validates size strictly between 10 KB and 40 KB",
+      "evidence_status": "Official Brochure",
+      "notes": "Online Application Stage"
+    },
+    {
+      "requirement_id": "signature",
+      "requirement_name": "Signature",
+      "requirement_type": "signature",
+      "submission_method": "handwritten_then_uploaded",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG, JPEG; 3.5 cm x 1.5 cm; 10 KB to 40 KB; 3.5 cm x 1.5 cm; Plain white paper; Running hand signature of candidate; Size 10 KB to 40 KB verified",
+      "evidence_status": "Official Brochure",
+      "notes": "Online Application Stage",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 40000,
+          "minimum_bytes": 10000,
+          "published_minimum": 10.0,
+          "published_maximum": 40.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "unspecified",
+          "preferred_width_px": 140,
+          "preferred_height_px": 60,
+          "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified."
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "General Information for the Candidates for Punjab State Civil Services Combined Competitive Examination (PSCSCCE) - General Information for Candidates, Section 8 (https://ppsc.gov.in)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "official",
+      "evidence_reference": "General Information for the Candidates for Punjab State Civil Services Combined Competitive Examination (PSCSCCE) - General Information for Candidates, Section 8 (https://ppsc.gov.in)",
+      "reasoning": "Pixel dimensions transcribed from the cited source.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "verified"
+  },
+  "fictional_example": false
+}

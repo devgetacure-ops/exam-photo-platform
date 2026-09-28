@@ -1,0 +1,215 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "foreign-medical-graduate-examination-fmge-screening-test",
+  "rule_version": "1.0.0",
+  "status": "verified",
+  "exam": {
+    "exam_id": "foreign-medical-graduate-examination-fmge-screening-test",
+    "exam_name": "Foreign Medical Graduate Examination (FMGE Screening Test)",
+    "conducting_body": "National Board of Examinations in Medical Sciences (NBEMS), New Delhi",
+    "examination_year": 2024,
+    "application_cycle": "FMGE June 2024 & December 2024 Sessions",
+    "aliases": [
+      "FMGE",
+      "MCI Screening Test",
+      "Foreign Medical Graduate Exam"
+    ],
+    "application_stage": "application",
+    "jurisdiction": "All India",
+    "category": "recruitment"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_webpage",
+      "official_source": true,
+      "captured_wording": "Upload passport size photograph in JPG format with size between 20 KB and 80 KB against a white background, dimensions 35 mm x 45 mm.",
+      "source_url": "https://natboard.edu.in",
+      "document_title": "Information Bulletin: Foreign Medical Graduate Examination (FMGE) June/December 2024 Session",
+      "section_name": "Annexure: Instructions for Image Upload"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "unspecified",
+      "preferred_width_px": 350,
+      "preferred_height_px": 450,
+      "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified.",
+      "dpi": 300,
+      "permitted_pixel_range": "Minimum 350 x 450 pixels (3.5 cm x 4.5 cm at 300 DPI)"
+    },
+    "file_size": {
+      "maximum_bytes": 80000,
+      "minimum_bytes": 20000,
+      "size_unit_as_published": "KB",
+      "published_maximum": 80.0,
+      "published_minimum": 20.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpg",
+        "jpeg"
+      ],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "exact_colour",
+      "required_colour": "#FFFFFF",
+      "tolerance": 3.0
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "unspecified",
+      "face_coverage_minimum": 75.0
+    },
+    "appearance": {
+      "spectacles": {
+        "policy": "conditional",
+        "condition": "Spectacles allowed if clear without reflections; dark glasses prohibited",
+        "source_wording": "Spectacles allowed if clear without reflections; dark glasses prohibited"
+      },
+      "headwear": {
+        "policy": "conditional",
+        "condition": "Cap prohibited; religious headwear allowed without shadowing face",
+        "source_wording": "Cap prohibited; religious headwear allowed without shadowing face"
+      },
+      "face_mask": {
+        "policy": "prohibited",
+        "source_wording": "Prohibited"
+      },
+      "monochrome_accepted": false,
+      "recency_maximum_days": 90
+    },
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false,
+      "instructions": "photo.jpg"
+    },
+    "exceptional_instructions": {
+      "spectacles_restriction": true,
+      "headwear_restriction": true,
+      "black_and_white_restriction": true,
+      "recent_photo_requirement": true,
+      "processing_support_status": "supported"
+    }
+  },
+  "requirements": [
+    {
+      "requirement_id": "candidate_passport_photograph",
+      "requirement_name": "Candidate Passport Photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG / JPEG; Minimum 350 x 450 pixels (3.5 cm x 4.5 cm at 300 DPI); 3.5 cm x 4.5 cm; Plain white background strictly mandated; Real-time live webcam photograph is captured in addition to passport photo upload during application",
+      "evidence_status": "Official Information Bulletin",
+      "notes": "Online Application"
+    },
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate Signature",
+      "requirement_type": "signature",
+      "submission_method": "handwritten_then_uploaded",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG / JPEG; Box 3.5 cm x 1.5 cm (approx 350 x 150 pixels); 3.5 cm x 1.5 cm; Pure white background; Running handwriting; capital letters not accepted; Printed on FMGE Admit Card and Pass Certificate",
+      "evidence_status": "Official Information Bulletin",
+      "notes": "Online Application",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 80000,
+          "minimum_bytes": 20000,
+          "published_minimum": 20.0,
+          "published_maximum": 80.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "unspecified",
+          "preferred_width_px": 350,
+          "preferred_height_px": 150,
+          "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified."
+        }
+      }
+    },
+    {
+      "requirement_id": "candidate_left_thumb_impression_lti",
+      "requirement_name": "Candidate Left Thumb Impression (LTI)",
+      "requirement_type": "thumb_impression",
+      "submission_method": "handwritten_then_uploaded",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG / JPEG; Box 3.5 cm x 1.5 cm; 3.5 cm x 1.5 cm; White paper; Clear unsmudged impression of left thumb with ridge lines visible; Biometrically cross-verified at examination center and in-person document verification",
+      "evidence_status": "Official Information Bulletin",
+      "notes": "Online Application",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 80000,
+          "minimum_bytes": 20000,
+          "published_minimum": 20.0,
+          "published_maximum": 80.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "unspecified",
+          "preferred_width_px": 350,
+          "preferred_height_px": 150,
+          "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified."
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "Information Bulletin: Foreign Medical Graduate Examination (FMGE) June/December 2024 Session - Annexure: Instructions for Image Upload (https://natboard.edu.in)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "official",
+      "evidence_reference": "Information Bulletin: Foreign Medical Graduate Examination (FMGE) June/December 2024 Session - Annexure: Instructions for Image Upload (https://natboard.edu.in)",
+      "reasoning": "Pixel dimensions transcribed from the cited source.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "verified"
+  },
+  "fictional_example": false
+}

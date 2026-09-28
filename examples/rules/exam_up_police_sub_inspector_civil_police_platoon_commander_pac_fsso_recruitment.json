@@ -1,0 +1,208 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "up-police-sub-inspector-civil-police-platoon-commander-pac-fsso-recruitment",
+  "rule_version": "1.0.0",
+  "status": "verified",
+  "exam": {
+    "exam_id": "up-police-sub-inspector-civil-police-platoon-commander-pac-fsso-recruitment",
+    "exam_name": "UP Police Sub-Inspector (Civil Police) / Platoon Commander PAC / FSSO Recruitment",
+    "conducting_body": "Uttar Pradesh Police Recruitment and Promotion Board (UPPRPB)",
+    "examination_year": 2025,
+    "application_cycle": "2024-2025",
+    "aliases": [
+      "UP Police SI Recruitment",
+      "UPPRPB Sub-Inspector Exam",
+      "UP Daroga Bharti"
+    ],
+    "application_stage": "application",
+    "jurisdiction": "Uttar Pradesh",
+    "category": "recruitment"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "\u091a\u0947\u0939\u0930\u0947 \u0915\u0940 \u091b\u0935\u093f \u0938\u094d\u092a\u0937\u094d\u091f \u0926\u093f\u0916\u0928\u0940 \u091a\u093e\u0939\u093f\u090f\u0964 \u091a\u0947\u0939\u0930\u0947 \u092a\u0930 \u0905\u0924\u094d\u092f\u0927\u093f\u0915 \u091a\u092e\u0915/\u091b\u093e\u092f\u093e \u0928\u0939\u0940\u0902 \u0939\u094b\u0928\u0940 \u091a\u093e\u0939\u093f\u090f\u0964 \u0928\u093e\u092e\u093e\u0902\u0915\u0928 \u0915\u0947 \u0932\u093f\u090f \u092b\u094b\u091f\u094b 6 \u092e\u0939\u0940\u0928\u0947 \u0915\u0947 \u092d\u0940\u0924\u0930 \u0932\u093f\u092f\u093e \u0917\u092f\u093e \u0939\u094b\u0964 \u092a\u0943\u0937\u094d\u0920\u092d\u0942\u092e\u093f \u0938\u092b\u0947\u0926 \u092f\u093e \u0939\u0932\u094d\u0915\u0947 \u0917\u094d\u0930\u0947 \u0930\u0902\u0917 \u0915\u0940 \u0939\u094b\u0928\u0940 \u091a\u093e\u0939\u093f\u090f\u0964 \u0906\u0915\u093e\u0930 20 KB \u0938\u0947 50 KB \u0915\u0947 \u092c\u0940\u091a \u0939\u094b\u0964",
+      "source_url": "https://uppbpb.gov.in/StaticPages/SI_2024_Detailed_Notice.pdf",
+      "document_title": "Direct Recruitment for the Posts of Sub-Inspector (Civil Police) and Equivalent Cadres",
+      "section_name": "Section 10.3 (Instructions for Photo & Signature)"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "unspecified",
+      "preferred_width_px": 350,
+      "preferred_height_px": 450,
+      "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified.",
+      "dpi": 200,
+      "permitted_pixel_range": "Width 35 mm x height 45 mm (3.5 cm x 4.5 cm); 20 KB to 50 KB JPG"
+    },
+    "file_size": {
+      "maximum_bytes": 50000,
+      "minimum_bytes": 20000,
+      "size_unit_as_published": "KB",
+      "published_maximum": 50.0,
+      "published_minimum": 20.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpg",
+        "jpeg"
+      ],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "plain_light",
+      "fallback_colour": "#FFFFFF"
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "unspecified",
+      "face_coverage_minimum": 70.0
+    },
+    "appearance": {
+      "spectacles": {
+        "policy": "conditional",
+        "condition": "Clear prescription spectacles permitted without tinted lenses; glare on glass strictly rejected",
+        "source_wording": "Clear prescription spectacles permitted without tinted lenses; glare on glass strictly rejected"
+      },
+      "headwear": {
+        "policy": "conditional",
+        "condition": "Caps, hats, mufflers strictly prohibited; religious headgear allowed if face uncovered from chin to forehead",
+        "source_wording": "Caps, hats, mufflers strictly prohibited; religious headgear allowed if face uncovered from chin to forehead"
+      },
+      "face_mask": {
+        "policy": "prohibited",
+        "source_wording": "Prohibited"
+      },
+      "monochrome_accepted": false,
+      "recency_maximum_days": 180
+    },
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false,
+      "instructions": "photo.jpg"
+    },
+    "exceptional_instructions": {
+      "spectacles_restriction": true,
+      "headwear_restriction": true,
+      "black_and_white_restriction": true,
+      "recent_photo_requirement": true,
+      "processing_support_status": "supported"
+    }
+  },
+  "requirements": [
+    {
+      "requirement_id": "candidate_photograph",
+      "requirement_name": "Candidate Photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG, JPEG; Width 35 mm x height 45 mm (3.5 cm x 4.5 cm); 20 KB to 50 KB JPG; 3.5 cm x 4.5 cm; Plain white or light grey background; Both eyes, nose, mouth and both ears must be clearly visible; neutral expression with mouth closed",
+      "evidence_status": "Official Notification",
+      "notes": "Application"
+    },
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate Signature",
+      "requirement_type": "signature",
+      "submission_method": "handwritten_then_uploaded",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG, JPEG; Width 3.5 cm x height 1.5 cm; 5 KB to 20 KB JPG; 3.5 cm x 1.5 cm; Plain white paper; Running handwriting with black ballpoint pen; capital block letters strictly prohibited; Signature must be made by candidate personally; initial letters not accepted as signature",
+      "evidence_status": "Official Notification",
+      "notes": "Application",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 20000,
+          "minimum_bytes": 5000,
+          "published_minimum": 5.0,
+          "published_maximum": 20.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "unspecified",
+          "preferred_width_px": 350,
+          "preferred_height_px": 150,
+          "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified."
+        }
+      }
+    },
+    {
+      "requirement_id": "undergraduate_degree_certificate_marksheet",
+      "requirement_name": "Undergraduate Degree Certificate / Marksheet",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "PDF, JPG, JPEG; 50 KB to 100 KB PDF/JPG scan (or fetched directly via DigiLocker); A4 original certificate; Candidate must possess graduation degree on or before the last date of application; appearing candidates are not eligible",
+      "evidence_status": "Official Notification",
+      "notes": "Application",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 100000,
+          "minimum_bytes": 50000,
+          "published_minimum": 50.0,
+          "published_maximum": 100.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "Direct Recruitment for the Posts of Sub-Inspector (Civil Police) and Equivalent Cadres - Section 10.3 (Instructions for Photo & Signature) (https://uppbpb.gov.in/StaticPages/SI_2024_Detailed_Notice.pdf)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "official",
+      "evidence_reference": "Direct Recruitment for the Posts of Sub-Inspector (Civil Police) and Equivalent Cadres - Section 10.3 (Instructions for Photo & Signature) (https://uppbpb.gov.in/StaticPages/SI_2024_Detailed_Notice.pdf)",
+      "reasoning": "Pixel dimensions transcribed from the cited source.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "verified"
+  },
+  "fictional_example": false
+}

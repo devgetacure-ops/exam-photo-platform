@@ -1,0 +1,185 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "telangana-police-sub-inspector-police-constable-direct-recruitment-tglprb-tslprb",
+  "rule_version": "1.0.0",
+  "status": "verified",
+  "exam": {
+    "exam_id": "telangana-police-sub-inspector-police-constable-direct-recruitment-tglprb-tslprb",
+    "exam_name": "Telangana Police Sub-Inspector & Police Constable Direct Recruitment (TGLPRB / TSLPRB)",
+    "conducting_body": "Telangana State Level Police Recruitment Board (TGLPRB / TSLPRB)",
+    "examination_year": 2025,
+    "application_cycle": "2024-2025",
+    "aliases": [
+      "TSLPRB SI & Constable Recruitment",
+      "Telangana Level Police Recruitment Board SCT Examination"
+    ],
+    "application_stage": "application",
+    "jurisdiction": "Telangana",
+    "category": "recruitment"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "The applicant has to paste a recent passport size photograph on a white paper and sign below the photograph in a box of 3.5 cm width x 1.5 cm height, scan the composite image (width 3.5 cm x height 6.0 cm) and upload file size not exceeding 50 KB.",
+      "source_url": "https://www.tglprb.in/notifications/sct_si_constable_2024.pdf",
+      "document_title": "Notification for Direct Recruitment of SCT Sub-Inspectors and Constables in Police Department",
+      "section_name": "Annexure - Instructions for Online Application Form"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "unspecified",
+      "preferred_width_px": 350,
+      "preferred_height_px": 600,
+      "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified.",
+      "dpi": 200,
+      "permitted_pixel_range": "Width 3.5 cm, photo height 4.5 cm, signature space 1.5 cm (total height 6.0 cm); max file size 50 KB (or individual photo 10-50 KB and signature 5-30 KB)"
+    },
+    "file_size": {
+      "maximum_bytes": 50000,
+      "minimum_bytes": 10000,
+      "size_unit_as_published": "KB",
+      "published_maximum": 50.0,
+      "published_minimum": 10.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpg",
+        "jpeg"
+      ],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "plain_light",
+      "fallback_colour": "#FFFFFF"
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "unspecified",
+      "face_coverage_minimum": 75.0
+    },
+    "appearance": {
+      "spectacles": {
+        "policy": "prohibited",
+        "source_wording": "Permitted if eyes are clearly visible; dark glasses prohibited"
+      },
+      "headwear": {
+        "policy": "conditional",
+        "condition": "Not allowed except religious coverings",
+        "source_wording": "Not allowed except religious coverings"
+      },
+      "face_mask": {
+        "policy": "prohibited",
+        "source_wording": "Prohibited"
+      },
+      "recency_maximum_days": 90
+    },
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false,
+      "instructions": "photo_signature.jpg"
+    },
+    "exceptional_instructions": {
+      "spectacles_restriction": true,
+      "headwear_restriction": true,
+      "recent_photo_requirement": true,
+      "processing_support_status": "supported"
+    }
+  },
+  "requirements": [
+    {
+      "requirement_id": "candidate_photograph_with_signature_composite_bo",
+      "requirement_name": "Candidate Photograph with Signature (Composite Box or Separate)",
+      "requirement_type": "signature",
+      "submission_method": "handwritten_then_uploaded",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG, JPEG; Width 3.5 cm, photo height 4.5 cm, signature space 1.5 cm (total height 6.0 cm); max file size 50 KB (or individual photo 10-50 KB and signature 5-30 KB); 3.5 cm x 6.0 cm total; Plain white/light background for photo; white paper for signature; Sign within the designated 1.5 cm box below the photo using black or blue pen; TSLPRB single composite template ensures photo and signature are uploaded simultaneously without mispairing",
+      "evidence_status": "Official Notification",
+      "notes": "Part-I Registration",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 50000,
+          "minimum_bytes": 10000,
+          "published_minimum": 10.0,
+          "published_maximum": 50.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "unspecified",
+          "preferred_width_px": 350,
+          "preferred_height_px": 600,
+          "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified."
+        }
+      }
+    },
+    {
+      "requirement_id": "local_candidature_study_certificates_classes_1_t",
+      "requirement_name": "Local Candidature Study Certificates (Classes 1 to 7)",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory for Local Quota",
+      "content_instructions": "PDF; 100 KB to 500 KB PDF file containing study certificates; A4 original document; Determines candidate local zone/district under the Presidential Order 2018; consecutive 4 years maximum study establishes local district",
+      "evidence_status": "Official Notification",
+      "notes": "Part-II Application",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 500000,
+          "minimum_bytes": 100000,
+          "published_minimum": 100.0,
+          "published_maximum": 500.0,
+          "size_unit_as_published": "KB"
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "Notification for Direct Recruitment of SCT Sub-Inspectors and Constables in Police Department - Annexure - Instructions for Online Application Form (https://www.tglprb.in/notifications/sct_si_constable_2024.pdf)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "official",
+      "evidence_reference": "Notification for Direct Recruitment of SCT Sub-Inspectors and Constables in Police Department - Annexure - Instructions for Online Application Form (https://www.tglprb.in/notifications/sct_si_constable_2024.pdf)",
+      "reasoning": "Pixel dimensions transcribed from the cited source.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "verified"
+  },
+  "fictional_example": false
+}

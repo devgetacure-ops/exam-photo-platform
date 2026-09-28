@@ -1,0 +1,203 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "national-entrance-screening-test-nest",
+  "rule_version": "1.0.0",
+  "status": "verified",
+  "exam": {
+    "exam_id": "national-entrance-screening-test-nest",
+    "exam_name": "National Entrance Screening Test (NEST)",
+    "conducting_body": "National Institute of Science Education and Research (NISER), Bhubaneswar & UM-DAE CEBS, Mumbai",
+    "examination_year": 2025,
+    "application_cycle": "NEST 2024 / NEST 2025",
+    "aliases": [
+      "NEST",
+      "NEST 2024",
+      "NEST 2025",
+      "NISER",
+      "CEBS Integrated M.Sc. Entrance"
+    ],
+    "application_stage": "application",
+    "jurisdiction": "All India",
+    "category": "entrance"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "Upload recent colour photograph with light or white background... file size not more than 80 KB in .jpg/.jpeg format.",
+      "source_url": "https://www.nestexam.in/doc/NEST2024_Brochure.pdf",
+      "document_title": "Information Brochure: National Entrance Screening Test (NEST) 2024 for Admission to 5-Year Integrated M.Sc. Programme",
+      "section_name": "Section: Online Application Process"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "unspecified",
+      "preferred_width_px": 140,
+      "preferred_height_px": 180,
+      "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified.",
+      "dpi": 200,
+      "permitted_pixel_range": "Preferred / Aspect Ratio 3.5:4.5"
+    },
+    "file_size": {
+      "maximum_bytes": 80000,
+      "minimum_bytes": 10000,
+      "size_unit_as_published": "KB",
+      "published_maximum": 80.0,
+      "published_minimum": 10.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpg",
+        "jpeg"
+      ],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "plain_light",
+      "fallback_colour": "#FFFFFF"
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "required_visible",
+      "ears_visible": true
+    },
+    "appearance": {
+      "spectacles": {
+        "policy": "conditional",
+        "condition": "Clear spectacles allowed without reflection",
+        "source_wording": "Clear spectacles allowed without reflection"
+      },
+      "headwear": {
+        "policy": "conditional",
+        "condition": "Caps/hats not permitted except religious headwear",
+        "source_wording": "Caps/hats not permitted except religious headwear"
+      },
+      "face_mask": {
+        "policy": "prohibited",
+        "source_wording": "Not permitted"
+      },
+      "monochrome_accepted": false,
+      "recency_maximum_days": 90
+    },
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false,
+      "instructions": "photo.jpg"
+    },
+    "exceptional_instructions": {
+      "spectacles_restriction": true,
+      "headwear_restriction": true,
+      "black_and_white_restriction": true,
+      "recent_photo_requirement": true,
+      "processing_support_status": "supported"
+    }
+  },
+  "requirements": [
+    {
+      "requirement_id": "passport_size_photograph",
+      "requirement_name": "Passport Size Photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG, JPEG; Preferred / Aspect Ratio 3.5:4.5; 3.5 cm x 4.5 cm; Plain white or light-coloured background; Portal image size validator check.",
+      "evidence_status": "OFFICIAL",
+      "notes": "Online Application Form (nestexam.in)"
+    },
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate Signature",
+      "requirement_type": "signature",
+      "submission_method": "handwritten_then_uploaded",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG, JPEG; Preferred / Aspect Ratio 3.5:1.5; ~ 3.5 cm x 1.5 cm; Plain white unruled paper; Clear signature of candidate using blue or black ink on white paper; capital letters not permitted.; File size validator (up to 80 KB).",
+      "evidence_status": "OFFICIAL",
+      "notes": "Online Application Form",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 80000,
+          "minimum_bytes": 10000,
+          "published_minimum": 10.0,
+          "published_maximum": 80.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "unspecified",
+          "preferred_width_px": 140,
+          "preferred_height_px": 60,
+          "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified."
+        }
+      }
+    },
+    {
+      "requirement_id": "category_certificate_obc_ncl_ews_sc_st",
+      "requirement_name": "Category Certificate (OBC-NCL / EWS / SC / ST)",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Conditional (Mandatory for reserved category candidates)",
+      "content_instructions": "PDF; Standard document page; A4; Document scan; OBC-NCL and EWS certificates must be issued on or after April 01 of preceding year as per Central Government list.",
+      "evidence_status": "OFFICIAL",
+      "notes": "Online Application / Counselling Portal",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 1000000,
+          "minimum_bytes": 50000,
+          "published_minimum": 50.0,
+          "published_maximum": 1000.0,
+          "size_unit_as_published": "KB"
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "Information Brochure: National Entrance Screening Test (NEST) 2024 for Admission to 5-Year Integrated M.Sc. Programme - Section: Online Application Process (https://www.nestexam.in/doc/NEST2024_Brochure.pdf)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "official",
+      "evidence_reference": "Information Brochure: National Entrance Screening Test (NEST) 2024 for Admission to 5-Year Integrated M.Sc. Programme - Section: Online Application Process (https://www.nestexam.in/doc/NEST2024_Brochure.pdf)",
+      "reasoning": "Pixel dimensions transcribed from the cited source.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "verified"
+  },
+  "fictional_example": false
+}
