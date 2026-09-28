@@ -104,7 +104,7 @@ afterwards. **19 September**: 53 examinations, 49 accepted all four portraits,
 **four accepted only two** -- Andhra Pradesh TET, BSSC, GATE 2026 and Karnataka
 PSC, which are the whole of Crop Mode B. Their fix is open: Mode B refuses to
 compose onto the background, so it turns away a head near an edge that Mode A
-accepts. Signatures and thumb impressions have no sweep of this kind yet.
+accepts. Signatures and thumb impressions have no sweep of this kind yet. **28–29 September (DEC-114)**: one portrait through every photograph rule (665, locally) all prepared; four portraits through one examination per distinct photograph configuration (114, on this server, 151 min) and through the 22 supplement examinations (locally) -- every one 4/4. Deployed 29 September; the live catalogue reports 770.
 
 ## Not yet verified on the live site
 
