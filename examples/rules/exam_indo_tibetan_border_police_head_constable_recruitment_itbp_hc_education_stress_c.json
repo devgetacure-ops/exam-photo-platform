@@ -1,0 +1,201 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "indo-tibetan-border-police-head-constable-recruitment-itbp-hc-education-stress-c",
+  "rule_version": "1.0.0",
+  "status": "verified",
+  "exam": {
+    "exam_id": "indo-tibetan-border-police-head-constable-recruitment-itbp-hc-education-stress-c",
+    "exam_name": "Indo-Tibetan Border Police Head Constable Recruitment (ITBP HC Education & Stress Counsellor / Motor Mechanic)",
+    "conducting_body": "Indo-Tibetan Border Police Force (ITBP), Ministry of Home Affairs, New Delhi",
+    "examination_year": 2025,
+    "application_cycle": "ITBP Head Constable Recruitment 2024 / 2025",
+    "aliases": [
+      "ITBP Head Constable",
+      "ITBP HC ESC",
+      "ITBP Motor Mechanic Recruitment"
+    ],
+    "application_stage": "application",
+    "jurisdiction": "All India",
+    "category": "defence_recruitment"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "Upload recent passport size colour photograph (size 30 KB to 100 KB) in JPG/JPEG format against a light background.",
+      "source_url": "https://recruitment.itbpolice.nic.in/assets/uploads/ADV_HC_ESC_2024.pdf",
+      "document_title": "Recruitment to the Post of Head Constable (Education & Stress Counsellor) and Head Constable (Motor Mechanic) 2024",
+      "section_name": "Section: Instructions for Uploading Photograph and Signature"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "unspecified",
+      "preferred_width_px": 350,
+      "preferred_height_px": 450,
+      "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified.",
+      "dpi": 200,
+      "permitted_pixel_range": "Preferred 3.5 cm x 4.5 cm (approx 350 x 450 px)"
+    },
+    "file_size": {
+      "maximum_bytes": 100000,
+      "minimum_bytes": 30000,
+      "size_unit_as_published": "KB",
+      "published_maximum": 100.0,
+      "published_minimum": 30.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpg",
+        "jpeg"
+      ],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "plain_light",
+      "fallback_colour": "#FFFFFF"
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "unspecified",
+      "face_coverage_minimum": 70.0
+    },
+    "appearance": {
+      "spectacles": {
+        "policy": "conditional",
+        "condition": "Allowed without glare",
+        "source_wording": "Allowed without glare"
+      },
+      "headwear": {
+        "policy": "conditional",
+        "condition": "Not permitted unless religious",
+        "source_wording": "Not permitted unless religious"
+      },
+      "face_mask": {
+        "policy": "prohibited",
+        "source_wording": "Prohibited"
+      },
+      "monochrome_accepted": false,
+      "recency_maximum_days": 90
+    },
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false,
+      "instructions": "photo.jpg"
+    },
+    "exceptional_instructions": {
+      "spectacles_restriction": true,
+      "headwear_restriction": true,
+      "black_and_white_restriction": true,
+      "recent_photo_requirement": true,
+      "processing_support_status": "supported"
+    }
+  },
+  "requirements": [
+    {
+      "requirement_id": "candidate_passport_photograph",
+      "requirement_name": "Candidate Passport Photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG / JPEG; Preferred 3.5 cm x 4.5 cm (approx 350 x 450 px); 3.5 cm x 4.5 cm; Plain light or white background; Front-facing colour photo; neutral expression; both ears visible; no caps/spectacles",
+      "evidence_status": "Official Examination Notice",
+      "notes": "Online Application (recruitment.itbpolice.nic.in)"
+    },
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate Signature",
+      "requirement_type": "signature",
+      "submission_method": "handwritten_then_uploaded",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG / JPEG; Preferred 3.5 cm x 1.5 cm (approx 350 x 150 px); 3.5 cm x 1.5 cm; Plain white background; Sign on white paper in blue or black ink in running hand; capital letters rejected; Clear signature; blurred images rejected",
+      "evidence_status": "Official Examination Notice",
+      "notes": "Online Application",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 30000,
+          "minimum_bytes": 15000,
+          "published_minimum": 15.0,
+          "published_maximum": 30.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "unspecified",
+          "preferred_width_px": 350,
+          "preferred_height_px": 150,
+          "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified."
+        }
+      }
+    },
+    {
+      "requirement_id": "educational_technical_qualification_certificate",
+      "requirement_name": "Educational / Technical Qualification Certificate",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "PDF; Clear legible PDF document; A4; Document scan; Degree in Psychology for ESC or 10th+ITI/Diploma in Motor Mechanic for HC MM",
+      "evidence_status": "Official Examination Notice",
+      "notes": "Online Application",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 500000,
+          "minimum_bytes": 100000,
+          "published_minimum": 100.0,
+          "published_maximum": 500.0,
+          "size_unit_as_published": "KB"
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "Recruitment to the Post of Head Constable (Education & Stress Counsellor) and Head Constable (Motor Mechanic) 2024 - Section: Instructions for Uploading Photograph and Signature (https://recruitment.itbpolice.nic.in/assets/uploads/ADV_HC_ESC_2024.pdf)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "official",
+      "evidence_reference": "Recruitment to the Post of Head Constable (Education & Stress Counsellor) and Head Constable (Motor Mechanic) 2024 - Section: Instructions for Uploading Photograph and Signature (https://recruitment.itbpolice.nic.in/assets/uploads/ADV_HC_ESC_2024.pdf)",
+      "reasoning": "Pixel dimensions transcribed from the cited source.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "verified"
+  },
+  "fictional_example": false
+}

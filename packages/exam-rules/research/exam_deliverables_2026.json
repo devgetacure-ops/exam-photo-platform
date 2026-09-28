@@ -26980,7 +26980,91 @@
     "application_stage": "application",
     "photo_role": "candidate_photograph",
     "evidence_source_url": "https://upsc.gov.in/sites/default/files/Notice-IFSP-2024-Engl-140224.pdf",
-    "deliverables": [],
+    "deliverables": [
+      {
+        "name": "Candidate Passport Photograph with Name and Date",
+        "requirement_status": "Mandatory",
+        "submission_method": "file_upload",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Minimum 350 x 350 px, maximum 1000 x 1000 px; 3.5 cm x 4.5 cm; Plain white background strictly mandated; UPSC 2024 Strict Rule: The candidate's facial appearance in photograph must match their actual appearance at all stages (Prelims, Mains, Interview). If candidate maintains beard in photo, same must be kept during exam.",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://upsc.gov.in/sites/default/files/Notice-IFSP-2024-Engl-140224.pdf",
+        "important_note": "One Time Registration (OTR) / Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 20.0,
+            "maximum": 300.0,
+            "source_wording": "20.0-300.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 350,
+            "height": 350,
+            "source_wording": "Minimum 350 x 350 px, maximum 1000 x 1000 px"
+          }
+        }
+      },
+      {
+        "name": "Candidate Signature",
+        "requirement_status": "Mandatory",
+        "submission_method": "handwritten_then_uploaded",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Minimum 350 x 350 px, maximum 1000 x 1000 px; 3.5 cm x 1.5 cm; Pure white background; Signature in running handwriting with black ink; signatures in capital block letters will be rejected; Printed on UPSC e-Admit Card and attendance lists",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://upsc.gov.in/sites/default/files/Notice-IFSP-2024-Engl-140224.pdf",
+        "important_note": "One Time Registration (OTR) / Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 20.0,
+            "maximum": 300.0,
+            "source_wording": "20.0-300.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 350,
+            "height": 350,
+            "source_wording": "Minimum 350 x 350 px, maximum 1000 x 1000 px"
+          }
+        }
+      },
+      {
+        "name": "Candidate Photo Identity Card Document",
+        "requirement_status": "Mandatory",
+        "submission_method": "document_scan_upload",
+        "applicability": "Mandatory",
+        "specification": "PDF; Clear legible PDF document; Original ID scanned; Document scan; Candidate must carry this EXACT original photo ID card to the exam hall and interview center",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://upsc.gov.in/sites/default/files/Notice-IFSP-2024-Engl-140224.pdf",
+        "important_note": "Part-II Registration",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 20.0,
+            "maximum": 300.0,
+            "source_wording": "20.0-300.0 KB"
+          },
+          "formats": {
+            "values": [
+              "pdf"
+            ],
+            "source_wording": "PDF"
+          }
+        }
+      }
+    ],
     "rejection_conditions": []
   },
   {
@@ -26991,7 +27075,91 @@
     "application_stage": "application",
     "photo_role": "candidate_photograph",
     "evidence_source_url": "https://upsc.gov.in/sites/default/files/Notice-CMS-2024-Engl-100424.pdf",
-    "deliverables": [],
+    "deliverables": [
+      {
+        "name": "Candidate Passport Photograph with Name and Date",
+        "requirement_status": "Mandatory",
+        "submission_method": "file_upload",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Minimum 350 x 350 px, maximum 1000 x 1000 px; 3.5 cm x 4.5 cm; Plain white background strictly mandated; UPSC 2024 Strict Rule: The candidate's facial appearance in photograph must match their actual appearance at all stages (Prelims, Mains, Interview). If candidate maintains beard in photo, same must be kept during exam.",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://upsc.gov.in/sites/default/files/Notice-CMS-2024-Engl-100424.pdf",
+        "important_note": "One Time Registration (OTR) / Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 20.0,
+            "maximum": 300.0,
+            "source_wording": "20.0-300.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 350,
+            "height": 350,
+            "source_wording": "Minimum 350 x 350 px, maximum 1000 x 1000 px"
+          }
+        }
+      },
+      {
+        "name": "Candidate Signature",
+        "requirement_status": "Mandatory",
+        "submission_method": "handwritten_then_uploaded",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Minimum 350 x 350 px, maximum 1000 x 1000 px; 3.5 cm x 1.5 cm; Pure white background; Signature in running handwriting with black ink; signatures in capital block letters will be rejected; Printed on UPSC e-Admit Card and attendance lists",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://upsc.gov.in/sites/default/files/Notice-CMS-2024-Engl-100424.pdf",
+        "important_note": "One Time Registration (OTR) / Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 20.0,
+            "maximum": 300.0,
+            "source_wording": "20.0-300.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 350,
+            "height": 350,
+            "source_wording": "Minimum 350 x 350 px, maximum 1000 x 1000 px"
+          }
+        }
+      },
+      {
+        "name": "Candidate Photo Identity Card Document",
+        "requirement_status": "Mandatory",
+        "submission_method": "document_scan_upload",
+        "applicability": "Mandatory",
+        "specification": "PDF; Clear legible PDF document; Original ID scanned; Document scan; Candidate must carry this EXACT original photo ID card to the exam hall and interview center",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://upsc.gov.in/sites/default/files/Notice-CMS-2024-Engl-100424.pdf",
+        "important_note": "Part-II Registration",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 20.0,
+            "maximum": 300.0,
+            "source_wording": "20.0-300.0 KB"
+          },
+          "formats": {
+            "values": [
+              "pdf"
+            ],
+            "source_wording": "PDF"
+          }
+        }
+      }
+    ],
     "rejection_conditions": []
   },
   {
@@ -27002,7 +27170,91 @@
     "application_stage": "application",
     "photo_role": "candidate_photograph",
     "evidence_source_url": "https://upsc.gov.in/sites/default/files/Notice-IES-ISS-2024-Engl-100424.pdf",
-    "deliverables": [],
+    "deliverables": [
+      {
+        "name": "Candidate Passport Photograph with Name and Date",
+        "requirement_status": "Mandatory",
+        "submission_method": "file_upload",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Minimum 350 x 350 px, maximum 1000 x 1000 px; 3.5 cm x 4.5 cm; Plain white background strictly mandated; UPSC 2024 Strict Rule: The candidate's facial appearance in photograph must match their actual appearance at all stages (Prelims, Mains, Interview). If candidate maintains beard in photo, same must be kept during exam.",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://upsc.gov.in/sites/default/files/Notice-IES-ISS-2024-Engl-100424.pdf",
+        "important_note": "One Time Registration (OTR) / Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 20.0,
+            "maximum": 300.0,
+            "source_wording": "20.0-300.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 350,
+            "height": 350,
+            "source_wording": "Minimum 350 x 350 px, maximum 1000 x 1000 px"
+          }
+        }
+      },
+      {
+        "name": "Candidate Signature",
+        "requirement_status": "Mandatory",
+        "submission_method": "handwritten_then_uploaded",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Minimum 350 x 350 px, maximum 1000 x 1000 px; 3.5 cm x 1.5 cm; Pure white background; Signature in running handwriting with black ink; signatures in capital block letters will be rejected; Printed on UPSC e-Admit Card and attendance lists",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://upsc.gov.in/sites/default/files/Notice-IES-ISS-2024-Engl-100424.pdf",
+        "important_note": "One Time Registration (OTR) / Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 20.0,
+            "maximum": 300.0,
+            "source_wording": "20.0-300.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 350,
+            "height": 350,
+            "source_wording": "Minimum 350 x 350 px, maximum 1000 x 1000 px"
+          }
+        }
+      },
+      {
+        "name": "Candidate Photo Identity Card Document",
+        "requirement_status": "Mandatory",
+        "submission_method": "document_scan_upload",
+        "applicability": "Mandatory",
+        "specification": "PDF; Clear legible PDF document; Original ID scanned; Document scan; Candidate must carry this EXACT original photo ID card to the exam hall and interview center",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://upsc.gov.in/sites/default/files/Notice-IES-ISS-2024-Engl-100424.pdf",
+        "important_note": "Part-II Registration",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 20.0,
+            "maximum": 300.0,
+            "source_wording": "20.0-300.0 KB"
+          },
+          "formats": {
+            "values": [
+              "pdf"
+            ],
+            "source_wording": "PDF"
+          }
+        }
+      }
+    ],
     "rejection_conditions": []
   },
   {
@@ -27013,7 +27265,91 @@
     "application_stage": "application",
     "photo_role": "candidate_photograph",
     "evidence_source_url": "https://upsc.gov.in/sites/default/files/Notice-CGSE-2024-Engl-200923.pdf",
-    "deliverables": [],
+    "deliverables": [
+      {
+        "name": "Candidate Passport Photograph with Name and Date",
+        "requirement_status": "Mandatory",
+        "submission_method": "file_upload",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Minimum 350 x 350 px, maximum 1000 x 1000 px; 3.5 cm x 4.5 cm; Plain white background strictly mandated; UPSC 2024 Strict Rule: The candidate's facial appearance in photograph must match their actual appearance at all stages (Prelims, Mains, Interview). If candidate maintains beard in photo, same must be kept during exam.",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://upsc.gov.in/sites/default/files/Notice-CGSE-2024-Engl-200923.pdf",
+        "important_note": "One Time Registration (OTR) / Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 20.0,
+            "maximum": 300.0,
+            "source_wording": "20.0-300.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 350,
+            "height": 350,
+            "source_wording": "Minimum 350 x 350 px, maximum 1000 x 1000 px"
+          }
+        }
+      },
+      {
+        "name": "Candidate Signature",
+        "requirement_status": "Mandatory",
+        "submission_method": "handwritten_then_uploaded",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Minimum 350 x 350 px, maximum 1000 x 1000 px; 3.5 cm x 1.5 cm; Pure white background; Signature in running handwriting with black ink; signatures in capital block letters will be rejected; Printed on UPSC e-Admit Card and attendance lists",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://upsc.gov.in/sites/default/files/Notice-CGSE-2024-Engl-200923.pdf",
+        "important_note": "One Time Registration (OTR) / Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 20.0,
+            "maximum": 300.0,
+            "source_wording": "20.0-300.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 350,
+            "height": 350,
+            "source_wording": "Minimum 350 x 350 px, maximum 1000 x 1000 px"
+          }
+        }
+      },
+      {
+        "name": "Candidate Photo Identity Card Document",
+        "requirement_status": "Mandatory",
+        "submission_method": "document_scan_upload",
+        "applicability": "Mandatory",
+        "specification": "PDF; Clear legible PDF document; Original ID scanned; Document scan; Candidate must carry this EXACT original photo ID card to the exam hall and interview center",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://upsc.gov.in/sites/default/files/Notice-CGSE-2024-Engl-200923.pdf",
+        "important_note": "Part-II Registration",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 20.0,
+            "maximum": 300.0,
+            "source_wording": "20.0-300.0 KB"
+          },
+          "formats": {
+            "values": [
+              "pdf"
+            ],
+            "source_wording": "PDF"
+          }
+        }
+      }
+    ],
     "rejection_conditions": []
   },
   {
@@ -27024,7 +27360,91 @@
     "application_stage": "application",
     "photo_role": "candidate_photograph",
     "evidence_source_url": "https://upsc.gov.in/sites/default/files/Notice-CBI-DSP-LDCE-2023-Engl.pdf",
-    "deliverables": [],
+    "deliverables": [
+      {
+        "name": "Candidate Passport Photograph with Name and Date",
+        "requirement_status": "Mandatory",
+        "submission_method": "file_upload",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Minimum 350 x 350 px, maximum 1000 x 1000 px; 3.5 cm x 4.5 cm; Plain white background strictly mandated; UPSC 2024 Strict Rule: The candidate's facial appearance in photograph must match their actual appearance at all stages (Prelims, Mains, Interview). If candidate maintains beard in photo, same must be kept during exam.",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://upsc.gov.in/sites/default/files/Notice-CBI-DSP-LDCE-2023-Engl.pdf",
+        "important_note": "One Time Registration (OTR) / Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 20.0,
+            "maximum": 300.0,
+            "source_wording": "20.0-300.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 350,
+            "height": 350,
+            "source_wording": "Minimum 350 x 350 px, maximum 1000 x 1000 px"
+          }
+        }
+      },
+      {
+        "name": "Candidate Signature",
+        "requirement_status": "Mandatory",
+        "submission_method": "handwritten_then_uploaded",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Minimum 350 x 350 px, maximum 1000 x 1000 px; 3.5 cm x 1.5 cm; Pure white background; Signature in running handwriting with black ink; signatures in capital block letters will be rejected; Printed on UPSC e-Admit Card and attendance lists",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://upsc.gov.in/sites/default/files/Notice-CBI-DSP-LDCE-2023-Engl.pdf",
+        "important_note": "One Time Registration (OTR) / Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 20.0,
+            "maximum": 300.0,
+            "source_wording": "20.0-300.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 350,
+            "height": 350,
+            "source_wording": "Minimum 350 x 350 px, maximum 1000 x 1000 px"
+          }
+        }
+      },
+      {
+        "name": "Candidate Photo Identity Card Document",
+        "requirement_status": "Mandatory",
+        "submission_method": "document_scan_upload",
+        "applicability": "Mandatory",
+        "specification": "PDF; Clear legible PDF document; Original ID scanned; Document scan; Candidate must carry this EXACT original photo ID card to the exam hall and interview center",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://upsc.gov.in/sites/default/files/Notice-CBI-DSP-LDCE-2023-Engl.pdf",
+        "important_note": "Part-II Registration",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 20.0,
+            "maximum": 300.0,
+            "source_wording": "20.0-300.0 KB"
+          },
+          "formats": {
+            "values": [
+              "pdf"
+            ],
+            "source_wording": "PDF"
+          }
+        }
+      }
+    ],
     "rejection_conditions": []
   },
   {
@@ -27035,7 +27455,91 @@
     "application_stage": "application",
     "photo_role": "candidate_photograph",
     "evidence_source_url": "https://upsc.gov.in/sites/default/files/Notice-CISF-AC-EXE-LDCE-2024-Engl-291123.pdf",
-    "deliverables": [],
+    "deliverables": [
+      {
+        "name": "Candidate Passport Photograph with Name and Date",
+        "requirement_status": "Mandatory",
+        "submission_method": "file_upload",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Minimum 350 x 350 px, maximum 1000 x 1000 px; 3.5 cm x 4.5 cm; Plain white background strictly mandated; UPSC 2024 Strict Rule: The candidate's facial appearance in photograph must match their actual appearance at all stages (Prelims, Mains, Interview). If candidate maintains beard in photo, same must be kept during exam.",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://upsc.gov.in/sites/default/files/Notice-CISF-AC-EXE-LDCE-2024-Engl-291123.pdf",
+        "important_note": "One Time Registration (OTR) / Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 20.0,
+            "maximum": 300.0,
+            "source_wording": "20.0-300.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 350,
+            "height": 350,
+            "source_wording": "Minimum 350 x 350 px, maximum 1000 x 1000 px"
+          }
+        }
+      },
+      {
+        "name": "Candidate Signature",
+        "requirement_status": "Mandatory",
+        "submission_method": "handwritten_then_uploaded",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Minimum 350 x 350 px, maximum 1000 x 1000 px; 3.5 cm x 1.5 cm; Pure white background; Signature in running handwriting with black ink; signatures in capital block letters will be rejected; Printed on UPSC e-Admit Card and attendance lists",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://upsc.gov.in/sites/default/files/Notice-CISF-AC-EXE-LDCE-2024-Engl-291123.pdf",
+        "important_note": "One Time Registration (OTR) / Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 20.0,
+            "maximum": 300.0,
+            "source_wording": "20.0-300.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 350,
+            "height": 350,
+            "source_wording": "Minimum 350 x 350 px, maximum 1000 x 1000 px"
+          }
+        }
+      },
+      {
+        "name": "Candidate Photo Identity Card Document",
+        "requirement_status": "Mandatory",
+        "submission_method": "document_scan_upload",
+        "applicability": "Mandatory",
+        "specification": "PDF; Clear legible PDF document; Original ID scanned; Document scan; Candidate must carry this EXACT original photo ID card to the exam hall and interview center",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://upsc.gov.in/sites/default/files/Notice-CISF-AC-EXE-LDCE-2024-Engl-291123.pdf",
+        "important_note": "Part-II Registration",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 20.0,
+            "maximum": 300.0,
+            "source_wording": "20.0-300.0 KB"
+          },
+          "formats": {
+            "values": [
+              "pdf"
+            ],
+            "source_wording": "PDF"
+          }
+        }
+      }
+    ],
     "rejection_conditions": []
   },
   {
@@ -27046,7 +27550,91 @@
     "application_stage": "application",
     "photo_role": "candidate_photograph",
     "evidence_source_url": "https://upsc.gov.in/sites/default/files/Notice-SO-Steno-LDCE-2021-2022-Engl.pdf",
-    "deliverables": [],
+    "deliverables": [
+      {
+        "name": "Candidate Passport Photograph with Name and Date",
+        "requirement_status": "Mandatory",
+        "submission_method": "file_upload",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Minimum 350 x 350 px, maximum 1000 x 1000 px; 3.5 cm x 4.5 cm; Plain white background strictly mandated; UPSC 2024 Strict Rule: The candidate's facial appearance in photograph must match their actual appearance at all stages (Prelims, Mains, Interview). If candidate maintains beard in photo, same must be kept during exam.",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://upsc.gov.in/sites/default/files/Notice-SO-Steno-LDCE-2021-2022-Engl.pdf",
+        "important_note": "One Time Registration (OTR) / Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 20.0,
+            "maximum": 300.0,
+            "source_wording": "20.0-300.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 350,
+            "height": 350,
+            "source_wording": "Minimum 350 x 350 px, maximum 1000 x 1000 px"
+          }
+        }
+      },
+      {
+        "name": "Candidate Signature",
+        "requirement_status": "Mandatory",
+        "submission_method": "handwritten_then_uploaded",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Minimum 350 x 350 px, maximum 1000 x 1000 px; 3.5 cm x 1.5 cm; Pure white background; Signature in running handwriting with black ink; signatures in capital block letters will be rejected; Printed on UPSC e-Admit Card and attendance lists",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://upsc.gov.in/sites/default/files/Notice-SO-Steno-LDCE-2021-2022-Engl.pdf",
+        "important_note": "One Time Registration (OTR) / Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 20.0,
+            "maximum": 300.0,
+            "source_wording": "20.0-300.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 350,
+            "height": 350,
+            "source_wording": "Minimum 350 x 350 px, maximum 1000 x 1000 px"
+          }
+        }
+      },
+      {
+        "name": "Candidate Photo Identity Card Document",
+        "requirement_status": "Mandatory",
+        "submission_method": "document_scan_upload",
+        "applicability": "Mandatory",
+        "specification": "PDF; Clear legible PDF document; Original ID scanned; Document scan; Candidate must carry this EXACT original photo ID card to the exam hall and interview center",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://upsc.gov.in/sites/default/files/Notice-SO-Steno-LDCE-2021-2022-Engl.pdf",
+        "important_note": "Part-II Registration",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 20.0,
+            "maximum": 300.0,
+            "source_wording": "20.0-300.0 KB"
+          },
+          "formats": {
+            "values": [
+              "pdf"
+            ],
+            "source_wording": "PDF"
+          }
+        }
+      }
+    ],
     "rejection_conditions": []
   },
   {
@@ -27057,7 +27645,137 @@
     "application_stage": "application",
     "photo_role": "candidate_photograph",
     "evidence_source_url": "https://upsconline.nic.in/ora/Advt_05_2024.pdf",
-    "deliverables": [],
+    "deliverables": [
+      {
+        "name": "Candidate Passport Photograph with Name and Date",
+        "requirement_status": "Mandatory",
+        "submission_method": "file_upload",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Minimum 350 x 350 px, maximum 1000 x 1000 px; 3.5 cm x 4.5 cm; Plain white background strictly mandated; UPSC 2024 Strict Rule: The candidate's facial appearance in photograph must match their actual appearance at all stages (Prelims, Mains, Interview). If candidate maintains beard in photo, same must be kept during exam.",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://upsconline.nic.in/ora/Advt_05_2024.pdf",
+        "important_note": "One Time Registration (OTR) / Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 20.0,
+            "maximum": 300.0,
+            "source_wording": "20.0-300.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 350,
+            "height": 350,
+            "source_wording": "Minimum 350 x 350 px, maximum 1000 x 1000 px"
+          }
+        }
+      },
+      {
+        "name": "Candidate Signature",
+        "requirement_status": "Mandatory",
+        "submission_method": "handwritten_then_uploaded",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Minimum 350 x 350 px, maximum 1000 x 1000 px; 3.5 cm x 1.5 cm; Pure white background; Signature in running handwriting with black ink; signatures in capital block letters will be rejected; Printed on UPSC e-Admit Card and attendance lists",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://upsconline.nic.in/ora/Advt_05_2024.pdf",
+        "important_note": "One Time Registration (OTR) / Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 20.0,
+            "maximum": 300.0,
+            "source_wording": "20.0-300.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 350,
+            "height": 350,
+            "source_wording": "Minimum 350 x 350 px, maximum 1000 x 1000 px"
+          }
+        }
+      },
+      {
+        "name": "Matriculation / 10th Standard Certificate (Proof of Date of Birth)",
+        "requirement_status": "Mandatory",
+        "submission_method": "document_scan_upload",
+        "applicability": "Mandatory",
+        "specification": "PDF; Clear legible PDF document; A4; Document scan; Date of birth recorded in certificate will be accepted by UPSC",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://upsconline.nic.in/ora/Advt_05_2024.pdf",
+        "important_note": "Online Recruitment Application (ORA)",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 20.0,
+            "maximum": 300.0,
+            "source_wording": "20.0-300.0 KB"
+          },
+          "formats": {
+            "values": [
+              "pdf"
+            ],
+            "source_wording": "PDF"
+          }
+        }
+      },
+      {
+        "name": "Degree / Diploma Certificate along with Marksheets",
+        "requirement_status": "Mandatory",
+        "submission_method": "document_scan_upload",
+        "applicability": "Mandatory",
+        "specification": "PDF; Clear legible PDF document; A4; Document scan; Educational qualification must match essential qualifications advertised",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://upsconline.nic.in/ora/Advt_05_2024.pdf",
+        "important_note": "Online Recruitment Application (ORA)",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 20.0,
+            "maximum": 300.0,
+            "source_wording": "20.0-300.0 KB"
+          },
+          "formats": {
+            "values": [
+              "pdf"
+            ],
+            "source_wording": "PDF"
+          }
+        }
+      },
+      {
+        "name": "Experience Certificate (Relevant Cadre / Specialty)",
+        "requirement_status": "Conditional",
+        "submission_method": "document_scan_upload",
+        "applicability": "Conditional (Mandatory for posts requiring experience)",
+        "specification": "PDF; Clear legible PDF document; A4; Document scan; Must be in prescribed proforma showing dates, designation and salary",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://upsconline.nic.in/ora/Advt_05_2024.pdf",
+        "important_note": "Online Recruitment Application (ORA)",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 20.0,
+            "maximum": 300.0,
+            "source_wording": "20.0-300.0 KB"
+          },
+          "formats": {
+            "values": [
+              "pdf"
+            ],
+            "source_wording": "PDF"
+          }
+        }
+      }
+    ],
     "rejection_conditions": []
   },
   {
@@ -27211,7 +27929,91 @@
     "application_stage": "application",
     "photo_role": "candidate_photograph",
     "evidence_source_url": "https://www.rrcecr.gov.in/GDCE_2023_Notification.pdf",
-    "deliverables": [],
+    "deliverables": [
+      {
+        "name": "Candidate Passport Photograph",
+        "requirement_status": "Mandatory",
+        "submission_method": "file_upload",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Preferred 350 x 450 px; 3.5 cm x 4.5 cm; Plain white background; Face must be clearly visible with ears visible; caps/sunglasses prohibited",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://www.rrcecr.gov.in/GDCE_2023_Notification.pdf",
+        "important_note": "Online Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 20.0,
+            "maximum": 50.0,
+            "source_wording": "20.0-50.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 350,
+            "height": 450,
+            "source_wording": "Preferred 350 x 450 px"
+          }
+        }
+      },
+      {
+        "name": "Candidate Signature",
+        "requirement_status": "Mandatory",
+        "submission_method": "handwritten_then_uploaded",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Preferred 350 x 150 px; 3.5 cm x 1.5 cm; Plain white background; Sign in running handwriting in black ink; signatures in capital/block letters will be rejected; Must match signature on Railway employee records",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://www.rrcecr.gov.in/GDCE_2023_Notification.pdf",
+        "important_note": "Online Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 10.0,
+            "maximum": 20.0,
+            "source_wording": "10.0-20.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 350,
+            "height": 150,
+            "source_wording": "Preferred 350 x 150 px"
+          }
+        }
+      },
+      {
+        "name": "Railway Employee Identity Card & Service Certificate",
+        "requirement_status": "Mandatory",
+        "submission_method": "document_scan_upload",
+        "applicability": "Mandatory",
+        "specification": "PDF; Clear legible PDF document; A4; Document scan; Serving employee verification with HRMS employee ID and current division",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://www.rrcecr.gov.in/GDCE_2023_Notification.pdf",
+        "important_note": "Online Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 100.0,
+            "maximum": 500.0,
+            "source_wording": "100.0-500.0 KB"
+          },
+          "formats": {
+            "values": [
+              "pdf"
+            ],
+            "source_wording": "PDF"
+          }
+        }
+      }
+    ],
     "rejection_conditions": []
   },
   {
@@ -27222,7 +28024,114 @@
     "application_stage": "application",
     "photo_role": "candidate_photograph",
     "evidence_source_url": "https://lbsedp.lbscentre.in/set/Prospectus_SET_2024.pdf",
-    "deliverables": [],
+    "deliverables": [
+      {
+        "name": "Candidate Passport Photograph",
+        "requirement_status": "Mandatory",
+        "submission_method": "file_upload",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Preferred 150 x 200 px (height 200 px, width 150 px); 3.5 cm x 4.5 cm; Light or white background; Straight frontal face view; ears clearly visible; mobile selfies prohibited",
+        "evidence_status": "Official Information Bulletin",
+        "source_url": "https://lbsedp.lbscentre.in/set/Prospectus_SET_2024.pdf",
+        "important_note": "Online Registration",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 30.0,
+            "maximum": 40.0,
+            "source_wording": "30.0-40.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 150,
+            "height": 200,
+            "source_wording": "Preferred 150 x 200 px (height 200 px, width 150 px)"
+          }
+        }
+      },
+      {
+        "name": "Candidate Signature",
+        "requirement_status": "Mandatory",
+        "submission_method": "handwritten_then_uploaded",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Preferred 200 x 100 px (width 200 px, height 100 px); 3.5 cm x 1.5 cm; Plain white background; Sign on white paper with black/blue ink inside box; capital letters rejected; Clarity check; unreadable signatures rejected",
+        "evidence_status": "Official Information Bulletin",
+        "source_url": "https://lbsedp.lbscentre.in/set/Prospectus_SET_2024.pdf",
+        "important_note": "Online Registration",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 10.0,
+            "maximum": 40.0,
+            "source_wording": "10.0-40.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 200,
+            "height": 100,
+            "source_wording": "Preferred 200 x 100 px (width 200 px, height 100 px)"
+          }
+        }
+      },
+      {
+        "name": "Post Graduate Degree / Provisional Certificate & Mark Sheet",
+        "requirement_status": "Conditional",
+        "submission_method": "document_scan_upload",
+        "applicability": "Conditional (Mandatory for candidates who have passed PG degree)",
+        "specification": "PDF; Clear legible PDF document; A4; Document scan; Minimum 55% marks (50% for reserved categories) in PG degree",
+        "evidence_status": "Official Information Bulletin",
+        "source_url": "https://lbsedp.lbscentre.in/set/Prospectus_SET_2024.pdf",
+        "important_note": "Online Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 100.0,
+            "maximum": 500.0,
+            "source_wording": "100.0-500.0 KB"
+          },
+          "formats": {
+            "values": [
+              "pdf"
+            ],
+            "source_wording": "PDF"
+          }
+        }
+      },
+      {
+        "name": "Community / Non-Creamy Layer / VH Certificate",
+        "requirement_status": "Conditional",
+        "submission_method": "document_scan_upload",
+        "applicability": "Conditional (Mandatory for candidates claiming reservation or relaxation)",
+        "specification": "PDF; Clear legible PDF document; A4; Document scan; Valid certificate issued by competent authority in prescribed format",
+        "evidence_status": "Official Information Bulletin",
+        "source_url": "https://lbsedp.lbscentre.in/set/Prospectus_SET_2024.pdf",
+        "important_note": "Online Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 100.0,
+            "maximum": 500.0,
+            "source_wording": "100.0-500.0 KB"
+          },
+          "formats": {
+            "values": [
+              "pdf"
+            ],
+            "source_wording": "PDF"
+          }
+        }
+      }
+    ],
     "rejection_conditions": []
   },
   {
@@ -27365,7 +28274,151 @@
     "application_stage": "application",
     "photo_role": "candidate_photograph",
     "evidence_source_url": "https://www.sidbi.in/files/careers/Direct_Recruitment_Grade_A_and_Grade_B_2024.pdf",
-    "deliverables": [],
+    "deliverables": [
+      {
+        "name": "Candidate Passport Photograph",
+        "requirement_status": "Mandatory",
+        "submission_method": "file_upload",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Preferred 200 x 230 pixels; 3.5 cm x 4.5 cm; Light or white background; Red-eye effect must be avoided; both ears clearly visible",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://www.sidbi.in/files/careers/Direct_Recruitment_Grade_A_and_Grade_B_2024.pdf",
+        "important_note": "Online Registration (IBPS Portal)",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 20.0,
+            "maximum": 50.0,
+            "source_wording": "20.0-50.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 200,
+            "height": 230,
+            "source_wording": "Preferred 200 x 230 pixels"
+          }
+        }
+      },
+      {
+        "name": "Candidate Signature",
+        "requirement_status": "Mandatory",
+        "submission_method": "handwritten_then_uploaded",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Preferred 140 x 60 pixels; 3.5 cm x 1.5 cm; Plain white background; Signature in black ink on white paper; signature in CAPITAL LETTERS shall NOT be accepted; Must match signature on call letter and attendance sheet",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://www.sidbi.in/files/careers/Direct_Recruitment_Grade_A_and_Grade_B_2024.pdf",
+        "important_note": "Online Registration (IBPS Portal)",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 10.0,
+            "maximum": 20.0,
+            "source_wording": "10.0-20.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 140,
+            "height": 60,
+            "source_wording": "Preferred 140 x 60 pixels"
+          }
+        }
+      },
+      {
+        "name": "Candidate Left Thumb Impression (LTI)",
+        "requirement_status": "Mandatory",
+        "submission_method": "handwritten_then_uploaded",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Preferred 240 x 240 pixels (3 cm x 3 cm at 200 DPI); 3.0 cm x 3.0 cm; Plain white background; Left thumb impression on white paper with black or blue ink; smudged prints rejected; Clear papillary ridges required; right thumb permitted only if left thumb missing",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://www.sidbi.in/files/careers/Direct_Recruitment_Grade_A_and_Grade_B_2024.pdf",
+        "important_note": "Online Registration (IBPS Portal)",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 20.0,
+            "maximum": 50.0,
+            "source_wording": "20.0-50.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 240,
+            "height": 240,
+            "source_wording": "Preferred 240 x 240 pixels (3 cm x 3 cm at 200 DPI)"
+          }
+        }
+      },
+      {
+        "name": "Candidate Handwritten Declaration",
+        "requirement_status": "Mandatory",
+        "submission_method": "handwritten_then_uploaded",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Preferred 800 x 400 pixels (10 cm x 5 cm at 200 DPI); 10.0 cm x 5.0 cm; Plain white background; Handwritten declaration in English clearly in candidate's own handwriting with black ink on white paper; typed or capital letters rejected; Text: 'I, [Name of candidate], hereby declare that all the information submitted by me in the application form is correct, true and valid...'",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://www.sidbi.in/files/careers/Direct_Recruitment_Grade_A_and_Grade_B_2024.pdf",
+        "important_note": "Online Registration (IBPS Portal)",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 50.0,
+            "maximum": 100.0,
+            "source_wording": "50.0-100.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 800,
+            "height": 400,
+            "source_wording": "Preferred 800 x 400 pixels (10 cm x 5 cm at 200 DPI)"
+          }
+        }
+      },
+      {
+        "name": "Brief Resume / Curriculum Vitae",
+        "requirement_status": "Mandatory",
+        "submission_method": "document_scan_upload",
+        "applicability": "Mandatory",
+        "specification": "PDF; Clear legible PDF document; A4; Document scan; Scrutiny of relevant banking/credit/IT work experience for Grade A and Grade B",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://www.sidbi.in/files/careers/Direct_Recruitment_Grade_A_and_Grade_B_2024.pdf",
+        "important_note": "Online Registration (IBPS Portal)",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 100.0,
+            "maximum": 500.0,
+            "source_wording": "100.0-500.0 KB"
+          },
+          "formats": {
+            "values": [
+              "pdf"
+            ],
+            "source_wording": "PDF"
+          }
+        }
+      }
+    ],
     "rejection_conditions": []
   },
   {
@@ -27376,7 +28429,151 @@
     "application_stage": "application",
     "photo_role": "candidate_photograph",
     "evidence_source_url": "https://www.pfrda.org.in/writereaddata/links/PFRDA_Grade_A_Brochure_2024.pdf",
-    "deliverables": [],
+    "deliverables": [
+      {
+        "name": "Candidate Passport Photograph",
+        "requirement_status": "Mandatory",
+        "submission_method": "file_upload",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Preferred 200 x 230 pixels; 3.5 cm x 4.5 cm; Light or white background; Red-eye effect must be avoided; both ears clearly visible",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://www.pfrda.org.in/writereaddata/links/PFRDA_Grade_A_Brochure_2024.pdf",
+        "important_note": "Online Registration (IBPS Portal)",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 20.0,
+            "maximum": 50.0,
+            "source_wording": "20.0-50.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 200,
+            "height": 230,
+            "source_wording": "Preferred 200 x 230 pixels"
+          }
+        }
+      },
+      {
+        "name": "Candidate Signature",
+        "requirement_status": "Mandatory",
+        "submission_method": "handwritten_then_uploaded",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Preferred 140 x 60 pixels; 3.5 cm x 1.5 cm; Plain white background; Signature in black ink on white paper; signature in CAPITAL LETTERS shall NOT be accepted; Must match signature on call letter and attendance sheet",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://www.pfrda.org.in/writereaddata/links/PFRDA_Grade_A_Brochure_2024.pdf",
+        "important_note": "Online Registration (IBPS Portal)",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 10.0,
+            "maximum": 20.0,
+            "source_wording": "10.0-20.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 140,
+            "height": 60,
+            "source_wording": "Preferred 140 x 60 pixels"
+          }
+        }
+      },
+      {
+        "name": "Candidate Left Thumb Impression (LTI)",
+        "requirement_status": "Mandatory",
+        "submission_method": "handwritten_then_uploaded",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Preferred 240 x 240 pixels (3 cm x 3 cm at 200 DPI); 3.0 cm x 3.0 cm; Plain white background; Left thumb impression on white paper with black or blue ink; smudged prints rejected; Clear papillary ridges required; right thumb permitted only if left thumb missing",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://www.pfrda.org.in/writereaddata/links/PFRDA_Grade_A_Brochure_2024.pdf",
+        "important_note": "Online Registration (IBPS Portal)",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 20.0,
+            "maximum": 50.0,
+            "source_wording": "20.0-50.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 240,
+            "height": 240,
+            "source_wording": "Preferred 240 x 240 pixels (3 cm x 3 cm at 200 DPI)"
+          }
+        }
+      },
+      {
+        "name": "Candidate Handwritten Declaration",
+        "requirement_status": "Mandatory",
+        "submission_method": "handwritten_then_uploaded",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Preferred 800 x 400 pixels (10 cm x 5 cm at 200 DPI); 10.0 cm x 5.0 cm; Plain white background; Handwritten declaration in English clearly in candidate's own handwriting with black ink on white paper; typed or capital letters rejected; Text: 'I, [Name of candidate], hereby declare that all the information submitted by me in the application form is correct, true and valid...'",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://www.pfrda.org.in/writereaddata/links/PFRDA_Grade_A_Brochure_2024.pdf",
+        "important_note": "Online Registration (IBPS Portal)",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 50.0,
+            "maximum": 100.0,
+            "source_wording": "50.0-100.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 800,
+            "height": 400,
+            "source_wording": "Preferred 800 x 400 pixels (10 cm x 5 cm at 200 DPI)"
+          }
+        }
+      },
+      {
+        "name": "Category / Caste / PwBD Certificate",
+        "requirement_status": "Conditional",
+        "submission_method": "document_scan_upload",
+        "applicability": "Conditional (Mandatory for candidates claiming reservation)",
+        "specification": "PDF; Clear legible PDF document; A4; Document scan; Issued by competent authority in prescribed format",
+        "evidence_status": "Official Information Bulletin",
+        "source_url": "https://www.pfrda.org.in/writereaddata/links/PFRDA_Grade_A_Brochure_2024.pdf",
+        "important_note": "Online Registration (IBPS Portal)",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 100.0,
+            "maximum": 500.0,
+            "source_wording": "100.0-500.0 KB"
+          },
+          "formats": {
+            "values": [
+              "pdf"
+            ],
+            "source_wording": "PDF"
+          }
+        }
+      }
+    ],
     "rejection_conditions": []
   },
   {
@@ -27387,7 +28584,151 @@
     "application_stage": "application",
     "photo_role": "candidate_photograph",
     "evidence_source_url": "https://uiic.co.in/sites/default/files/AO_2024_Detailed_Advertisement.pdf",
-    "deliverables": [],
+    "deliverables": [
+      {
+        "name": "Candidate Passport Photograph",
+        "requirement_status": "Mandatory",
+        "submission_method": "file_upload",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Preferred 200 x 230 pixels; 3.5 cm x 4.5 cm; Light or white background; Red-eye effect must be avoided; both ears clearly visible",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://uiic.co.in/sites/default/files/AO_2024_Detailed_Advertisement.pdf",
+        "important_note": "Online Registration (IBPS Portal)",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 20.0,
+            "maximum": 50.0,
+            "source_wording": "20.0-50.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 200,
+            "height": 230,
+            "source_wording": "Preferred 200 x 230 pixels"
+          }
+        }
+      },
+      {
+        "name": "Candidate Signature",
+        "requirement_status": "Mandatory",
+        "submission_method": "handwritten_then_uploaded",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Preferred 140 x 60 pixels; 3.5 cm x 1.5 cm; Plain white background; Signature in black ink on white paper; signature in CAPITAL LETTERS shall NOT be accepted; Must match signature on call letter and attendance sheet",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://uiic.co.in/sites/default/files/AO_2024_Detailed_Advertisement.pdf",
+        "important_note": "Online Registration (IBPS Portal)",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 10.0,
+            "maximum": 20.0,
+            "source_wording": "10.0-20.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 140,
+            "height": 60,
+            "source_wording": "Preferred 140 x 60 pixels"
+          }
+        }
+      },
+      {
+        "name": "Candidate Left Thumb Impression (LTI)",
+        "requirement_status": "Mandatory",
+        "submission_method": "handwritten_then_uploaded",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Preferred 240 x 240 pixels (3 cm x 3 cm at 200 DPI); 3.0 cm x 3.0 cm; Plain white background; Left thumb impression on white paper with black or blue ink; smudged prints rejected; Clear papillary ridges required; right thumb permitted only if left thumb missing",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://uiic.co.in/sites/default/files/AO_2024_Detailed_Advertisement.pdf",
+        "important_note": "Online Registration (IBPS Portal)",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 20.0,
+            "maximum": 50.0,
+            "source_wording": "20.0-50.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 240,
+            "height": 240,
+            "source_wording": "Preferred 240 x 240 pixels (3 cm x 3 cm at 200 DPI)"
+          }
+        }
+      },
+      {
+        "name": "Candidate Handwritten Declaration",
+        "requirement_status": "Mandatory",
+        "submission_method": "handwritten_then_uploaded",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Preferred 800 x 400 pixels (10 cm x 5 cm at 200 DPI); 10.0 cm x 5.0 cm; Plain white background; Handwritten declaration in English clearly in candidate's own handwriting with black ink on white paper; typed or capital letters rejected; Text: 'I, [Name of candidate], hereby declare that all the information submitted by me in the application form is correct, true and valid...'",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://uiic.co.in/sites/default/files/AO_2024_Detailed_Advertisement.pdf",
+        "important_note": "Online Registration (IBPS Portal)",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 50.0,
+            "maximum": 100.0,
+            "source_wording": "50.0-100.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 800,
+            "height": 400,
+            "source_wording": "Preferred 800 x 400 pixels (10 cm x 5 cm at 200 DPI)"
+          }
+        }
+      },
+      {
+        "name": "Category / Caste / PwBD Certificate",
+        "requirement_status": "Conditional",
+        "submission_method": "document_scan_upload",
+        "applicability": "Conditional (Mandatory for candidates claiming reservation)",
+        "specification": "PDF; Clear legible PDF document; A4; Document scan; Prescribed format of Government of India",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://uiic.co.in/sites/default/files/AO_2024_Detailed_Advertisement.pdf",
+        "important_note": "Online Registration (IBPS Portal)",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 100.0,
+            "maximum": 500.0,
+            "source_wording": "100.0-500.0 KB"
+          },
+          "formats": {
+            "values": [
+              "pdf"
+            ],
+            "source_wording": "PDF"
+          }
+        }
+      }
+    ],
     "rejection_conditions": []
   },
   {
@@ -27500,7 +28841,162 @@
     "application_stage": "application",
     "photo_role": "candidate_photograph",
     "evidence_source_url": "https://natboard.edu.in/viewUpload?xyz=eG9TMFM0cGFSc3ZqQWtxV3J5Tml4QT09",
-    "deliverables": [],
+    "deliverables": [
+      {
+        "name": "Candidate Passport Photograph",
+        "requirement_status": "Mandatory",
+        "submission_method": "file_upload",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Minimum 350 x 450 pixels (3.5 cm x 4.5 cm at 300 DPI); 3.5 cm x 4.5 cm; Plain white background; Both ears visible; neutral expression; closed mouth; no shadows",
+        "evidence_status": "Official Information Bulletin",
+        "source_url": "https://natboard.edu.in/viewUpload?xyz=eG9TMFM0cGFSc3ZqQWtxV3J5Tml4QT09",
+        "important_note": "Online Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 20.0,
+            "maximum": 80.0,
+            "source_wording": "20.0-80.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 350,
+            "height": 450,
+            "source_wording": "Minimum 350 x 450 pixels (3.5 cm x 4.5 cm at 300 DPI)"
+          }
+        }
+      },
+      {
+        "name": "Real-Time Photograph (Webcam Capture)",
+        "requirement_status": "Mandatory",
+        "submission_method": "official_live_capture",
+        "applicability": "Mandatory",
+        "specification": "Direct browser / webcam digital capture; Browser stream capture; Not specified; Plain white or light background behind candidate; Live face capture algorithm checks single upright face",
+        "evidence_status": "Official Information Bulletin",
+        "source_url": "https://natboard.edu.in/viewUpload?xyz=eG9TMFM0cGFSc3ZqQWtxV3J5Tml4QT09",
+        "important_note": "Online Application",
+        "parsed": {
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 640,
+            "height": 480,
+            "source_wording": "Browser stream capture"
+          }
+        }
+      },
+      {
+        "name": "Candidate Signature",
+        "requirement_status": "Mandatory",
+        "submission_method": "handwritten_then_uploaded",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Box 3.5 cm x 1.5 cm (approx 350 x 150 pixels); 3.5 cm x 1.5 cm; Plain white background; Signature in running handwriting inside 3.5 cm x 1.5 cm box; capital letters rejected; Crisp signature; smudged prints rejected",
+        "evidence_status": "Official Information Bulletin",
+        "source_url": "https://natboard.edu.in/viewUpload?xyz=eG9TMFM0cGFSc3ZqQWtxV3J5Tml4QT09",
+        "important_note": "Online Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 20.0,
+            "maximum": 80.0,
+            "source_wording": "20.0-80.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 350,
+            "height": 150,
+            "source_wording": "Box 3.5 cm x 1.5 cm (approx 350 x 150 pixels)"
+          }
+        }
+      },
+      {
+        "name": "Candidate Left Thumb Impression (LTI)",
+        "requirement_status": "Mandatory",
+        "submission_method": "handwritten_then_uploaded",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Box 3.5 cm x 1.5 cm; 3.5 cm x 1.5 cm; Plain white background; Left thumb print horizontally on white paper using blue/black stamp pad; Clear epidermal ridges required",
+        "evidence_status": "Official Information Bulletin",
+        "source_url": "https://natboard.edu.in/viewUpload?xyz=eG9TMFM0cGFSc3ZqQWtxV3J5Tml4QT09",
+        "important_note": "Online Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 20.0,
+            "maximum": 80.0,
+            "source_wording": "20.0-80.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 350,
+            "height": 150,
+            "source_wording": "Box 3.5 cm x 1.5 cm"
+          }
+        }
+      },
+      {
+        "name": "Primary Dental Qualification Degree (BDS / MDS) & Mark Sheets",
+        "requirement_status": "Mandatory",
+        "submission_method": "document_scan_upload",
+        "applicability": "Mandatory",
+        "specification": "PDF; Clear legible PDF document; A4; Document scan; Degree certificate issued by foreign dental university",
+        "evidence_status": "Official Information Bulletin",
+        "source_url": "https://natboard.edu.in/viewUpload?xyz=eG9TMFM0cGFSc3ZqQWtxV3J5Tml4QT09",
+        "important_note": "Online Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 100.0,
+            "maximum": 1000.0,
+            "source_wording": "100.0-1000.0 KB"
+          },
+          "formats": {
+            "values": [
+              "pdf"
+            ],
+            "source_wording": "PDF"
+          }
+        }
+      },
+      {
+        "name": "Candidate Passport Document (Proof of Citizenship)",
+        "requirement_status": "Mandatory",
+        "submission_method": "document_scan_upload",
+        "applicability": "Mandatory",
+        "specification": "PDF; Clear legible PDF document; A4; Document scan; Valid Indian passport or OCI card with entry/exit visa pages",
+        "evidence_status": "Official Information Bulletin",
+        "source_url": "https://natboard.edu.in/viewUpload?xyz=eG9TMFM0cGFSc3ZqQWtxV3J5Tml4QT09",
+        "important_note": "Online Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 100.0,
+            "maximum": 1000.0,
+            "source_wording": "100.0-1000.0 KB"
+          },
+          "formats": {
+            "values": [
+              "pdf"
+            ],
+            "source_wording": "PDF"
+          }
+        }
+      }
+    ],
     "rejection_conditions": []
   },
   {
@@ -27511,7 +29007,162 @@
     "application_stage": "application",
     "photo_role": "candidate_photograph",
     "evidence_source_url": "https://natboard.edu.in/viewUpload?xyz=cTV3T0pEb1NuZWVxcUpqSHFwbFptQT09",
-    "deliverables": [],
+    "deliverables": [
+      {
+        "name": "Candidate Passport Photograph",
+        "requirement_status": "Mandatory",
+        "submission_method": "file_upload",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Minimum 350 x 450 pixels (3.5 cm x 4.5 cm at 300 DPI); 3.5 cm x 4.5 cm; Plain white background; Both ears visible; neutral expression; closed mouth; no shadows",
+        "evidence_status": "Official Information Bulletin",
+        "source_url": "https://natboard.edu.in/viewUpload?xyz=cTV3T0pEb1NuZWVxcUpqSHFwbFptQT09",
+        "important_note": "Online Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 20.0,
+            "maximum": 80.0,
+            "source_wording": "20.0-80.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 350,
+            "height": 450,
+            "source_wording": "Minimum 350 x 450 pixels (3.5 cm x 4.5 cm at 300 DPI)"
+          }
+        }
+      },
+      {
+        "name": "Real-Time Photograph (Webcam Capture)",
+        "requirement_status": "Mandatory",
+        "submission_method": "official_live_capture",
+        "applicability": "Mandatory",
+        "specification": "Direct browser / webcam digital capture; Browser stream capture; Not specified; Plain white or light background behind candidate; Live face capture algorithm checks single upright face",
+        "evidence_status": "Official Information Bulletin",
+        "source_url": "https://natboard.edu.in/viewUpload?xyz=cTV3T0pEb1NuZWVxcUpqSHFwbFptQT09",
+        "important_note": "Online Application",
+        "parsed": {
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 640,
+            "height": 480,
+            "source_wording": "Browser stream capture"
+          }
+        }
+      },
+      {
+        "name": "Candidate Signature",
+        "requirement_status": "Mandatory",
+        "submission_method": "handwritten_then_uploaded",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Box 3.5 cm x 1.5 cm (approx 350 x 150 pixels); 3.5 cm x 1.5 cm; Plain white background; Signature in running handwriting inside 3.5 cm x 1.5 cm box; capital letters rejected; Crisp signature; smudged prints rejected",
+        "evidence_status": "Official Information Bulletin",
+        "source_url": "https://natboard.edu.in/viewUpload?xyz=cTV3T0pEb1NuZWVxcUpqSHFwbFptQT09",
+        "important_note": "Online Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 20.0,
+            "maximum": 80.0,
+            "source_wording": "20.0-80.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 350,
+            "height": 150,
+            "source_wording": "Box 3.5 cm x 1.5 cm (approx 350 x 150 pixels)"
+          }
+        }
+      },
+      {
+        "name": "Candidate Left Thumb Impression (LTI)",
+        "requirement_status": "Mandatory",
+        "submission_method": "handwritten_then_uploaded",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Box 3.5 cm x 1.5 cm; 3.5 cm x 1.5 cm; Plain white background; Left thumb print horizontally on white paper using blue/black stamp pad; Clear epidermal ridges required",
+        "evidence_status": "Official Information Bulletin",
+        "source_url": "https://natboard.edu.in/viewUpload?xyz=cTV3T0pEb1NuZWVxcUpqSHFwbFptQT09",
+        "important_note": "Online Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 20.0,
+            "maximum": 80.0,
+            "source_wording": "20.0-80.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 350,
+            "height": 150,
+            "source_wording": "Box 3.5 cm x 1.5 cm"
+          }
+        }
+      },
+      {
+        "name": "DNB / DrNB Training Completion Certificate / Provisional Certificate",
+        "requirement_status": "Mandatory",
+        "submission_method": "document_scan_upload",
+        "applicability": "Mandatory",
+        "specification": "PDF; Clear legible PDF document; A4; Document scan; Signed by Head of Institution certifying prescribed residency training completion",
+        "evidence_status": "Official Information Bulletin",
+        "source_url": "https://natboard.edu.in/viewUpload?xyz=cTV3T0pEb1NuZWVxcUpqSHFwbFptQT09",
+        "important_note": "Online Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 100.0,
+            "maximum": 1000.0,
+            "source_wording": "100.0-1000.0 KB"
+          },
+          "formats": {
+            "values": [
+              "pdf"
+            ],
+            "source_wording": "PDF"
+          }
+        }
+      },
+      {
+        "name": "Permanent / Provisional Medical Council Registration Certificate (NMC / SMC)",
+        "requirement_status": "Mandatory",
+        "submission_method": "document_scan_upload",
+        "applicability": "Mandatory",
+        "specification": "PDF; Clear legible PDF document; A4; Document scan; Verification of valid medical registration under NMC or State Medical Council",
+        "evidence_status": "Official Information Bulletin",
+        "source_url": "https://natboard.edu.in/viewUpload?xyz=cTV3T0pEb1NuZWVxcUpqSHFwbFptQT09",
+        "important_note": "Online Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 100.0,
+            "maximum": 1000.0,
+            "source_wording": "100.0-1000.0 KB"
+          },
+          "formats": {
+            "values": [
+              "pdf"
+            ],
+            "source_wording": "PDF"
+          }
+        }
+      }
+    ],
     "rejection_conditions": []
   },
   {
@@ -27726,7 +29377,137 @@
     "application_stage": "application",
     "photo_role": "candidate_photograph",
     "evidence_source_url": "https://www.joinindiannavy.gov.in/files/files/SSR_02_2024_ADV.pdf",
-    "deliverables": [],
+    "deliverables": [
+      {
+        "name": "Candidate Passport Photograph with Slate (Name & Date in Chalk)",
+        "requirement_status": "Mandatory",
+        "submission_method": "file_upload",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Preferred 3.5 cm x 4.5 cm (approx 350 x 450 px); 3.5 cm x 4.5 cm; Plain light blue background; Frontal view against light blue background holding black slate with name and date in chalk; ears clearly visible",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://www.joinindiannavy.gov.in/files/files/SSR_02_2024_ADV.pdf",
+        "important_note": "Online Registration",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 10.0,
+            "maximum": 50.0,
+            "source_wording": "10.0-50.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 350,
+            "height": 450,
+            "source_wording": "Preferred 3.5 cm x 4.5 cm (approx 350 x 450 px)"
+          }
+        }
+      },
+      {
+        "name": "Candidate Signature",
+        "requirement_status": "Mandatory",
+        "submission_method": "handwritten_then_uploaded",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Preferred 3.5 cm x 1.5 cm; 3.5 cm x 1.5 cm; Plain white background; Running handwriting in blue/black ink; capital letters prohibited; Crisp signature on plain white paper",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://www.joinindiannavy.gov.in/files/files/SSR_02_2024_ADV.pdf",
+        "important_note": "Online Registration",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 10.0,
+            "maximum": 50.0,
+            "source_wording": "10.0-50.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 350,
+            "height": 150,
+            "source_wording": "Preferred 3.5 cm x 1.5 cm"
+          }
+        }
+      },
+      {
+        "name": "Matriculation / Class 10 Certificate (Proof of Date of Birth)",
+        "requirement_status": "Mandatory",
+        "submission_method": "document_scan_upload",
+        "applicability": "Mandatory",
+        "specification": "PDF; Clear legible PDF document; A4; Document scan; Proof of date of birth and educational qualification",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://www.joinindiannavy.gov.in/files/files/SSR_02_2024_ADV.pdf",
+        "important_note": "Online Registration",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 100.0,
+            "maximum": 400.0,
+            "source_wording": "100.0-400.0 KB"
+          },
+          "formats": {
+            "values": [
+              "pdf"
+            ],
+            "source_wording": "PDF"
+          }
+        }
+      },
+      {
+        "name": "10+2 / Higher Secondary Marksheet",
+        "requirement_status": "Conditional",
+        "submission_method": "document_scan_upload",
+        "applicability": "Conditional (Mandatory for Agniveer SSR candidates)",
+        "specification": "PDF; Clear legible PDF document; A4; Document scan; Maths & Physics with Chemistry/Biology/Computer Science",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://www.joinindiannavy.gov.in/files/files/SSR_02_2024_ADV.pdf",
+        "important_note": "Online Registration",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 100.0,
+            "maximum": 400.0,
+            "source_wording": "100.0-400.0 KB"
+          },
+          "formats": {
+            "values": [
+              "pdf"
+            ],
+            "source_wording": "PDF"
+          }
+        }
+      },
+      {
+        "name": "Domicile Certificate",
+        "requirement_status": "Mandatory",
+        "submission_method": "document_scan_upload",
+        "applicability": "Mandatory",
+        "specification": "PDF; Clear legible PDF document; A4; Document scan; State of domicile determining recruitment quota",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://www.joinindiannavy.gov.in/files/files/SSR_02_2024_ADV.pdf",
+        "important_note": "Online Registration",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 100.0,
+            "maximum": 400.0,
+            "source_wording": "100.0-400.0 KB"
+          },
+          "formats": {
+            "values": [
+              "pdf"
+            ],
+            "source_wording": "PDF"
+          }
+        }
+      }
+    ],
     "rejection_conditions": []
   },
   {
@@ -27737,7 +29518,114 @@
     "application_stage": "application",
     "photo_role": "candidate_photograph",
     "evidence_source_url": "https://www.joinindiannavy.gov.in/files/files/Sports_Quota_Sailor_2024.pdf",
-    "deliverables": [],
+    "deliverables": [
+      {
+        "name": "Candidate Passport Photograph with Slate (Name & Date in Chalk)",
+        "requirement_status": "Mandatory",
+        "submission_method": "file_upload",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Preferred 3.5 cm x 4.5 cm; 3.5 cm x 4.5 cm; Plain light blue background; Recent photograph against light blue background holding black slate with candidate name and date in chalk; ears visible",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://www.joinindiannavy.gov.in/files/files/Sports_Quota_Sailor_2024.pdf",
+        "important_note": "Application Form Submission (Affixed / Upload)",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 10.0,
+            "maximum": 100.0,
+            "source_wording": "10.0-100.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 350,
+            "height": 450,
+            "source_wording": "Preferred 3.5 cm x 4.5 cm"
+          }
+        }
+      },
+      {
+        "name": "Candidate Signature",
+        "requirement_status": "Mandatory",
+        "submission_method": "handwritten_then_uploaded",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Preferred 3.5 cm x 1.5 cm; 3.5 cm x 1.5 cm; Plain white background; Running handwriting on plain white paper; Signature must match across trials and verification",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://www.joinindiannavy.gov.in/files/files/Sports_Quota_Sailor_2024.pdf",
+        "important_note": "Application Form Submission",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 10.0,
+            "maximum": 50.0,
+            "source_wording": "10.0-50.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 350,
+            "height": 150,
+            "source_wording": "Preferred 3.5 cm x 1.5 cm"
+          }
+        }
+      },
+      {
+        "name": "Sports Discipline Achievement Certificates",
+        "requirement_status": "Mandatory",
+        "submission_method": "document_scan_upload",
+        "applicability": "Mandatory",
+        "specification": "PDF; Clear legible PDF document; A4; Document scan; Representation at International/National/Senior State/Inter-University sports competitions",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://www.joinindiannavy.gov.in/files/files/Sports_Quota_Sailor_2024.pdf",
+        "important_note": "Application Form Submission",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 100.0,
+            "maximum": 1000.0,
+            "source_wording": "100.0-1000.0 KB"
+          },
+          "formats": {
+            "values": [
+              "pdf"
+            ],
+            "source_wording": "PDF"
+          }
+        }
+      },
+      {
+        "name": "Educational Qualification Certificate (10th / 10+2)",
+        "requirement_status": "Mandatory",
+        "submission_method": "document_scan_upload",
+        "applicability": "Mandatory",
+        "specification": "PDF; Clear legible PDF document; A4; Document scan; Matriculation / 10+2 certificate showing proof of age and academic eligibility",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://www.joinindiannavy.gov.in/files/files/Sports_Quota_Sailor_2024.pdf",
+        "important_note": "Application Form Submission",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 100.0,
+            "maximum": 500.0,
+            "source_wording": "100.0-500.0 KB"
+          },
+          "formats": {
+            "values": [
+              "pdf"
+            ],
+            "source_wording": "PDF"
+          }
+        }
+      }
+    ],
     "rejection_conditions": []
   },
   {
@@ -27748,7 +29636,114 @@
     "application_stage": "application",
     "photo_role": "candidate_photograph",
     "evidence_source_url": "https://joinindianarmy.nic.in/writereaddata/Portal/NotificationTemplate/TGC_140_Notification.pdf",
-    "deliverables": [],
+    "deliverables": [
+      {
+        "name": "Candidate Passport Photograph",
+        "requirement_status": "Mandatory",
+        "submission_method": "file_upload",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Preferred 3.5 cm x 4.5 cm (approx 150 x 200 to 200 x 230 px); 3.5 cm x 4.5 cm; Plain white or light background; Clear portrait looking straight; ears visible; head centered; no caps or sunglasses",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://joinindianarmy.nic.in/writereaddata/Portal/NotificationTemplate/TGC_140_Notification.pdf",
+        "important_note": "Online Application (Join Indian Army Portal)",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 10.0,
+            "maximum": 50.0,
+            "source_wording": "10.0-50.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 150,
+            "height": 200,
+            "source_wording": "Preferred 3.5 cm x 4.5 cm (approx 150 x 200 to 200 x 230 px)"
+          }
+        }
+      },
+      {
+        "name": "Candidate Signature",
+        "requirement_status": "Mandatory",
+        "submission_method": "handwritten_then_uploaded",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Preferred 140 x 60 pixels (approx 3.5 cm x 1.5 cm); 3.5 cm x 1.5 cm; Plain white background; Sign on white paper in black ink in running handwriting; block letters strictly prohibited; Must match signature during 5-Day SSB Interview",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://joinindianarmy.nic.in/writereaddata/Portal/NotificationTemplate/TGC_140_Notification.pdf",
+        "important_note": "Online Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 5.0,
+            "maximum": 20.0,
+            "source_wording": "5.0-20.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 140,
+            "height": 60,
+            "source_wording": "Preferred 140 x 60 pixels (approx 3.5 cm x 1.5 cm)"
+          }
+        }
+      },
+      {
+        "name": "Engineering Degree / Provisional Certificate & Cumulative Mark Sheets",
+        "requirement_status": "Mandatory",
+        "submission_method": "document_scan_upload",
+        "applicability": "Mandatory",
+        "specification": "PDF; Clear legible PDF document; A4; Document scan; Engineering branch eligibility and cumulative marks verification for cutoff cut",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://joinindianarmy.nic.in/writereaddata/Portal/NotificationTemplate/TGC_140_Notification.pdf",
+        "important_note": "Online Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 100.0,
+            "maximum": 500.0,
+            "source_wording": "100.0-500.0 KB"
+          },
+          "formats": {
+            "values": [
+              "pdf"
+            ],
+            "source_wording": "PDF"
+          }
+        }
+      },
+      {
+        "name": "Matriculation / Secondary School Certificate (Proof of Date of Birth)",
+        "requirement_status": "Mandatory",
+        "submission_method": "document_scan_upload",
+        "applicability": "Mandatory",
+        "specification": "PDF; Clear legible PDF document; A4; Document scan; Date of birth verification as recorded in Class 10 certificate",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://joinindianarmy.nic.in/writereaddata/Portal/NotificationTemplate/TGC_140_Notification.pdf",
+        "important_note": "Online Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 100.0,
+            "maximum": 500.0,
+            "source_wording": "100.0-500.0 KB"
+          },
+          "formats": {
+            "values": [
+              "pdf"
+            ],
+            "source_wording": "PDF"
+          }
+        }
+      }
+    ],
     "rejection_conditions": []
   },
   {
@@ -27759,7 +29754,137 @@
     "application_stage": "application",
     "photo_role": "candidate_photograph",
     "evidence_source_url": "https://joinindianarmy.nic.in/writereaddata/Portal/NotificationTemplate/ADC_2024_Advt.pdf",
-    "deliverables": [],
+    "deliverables": [
+      {
+        "name": "Candidate Passport Photograph",
+        "requirement_status": "Mandatory",
+        "submission_method": "file_upload",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Preferred 3.5 cm x 4.5 cm (approx 150 x 200 px); 3.5 cm x 4.5 cm; Plain white or light background; Clear frontal facial appearance; both ears visible; no head coverings unless religious",
+        "evidence_status": "Official Information Bulletin",
+        "source_url": "https://joinindianarmy.nic.in/writereaddata/Portal/NotificationTemplate/ADC_2024_Advt.pdf",
+        "important_note": "Online Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 10.0,
+            "maximum": 50.0,
+            "source_wording": "10.0-50.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 150,
+            "height": 200,
+            "source_wording": "Preferred 3.5 cm x 4.5 cm (approx 150 x 200 px)"
+          }
+        }
+      },
+      {
+        "name": "Candidate Signature",
+        "requirement_status": "Mandatory",
+        "submission_method": "handwritten_then_uploaded",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Preferred 140 x 60 pixels; 3.5 cm x 1.5 cm; Plain white background; Sign on white paper in running hand with black ink; capital letters rejected; Crisp signature; blurred images rejected",
+        "evidence_status": "Official Information Bulletin",
+        "source_url": "https://joinindianarmy.nic.in/writereaddata/Portal/NotificationTemplate/ADC_2024_Advt.pdf",
+        "important_note": "Online Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 5.0,
+            "maximum": 20.0,
+            "source_wording": "5.0-20.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 140,
+            "height": 60,
+            "source_wording": "Preferred 140 x 60 pixels"
+          }
+        }
+      },
+      {
+        "name": "NEET (MDS) Admit Card and Score Card",
+        "requirement_status": "Mandatory",
+        "submission_method": "document_scan_upload",
+        "applicability": "Mandatory",
+        "specification": "PDF; Clear legible PDF document; A4; Document scan; Verification of NEET (MDS) roll number, marks, and All India Rank for shortlisting",
+        "evidence_status": "Official Information Bulletin",
+        "source_url": "https://joinindianarmy.nic.in/writereaddata/Portal/NotificationTemplate/ADC_2024_Advt.pdf",
+        "important_note": "Online Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 100.0,
+            "maximum": 500.0,
+            "source_wording": "100.0-500.0 KB"
+          },
+          "formats": {
+            "values": [
+              "pdf"
+            ],
+            "source_wording": "PDF"
+          }
+        }
+      },
+      {
+        "name": "BDS / MDS Degree / Provisional Certificate & Mark Sheets",
+        "requirement_status": "Mandatory",
+        "submission_method": "document_scan_upload",
+        "applicability": "Mandatory",
+        "specification": "PDF; Clear legible PDF document; A4; Document scan; Minimum 55% marks in final BDS; recognized dental college under DCI",
+        "evidence_status": "Official Information Bulletin",
+        "source_url": "https://joinindianarmy.nic.in/writereaddata/Portal/NotificationTemplate/ADC_2024_Advt.pdf",
+        "important_note": "Online Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 100.0,
+            "maximum": 500.0,
+            "source_wording": "100.0-500.0 KB"
+          },
+          "formats": {
+            "values": [
+              "pdf"
+            ],
+            "source_wording": "PDF"
+          }
+        }
+      },
+      {
+        "name": "Compulsory Rotatory Internship Certificate & State Dental Council Registration",
+        "requirement_status": "Mandatory",
+        "submission_method": "document_scan_upload",
+        "applicability": "Mandatory",
+        "specification": "PDF; Clear legible PDF document; A4; Document scan; One-year rotatory internship completion and valid Part-A State Dental Council/DCI permanent registration",
+        "evidence_status": "Official Information Bulletin",
+        "source_url": "https://joinindianarmy.nic.in/writereaddata/Portal/NotificationTemplate/ADC_2024_Advt.pdf",
+        "important_note": "Online Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 100.0,
+            "maximum": 500.0,
+            "source_wording": "100.0-500.0 KB"
+          },
+          "formats": {
+            "values": [
+              "pdf"
+            ],
+            "source_wording": "PDF"
+          }
+        }
+      }
+    ],
     "rejection_conditions": []
   },
   {
@@ -27770,7 +29895,118 @@
     "application_stage": "application",
     "photo_role": "candidate_photograph",
     "evidence_source_url": "https://www.assamrifles.gov.in/DOCS/RECRUITMENT/Advt_Tradesman_2024.pdf",
-    "deliverables": [],
+    "deliverables": [
+      {
+        "name": "Candidate Passport Photograph",
+        "requirement_status": "Mandatory",
+        "submission_method": "file_upload",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Preferred 3.5 cm x 4.5 cm (approx 200 x 230 px); 3.5 cm x 4.5 cm; Plain white or light background; Front-facing colour photo; ears visible; no caps or dark glasses",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://www.assamrifles.gov.in/DOCS/RECRUITMENT/Advt_Tradesman_2024.pdf",
+        "important_note": "Online Application (assamrifles.gov.in)",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 30.0,
+            "maximum": 50.0,
+            "source_wording": "30.0-50.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 200,
+            "height": 230,
+            "source_wording": "Preferred 3.5 cm x 4.5 cm (approx 200 x 230 px)"
+          }
+        }
+      },
+      {
+        "name": "Candidate Signature",
+        "requirement_status": "Mandatory",
+        "submission_method": "handwritten_then_uploaded",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Preferred 140 x 60 pixels (approx 3.5 cm x 1.5 cm); 3.5 cm x 1.5 cm; Plain white background; Signature in running handwriting on white paper; capital letters strictly rejected; Crisp signature; clear contrast",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://www.assamrifles.gov.in/DOCS/RECRUITMENT/Advt_Tradesman_2024.pdf",
+        "important_note": "Online Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 10.0,
+            "maximum": 30.0,
+            "source_wording": "10.0-30.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 140,
+            "height": 60,
+            "source_wording": "Preferred 140 x 60 pixels (approx 3.5 cm x 1.5 cm)"
+          }
+        }
+      },
+      {
+        "name": "10th / 12th / ITI Trade Qualification Certificate",
+        "requirement_status": "Mandatory",
+        "submission_method": "document_scan_upload",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG / PDF; Clear legible document scan; A4; Document scan; Technical trade or educational qualification depending on post applied for",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://www.assamrifles.gov.in/DOCS/RECRUITMENT/Advt_Tradesman_2024.pdf",
+        "important_note": "Online Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 50.0,
+            "maximum": 100.0,
+            "source_wording": "50.0-100.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg",
+              "pdf"
+            ],
+            "source_wording": "JPG / JPEG / PDF"
+          }
+        }
+      },
+      {
+        "name": "Permanent Residential Certificate (PRC) / Domicile Certificate",
+        "requirement_status": "Mandatory",
+        "submission_method": "document_scan_upload",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG / PDF; Clear legible document scan; A4; Document scan; State/UT domicile verification for state-wise vacancy allocation",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://www.assamrifles.gov.in/DOCS/RECRUITMENT/Advt_Tradesman_2024.pdf",
+        "important_note": "Online Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 50.0,
+            "maximum": 100.0,
+            "source_wording": "50.0-100.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg",
+              "pdf"
+            ],
+            "source_wording": "JPG / JPEG / PDF"
+          }
+        }
+      }
+    ],
     "rejection_conditions": []
   },
   {
@@ -27781,7 +30017,91 @@
     "application_stage": "application",
     "photo_role": "candidate_photograph",
     "evidence_source_url": "https://recruitment.itbpolice.nic.in/assets/uploads/ADV_HC_ESC_2024.pdf",
-    "deliverables": [],
+    "deliverables": [
+      {
+        "name": "Candidate Passport Photograph",
+        "requirement_status": "Mandatory",
+        "submission_method": "file_upload",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Preferred 3.5 cm x 4.5 cm (approx 350 x 450 px); 3.5 cm x 4.5 cm; Plain light or white background; Front-facing colour photo; neutral expression; both ears visible; no caps/spectacles",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://recruitment.itbpolice.nic.in/assets/uploads/ADV_HC_ESC_2024.pdf",
+        "important_note": "Online Application (recruitment.itbpolice.nic.in)",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 30.0,
+            "maximum": 100.0,
+            "source_wording": "30.0-100.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 350,
+            "height": 450,
+            "source_wording": "Preferred 3.5 cm x 4.5 cm (approx 350 x 450 px)"
+          }
+        }
+      },
+      {
+        "name": "Candidate Signature",
+        "requirement_status": "Mandatory",
+        "submission_method": "handwritten_then_uploaded",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Preferred 3.5 cm x 1.5 cm (approx 350 x 150 px); 3.5 cm x 1.5 cm; Plain white background; Sign on white paper in blue or black ink in running hand; capital letters rejected; Clear signature; blurred images rejected",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://recruitment.itbpolice.nic.in/assets/uploads/ADV_HC_ESC_2024.pdf",
+        "important_note": "Online Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 15.0,
+            "maximum": 30.0,
+            "source_wording": "15.0-30.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 350,
+            "height": 150,
+            "source_wording": "Preferred 3.5 cm x 1.5 cm (approx 350 x 150 px)"
+          }
+        }
+      },
+      {
+        "name": "Educational / Technical Qualification Certificate",
+        "requirement_status": "Mandatory",
+        "submission_method": "document_scan_upload",
+        "applicability": "Mandatory",
+        "specification": "PDF; Clear legible PDF document; A4; Document scan; Degree in Psychology for ESC or 10th+ITI/Diploma in Motor Mechanic for HC MM",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://recruitment.itbpolice.nic.in/assets/uploads/ADV_HC_ESC_2024.pdf",
+        "important_note": "Online Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 100.0,
+            "maximum": 500.0,
+            "source_wording": "100.0-500.0 KB"
+          },
+          "formats": {
+            "values": [
+              "pdf"
+            ],
+            "source_wording": "PDF"
+          }
+        }
+      }
+    ],
     "rejection_conditions": []
   },
   {
@@ -27792,7 +30112,114 @@
     "application_stage": "application",
     "photo_role": "candidate_photograph",
     "evidence_source_url": "https://rect.crpf.gov.in/Uploads/Sports_Quota_Advt_2024.pdf",
-    "deliverables": [],
+    "deliverables": [
+      {
+        "name": "Candidate Passport Photograph",
+        "requirement_status": "Mandatory",
+        "submission_method": "file_upload",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Preferred 3.5 cm x 4.5 cm (approx 350 x 450 px); 3.5 cm x 4.5 cm; Plain white or light background; Front-facing colour photo; both ears visible; no caps or sunglasses",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://rect.crpf.gov.in/Uploads/Sports_Quota_Advt_2024.pdf",
+        "important_note": "Online Application (rect.crpf.gov.in)",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 20.0,
+            "maximum": 50.0,
+            "source_wording": "20.0-50.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 350,
+            "height": 450,
+            "source_wording": "Preferred 3.5 cm x 4.5 cm (approx 350 x 450 px)"
+          }
+        }
+      },
+      {
+        "name": "Candidate Signature",
+        "requirement_status": "Mandatory",
+        "submission_method": "handwritten_then_uploaded",
+        "applicability": "Mandatory",
+        "specification": "JPG / JPEG; Preferred 4.0 cm x 2.0 cm (approx 350 x 150 px); 4.0 cm x 2.0 cm; Plain white background; Sign on white paper in black or blue ink in running hand; capital letters rejected; Crisp signature; blurred images rejected",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://rect.crpf.gov.in/Uploads/Sports_Quota_Advt_2024.pdf",
+        "important_note": "Online Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 10.0,
+            "maximum": 20.0,
+            "source_wording": "10.0-20.0 KB"
+          },
+          "formats": {
+            "values": [
+              "jpg",
+              "jpeg"
+            ],
+            "source_wording": "JPG / JPEG"
+          },
+          "dimensions_px": {
+            "mode": "preferred",
+            "width": 350,
+            "height": 150,
+            "source_wording": "Preferred 4.0 cm x 2.0 cm (approx 350 x 150 px)"
+          }
+        }
+      },
+      {
+        "name": "Sports Achievement Certificate (Representing Country / State / University)",
+        "requirement_status": "Mandatory",
+        "submission_method": "document_scan_upload",
+        "applicability": "Mandatory",
+        "specification": "PDF; Clear legible PDF document; A4; Document scan; Certificate from National/International Sports Federation or Indian Universities Association",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://rect.crpf.gov.in/Uploads/Sports_Quota_Advt_2024.pdf",
+        "important_note": "Online Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 100.0,
+            "maximum": 300.0,
+            "source_wording": "100.0-300.0 KB"
+          },
+          "formats": {
+            "values": [
+              "pdf"
+            ],
+            "source_wording": "PDF"
+          }
+        }
+      },
+      {
+        "name": "Matriculation / 10th Class Certificate (Proof of Age)",
+        "requirement_status": "Mandatory",
+        "submission_method": "document_scan_upload",
+        "applicability": "Mandatory",
+        "specification": "PDF; Clear legible PDF document; A4; Document scan; Verification of date of birth and minimum educational qualification",
+        "evidence_status": "Official Examination Notice",
+        "source_url": "https://rect.crpf.gov.in/Uploads/Sports_Quota_Advt_2024.pdf",
+        "important_note": "Online Application",
+        "parsed": {
+          "file_size_kb": {
+            "minimum": 100.0,
+            "maximum": 300.0,
+            "source_wording": "100.0-300.0 KB"
+          },
+          "formats": {
+            "values": [
+              "pdf"
+            ],
+            "source_wording": "PDF"
+          }
+        }
+      }
+    ],
     "rejection_conditions": []
   },
   {

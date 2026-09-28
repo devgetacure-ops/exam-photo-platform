@@ -1,0 +1,242 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "army-dental-corps-short-service-commission-army-dental-corps-ssc",
+  "rule_version": "1.0.0",
+  "status": "verified",
+  "exam": {
+    "exam_id": "army-dental-corps-short-service-commission-army-dental-corps-ssc",
+    "exam_name": "Army Dental Corps Short Service Commission (Army Dental Corps SSC)",
+    "conducting_body": "Directorate General Armed Forces Medical Services (DGAFMS), Ministry of Defence, New Delhi",
+    "examination_year": 2025,
+    "application_cycle": "Army Dental Corps SSC 2024 / 2025",
+    "aliases": [
+      "Army Dental Corps",
+      "AD Corps SSC Officer Recruitment"
+    ],
+    "application_stage": "application",
+    "jurisdiction": "All India",
+    "category": "defence_recruitment"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "Upload recent passport size colour photograph with light background in JPG/JPEG format (file size 10 KB to 50 KB).",
+      "source_url": "https://joinindianarmy.nic.in/writereaddata/Portal/NotificationTemplate/ADC_2024_Advt.pdf",
+      "document_title": "Information Brochure: Grant of Short Service Commission in Army Dental Corps 2024 for BDS / MDS Candidates",
+      "section_name": "Section: How to Apply"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "unspecified",
+      "preferred_width_px": 150,
+      "preferred_height_px": 200,
+      "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified.",
+      "dpi": 200,
+      "permitted_pixel_range": "Preferred 3.5 cm x 4.5 cm (approx 150 x 200 px)"
+    },
+    "file_size": {
+      "maximum_bytes": 50000,
+      "minimum_bytes": 10000,
+      "size_unit_as_published": "KB",
+      "published_maximum": 50.0,
+      "published_minimum": 10.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpg",
+        "jpeg"
+      ],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "plain_light",
+      "fallback_colour": "#FFFFFF"
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "unspecified",
+      "face_coverage_minimum": 75.0
+    },
+    "appearance": {
+      "spectacles": {
+        "policy": "conditional",
+        "condition": "Allowed without glare",
+        "source_wording": "Allowed without glare"
+      },
+      "headwear": {
+        "policy": "conditional",
+        "condition": "Not permitted unless religious",
+        "source_wording": "Not permitted unless religious"
+      },
+      "face_mask": {
+        "policy": "prohibited",
+        "source_wording": "Prohibited"
+      },
+      "monochrome_accepted": false,
+      "recency_maximum_days": 90
+    },
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false,
+      "instructions": "photo.jpg"
+    },
+    "exceptional_instructions": {
+      "spectacles_restriction": true,
+      "headwear_restriction": true,
+      "black_and_white_restriction": true,
+      "recent_photo_requirement": true,
+      "processing_support_status": "supported"
+    }
+  },
+  "requirements": [
+    {
+      "requirement_id": "candidate_passport_photograph",
+      "requirement_name": "Candidate Passport Photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG / JPEG; Preferred 3.5 cm x 4.5 cm (approx 150 x 200 px); 3.5 cm x 4.5 cm; Plain white or light background; Clear frontal facial appearance; both ears visible; no head coverings unless religious",
+      "evidence_status": "Official Information Bulletin",
+      "notes": "Online Application"
+    },
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate Signature",
+      "requirement_type": "signature",
+      "submission_method": "handwritten_then_uploaded",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG / JPEG; Preferred 140 x 60 pixels; 3.5 cm x 1.5 cm; Plain white background; Sign on white paper in running hand with black ink; capital letters rejected; Crisp signature; blurred images rejected",
+      "evidence_status": "Official Information Bulletin",
+      "notes": "Online Application",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 20000,
+          "minimum_bytes": 5000,
+          "published_minimum": 5.0,
+          "published_maximum": 20.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "unspecified",
+          "preferred_width_px": 140,
+          "preferred_height_px": 60,
+          "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified."
+        }
+      }
+    },
+    {
+      "requirement_id": "neet_mds_admit_card_and_score_card",
+      "requirement_name": "NEET (MDS) Admit Card and Score Card",
+      "requirement_type": "other",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "not_yet_supported",
+      "applicability": "Mandatory",
+      "content_instructions": "PDF; Clear legible PDF document; A4; Document scan; Verification of NEET (MDS) roll number, marks, and All India Rank for shortlisting",
+      "evidence_status": "Official Information Bulletin",
+      "notes": "Online Application",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 500000,
+          "minimum_bytes": 100000,
+          "published_minimum": 100.0,
+          "published_maximum": 500.0,
+          "size_unit_as_published": "KB"
+        }
+      }
+    },
+    {
+      "requirement_id": "bds_mds_degree_provisional_certificate_mark_shee",
+      "requirement_name": "BDS / MDS Degree / Provisional Certificate & Mark Sheets",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "PDF; Clear legible PDF document; A4; Document scan; Minimum 55% marks in final BDS; recognized dental college under DCI",
+      "evidence_status": "Official Information Bulletin",
+      "notes": "Online Application",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 500000,
+          "minimum_bytes": 100000,
+          "published_minimum": 100.0,
+          "published_maximum": 500.0,
+          "size_unit_as_published": "KB"
+        }
+      }
+    },
+    {
+      "requirement_id": "compulsory_rotatory_internship_certificate_state",
+      "requirement_name": "Compulsory Rotatory Internship Certificate & State Dental Council Registration",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "PDF; Clear legible PDF document; A4; Document scan; One-year rotatory internship completion and valid Part-A State Dental Council/DCI permanent registration",
+      "evidence_status": "Official Information Bulletin",
+      "notes": "Online Application",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 500000,
+          "minimum_bytes": 100000,
+          "published_minimum": 100.0,
+          "published_maximum": 500.0,
+          "size_unit_as_published": "KB"
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "Information Brochure: Grant of Short Service Commission in Army Dental Corps 2024 for BDS / MDS Candidates - Section: How to Apply (https://joinindianarmy.nic.in/writereaddata/Portal/NotificationTemplate/ADC_2024_Advt.pdf)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "official",
+      "evidence_reference": "Information Brochure: Grant of Short Service Commission in Army Dental Corps 2024 for BDS / MDS Candidates - Section: How to Apply (https://joinindianarmy.nic.in/writereaddata/Portal/NotificationTemplate/ADC_2024_Advt.pdf)",
+      "reasoning": "Pixel dimensions transcribed from the cited source.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "verified"
+  },
+  "fictional_example": false
+}

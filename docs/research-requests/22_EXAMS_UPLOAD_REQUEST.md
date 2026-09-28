@@ -1,5 +1,7 @@
 # Upload rules for 22 examinations
 
+**Fulfilled 28 September**: the rows arrived as `packages/exam-rules/research/delivery_2026_09_27/uploads_22_rows.csv` and all 22 are in the catalogue (DEC-114).
+
 These 22 examinations are in the 2026-09-27 delivery's exam sheet, but it has no upload rows for them, so the catalogue has nothing to build their photograph from (DEC-114). Everything else from the delivery is already in.
 
 What to hand back: **one CSV with the same columns as the delivery's uploads sheet** (`packages/exam-rules/research/delivery_2026_09_27/uploads.csv`), one row per uploaded file, using the row numbers below. It is imported with the same script as the rest.

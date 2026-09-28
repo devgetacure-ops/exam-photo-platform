@@ -5,7 +5,7 @@ evidence research. Do not edit by hand: re-running the script rebuilds
 both the rule records and this register, so a manual edit here is lost
 and a manual edit to a rule record silently diverges from its evidence.
 
-**Encoded: 748. Not encoded: 3. Rejected by validation: 0.**
+**Encoded: 770. Not encoded: 3. Rejected by validation: 0.**
 
 ## Encoded
 
@@ -132,6 +132,7 @@ and a manual edit to a rule record silently diverges from its evidence.
 | Andrew Yule & Company Limited Officer & Manager Direct Recruitment Examination | Full specification (official dimensions, size and format) | `exam_andrew_yule_company_limited_officer_manager_direct_recruitment_examination.json` |
 | Anganwadi Worker, Mini Worker & Helper Recruitments (Multi-States) | Full specification (official dimensions, size and format) | `exam_anganwadi_worker_mini_worker_helper_recruitments_multi_states.json` |
 | Army Cadet College (ACC) Entrance Examination | Full specification (official dimensions, size and format) | `exam_army_cadet_college_acc_entrance_examination.json` |
+| Army Dental Corps Short Service Commission (Army Dental Corps SSC) | Full specification (official dimensions, size and format) | `exam_army_dental_corps_short_service_commission_army_dental_corps_ssc.json` |
 | Army Institute of Law Law Entrance Test (AIL LET) | Full specification (official dimensions, size and format) | `exam_army_institute_of_law_law_entrance_test_ail_let.json` |
 | Army Public School Teacher Recruitment (Sukna, Bengdubi) | Full specification (official dimensions, size and format) | `exam_army_public_school_teacher_recruitment_sukna_bengdubi.json` |
 | Arunachal PSC Direct Recruitments (Assistant Public Prosecutor, Sub-Treasury Officer, Labour Officer, Veterinary Officer, ADO, Technical Cadres) | Full specification (official dimensions, size and format) | `exam_arunachal_psc_direct_recruitments_assistant_public_prosecutor_sub_treasury_offic.json` |
@@ -146,6 +147,7 @@ and a manual edit to a rule record silently diverges from its evidence.
 | Assam Diploma in Elementary Education Pre-Entry Test (Assam D.El.Ed PET) | Full specification (official dimensions, size and format) | `exam_assam_diploma_in_elementary_education_pre_entry_test_assam_d_el_ed_pet.json` |
 | Assam PSC Combined Competitive Examination (APSC CCE) | Full specification (official dimensions, size and format) | `exam_assam_psc_combined_competitive_examination_apsc_cce.json` |
 | Assam Polytechnic Admission Test (Assam PAT) | Full specification (official dimensions, size and format) | `exam_assam_polytechnic_admission_test_assam_pat.json` |
+| Assam Rifles Technical and Tradesman Recruitment Rally | Full specification (official dimensions, size and format) | `exam_assam_rifles_technical_and_tradesman_recruitment_rally.json` |
 | Assam Teacher Eligibility Test (Assam TET & Special TET) | Full specification (official dimensions, size and format) | `exam_assam_teacher_eligibility_test_assam_tet_special_tet.json` |
 | BHU Research Scientist, Medical Officer & Faculty Recruitment | Full specification (official dimensions, size and format) | `exam_bhu_research_scientist_medical_officer_faculty_recruitment.json` |
 | BITS Pilani Campus Technical & Administrative Recruitment | Full specification (official dimensions, size and format) | `exam_bits_pilani_campus_technical_administrative_recruitment.json` |
@@ -182,6 +184,7 @@ and a manual edit to a rule record silently diverges from its evidence.
 | Central Pool MBBS/BDS Seats Allocation - UT Ladakh Quota | Full specification (official dimensions, size and format) | `exam_central_pool_mbbs_bds_seats_allocation_ut_ladakh_quota.json` |
 | Central Power Research Institute (CPRI) Assistant, Technician & MTS Direct Recruitment | Full specification (official dimensions, size and format) | `exam_central_power_research_institute_cpri_assistant_technician_mts_direct_recruitmen.json` |
 | Central Railway Advocate Panel Empanelment Examination & Selection (HQ & Divisions) | Full specification (official dimensions, size and format) | `exam_central_railway_advocate_panel_empanelment_examination_selection_hq_divisions.json` |
+| Central Reserve Police Force Meritorious Sports Persons Recruitment (CRPF Sports Quota GD Constable) | Full specification (official dimensions, size and format) | `exam_central_reserve_police_force_meritorious_sports_persons_recruitment_crpf_sports_.json` |
 | Central Sanskrit University (CSU/CWSSU) Faculty Recruitment | Full specification (official dimensions, size and format) | `exam_central_sanskrit_university_csu_cwssu_faculty_recruitment.json` |
 | Central Silk Board (CSB) Assistant Engineer & Young Professional Direct Recruitment | Full specification (official dimensions, size and format) | `exam_central_silk_board_csb_assistant_engineer_young_professional_direct_recruitment.json` |
 | Centralised Admission Committee Admissions (CENTAC Puducherry UG NEET / Non-NEET / PG / B.Sc Nursing) | Full specification (official dimensions, size and format) | `exam_centralised_admission_committee_admissions_centac_puducherry_ug_neet_non_neet_pg.json` |
@@ -242,6 +245,7 @@ and a manual edit to a rule record silently diverges from its evidence.
 | Department of Telecommunications (DoT) Junior Engineer & Telecom Consultant Selection | Full specification (official dimensions, size and format) | `exam_department_of_telecommunications_dot_junior_engineer_telecom_consultant_selectio.json` |
 | Deputy Commissioner Tuensang Multi-Tasking Staff (MTS) Recruitment | Full specification (official dimensions, size and format) | `exam_deputy_commissioner_tuensang_multi_tasking_staff_mts_recruitment.json` |
 | Diploma Certificate Entrance Competitive Examination (DCECE) Bihar | Full specification (official dimensions, size and format) | `exam_diploma_certificate_entrance_competitive_examination_dcece_bihar.json` |
+| Diplomate of National Board Final Examination (DNB Final / DrNB Final Theory) | Full specification (official dimensions, size and format) | `exam_diplomate_of_national_board_final_examination_dnb_final_drnb_final_theory.json` |
 | Directorate of Enforcement (ED) Additional / Joint Director Deputation & Selection | Full specification (official dimensions, size and format) | `exam_directorate_of_enforcement_ed_additional_joint_director_deputation_selection.json` |
 | District Child Protection Unit (DCPU) Staff Recruitments (Multi-Districts) | Full specification (official dimensions, size and format) | `exam_district_child_protection_unit_dcpu_staff_recruitments_multi_districts.json` |
 | District Courts Multi-District Staff Recruitments (Ananthapuramu, Hassan, Kodagu, Prayagraj, Sangareddy, Thalassery, Thrissur, Yadgir, Lakhimpur Kheri) | Full specification (official dimensions, size and format) | `exam_district_courts_multi_district_staff_recruitments_ananthapuramu_hassan_kodagu_pr.json` |
@@ -260,6 +264,7 @@ and a manual edit to a rule record silently diverges from its evidence.
 | Export-Import Bank of India Business Development Officer (Exim Bank BDO) Recruitment | Full specification (official dimensions, size and format) | `exam_export_import_bank_of_india_business_development_officer_exim_bank_bdo_recruitme.json` |
 | Export-Import Bank of India Deputy Manager & Manager (Scale I & II) Direct Recruitment | Full specification (official dimensions, size and format) | `exam_export_import_bank_of_india_deputy_manager_manager_scale_i_ii_direct_recruitment.json` |
 | Footwear Design & Development Institute All India Selection Test (FDDI AIST) | Full specification (official dimensions, size and format) | `exam_footwear_design_development_institute_all_india_selection_test_fddi_aist.json` |
+| Foreign Dental Screening Test (FDST for BDS / MDS Graduates) | Full specification (official dimensions, size and format) | `exam_foreign_dental_screening_test_fdst_for_bds_mds_graduates.json` |
 | Foreign Medical Graduate Examination (FMGE Screening Test) | Full specification (official dimensions, size and format) | `exam_foreign_medical_graduate_examination_fmge_screening_test.json` |
 | GAIL (India) Limited Executive Trainee (ET) Direct Recruitment | Full specification (official dimensions, size and format) | `exam_gail_india_limited_executive_trainee_et_direct_recruitment.json` |
 | GATE 2026 | Full specification (official dimensions, size and format) | `exam_gate_2026.json` |
@@ -338,16 +343,20 @@ and a manual edit to a rule record silently diverges from its evidence.
 | IUST Programme Manager & Technical Project Recruitment | Full specification (official dimensions, size and format) | `exam_iust_programme_manager_technical_project_recruitment.json` |
 | Indbank Merchant Banking Services Head & Specialist Officers Direct Recruitment | Full specification (official dimensions, size and format) | `exam_indbank_merchant_banking_services_head_specialist_officers_direct_recruitment.json` |
 | India Ports Global Limited (IPGL) Individual Consultant & Terminal Executive Recruitment | Full specification (official dimensions, size and format) | `exam_india_ports_global_limited_ipgl_individual_consultant_terminal_executive_recruit.json` |
+| Indian Army Technical Graduate Course (Army TGC-140 / TGC-141) | Full specification (official dimensions, size and format) | `exam_indian_army_technical_graduate_course_army_tgc_140_tgc_141.json` |
 | Indian Coast Guard (ICG) Civilian Posts (Foreman of Stores, Chowkidar, Peon) Direct Exam | Full specification (official dimensions, size and format) | `exam_indian_coast_guard_icg_civilian_posts_foreman_of_stores_chowkidar_peon_direct_ex.json` |
 | Indian Coast Guard Enrolled Personnel Test (ICG CGEPT Navik GD / Navik DB / Yantrik) | Full specification (official dimensions, size and format) | `exam_indian_coast_guard_enrolled_personnel_test_icg_cgept_navik_gd_navik_db_yantrik.json` |
 | Indian Council of Agricultural Research (ICAR Institutes) Young Professional (YP-I & II) Selection | Full specification (official dimensions, size and format) | `exam_indian_council_of_agricultural_research_icar_institutes_young_professional_yp_i_.json` |
 | Indian Institute of Astrophysics (IIA Bangalore) Project Assistant & Engineer Direct Exam | Full specification (official dimensions, size and format) | `exam_indian_institute_of_astrophysics_iia_bangalore_project_assistant_engineer_direct.json` |
 | Indian Maritime University Common Entrance Test (IMU CET) | Full specification (official dimensions, size and format) | `exam_indian_maritime_university_common_entrance_test_imu_cet.json` |
 | Indian Museum Kolkata Staff Car Driver, Technical Assistant & Guide Lecturer Exam | Full specification (official dimensions, size and format) | `exam_indian_museum_kolkata_staff_car_driver_technical_assistant_guide_lecturer_exam.json` |
+| Indian Navy Agniveer Senior Secondary Recruit & Matric Recruit (Navy Agniveer SSR / MR) | Full specification (official dimensions, size and format) | `exam_indian_navy_agniveer_senior_secondary_recruit_matric_recruit_navy_agniveer_ssr_m.json` |
+| Indian Navy Direct Entry Petty Officer / Chief Petty Officer (Sports Quota Recruitment) | Full specification (official dimensions, size and format) | `exam_indian_navy_direct_entry_petty_officer_chief_petty_officer_sports_quota_recruitm.json` |
 | Indian Overseas Bank Specialist Officers & Senior Manager Recruitment | Full specification (official dimensions, size and format) | `exam_indian_overseas_bank_specialist_officers_senior_manager_recruitment.json` |
 | Indian Railway Catering and Tourism Corporation (IRCTC) Hospitality & Tourism Monitors | Full specification (official dimensions, size and format) | `exam_indian_railway_catering_and_tourism_corporation_irctc_hospitality_tourism_monito.json` |
 | Indian Statistical Institute (ISI) Admission Test | Full specification (official dimensions, size and format) | `exam_indian_statistical_institute_isi_admission_test.json` |
 | Indira Gandhi National Open University B.Ed Entrance Test (IGNOU B.Ed Entrance) | Full specification (official dimensions, size and format) | `exam_indira_gandhi_national_open_university_b_ed_entrance_test_ignou_b_ed_entrance.json` |
+| Indo-Tibetan Border Police Head Constable Recruitment (ITBP HC Education & Stress Counsellor / Motor Mechanic) | Full specification (official dimensions, size and format) | `exam_indo_tibetan_border_police_head_constable_recruitment_itbp_hc_education_stress_c.json` |
 | Industrial Finance Corporation of India (IFCI) Assistant Manager & Manager Recruitment | Full specification (official dimensions, size and format) | `exam_industrial_finance_corporation_of_india_ifci_assistant_manager_manager_recruitme.json` |
 | Industrial Training Institute Competitive Admission Test (Bihar ITICAT) | Full specification (official dimensions, size and format) | `exam_industrial_training_institute_competitive_admission_test_bihar_iticat.json` |
 | Institute of Company Secretaries of India (ICSI) Executive (Legal / Academics / IT) Exam | Full specification (official dimensions, size and format) | `exam_institute_of_company_secretaries_of_india_icsi_executive_legal_academics_it_exam.json` |
@@ -567,6 +576,7 @@ and a manual edit to a rule record silently diverges from its evidence.
 | Panjab University Management Entrance Test (PU MET) | Full specification (official dimensions, size and format) | `exam_panjab_university_management_entrance_test_pu_met.json` |
 | Panjab University Research Fellowship & Project Staff Recruitment | Full specification (official dimensions, size and format) | `exam_panjab_university_research_fellowship_project_staff_recruitment.json` |
 | Pearl Academy Design & Fashion Entrance Exam | Full specification (official dimensions, size and format) | `exam_pearl_academy_design_fashion_entrance_exam.json` |
+| Pension Fund Regulatory and Development Authority Officer Grade A Assistant Manager (PFRDA Grade A) | Full specification (official dimensions, size and format) | `exam_pension_fund_regulatory_and_development_authority_officer_grade_a_assistant_mana.json` |
 | Pharmaceuticals & Medical Devices Bureau of India (PMBI) Executive & Pharmacist Exam | Full specification (official dimensions, size and format) | `exam_pharmaceuticals_medical_devices_bureau_of_india_pmbi_executive_pharmacist_exam.json` |
 | Physical Research Laboratory (PRL Ahmedabad) Technical Trainee & Telescope Operator Exam | Full specification (official dimensions, size and format) | `exam_physical_research_laboratory_prl_ahmedabad_technical_trainee_telescope_operator_.json` |
 | Pondicherry Institute of Hotel Management and Catering Technology Admissions (PIHMCT) | Full specification (official dimensions, size and format) | `exam_pondicherry_institute_of_hotel_management_and_catering_technology_admissions_pih.json` |
@@ -597,6 +607,7 @@ and a manual edit to a rule record silently diverges from its evidence.
 | RUHS Medical Officer (Medical) Direct Recruitment Examination | Full specification (official dimensions, size and format) | `exam_ruhs_medical_officer_medical_direct_recruitment_examination.json` |
 | Rabindra Bharati University Technical Assistant & Staff Recruitment | Full specification (official dimensions, size and format) | `exam_rabindra_bharati_university_technical_assistant_staff_recruitment.json` |
 | Railway Recruitment Boards Non-Technical Popular Categories Undergraduate Posts (RRB NTPC UG) | Full specification (official dimensions, size and format) | `exam_railway_recruitment_boards_non_technical_popular_categories_undergraduate_posts_.json` |
+| Railway Recruitment Cell East Central Railway General Departmental Competitive Examination (RRC ECR GDCE) | Full specification (official dimensions, size and format) | `exam_railway_recruitment_cell_east_central_railway_general_departmental_competitive_e.json` |
 | Rajasthan Engineering Admission Process (REAP) | Full specification (official dimensions, size and format) | `exam_rajasthan_engineering_admission_process_reap.json` |
 | Rajasthan Joint Entrance Test (Rajasthan JET Agriculture) | Full specification (official dimensions, size and format) | `exam_rajasthan_joint_entrance_test_rajasthan_jet_agriculture.json` |
 | Rajasthan Police Sub-Inspector & Platoon Commander Combined Competitive Exam | Full specification (official dimensions, size and format) | `exam_rajasthan_police_sub_inspector_platoon_commander_combined_competitive_exam.json` |
@@ -639,6 +650,7 @@ and a manual edit to a rule record silently diverges from its evidence.
 | Sikkim University Research Staff & Project Fellow Recruitment | Full specification (official dimensions, size and format) | `exam_sikkim_university_research_staff_project_fellow_recruitment.json` |
 | Siksha 'O' Anusandhan Admission Test (SAAT) | Full specification (official dimensions, size and format) | `exam_siksha_o_anusandhan_admission_test_saat.json` |
 | Small Industries Development Bank of India (SIDBI) Specialist Cadre Officers Recruitment | Full specification (official dimensions, size and format) | `exam_small_industries_development_bank_of_india_sidbi_specialist_cadre_officers_recru.json` |
+| Small Industries Development Bank of India Assistant Manager Grade A & Manager Grade B (SIDBI Grade A / B) | Full specification (official dimensions, size and format) | `exam_small_industries_development_bank_of_india_assistant_manager_grade_a_manager_gra.json` |
 | Software Technology Parks of India (STPI) Assistant, Administrative Officer & Apprentice Exam | Full specification (official dimensions, size and format) | `exam_software_technology_parks_of_india_stpi_assistant_administrative_officer_apprent.json` |
 | Solapur Aaple Sarkar Seva Kendra (ASSK) Village Operators | Full specification (official dimensions, size and format) | `exam_solapur_aaple_sarkar_seva_kendra_assk_village_operators.json` |
 | Southern Railway Act Apprentice Direct Selection Examination (RRC Chennai) | Full specification (official dimensions, size and format) | `exam_southern_railway_act_apprentice_direct_selection_examination_rrc_chennai.json` |
@@ -688,13 +700,23 @@ and a manual edit to a rule record silently diverges from its evidence.
 | Tripura Selection Test for Graduate Teachers & Post Graduate Teachers (STGT & STPGT) | Full specification (official dimensions, size and format) | `exam_tripura_selection_test_for_graduate_teachers_post_graduate_teachers_stgt_stpgt.json` |
 | Tripura Teacher Eligibility Test (T-TET - Paper I & Paper II) | Full specification (official dimensions, size and format) | `exam_tripura_teacher_eligibility_test_t_tet_paper_i_paper_ii.json` |
 | UDD Uttarakhand Municipal Engineers Recruitment | Full specification (official dimensions, size and format) | `exam_udd_uttarakhand_municipal_engineers_recruitment.json` |
+| UGC Recognised State Eligibility Tests (Kerala SET, KSET Karnataka, JKSET/LASET, WB SET) | Full specification (official dimensions, size and format) | `exam_ugc_recognised_state_eligibility_tests_kerala_set_kset_karnataka_jkset_laset_wb_.json` |
 | UKPSC Review Officer / Assistant Review Officer Examination (UKPSC RO / ARO Secretariat & Public Service Commission) | Full specification (official dimensions, size and format) | `exam_ukpsc_review_officer_assistant_review_officer_examination_ukpsc_ro_aro_secretari.json` |
 | UP Board High School (Class 10) & Intermediate (Class 12) Examination Registration | Full specification (official dimensions, size and format) | `exam_up_board_high_school_class_10_intermediate_class_12_examination_registration.json` |
 | UP Police Sub-Inspector (Civil Police) / Platoon Commander PAC / FSSO Recruitment | Full specification (official dimensions, size and format) | `exam_up_police_sub_inspector_civil_police_platoon_commander_pac_fsso_recruitment.json` |
 | UPESSC Special TET (Primary & Upper Primary Special Education Teachers) | Full specification (official dimensions, size and format) | `exam_upessc_special_tet_primary_upper_primary_special_education_teachers.json` |
+| UPSC Central Bureau of Investigation DSP Limited Departmental Competitive Examination (CBI DSP LDCE) | Full specification (official dimensions, size and format) | `exam_upsc_central_bureau_of_investigation_dsp_limited_departmental_competitive_examin.json` |
+| UPSC Central Industrial Security Force Assistant Commandants Executive LDCE (CISF AC EXE LDCE) | Full specification (official dimensions, size and format) | `exam_upsc_central_industrial_security_force_assistant_commandants_executive_ldce_cisf.json` |
 | UPSC Combined Defence Services Examination I (UPSC CDS I) | Full specification (official dimensions, size and format) | `exam_upsc_combined_defence_services_examination_i_upsc_cds_i.json` |
+| UPSC Combined Geo-Scientist Examination (CGSE) | Full specification (official dimensions, size and format) | `exam_upsc_combined_geo_scientist_examination_cgse.json` |
+| UPSC Combined Medical Services Examination (UPSC CMS) | Full specification (official dimensions, size and format) | `exam_upsc_combined_medical_services_examination_upsc_cms.json` |
+| UPSC Combined Section Officers / Stenographers Grade B / Grade 1 LDCE | Full specification (official dimensions, size and format) | `exam_upsc_combined_section_officers_stenographers_grade_b_grade_1_ldce.json` |
+| UPSC Direct Recruitment by Online Recruitment Application (UPSC ORA Advertisements) | Full specification (official dimensions, size and format) | `exam_upsc_direct_recruitment_by_online_recruitment_application_upsc_ora_advertisement.json` |
+| UPSC Indian Economic Service / Indian Statistical Service Examination (IES / ISS) | Full specification (official dimensions, size and format) | `exam_upsc_indian_economic_service_indian_statistical_service_examination_ies_iss.json` |
+| UPSC Indian Forest Service Examination (UPSC IFoS Main Examination) | Full specification (official dimensions, size and format) | `exam_upsc_indian_forest_service_examination_upsc_ifos_main_examination.json` |
 | Udupi Cochin Shipyard Limited (UCSL) Diploma & Trade Apprentice Direct Selection | Full specification (official dimensions, size and format) | `exam_udupi_cochin_shipyard_limited_ucsl_diploma_trade_apprentice_direct_selection.json` |
 | Undergraduate Common Entrance Examination for Design (UCEED) | Full specification (official dimensions, size and format) | `exam_undergraduate_common_entrance_examination_for_design_uceed.json` |
+| United India Insurance Company Administrative Officer Scale I Recruitment (UIIC AO) | Full specification (official dimensions, size and format) | `exam_united_india_insurance_company_administrative_officer_scale_i_recruitment_uiic_a.json` |
 | University of Kashmir Senior Research Fellow (SRF) Recruitment | Full specification (official dimensions, size and format) | `exam_university_of_kashmir_senior_research_fellow_srf_recruitment.json` |
 | University of Kerala Controller & Registrar Senior Recruitment | Full specification (official dimensions, size and format) | `exam_university_of_kerala_controller_registrar_senior_recruitment.json` |
 | University of Ladakh Centralized Admissions (UOL Admissions) | Full specification (official dimensions, size and format) | `exam_university_of_ladakh_centralized_admissions_uol_admissions.json` |
@@ -974,33 +996,3 @@ photograph specification, which is what blocks them.
 | UPSSSC Preliminary Eligibility Test (PET) | 1 |
 | Uttar Pradesh Police Constable Recruitment | 1 |
 | West Bengal Primary Teacher Eligibility Test | 1 |
-
-## Research records present in one sidecar only
-
-The photograph and deliverable research are joined on examination
-name plus stage. A record here is missing its counterpart, so its
-rule carries no inventory -- which is not the same statement as the
-examination requiring only a photograph.
-
-- Deliverable record with no photograph record: Army Dental Corps Short Service Commission (Army Dental Corps SSC) (application)
-- Deliverable record with no photograph record: Assam Rifles Technical and Tradesman Recruitment Rally (application)
-- Deliverable record with no photograph record: Central Reserve Police Force Meritorious Sports Persons Recruitment (CRPF Sports Quota GD Constable) (application)
-- Deliverable record with no photograph record: Diplomate of National Board Final Examination (DNB Final / DrNB Final Theory) (application)
-- Deliverable record with no photograph record: Foreign Dental Screening Test (FDST for BDS / MDS Graduates) (application)
-- Deliverable record with no photograph record: Indian Army Technical Graduate Course (Army TGC-140 / TGC-141) (application)
-- Deliverable record with no photograph record: Indian Navy Agniveer Senior Secondary Recruit & Matric Recruit (Navy Agniveer SSR / MR) (application)
-- Deliverable record with no photograph record: Indian Navy Direct Entry Petty Officer / Chief Petty Officer (Sports Quota Recruitment) (application)
-- Deliverable record with no photograph record: Indo-Tibetan Border Police Head Constable Recruitment (ITBP HC Education & Stress Counsellor / Motor Mechanic) (application)
-- Deliverable record with no photograph record: Pension Fund Regulatory and Development Authority Officer Grade A Assistant Manager (PFRDA Grade A) (application)
-- Deliverable record with no photograph record: Railway Recruitment Cell East Central Railway General Departmental Competitive Examination (RRC ECR GDCE) (application)
-- Deliverable record with no photograph record: Small Industries Development Bank of India Assistant Manager Grade A & Manager Grade B (SIDBI Grade A / B) (application)
-- Deliverable record with no photograph record: UGC Recognised State Eligibility Tests (Kerala SET, KSET Karnataka, JKSET/LASET, WB SET) (application)
-- Deliverable record with no photograph record: UPSC Central Bureau of Investigation DSP Limited Departmental Competitive Examination (CBI DSP LDCE) (application)
-- Deliverable record with no photograph record: UPSC Central Industrial Security Force Assistant Commandants Executive LDCE (CISF AC EXE LDCE) (application)
-- Deliverable record with no photograph record: UPSC Combined Geo-Scientist Examination (CGSE) (application)
-- Deliverable record with no photograph record: UPSC Combined Medical Services Examination (UPSC CMS) (application)
-- Deliverable record with no photograph record: UPSC Combined Section Officers / Stenographers Grade B / Grade 1 LDCE (application)
-- Deliverable record with no photograph record: UPSC Direct Recruitment by Online Recruitment Application (UPSC ORA Advertisements) (application)
-- Deliverable record with no photograph record: UPSC Indian Economic Service / Indian Statistical Service Examination (IES / ISS) (application)
-- Deliverable record with no photograph record: UPSC Indian Forest Service Examination (UPSC IFoS Main Examination) (application)
-- Deliverable record with no photograph record: United India Insurance Company Administrative Officer Scale I Recruitment (UIIC AO) (application)

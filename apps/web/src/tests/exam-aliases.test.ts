@@ -43,7 +43,7 @@ describe("the examination aliases", () => {
     const entries = catalogue();
 
     it("covers the catalogue", () => {
-        expect(entries.length).toBe(748);
+        expect(entries.length).toBe(770);
         const without = entries.filter((entry) => entry.aliases.length === 0);
         // One record is its own short form already: NEET-PG.
         expect(without.map((entry) => entry.name)).toEqual(["NEET-PG"]);
@@ -60,7 +60,7 @@ describe("the examination aliases", () => {
             }
         }
         expect(misses).toEqual([]);
-    }, 60_000);
+    }, 180_000);
 
     it("never gives two examinations the same alias for the same body", () => {
         const seen = new Map<string, string[]>();

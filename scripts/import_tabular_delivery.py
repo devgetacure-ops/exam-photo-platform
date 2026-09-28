@@ -380,7 +380,11 @@ def main() -> int:
             return [{k: (v or "").strip() for k, v in r.items()} for r in csv.DictReader(handle)]
 
     exams = rows("exams.csv")
+    # uploads.csv, plus any supplement delivered later (uploads_22_rows.csv
+    # carries the 22 examinations the first delivery gave no rows for).
     uploads = rows("uploads.csv")
+    for extra in sorted(args.delivery.glob("uploads_*.csv")):
+        uploads += rows(extra.name)
     by_row: Dict[str, List[Dict[str, str]]] = {}
     for row in uploads:
         by_row.setdefault(row["row_no"], []).append(row)

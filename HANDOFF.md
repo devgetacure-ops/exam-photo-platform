@@ -477,7 +477,7 @@ upload and a requirement, get back a compliant file.
 | Certificate / ID scan | Ink `PAGE` + PDF | Image→PDF, or an existing PDF restructured |
 | Multi-page document | `pdf/document.py` | Add pages, reorder, rotate, omit, repeat |
 
-**Catalogue: 748 examinations, 1,921 requirements** since DEC-114 imported the 2026-09-27 delivery (617 examinations; 22 more in it had no upload rows, requested in `docs/research-requests/22_EXAMS_UPLOAD_REQUEST.md`). Before that: **131 examinations, 405 requirements** (DEC-093, DEC-095). 303
+**Catalogue: 770 examinations, 2,010 requirements** since DEC-114 imported the 2026-09-27 delivery (639 examinations; the last 22 arrived as `uploads_22_rows.csv`). Before that: **131 examinations, 405 requirements** (DEC-093, DEC-095). 303
 supported, 28 guidance-only (live capture and portal declarations — correctly
 never ours), 4 partially supported (a name/date printed on the photograph, or
 WBSSC's signature on it, which the engine cannot write), 70 not yet supported.

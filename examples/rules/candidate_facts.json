@@ -1688,6 +1688,44 @@
         }
       ]
     },
+    "army-dental-corps-short-service-commission-army-dental-corps-ssc": {
+      "exam_id": "army-dental-corps-short-service-commission-army-dental-corps-ssc",
+      "exam_name": "Army Dental Corps Short Service Commission (Army Dental Corps SSC)",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 10 KB and 50 KB.",
+          "source": "Information Brochure: Grant of Short Service Commission in Army Dental Corps 2024 for BDS / MDS Candidates - Section: How to Apply (https://joinindianarmy.nic.in/writereaddata/Portal/NotificationTemplate/ADC_2024_Advt.pdf)",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://joinindianarmy.nic.in/writereaddata/Portal/NotificationTemplate/ADC_2024_Advt.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 5 files, not only a photograph — 4 more files besides it.",
+          "source": "https://joinindianarmy.nic.in/writereaddata/Portal/NotificationTemplate/ADC_2024_Advt.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "history",
+          "text": "National NEET-MDS Ranking Merit: Candidates are shortlisted directly on the basis of their All India Rank in the NEET-MDS examination, followed by a clinical board interview in New Delhi.",
+          "source": "Army Dental Corps Short Service Commission (Army Dental Corps SSC) (https://joinindianarmy.nic.in)",
+          "requirement_id": null,
+          "official": false,
+          "reported_by": "joinindianarmy.nic.in"
+        }
+      ]
+    },
     "army-institute-of-law-law-entrance-test-ail-let": {
       "exam_id": "army-institute-of-law-law-entrance-test-ail-let",
       "exam_name": "Army Institute of Law Law Entrance Test (AIL LET)",
@@ -2315,6 +2353,52 @@
           "requirement_id": null,
           "official": false,
           "reported_by": "apsc.nic.in"
+        }
+      ]
+    },
+    "assam-rifles-technical-and-tradesman-recruitment-rally": {
+      "exam_id": "assam-rifles-technical-and-tradesman-recruitment-rally",
+      "exam_name": "Assam Rifles Technical and Tradesman Recruitment Rally",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 30 KB and 50 KB.",
+          "source": "Notification: Assam Rifles Technical and Tradesmen Recruitment Rally 2024 across Group B & C Posts - Section: How to Apply (https://www.assamrifles.gov.in/DOCS/RECRUITMENT/Advt_Tradesman_2024.pdf)",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://www.assamrifles.gov.in/DOCS/RECRUITMENT/Advt_Tradesman_2024.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 4 files, not only a photograph — 3 more files besides it.",
+          "source": "https://www.assamrifles.gov.in/DOCS/RECRUITMENT/Advt_Tradesman_2024.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "history",
+          "text": "Sentinels of the Northeast (Oldest Paramilitary): Raised in 1835 as Cachar Levy, Assam Rifles is India's oldest paramilitary force, operating under the operational control of the Indian Army along the 1,643 km Indo-Myanmar border.",
+          "source": "Assam Rifles Technical and Tradesman Recruitment Rally (https://www.assamrifles.gov.in)",
+          "requirement_id": null,
+          "official": false,
+          "reported_by": "assamrifles.gov.in"
+        },
+        {
+          "kind": "history",
+          "text": "Hill Rally Testing Grounds: Physical efficiency tests and rallies are conducted across rugged jungle garrisons in Diphu, Dimapur, Silchar, and Laitkor.",
+          "source": "Assam Rifles Technical and Tradesman Recruitment Rally (https://www.assamrifles.gov.in)",
+          "requirement_id": null,
+          "official": false,
+          "reported_by": "assamrifles.gov.in"
         }
       ]
     },
@@ -3801,6 +3885,52 @@
           "requirement_id": null,
           "official": false,
           "reported_by": "cr.indianrailways.gov.in"
+        }
+      ]
+    },
+    "central-reserve-police-force-meritorious-sports-persons-recruitment-crpf-sports-": {
+      "exam_id": "central-reserve-police-force-meritorious-sports-persons-recruitment-crpf-sports-",
+      "exam_name": "Central Reserve Police Force Meritorious Sports Persons Recruitment (CRPF Sports Quota GD Constable)",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 20 KB and 50 KB.",
+          "source": "Recruitment of Meritorious Sportspersons for the Post of Constable (General Duty) in CRPF against Sports Quota - Section: How to Apply (https://rect.crpf.gov.in/Uploads/Sports_Quota_Advt_2024.pdf)",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://rect.crpf.gov.in/Uploads/Sports_Quota_Advt_2024.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 4 files, not only a photograph — 3 more files besides it.",
+          "source": "https://rect.crpf.gov.in/Uploads/Sports_Quota_Advt_2024.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "history",
+          "text": "Largest Paramilitary Force in the World: With 246 battalions, CRPF is India's primary internal security force, maintaining a renowned sports wing that has produced Commonwealth and Asian Games champions.",
+          "source": "Central Reserve Police Force Meritorious Sports Persons Recruitment (CRPF Sports Quota GD Constable) (https://crpf.gov.in)",
+          "requirement_id": null,
+          "official": false,
+          "reported_by": "crpf.gov.in"
+        },
+        {
+          "kind": "history",
+          "text": "Direct Practical Ground Trials: Selected sportspersons represent the CRPF Central Sports Teams across athletics, wrestling, archery, judo, and shooting.",
+          "source": "Central Reserve Police Force Meritorious Sports Persons Recruitment (CRPF Sports Quota GD Constable) (https://rect.crpf.gov.in)",
+          "requirement_id": null,
+          "official": false,
+          "reported_by": "rect.crpf.gov.in"
         }
       ]
     },
@@ -6290,6 +6420,36 @@
         }
       ]
     },
+    "diplomate-of-national-board-final-examination-dnb-final-drnb-final-theory": {
+      "exam_id": "diplomate-of-national-board-final-examination-dnb-final-drnb-final-theory",
+      "exam_name": "Diplomate of National Board Final Examination (DNB Final / DrNB Final Theory)",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 20 KB and 80 KB.",
+          "source": "Information Bulletin: DNB / DrNB Final Theory Examination - Broad & Super Specialties - Section: Instructions for Uploading Images (https://natboard.edu.in/viewUpload?xyz=cTV3T0pEb1NuZWVxcUpqSHFwbFptQT09)",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://natboard.edu.in/viewUpload?xyz=cTV3T0pEb1NuZWVxcUpqSHFwbFptQT09",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 6 files, not only a photograph — 5 more files besides it.",
+          "source": "https://natboard.edu.in/viewUpload?xyz=cTV3T0pEb1NuZWVxcUpqSHFwbFptQT09",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        }
+      ]
+    },
     "directorate-of-enforcement-ed-additional-joint-director-deputation-selection": {
       "exam_id": "directorate-of-enforcement-ed-additional-joint-director-deputation-selection",
       "exam_name": "Directorate of Enforcement (ED) Additional / Joint Director Deputation & Selection",
@@ -7165,6 +7325,44 @@
           "requirement_id": null,
           "official": false,
           "reported_by": "fddiindia.com"
+        }
+      ]
+    },
+    "foreign-dental-screening-test-fdst-for-bds-mds-graduates": {
+      "exam_id": "foreign-dental-screening-test-fdst-for-bds-mds-graduates",
+      "exam_name": "Foreign Dental Screening Test (FDST for BDS / MDS Graduates)",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 20 KB and 80 KB.",
+          "source": "Information Bulletin: Foreign Dental Screening Test (FDST) for BDS and MDS Graduates - Section: Instructions for Uploading Images (https://natboard.edu.in/viewUpload?xyz=eG9TMFM0cGFSc3ZqQWtxV3J5Tml4QT09)",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://natboard.edu.in/viewUpload?xyz=eG9TMFM0cGFSc3ZqQWtxV3J5Tml4QT09",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 6 files, not only a photograph — 5 more files besides it.",
+          "source": "https://natboard.edu.in/viewUpload?xyz=eG9TMFM0cGFSc3ZqQWtxV3J5Tml4QT09",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "history",
+          "text": "Three-Tier Evaluation: Combines a computer-based theory exam, a clinical viva-voce, and a comprehensive practical examination at designated dental colleges in Delhi.",
+          "source": "Foreign Dental Screening Test (FDST for BDS / MDS Graduates) (https://natboard.edu.in)",
+          "requirement_id": null,
+          "official": false,
+          "reported_by": "natboard.edu.in"
         }
       ]
     },
@@ -10638,6 +10836,52 @@
         }
       ]
     },
+    "indian-army-technical-graduate-course-army-tgc-140-tgc-141": {
+      "exam_id": "indian-army-technical-graduate-course-army-tgc-140-tgc-141",
+      "exam_name": "Indian Army Technical Graduate Course (Army TGC-140 / TGC-141)",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 10 KB and 50 KB.",
+          "source": "Notification for 140th Technical Graduate Course (TGC-140) (Commencing in January 2025 at Indian Military Academy, Dehradun) - Section: Instructions for Online Application (https://joinindianarmy.nic.in/writereaddata/Portal/NotificationTemplate/TGC_140_Notification.pdf)",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://joinindianarmy.nic.in/writereaddata/Portal/NotificationTemplate/TGC_140_Notification.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 4 files, not only a photograph — 3 more files besides it.",
+          "source": "https://joinindianarmy.nic.in/writereaddata/Portal/NotificationTemplate/TGC_140_Notification.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "history",
+          "text": "Engineers to Military Combat Commanders: TGC offers permanent commissions directly to engineering graduates at the historic Indian Military Academy (IMA) in Dehradun without any written test.",
+          "source": "Indian Army Technical Graduate Course (Army TGC-140 / TGC-141) (https://joinindianarmy.nic.in)",
+          "requirement_id": null,
+          "official": false,
+          "reported_by": "joinindianarmy.nic.in"
+        },
+        {
+          "kind": "history",
+          "text": "Combat Technical Leadership: Commissioned Captains and Majors spearhead bridge construction under fire in the Corps of Engineers and radar jamming in the Corps of Signals.",
+          "source": "Indian Army Technical Graduate Course (Army TGC-140 / TGC-141) (https://joinindianarmy.nic.in)",
+          "requirement_id": null,
+          "official": false,
+          "reported_by": "joinindianarmy.nic.in"
+        }
+      ]
+    },
     "indian-coast-guard-enrolled-personnel-test-icg-cgept-navik-gd-navik-db-yantrik": {
       "exam_id": "indian-coast-guard-enrolled-personnel-test-icg-cgept-navik-gd-navik-db-yantrik",
       "exam_name": "Indian Coast Guard Enrolled Personnel Test (ICG CGEPT Navik GD / Navik DB / Yantrik)",
@@ -10882,6 +11126,114 @@
         }
       ]
     },
+    "indian-navy-agniveer-senior-secondary-recruit-matric-recruit-navy-agniveer-ssr-m": {
+      "exam_id": "indian-navy-agniveer-senior-secondary-recruit-matric-recruit-navy-agniveer-ssr-m",
+      "exam_name": "Indian Navy Agniveer Senior Secondary Recruit & Matric Recruit (Navy Agniveer SSR / MR)",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 10 KB and 50 KB.",
+          "source": "Notification: Recruitment of Agniveer (SSR) and Agniveer (MR) for Male and Female Candidates - 02/2024 Batch - Section: Online Application Instructions (https://www.joinindiannavy.gov.in/files/files/SSR_02_2024_ADV.pdf)",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://www.joinindiannavy.gov.in/files/files/SSR_02_2024_ADV.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 5 files, not only a photograph — 4 more files besides it.",
+          "source": "https://www.joinindiannavy.gov.in/files/files/SSR_02_2024_ADV.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "appearance",
+          "text": "This examination requires candidate_name, photograph_date printed on the photograph itself. We cannot add that, so you will need to.",
+          "source": "https://www.joinindiannavy.gov.in/files/files/SSR_02_2024_ADV.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "history",
+          "text": "Flagship Agnipath Maritime Scheme: Trains young men and women aboard warships, submarines, and naval air stations under the Agnipath scheme, with 25% retained as permanent cadre sailors.",
+          "source": "Indian Navy Agniveer Senior Secondary Recruit & Matric Recruit (Navy Agniveer SSR / MR) (https://www.joinindiannavy.gov.in)",
+          "requirement_id": null,
+          "official": false,
+          "reported_by": "joinindiannavy.gov.in"
+        },
+        {
+          "kind": "history",
+          "text": "Historic INS Chilka Basic Training: Successful candidates undergo intensive sea-training and maritime drills at INS Chilka, located along the scenic Chilika Lake in Odisha.",
+          "source": "Indian Navy Agniveer Senior Secondary Recruit & Matric Recruit (Navy Agniveer SSR / MR) (https://www.joinindiannavy.gov.in)",
+          "requirement_id": null,
+          "official": false,
+          "reported_by": "joinindiannavy.gov.in"
+        }
+      ]
+    },
+    "indian-navy-direct-entry-petty-officer-chief-petty-officer-sports-quota-recruitm": {
+      "exam_id": "indian-navy-direct-entry-petty-officer-chief-petty-officer-sports-quota-recruitm",
+      "exam_name": "Indian Navy Direct Entry Petty Officer / Chief Petty Officer (Sports Quota Recruitment)",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 10 KB and 100 KB.",
+          "source": "Notification: Recruitment of Outstanding Sportsmen as Direct Entry Petty Officer and Chief Petty Officer - Section: Application Guidelines (https://www.joinindiannavy.gov.in/files/files/Sports_Quota_Sailor_2024.pdf)",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://www.joinindiannavy.gov.in/files/files/Sports_Quota_Sailor_2024.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 4 files, not only a photograph — 3 more files besides it.",
+          "source": "https://www.joinindiannavy.gov.in/files/files/Sports_Quota_Sailor_2024.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "appearance",
+          "text": "This examination requires candidate_name, photograph_date printed on the photograph itself. We cannot add that, so you will need to.",
+          "source": "https://www.joinindiannavy.gov.in/files/files/Sports_Quota_Sailor_2024.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "history",
+          "text": "Direct Entry NCO Ranks: Unlike standard soldier entries, extraordinary national and international medal winners are recruited directly into Senior Non-Commissioned Officer (NCO) ranks of Petty Officer and Chief Petty Officer.",
+          "source": "Indian Navy Direct Entry Petty Officer / Chief Petty Officer (Sports Quota Recruitment) (https://www.joinindiannavy.gov.in)",
+          "requirement_id": null,
+          "official": false,
+          "reported_by": "joinindiannavy.gov.in"
+        },
+        {
+          "kind": "history",
+          "text": "Olympic Training Base at INS Hamla: Navy athletes train at the Navy Sports Control Board and Mission Olympics installations, producing world champions in sailing, rowing, boxing, and shooting.",
+          "source": "Indian Navy Direct Entry Petty Officer / Chief Petty Officer (Sports Quota Recruitment) (https://www.joinindiannavy.gov.in)",
+          "requirement_id": null,
+          "official": false,
+          "reported_by": "joinindiannavy.gov.in"
+        }
+      ]
+    },
     "indian-overseas-bank-specialist-officers-senior-manager-recruitment": {
       "exam_id": "indian-overseas-bank-specialist-officers-senior-manager-recruitment",
       "exam_name": "Indian Overseas Bank Specialist Officers & Senior Manager Recruitment",
@@ -11047,6 +11399,52 @@
           "requirement_id": null,
           "official": false,
           "reported_by": "ignou.ac.in"
+        }
+      ]
+    },
+    "indo-tibetan-border-police-head-constable-recruitment-itbp-hc-education-stress-c": {
+      "exam_id": "indo-tibetan-border-police-head-constable-recruitment-itbp-hc-education-stress-c",
+      "exam_name": "Indo-Tibetan Border Police Head Constable Recruitment (ITBP HC Education & Stress Counsellor / Motor Mechanic)",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 30 KB and 100 KB.",
+          "source": "Recruitment to the Post of Head Constable (Education & Stress Counsellor) and Head Constable (Motor Mechanic) 2024 - Section: Instructions for Uploading Photograph and Signature (https://recruitment.itbpolice.nic.in/assets/uploads/ADV_HC_ESC_2024.pdf)",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://recruitment.itbpolice.nic.in/assets/uploads/ADV_HC_ESC_2024.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 3 files, not only a photograph — 2 more files besides it.",
+          "source": "https://recruitment.itbpolice.nic.in/assets/uploads/ADV_HC_ESC_2024.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "history",
+          "text": "Himveers Guardian of the Trans-Himalayas: Raised in 1962 during the Sino-Indian conflict, ITBP guards the 3,488 km India-China border from Karakoram Pass in Ladakh to Jachep La in Arunachal Pradesh at altitudes up to 18,750 feet.",
+          "source": "Indo-Tibetan Border Police Head Constable Recruitment (ITBP HC Education & Stress Counsellor / Motor Mechanic) (https://itbpolice.nic.in)",
+          "requirement_id": null,
+          "official": false,
+          "reported_by": "itbpolice.nic.in"
+        },
+        {
+          "kind": "history",
+          "text": "Pioneering Stress Counselling Cadre: ITBP was the first central armed police force to establish a specialized Education & Stress Counsellor cadre to maintain high morale in extreme sub-zero isolation.",
+          "source": "Indo-Tibetan Border Police Head Constable Recruitment (ITBP HC Education & Stress Counsellor / Motor Mechanic) (https://recruitment.itbpolice.nic.in)",
+          "requirement_id": null,
+          "official": false,
+          "reported_by": "recruitment.itbpolice.nic.in"
         }
       ]
     },
@@ -20674,6 +21072,52 @@
         }
       ]
     },
+    "pension-fund-regulatory-and-development-authority-officer-grade-a-assistant-mana": {
+      "exam_id": "pension-fund-regulatory-and-development-authority-officer-grade-a-assistant-mana",
+      "exam_name": "Pension Fund Regulatory and Development Authority Officer Grade A Assistant Manager (PFRDA Grade A)",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 20 KB and 50 KB.",
+          "source": "PFRDA - Recruitment of Officer Grade 'A' (Assistant Manager) 2024 across General, Finance, Legal and IT streams - Annexure: Guidelines for Scanning and Upload of Documents (https://www.pfrda.org.in/writereaddata/links/PFRDA_Grade_A_Brochure_2024.pdf)",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://www.pfrda.org.in/writereaddata/links/PFRDA_Grade_A_Brochure_2024.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 5 files, not only a photograph — 4 more files besides it.",
+          "source": "https://www.pfrda.org.in/writereaddata/links/PFRDA_Grade_A_Brochure_2024.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "history",
+          "text": "National Old-Age Security Regulator: Established under the PFRDA Act, 2013, PFRDA regulates and supervises over ₹11 lakh crore in retirement assets under the National Pension System (NPS) and Atal Pension Yojana (APY).",
+          "source": "Pension Fund Regulatory and Development Authority Officer Grade A Assistant Manager (PFRDA Grade A) (https://www.pfrda.org.in)",
+          "requirement_id": null,
+          "official": false,
+          "reported_by": "pfrda.org.in"
+        },
+        {
+          "kind": "history",
+          "text": "B-14/A Qutab Institutional Area: Operates from New Delhi, regulating specialized pension fund managers, central recordkeeping agencies, and point-of-presence institutions.",
+          "source": "Pension Fund Regulatory and Development Authority Officer Grade A Assistant Manager (PFRDA Grade A) (https://www.pfrda.org.in)",
+          "requirement_id": null,
+          "official": false,
+          "reported_by": "pfrda.org.in"
+        }
+      ]
+    },
     "pes-scholastic-aptitude-test-pessat": {
       "exam_id": "pes-scholastic-aptitude-test-pessat",
       "exam_name": "PES Scholastic Aptitude Test (PESSAT)",
@@ -21513,6 +21957,52 @@
           "requirement_id": null,
           "official": false,
           "reported_by": "rrbapply.gov.in"
+        }
+      ]
+    },
+    "railway-recruitment-cell-east-central-railway-general-departmental-competitive-e": {
+      "exam_id": "railway-recruitment-cell-east-central-railway-general-departmental-competitive-e",
+      "exam_name": "Railway Recruitment Cell East Central Railway General Departmental Competitive Examination (RRC ECR GDCE)",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 20 KB and 50 KB.",
+          "source": "Employment Notification for General Departmental Competitive Examination (GDCE-2023) for Serving Employees of ECR - Section: Steps to Apply Online (https://www.rrcecr.gov.in/GDCE_2023_Notification.pdf)",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://www.rrcecr.gov.in/GDCE_2023_Notification.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 3 files, not only a photograph — 2 more files besides it.",
+          "source": "https://www.rrcecr.gov.in/GDCE_2023_Notification.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "history",
+          "text": "Serving Railway Employee Promotion Fast-Track: GDCE allows regular serving Group D (Level-1) track maintainers, pointsmen, and technicians in East Central Railway to compete for rapid promotion into Group C posts like Assistant Loco Pilot and Train Manager.",
+          "source": "Railway Recruitment Cell East Central Railway General Departmental Competitive Examination (RRC ECR GDCE) (https://www.rrcecr.gov.in)",
+          "requirement_id": null,
+          "official": false,
+          "reported_by": "rrcecr.gov.in"
+        },
+        {
+          "kind": "history",
+          "text": "Hajipur Zonal Hub: ECR headquarters at Hajipur, established in 2002, manages vital freight and passenger corridors spanning coal belts and agricultural plains across five key railway divisions.",
+          "source": "Railway Recruitment Cell East Central Railway General Departmental Competitive Examination (RRC ECR GDCE) (https://www.rrcecr.gov.in)",
+          "requirement_id": null,
+          "official": false,
+          "reported_by": "rrcecr.gov.in"
         }
       ]
     },
@@ -24097,6 +24587,52 @@
           "requirement_id": null,
           "official": false,
           "reported_by": "soa.ac.in"
+        }
+      ]
+    },
+    "small-industries-development-bank-of-india-assistant-manager-grade-a-manager-gra": {
+      "exam_id": "small-industries-development-bank-of-india-assistant-manager-grade-a-manager-gra",
+      "exam_name": "Small Industries Development Bank of India Assistant Manager Grade A & Manager Grade B (SIDBI Grade A / B)",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 20 KB and 50 KB.",
+          "source": "Recruitment of Officers in Grade 'A' and Grade 'B' - General and Specialist Stream: 2024-25 - Annexure: Guidelines for Scanning and Upload of Documents (https://www.sidbi.in/files/careers/Direct_Recruitment_Grade_A_and_Grade_B_2024.pdf)",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://www.sidbi.in/files/careers/Direct_Recruitment_Grade_A_and_Grade_B_2024.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 5 files, not only a photograph — 4 more files besides it.",
+          "source": "https://www.sidbi.in/files/careers/Direct_Recruitment_Grade_A_and_Grade_B_2024.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "history",
+          "text": "MSME Apex Development Bank: Set up under an Act of Parliament in 1990, SIDBI is the principal financial institution for promotion, financing, and development of micro, small, and medium enterprises (MSMEs), which drive 30% of India's GDP.",
+          "source": "Small Industries Development Bank of India Assistant Manager Grade A & Manager Grade B (SIDBI Grade A / B) (https://www.sidbi.in)",
+          "requirement_id": null,
+          "official": false,
+          "reported_by": "sidbi.in"
+        },
+        {
+          "kind": "history",
+          "text": "Venture Capital & Green Financing Operations: SIDBI operates the national Fund of Funds for Startups and champions concessional green financing for industrial decarbonization.",
+          "source": "Small Industries Development Bank of India Assistant Manager Grade A & Manager Grade B (SIDBI Grade A / B) (https://www.sidbi.in)",
+          "requirement_id": null,
+          "official": false,
+          "reported_by": "sidbi.in"
         }
       ]
     },
@@ -26940,6 +27476,44 @@
         }
       ]
     },
+    "ugc-recognised-state-eligibility-tests-kerala-set-kset-karnataka-jkset-laset-wb-": {
+      "exam_id": "ugc-recognised-state-eligibility-tests-kerala-set-kset-karnataka-jkset-laset-wb-",
+      "exam_name": "UGC Recognised State Eligibility Tests (Kerala SET, KSET Karnataka, JKSET/LASET, WB SET)",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 30 KB and 40 KB.",
+          "source": "Prospectus and Notification for State Eligibility Test (SET-2024) for Assistant Professor & Higher Secondary Teachers - Section 4: Registration Procedure (https://lbsedp.lbscentre.in/set/Prospectus_SET_2024.pdf)",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://lbsedp.lbscentre.in/set/Prospectus_SET_2024.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 4 files, not only a photograph — 3 more files besides it.",
+          "source": "https://lbsedp.lbscentre.in/set/Prospectus_SET_2024.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "history",
+          "text": "Regional Language Papers: Unlike national UGC-NET, state SETs feature deep regional language and literature disciplines such as Malayalam, Kannada, Kashmiri, Dogri, and Bengali.",
+          "source": "UGC Recognised State Eligibility Tests (Kerala SET, KSET Karnataka, JKSET/LASET, WB SET) (https://lbsedp.lbscentre.in/set/)",
+          "requirement_id": null,
+          "official": false,
+          "reported_by": "lbsedp.lbscentre.in"
+        }
+      ]
+    },
     "ukpsc-review-officer-assistant-review-officer-examination-ukpsc-ro-aro-secretari": {
       "exam_id": "ukpsc-review-officer-assistant-review-officer-examination-ukpsc-ro-aro-secretari",
       "exam_name": "UKPSC Review Officer / Assistant Review Officer Examination (UKPSC RO / ARO Secretariat & Public Service Commission)",
@@ -27021,6 +27595,52 @@
           "requirement_id": null,
           "official": false,
           "reported_by": "uceed.iitb.ac.in"
+        }
+      ]
+    },
+    "united-india-insurance-company-administrative-officer-scale-i-recruitment-uiic-a": {
+      "exam_id": "united-india-insurance-company-administrative-officer-scale-i-recruitment-uiic-a",
+      "exam_name": "United India Insurance Company Administrative Officer Scale I Recruitment (UIIC AO)",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 20 KB and 50 KB.",
+          "source": "Recruitment of Administrative Officers (Scale-I) (Generalists & Specialists) - 2024 - Annexure: Guidelines for Scanning and Upload of Documents (https://uiic.co.in/sites/default/files/AO_2024_Detailed_Advertisement.pdf)",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://uiic.co.in/sites/default/files/AO_2024_Detailed_Advertisement.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 5 files, not only a photograph — 4 more files besides it.",
+          "source": "https://uiic.co.in/sites/default/files/AO_2024_Detailed_Advertisement.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "history",
+          "text": "Historic Public Sector General Insurer: Incorporated in 1938 and nationalized in 1972, UIIC is one of India's premier government-owned general insurance companies, headquartered on Whites Road in Chennai.",
+          "source": "United India Insurance Company Administrative Officer Scale I Recruitment (UIIC AO) (https://uiic.co.in)",
+          "requirement_id": null,
+          "official": false,
+          "reported_by": "uiic.co.in"
+        },
+        {
+          "kind": "history",
+          "text": "Rural & Large-Risk Underwriting: UIIC is celebrated for pioneering rural crop insurance schemes, complex marine industrial underwriting, and flagship central health insurance policies.",
+          "source": "United India Insurance Company Administrative Officer Scale I Recruitment (UIIC AO) (https://uiic.co.in)",
+          "requirement_id": null,
+          "official": false,
+          "reported_by": "uiic.co.in"
         }
       ]
     },
@@ -27566,6 +28186,106 @@
         }
       ]
     },
+    "upsc-central-bureau-of-investigation-dsp-limited-departmental-competitive-examin": {
+      "exam_id": "upsc-central-bureau-of-investigation-dsp-limited-departmental-competitive-examin",
+      "exam_name": "UPSC Central Bureau of Investigation DSP Limited Departmental Competitive Examination (CBI DSP LDCE)",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 20 KB and 300 KB.",
+          "source": "Notice: Limited Departmental Competitive Examination for the Post of Deputy Superintendent of Police in CBI - Appendix-II: Instructions to Candidates for OTR and Form Filling (https://upsc.gov.in/sites/default/files/Notice-CBI-DSP-LDCE-2023-Engl.pdf)",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://upsc.gov.in/sites/default/files/Notice-CBI-DSP-LDCE-2023-Engl.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 3 files, not only a photograph — 2 more files besides it.",
+          "source": "https://upsc.gov.in/sites/default/files/Notice-CBI-DSP-LDCE-2023-Engl.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "appearance",
+          "text": "This examination requires candidate_name, photograph_date printed on the photograph itself. We cannot add that, so you will need to.",
+          "source": "https://upsc.gov.in/sites/default/files/Notice-CBI-DSP-LDCE-2023-Engl.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "history",
+          "text": "Premier Anti-Corruption Investigative Fast-Track: Allows outstanding in-service CBI Inspectors with unblemished service records to fast-track their promotion into the Gazetted rank of Deputy Superintendent of Police (DSP) through competitive examination.",
+          "source": "UPSC Central Bureau of Investigation DSP Limited Departmental Competitive Examination (CBI DSP LDCE) (https://upsc.gov.in)",
+          "requirement_id": null,
+          "official": false,
+          "reported_by": "upsc.gov.in"
+        }
+      ]
+    },
+    "upsc-central-industrial-security-force-assistant-commandants-executive-ldce-cisf": {
+      "exam_id": "upsc-central-industrial-security-force-assistant-commandants-executive-ldce-cisf",
+      "exam_name": "UPSC Central Industrial Security Force Assistant Commandants Executive LDCE (CISF AC EXE LDCE)",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 20 KB and 300 KB.",
+          "source": "Examination Notice No. 03/2024-CISF: CISF AC (EXE) Limited Departmental Competitive Examination, 2024 - Appendix-II: Instructions to Candidates for OTR and Form Filling (https://upsc.gov.in/sites/default/files/Notice-CISF-AC-EXE-LDCE-2024-Engl-291123.pdf)",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://upsc.gov.in/sites/default/files/Notice-CISF-AC-EXE-LDCE-2024-Engl-291123.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 3 files, not only a photograph — 2 more files besides it.",
+          "source": "https://upsc.gov.in/sites/default/files/Notice-CISF-AC-EXE-LDCE-2024-Engl-291123.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "appearance",
+          "text": "This examination requires candidate_name, photograph_date printed on the photograph itself. We cannot add that, so you will need to.",
+          "source": "https://upsc.gov.in/sites/default/files/Notice-CISF-AC-EXE-LDCE-2024-Engl-291123.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "history",
+          "text": "Critical Infrastructure Command: Fast-tracks sub-inspectors and inspectors into Assistant Commandants overseeing security at 350+ sensitive installations including nuclear power plants, space establishments (ISRO), airports, and Delhi Metro.",
+          "source": "UPSC Central Industrial Security Force Assistant Commandants Executive LDCE (CISF AC EXE LDCE) (https://upsc.gov.in)",
+          "requirement_id": null,
+          "official": false,
+          "reported_by": "upsc.gov.in"
+        },
+        {
+          "kind": "history",
+          "text": "Multi-Tier Screening: Combines a written examination on general awareness and industrial security law with physical efficiency trials and a UPSC interview board.",
+          "source": "UPSC Central Industrial Security Force Assistant Commandants Executive LDCE (CISF AC EXE LDCE) (https://upsc.gov.in)",
+          "requirement_id": null,
+          "official": false,
+          "reported_by": "upsc.gov.in"
+        }
+      ]
+    },
     "upsc-civil-services-examination-2026": {
       "exam_id": "upsc-civil-services-examination-2026",
       "exam_name": "UPSC Civil Services Examination 2026",
@@ -27829,6 +28549,322 @@
           "requirement_id": null,
           "official": false,
           "reported_by": "AglaSem"
+        }
+      ]
+    },
+    "upsc-combined-geo-scientist-examination-cgse": {
+      "exam_id": "upsc-combined-geo-scientist-examination-cgse",
+      "exam_name": "UPSC Combined Geo-Scientist Examination (CGSE)",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 20 KB and 300 KB.",
+          "source": "Examination Notice No. 02/2024-GEO: Combined Geo-Scientist Examination, 2024 - Appendix-II: Instructions to Candidates for OTR and Form Filling (https://upsc.gov.in/sites/default/files/Notice-CGSE-2024-Engl-200923.pdf)",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://upsc.gov.in/sites/default/files/Notice-CGSE-2024-Engl-200923.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 3 files, not only a photograph — 2 more files besides it.",
+          "source": "https://upsc.gov.in/sites/default/files/Notice-CGSE-2024-Engl-200923.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "appearance",
+          "text": "This examination requires candidate_name, photograph_date printed on the photograph itself. We cannot add that, so you will need to.",
+          "source": "https://upsc.gov.in/sites/default/files/Notice-CGSE-2024-Engl-200923.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "history",
+          "text": "Mineral Exploration & Geological Heritage: Recruits Geologists, Geophysicists, and Chemists for the Geological Survey of India (GSI, founded 1851, the 2nd oldest geological survey in the world) and Hydrogeologists for the Central Ground Water Board.",
+          "source": "UPSC Combined Geo-Scientist Examination (CGSE) (https://upsc.gov.in)",
+          "requirement_id": null,
+          "official": false,
+          "reported_by": "upsc.gov.in"
+        },
+        {
+          "kind": "history",
+          "text": "Critical Minerals Mission: Selected geoscientists lead national strategic exploration for lithium, rare earth elements, and offshore seabed mineral deposits across India.",
+          "source": "UPSC Combined Geo-Scientist Examination (CGSE) (https://upsc.gov.in)",
+          "requirement_id": null,
+          "official": false,
+          "reported_by": "upsc.gov.in"
+        }
+      ]
+    },
+    "upsc-combined-medical-services-examination-upsc-cms": {
+      "exam_id": "upsc-combined-medical-services-examination-upsc-cms",
+      "exam_name": "UPSC Combined Medical Services Examination (UPSC CMS)",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 20 KB and 300 KB.",
+          "source": "Examination Notice No. 08/2024-CMS: Combined Medical Services Examination, 2024 - Appendix-II: Instructions to Candidates for OTR and Form Filling (https://upsc.gov.in/sites/default/files/Notice-CMS-2024-Engl-100424.pdf)",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://upsc.gov.in/sites/default/files/Notice-CMS-2024-Engl-100424.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 3 files, not only a photograph — 2 more files besides it.",
+          "source": "https://upsc.gov.in/sites/default/files/Notice-CMS-2024-Engl-100424.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "appearance",
+          "text": "This examination requires candidate_name, photograph_date printed on the photograph itself. We cannot add that, so you will need to.",
+          "source": "https://upsc.gov.in/sites/default/files/Notice-CMS-2024-Engl-100424.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "history",
+          "text": "Central Healthcare Doctor Commission: UPSC CMS recruits MBBS doctors directly into Group A Central Health Service, serving central government health schemes (CGHS), Indian Railway Medical Services, and New Delhi Municipal Council hospitals.",
+          "source": "UPSC Combined Medical Services Examination (UPSC CMS) (https://upsc.gov.in)",
+          "requirement_id": null,
+          "official": false,
+          "reported_by": "upsc.gov.in"
+        },
+        {
+          "kind": "history",
+          "text": "High-Stakes Clinical Computer-Based Exam: Comprises two objective papers of 250 marks each covering General Medicine, Paediatrics, Surgery, Gynaecology & Obstetrics, and Preventive & Social Medicine.",
+          "source": "UPSC Combined Medical Services Examination (UPSC CMS) (https://upsc.gov.in)",
+          "requirement_id": null,
+          "official": false,
+          "reported_by": "upsc.gov.in"
+        }
+      ]
+    },
+    "upsc-combined-section-officers-stenographers-grade-b-grade-1-ldce": {
+      "exam_id": "upsc-combined-section-officers-stenographers-grade-b-grade-1-ldce",
+      "exam_name": "UPSC Combined Section Officers / Stenographers Grade B / Grade 1 LDCE",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 20 KB and 300 KB.",
+          "source": "Rules for Combined Section Officers / Stenographers (Grade B / Grade 1) Limited Departmental Competitive Examination - Appendix-II: Instructions to Candidates for OTR and Form Filling (https://upsc.gov.in/sites/default/files/Notice-SO-Steno-LDCE-2021-2022-Engl.pdf)",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://upsc.gov.in/sites/default/files/Notice-SO-Steno-LDCE-2021-2022-Engl.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 3 files, not only a photograph — 2 more files besides it.",
+          "source": "https://upsc.gov.in/sites/default/files/Notice-SO-Steno-LDCE-2021-2022-Engl.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "appearance",
+          "text": "This examination requires candidate_name, photograph_date printed on the photograph itself. We cannot add that, so you will need to.",
+          "source": "https://upsc.gov.in/sites/default/files/Notice-SO-Steno-LDCE-2021-2022-Engl.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "history",
+          "text": "Central Secretariat Nervous System: Selects Section Officers who manage bureaucratic decision-making files, statutory rules, and cabinet notes across Central Ministries in North Block, South Block, and Shastri Bhawan.",
+          "source": "UPSC Combined Section Officers / Stenographers Grade B / Grade 1 LDCE (https://upsc.gov.in)",
+          "requirement_id": null,
+          "official": false,
+          "reported_by": "upsc.gov.in"
+        },
+        {
+          "kind": "history",
+          "text": "Testing Fundamental Rules & Procedures: Tests profound knowledge of the Central Secretariat Manual of Office Procedure (CSMOP), Government of India (Allocation of Business) Rules, and Central Civil Services (CCS) Conduct Rules.",
+          "source": "UPSC Combined Section Officers / Stenographers Grade B / Grade 1 LDCE (https://upsc.gov.in)",
+          "requirement_id": null,
+          "official": false,
+          "reported_by": "upsc.gov.in"
+        }
+      ]
+    },
+    "upsc-direct-recruitment-by-online-recruitment-application-upsc-ora-advertisement": {
+      "exam_id": "upsc-direct-recruitment-by-online-recruitment-application-upsc-ora-advertisement",
+      "exam_name": "UPSC Direct Recruitment by Online Recruitment Application (UPSC ORA Advertisements)",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 20 KB and 300 KB.",
+          "source": "Advertisement No. 05/2024: Direct Recruitment to Various Posts (Medical, Engineering, Teaching, Legal) - Appendix-II: Instructions to Candidates for OTR and Form Filling (https://upsconline.nic.in/ora/Advt_05_2024.pdf)",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://upsconline.nic.in/ora/Advt_05_2024.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 5 files, not only a photograph — 4 more files besides it.",
+          "source": "https://upsconline.nic.in/ora/Advt_05_2024.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "appearance",
+          "text": "This examination requires candidate_name, photograph_date printed on the photograph itself. We cannot add that, so you will need to.",
+          "source": "https://upsconline.nic.in/ora/Advt_05_2024.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "history",
+          "text": "Pan-Ministry Lateral & Specialist Hiring: The ORA platform is UPSC's specialized rolling mechanism for direct recruitment of Assistant Professors, Medical Specialists, Aeronautical Officers, and Drug Inspectors across central departments.",
+          "source": "UPSC Direct Recruitment by Online Recruitment Application (UPSC ORA Advertisements) (https://upsconline.nic.in)",
+          "requirement_id": null,
+          "official": false,
+          "reported_by": "upsconline.nic.in"
+        },
+        {
+          "kind": "history",
+          "text": "Fortnightly National Gazette Cycle: Advertisements are released systematically every fortnight in the Employment News on alternate Saturdays, giving candidates exactly 20 days to register.",
+          "source": "UPSC Direct Recruitment by Online Recruitment Application (UPSC ORA Advertisements) (https://upsconline.nic.in)",
+          "requirement_id": null,
+          "official": false,
+          "reported_by": "upsconline.nic.in"
+        }
+      ]
+    },
+    "upsc-indian-economic-service-indian-statistical-service-examination-ies-iss": {
+      "exam_id": "upsc-indian-economic-service-indian-statistical-service-examination-ies-iss",
+      "exam_name": "UPSC Indian Economic Service / Indian Statistical Service Examination (IES / ISS)",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 20 KB and 300 KB.",
+          "source": "Examination Notice No. 07/2024-IES/ISS: Indian Economic Service / Indian Statistical Service Exam, 2024 - Appendix-II: Instructions to Candidates for OTR and Form Filling (https://upsc.gov.in/sites/default/files/Notice-IES-ISS-2024-Engl-100424.pdf)",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://upsc.gov.in/sites/default/files/Notice-IES-ISS-2024-Engl-100424.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 3 files, not only a photograph — 2 more files besides it.",
+          "source": "https://upsc.gov.in/sites/default/files/Notice-IES-ISS-2024-Engl-100424.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "appearance",
+          "text": "This examination requires candidate_name, photograph_date printed on the photograph itself. We cannot add that, so you will need to.",
+          "source": "https://upsc.gov.in/sites/default/files/Notice-IES-ISS-2024-Engl-100424.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "history",
+          "text": "Chief Economic Advisory Pipeline: Officers recruited through IES formulate national macroeconomic policy, fiscal budgets, and international trade policy under the Ministry of Finance, while ISS officers steer the National Statistical Office (NSO) and Census computations.",
+          "source": "UPSC Indian Economic Service / Indian Statistical Service Examination (IES / ISS) (https://upsc.gov.in)",
+          "requirement_id": null,
+          "official": false,
+          "reported_by": "upsc.gov.in"
+        },
+        {
+          "kind": "history",
+          "text": "Specialized Postgraduate Entry: Uniquely restricted to postgraduates in Economics, Applied Economics, Business Economics, or Econometrics (for IES) and Statistics/Mathematical Statistics (for ISS).",
+          "source": "UPSC Indian Economic Service / Indian Statistical Service Examination (IES / ISS) (https://upsc.gov.in)",
+          "requirement_id": null,
+          "official": false,
+          "reported_by": "upsc.gov.in"
+        }
+      ]
+    },
+    "upsc-indian-forest-service-examination-upsc-ifos-main-examination": {
+      "exam_id": "upsc-indian-forest-service-examination-upsc-ifos-main-examination",
+      "exam_name": "UPSC Indian Forest Service Examination (UPSC IFoS Main Examination)",
+      "facts": [
+        {
+          "kind": "file_size",
+          "text": "The photograph has to be between 20 KB and 300 KB.",
+          "source": "Examination Notice No. 06/2024-IFS: Indian Forest Service Examination, 2024 - Appendix-II: Instructions to Candidates for OTR and Form Filling (https://upsc.gov.in/sites/default/files/Notice-IFSP-2024-Engl-140224.pdf)",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "format",
+          "text": "The only accepted formats are JPG, JPEG.",
+          "source": "https://upsc.gov.in/sites/default/files/Notice-IFSP-2024-Engl-140224.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "deliverables",
+          "text": "This application asks for 3 files, not only a photograph — 2 more files besides it.",
+          "source": "https://upsc.gov.in/sites/default/files/Notice-IFSP-2024-Engl-140224.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "appearance",
+          "text": "This examination requires candidate_name, photograph_date printed on the photograph itself. We cannot add that, so you will need to.",
+          "source": "https://upsc.gov.in/sites/default/files/Notice-IFSP-2024-Engl-140224.pdf",
+          "requirement_id": null,
+          "official": null,
+          "reported_by": null
+        },
+        {
+          "kind": "history",
+          "text": "One of India's Three All-India Services: Along with the IAS and IPS, the Indian Forest Service (IFoS) is one of the three constitutional All-India Services created under Article 312 of the Constitution, managing over 700,000 square kilometres of India's national forests and wildlife reserves.",
+          "source": "UPSC Indian Forest Service Examination (UPSC IFoS Main Examination) (https://upsc.gov.in)",
+          "requirement_id": null,
+          "official": false,
+          "reported_by": "upsc.gov.in"
         }
       ]
     },

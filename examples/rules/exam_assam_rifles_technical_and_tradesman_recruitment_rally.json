@@ -1,0 +1,235 @@
+{
+  "schema_version": "1.1",
+  "rule_id": "assam-rifles-technical-and-tradesman-recruitment-rally",
+  "rule_version": "1.0.0",
+  "status": "verified",
+  "exam": {
+    "exam_id": "assam-rifles-technical-and-tradesman-recruitment-rally",
+    "exam_name": "Assam Rifles Technical and Tradesman Recruitment Rally",
+    "conducting_body": "Headquarters Directorate General Assam Rifles, Laitkor, Shillong, Meghalaya",
+    "examination_year": 2025,
+    "application_cycle": "Assam Rifles Technical and Tradesman Recruitment Rally 2024 / 2025",
+    "aliases": [
+      "Assam Rifles Rally",
+      "Assam Rifles Tradesman Recruitment"
+    ],
+    "application_stage": "application",
+    "jurisdiction": "All India",
+    "category": "defence_recruitment"
+  },
+  "source_evidence": [
+    {
+      "source_type": "official_pdf",
+      "official_source": true,
+      "captured_wording": "Upload recent passport size colour photograph (size 30 KB to 50 KB) in JPG/JPEG format against plain white or light background.",
+      "source_url": "https://www.assamrifles.gov.in/DOCS/RECRUITMENT/Advt_Tradesman_2024.pdf",
+      "document_title": "Notification: Assam Rifles Technical and Tradesmen Recruitment Rally 2024 across Group B & C Posts",
+      "section_name": "Section: How to Apply"
+    }
+  ],
+  "image_requirements": {
+    "dimensions": {
+      "mode": "unspecified",
+      "preferred_width_px": 200,
+      "preferred_height_px": 230,
+      "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified.",
+      "dpi": 200,
+      "permitted_pixel_range": "Preferred 3.5 cm x 4.5 cm (approx 200 x 230 px)"
+    },
+    "file_size": {
+      "maximum_bytes": 50000,
+      "minimum_bytes": 30000,
+      "size_unit_as_published": "KB",
+      "published_maximum": 50.0,
+      "published_minimum": 30.0
+    },
+    "formats": {
+      "allowed_formats": [
+        "jpg",
+        "jpeg"
+      ],
+      "preferred_format": "jpeg",
+      "preserve_transparency": false,
+      "strip_metadata": true,
+      "colour_space": "sRGB"
+    },
+    "background": {
+      "mode": "plain_light",
+      "fallback_colour": "#FFFFFF"
+    },
+    "composition": {
+      "crop_profile": "tight_exam_portrait",
+      "complete_hair_required": true,
+      "complete_chin_required": true,
+      "ears_policy": "unspecified",
+      "face_coverage_minimum": 75.0
+    },
+    "appearance": {
+      "spectacles": {
+        "policy": "conditional",
+        "condition": "Allowed without glare",
+        "source_wording": "Allowed without glare"
+      },
+      "headwear": {
+        "policy": "conditional",
+        "condition": "Not permitted unless religious",
+        "source_wording": "Not permitted unless religious"
+      },
+      "face_mask": {
+        "policy": "prohibited",
+        "source_wording": "Prohibited"
+      },
+      "monochrome_accepted": false,
+      "recency_maximum_days": 90
+    },
+    "filename": {
+      "mode": "unspecified",
+      "extension_required": true,
+      "case_sensitive": false,
+      "instructions": "photo.jpg"
+    },
+    "exceptional_instructions": {
+      "spectacles_restriction": true,
+      "headwear_restriction": true,
+      "black_and_white_restriction": true,
+      "recent_photo_requirement": true,
+      "processing_support_status": "supported"
+    }
+  },
+  "requirements": [
+    {
+      "requirement_id": "candidate_passport_photograph",
+      "requirement_name": "Candidate Passport Photograph",
+      "requirement_type": "photograph",
+      "submission_method": "file_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG / JPEG; Preferred 3.5 cm x 4.5 cm (approx 200 x 230 px); 3.5 cm x 4.5 cm; Plain white or light background; Front-facing colour photo; ears visible; no caps or dark glasses",
+      "evidence_status": "Official Examination Notice",
+      "notes": "Online Application (assamrifles.gov.in)"
+    },
+    {
+      "requirement_id": "candidate_signature",
+      "requirement_name": "Candidate Signature",
+      "requirement_type": "signature",
+      "submission_method": "handwritten_then_uploaded",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG / JPEG; Preferred 140 x 60 pixels (approx 3.5 cm x 1.5 cm); 3.5 cm x 1.5 cm; Plain white background; Signature in running handwriting on white paper; capital letters strictly rejected; Crisp signature; clear contrast",
+      "evidence_status": "Official Examination Notice",
+      "notes": "Online Application",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 30000,
+          "minimum_bytes": 10000,
+          "published_minimum": 10.0,
+          "published_maximum": 30.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        },
+        "dimensions": {
+          "mode": "unspecified",
+          "preferred_width_px": 140,
+          "preferred_height_px": 60,
+          "fallback_reason": "The body publishes a preferred pixel size without mandating it, so the size is honoured while the mode stays unspecified."
+        }
+      }
+    },
+    {
+      "requirement_id": "10th_12th_iti_trade_qualification_certificate",
+      "requirement_name": "10th / 12th / ITI Trade Qualification Certificate",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG / JPEG / PDF; Clear legible document scan; A4; Document scan; Technical trade or educational qualification depending on post applied for",
+      "evidence_status": "Official Examination Notice",
+      "notes": "Online Application",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 100000,
+          "minimum_bytes": 50000,
+          "published_minimum": 50.0,
+          "published_maximum": 100.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    },
+    {
+      "requirement_id": "permanent_residential_certificate_prc_domicile_c",
+      "requirement_name": "Permanent Residential Certificate (PRC) / Domicile Certificate",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "mandatory",
+      "platform_support": "supported",
+      "applicability": "Mandatory",
+      "content_instructions": "JPG / JPEG / PDF; Clear legible document scan; A4; Document scan; State/UT domicile verification for state-wise vacancy allocation",
+      "evidence_status": "Official Examination Notice",
+      "notes": "Online Application",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 100000,
+          "minimum_bytes": 50000,
+          "published_minimum": 50.0,
+          "published_maximum": 100.0,
+          "size_unit_as_published": "KB"
+        },
+        "formats": {
+          "allowed_formats": [
+            "jpg",
+            "jpeg"
+          ],
+          "preferred_format": "jpg"
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "image_requirements.file_size": {
+      "type": "official",
+      "evidence_reference": "Notification: Assam Rifles Technical and Tradesmen Recruitment Rally 2024 across Group B & C Posts - Section: How to Apply (https://www.assamrifles.gov.in/DOCS/RECRUITMENT/Advt_Tradesman_2024.pdf)",
+      "reasoning": "Byte ceiling converted from the published figure using 1 KB = 1000 bytes. No body in the researched set defines the unit, and the decimal reading is the smaller of the two, so a file satisfying it also satisfies a 1024-byte reading.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.dimensions": {
+      "type": "official",
+      "evidence_reference": "Notification: Assam Rifles Technical and Tradesmen Recruitment Rally 2024 across Group B & C Posts - Section: How to Apply (https://www.assamrifles.gov.in/DOCS/RECRUITMENT/Advt_Tradesman_2024.pdf)",
+      "reasoning": "Pixel dimensions transcribed from the cited source.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.formats.preferred_format": {
+      "type": "inferred",
+      "reasoning": "The body lists permitted formats without naming a preference. JPEG is selected from the permitted list; JPG and JPEG name the same format, so this chooses a spelling rather than a format.",
+      "confidence": 4,
+      "approved": true
+    },
+    "image_requirements.composition.crop_profile": {
+      "type": "platform_default",
+      "reasoning": "One composition is used for every examination: the tightest crop that keeps hair, ears and the chin/beard boundary intact. No researched body publishes a coverage maximum this would breach, and all published minima are cleared by it.",
+      "confidence": 5,
+      "approved": true
+    }
+  },
+  "verification": {
+    "verification_status": "verified"
+  },
+  "fictional_example": false
+}
