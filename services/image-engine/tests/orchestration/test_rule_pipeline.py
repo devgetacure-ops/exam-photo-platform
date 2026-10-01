@@ -102,27 +102,31 @@ def test_rule_resolver_range_mode():
     rule = ExamRule.model_validate(data)
 
     plan = resolve_rule(rule)
-    assert plan.crop_mode == "b"
-    assert plan.crop_config.min_aspect_ratio == pytest.approx(200 / 400)
-    assert plan.crop_config.max_aspect_ratio == pytest.approx(300 / 230)
+    # DEC-105: a published range is a permission, not an instruction. The
+    # resolver takes one size inside it and frames with Crop Mode A, as it does
+    # for every examination; Mode B is no longer selected by any record.
+    assert plan.crop_mode == "a"
+    assert plan.crop_config.target_width == 240
+    assert plan.crop_config.target_height == 320
+    assert 200 <= plan.crop_config.target_width <= 300
+    assert 230 <= plan.crop_config.target_height <= 400
     assert plan.background_config.target_colour_hex == "#FFFFFF"
-    assert plan.output_preparation_config.min_width == 200
-    assert plan.output_preparation_config.max_width == 300
+    prep = plan.output_preparation_config
+    assert prep.resize_mode == ResizeMode.EXACT
+    assert prep.target_width == 240 and prep.target_height == 320
     assert plan.compression_config.maximum_bytes == 51200
 
 
-def test_rule_resolver_unspecified_dimensions_sizes_from_the_photograph():
-    """An exam that publishes no dimensions must not get a constant frame.
+def test_rule_resolver_unspecified_dimensions_take_the_stated_estimate():
+    """An exam that publishes no dimensions is delivered at one stated size.
 
-    This used to assert a fixed 350x450 taken from a named platform profile.
-    That was wrong in a way the assertion could not see: an unspecified rule
-    resolves to Crop Mode B, whose crop is head-led and whose aspect therefore
-    varies with the subject, and the output preparer was then forcing it into a
-    constant frame under ResizeMode.EXACT -- which only warns on aspect
-    mismatch and resizes anyway. The subject was stretched to fit.
-
-    The contract is now an envelope rather than a target: bounds wide enough
-    that the crop's own aspect survives, and no invented fixed size.
+    This test has been rewritten twice. It first asserted a fixed 350x450 from
+    a named platform profile, then (when that stretched the subject) an
+    envelope sized from each photograph under Crop Mode B. DEC-095 and DEC-105
+    settled it: no published size means 413 x 531, a 3.5 x 4.5 cm passport
+    photograph at 300 DPI, framed by Crop Mode A like every other examination
+    and marked as the platform's estimate. The old assertions kept failing in
+    CI from the day DEC-105 landed (20 September) until 2 October.
     """
     rule_path = EXAMPLES_DIR / "sample_unspecified_dimensions.json"
     with open(rule_path, "r", encoding="utf-8") as f:
@@ -131,20 +135,16 @@ def test_rule_resolver_unspecified_dimensions_sizes_from_the_photograph():
 
     plan = resolve_rule(rule)
 
-    assert plan.crop_mode == "b"
-    # DEC-029: Mode B still measures head height against the preservation box,
-    # so it keeps its own calibration rather than the Mode A anatomical ratios.
-    assert plan.crop_config.target_head_height_ratio == pytest.approx(0.76)
-    assert plan.crop_config.min_head_height_ratio == pytest.approx(0.68)
-    assert plan.crop_config.max_head_height_ratio == pytest.approx(0.84)
-    assert plan.crop_config.allow_subject_clipping is False
+    assert plan.crop_mode == "a"
+    assert plan.crop_config.target_width == 413
+    assert plan.crop_config.target_height == 531
     assert plan.background_config.target_colour_hex == "#FFFFFF"
 
     prep = plan.output_preparation_config
-    assert prep.resize_mode == ResizeMode.RANGE_SELECT
-    assert prep.target_width is None and prep.target_height is None
-    assert prep.min_width == 240 and prep.max_width == 1200
-    assert prep.min_height == 240 and prep.max_height == 1200
+    assert prep.resize_mode == ResizeMode.EXACT
+    assert prep.target_width == 413 and prep.target_height == 531
+    assert prep.min_width == 413 and prep.max_width == 413
+    assert prep.min_height == 531 and prep.max_height == 531
     assert plan.target_filename == "candidate_photo"
 
 
@@ -190,7 +190,10 @@ def test_rule_resolver_no_longer_demands_a_platform_default_profile():
 
     rule = ExamRule.model_validate(data)
 
-    assert resolve_rule(rule).crop_mode == "b"
+    plan = resolve_rule(rule)
+    # DEC-105: Mode A at the stated estimate, with or without the old field.
+    assert plan.crop_mode == "a"
+    assert (plan.crop_config.target_width, plan.crop_config.target_height) == (413, 531)
 
 
 def test_rule_resolver_allows_padding_without_subject_clipping():
@@ -593,7 +596,9 @@ def test_pipeline_integration_range_mode():
 
     result = pipeline.process_rule(image_bytes, rule_dict, config)
     assert result.is_valid is True
-    assert result.selected_crop_mode == "b"
+    # DEC-105: one size inside the published range, framed by Crop Mode A.
+    assert result.selected_crop_mode == "a"
+    assert (result.final_width, result.final_height) == (240, 320)
     assert 200 <= result.final_width <= 300
     assert 230 <= result.final_height <= 400
     assert result.final_format.upper() == "JPEG"
