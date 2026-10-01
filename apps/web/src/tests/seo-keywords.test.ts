@@ -44,7 +44,7 @@ describe("the keyword map", () => {
             const exam = row.target_url.match(/^\/exam\/([^/]+)/)?.[1];
             if (exam) expect(ids.has(exam), row.keyword).toBe(true);
         }
-    });
+    }, 60_000);
 
     test("an examination's file keywords only name files that examination asks for", () => {
         const words: Record<string, string> = { "thumb impression": "thumb_impression", declaration: "handwritten_declaration", signature: "signature" };

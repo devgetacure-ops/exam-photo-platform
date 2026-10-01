@@ -474,4 +474,47 @@ describe("routine normalisation is not a caveat", () => {
             screen.getByText(/ready — with something to check/i),
         ).toBeTruthy();
     });
+    const remembered = (expiresAt: string) =>
+        window.localStorage.setItem(
+            "exam-photo:kits:v1",
+            JSON.stringify({
+                "rbi-assistant-panel-year-2025": {
+                    kitId: "kit_saved",
+                    examId: "rbi-assistant-panel-year-2025",
+                    createdAt: "2026-10-01",
+                    updatedAt: "2026-10-01",
+                    requirements: {
+                        candidate_signature: {
+                            jobId: "job_saved",
+                            requirementId: "candidate_signature",
+                            requirementType: "signature",
+                            status: "SUCCEEDED",
+                            outcome: "prepared",
+                            outputFilename: "signature.jpg",
+                            expiresAt,
+                            findings: [],
+                            updatedAt: "2026-10-01",
+                        },
+                    },
+                },
+            }),
+        );
+
+    test("coming back to a ready file shows that file, not an empty upload form", () => {
+        remembered(new Date(Date.now() + 20 * 60_000).toISOString());
+        renderUpload();
+        expect(screen.getByText("Ready")).toBeTruthy();
+        expect(screen.getByText(/signature\.jpg/)).toBeTruthy();
+        expect(screen.queryByLabelText(/upload for candidate signature/i)).toBeNull();
+        // Replace still leads back to the upload form.
+        fireEvent.click(screen.getByRole("button", { name: "Replace" }));
+        expect(screen.getByLabelText(/upload for candidate signature/i)).toBeTruthy();
+    });
+
+    test("a remembered file the server has since deleted is asked for again", () => {
+        remembered(new Date(Date.now() - 60_000).toISOString());
+        renderUpload();
+        expect(screen.queryByText("Ready")).toBeNull();
+        expect(screen.getByLabelText(/upload for candidate signature/i)).toBeTruthy();
+    });
 });

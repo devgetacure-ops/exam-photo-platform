@@ -16,6 +16,7 @@ import { OutcomeResult } from "./outcome-result";
 import { PreparationChallenge } from "./preparation-challenge";
 import { useLiveJob } from "./live-job-state";
 import { switchLighting, type PreparedFile } from "../../lib/journey-client";
+import { entryLive, resultFromEntry } from "../../lib/kit-liveness";
 import { PreparationLoader } from "./preparation-loader";
 import { FileTypeDrawing } from "../euk/doodles";
 import { useUploadConsent } from "./upload-consent";
@@ -121,8 +122,7 @@ export function RequirementUpload({
     onWorking,
 }: Props) {
     const [phase, setPhase] = useState<Phase>("idle");
-    const [result, setResult] = useState<PreparedFile | null>(null);
-    const live = useLiveJob(result?.job_id ?? "");
+    const [fresh, setResult] = useState<PreparedFile | null>(null);
     const [refusal, setRefusal] = useState<RequirementNotServed | null>(null);
     const [message, setMessage] = useState<string | null>(null);
     const challengeKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
@@ -141,7 +141,19 @@ export function RequirementUpload({
     );
     const inputRef = useRef<HTMLInputElement>(null);
     const cameraRef = useRef<HTMLInputElement>(null);
-    const { record, forget } = useKit(examId);
+    const { entries, record, forget } = useKit(examId);
+    // Coming back to a file that is already ready shows that file, not an
+    // empty upload form under a bar that says "Ready" (owner's testing,
+    // 1 October). The kit remembers it; the server says whether it still exists.
+    const saved = entries[requirementId];
+    const savedJob = useLiveJob(saved?.jobId ?? "");
+    const [openedAt] = useState(() => Date.now());
+    const result: PreparedFile | null =
+        fresh ??
+        (phase === "idle" && entryLive(saved, savedJob, openedAt)
+            ? resultFromEntry(saved, examId, savedJob)
+            : null);
+    const live = useLiveJob(result?.job_id ?? "");
     const documents = ["certificate_scan", "identity_document"].includes(
         requirementType,
     );
@@ -286,7 +298,7 @@ export function RequirementUpload({
         );
     }
 
-    if (phase === "done" && result) {
+    if (result && (phase === "done" || phase === "idle")) {
         return (
             <>
                 {/* DEC-095: offered only where switching shows a difference

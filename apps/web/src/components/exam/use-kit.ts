@@ -45,7 +45,26 @@ function subscribe(listener: () => void): () => void {
   };
 }
 
+// What the store held when the cache was last filled. The cache is only as
+// good as the store it was read from: if anything else has changed the store
+// (it was cleared, or another part of the app wrote to it), the cached entries
+// are stale and are read again.
+let cachedFrom: string | null | undefined;
+
+function storeNow(): string | null {
+  try {
+    return window.localStorage.getItem("exam-photo:kits:v1");
+  } catch {
+    return null;
+  }
+}
+
 function snapshotFor(examId: string): Entries {
+  const raw = storeNow();
+  if (raw !== cachedFrom) {
+    cache.clear();
+    cachedFrom = raw;
+  }
   const cached = cache.get(examId);
   if (cached) return cached;
   const entries = getKit(examId)?.requirements ?? EMPTY;

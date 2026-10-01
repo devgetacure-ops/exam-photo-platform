@@ -125,11 +125,36 @@
 }
 
 .euk .comparison-actions {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 14px;
-    padding-top: 14px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 14px 3px 12px 0;
+}
+
+/* Buttons that read as buttons, the one in view filled (owner's testing,
+   1 October): as plain words nobody knew they could be tapped. */
+.euk .comparison-actions button {
+    min-height: 44px;
+    padding: 8px 12px;
+    border: var(--rule-thin) solid var(--ink);
+    background: var(--paper);
+    color: var(--ink);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 3px 3px 0 var(--ink);
+}
+
+.euk .comparison-actions button[aria-pressed="true"] {
+    background: var(--ink);
+    color: var(--paper);
+    box-shadow: none;
+    transform: translate(3px, 3px);
+}
+
+.euk .comparison-actions button:focus-visible {
+    outline: 3px solid var(--signal);
+    outline-offset: 2px;
 }
 
 /* ---- before/after comparison ---------------------------------------- */

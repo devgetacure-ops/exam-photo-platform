@@ -236,6 +236,7 @@ function FileRow({
     reason,
     extending,
     onExtend,
+    onPrepareAgain,
 }: {
     entry: KitEntry;
     job?: LiveJob;
@@ -245,6 +246,8 @@ function FileRow({
     reason?: string;
     extending: string | null;
     onExtend: () => void;
+    /** Opens this file's own screen, where it can be added again. */
+    onPrepareAgain?: () => void;
 }) {
     const expired = !!job && jobExpired(job, now);
     const available = !!job && jobDownloadable(job, now);
@@ -314,6 +317,14 @@ function FileRow({
                 )}
             </div>
             <div className="euk-order-actions">
+                {/* An expired file used to be a dead end here: the row said
+                    to prepare it again and offered nowhere to do it (owner's
+                    testing, 1 October). */}
+                {expired && onPrepareAgain && (
+                    <button type="button" className="primary-button" onClick={onPrepareAgain}>
+                        Prepare it again
+                    </button>
+                )}
                 {available && (
                     <a className="primary-button" href={jobOutputUrl(entry.jobId)}>
                         Download file
@@ -341,6 +352,7 @@ export function KitCheckout({
     preparationBusy = false,
     selectedRequirements,
     facts = [],
+    onPrepareAgain,
 }: {
     exam: ExamDetail;
     entries: Record<string, KitEntry>;
@@ -348,6 +360,7 @@ export function KitCheckout({
     preparationBusy?: boolean;
     selectedRequirements?: string[];
     facts?: ExamFact[];
+    onPrepareAgain?: (requirementId: string) => void;
 }) {
     const files = Object.values(entries).filter(
         (e) =>
@@ -779,6 +792,11 @@ export function KitCheckout({
                         reason={quote?.lines.find((l) => l.job_id === entry.jobId)?.reason}
                         extending={extending}
                         onExtend={() => void extend(entry.jobId)}
+                        onPrepareAgain={
+                            onPrepareAgain
+                                ? () => onPrepareAgain(entry.requirementId)
+                                : undefined
+                        }
                     />
                 );
             })}

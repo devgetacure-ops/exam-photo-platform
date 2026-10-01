@@ -50,7 +50,10 @@ export default async function PreparePage({
 
     return (
         <main id="main-content">
-            <PrepareFlow exam={exam} facts={facts} />
+            {/* Keyed by examination: changing exam inside the app must start
+                that exam's flow afresh, not inherit the last one's step and
+                open file (owner's testing, 1 October). */}
+            <PrepareFlow key={exam.exam_id} exam={exam} facts={facts} />
         </main>
     );
 }

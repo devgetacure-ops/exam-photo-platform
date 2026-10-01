@@ -116,11 +116,22 @@ export function FileComparison({
             </div>
             <figcaption>
                 <label htmlFor={id}>Drag across the picture, or use the arrow keys</label>
-                <div className="comparison-actions">
-                    <button type="button" onClick={() => setPosition(100)}>
+                {/* Two buttons that look like buttons, the one in view marked:
+                    as plain words nobody knew they could be tapped (owner's
+                    testing, 1 October). */}
+                <div className="comparison-actions" role="group" aria-label="Show">
+                    <button
+                        type="button"
+                        aria-pressed={position >= 50}
+                        onClick={() => setPosition(100)}
+                    >
                         Original
                     </button>
-                    <button type="button" onClick={() => setPosition(0)}>
+                    <button
+                        type="button"
+                        aria-pressed={position < 50}
+                        onClick={() => setPosition(0)}
+                    >
                         Preview
                     </button>
                 </div>

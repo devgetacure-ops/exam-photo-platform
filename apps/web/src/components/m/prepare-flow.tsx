@@ -8,6 +8,7 @@ import { factAttribution, factUrl, type ExamFact } from "../exam/exam-facts";
 import { plainFindings } from "../../lib/finding-text";
 import { isOurs, kitPrice, rupees } from "../../lib/kit-pricing";
 import { useKit } from "../exam/use-kit";
+import { useKitLiveness } from "../exam/use-kit-liveness";
 import { DocumentWorkspace } from "../exam/document-workspace";
 import { RequirementUpload } from "../exam/requirement-upload";
 import { KitCheckout } from "../exam/kit-checkout";
@@ -60,7 +61,10 @@ export function PrepareFlow({
         () => requirements.filter((r) => !isOurs(r)),
         [requirements],
     );
-    const { entries } = useKit(exam.exam_id);
+    const { entries, forget } = useKit(exam.exam_id);
+    // "Ready" is only true while the server still holds the file (owner's
+    // testing, 1 October): a deleted one is forgotten and has to be added again.
+    const { isLive, expired } = useKitLiveness(entries, forget);
 
     const [step, setStep] = useState<Step>("files");
     const [activeId, setActiveId] = useState<string | null>(null);
@@ -172,12 +176,7 @@ export function PrepareFlow({
 
     const chosen = ours.filter((r) => included.includes(r.requirement_id));
     const price = kitPrice(requirements, included);
-    const ready = chosen.filter((r) => {
-        const entry = entries[r.requirement_id];
-        return (
-            entry && ["prepared", "prepared_with_findings"].includes(entry.outcome)
-        );
-    });
+    const ready = chosen.filter((r) => isLive(r.requirement_id));
     // A different one of the examination's facts each time a file comes back
     // ready, so returning to the list is never the same screen twice.
     const fact = facts.length > 0 ? facts[ready.length % facts.length] : null;
@@ -186,9 +185,7 @@ export function PrepareFlow({
 
     // --- one file, on its own screen ------------------------------------
     if (active) {
-        const entry = entries[active.requirement_id];
-        const done =
-            entry && ["prepared", "prepared_with_findings"].includes(entry.outcome);
+        const done = isLive(active.requirement_id);
         // A record may carry no photograph specification at all and still list
         // a photograph (DEC-079). Asking for its rows would throw, and a crash
         // on the file screen takes the whole flow with it.
@@ -259,7 +256,7 @@ export function PrepareFlow({
                 {!busy && done && (
                     <ActionBar
                         note={
-                            <>
+                            <span className="euk-m-barnote">
                                 <strong>Ready</strong>
                                 <button
                                     type="button"
@@ -268,7 +265,7 @@ export function PrepareFlow({
                                 >
                                     Back to the list
                                 </button>
-                            </>
+                            </span>
                         }
                     >
                         {nextFile ? (
@@ -430,23 +427,33 @@ export function PrepareFlow({
                     <ul className="euk-m-files">
                         {chosen.map((r) => {
                             const entry = entries[r.requirement_id];
-                            const done =
-                                !!entry &&
-                                ["prepared", "prepared_with_findings"].includes(entry.outcome);
+                            const done = isLive(r.requirement_id);
                             const note =
                                 done &&
+                                !!entry &&
                                 entry.outcome === "prepared_with_findings" &&
                                 plainFindings(entry.findings).length > 0;
+                            // Deleted by the server since it was prepared: said,
+                            // so the row does not just go quiet.
+                            const lapsed =
+                                !done &&
+                                (expired.has(r.requirement_id) ||
+                                    (!!entry &&
+                                        ["prepared", "prepared_with_findings"].includes(
+                                            entry.outcome,
+                                        )));
                             // An entry is written only once a preparation has
                             // finished, so one that is not prepared failed and
                             // wants another go, as the desktop row says.
-                            const tone = !entry
-                                ? undefined
-                                : done
-                                  ? note
-                                      ? "check"
-                                      : "done"
-                                  : "retry";
+                            const tone = lapsed
+                                ? "retry"
+                                : !entry
+                                  ? undefined
+                                  : done
+                                    ? note
+                                        ? "check"
+                                        : "done"
+                                    : "retry";
                             return (
                                 <li key={r.requirement_id}>
                                     <button
@@ -457,7 +464,9 @@ export function PrepareFlow({
                                         <span className="euk-m-file-body">
                                             <strong>{r.requirement_name}</strong>
                                             <span>
-                                                {tone === "check"
+                                                {lapsed
+                                                    ? "Expired. Add it again"
+                                                    : tone === "check"
                                                     ? "Ready, with a note to read"
                                                     : tone === "done"
                                                       ? "Ready"
@@ -499,6 +508,7 @@ export function PrepareFlow({
                         onBusy={setBusy}
                         selectedRequirements={included}
                         facts={facts}
+                        onPrepareAgain={(requirementId) => go("add", requirementId, true)}
                     />
                 </div>
             )}

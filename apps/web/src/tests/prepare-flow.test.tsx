@@ -287,4 +287,44 @@ describe("the phone flow", () => {
             await screen.findByRole("heading", { level: 1, name: "Recent photograph" }),
         ).toBeInTheDocument();
     });
+    test("a file the server has deleted is not ready, and the flow does not lead to payment", () => {
+        const goneExam = {
+            ...exam,
+            exam_id: "gone-exam",
+            requirements: [requirement("photo", "Recent photograph", "photograph")],
+        } as unknown as ExamDetail;
+        window.localStorage.setItem(
+            "exam-photo:kits:v1",
+            JSON.stringify({
+                "gone-exam": {
+                    kitId: "kit_gone",
+                    examId: "gone-exam",
+                    createdAt: "2026-10-01",
+                    updatedAt: "2026-10-01",
+                    requirements: {
+                        photo: {
+                            jobId: "job_gone",
+                            requirementId: "photo",
+                            requirementType: "photograph",
+                            status: "SUCCEEDED",
+                            outcome: "prepared",
+                            expiresAt: new Date(Date.now() - 60_000).toISOString(),
+                            findings: [],
+                            updatedAt: "2026-10-01",
+                        },
+                    },
+                },
+            }),
+        );
+        render(<PrepareFlow exam={goneExam} />);
+        fireEvent.click(screen.getByRole("button", { name: "Add your files" }));
+
+        const row = screen.getByRole("button", { name: /Recent photograph/ });
+        expect(within(row).getByText("Expired. Add it again")).toBeInTheDocument();
+        expect(screen.getByRole("button", { name: /Check 0 of 1/ })).toBeDisabled();
+
+        fireEvent.click(row);
+        expect(within(actionBar()).getByRole("button", { name: "Do this later" })).toBeInTheDocument();
+        expect(within(actionBar()).queryByRole("button", { name: "Check and pay" })).toBeNull();
+    });
 });
