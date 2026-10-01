@@ -1338,3 +1338,13 @@ Recommendation implemented locally: require explicitly configured persistent req
 - **Consequences**: `kit-liveness.test.ts` (5), `prepare-flow.test.tsx` +1 (a deleted file is not ready and does not lead to payment), `requirement-upload.test.tsx` +2 (a ready file shows itself; a deleted one is asked for again). Web 375 passed, lint and types clean. Seen at 375 px on the local engine: a live ready file with its preview and Replace, the same file after deletion ("Expired. Add it again", check disabled), and the two buttons. **Not seen**: the pay screen's Prepare-it-again in a browser (covered by code path only), and the installed app on the owner's phone.
 - **Affected Modules**: `lib/kit-liveness.ts`, `components/exam/use-kit-liveness.ts`, `components/exam/use-kit.ts`, `components/m/prepare-flow.tsx`, `components/exam/requirement-upload.tsx`, `components/exam/kit-checkout.tsx`, `components/file-comparison.tsx`, `app/exam/[examId]/prepare/page.tsx`, `app/app.css`, `app/mobile.css`.
 - **Approval Owner**: Product Owner
+
+### DEC-118: One Review Reward per Person Counts the Phone as Well as the Address
+- **Date**: 2026-10-02
+- **Status**: Approved (owner, 2 October: no expiry on review codes; "a tighter limit ... yes. do it")
+- **Problem**: DEC-112 gives one free-files code per order and per email address. A candidate paying with a different address each time earned a code on every order.
+- **Decision**: A reward is refused when **either** an address **or** the phone number on the order has already earned one. The phone is the contact Razorpay collects at checkout, already stored with the order (DEC-109), reduced to its last ten digits so "+91", a leading zero and bare digits are one line. New rewards record the phone beside the addresses; rewards issued before this are matched through the order they were issued for. An order with no phone held is judged on its addresses alone. **Review codes still do not expire** (owner).
+- **Reasoning**: A phone number is asked for by the payment itself and is harder to vary than an address. Nothing new is collected. Two people paying from one phone share one reward, which is accepted: the heaviest repeat buyer is an operator paying for many candidates.
+- **Consequences**: `test_reviews_and_rewards.py` +2 (a new address on the same phone earns nothing; a reward issued before phones were recorded still counts). The candidate's screen is unchanged: the review is saved and thanked, and no code appears.
+- **Affected Modules**: `api/operator.py` (`normalise_phone`, `order_phones`), `api/app.py` (`_save_review`, `_phone_already_rewarded`), `api/ledger.py` (docstring).
+- **Approval Owner**: Product Owner

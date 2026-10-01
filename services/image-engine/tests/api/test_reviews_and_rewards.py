@@ -58,7 +58,9 @@ def api(tmp_path):
         ) = original
 
 
-def _paid(api, order_id="order_P1", kit=KIT, email="c@example.com", amount=300):
+def _paid(
+    api, order_id="order_P1", kit=KIT, email="c@example.com", amount=300, phone=None
+):
     api.orders.create(
         order_id,
         kit,
@@ -68,7 +70,7 @@ def _paid(api, order_id="order_P1", kit=KIT, email="c@example.com", amount=300):
         items=[OrderItem(job_id="job_x", exam_name="CTET")],
     )
     api.orders.mark_paid(order_id, f"pay_{order_id}")
-    api.orders.record_payer(order_id, email, None, "upi")
+    api.orders.record_payer(order_id, email, phone, "upi")
 
 
 def _prepared(api, job_id, kit=OTHER_KIT):
@@ -254,3 +256,34 @@ def test_badges_count_what_is_waiting(api):
         "reviews_pending": 1,
     }
     assert client.get("/v1/operator/badges").status_code == 401
+
+
+def test_a_new_email_on_the_same_phone_does_not_earn_a_second_code(api):
+    """One code per person, and a shared phone number is the same person."""
+    client.post("/v1/operator/offers/review_reward", headers=AUTH, json={"on": True})
+    _paid(api, "order_P1", email="first@example.com", phone="+919812345678")
+    _paid(
+        api, "order_P2", kit="kit_two", email="second@example.com", phone="09812345678"
+    )
+    _paid(
+        api, "order_P3", kit="kit_three", email="third@example.com", phone="9900000001"
+    )
+    _paid(api, "order_P4", kit="kit_four", email="fourth@example.com")  # no phone held
+
+    first = _review().json()["reward_code"]
+    assert first
+    # A different address, the same line written another way: no second code.
+    assert _review("order_P2", "kit_two").json()["reward_code"] is None
+    # A different person entirely still earns theirs, with or without a phone.
+    assert _review("order_P3", "kit_three").json()["reward_code"]
+    assert _review("order_P4", "kit_four").json()["reward_code"]
+
+
+def test_a_reward_issued_before_phones_were_recorded_still_counts(api):
+    client.post("/v1/operator/offers/review_reward", headers=AUTH, json={"on": True})
+    _paid(api, "order_P1", email="old@example.com", phone="9812345678")
+    _paid(api, "order_P2", kit="kit_two", email="new@example.com", phone="9812345678")
+    # As the ledger held it before this change: addresses only.
+    api.ledger.issue_reward("order_P1", ["old@example.com"])
+
+    assert _review("order_P2", "kit_two").json()["reward_code"] is None

@@ -2308,11 +2308,37 @@ def _save_review(
         and service.ledger.offer_on("review_reward")
         and order.amount_paise > 0
     ):
+        # One code per person, and a person is whoever shares an address or
+        # a phone number with an earlier reward (owner, 2 October): a new
+        # email on the same phone used to earn a code each time. The phone is
+        # the one Razorpay collected at checkout; nothing new is asked for.
         emails = operator_views.order_emails(order)
-        if not service.ledger.reward_already_given(order.order_id, emails):
-            reward = service.ledger.issue_reward(order.order_id, emails)
+        phones = operator_views.order_phones(order)
+        known = [*emails, *(f"tel:{phone}" for phone in phones)]
+        if not service.ledger.reward_already_given(
+            order.order_id, known
+        ) and not _phone_already_rewarded(order.order_id, phones):
+            reward = service.ledger.issue_reward(order.order_id, known)
             service.ledger.set_reward_code(order.order_id, reward)
     return {"ok": True, "review": saved, "reward_code": reward}
+
+
+def _phone_already_rewarded(order_id: str, phones: list[str]) -> bool:
+    """Whether an earlier reward went to an order paid from one of these phones.
+
+    Rewards issued before phones were recorded with them name only addresses,
+    so the phone is read from the order each one was issued for.
+    """
+    if not phones:
+        return False
+    for coupon in service.ledger.coupons():
+        earlier = coupon.get("issued_for_order")
+        if coupon.get("source") != "reward" or not earlier or earlier == order_id:
+            continue
+        rewarded = service.orders.get(str(earlier))
+        if rewarded and set(operator_views.order_phones(rewarded)) & set(phones):
+            return True
+    return False
 
 
 @app.get("/v1/kits/{kit_id}/review")

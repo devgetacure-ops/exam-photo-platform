@@ -1018,7 +1018,11 @@ class Ledger:
     # --- the review reward (DEC-112) -------------------------------------
 
     def reward_already_given(self, order_id: str, emails: List[str]) -> Optional[str]:
-        """The code this order or any of these addresses already received."""
+        """The code this order, or anyone known by these, already received.
+
+        ``emails`` carries addresses and, as ``tel:`` entries, phone numbers:
+        whatever a person is known by (DEC-112, tightened 2 October).
+        """
         for row in self._rows(
             "SELECT code, issued_for_order, issued_to FROM coupons WHERE source='reward'"
         ):

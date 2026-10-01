@@ -52,6 +52,25 @@ def order_emails(order: OrderRecord) -> List[str]:
     return [email for email in dict.fromkeys(found) if email]
 
 
+def normalise_phone(value: Optional[str]) -> str:
+    """A phone number reduced to what identifies the line: its last ten digits.
+
+    Razorpay hands the contact over as "+919812345678", "09812345678" or bare
+    digits depending on how it was typed; the ten digits are the same line.
+    Anything shorter is not a usable number and matches nobody.
+    """
+    digits = "".join(ch for ch in str(value or "") if ch.isdigit())
+    return digits[-10:] if len(digits) >= 10 else ""
+
+
+def order_phones(order: OrderRecord) -> List[str]:
+    """Every phone number this order was paid, or attempted, from."""
+    found = [normalise_phone(order.payer_contact)]
+    for attempt in order.failed_payments:
+        found.append(normalise_phone(attempt.get("contact")))
+    return [phone for phone in dict.fromkeys(found) if phone]
+
+
 def order_view(
     order: OrderRecord, refunds: Dict[str, Dict[str, Any]]
 ) -> Dict[str, Any]:
