@@ -1300,24 +1300,28 @@
     font-weight: 700;
 }
 
+/* Five stars on one line at any width: as a wrapping row the fifth dropped
+   to a line of its own on a narrow card (owner's testing, 2 October). */
 .euk .euk-rate-stars {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 52px));
     align-items: center;
     gap: 2px;
 }
 
-.euk .euk-rate-stars legend {
-    width: 100%;
+.euk .euk-rate-stars legend,
+.euk .euk-rate-stars .euk-rate-word {
+    grid-column: 1 / -1;
 }
 
 .euk .euk-rate-stars label {
     display: grid;
     place-items: center;
-    width: 52px;
-    height: 52px;
+    width: 100%;
+    aspect-ratio: 1;
+    min-height: 44px;
     cursor: pointer;
-    font-size: 40px;
+    font-size: clamp(30px, 10vw, 40px);
     line-height: 1;
     /* Unlit stars were nearly invisible on the card; they are the control. */
     color: var(--ink-55);
@@ -1345,7 +1349,7 @@
 }
 
 .euk .euk-rate-word {
-    margin-left: 8px;
+    margin-top: 2px;
     font-weight: 600;
 }
 
