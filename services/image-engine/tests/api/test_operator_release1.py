@@ -69,7 +69,7 @@ def _paid_order(api, order_id="order_R1", job_ids=("job_a",), email=None):
         list(job_ids),
         300,
         "INR",
-        items=[OrderItem(job_id=j, exam_name="CTET September 2026") for j in job_ids],
+        items=[OrderItem(job_id=j, exam_name="CTET 2026") for j in job_ids],
     )
     api.orders.mark_paid(order_id, f"pay_{order_id}")
     if email:
@@ -121,7 +121,7 @@ def test_a_preparation_is_timed_and_kept_after_erasure(api):
     api.store.delete_job_directory("job_t1")
 
     row = service.ledger.upload("job_t1")
-    assert row["exam_name"] == "CTET September 2026"
+    assert row["exam_name"] == "CTET 2026"
     assert row["status"] == "succeeded"
     assert row["input_bytes"] == 12345
     assert row["output_width"] == 413
@@ -378,7 +378,7 @@ def test_a_run_of_failures_on_one_exam_alerts(api):
 def test_overview_reports_timing_and_per_exam_numbers(api):
     ledger: Ledger = api.ledger
     for n, seconds in enumerate((8.0, 10.0, 30.0)):
-        ledger.upload_started(f"job_o{n}", kit_id=KIT, exam_name="CTET September 2026")
+        ledger.upload_started(f"job_o{n}", kit_id=KIT, exam_name="CTET 2026")
         ledger.upload_finished(
             f"job_o{n}",
             status="succeeded",

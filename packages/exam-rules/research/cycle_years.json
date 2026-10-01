@@ -1,0 +1,3086 @@
+{
+ "_note": "Which cycle each examination is in now (owner, 2 October 2026). Applied by encode_exam_rules.py to the name's year, the year field and the short forms. Ids and source evidence are untouched. Written by scripts/derive_cycle_years.py from the owner's tracker pack.",
+ "as_of": "2026-10-02",
+ "exams": {
+  "a-n-administration-common-graduate-matriculation-level-exams": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "a-n-administration-departmental-agriculture-health-nhm-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "aadhaar-supervisor-operator-certification-examination": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "abhyudaya-cooperative-bank-manager-credit-officer-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "administration-of-ut-of-ladakh-police-sub-inspector-constable-recruitment-ladakh": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "advanced-centre-for-treatment-research-and-education-in-cancer-actrec-tendering-": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "ai-engineering-services-limited-aiesl-chief-executive-officer-ceo-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "aiims-b-sc-nursing-entrance-examination-b-sc-hons-nursing-b-sc-nursing-post-basi": {
+   "year": 2027,
+   "basis": "AIIMS B.Sc Nursing 2027 | cycle 2027 | Expected / watch | 27 Jun 2027 (tentative in aggregator)"
+  },
+  "aiims-faculty-non-faculty-senior-resident-direct-recruitment-bathinda-bibinagar-": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "aims-test-for-management-admissions-atma": {
+   "year": 2027,
+   "basis": "ATMA 2027 | cycle 2027 | Future expected | Feb 2027"
+  },
+  "air-force-common-admission-test-afcat": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "aircraft-maintenance-engineering-common-entrance-test-ame-cet": {
+   "year": 2027,
+   "basis": "AME CET 2027 | cycle 2027 | Open Now | "
+  },
+  "airports-authority-of-india-aai-graduate-diploma-apprentice-direct-selection": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "ajeenkya-dy-patil-university-design-aptitude-test-acet-aidat": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "aligarh-muslim-university-entrance-examination-amu-entrance-incl-amueee": {
+   "year": 2027,
+   "basis": "AMUEEE 2027 | cycle 2027 | Expected / watch | "
+  },
+  "all-india-sainik-schools-entrance-examination": {
+   "year": 2027,
+   "basis": "AISSEE 2027 | cycle 2027 | Opening soon / expected | 2027-01-31 expected"
+  },
+  "all-india-ayush-post-graduate-entrance-test-aiapget": {
+   "year": 2027,
+   "basis": "AIAPGET 2027 | cycle 2027 | Expected / watch | "
+  },
+  "all-india-bar-examination-aibe": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "all-india-entrance-examination-for-design-aieed": {
+   "year": 2027,
+   "basis": "AIEED 2027 | cycle 2027 |  | Expected 2027"
+  },
+  "all-india-forensic-science-entrance-test-aifset": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "all-india-law-entrance-test-ailet": {
+   "year": 2027,
+   "basis": "AILET 2027 | cycle 2027 | Open || Open Now | 2026-12-13"
+  },
+  "alliance-university-common-law-entrance-test-aiclet-aclat": {
+   "year": 2027,
+   "basis": "AICLET 2027 | cycle 2027 | Open now | 2026-09-26"
+  },
+  "alliance-university-engineering-entrance-test-aueet": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "amrita-entrance-examination-engineering-aeee": {
+   "year": 2027,
+   "basis": "AEEE 2027 | cycle 2027 | Future confirmed opening month || Expect | 2027 || Phase 1 Jan 2027; Phase 2 Apr 2027 || TBD"
+  },
+  "andaman-nicobar-islands-institute-of-medical-sciences-aniims-senior-resident-dir": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "andaman-nicobar-police-sub-inspector-police-constable-direct-recruitment": {
+   "year": 2027,
+   "basis": "A&N Police Recruitment | cycle 2027 / next cycle | Expected / Watchlist | 2027 TBA"
+  },
+  "andhra-pradesh-education-common-entrance-test-ap-edcet": {
+   "year": 2027,
+   "basis": "AP EdCET 2027 | cycle Next / 2027 | Expected / watch | "
+  },
+  "andhra-pradesh-engineering-common-entrance-test-ap-ecet": {
+   "year": 2027,
+   "basis": "AP ECET 2027 | cycle Next / 2027 | Expected / watch | "
+  },
+  "andhra-pradesh-integrated-common-entrance-test-ap-icet": {
+   "year": 2027,
+   "basis": "AP ICET 2027 | cycle 2027 | Future expected | May 2027 expected"
+  },
+  "andhra-pradesh-law-common-entrance-test-post-graduate-law-cet-ap-lawcet-pglcet": {
+   "year": 2027,
+   "basis": "AP LAWCET 2027 | cycle 2027 | Expected / watch | "
+  },
+  "andhra-pradesh-post-graduate-engineering-common-entrance-test-ap-pgecet": {
+   "year": 2027,
+   "basis": "AP PGECET 2027 | cycle Next / 2027 | Expected / watch | "
+  },
+  "andhra-pradesh-state-level-police-recruitment-board-police-constable-sub-inspect": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "andhra-pradesh-teacher-eligibility-test": {
+   "year": 2027,
+   "basis": "AP TET next cycle | cycle Next / 2027 | Expected / watch | "
+  },
+  "andrew-yule-company-limited-officer-manager-direct-recruitment-examination": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "anganwadi-worker-mini-worker-helper-recruitments-multi-states": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "aniidco-senior-consultant-managerial-recruitment": {
+   "year": 2026,
+   "basis": "ANIIDCO Senior Consultant (Urban Planning/Design/Mobility) | cycle 2026 | Open | "
+  },
+  "ap-mega-dsc-teacher-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "ap-polycet": {
+   "year": 2027,
+   "basis": "AP POLYCET | cycle 2027 / next cycle | Expected / Watchlist | Apr-May 2027"
+  },
+  "ap-high-court-civil-judge-junior-division-examination": {
+   "year": 2026,
+   "basis": "AP High Court - Civil Judge || AP High Court Civil Judge | cycle 2026 | Open | TBD"
+  },
+  "appsc-forest-beat-officer-assistant-beat-officer-2025": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "appsc-group-i-services-examination": {
+   "year": 2026,
+   "basis": "APPSC - Group I Services | cycle 2026 | Open | "
+  },
+  "appsc-group-ii-services-examination": {
+   "year": 2027,
+   "basis": "APPSC Group II Services | cycle Next / 2027 | Expected / watch | "
+  },
+  "appsc-group-iii-group-iv-and-departmental-recruitments-panchayat-secretary-junio": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "appsc-post-specific-recruitments-forest-range-officer-horticulture-officer-hoste": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "army-cadet-college-acc-entrance-examination": {
+   "year": 2027,
+   "basis": "Army Cadet College Entrance Exam 2027 | cycle 2027 | Future announced | 2027-01-04"
+  },
+  "army-dental-corps-short-service-commission-army-dental-corps-ssc": {
+   "year": 2026,
+   "basis": "Army Dental Corps Short Service Commission | cycle 2026 | Expected / Watchlist | "
+  },
+  "army-institute-of-law-law-entrance-test-ail-let": {
+   "year": 2027,
+   "basis": "AIL LET 2027 | cycle 2027 | Expected / watch | "
+  },
+  "army-public-school-teacher-recruitment-sukna-bengdubi": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "arunachal-pradesh-joint-entrance-examination-technical-counselling-apjee": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "arunachal-pradesh-police-constable-sub-inspector-direct-recruitment-app-si-const": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "arunachal-pradesh-psc-combined-competitive-examination-appscce": {
+   "year": 2027,
+   "basis": "Arunachal Pradesh PSC Combined Competitive Examination next cycle | cycle Next / 2027 | Expected / watch | "
+  },
+  "arunachal-pradesh-staff-selection-board-combined-examinations-apssb-csle-chsle-c": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "arunachal-pradesh-teacher-eligibility-test-tgt-recruitment-examination": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "arunachal-psc-direct-recruitments-assistant-public-prosecutor-sub-treasury-offic": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "asdma-district-project-officer-disaster-management-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "ashoka-university-undergraduate-admissions-ashoka-aptitude-assessment-aat": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "assam-direct-recruitment-grade-iii": {
+   "year": 2027,
+   "basis": "Assam Direct Recruitment Grade III next cycle | cycle Next / 2027 | Expected / watch | "
+  },
+  "assam-direct-recruitment-grade-iv": {
+   "year": 2027,
+   "basis": "Assam Direct Recruitment Grade IV next cycle | cycle Next / 2027 | Expected / watch | "
+  },
+  "assam-combined-entrance-examination-assam-cee": {
+   "year": 2027,
+   "basis": "Assam CEE 2027 | cycle Next / 2027 | Expected / watch | "
+  },
+  "assam-diploma-in-elementary-education-pre-entry-test-assam-d-el-ed-pet": {
+   "year": 2027,
+   "basis": "Assam D.El.Ed PET | cycle 2027 / next cycle | Expected / Watchlist | Sep 2027"
+  },
+  "assam-dlrs-land-record-assistant-revenue-staff-recruitment": {
+   "year": 2026,
+   "basis": "Assam DLRS Land Record Assistant | cycle 2026 | Open | TBD"
+  },
+  "assam-polytechnic-admission-test-assam-pat": {
+   "year": 2027,
+   "basis": "Assam PAT | cycle 2027 / next cycle | Expected / Watchlist | Jun 2027"
+  },
+  "assam-psc-combined-competitive-examination-apsc-cce": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "assam-rifles-technical-and-tradesman-recruitment-rally": {
+   "year": 2026,
+   "basis": "Assam Rifles Recruitment Rally | cycle 2026 | Open / reported | "
+  },
+  "assam-teacher-eligibility-test-assam-tet-special-tet": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "balmer-lawrie-co-limited-junior-officer-assistant-manager-direct-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "banaras-hindu-university-special-courses-of-study-research-entrance-bhu-scs-ret": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "banasthali-vidyapith-all-india-aptitude-test": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "bank-of-baroda-specialist-officers-wealth-management-professionals-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "bank-of-india-specialist-officers-boi-so-direct-recruitment-project": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "bennett-university-engineering-admission-test-counseling": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "bharat-electronics-limited-bel-bangalore-iti-diploma-apprentice-direct-selection": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "bharati-vidyapeeth-common-entrance-test-bvp-cet": {
+   "year": 2027,
+   "basis": "BVP CET 2027 | cycle 2027 | Expected / watch | "
+  },
+  "bharatiya-nabhikiya-vidyut-nigam-limited-bhavini-trade-apprentice-direct-selecti": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "bhopal-memorial-hospital-and-research-centre-bmhrc-specialist-paramedical-exam": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "bhu-research-scientist-medical-officer-faculty-recruitment": {
+   "year": 2026,
+   "basis": "BHU Research Scientist | cycle 2026 | Open | "
+  },
+  "bihar-b-ed-common-entrance-test": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "bihar-d-el-ed-joint-entrance-examination": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "bihar-police-constable-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "bihar-public-service-commission-direct-recruitments-assistant-professor-assistan": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "bihar-secondary-teacher-eligibility-test": {
+   "year": 2027,
+   "basis": "Bihar STET next cycle | cycle Next / 2027 | Expected / watch | "
+  },
+  "bihar-combined-entrance-competitive-examination-bcece": {
+   "year": 2027,
+   "basis": "BCECE 2027 | cycle Next / 2027 | Expected / watch | "
+  },
+  "bihar-police-subordinate-services-commission-sub-inspector-sergeant-recruitment-": {
+   "year": 2027,
+   "basis": "BPSSC Police Sub-Inspector | cycle 2027 / next cycle | Expected / Watchlist | 2027 TBA"
+  },
+  "bihar-secondary-school-librarian-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "bihar-staff-selection-commission-3rd-4th-graduate-level-combined-competitive-exa": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "bihar-technical-service-commission-recruitments-touring-veterinary-officer-fishe": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "bits-admission-test": {
+   "year": 2027,
+   "basis": "BITSAT 2027 | cycle 2027 | Opening Soon | Expected Apr & May 2027"
+  },
+  "bits-pilani-campus-technical-administrative-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "bob-capital-markets-business-development-manager-research-analyst-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "bob-global-shared-services-bgssl-apprentice-customer-support-executive-recruitme": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "bodoland-university-finance-officer-registrar-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "bpsc-online-application": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "bpsc-teacher-recruitment-examination-tre": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "brahmaputra-cracker-and-polymer-limited-bcpl-foreman-technician-operator-exam": {
+   "year": 2026,
+   "basis": "BCPL Non-Executive Recruitment (Foreman/Technician/Operator/etc.) | cycle 2026 | Open Now | "
+  },
+  "bric-institute-of-life-sciences-ils-bhubaneswar-project-scientist-technician-dir": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "brihanmumbai-municipal-corporation-bmc-chief-clerk-recruitment": {
+   "year": 2026,
+   "basis": "BMC Chief Clerk | cycle 2026 | Open | "
+  },
+  "bsfc-bihar-accountant-quality-controller-assistant-manager-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "bssc-second-inter-level-combined-competitive-examination": {
+   "year": 2027,
+   "basis": "BSSC Inter Level next cycle | cycle Next / 2027 | Expected / watch | "
+  },
+  "cbse-class-10-12-board-examinations-private-candidates-list-of-candidates-loc": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "cbse-classes-ix-xi-registration-2025-26": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "central-bank-of-india-counsellor-flcc-rseti-specialist-officer-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "central-bureau-of-investigation-cbi-special-public-prosecutor-spp-empanelment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "central-pool-mbbs-bds-seats-allocation-ut-ladakh-quota": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "central-power-research-institute-cpri-assistant-technician-mts-direct-recruitmen": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "central-railway-advocate-panel-empanelment-examination-selection-hq-divisions": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "central-reserve-police-force-meritorious-sports-persons-recruitment-crpf-sports-": {
+   "year": 2026,
+   "basis": "CRPF Sports Quota Recruitment | cycle 2026 | Open | "
+  },
+  "central-sanskrit-university-csu-cwssu-faculty-recruitment": {
+   "year": 2026,
+   "basis": "CWSSU Faculty Recruitment | cycle 2026 | Open | "
+  },
+  "central-silk-board-csb-assistant-engineer-young-professional-direct-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "centralised-admission-committee-admissions-centac-puducherry-ug-neet-non-neet-pg": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "centre-for-materials-for-electronics-technology-c-met-jrf-research-associate-sel": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "centurion-university-entrance-examination-cuee": {
+   "year": 2027,
+   "basis": "CUEE 2027 | cycle 2027 | Future Expected | TBD"
+  },
+  "cg-vyapam-pre-b-ed-entrance-examination": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "cgpsc-post-specific-technical-recruitments-microbiologist-veterinary-assistant-s": {
+   "year": 2026,
+   "basis": "CGPSC Microbiologist | cycle 2026 | Open | TBD"
+  },
+  "chandigarh-administration-clerk-steno-junior-engineer-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "chandigarh-judicial-district-court-clerk-steno-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "chandigarh-junior-basic-training-jbt-tgt-pgt-direct-recruitment-examination": {
+   "year": 2026,
+   "basis": "PGT | cycle 2026 | Open Now | "
+  },
+  "chandigarh-police-assistant-sub-inspector-police-constable-direct-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "chandigarh-state-cooperative-bank-cooperative-intern-clerk-direct-recruitment": {
+   "year": 2026,
+   "basis": "Intern | cycle 2026 | Open Now | "
+  },
+  "chandigarh-university-common-entrance-test-cucet": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "chandigarh-utcps-contractual-child-protection-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "chennai-mathematical-institute-cmi-entrance-examination": {
+   "year": 2027,
+   "basis": "CMI Entrance Exam 2027 | cycle 2027 | Future / expected | 1st week May 2027 (expected)"
+  },
+  "chennai-port-authority-materials-manager-executive-direct-recruitment-examinatio": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "chhattisgarh-police-constable-sub-inspector-cadre-recruitment-cg-police-constabl": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "chhattisgarh-pre-agriculture-test-cg-pat": {
+   "year": 2027,
+   "basis": "CG PAT 2027 | cycle 2027 | Future / expected | 2027-06-13"
+  },
+  "chhattisgarh-pre-diploma-in-elementary-education-cg-pre-d-el-ed": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "chhattisgarh-pre-engineering-test-cg-pet": {
+   "year": 2027,
+   "basis": "CG PET 2027 | cycle 2027 | Future / expected || Future Expected | 2027-05-09"
+  },
+  "chhattisgarh-pre-pharmacy-test-cg-ppht": {
+   "year": 2027,
+   "basis": "CG PPHT 2027 | cycle Next / 2027 | Expected / watch | "
+  },
+  "chhattisgarh-professional-examination-board-departmental-recruitment-exams-cg-vy": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "chhattisgarh-public-service-commission-state-service-examination-cgpsc-sse": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "chhattisgarh-school-education-teacher-recruitment-assistant-teacher-teacher-lect": {
+   "year": 2027,
+   "basis": "CG Vyapam Teacher Recruitment | cycle 2027 / next cycle | Expected / Watchlist | 2027 TBA"
+  },
+  "chhattisgarh-teacher-eligibility-test-cg-tet": {
+   "year": 2027,
+   "basis": "CG TET next cycle | cycle Next / 2027 | Expected / watch | "
+  },
+  "christ-university-entrance-test-mba-selection-process": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "christian-medical-college-ludhiana-b-sc-nursing-entrance-examination": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "cipet-lecturer-instructor-technical-staff-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "civil-hospital-ambala-medical-physicist-radiotherapy-technologist": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "cnci-nursing-accounts-security-guard-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "cochin-port-authority-trade-technician-apprentice-direct-selection-project": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "cochin-shipyard-limited-csl-apprentice-draughtsman-technical-intern-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "cochin-university-of-science-and-technology-common-admission-test-cusat-cat": {
+   "year": 2027,
+   "basis": "CUSAT CAT 2027 | cycle 2027 | Future / expected | May 2027 (expected)"
+  },
+  "common-admission-test-2025": {
+   "year": 2026,
+   "basis": "CAT 2026 | cycle 2026 | Recently closed / exam upcoming | 2026-11-29"
+  },
+  "common-engineering-entrance-test-and-admission-ceeta-pg": {
+   "year": 2027,
+   "basis": "CEETA-PG 2027 | cycle Next / 2027 | Expected / watch | "
+  },
+  "common-entrance-examination-for-design-ceed": {
+   "year": 2027,
+   "basis": "CEED 2027 | cycle 2027 | Opening soon || Expected / watch || Open | 2027-01-17 || Jan 2027"
+  },
+  "common-law-admission-test-clat-ug-pg": {
+   "year": 2027,
+   "basis": "CLAT 2027 | cycle 2027 | Open || Open Now | 2026-12-06"
+  },
+  "common-management-admission-test-cmat": {
+   "year": 2027,
+   "basis": "CMAT 2027 | cycle 2027 | Opening soon || Opening soon / expected  | 2027-02-07 || 7 Feb 2027 (tentative in aggregator) || Report"
+  },
+  "common-post-graduate-entrance-tests-cpget-telangana": {
+   "year": 2027,
+   "basis": "TG CPGET 2027 | cycle Next / 2027 | Expected / watch | "
+  },
+  "consortium-of-medical-engineering-dental-colleges-of-karnataka-under-graduate-en": {
+   "year": 2027,
+   "basis": "COMEDK UGET 2027 | cycle 2027 | Future / expected | May 2027 (expected)"
+  },
+  "container-corporation-of-india-concor-management-trainee-assistant-officer-exam": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "council-of-scientific-industrial-research-csir-labs-project-scientist-associate-": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "ctet-september-2026": {
+   "year": 2026,
+   "basis": "CTET Dec 2026 / Jan 2027 cycle | cycle 2026-27 | Expected Soon | Dec 2026-Jan 2027"
+  },
+  "cuet-pg-2026": {
+   "year": 2027,
+   "basis": "CUET PG 2027 | cycle 2027 | Opening Soon | Reported exam window Mar 1-5, 8, 12-20, 24-25 2027"
+  },
+  "cuet-ug-2026": {
+   "year": 2027,
+   "basis": "CUET UG 2027 || CUET-UG 2027 || CUET (UG) 2027 | cycle 2027 | Future / expected || Future expected ||  | 2027-05 to 2027-06 (expected) || Expected May 2027 || 2027 d"
+  },
+  "cutn-guest-faculty-teaching-staff-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "dadra-nagar-haveli-and-daman-diu-police-constable-si-direct-recruitment": {
+   "year": 2027,
+   "basis": "DNHDD Police recruitment next cycle | cycle 2026-27/2027 | Future Expected / Rolling | TBD"
+  },
+  "davcmc-ldc-pgt-tgt-prt-staff-recruitment": {
+   "year": 2026,
+   "basis": "PGT | cycle 2026 | Open Now | "
+  },
+  "deendayal-port-authority-kandla-harbor-pilot-marine-officer-direct-selection": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "defence-institute-of-advanced-technology-diat-pune-project-assistant-analyst-sel": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "defence-research-development-organisation-drdo-labs-jrf-ra-apprentice-selection": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "delhi-police-constable-executive": {
+   "year": 2027,
+   "basis": "Delhi Police Constable (SSC) | cycle 2027 / next cycle | Expected / Watchlist | 2027 TBA"
+  },
+  "delhi-police-head-constable-ministerial-awo-tpo-examination": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "delhi-development-authority-direct-recruitment-examination-dda-assistant-section": {
+   "year": 2027,
+   "basis": "DDA Recruitment Examination | cycle 2027 / next cycle | Expected / Watchlist | 2027 TBA"
+  },
+  "delhi-high-court-senior-pa-pa-judicial-assistant-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "delhi-jal-board-djb-law-officer-legal-assistant-direct-recruitment-examination": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "delhi-judicial-service-examination-djs-civil-judge-junior-division": {
+   "year": 2027,
+   "basis": "Delhi Judicial Service Examination | cycle 2027 / next cycle | Expected / Watchlist | 2027 TBA"
+  },
+  "delhi-mcd-hospital-senior-resident-recruitments-ambedkar-nagar-glm-sgmh": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "delhi-metro-rail-corporation-dmrc-general-manager-head-operations-direct-recruit": {
+   "year": 2026,
+   "basis": "DMRC Head Operations | cycle 2026 | Open Now | "
+  },
+  "delhi-transco-limited-dtl-assistant-manager-trainee-technical-hr-finance-exam": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "delhi-urban-art-commission-duac-lower-division-clerk-ldc-daftry-direct-exam": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "department-of-posts-india-post-staff-car-driver-ordinary-grade-direct-recruitmen": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "department-of-telecommunications-dot-junior-engineer-telecom-consultant-selectio": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "deputy-commissioner-tuensang-multi-tasking-staff-mts-recruitment": {
+   "year": 2026,
+   "basis": "Deputy Commissioner Tuensang - Multi Tasking Staff | cycle 2026 | Open | "
+  },
+  "diploma-certificate-entrance-competitive-examination-dcece-bihar": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "diplomate-of-national-board-final-examination-dnb-final-drnb-final-theory": {
+   "year": 2026,
+   "basis": "DNB Final Examination December 2026 | cycle Dec 2026 session | Open / newly announced | "
+  },
+  "directorate-of-enforcement-ed-additional-joint-director-deputation-selection": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "district-child-protection-unit-dcpu-staff-recruitments-multi-districts": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "district-courts-multi-district-staff-recruitments-ananthapuramu-hassan-kodagu-pr": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "district-development-commissioner-ganderbal-swachh-bharat-motivator": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "district-health-society-asha-community-health-posts-multi-districts": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "district-legal-services-authority-dlsa-para-legal-volunteers-amroha-kokrajhar-ma": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "dnb-post-diploma-centralized-entrance-test-dnb-pdcet": {
+   "year": 2026,
+   "basis": "DNB PDCET 2027 | cycle 2026-27 |  | Expected 2027"
+  },
+  "dnhdd-directorate-of-education-technical-education-lecturer-teacher-direct-recru": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "dnhdd-group-c-technical-namo-hospital-specialist-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "dns-ricm-patna-lecturer-faculty-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "dpar-manipur-state-chief-information-commissioner-recruitment": {
+   "year": 2026,
+   "basis": "DPAR Manipur State Chief Information Commissioner | cycle 2026 | Open Now | "
+  },
+  "dr-ram-manohar-lohia-institute-of-medical-sciences-dr-rmlims-non-teaching-staff-": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "dr-rml-avadh-university-faculty-academic-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "dredging-corporation-of-india-limited-dci-executive-director-direct-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "dsssb-recruitment-examinations": {
+   "year": 2027,
+   "basis": "DSSSB recruitment examinations | cycle 2026-27 / 2027 |  | TBA"
+  },
+  "dsssb-teaching-posts-recruitment-examination-prt-tgt-pgt-special-educator": {
+   "year": 2026,
+   "basis": "PGT | cycle 2026 | Open Now | "
+  },
+  "east-central-railway-general-departmental-competitive-examination-gdce-for-alp-j": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "east-coast-railway-act-apprentice-direct-selection-examination-rrc-bhubaneswar": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "eklavya-model-residential-schools-emrs-teaching-non-teaching-staff-selection-exa": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "employees-state-insurance-corporation-esic-senior-resident-junior-engineer-recru": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "engineers-india-limited-eil-associate-engineer-management-trainee-direct-recruit": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "ex-servicemen-contributory-health-scheme-echs-medical-officer-dental-officer-exa": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "export-import-bank-of-india-business-development-officer-exim-bank-bdo-recruitme": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "export-import-bank-of-india-deputy-manager-manager-scale-i-ii-direct-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "footwear-design-development-institute-all-india-selection-test-fddi-aist": {
+   "year": 2027,
+   "basis": "FDDI AIST 2027 | cycle 2027 | Future expected | May 2027 expected"
+  },
+  "foreign-dental-screening-test-fdst-for-bds-mds-graduates": {
+   "year": 2026,
+   "basis": "Foreign Dental Screening Test 2027 | cycle 2026-27 |  | Expected 2027"
+  },
+  "foreign-medical-graduate-examination-fmge-screening-test": {
+   "year": 2026,
+   "basis": "FMGE October 2026 | cycle 2026 | Open now | 2026-10-31"
+  },
+  "gail-india-limited-executive-trainee-et-direct-recruitment": {
+   "year": 2026,
+   "basis": "GAIL Executive Trainee recruitment 2026-27 | cycle 2026 | Open | TBD"
+  },
+  "gandhi-institute-of-technology-and-management-admission-test-gitam-gat": {
+   "year": 2027,
+   "basis": "GITAM GAT 2027 Phase 1 | cycle 2027 | Future expected | Dec 2026 Phase 1"
+  },
+  "gate-2026": {
+   "year": 2027,
+   "basis": "GATE 2027 | cycle 2027 | Open || Open now | 2027-02-06 to 2027-02-21 || Feb 2027 || 6-7, 13-14 & 20-21 F"
+  },
+  "gauhati-medical-college-hospital-gmch-contractual-staff-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "gic-assistant-manager-2024-25": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "gims-greater-noida-staff-nurse-paramedical-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "goa-directorate-of-education-primary-teacher-secondary-teacher-direct-recruitmen": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "goa-police-police-sub-inspector-police-constable-recruitment-goa-police-psi-cons": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "goa-public-service-commission-direct-recruitments-goa-civil-service-gpsc-goa": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "goa-shipyard-limited-gsl-trainee-project-executive-technical-officer-exam": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "goa-staff-selection-commission-group-c-recruitments-ldc-junior-assistant-data-en": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "goa-state-biodiversity-board-finance-controller-staff-recruitment": {
+   "year": 2026,
+   "basis": "Goa State Biodiversity Board Finance Controller | cycle 2026 | Open | "
+  },
+  "goa-university-admissions-ranking-test-gu-art": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "government-medical-college-and-hospital-gmch-chandigarh-staff-nurse-staff-direct": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "govind-ballabh-pant-university-of-agriculture-technology-entrance-examination-gb": {
+   "year": 2027,
+   "basis": "GBPUAT Entrance 2027 | cycle 2027 | Expected / watch | "
+  },
+  "gpsc-post-specific-technical-recruitments-marine-engineer-manager-assistant-port": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "graduate-pharmacy-aptitude-test-gpat": {
+   "year": 2027,
+   "basis": "GPAT 2027 | cycle 2027 | Future expected || Expected / watch | To be announced || Likely around Mar 2027 (not official)"
+  },
+  "greater-chennai-corporation-gcc-staff-nurse-recruitment": {
+   "year": 2026,
+   "basis": "Greater Chennai Corporation Staff Nurse Recruitment | cycle 2026 | Expected / Watchlist | Selection TBA"
+  },
+  "grid-controller-of-india-limited-grid-india-executive-trainee-direct-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "gujarat-police-lokrakshak-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "gujarat-police-psi-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "gujarat-alkalies-and-chemicals-limited-gacl-officer-engineer-direct-recruitment": {
+   "year": 2026,
+   "basis": "GACL Officer Recruitment | cycle 2026 | Open | "
+  },
+  "gujarat-head-teacher-aptitude-test-gujarat-htat": {
+   "year": 2027,
+   "basis": "Gujarat HTAT | cycle 2027 / next cycle | Expected / Watchlist | 2027 TBA"
+  },
+  "gujarat-metro-rail-corporation-gmrc-manager-assistant-manager-engineer-recruitme": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "gujarat-nursing-paramedical-centralized-admissions-acpmec-medadmm-gujarat": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "gujarat-public-service-commission-class-1-2-examination-gujarat-administrative-s": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "gujarat-state-road-transport-corporation-gsrtc-helper-mechanic-direct-recruitmen": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "gujarat-subordinate-service-selection-board-combined-competitive-examination-gss": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "gujarat-teacher-aptitude-test-gujarat-tat-secondary-higher-secondary": {
+   "year": 2027,
+   "basis": "Gujarat TAT | cycle 2027 / next cycle | Expected / Watchlist | 2027 TBA"
+  },
+  "gujarat-teacher-eligibility-test-gujarat-tet-i-tet-ii": {
+   "year": 2027,
+   "basis": "Gujarat TET-II | cycle 2027 / next cycle | Expected / Watchlist | 2027 TBA"
+  },
+  "gujcet": {
+   "year": 2027,
+   "basis": "GUJCET 2027 | cycle 2027 | Future / expected || Future / Expected | | Mar 2027 (expected) || 2027-03 (expected) || Expected Mar 20"
+  },
+  "guru-ghasidas-vishwavidyalaya-deo-field-assistant-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "guru-gobind-singh-indraprastha-university-common-entrance-test-ipu-cet": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "haryana-cet-group-c": {
+   "year": 2027,
+   "basis": "HSSC CET Group C next cycle | cycle Next / 2027 | Expected / watch | "
+  },
+  "haryana-teacher-eligibility-test": {
+   "year": 2027,
+   "basis": "HTET next cycle | cycle Next / 2027 | Expected / watch | "
+  },
+  "haryana-public-service-commission-hcs-executive-branch-allied-services-examinati": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "haryana-public-service-commission-hcs-judicial-branch-examination-civil-judge-ju": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "haryana-sports-department-doctor-young-professional-recruitment": {
+   "year": 2026,
+   "basis": "Haryana Sports Department Doctor/Young Professional | cycle 2026 | Open | "
+  },
+  "haryana-staff-selection-commission-direct-recruitments-by-advertisement-police-c": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "haryana-staff-selection-commission-haryana-police-constable-sub-inspector-recrui": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "haryana-technical-admissions-hstes-centralized-online-counselling": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "himachal-pradesh-common-entrance-test-hpcet": {
+   "year": 2027,
+   "basis": "HPCET 2027 | cycle Next / 2027 | Expected / watch | "
+  },
+  "himachal-pradesh-lateral-entry-entrance-test-hp-leet": {
+   "year": 2027,
+   "basis": "HP LEET | cycle 2027 / next cycle | Expected / Watchlist | May-Jun 2027"
+  },
+  "himachal-pradesh-police-constable-sub-inspector-direct-recruitment-hp-police-con": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "himachal-pradesh-polytechnic-admission-test-hp-pat": {
+   "year": 2027,
+   "basis": "HP PAT | cycle 2027 / next cycle | Expected / Watchlist | May-Jun 2027"
+  },
+  "himachal-pradesh-public-service-commission-hp-administrative-service-combined-co": {
+   "year": 2027,
+   "basis": "HPPSC HPAS 2027 | cycle 2026-27/2027 | Future Expected / Rolling | TBD"
+  },
+  "himachal-pradesh-rajya-chayan-aayog-group-c-recruitments-hprca-joa-it-operation-": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "himachal-pradesh-teacher-eligibility-test-hp-tet-jbt-tgt-arts-non-med-med-shastr": {
+   "year": 2026,
+   "basis": "HP TET November Session | cycle Nov 2026 | Open Now | 22 Nov-6 Dec 2026"
+  },
+  "hindustan-copper-limited-hcl-executive-gm-dgm-deputy-manager-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "hll-infra-tech-services-limited-hites-managerial-engineering-direct-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "hmt-limited-consultant-young-professional-direct-recruitment-project": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "hnb-uttarakhand-medical-education-university-nursing-paramedical-entrance-examin": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "homi-bhabha-cancer-hospital-and-research-centre-hbchrc-punjab-assistant-dieticia": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "hp-jal-shakti-vibhag-multi-purpose-worker-para-pump-operator-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "hp-state-cooperative-bank-junior-clerk-cooperative-intern-direct-recruitment": {
+   "year": 2026,
+   "basis": "Intern | cycle 2026 | Open Now | "
+  },
+  "hppsc-post-specific-technical-recruitments-medical-officer-assistant-professor-c": {
+   "year": 2026,
+   "basis": "HPPSC - Assistant Professor || HPPSC Assistant Professor | cycle 2026 | Open || Open Now | "
+  },
+  "hpsc-post-specific-recruitments-assistant-professor-college-cadre-food-safety-of": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "hssc-cet-group-d": {
+   "year": 2026,
+   "basis": "HSSC CET Group D | cycle Advt 05/2026 | Open / Closing TBA | Exam TBA"
+  },
+  "ibps-crp-customer-service-associates-xv": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "ibps-crp-po-mt-xvi": {
+   "year": 2027,
+   "basis": "IBPS PO 2027 | cycle 2027 |  | Expected late 2027"
+  },
+  "ibps-crp-regional-rural-banks-xiv": {
+   "year": 2027,
+   "basis": "IBPS RRB 2027 | cycle 2027 |  | Expected late 2027"
+  },
+  "ibps-crp-specialist-officers-xvi": {
+   "year": 2027,
+   "basis": "IBPS SO 2027 | cycle 2027 |  | Expected late 2027"
+  },
+  "icai-examination-portal": {
+   "year": 2027,
+   "basis": "CA Foundation January 2027 | cycle Jan 2027 | Future confirmed | Jan 2027 schedule announced"
+  },
+  "icar-all-india-competitive-examination-for-admission-to-doctoral-degree-programm": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "icar-all-india-entrance-examination-for-admission-to-bachelor-degree-programmes-": {
+   "year": 2027,
+   "basis": "CUET UG 2027 || CUET-UG 2027 || CUET (UG) 2027 | cycle 2027 | Future / expected || Future expected ||  | 2027-05 to 2027-06 (expected) || Expected May 2027 || 2027 d"
+  },
+  "icar-all-india-entrance-examination-for-admission-to-master-degree-programmes-ic": {
+   "year": 2027,
+   "basis": "ICAR AIEEA PG 2027 | cycle 2027 |  | TBA"
+  },
+  "icfai-business-school-aptitude-test-ibsat": {
+   "year": 2026,
+   "basis": "IBSAT | cycle 2026 | Expected / Watchlist | Dec 2026"
+  },
+  "icmai-certified-management-accountant-cma-foundation-intermediate-final-examinat": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "icmr-national-institute-of-research-in-tribal-health-icmr-nirth-project-associat": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "icsi-student-registration-and-examination": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "ignou-non-teaching-technical-faculty-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "iiest-shibpur-librarian-non-teaching-staff-recruitment": {
+   "year": 2026,
+   "basis": "IIEST Shibpur Librarian | cycle 2026 | Open Now | "
+  },
+  "iift-library-assistant-administrative-recruitment": {
+   "year": 2026,
+   "basis": "IIFT Library Assistant | cycle 2026 | Open | "
+  },
+  "iiit-hyderabad-undergraduate-entrance-examination-iiit-h-ugee": {
+   "year": 2027,
+   "basis": "IIIT-H UGEE | cycle 2027 | Expected / Watchlist | Apr 2027"
+  },
+  "iiit-non-teaching-staff-recruitment-dharwad-sri-city": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "iim-non-teaching-administrative-staff-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "iiser-aptitude-test-iat": {
+   "year": 2027,
+   "basis": "IISER Aptitude Test (IAT) 2027 | cycle 2027 | Expected / watch | "
+  },
+  "iiser-non-teaching-technical-staff-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "iit-non-teaching-technical-staff-recruitments-multi-iits": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "indbank-merchant-banking-services-head-specialist-officers-direct-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "india-ports-global-limited-ipgl-individual-consultant-terminal-executive-recruit": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "indian-air-force-agniveervayu-recruitment": {
+   "year": 2027,
+   "basis": "Indian Air Force Agniveervayu 2027 | cycle 2027 |  | TBA"
+  },
+  "indian-army-agniveer-cee-2025-26-online-upload": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "indian-army-agniveer-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "indian-army-technical-graduate-course-army-tgc-140-tgc-141": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "indian-coast-guard-enrolled-personnel-test-icg-cgept-navik-gd-navik-db-yantrik": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "indian-coast-guard-icg-civilian-posts-foreman-of-stores-chowkidar-peon-direct-ex": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "indian-council-of-agricultural-research-icar-institutes-young-professional-yp-i-": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "indian-institute-of-astrophysics-iia-bangalore-project-assistant-engineer-direct": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "indian-maritime-university-common-entrance-test-imu-cet": {
+   "year": 2027,
+   "basis": "IMU CET 2027 | cycle 2027 | Expected / watch | "
+  },
+  "indian-museum-kolkata-staff-car-driver-technical-assistant-guide-lecturer-exam": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "indian-navy-agniveer-senior-secondary-recruit-matric-recruit-navy-agniveer-ssr-m": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "indian-navy-direct-entry-petty-officer-chief-petty-officer-sports-quota-recruitm": {
+   "year": 2026,
+   "basis": "Indian Navy Direct Entry Petty Officer / Chief Petty Officer | cycle 2026 | Open Now | "
+  },
+  "indian-overseas-bank-specialist-officers-senior-manager-recruitment": {
+   "year": 2026,
+   "basis": "Assistant Manager | cycle 2026 | Open Now | "
+  },
+  "indian-railway-catering-and-tourism-corporation-irctc-hospitality-tourism-monito": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "indian-statistical-institute-isi-admission-test": {
+   "year": 2027,
+   "basis": "ISI Admission Test 2027 | cycle 2027 | Future / expected || Future expected ||  | 2nd week May 2027 (expected) || Second week May 2027 expecte"
+  },
+  "indira-gandhi-national-open-university-b-ed-entrance-test-ignou-b-ed-entrance": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "indo-tibetan-border-police-head-constable-recruitment-itbp-hc-education-stress-c": {
+   "year": 2026,
+   "basis": "ITBP Head Constable Recruitment | cycle 2026 | Open || Open Now | "
+  },
+  "industrial-finance-corporation-of-india-ifci-assistant-manager-manager-recruitme": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "industrial-training-institute-competitive-admission-test-bihar-iticat": {
+   "year": 2027,
+   "basis": "Bihar ITICAT 2027 | cycle Next / 2027 | Expected / watch | "
+  },
+  "institute-of-company-secretaries-of-india-icsi-executive-legal-academics-it-exam": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "institute-of-national-importance-combined-entrance-test-ini-cet": {
+   "year": 2027,
+   "basis": "INI-CET January 2027 | cycle Jan 2027 | Open | 2026-11-01"
+  },
+  "institute-of-national-importance-super-specialty-entrance-test-ini-ss": {
+   "year": 2027,
+   "basis": "INI-SS January 2027 | cycle Jan 2027 | Open | 2026-10-24"
+  },
+  "integrated-programme-in-management-aptitude-test-iim-indore-ipmat-indore": {
+   "year": 2027,
+   "basis": "IPMAT Indore 2027 | cycle 2027 | Future expected || Future Expected | Early May 2027 expected || TBD"
+  },
+  "integrated-programme-in-management-aptitude-test-iim-rohtak-ipmat-rohtak": {
+   "year": 2027,
+   "basis": "IPMAT Rohtak 2027 | cycle 2027 | Future expected || Future Expected | Second week May 2027 expected || TBD"
+  },
+  "isi-kolkata-research-fellow-administrative-staff-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "isro-propulsion-complex-iprc-mahendragiri-technician-fireman-direct-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "isro-space-applications-centre-sac-ahmedabad-junior-research-fellow-ra-selection": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "iust-programme-manager-technical-project-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "jai-prakash-university-guest-faculty-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "jain-entrance-test-jet": {
+   "year": 2027,
+   "basis": "Jain Entrance Test (JET) 2027 | cycle 2027 | Expected / possibly opening now | 2027 multi-window"
+  },
+  "jamia-millia-islamia-faculty-academic-staff-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "jammu-and-kashmir-board-of-professional-entrance-examinations-common-entrance-te": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "jammu-kashmir-bank-zonal-security-officer-specialist-cadre-direct-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "jammu-kashmir-public-service-commission-combined-competitive-examination-jkpsc-c": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "jammu-kashmir-services-selection-board-graduate-10-2-matric-level-recruitments-m": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "jammu-kashmir-services-selection-board-police-sub-inspector-recruitment-jkssb-j-": {
+   "year": 2027,
+   "basis": "J&K Police Sub Inspector | cycle 2027 / next cycle | Expected / Watchlist | 2027 TBA"
+  },
+  "jammu-kashmir-teacher-junior-assistant-direct-recruitment-examination": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "jawahar-navodaya-vidyalaya-selection-test-class-vi": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "jawahar-navodaya-vidyalaya-lateral-entry-selection-test-for-class-ix-jnv-lest-cl": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "jawahar-navodaya-vidyalaya-lateral-entry-selection-test-for-class-xi-jnv-lest-cl": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "jawaharlal-institute-of-postgraduate-medical-education-research-b-sc-nursing-adm": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "jawaharlal-institute-of-postgraduate-medical-education-research-jipmer-non-facul": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "jawaharlal-nehru-port-authority-jnpa-legal-expert-terminal-officer-direct-select": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "jaypee-universities-b-tech-admission-process-jiit-juit-juet": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "jee-advanced-2026": {
+   "year": 2027,
+   "basis": "JEE Advanced 2027 | cycle 2027 | Future / dates awaited || Future / Expec | May 2027 expected (some sources differ) || 2027 (date TBD)"
+  },
+  "jee-main-2026": {
+   "year": 2027,
+   "basis": "JEE Main 2027 Session 1 | cycle 2027 | Opening soon || Future announced / regis | 2027-01-22 to 2027-01-30 || 2027-01-22 to 24, 28 to 30; Jan3"
+  },
+  "jharkhand-police-constable-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "jharkhand-b-ed-combined-entrance-competitive-examination": {
+   "year": 2027,
+   "basis": "Jharkhand B.Ed Entrance 2027 | cycle Next / 2027 | Expected / watch | "
+  },
+  "jharkhand-combined-entrance-competitive-examination-jcece": {
+   "year": 2027,
+   "basis": "JCECE 2027 | cycle 2027 | Future / expected | "
+  },
+  "jharkhand-combined-police-sub-inspector-competitive-examination-jcpsice": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "jharkhand-home-defense-corps-home-guard-volunteer-enrolment-examination": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "jharkhand-polytechnic-entrance-competitive-examination-pece": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "jharkhand-public-service-commission-combined-civil-services-examination-jpsc-ccs": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "jharkhand-staff-selection-commission-intermediate-standard-combined-competitive-": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "jharkhand-staff-selection-commission-technical-health-services-recruitments-jssc": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "jharkhand-state-child-protection-society-jscps-social-worker-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "jharkhand-teacher-eligibility-test-jtet-level-1-level-2": {
+   "year": 2027,
+   "basis": "JTET | cycle 2027 / next cycle | Expected / Watchlist | 2027 TBA"
+  },
+  "jharkhand-trained-primary-assistant-acharya-combined-competitive-examination-jss": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "jkbopee-b-ed-common-entrance-test-jammu-kashmir": {
+   "year": 2027,
+   "basis": "JKBOPEE B.Ed Entrance | cycle 2027 / next cycle | Expected / Watchlist | Jun 2027"
+  },
+  "jkbopee-b-sc-nursing-b-sc-paramedical-b-sc-technology-entrance-examination": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "jkbopee-polytechnic-entrance-test-pet-j-k": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "jkpsc-assistant-professor-pti-librarian-recruitment-in-higher-education-departme": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "jkssb-police-constable-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "joint-entrance-examination-council-uttar-pradesh-polytechnic-entrance": {
+   "year": 2027,
+   "basis": "JEECUP 2027 | cycle Next / 2027 | Expected / watch | "
+  },
+  "joint-admission-counselling-delhi-jac-delhi": {
+   "year": 2027,
+   "basis": "JAC Delhi 2027 | cycle 2027 | Expected / watch | "
+  },
+  "joint-admission-test-for-masters-iit-jam": {
+   "year": 2027,
+   "basis": "IIT JAM 2027 | cycle 2027 | Open | 2027-02-14"
+  },
+  "joint-csir-ugc-net": {
+   "year": 2026,
+   "basis": "Joint CSIR-UGC NET December 2026 | cycle Dec 2026 | Expected / upcoming | 2026-12-20 to 2026-12-21"
+  },
+  "joint-entrance-test-for-m-sc-nursing-wbjeeb-jemscn": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "joint-entrance-test-for-nursing-paramedical-and-allied-sciences-under-graduate-w": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "joint-integrated-programme-in-management-admission-test-jipmat": {
+   "year": 2027,
+   "basis": "JIPMAT 2027 | cycle 2027 | Future expected | Jun 2027 expected"
+  },
+  "joint-recruitment-board-tripura-group-c-combined-examination-jrbt-group-c-ldc-ag": {
+   "year": 2027,
+   "basis": "JRBT Group C Recruitment | cycle 2027 / next cycle | Expected / Watchlist | 2027 TBA"
+  },
+  "jssc-combined-graduate-level-examination": {
+   "year": 2027,
+   "basis": "JSSC Combined Graduate Level (CGL) | cycle 2027 / next cycle | Expected / Watchlist | 2027 TBA"
+  },
+  "junior-plant-protection-office-dhanbad-crop-protector-recruitment": {
+   "year": 2026,
+   "basis": "Junior Plant Protection Office Dhanbad - Crop Protector | cycle 2026 | Closes soon | "
+  },
+  "juvenile-justice-board-jjb-social-worker-members-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "k-l-engineering-entrance-examination-kleee": {
+   "year": 2027,
+   "basis": "KLEEE 2027 Phase 1 | cycle 2027 | Open Now | 2026-12-03 to 2026-12-07"
+  },
+  "kalinga-institute-of-industrial-technology-entrance-examination-kiitee": {
+   "year": 2027,
+   "basis": "KIITEE 2027 | cycle 2027 | Opening Soon | Expected Apr 2027 Phase 1"
+  },
+  "karnataka-teacher-eligibility-test": {
+   "year": 2027,
+   "basis": "Karnataka TET next cycle | cycle Next / 2027 | Expected / watch | "
+  },
+  "karnataka-common-entrance-test-2026": {
+   "year": 2027,
+   "basis": "KCET 2027 | cycle 2027 | Future / expected || Future expected ||  | 2027 || Third week Apr 2027 expected || 2027-04 (expected)"
+  },
+  "karnataka-diploma-common-entrance-test-kea-karnataka-dcet": {
+   "year": 2027,
+   "basis": "Karnataka DCET 2027 | cycle Next / 2027 | Expected / watch | "
+  },
+  "karnataka-examinations-authority-departmental-recruitments-kea-pdo-technical-pos": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "karnataka-graduate-primary-teacher-recruitment-gptr-classes-6-8-high-school-teac": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "karnataka-post-graduate-common-entrance-test-kea-karnataka-pgcet": {
+   "year": 2027,
+   "basis": "Karnataka PGCET 2027 | cycle 2027 | Future expected || Future / Expected | Jun 2027 expected || 2027-06"
+  },
+  "karnataka-prisons-department-jailor-warder-direct-recruitment-examination": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "karnataka-psc-gazetted-probationers-examination-kpsc-kas-assistant-commissioner-": {
+   "year": 2027,
+   "basis": "KPSC Gazetted Probationers next cycle | cycle Next / 2027 | Expected / watch | "
+  },
+  "karnataka-psc-online-application": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "karnataka-sanjeevini-nrlm-block-project-manager-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "karnataka-state-police-civil-armed-police-constable-and-police-sub-inspector-rec": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "karunya-entrance-examination-karunya-kee": {
+   "year": 2027,
+   "basis": "KEE 2027 | cycle 2027 | Opening Soon / Expected | Phase 1 Jan 2027; Phase 2 Apr 2027"
+  },
+  "kbcnmu-jalgaon-assistant-professor-academic-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "kendriya-vidyalaya-sangathan-direct-recruitment-examination": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "kendriya-vidyalaya-school-level-contractual-teachers-multi-kvs": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "kerala-engineering-architecture-medical-entrance-examination": {
+   "year": 2027,
+   "basis": "KEAM 2027 | cycle 2027 | Future expected || Expected / watch | 2027 dates awaited"
+  },
+  "kerala-fibre-optic-network-kfon-district-telecom-executive-network-engineer-exam": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "kerala-high-court-registrar-office-attendant-recruitments": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "kerala-law-entrance-examination-klee-3-year-5-year-ll-b": {
+   "year": 2027,
+   "basis": "KLEE 2027 | cycle 2027 | Expected / watch | "
+  },
+  "kerala-lbs-centre-nursing-paramedical-centralized-admissions": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "kerala-management-aptitude-test-kmat-kerala": {
+   "year": 2027,
+   "basis": "KMAT Kerala 2027 | cycle 2027 | Future expected | Feb 2027 expected"
+  },
+  "kerala-psc-10th-plus-two-level-common-preliminary-examinations-kerala-psc-sslc-1": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "kerala-psc-degree-level-common-preliminary-examination-kerala-psc-degree-prelims": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "kerala-psc-lower-division-clerk-ldc-last-grade-servants-lgs-category-wise-recrui": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "kerala-psc-one-time-registration": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "kerala-psc-police-constable-civil-police-officer-cpo-sub-inspector-of-police-rec": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "kerala-teacher-eligibility-test-ktet-category-i-ii-iii-iv": {
+   "year": 2026,
+   "basis": "K-TET September 2026 | cycle Sep 2026 | Open | 2026-11-14 to 2026-11-15"
+  },
+  "kgbv-agra-teacher-warden-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "khadi-and-village-industries-commission-kvic-young-professional-senior-consultan": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "kiitee-management-entrance-exam-kiitee-management": {
+   "year": 2027,
+   "basis": "KIITEE Management 2027 | cycle 2027 | Opening soon | 3rd week Jan 2027 (expected)"
+  },
+  "konkan-railway-corporation-limited-krcl-assistant-loco-pilot-alp-senior-alp-exam": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "kpsc-group-c-non-technical-technical-recruitments-audit-officer-assistant-contro": {
+   "year": 2026,
+   "basis": "KPSC - Audit Officer || KPSC Audit Officer | cycle 2026 | Closes soon || Open Now | "
+  },
+  "ladakh-group-c-health-education-recruitment-lahdc-leh-kargil": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "ladakh-school-education-department-general-teacher-direct-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "lakshadweep-administration-group-c-health-veterinary-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "lakshadweep-directorate-of-education-primary-graduate-teacher-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "lakshadweep-health-services-specialist-cardiologist-contract": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "lakshadweep-technical-higher-education-centralized-admissions": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "lic-assistant-administrative-officers-generalist-2025": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "life-mission-kerala-social-work-urban-planning-interns": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "lovely-professional-university-national-entrance-and-scholarship-test-lpunest": {
+   "year": 2027,
+   "basis": "LPUNEST 2027 | cycle 2027 | Opening soon || Expected / watch || Futu | From Jan 2027 || TBD"
+  },
+  "madhya-pradesh-directorate-of-technical-education-centralized-online-engineering": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "madhya-pradesh-employees-selection-board-group-2-sub-group-combined-recruitment-": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "madhya-pradesh-employees-selection-board-group-4-combined-recruitment-test-mpesb": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "madhya-pradesh-metro-rail-corporation-limited-mpmrcl-gm-dgm-manager-recruitment": {
+   "year": 2026,
+   "basis": "Manager (Engineering) | cycle 2026 | Open Now | "
+  },
+  "madhya-pradesh-pre-agriculture-test-mp-pat": {
+   "year": 2027,
+   "basis": "MP PAT next cycle | cycle Next / 2027 | Expected / watch | "
+  },
+  "madhya-pradesh-pre-nursing-selection-test-general-nursing-training-test-mp-pnst-": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "madhya-pradesh-pre-veterinary-fishery-entrance-test-mp-pvft-addet": {
+   "year": 2027,
+   "basis": "MP PVFT | cycle 2027 / next cycle | Expected / Watchlist | 2027"
+  },
+  "madhya-pradesh-public-service-commission-state-forest-service-examination-mppsc-": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "madhya-pradesh-public-service-commission-state-service-examination-mppsc-sse": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "madras-high-court-data-entry-operator-technical-staff-recruitment": {
+   "year": 2026,
+   "basis": "Madras High Court Data Entry Operator Recruitment | cycle 2026 | Expected / Watchlist | Selection TBA"
+  },
+  "mah-mba-mms-cet": {
+   "year": 2027,
+   "basis": "MAH MBA/MMS CET 2027 | cycle Next / 2027 | Expected / watch | "
+  },
+  "maharashtra-police-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "maharashtra-common-entrance-test-for-b-ed-mah-b-ed-b-ed-elcet-cet": {
+   "year": 2027,
+   "basis": "MAH B.Ed CET 2027 | cycle Next / 2027 | Expected / watch | "
+  },
+  "maharashtra-common-entrance-test-for-b-sc-nursing-mah-b-sc-nursing-cet": {
+   "year": 2027,
+   "basis": "MAH B.Sc Nursing CET | cycle 2027 / next cycle | Expected / Watchlist | Apr-May 2027"
+  },
+  "maharashtra-common-entrance-test-for-bba-bca-bms-bbm-mah-bba-bca-cet": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "maharashtra-common-entrance-test-for-design-applied-art-mah-b-design-cet-mah-aac": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "maharashtra-common-entrance-test-for-law-mh-cet-law-3-year-5-year-ll-b": {
+   "year": 2027,
+   "basis": "MH CET Law 2027 (3-year & 5-year LLB) | cycle 2027 | Future / expected | Apr 2027 (expected)"
+  },
+  "maharashtra-common-entrance-test-for-mca-mah-mca-cet": {
+   "year": 2027,
+   "basis": "MAH MCA CET 2027 | cycle Next / 2027 | Expected / watch | "
+  },
+  "maharashtra-higher-secondary-certificate-hsc-class-12-examination-application": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "maharashtra-metro-rail-corporation-maha-metro-mts-junior-engineer-section-engine": {
+   "year": 2026,
+   "basis": "MTS | cycle 2026 | Open Now | "
+  },
+  "maharashtra-public-service-commission-state-services-examination-mpsc-rajyaseva-": {
+   "year": 2027,
+   "basis": "MPSC Rajyaseva 2027 | cycle 2026-27/2027 | Future Expected / Rolling | TBD"
+  },
+  "maharashtra-state-electricity-transmission-co-ltd-msetcl-electrician-apprentice-": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "maharashtra-teacher-eligibility-test-maha-tet": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "mahindra-university-b-tech-admission-process": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "maitreyi-college-non-teaching-staff-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "management-aptitude-test-2026": {
+   "year": 2026,
+   "basis": "MAT next cycle (Dec 2026 / 2027) | cycle 2026-27 | Expected / watch | "
+  },
+  "manipal-entrance-test-met": {
+   "year": 2027,
+   "basis": "Manipal Entrance Test (MET) 2027 | cycle 2027 | Opening imminently | Apr-May 2027"
+  },
+  "manipur-civil-services-combined-competitive-examination-mpsc-mcscce": {
+   "year": 2027,
+   "basis": "Manipur Civil Services Combined Competitive Examination | cycle 2027 / next cycle | Expected / Watchlist | 2027 TBA"
+  },
+  "manipur-mizoram-health-department-nursing-technical-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "manipur-police-sub-inspector-constable-india-reserve-battalion-recruitment-manip": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "manipur-psc-direct-technical-recruitments-dental-surgeon-research-assistant-unde": {
+   "year": 2026,
+   "basis": "Manipur PSC - Dental Surgeon || Manipur PSC Dental Surgeon | cycle 2026 | Open || Open Now | "
+  },
+  "manipur-staff-selection-commission-group-c-d-recruitments-manipur-ssc-ldc-driver": {
+   "year": 2027,
+   "basis": "Manipur Staff Selection Commission Group C/D Recruitments | cycle 2027 / next cycle | Expected / Watchlist | 2027 TBA"
+  },
+  "manipur-teacher-eligibility-test-mtet-and-primary-graduate-teacher-recruitment": {
+   "year": 2027,
+   "basis": "Manipur TET next cycle | cycle Next / 2027 | Expected / watch | "
+  },
+  "meghalaya-civil-defence-home-guards-direct-recruitment-examination": {
+   "year": 2026,
+   "basis": "Meghalaya Home Guards Recruitment | cycle 2026 | Open | "
+  },
+  "meghalaya-district-selection-committee-recruitments-east-khasi-hills-west-garo-h": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "meghalaya-high-court-stenographer-library-assistant-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "meghalaya-police-central-recruitment-board-police-sub-inspector-constable-recrui": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "meghalaya-psc-departmental-direct-recruitments-medical-health-officer-assistant-": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "meghalaya-public-service-commission-meghalaya-civil-service-examination-mpsc-mcs": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "meghalaya-staff-nurse-anm-recruitment-dhs-ri-bhoi-state": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "meghalaya-state-screening-centralized-admissions-b-sc-nursing-paramedical-techni": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "meghalaya-teacher-eligibility-test-mtet-lower-primary-upper-primary": {
+   "year": 2027,
+   "basis": "Meghalaya Teacher Eligibility Test next cycle | cycle Next / 2027 | Expected / watch | "
+  },
+  "mht-cet-2026": {
+   "year": 2027,
+   "basis": "MHT CET 2027 - Phase 1 | cycle 2027 | Opening soon / rumoured shift | Dec 2026-Jan 2027 (rumoured)"
+  },
+  "mica-admission-test-micat-i-and-ii": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "military-nursing-service-b-sc-nursing-course-entrance-indian-army-mns": {
+   "year": 2027,
+   "basis": "Indian Army B.Sc Nursing (MNS) 2027 | cycle 2027 | Expected / watch | "
+  },
+  "mineral-exploration-consultancy-limited-mecl-non-executive-technical-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "ministry-of-external-affairs-mea-internship-programme-selection-term-i-ii": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "mission-vatsalya-kargil-contractual-child-protection-staff-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "mit-design-aptitude-test-mit-dat-mitid": {
+   "year": 2027,
+   "basis": "MIT DAT 2027 | cycle 2027 | Future expected | Apr 2027 expected"
+  },
+  "mit-world-peace-university-common-entrance-test-mit-wpu-cet": {
+   "year": 2027,
+   "basis": "MIT-WPU CET 2027 | cycle 2027 | Expected / watch | "
+  },
+  "mizoram-nagaland-manipur-state-centralized-professional-admissions": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "mizoram-police-sub-inspector-police-constable-direct-recruitment-mizoram-police-": {
+   "year": 2027,
+   "basis": "Mizoram Police recruitment next cycle | cycle Next / 2027 | Expected / watch | "
+  },
+  "mizoram-psc-direct-recruitments-ldc-peon-assistant-engineer-lecturer-veterinary-": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "mizoram-public-service-commission-combined-competitive-examination-mizoram-mcscc": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "mizoram-teacher-eligibility-test-mizoram-tet-paper-i-paper-ii": {
+   "year": 2027,
+   "basis": "Mizoram Teacher Eligibility Test next cycle | cycle Next / 2027 | Expected / watch | "
+  },
+  "moil-limited-manager-senior-manager-mining-survey-electrical-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "mp-patwari-recruitment-examination": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "mp-police-constable-recruitment-test": {
+   "year": 2027,
+   "basis": "MP Police Constable next cycle | cycle 2027 / next cycle | Expected / Watchlist | 2027 TBA"
+  },
+  "mp-primary-school-teacher-eligibility-test": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "mp-bhoj-open-university-faculty-officer-recruitment": {
+   "year": 2026,
+   "basis": "MP Bhoj Open University Faculty | cycle 2026 | Open | "
+  },
+  "mp-high-court-assistant-grade-3-stenographer-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "mp-middle-school-teacher-selection-test-mstst": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "mp-police-sub-inspector-subedar-asi-recruitment-examination": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "mpesb-naib-tehsildar-limited-departmental-competitive-examination-mpesb-ldce-nai": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "mpsc-non-gazetted-group-b-group-c-services-combined-preliminary-examination-mpsc": {
+   "year": 2027,
+   "basis": "MPSC Group B Combined next cycle | cycle Next / 2027 | Expected / watch | "
+  },
+  "mpsc-online-application": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "mpsc-post-specific-technical-recruitments-assistant-language-director-deputy-med": {
+   "year": 2026,
+   "basis": "MPSC - Assistant Language Director | cycle 2026 | Open | "
+  },
+  "mumbai-port-authority-mbpa-junior-planner-clerk-specialist-doctor-direct-recruit": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "mysuru-city-corporation-mcc-ugd-helper-sanitation-staff": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "nabard-financial-services-nabfins-customer-service-officer-direct-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "nabard-grade-a-2025": {
+   "year": 2027,
+   "basis": "NABARD Grade A 2027 | cycle 2027 | Future Expected | TBD"
+  },
+  "nagaland-police-sub-inspector-constable-direct-recruitment": {
+   "year": 2027,
+   "basis": "Nagaland Police recruitment next cycle | cycle Next / 2027 | Expected / watch | "
+  },
+  "nagaland-public-service-commission-combined-competitive-examination-npsc-ncs-nps": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "nagaland-public-service-commission-combined-technical-services-examination-npsc-": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "nagaland-public-service-commission-common-educational-services-examination-npsc-": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "nagaland-public-service-commission-stenographers-examination-npsc-steno-grade-i-": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "nagaland-staff-selection-board-combined-staff-recruitment-examination-nssb-csre-": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "nagaland-teacher-eligibility-test-nagaland-tet": {
+   "year": 2027,
+   "basis": "Nagaland Teacher Eligibility Test | cycle 2027 / next cycle | Expected / Watchlist | 2027 TBA"
+  },
+  "national-aptitude-test-in-architecture-nata": {
+   "year": 2027,
+   "basis": "NATA | cycle 2027 | Expected / Watchlist | Apr-Jul 2027"
+  },
+  "national-ayush-mission-kerala-deo-paramedical-recruitment": {
+   "year": 2026,
+   "basis": "National AYUSH Mission Kerala DEO | cycle 2026 | Open | "
+  },
+  "national-bal-bhavan-nbb-educational-instructor-administrative-staff-direct-recru": {
+   "year": 2026,
+   "basis": "National Bal Bhavan Recruitment | cycle 2026 | Open | "
+  },
+  "national-bank-for-financing-infrastructure-and-development-nabfid-officer-recrui": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "national-board-of-examinations-in-medical-sciences-nbems-executive-director-sele": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "national-book-trust-nbt-editorial-assistant-production-officer-assistant-recruit": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "national-capital-region-transport-corporation-ncrtc-operations-maintainer-recrui": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "national-common-entrance-test-ncet-for-4-year-integrated-teacher-education-progr": {
+   "year": 2027,
+   "basis": "NCET 2027 | cycle 2027 | Future / Expected | 2027 (TBD)"
+  },
+  "national-council-for-hotel-management-joint-entrance-examination-nchm-jee": {
+   "year": 2027,
+   "basis": "NCHM JEE 2027 | cycle 2027 | Opening Soon | Expected Apr 2027"
+  },
+  "national-disaster-management-authority-ndma-young-consultant-direct-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "national-eligibility-cum-entrance-test-for-master-of-dental-surgery-neet-mds": {
+   "year": 2026,
+   "basis": "NEET-MDS 2027 | cycle 2026-27 |  | Expected early 2027"
+  },
+  "national-eligibility-cum-entrance-test-for-super-specialty-neet-ss": {
+   "year": 2026,
+   "basis": "NEET-SS 2026 | cycle 2026-27 |  | 2026-12-11 to 2026-12-12"
+  },
+  "national-entrance-screening-test-nest": {
+   "year": 2027,
+   "basis": "NEST 2027 | cycle 2027 | Future expected | Jun 2027 expected"
+  },
+  "national-health-mission-district-state-contractual-posts-multi-states": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "national-informatics-centre-nic-scientific-technical-assistant-direct-recruitmen": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "national-initiative-for-technical-teachers-training-nittt-examination-part-1-and": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "national-institute-of-animal-biotechnology-niab-hyderabad-project-scientist-sele": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "national-institute-of-design-design-aptitude-test-nid-dat": {
+   "year": 2027,
+   "basis": "NID DAT 2027 | cycle 2027 | Open || Open Now || Expected Soon | 2026-12-20 || 2026-12-20 (Prelims) || Dec 2026 / Jan 2027"
+  },
+  "national-institute-of-electronics-and-information-technology-nielit-technical-st": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "national-institute-of-fashion-technology-entrance-examination-nift-admissions": {
+   "year": 2027,
+   "basis": "NIFT Entrance Examination 2027 | cycle 2027 | Opening Soon | Expected first week Feb 2027"
+  },
+  "national-institute-of-food-technology-entrepreneurship-and-management-niftem-srf": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "national-institute-of-pharmaceutical-education-and-research-joint-entrance-exami": {
+   "year": 2027,
+   "basis": "NIPER JEE 2027 | cycle 2027 | Expected / watch | "
+  },
+  "national-institute-of-solar-energy-nise-senior-project-scientist-engineer-direct": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "national-test-house-nth-young-professional-associate-direct-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "naval-ship-repair-yard-nsry-karwar-kochi-trade-apprentice-direct-selection-exam": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "neet-pg": {
+   "year": 2026,
+   "basis": "NEET-PG 2027 | cycle 2026-27 |  | Expected mid-2027"
+  },
+  "neet-ug-2026": {
+   "year": 2027,
+   "basis": "NEET UG 2027 || NEET-UG 2027 || NEET (UG) 2027 | cycle 2027 | Future / expected || Future expected ||  | 2027-05-02 (expected) || 2027-05-02 expected || 2027 date no"
+  },
+  "nehu-guest-faculty-ad-hoc-academic-recruitment": {
+   "year": 2026,
+   "basis": "NEHU Guest Faculty | cycle 2026 | Open | "
+  },
+  "niacl-administrative-officers-2025": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "nid-madhya-pradesh-faculty-technical-recruitment": {
+   "year": 2026,
+   "basis": "NID Madhya Pradesh - Faculty | cycle 2026 | Open | "
+  },
+  "niit-university-admission-test-nuat": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "niper-hajipur-staff-nurse-non-faculty-recruitment": {
+   "year": 2026,
+   "basis": "NIPER Hajipur Staff Nurse | cycle 2026 | Open Now | "
+  },
+  "niser-bhubaneswar-junior-research-fellow-jrf-recruitment": {
+   "year": 2026,
+   "basis": "JRF | cycle 2026 | Open Now | "
+  },
+  "nit-non-teaching-staff-centralised-institutional-recruitments": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "nitte-university-common-admission-test-nucat": {
+   "year": 2027,
+   "basis": "NUCAT 2027 | cycle 2027 | Expected / watch | "
+  },
+  "nlc-india-limited-graduate-executive-trainee-get-direct-recruitment-through-gate": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "nluja-assam-lawyer-fellow-research-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "nmat-by-gmac": {
+   "year": 2026,
+   "basis": "NMAT by GMAC 2026 | cycle 2026 | Open | 2026-11-02 to 2026-12-20"
+  },
+  "nmims-law-aptitude-test-nmims-lat": {
+   "year": 2027,
+   "basis": "NMIMS LAT 2027 | cycle 2027 | Expected / watch | "
+  },
+  "nmims-national-test-for-programs-after-twelfth-npat": {
+   "year": 2027,
+   "basis": "NMIMS NPAT 2027 | cycle 2027 | Future expected | Feb-May 2027 expected"
+  },
+  "north-eastern-hill-university-entrance-admissions-nehu-admissions": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "ntpc-limited-diploma-trainee-mechanical-electrical-c-i-mining-direct-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "nuclear-fuel-complex-nfc-hyderabad-iti-trade-technician-apprentice-direct-select": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "numaligarh-refinery-limited-nrl-graduate-engineer-trainee-associate-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "odisha-joint-entrance-examination-ojee": {
+   "year": 2027,
+   "basis": "OJEE 2027 | cycle 2027 | Future / expected || Future expected | 1st week May 2027 (expected) || 2027 dates awaited"
+  },
+  "odisha-adarsha-vidyalaya-sangathan-oavs-principal-teacher-recruitment": {
+   "year": 2026,
+   "basis": "PGT | cycle 2026 | Open Now | "
+  },
+  "odisha-adarsha-vidyalaya-staff-recruitment-keonjhar-rajapur": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "odisha-common-pg-entrance-test-ojee-lateral-pg-streams-odisha-cpet-ojee-pg": {
+   "year": 2027,
+   "basis": "Odisha CPET | cycle 2027 / next cycle | Expected / Watchlist | Jun-Jul 2027"
+  },
+  "odisha-police-constable-sub-inspector-direct-recruitment-examination": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "odisha-power-transmission-corporation-limited-optcl-management-diploma-trainee-e": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "odisha-public-service-commission-odisha-civil-services-examination-opsc-ocs": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "odisha-secondary-school-teacher-eligibility-test-osstet": {
+   "year": 2026,
+   "basis": "OSSTET 2026 | cycle 2026 | Registration recently closed / cycle act | 2026"
+  },
+  "odisha-staff-selection-commission-combined-graduate-level-examination-ossc-cgl-g": {
+   "year": 2027,
+   "basis": "OSSC Combined Graduate Level Recruitment Examination | cycle 2027 / next cycle | Expected / Watchlist | 2027 TBA"
+  },
+  "odisha-staff-selection-commission-combined-higher-secondary-10-2-level-examinati": {
+   "year": 2027,
+   "basis": "OSSC CHSL next cycle | cycle Next / 2027 | Expected / watch | "
+  },
+  "odisha-sub-ordinate-staff-selection-commission-district-cadre-specialist-recruit": {
+   "year": 2026,
+   "basis": "OSSSC - Radiographer | cycle 2026 | Open | "
+  },
+  "odisha-teacher-eligibility-test-otet": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "oil-india-limited-oil-electrician-associate-engineer-deputy-chief-direct-recruit": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "opsc-post-specific-recruitments-assistant-agriculture-engineer-assistant-public-": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "ordnance-factory-ambarnath-labour-welfare-officer-group-b-direct-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "osssc-combined-recruitment-examination": {
+   "year": 2027,
+   "basis": "OSSSC Combined Recruitment Examination (RI/ARI/Amin etc.) next cycle | cycle Next / 2027 | Expected / watch | "
+  },
+  "panjab-university-common-entrance-test-pu-cet-ug-pu-cet-pg": {
+   "year": 2027,
+   "basis": "PU CET UG | cycle 2027 / next cycle | Expected / Watchlist | May 2027"
+  },
+  "panjab-university-lateral-engineering-entrance-test-puleet": {
+   "year": 2027,
+   "basis": "PULEET 2027 | cycle Next / 2027 | Expected / watch | "
+  },
+  "panjab-university-law-entrance-test-pu-llb-3-year-pu-uglaw-5-year-b-a-b-com-ll-b": {
+   "year": 2027,
+   "basis": "PU LLB 2027 | cycle 2027 | Expected / watch | "
+  },
+  "panjab-university-management-entrance-test-pu-met": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "panjab-university-research-fellowship-project-staff-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "pearl-academy-design-fashion-entrance-exam": {
+   "year": 2027,
+   "basis": "Pearl Academy Entrance | cycle 2027 | Expected / Watchlist | Multiple 2027 cycles"
+  },
+  "pension-fund-regulatory-and-development-authority-officer-grade-a-assistant-mana": {
+   "year": 2027,
+   "basis": "PFRDA Grade A | cycle 2026 | Closes Today | "
+  },
+  "pes-scholastic-aptitude-test-pessat": {
+   "year": 2027,
+   "basis": "PESSAT 2027 | cycle 2027 | Opening soon / expected | 2027"
+  },
+  "pharmaceuticals-medical-devices-bureau-of-india-pmbi-executive-pharmacist-exam": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "phed-mizoram-technician-electric-lineman-recruitment": {
+   "year": 2026,
+   "basis": "PHED Mizoram Technician / Electric Lineman | cycle 2026 | Open | "
+  },
+  "physical-research-laboratory-prl-ahmedabad-technical-trainee-telescope-operator-": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "pihmct-puducherry-assistant-lecturer-instructor-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "pondicherry-institute-of-hotel-management-and-catering-technology-admissions-pih": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "postgraduate-institute-of-medical-education-research-b-sc-nursing-entrance-pgime": {
+   "year": 2027,
+   "basis": "PGIMER B.Sc Nursing 2027 | cycle 2027 | Expected / watch | "
+  },
+  "postgraduate-institute-of-medical-education-research-pgimer-nursing-officer-grou": {
+   "year": 2026,
+   "basis": "PGIMER Nursing Officer | cycle 2026 | Open || Open Now | "
+  },
+  "power-grid-corporation-of-india-limited-powergrid-engineer-trainee-direct-recrui": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "presidency-university-bachelor-degree-entrance-test-master-degree-entrance-test-": {
+   "year": 2027,
+   "basis": "PUMDET | cycle 2027 / next cycle | Expected / Watchlist | Jul 2027"
+  },
+  "puducherry-directorate-of-school-education-primary-school-teacher-lecturer-recru": {
+   "year": 2026,
+   "basis": "Lecturer | cycle 2026 | Open now || Open Now | "
+  },
+  "puducherry-government-group-b-c-recruitment": {
+   "year": 2027,
+   "basis": "Puducherry Government Group B/C recruitment next cycle | cycle 2026-27/2027 | Future Expected / Rolling | TBD"
+  },
+  "puducherry-police-constable-sub-inspector-direct-recruitment": {
+   "year": 2027,
+   "basis": "Puducherry Police recruitment next cycle | cycle 2026-27/2027 | Future Expected / Rolling | TBD"
+  },
+  "punjab-agricultural-university-common-entrance-test-pau-cet": {
+   "year": 2027,
+   "basis": "PAU CET 2027 | cycle 2027 | Expected / watch | "
+  },
+  "punjab-joint-b-ed-common-entrance-test-punjab-b-ed-cet": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "punjab-police-sub-inspector-police-constable-recruitment-examination": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "punjab-public-service-commission-punjab-state-civil-services-combined-competitiv": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "punjab-remote-sensing-centre-clerk-lab-attendant-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "punjab-revenue-department-patwari-recruitment-examination-psssb-punjab-revenue-p": {
+   "year": 2027,
+   "basis": "Punjab Patwari Recruitment | cycle 2027 / next cycle | Expected / Watchlist | 2027 TBA"
+  },
+  "punjab-state-teacher-eligibility-test-pstet": {
+   "year": 2027,
+   "basis": "PSTET next cycle | cycle Next / 2027 | Expected / watch | "
+  },
+  "punjab-subordinate-services-selection-board-group-b-c-recruitments-psssb-clerk-j": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "rabindra-bharati-university-technical-assistant-staff-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "railway-recruitment-boards-non-technical-popular-categories-undergraduate-posts-": {
+   "year": 2026,
+   "basis": "RRB NTPC Undergraduate | cycle 2026 | Open Now | "
+  },
+  "railway-recruitment-cell-east-central-railway-general-departmental-competitive-e": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "rajasthan-cet-graduate-level": {
+   "year": 2027,
+   "basis": "RSSB CET Graduate Level next cycle | cycle Next / 2027 | Expected / watch | "
+  },
+  "rajasthan-cet-senior-secondary-level": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "rajasthan-eligibility-examination-for-teachers-reet": {
+   "year": 2027,
+   "basis": "REET next cycle | cycle Next / 2027 | Expected / watch | "
+  },
+  "rajasthan-grade-iv-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "rajasthan-patwari-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "rajasthan-police-constable-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "rajasthan-pre-d-el-ed-examination-bstc": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "rajasthan-pre-teacher-education-test": {
+   "year": 2027,
+   "basis": "Rajasthan PTET 2027 | cycle Next / 2027 | Expected / watch | "
+  },
+  "rajasthan-engineering-admission-process-reap": {
+   "year": 2027,
+   "basis": "REAP 2027 | cycle 2027 | Expected / watch | "
+  },
+  "rajasthan-joint-entrance-test-rajasthan-jet-agriculture": {
+   "year": 2027,
+   "basis": "Rajasthan JET 2027 | cycle 2026-27/2027 | Future Expected / Rolling | TBD"
+  },
+  "rajasthan-police-sub-inspector-platoon-commander-combined-competitive-exam": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "rajasthan-public-service-commission-state-and-subordinate-services-combined-comp": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "rajasthan-safai-karmachari-recruitment": {
+   "year": 2026,
+   "basis": "Rajasthan Safai Karmachari Recruitment | cycle 2026 | Open Now | "
+  },
+  "rajasthan-staff-selection-board-direct-recruitment-examinations-rsmssb-animal-at": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "rajkot-nagarik-sahakari-bank-rnsb-junior-executive-officer-direct-recruitment": {
+   "year": 2026,
+   "basis": "RNSB Junior Executive | cycle 2026 | Open Now | "
+  },
+  "rajkot-rajpath-deo-brts-admin-assistant-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "ramagundam-fertilizers-chemicals-limited-rfcl-non-executive-engineer-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "rashtriya-chemicals-fertilizers-limited-rcfl-assistant-officer-management-traine": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "rashtriya-indian-military-college-entrance-examination-rimc-entrance-exam": {
+   "year": 2026,
+   "basis": "Rashtriya Indian Military College entrance - Dec 2026 | cycle 2026 | Future / Announced | 2026-12-06"
+  },
+  "rashtriya-military-schools-common-entrance-test-rms-cet-for-class-vi-and-class-i": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "rbi-assistant-panel-year-2025": {
+   "year": 2027,
+   "basis": "RBI Assistant 2027 | cycle 2027 | Future Expected | TBD"
+  },
+  "rbi-officers-in-grade-b-2026": {
+   "year": 2027,
+   "basis": "RBI Grade B 2027 | cycle 2027 | Future Expected | TBD"
+  },
+  "regional-ayurveda-research-institute-rari-senior-research-fellow-consultant-exam": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "regional-centre-for-biotechnology-rcb-faridabad-project-associate-direct-selecti": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "regional-institute-of-education-common-entrance-examination-rie-cee": {
+   "year": 2027,
+   "basis": "RIE CEE 2027 | cycle 2027 | Future / Expected | 2027-07"
+  },
+  "repco-bank-assistant-manager-junior-assistant-clerk-direct-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "reserve-bank-of-india-bank-medical-consultant-rbi-bmc-regional-offices-direct-re": {
+   "year": 2026,
+   "basis": "RBI Medical Consultant | cycle 2026 | Open Now | "
+  },
+  "rgnau-amethi-executive-engineer-non-teaching-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "rites-limited-manager-assistant-manager-dgm-direct-recruitment-examination": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "rpf-constable": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "rpf-sub-inspector": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "rpsc-online-application": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "rpsc-school-lecturer-1st-grade-senior-teacher-2nd-grade-assistant-professor-coll": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "rrb-je-dms-cma": {
+   "year": 2027,
+   "basis": "RRB JE future cycle | cycle 2027 |  | TBA"
+  },
+  "rrb-paramedical-categories": {
+   "year": 2026,
+   "basis": "RRB Paramedical Categories | cycle 2026 | Open || Open Now | "
+  },
+  "rrb-section-controller": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "rrb-technician": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "rrb-level-1-posts-cen-08-2024": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "rrb-ministerial-and-isolated-categories": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "rrb-ntpc-graduate-cen-05-2024": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "rrc-south-central-railway-paramedical-commercial-staff-direct-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "ruhs-medical-officer-medical-direct-recruitment-examination": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "sahitya-akademi-junior-clerk-assistant-multi-tasking-staff-mts-direct-recruitmen": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "sail-iisco-steel-plant-specialist-advisors-senior-consultants-engagement": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "sainik-school-faculty-staff-recruitments-bhubaneswar-korukonda-nagrota": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "samagra-shiksha-mungeli-vocational-trainers-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "sanjay-gandhi-postgraduate-institute-of-medical-sciences-sgpgims-staff-direct-re": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "sarvodaya-sahakari-bank-sns-bank-junior-assistant-officer-direct-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "sastra-university-b-tech-admissions-process": {
+   "year": 2027,
+   "basis": "SASTRA Admissions 2027 | cycle 2027 | Future Expected | TBD"
+  },
+  "sathyabama-all-india-online-entrance-examination-saeee": {
+   "year": 2027,
+   "basis": "SAEEE 2027 | cycle 2027 | Expected / watch | "
+  },
+  "sbi-junior-associates-2025": {
+   "year": 2027,
+   "basis": "SBI Clerk 2027 | cycle 2027 | Future Expected | TBD"
+  },
+  "sbi-probationary-officers-2025": {
+   "year": 2027,
+   "basis": "SBI PO 2027 | cycle 2027 | Future Expected | TBD"
+  },
+  "scheme-for-residential-education-for-students-in-high-classes-in-targeted-areas-": {
+   "year": 2027,
+   "basis": "SHRESHTA NETS | cycle 2027 | Announced - Registration TBA | 10 Jan 2027"
+  },
+  "securities-and-exchange-board-of-india-officer-grade-a-assistant-manager-recruit": {
+   "year": 2027,
+   "basis": "SEBI Grade A 2027 | cycle 2027 | Future Expected | TBD"
+  },
+  "security-paper-mill-spm-hoshangabad-medical-officer-technical-officer-exam": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "shillong-polytechnic-centralized-admissions": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "shiv-nadar-university-scholastic-aptitude-test-snusat": {
+   "year": 2027,
+   "basis": "SNUSAT 2027 | cycle 2027 | Expected / watch | "
+  },
+  "sikkim-police-sub-inspector-police-constable-open-competitive-examination": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "sikkim-psc-technical-clerical-paramedical-recruitments-spsc-ldc-junior-engineer-": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "sikkim-public-service-commission-state-civil-service-police-service-examination-": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "sikkim-teacher-eligibility-test-stet-for-in-service-teachers-fresh-candidates": {
+   "year": 2027,
+   "basis": "Sikkim TET next cycle | cycle Next / 2027 | Expected / watch | "
+  },
+  "sikkim-university-centralized-admissions": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "sikkim-university-research-staff-project-fellow-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "siksha-o-anusandhan-admission-test-saat": {
+   "year": 2027,
+   "basis": "SAAT 2027 | cycle 2027 | Future / expected | 2027"
+  },
+  "small-industries-development-bank-of-india-assistant-manager-grade-a-manager-gra": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "small-industries-development-bank-of-india-sidbi-specialist-cadre-officers-recru": {
+   "year": 2026,
+   "basis": "SIDBI - Assistant Communication Officer & Audit Consultant | cycle 2026 | Open | "
+  },
+  "software-technology-parks-of-india-stpi-assistant-administrative-officer-apprent": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "solapur-aaple-sarkar-seva-kendra-assk-village-operators": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "southern-railway-act-apprentice-direct-selection-examination-rrc-chennai": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "southern-railway-sports-quota-scouts-guides-quota-direct-recruitment": {
+   "year": 2026,
+   "basis": "Southern Railway Sports Quota | cycle 2026 | Open Now | "
+  },
+  "sports-authority-of-india-sai-medical-officer-high-performance-coach-direct-exam": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "sree-chitra-tirunal-institute-for-medical-sciences-and-technology-sctimst-projec": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "srm-joint-engineering-entrance-examination-srmjeee": {
+   "year": 2027,
+   "basis": "SRMJEEE 2027 | cycle 2027 | Opening soon | Phase 1 Apr 2027; later Jun/Jul"
+  },
+  "ssc-combined-graduate-level-examination-2026-live-capture": {
+   "year": 2026,
+   "basis": "SSC CGL 2026 | cycle CGL 2026 | Opening soon | Schedule per 2026-27 calendar / current exam calendars"
+  },
+  "ssc-combined-higher-secondary-10-2-level-examination-2025-live-capture": {
+   "year": 2026,
+   "basis": "SSC CHSL | cycle 2026 | Open || Open Now | "
+  },
+  "ssc-constable-gd-examination-2025-live-capture": {
+   "year": 2027,
+   "basis": "SSC Constable (GD) 2027 | cycle 2027 | Opening soon | Jan-Mar 2027"
+  },
+  "ssc-junior-engineer-examination": {
+   "year": 2026,
+   "basis": "SSC JE 2027 | cycle 2026-27 | Future Expected | 2027"
+  },
+  "ssc-multi-tasking-staff-and-havaldar-examination-2025-live-capture": {
+   "year": 2026,
+   "basis": "MTS | cycle 2026 | Open Now | "
+  },
+  "ssc-selection-post-phase-xiii": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "ssc-stenographer-grade-c-d-examination": {
+   "year": 2026,
+   "basis": "SSC Stenographer Grade C & D 2026 | cycle 2026 | Expected / watch | "
+  },
+  "ssc-sub-inspector-in-delhi-police-and-capfs-examination": {
+   "year": 2026,
+   "basis": "SSC Sub-Inspector in Delhi Police and CAPFs | cycle 2026 | Open | Oct-Nov 2026 (tentative calendar)"
+  },
+  "staff-selection-commission-junior-hindi-translator-examination-ssc-jht-sht": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "staff-selection-commission-selection-post-recruitment-for-ut-of-ladakh-ssc-ladak": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "state-agricultural-universities-faculty-scientist-recruitments-multi-saus": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "state-bank-of-india-specialist-cadre-officers-sbi-sco-direct-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "state-engineering-colleges-polytechnics-guest-faculty-uit-jhabua-marwahi": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "state-level-police-recruitment-board-assam-police-sub-inspector-constable-recrui": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "state-trading-corporation-stc-stcl-executive-senior-executive-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "svnit-surat-registrar-senior-administrative-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "syama-prasad-mookerjee-port-kolkata-chief-hydraulic-engineer-rent-officer-exam": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "symbiosis-entrance-exam-for-design-seed": {
+   "year": 2027,
+   "basis": "SEED 2027 | cycle 2027 |  | Expected Jan 2027"
+  },
+  "symbiosis-entrance-test-for-general-undergraduate-programs-set-general": {
+   "year": 2027,
+   "basis": "SET 2027 | cycle 2027 | Future expected | May 2027 expected"
+  },
+  "symbiosis-institute-of-technology-engineering-entrance-exam-siteee": {
+   "year": 2027,
+   "basis": "SITEEE 2027 | cycle 2027 | Expected / watch | "
+  },
+  "symbiosis-law-admission-test-slat": {
+   "year": 2027,
+   "basis": "SLAT 2027 | cycle 2027 | Open || Open now | 2026-12-19 and 2026-12-26"
+  },
+  "symbiosis-national-aptitude-test-snap": {
+   "year": 2026,
+   "basis": "SNAP 2026 | cycle 2026 | Open || Open Now | 2026-12-13, 19, 26 || 2026-12-13 / 19 / 26"
+  },
+  "tamil-nadu-common-entrance-test-for-mba-mca-tancet-mba": {
+   "year": 2027,
+   "basis": "TANCET 2027 | cycle Next / 2027 | Expected / watch | "
+  },
+  "tamil-nadu-district-welfare-social-defense-recruitments-multi-districts": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "tamil-nadu-engineering-admissions-tnea": {
+   "year": 2027,
+   "basis": "TNEA 2027 | cycle 2027 | Expected / watch | "
+  },
+  "tamil-nadu-family-welfare-department-contractual-medical-posts": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "tamil-nadu-medical-services-recruitment-board-direct-recruitments-tn-mrb-assista": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "tamil-nadu-public-service-commission-post-specific-technical-recruitments-resear": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "tamil-nadu-teacher-eligibility-test-tntet-paper-i-paper-ii": {
+   "year": 2027,
+   "basis": "TNTET next cycle | cycle Next / 2027 | Expected / watch | "
+  },
+  "tamilnad-mercantile-bank-tmb-relationship-manager-specialist-officer-recruitment": {
+   "year": 2026,
+   "basis": "TMB Relationship Manager | cycle 2026 | Open Now | "
+  },
+  "tata-institute-of-fundamental-research-tifr-mumbai-trade-technician-apprentice-e": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "teachers-recruitment-board-tamil-nadu-direct-recruitment-tn-trb-pg-assistant-gra": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "technology-development-board-tdb-assistant-law-officer-technology-associate-exam": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "telangana-dsc-teacher-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "telangana-teacher-eligibility-test-tg-tet": {
+   "year": 2027,
+   "basis": "TG TET 2027 | cycle 2027 | Future / expected | Jan 2027 and Jun/Jul 2027 (tentative)"
+  },
+  "telangana-police-sub-inspector-police-constable-direct-recruitment-tglprb-tslprb": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "telangana-public-service-commission-post-specific-recruitments-manager-engineeri": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "telangana-state-education-common-entrance-test-tg-edcet": {
+   "year": 2027,
+   "basis": "TG EdCET 2027 | cycle Next / 2027 | Expected / watch | "
+  },
+  "telangana-state-engineering-common-entrance-test-tg-ecet": {
+   "year": 2027,
+   "basis": "TG ECET 2027 | cycle Next / 2027 | Expected / watch | "
+  },
+  "telangana-state-integrated-common-entrance-test-tg-icet": {
+   "year": 2027,
+   "basis": "TG ICET 2027 | cycle 2027 | Future expected | May 2027 expected"
+  },
+  "telangana-state-law-common-entrance-test-pg-law-cet-tg-lawcet-pglcet": {
+   "year": 2027,
+   "basis": "TG LAWCET 2027 | cycle 2027 | Expected / watch | "
+  },
+  "telangana-state-post-graduate-engineering-common-entrance-test-tg-pgecet": {
+   "year": 2027,
+   "basis": "TG PGECET 2027 | cycle Next / 2027 | Expected / watch | "
+  },
+  "tg-eapcet": {
+   "year": 2027,
+   "basis": "TG EAPCET 2027 | cycle 2027 | Future / expected || Future expected | 2027 || 2027 dates awaited"
+  },
+  "tg-ts-polycet": {
+   "year": 2027,
+   "basis": "TG POLYCET | cycle 2027 / next cycle | Expected / Watchlist | May 2027"
+  },
+  "tgpsc-group-i-services-examination": {
+   "year": 2027,
+   "basis": "TGPSC Group I Services | cycle 2027 / next cycle | Expected / Watchlist | 2027 TBA"
+  },
+  "tgpsc-group-ii-services-examination": {
+   "year": 2027,
+   "basis": "TGPSC Group II Services | cycle 2027 / next cycle | Expected / Watchlist | 2027 TBA"
+  },
+  "tgpsc-group-iii-services-examination": {
+   "year": 2027,
+   "basis": "TGPSC Group III Services | cycle 2027 / next cycle | Expected / Watchlist | 2027 TBA"
+  },
+  "tnpsc-combined-civil-services-examination-i-group-i": {
+   "year": 2027,
+   "basis": "TNPSC Group I next cycle | cycle Next / 2027 | Expected / watch | "
+  },
+  "tnpsc-combined-civil-services-examination-ii-group-ii-iia": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "tnpsc-combined-civil-services-examination-iv-group-iv-services": {
+   "year": 2026,
+   "basis": "TNPSC Group IV 2026 | cycle 2026 | Open | TBD"
+  },
+  "tnpsc-combined-technical-services-examination-2025": {
+   "year": 2027,
+   "basis": "TNPSC Combined Technical Services | cycle 2027 / next cycle | Expected / Watchlist | 2027 TBA"
+  },
+  "tnusrb-common-recruitment-for-grade-ii-police-constables-jail-warders-firemen": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "tnusrb-sub-inspector-of-police-taluk-ar-tsp-station-officer-joint-recruitment": {
+   "year": 2027,
+   "basis": "TNUSRB SI next recruitment | cycle 2026-27/2027 | Future Expected / Rolling | TBD"
+  },
+  "tripura-board-of-joint-entrance-examination-tbjee-tjee": {
+   "year": 2027,
+   "basis": "TJEE 2027 | cycle Next / 2027 | Expected / watch | "
+  },
+  "tripura-natural-gas-company-limited-tngcl-dgm-assistant-manager-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "tripura-police-sub-inspector-police-constable-direct-recruitment": {
+   "year": 2027,
+   "basis": "Tripura Police recruitment next cycle | cycle Next / 2027 | Expected / watch | "
+  },
+  "tripura-psc-departmental-direct-recruitments-personal-assistant-child-developmen": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "tripura-public-service-commission-tripura-civil-service-police-service-combined-": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "tripura-selection-test-for-graduate-teachers-post-graduate-teachers-stgt-stpgt": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "tripura-teacher-eligibility-test-t-tet-paper-i-paper-ii": {
+   "year": 2027,
+   "basis": "T-TET next cycle | cycle Next / 2027 | Expected / watch | "
+  },
+  "tspsc-group-iv-services": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "udd-uttarakhand-municipal-engineers-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "udupi-cochin-shipyard-limited-ucsl-diploma-trade-apprentice-direct-selection": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "ugc-net-june-2026": {
+   "year": 2026,
+   "basis": "UGC NET December 2026 || UGC-NET December 2026 | cycle Dec 2026 | Opening soon || Future announced / appli | 2026-12-14 to 2026-12-19 || 2026-12-14 to 19 (buffer 20-21) "
+  },
+  "ugc-recognised-state-eligibility-tests-kerala-set-kset-karnataka-jkset-laset-wb-": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "ukpsc-review-officer-assistant-review-officer-examination-ukpsc-ro-aro-secretari": {
+   "year": 2027,
+   "basis": "UKPSC RO/ARO Examination | cycle 2027 / next cycle | Expected / Watchlist | 2027 TBA"
+  },
+  "undergraduate-common-entrance-examination-for-design-uceed": {
+   "year": 2027,
+   "basis": "UCEED 2027 | cycle 2027 | Opening soon || Opening Soon | 2027-01-17 || 17 Jan 2027"
+  },
+  "united-india-insurance-company-administrative-officer-scale-i-recruitment-uiic-a": {
+   "year": 2026,
+   "basis": "Specialist | cycle 2026 | Open Now | "
+  },
+  "university-of-kashmir-senior-research-fellow-srf-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "university-of-kerala-controller-registrar-senior-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "university-of-ladakh-centralized-admissions-uol-admissions": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "university-of-petroleum-energy-studies-engineering-aptitude-test-upeseat": {
+   "year": 2027,
+   "basis": "UPESEAT 2027 | cycle 2027 | Open | 2027 multi-phase"
+  },
+  "up-b-ed-joint-entrance-examination": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "up-board-high-school-class-10-intermediate-class-12-examination-registration": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "up-police-sub-inspector-civil-police-platoon-commander-pac-fsso-recruitment": {
+   "year": 2027,
+   "basis": "UP Police SI next recruitment | cycle Next / 2027 | Expected / watch | "
+  },
+  "upessc-special-tet-primary-upper-primary-special-education-teachers": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "uppsc-combined-state-upper-subordinate-services-examination-pcs": {
+   "year": 2027,
+   "basis": "UPPSC PCS 2027 | cycle 2026-27/2027 | Future Expected / Rolling | TBD"
+  },
+  "uppsc-one-time-registration": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "uppsc-review-officer-assistant-review-officer": {
+   "year": 2027,
+   "basis": "UPPSC RO/ARO next cycle | cycle Next / 2027 | Expected / watch | "
+  },
+  "upsc-engineering-services-examination": {
+   "year": 2027,
+   "basis": "Engineering Services (Preliminary) Examination 2027 | cycle ESE 2027 | Open now | 31 Jan 2027"
+  },
+  "upsc-capf-assistant-commandants-examination-2026": {
+   "year": 2027,
+   "basis": "Central Armed Police Forces (ACs) Examination 2027 | cycle CAPF AC 2027 | Future confirmed | 4 Jul 2027"
+  },
+  "upsc-central-bureau-of-investigation-dsp-limited-departmental-competitive-examin": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "upsc-central-industrial-security-force-assistant-commandants-executive-ldce-cisf": {
+   "year": 2027,
+   "basis": "CISF AC(EXE) LDCE 2027 | cycle 2027 | Future confirmed | 14 Mar 2027"
+  },
+  "upsc-civil-services-examination-2026": {
+   "year": 2027,
+   "basis": "Civil Services (Preliminary) Examination 2027 | cycle CSE 2027 | Future confirmed | 23 May 2027"
+  },
+  "upsc-combined-defence-services-examination-i-upsc-cds-i": {
+   "year": 2027,
+   "basis": "Combined Defence Services Examination (I) 2027 | cycle CDS I 2027 | Future confirmed | 11 Apr 2027"
+  },
+  "upsc-combined-defence-services-examination-ii-2026": {
+   "year": 2027,
+   "basis": "Combined Defence Services Examination (I) 2027 | cycle CDS I 2027 | Future confirmed | 11 Apr 2027"
+  },
+  "upsc-combined-geo-scientist-examination-cgse": {
+   "year": 2027,
+   "basis": "Combined Geo-Scientist (Preliminary) Examination 2027 | cycle 2027 | Registration closed; exam upcoming | 10 Jan 2027"
+  },
+  "upsc-combined-medical-services-examination-upsc-cms": {
+   "year": 2027,
+   "basis": "Combined Medical Services Examination 2027 | cycle CMS 2027 | Future confirmed | 18 Jul 2027"
+  },
+  "upsc-combined-section-officers-stenographers-grade-b-grade-1-ldce": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "upsc-direct-recruitment-by-online-recruitment-application-upsc-ora-advertisement": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "upsc-indian-economic-service-indian-statistical-service-examination-ies-iss": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "upsc-indian-forest-service-examination-upsc-ifos-main-examination": {
+   "year": 2027,
+   "basis": "UPSC Indian Forest Service 2027 | cycle 2027 | Future announced | Prelims 2027-05-23; Mains from 2027-11-21"
+  },
+  "upsc-nda-na-examination-ii-2026": {
+   "year": 2027,
+   "basis": "UPSC NDA & NA Examination (I) 2027 | cycle 2027 | Future Expected | Apr 2027"
+  },
+  "upsssc-preliminary-eligibility-test-pet": {
+   "year": 2027,
+   "basis": "UPSSSC PET next cycle | cycle Next / 2027 | Expected / watch | "
+  },
+  "uttar-pradesh-police-constable-recruitment": {
+   "year": 2027,
+   "basis": "UP Police Constable next recruitment | cycle Next / 2027 | Expected / watch | "
+  },
+  "uttar-pradesh-combined-agriculture-and-technology-entrance-test-upcatet": {
+   "year": 2027,
+   "basis": "UPCATET 2027 | cycle 2027 | Future / Expected | 2027-06"
+  },
+  "uttar-pradesh-common-nursing-entrance-test-up-cnet-cpet": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "uttar-pradesh-education-service-selection-commission-assistant-professor-examina": {
+   "year": 2026,
+   "basis": "UPESSC Assistant Professor | cycle 2026 | Open | "
+  },
+  "uttar-pradesh-education-service-selection-commission-post-graduate-teacher-recru": {
+   "year": 2026,
+   "basis": "UP PGT Recruitment | cycle 2026 | Open Now | "
+  },
+  "uttar-pradesh-education-service-selection-commission-primary-assistant-teacher-r": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "uttar-pradesh-post-graduate-teacher-up-pgt-recruitment-examination": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "uttar-pradesh-public-service-commission-direct-recruitments-uppsc-deputy-secreta": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "uttar-pradesh-subordinate-services-selection-commission-group-c-main-examination": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "uttar-pradesh-teacher-eligibility-test-uptet-primary-upper-primary": {
+   "year": 2027,
+   "basis": "UPTET 2027 | cycle 2027 | Future / expected | 2027"
+  },
+  "uttar-pradesh-technical-admission-counselling-uptac": {
+   "year": 2027,
+   "basis": "UPTAC 2027 | cycle 2027 | Expected / watch | "
+  },
+  "uttarakhand-assistant-teacher-lt-grade-lecturer-direct-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "uttarakhand-joint-engineering-examination-polytechnic-uttarakhand-jeep": {
+   "year": 2027,
+   "basis": "Uttarakhand JEEP 2027 | cycle Next / 2027 | Expected / watch | "
+  },
+  "uttarakhand-police-sub-inspector-police-constable-direct-recruitment-examination": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "uttarakhand-public-service-commission-combined-state-civil-upper-subordinate-ser": {
+   "year": 2027,
+   "basis": "UKPSC PCS next cycle | cycle Next / 2027 | Expected / watch | "
+  },
+  "uttarakhand-subordinate-service-selection-commission-group-c-combined-recruitmen": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "uttarakhand-teacher-eligibility-test-utet-paper-i-paper-ii": {
+   "year": 2027,
+   "basis": "UTET next cycle | cycle Next / 2027 | Expected / watch | "
+  },
+  "vadodara-municipal-corporation-vmc-draftsman-work-assistant": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "vamnicom-pune-faculty-research-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "vellore-institute-of-technology-engineering-entrance-examination-viteee": {
+   "year": 2027,
+   "basis": "VITEEE 2027 | cycle 2027 | Opening soon || Expected / watch || Open | Apr-May 2027 (expected) || 2027 (TBD) || Apr 2027"
+  },
+  "vidyashilp-university-engineering-admission-process": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "vssut-burla-research-project-staff-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "wbjee-2026": {
+   "year": 2027,
+   "basis": "WBJEE 2027 | cycle 2027 | Future expected || Expected / watch || F | Last week Apr 2027 expected || 2027-05 (expected) || Expecte"
+  },
+  "wbpsc-wbcs-online-application": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "wcd-mahasamund-storekeeper-accountant-cook-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "west-bengal-primary-teacher-eligibility-test": {
+   "year": 2027,
+   "basis": "WB TET | cycle 2027 / next cycle | Expected / Watchlist | 2027 TBA"
+  },
+  "west-bengal-central-school-service-commission-group-c-group-d-recruitments-wbssc": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "west-bengal-joint-entrance-examination-for-computer-applications-wbjeeb-jeca": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "west-bengal-joint-entrance-examination-for-lateral-entry-wbjeeb-jelet": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "west-bengal-police-sub-inspector-police-constable-direct-recruitment-examination": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "west-bengal-public-service-commission-clerkship-examination-wbpsc-clerkship": {
+   "year": 2027,
+   "basis": "WBPSC Clerkship Examination | cycle 2027 / next cycle | Expected / Watchlist | 2027 TBA"
+  },
+  "west-bengal-public-service-commission-miscellaneous-services-recruitment-examina": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "west-bengal-school-service-commission-slst-assistant-teacher-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "west-bengal-upper-primary-teacher-eligibility-test-wb-upper-primary-tet-slst": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "wildlife-institute-of-india-wii-dehradun-project-assistant-project-associate-sel": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  },
+  "xavier-aptitude-test": {
+   "year": 2027,
+   "basis": "XAT 2027 | cycle 2027 | Open | 2027-01-03"
+  },
+  "zp-shivamogga-bill-collector-dc-gadag-pourakarmika-recruitment": {
+   "year": 2026,
+   "basis": "no tracker row; the cycle now running"
+  }
+ }
+}

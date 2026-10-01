@@ -374,7 +374,7 @@ def test_the_email_names_the_examination_and_the_order_that_paid_for_it(api):
     client.post(f"/v1/kits/{KIT}/email", json={"address": "candidate@example.com"})
 
     sent = api.email_sender.sent[0]
-    assert sent["subject"] == "Your CTET September 2026 file is ready"
+    assert sent["subject"] == "Your CTET 2026 file is ready"
     assert "Candidate photograph" in sent["body"]
     assert "order_named1" in sent["body"] and "pay_named1" in sent["html"]
     assert "413 × 531 px" in sent["body"]

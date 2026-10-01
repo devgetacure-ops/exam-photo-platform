@@ -7,13 +7,12 @@
     "exam_id": "common-management-admission-test-cmat",
     "exam_name": "Common Management Admission Test (CMAT)",
     "conducting_body": "National Testing Agency (NTA) on behalf of AICTE",
-    "examination_year": 2025,
-    "application_cycle": "CMAT 2024 / CMAT 2025",
+    "examination_year": 2027,
+    "application_cycle": "2027",
     "aliases": [
       "CMAT",
       "NTA CMAT",
-      "CMAT 2024",
-      "CMAT 2025",
+      "CMAT 2027",
       "AICTE CMAT"
     ],
     "application_stage": "application",

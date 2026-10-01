@@ -88,7 +88,7 @@ def test_live_jobs_are_listed_with_their_names_and_files(api):
     _job(api, "job_a")
     [job] = client.get("/v1/operator/jobs", headers=AUTH).json()["jobs"]
     assert job["job_id"] == "job_a"
-    assert job["exam_name"] == "CTET September 2026"
+    assert job["exam_name"] == "CTET 2026"
     assert job["released"] is False
     names = {item["name"] for item in job["files"]}
     assert {"input.jpg", "job_a.jpg", "report.json"} <= names
@@ -147,7 +147,7 @@ def test_an_order_names_what_it_was_for(api):
     [order] = client.get("/v1/orders", headers=AUTH).json()["orders"]
     assert order["order_id"] == "order_OP1"
     [item] = order["items"]
-    assert item["exam_name"] == "CTET September 2026"
+    assert item["exam_name"] == "CTET 2026"
     assert item["job_id"] == "job_a"
 
 

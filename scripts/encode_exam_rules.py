@@ -98,6 +98,67 @@ def _slug(text: str) -> str:
     return re.sub(r"-{2,}", "-", slug)[:80]
 
 
+# --- The cycle each examination is in now (DEC-119) --------------------------
+#
+# A record carries the year of the notice its rules were read from. Shown to a
+# candidate in October 2026, "Common Admission Test 2025" reads as a mistake.
+# ``cycle_years.json`` (scripts/derive_cycle_years.py, from the owner's tracker)
+# says whether each examination's next sitting is 2026 or 2027, and that year
+# replaces the one a candidate sees: in the name, the year field, the cycle and
+# the short forms. The id is never touched, so no address moves, and
+# ``source_evidence`` still names the notice the rules came from.
+_CYCLE_YEARS_PATH = (
+    REPO_ROOT / "packages" / "exam-rules" / "research" / "cycle_years.json"
+)
+_CYCLE_YEARS: Optional[dict[str, Any]] = None
+
+# A span of years ("2025-26") or a year standing alone. A year that is part of
+# a notice number ("CEN 05/2024") is the notice's name and is left as it is.
+_YEAR_SPAN = re.compile(r"(?<![/\d])20\d\d-\d\d(?!\d)")
+_YEAR_ALONE = re.compile(r"(?<![/\d-])20\d\d(?![\d-])")
+
+
+# "UGC-NET June 2026", "CTET September 2026": a month names one sitting, and
+# once the year moves on it names the wrong one. The month goes; the year stays.
+_MONTH_BEFORE_YEAR = re.compile(
+    r"\b(January|February|March|April|May|June|July|August|September|October|"
+    r"November|December)\s+(?=20\d\d)"
+)
+
+
+def _recycle(text: str, year: int) -> str:
+    text = _MONTH_BEFORE_YEAR.sub("", text)
+    text = _YEAR_SPAN.sub(f"{year}-{(year + 1) % 100:02d}", text)
+    return _YEAR_ALONE.sub(str(year), text)
+
+
+def _apply_cycle(exam: dict[str, Any]) -> None:
+    """Move the candidate-facing year of ``exam`` to its current cycle."""
+    global _CYCLE_YEARS
+    if _CYCLE_YEARS is None:
+        try:
+            _CYCLE_YEARS = json.loads(_CYCLE_YEARS_PATH.read_text(encoding="utf-8"))[
+                "exams"
+            ]
+        except (OSError, ValueError, KeyError):
+            _CYCLE_YEARS = {}
+    entry = _CYCLE_YEARS.get(str(exam.get("exam_id")))
+    if not entry:
+        return
+    year = int(entry["year"])
+    exam["exam_name"] = _recycle(str(exam["exam_name"]), year)
+    exam["examination_year"] = year
+    cycle = str(exam.get("application_cycle") or "")
+    if "CEN" not in cycle:
+        exam["application_cycle"] = (
+            f"{year}-{(year + 1) % 100:02d}" if _YEAR_SPAN.search(cycle) else str(year)
+        )
+    if exam.get("aliases"):
+        exam["aliases"] = list(
+            dict.fromkeys(_recycle(str(alias), year) for alias in exam["aliases"])
+        )
+
+
 class Field:
     """One researched field: its value, status and citation."""
 
@@ -1037,9 +1098,7 @@ def _deliverable_file_spec(
     values = list(
         dict.fromkeys(
             name
-            for name in (
-                str(f).strip().lower() for f in (formats.get("values") or [])
-            )
+            for name in (str(f).strip().lower() for f in (formats.get("values") or []))
             if name in _ENGINE_FORMATS
         )
     )
@@ -1337,6 +1396,7 @@ def build_deliverables_only_rule(
         "verification": {"verification_status": "provisional"},
         "fictional_example": False,
     }
+    _apply_cycle(rule["exam"])
     if application_rejections:
         rule["application_rejection_conditions"] = application_rejections
     if not rule["source_evidence"]:
@@ -1401,6 +1461,7 @@ def build_rule(
     aliases = record.data.get("aliases")
     if aliases:
         exam["aliases"] = [str(a) for a in aliases]
+    _apply_cycle(exam)
     if stage:
         exam["application_stage"] = stage
     if record.data.get("jurisdiction"):
@@ -1664,9 +1725,7 @@ def main() -> int:
         unmatched_deliverables,
         unserved_deliverables,
     )
-    _write_unavailable(
-        args.out / UNAVAILABLE_FILENAME, skipped, unserved_deliverables
-    )
+    _write_unavailable(args.out / UNAVAILABLE_FILENAME, skipped, unserved_deliverables)
 
     print(f"written  : {len(written)}")
     print(f"skipped  : {len(skipped)}")

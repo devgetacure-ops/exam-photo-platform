@@ -2323,6 +2323,29 @@ def _save_review(
     return {"ok": True, "review": saved, "reward_code": reward}
 
 
+def _reward_on_offer(order: Any) -> bool:
+    """Whether rating this order would earn a code, so the page may say so.
+
+    The banner used to promise free files to anyone with a paid order while
+    the offer ran, including someone who already held their one code; they
+    rated and, correctly, got nothing (owner, 2 October). The promise is now
+    made only where `_save_review` would keep it.
+    """
+    if not service.ledger.offer_on("review_reward") or order.amount_paise <= 0:
+        return False
+    # The order that earned the code is still within the offer: its page shows
+    # the code it was given.
+    own = service.ledger.review(order.order_id)
+    if own and own.get("reward_code"):
+        return True
+    emails = operator_views.order_emails(order)
+    phones = operator_views.order_phones(order)
+    known = [*emails, *(f"tel:{phone}" for phone in phones)]
+    return not service.ledger.reward_already_given(
+        order.order_id, known
+    ) and not _phone_already_rewarded(order.order_id, phones)
+
+
 def _phone_already_rewarded(order_id: str, phones: list[str]) -> bool:
     """Whether an earlier reward went to an order paid from one of these phones.
 
@@ -2353,7 +2376,7 @@ def get_kit_review(kit_id: str, order_id: str) -> dict[str, Any]:
     return {
         "review": existing,
         "reward_code": existing.get("reward_code") if existing else None,
-        "offer": service.ledger.offer_on("review_reward") and order.amount_paise > 0,
+        "offer": _reward_on_offer(order),
         "tags": REVIEW_TAGS,
     }
 
@@ -2395,7 +2418,7 @@ def get_feedback(order_id: str, token: str) -> dict[str, Any]:
     return {
         "review": existing,
         "reward_code": existing.get("reward_code") if existing else None,
-        "offer": service.ledger.offer_on("review_reward") and order.amount_paise > 0,
+        "offer": _reward_on_offer(order),
         "tags": REVIEW_TAGS,
     }
 

@@ -86,6 +86,8 @@ interface CheckoutOptions {
 interface CheckoutInstance {
     open: () => void;
     on: (event: string, callback: () => void) => void;
+    /** Razorpay's own way to dismiss its window. */
+    close?: () => void;
 }
 declare global {
     interface Window {
@@ -381,6 +383,10 @@ export function KitCheckout({
     const [busy, setBusy] = useState(false);
     const [pending, setPending] = useState(false);
     const [windowOpen, setWindowOpen] = useState(false);
+    const checkoutRef = useRef<CheckoutInstance | null>(null);
+    // Set once the server has released the files, so closing Razorpay's
+    // window ourselves is not then reported as "Checkout closed".
+    const releasedRef = useRef(false);
     const [simOrder, setSimOrder] = useState<Order | null>(null);
     const [failed, setFailed] = useState(false);
     const [ack, setAck] = useState(false);
@@ -514,20 +520,40 @@ export function KitCheckout({
         return () => clearTimeout(timer);
     }, [allReleased, onBusy, pendingKey]);
 
-    // Razorpay keeps its own "payment successful" screen up for a few seconds,
-    // and the server often confirms before it closes. The success moment and
-    // the move to the downloads wait for that window to go, or they play
-    // underneath it and the candidate sees neither (owner's testing, 1 Oct).
+    // Razorpay keeps its own "payment successful" countdown up for about five
+    // seconds after the server has already confirmed and released the files.
+    // The first attempt at waiting for it (DEC-115) asked whether its overlay
+    // had an `offsetParent`, which a fixed overlay never has, so it always read
+    // as gone and the success moment still played underneath (owner, 2 October).
+    //
+    // The server's confirmation is what releases the files, so there is nothing
+    // to wait for: close Razorpay's window ourselves, then show ours. The
+    // overlay is watched until it has actually left the screen, with a short
+    // ceiling in case Razorpay's markup changes.
     useEffect(() => {
         if (!windowOpen || !allReleased) return;
+        releasedRef.current = true;
+        try {
+            checkoutRef.current?.close?.();
+        } catch {
+            /* Razorpay will close on its own; the watch below still ends. */
+        }
         const started = Date.now();
-        const timer = setInterval(() => {
+        const onScreen = () => {
             const overlay = document.querySelector<HTMLElement>(".razorpay-container");
-            const showing = overlay !== null && overlay.offsetParent !== null && overlay.style.display !== "none";
-            // Twelve seconds is longer than Razorpay ever holds it; past that
-            // the files matter more than the choreography.
-            if (!showing || Date.now() - started > 12_000) setWindowOpen(false);
-        }, 250);
+            if (!overlay) return false;
+            const style = window.getComputedStyle(overlay);
+            const box = overlay.getBoundingClientRect();
+            return (
+                style.display !== "none" &&
+                style.visibility !== "hidden" &&
+                box.width > 0 &&
+                box.height > 0
+            );
+        };
+        const timer = setInterval(() => {
+            if (!onScreen() || Date.now() - started > 4_000) setWindowOpen(false);
+        }, 150);
         return () => clearInterval(timer);
     }, [windowOpen, allReleased]);
 
@@ -596,6 +622,7 @@ export function KitCheckout({
     };
     const checkoutClosed = () => {
         setWindowOpen(false);
+        if (releasedRef.current) return;
         setBusy(false);
         setPending(true);
         onBusy(false);
@@ -678,6 +705,8 @@ export function KitCheckout({
                 modal: { ondismiss: checkoutClosed },
             });
             checkout.on("payment.failed", paymentFailed);
+            checkoutRef.current = checkout;
+            releasedRef.current = false;
             setWindowOpen(true);
             checkout.open();
         } catch (err) {

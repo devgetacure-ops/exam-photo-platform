@@ -82,7 +82,12 @@ RUN useradd --system --uid 10002 --create-home --home-dir /home/web web \
     # named volume is mounted over it; creating it here, owned by the app's
     # user, is what lets Docker give the empty volume that ownership.
     && mkdir -p /data/requests \
-    && chown web:web /data/requests
+    && chown web:web /data/requests \
+    # Next writes resized images under .next/cache at request time. The build
+    # output is root's, so the app's user could not create that folder and
+    # every image was resized again on every request (logs, 2 October).
+    && mkdir -p /repo/apps/web/.next/cache/images \
+    && chown -R web:web /repo/apps/web/.next/cache
 USER web
 
 EXPOSE 3000

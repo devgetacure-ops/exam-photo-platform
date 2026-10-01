@@ -81,9 +81,9 @@ describe("the examination aliases", () => {
         // examination it does not belong to.
         expect(shared.sort()).toEqual(
             [
-                "Indian Army::agniveer: Indian Army Agniveer CEE 2025-26 - online upload / Indian Army Agniveer Recruitment",
-                "Indian Army::army agniveer: Indian Army Agniveer CEE 2025-26 - online upload / Indian Army Agniveer Recruitment",
-                "Indian Army::agnipath: Indian Army Agniveer CEE 2025-26 - online upload / Indian Army Agniveer Recruitment",
+                "Indian Army::agniveer: Indian Army Agniveer CEE 2026-27 - online upload / Indian Army Agniveer Recruitment",
+                "Indian Army::army agniveer: Indian Army Agniveer CEE 2026-27 - online upload / Indian Army Agniveer Recruitment",
+                "Indian Army::agnipath: Indian Army Agniveer CEE 2026-27 - online upload / Indian Army Agniveer Recruitment",
             ].sort(),
         );
     });

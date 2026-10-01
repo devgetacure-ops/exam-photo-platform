@@ -287,3 +287,23 @@ def test_a_reward_issued_before_phones_were_recorded_still_counts(api):
     api.ledger.issue_reward("order_P1", ["old@example.com"])
 
     assert _review("order_P2", "kit_two").json()["reward_code"] is None
+
+
+def test_the_offer_is_not_made_to_someone_who_already_holds_their_code(api):
+    """The page promises free files only where a review would earn them."""
+    client.post("/v1/operator/offers/review_reward", headers=AUTH, json={"on": True})
+    _paid(api, "order_P1", email="same@example.com", phone="9812345678")
+    _paid(api, "order_P2", kit="kit_two", email="other@example.com", phone="9812345678")
+    _paid(api, "order_P3", kit="kit_three", email="new@example.com", phone="9900000001")
+
+    state = lambda order, kit: client.get(  # noqa: E731
+        f"/v1/kits/{kit}/review?order_id={order}"
+    ).json()
+    assert state("order_P1", KIT)["offer"] is True
+    assert _review().json()["reward_code"]
+
+    # The same person, a later order: no promise, and no code if they rate.
+    assert state("order_P2", "kit_two")["offer"] is False
+    assert _review("order_P2", "kit_two").json()["reward_code"] is None
+    # Someone else is still offered theirs.
+    assert state("order_P3", "kit_three")["offer"] is True
