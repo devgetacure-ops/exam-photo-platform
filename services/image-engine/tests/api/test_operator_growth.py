@@ -504,6 +504,34 @@ def test_email_feedback_is_signed_per_order_and_shown_only_when_approved(api):
     assert "f@example.com" not in str(shown)
 
 
+def test_the_email_link_shows_the_review_already_given_and_never_a_second_code(api):
+    """One code per order, whichever door the rating came through (1 October)."""
+    _paid(api, "order_ONE", "one@example.com")
+    api.ledger.set_offer("review_reward", True)
+    token = (
+        marketing.feedback_urls(api, "order_ONE")["yes"].split("t=")[1].split("&")[0]
+    )
+    link = {"order_id": "order_ONE", "token": token}
+
+    assert (
+        client.get("/v1/feedback", params={**link, "token": "forged"}).status_code
+        == 403
+    )
+    before = client.get("/v1/feedback", params=link).json()
+    assert before["review"] is None and before["reward_code"] is None
+
+    first = client.post("/v1/feedback", json={**link, "rating": 5}).json()[
+        "reward_code"
+    ]
+    again = client.post("/v1/feedback", json={**link, "rating": 4}).json()[
+        "reward_code"
+    ]
+    shown = client.get("/v1/feedback", params=link).json()
+    assert shown["review"]["rating"] == 4
+    assert first and again == first and shown["reward_code"] == first
+    assert len([c for c in api.ledger.coupons() if c.get("source") == "reward"]) == 1
+
+
 def test_the_delivery_email_asks_whether_it_worked():
     email = compose(
         Delivery(

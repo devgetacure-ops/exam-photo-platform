@@ -70,6 +70,7 @@ function actionBar(): HTMLElement {
 describe("the phone flow", () => {
     beforeEach(() => {
         window.localStorage.clear();
+        window.sessionStorage.clear();
         window.history.replaceState(null, "");
     });
     afterEach(() => cleanup());
@@ -220,5 +221,70 @@ describe("the phone flow", () => {
         const marks = row(/Class 10 certificate/);
         expect(within(marks).getByText("Not added yet")).toBeInTheDocument();
         expect(marks.querySelector(".euk-m-file-state")).not.toHaveAttribute("data-tone");
+    });
+    const readyKit = (examId: string, ready: string[]) => {
+        const done = (id: string) => ({
+            jobId: `job_${id}`,
+            requirementId: id,
+            requirementType: id === "photo" ? "photograph" : "signature",
+            status: "SUCCEEDED",
+            outcome: "prepared",
+            findings: [],
+            updatedAt: "2026-10-01",
+        });
+        window.localStorage.setItem(
+            "exam-photo:kits:v1",
+            JSON.stringify({
+                [examId]: {
+                    kitId: "kit_next",
+                    examId,
+                    createdAt: "2026-10-01",
+                    updatedAt: "2026-10-01",
+                    requirements: Object.fromEntries(ready.map((id) => [id, done(id)])),
+                },
+            }),
+        );
+    };
+
+    test("a finished file leads to the next file still to add, not back to the list", () => {
+        const nextExam = { ...exam, exam_id: "next-exam" } as ExamDetail;
+        readyKit("next-exam", ["photo"]);
+        render(<PrepareFlow exam={nextExam} />);
+        fireEvent.click(screen.getByRole("button", { name: "Add your files" }));
+        fireEvent.click(screen.getByRole("button", { name: /Recent photograph/ }));
+
+        fireEvent.click(within(actionBar()).getByRole("button", { name: "Next: Candidate signature" }));
+        expect(
+            screen.getByRole("heading", { level: 1, name: "Candidate signature" }),
+        ).toBeInTheDocument();
+    });
+
+    test("when every chosen file is ready, a finished file leads to the check", () => {
+        const oneExam = {
+            ...exam,
+            exam_id: "one-exam",
+            requirements: [requirement("photo", "Recent photograph", "photograph")],
+        } as unknown as ExamDetail;
+        readyKit("one-exam", ["photo"]);
+        render(<PrepareFlow exam={oneExam} />);
+        fireEvent.click(screen.getByRole("button", { name: "Add your files" }));
+        fireEvent.click(screen.getByRole("button", { name: /Recent photograph/ }));
+
+        expect(within(actionBar()).getByRole("button", { name: "Back to the list" })).toBeInTheDocument();
+        fireEvent.click(within(actionBar()).getByRole("button", { name: "Check and pay" }));
+        expect(screen.getByTestId("checkout")).toBeInTheDocument();
+    });
+
+    test("a reload lands back on the file that was open, not on the list", async () => {
+        const first = render(<PrepareFlow exam={exam} />);
+        fireEvent.click(screen.getByRole("button", { name: "Add your files" }));
+        fireEvent.click(screen.getByRole("button", { name: /Recent photograph/ }));
+        first.unmount();
+
+        // The phone reloaded the page behind the camera: a fresh mount.
+        render(<PrepareFlow exam={exam} />);
+        expect(
+            await screen.findByRole("heading", { level: 1, name: "Recent photograph" }),
+        ).toBeInTheDocument();
     });
 });

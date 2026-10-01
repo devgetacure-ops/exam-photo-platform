@@ -104,21 +104,71 @@ export function PrepareFlow({
     }, [storageKey, included]);
 
     // History, so the back button steps the flow rather than leaving it.
-    const go = useCallback((next: Step, requirement: string | null = null) => {
-        setStep(next);
-        setActiveId(requirement);
-        window.history.pushState({ euk: { step: next, requirement } }, "");
-    }, []);
+    const flowKey = `uploadready:flow:${exam.exam_id}`;
+    const remember = useCallback(
+        (next: Step, requirement: string | null) => {
+            try {
+                sessionStorage.setItem(flowKey, JSON.stringify({ step: next, requirement }));
+            } catch {
+                // Storage blocked: a reload simply starts at the list.
+            }
+        },
+        [flowKey],
+    );
+    const go = useCallback(
+        (next: Step, requirement: string | null = null, replace = false) => {
+            setStep(next);
+            setActiveId(requirement);
+            const state = { euk: { step: next, requirement } };
+            if (replace) window.history.replaceState(state, "");
+            else window.history.pushState(state, "");
+            remember(next, requirement);
+        },
+        [remember],
+    );
+
+    // A phone reloads the page when the camera opens or a call comes in, and
+    // the flow used to restart at the list with the candidate mid-file
+    // (owner's testing, 1 October). Where they were is in the history entry,
+    // which survives a reload, and in this tab's storage as a second copy.
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            type Saved = { step?: Step; requirement?: string | null };
+            let saved: Saved | undefined = (window.history.state as { euk?: Saved } | null)?.euk;
+            // The stored copy only answers a reload. On a fresh arrival it
+            // would drop someone into a file with no list behind the back button.
+            const arrival = (
+                performance.getEntriesByType?.("navigation")[0] as PerformanceNavigationTiming | undefined
+            )?.type;
+            if (!saved && (arrival === "reload" || arrival === "back_forward")) {
+                try {
+                    const raw = sessionStorage.getItem(flowKey);
+                    if (raw) saved = JSON.parse(raw) as Saved;
+                } catch {
+                    saved = undefined;
+                }
+            }
+            if (!saved?.step || !STEP_LABELS.some((s) => s.id === saved!.step)) return;
+            // Payment is never resumed into blind; the list of files is.
+            setStep(saved.step === "pay" ? "add" : saved.step);
+            const requirement = saved.requirement ?? null;
+            setActiveId(
+                requirement && ours.some((r) => r.requirement_id === requirement) ? requirement : null,
+            );
+        }, 0);
+        return () => clearTimeout(timer);
+    }, [flowKey, ours]);
 
     useEffect(() => {
         const onPop = (event: PopStateEvent) => {
             const state = (event.state as { euk?: { step: Step; requirement: string | null } })?.euk;
             setStep(state?.step ?? "files");
             setActiveId(state?.requirement ?? null);
+            remember(state?.step ?? "files", state?.requirement ?? null);
         };
         window.addEventListener("popstate", onPop);
         return () => window.removeEventListener("popstate", onPop);
-    }, []);
+    }, [remember]);
 
     const chosen = ours.filter((r) => included.includes(r.requirement_id));
     const price = kitPrice(requirements, included);
@@ -142,6 +192,13 @@ export function PrepareFlow({
         // A record may carry no photograph specification at all and still list
         // a photograph (DEC-079). Asking for its rows would throw, and a crash
         // on the file screen takes the whole flow with it.
+        // The next chosen file with nothing ready yet, in the list's order.
+        const nextFile =
+            chosen.find(
+                (r) =>
+                    r.requirement_id !== active.requirement_id &&
+                    !ready.some((d) => d.requirement_id === r.requirement_id),
+            ) ?? null;
         const rows =
             active.requirement_type === "photograph" && exam.image_requirements
                 ? photographSpecRows(exam)
@@ -185,15 +242,52 @@ export function PrepareFlow({
                     )}
                 </div>
 
-                {!busy && (
-                    <ActionBar note={done ? <strong>Ready</strong> : "Add this file"}>
+                {!busy && !done && (
+                    <ActionBar note="Add this file">
                         <button
                             type="button"
-                            className={done ? "primary-button" : "secondary-button"}
+                            className="secondary-button"
                             onClick={() => window.history.back()}
                         >
-                            {done ? "Back to the list" : "Do this later"}
+                            Do this later
                         </button>
+                    </ActionBar>
+                )}
+                {/* A finished file leads on, never back: to the next file still
+                    to add, or to the check when there is none (owner's testing,
+                    1 October). The list is one tap away for anyone who wants it. */}
+                {!busy && done && (
+                    <ActionBar
+                        note={
+                            <>
+                                <strong>Ready</strong>
+                                <button
+                                    type="button"
+                                    className="quiet-link"
+                                    onClick={() => window.history.back()}
+                                >
+                                    Back to the list
+                                </button>
+                            </>
+                        }
+                    >
+                        {nextFile ? (
+                            <button
+                                type="button"
+                                className="primary-button"
+                                onClick={() => go("add", nextFile.requirement_id, true)}
+                            >
+                                Next: {nextFile.requirement_name}
+                            </button>
+                        ) : (
+                            <button
+                                type="button"
+                                className="primary-button"
+                                onClick={() => go("pay", null, true)}
+                            >
+                                Check and pay
+                            </button>
+                        )}
                     </ActionBar>
                 )}
 

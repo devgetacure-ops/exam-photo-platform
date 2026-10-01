@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getApiBaseUrl } from "../../lib/api-client";
 
 /**
@@ -38,6 +38,12 @@ export function ReviewPanel({ kitId, orderId, token }: { kitId?: string; orderId
     const [sent, setSent] = useState(false);
     const [reward, setReward] = useState<string | null>(null);
     const [copied, setCopied] = useState(false);
+    // Once a review is in, the form folds to one line and the code leads: a
+    // sent form left open, with the code above it off-screen, read as nothing
+    // having happened (owner's testing, 1 October).
+    const [editing, setEditing] = useState(false);
+    const rewardRef = useRef<HTMLDivElement>(null);
+    const panelRef = useRef<HTMLElement>(null);
 
     useEffect(() => {
         let live = true;
@@ -46,10 +52,15 @@ export function ReviewPanel({ kitId, orderId, token }: { kitId?: string; orderId
             ? fetch(new URL(`/v1/kits/${encodeURIComponent(kitId)}/review?order_id=${encodeURIComponent(orderId)}`, base), {
                   cache: "no-store",
               }).then((response) => (response.ok ? (response.json() as Promise<ReviewState>) : null))
-            : Promise.all([
-                  fetch(new URL("/v1/review-options", base)).then((r) => r.json() as Promise<{ tags: ReviewState["tags"] }>),
-                  fetch(new URL("/v1/offers", base)).then((r) => r.json() as Promise<{ review_reward: boolean }>),
-              ]).then(([options, offers]) => ({ review: null, reward_code: null, offer: offers.review_reward, tags: options.tags }));
+            : // From the email: the link's signature proves the order, and the
+              // order may already have been rated on the downloads screen.
+              fetch(
+                  new URL(
+                      `/v1/feedback?order_id=${encodeURIComponent(orderId)}&token=${encodeURIComponent(token ?? "")}`,
+                      base,
+                  ),
+                  { cache: "no-store" },
+              ).then((response) => (response.ok ? (response.json() as Promise<ReviewState>) : null));
         load
             .then((value) => {
                 if (!live || !value) return;
@@ -68,7 +79,7 @@ export function ReviewPanel({ kitId, orderId, token }: { kitId?: string; orderId
         return () => {
             live = false;
         };
-    }, [kitId, orderId]);
+    }, [kitId, orderId, token]);
 
     if (!state) return null;
     const options = rating >= 4 ? state.tags.good : rating > 0 ? state.tags.bad : [];
@@ -97,6 +108,13 @@ export function ReviewPanel({ kitId, orderId, token }: { kitId?: string; orderId
             const body = (await response.json()) as { reward_code: string | null };
             setReward(body.reward_code);
             setSent(true);
+            setEditing(false);
+            // After the fold has painted: bring what changed to the candidate.
+            requestAnimationFrame(() => {
+                const target = rewardRef.current ?? panelRef.current;
+                target?.scrollIntoView?.({ behavior: "smooth", block: "center" });
+                target?.focus({ preventScroll: true });
+            });
         } catch {
             setError("That didn’t send. Please try again.");
         } finally {
@@ -104,20 +122,30 @@ export function ReviewPanel({ kitId, orderId, token }: { kitId?: string; orderId
         }
     };
 
+    const folded = sent && !editing;
+
     return (
-        <section className="euk-rate" aria-labelledby="rate-title">
+        <section className="euk-rate" aria-labelledby="rate-title" ref={panelRef} tabIndex={-1}>
             <h3 id="rate-title">{sent ? "Thank you for your review" : "How did we do?"}</h3>
-            {state.offer && !reward && (
-                <p className="euk-rate-offer">Rate us and your next examination&rsquo;s files are free.</p>
+            {state.offer && !reward && !sent && (
+                <div className="euk-rate-offer">
+                    <span className="euk-rate-offer-tag" aria-hidden="true">
+                        Free
+                    </span>
+                    <p>
+                        <strong>Rate us and your next examination&rsquo;s files are free.</strong>
+                        <span>Tap a star and send. Your code appears right here.</span>
+                    </p>
+                </div>
             )}
             {reward && (
-                <div className="euk-rate-reward" role="status">
-                    <p>Your code for free files on your next examination:</p>
+                <div className="euk-rate-reward" role="status" ref={rewardRef} tabIndex={-1}>
+                    <p className="euk-rate-reward-title">Your next examination&rsquo;s files are free</p>
                     <p className="euk-rate-code">
                         <strong>{reward}</strong>
                         <button
                             type="button"
-                            className="quiet-link"
+                            className="secondary-button"
                             onClick={async () => {
                                 try {
                                     await navigator.clipboard.writeText(reward);
@@ -127,37 +155,57 @@ export function ReviewPanel({ kitId, orderId, token }: { kitId?: string; orderId
                                 }
                             }}
                         >
-                            {copied ? "Copied" : "Copy"}
+                            {copied ? "Copied" : "Copy code"}
                         </button>
                     </p>
                     <p className="euk-rate-fine">Enter it under &ldquo;Have a code?&rdquo; before you pay. It works once.</p>
                 </div>
             )}
 
-            <fieldset className="euk-rate-stars">
-                <legend>Your rating</legend>
-                {[1, 2, 3, 4, 5].map((star) => (
-                    <label key={star} data-on={star <= rating ? "true" : undefined}>
-                        <input
-                            type="radio"
-                            name="euk-rating"
-                            value={star}
-                            checked={rating === star}
-                            onChange={() => {
-                                setRating(star);
-                                setTags([]);
-                            }}
-                        />
-                        <span aria-hidden="true">★</span>
-                        <span className="sr-only">
-                            {star} star{star === 1 ? "" : "s"}, {STAR_WORDS[star]}
+            {folded && (
+                <p className="euk-rate-summary">
+                    <span>
+                        You rated us{" "}
+                        <span className="euk-rate-summary-stars" aria-hidden="true">
+                            {"★".repeat(rating)}
+                            <span>{"★".repeat(5 - rating)}</span>
                         </span>
-                    </label>
-                ))}
-                {rating > 0 && <span className="euk-rate-word">{STAR_WORDS[rating]}</span>}
-            </fieldset>
+                        <span className="sr-only">
+                            {rating} out of 5, {STAR_WORDS[rating]}
+                        </span>
+                    </span>
+                    <button type="button" className="quiet-link" onClick={() => setEditing(true)}>
+                        Change my review
+                    </button>
+                </p>
+            )}
 
-            {options.length > 0 && (
+            {!folded && (
+                <fieldset className="euk-rate-stars">
+                    <legend>Your rating</legend>
+                    {[1, 2, 3, 4, 5].map((star) => (
+                        <label key={star} data-on={star <= rating ? "true" : undefined}>
+                            <input
+                                type="radio"
+                                name="euk-rating"
+                                value={star}
+                                checked={rating === star}
+                                onChange={() => {
+                                    setRating(star);
+                                    setTags([]);
+                                }}
+                            />
+                            <span aria-hidden="true">★</span>
+                            <span className="sr-only">
+                                {star} star{star === 1 ? "" : "s"}, {STAR_WORDS[star]}
+                            </span>
+                        </label>
+                    ))}
+                    {rating > 0 && <span className="euk-rate-word">{STAR_WORDS[rating]}</span>}
+                </fieldset>
+            )}
+
+            {!folded && options.length > 0 && (
                 <fieldset className="euk-rate-tags">
                     <legend>{rating >= 4 ? "What went well?" : "What went wrong?"}</legend>
                     {options.map((tag) => (
@@ -175,7 +223,7 @@ export function ReviewPanel({ kitId, orderId, token }: { kitId?: string; orderId
                 </fieldset>
             )}
 
-            {rating > 0 && (
+            {!folded && rating > 0 && (
                 <>
                     <label className="euk-rate-field">
                         <span>In your own words (optional)</span>

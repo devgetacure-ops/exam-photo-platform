@@ -51,11 +51,41 @@ describe("the review box (DEC-112)", () => {
         render(<ReviewPanel kitId="kit_a" orderId="order_1" />);
         expect(await screen.findByText("Thank you for your review")).toBeTruthy();
         expect(screen.getByText("THANKS-OLD00001")).toBeTruthy();
+        // Folded to one line: no open form, and no offer of a second code.
+        expect(screen.getByText(/You rated us/)).toBeTruthy();
+        expect(screen.queryByText("Update my review")).toBeNull();
+        expect(screen.queryByText(/Rate us and your next/)).toBeNull();
+        fireEvent.click(screen.getByText("Change my review"));
         expect(screen.getByText("Update my review")).toBeTruthy();
     });
 
+    it("folds the form and leads with the code once the review is sent", async () => {
+        mockFetch({ review: null, reward_code: null, offer: true, tags: TAGS }, "THANKS-NEW00001");
+        render(<ReviewPanel kitId="kit_a" orderId="order_1" />);
+        fireEvent.click(await screen.findByLabelText(/5 stars/));
+        fireEvent.click(screen.getByText("Send my review"));
+        expect(await screen.findByText("THANKS-NEW00001")).toBeTruthy();
+        expect(screen.queryByText("Send my review")).toBeNull();
+        expect(screen.queryByLabelText(/5 stars/)).toBeNull();
+        expect(screen.getByText(/You rated us/)).toBeTruthy();
+    });
+
+    it("shows the email link what the order already said, with its one code", async () => {
+        const calls = mockFetch({
+            review: { rating: 5, tags: [], comment: "", name: "", may_publish: 0 },
+            reward_code: "THANKS-OLD00001",
+            offer: true,
+            tags: TAGS,
+        });
+        render(<ReviewPanel orderId="order_1" token="0123456789abcdef0123456789abcdef" />);
+        expect(await screen.findByText("THANKS-OLD00001")).toBeTruthy();
+        expect(screen.getByText(/You rated us/)).toBeTruthy();
+        expect(screen.queryByLabelText(/5 stars/)).toBeNull();
+        expect(calls[0].url).toContain("/v1/feedback?order_id=order_1&token=0123456789abcdef0123456789abcdef");
+    });
+
     it("uses the signed link when opened from the email", async () => {
-        const calls = mockFetch({ tags: TAGS, review_reward: false });
+        const calls = mockFetch({ review: null, reward_code: null, offer: false, tags: TAGS });
         render(<ReviewPanel orderId="order_1" token="0123456789abcdef0123456789abcdef" />);
         await waitFor(() => expect(screen.getByLabelText(/3 stars/)).toBeTruthy());
         fireEvent.click(screen.getByLabelText(/3 stars/));

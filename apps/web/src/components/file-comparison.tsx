@@ -21,6 +21,10 @@ export function FileComparison({
     illustration?: boolean;
 }) {
     const [position, setPosition] = useState(50);
+    // A 150 x 200 photograph drawn three times its size looks soft, and was
+    // read as a poor result (owner's testing, 1 October). Said plainly when
+    // the preview is being shown well above the file's own size.
+    const [enlarged, setEnlarged] = useState<{ width: number; height: number } | null>(null);
     const frameRef = useRef<HTMLDivElement>(null);
     const id = useId();
 
@@ -60,6 +64,15 @@ export function FileComparison({
                             : "Prepared watermarked preview"
                     }
                     draggable={false}
+                    onLoad={(event) => {
+                        const image = event.currentTarget;
+                        const shown = image.getBoundingClientRect().width;
+                        setEnlarged(
+                            !illustration && image.naturalWidth > 0 && shown > image.naturalWidth * 1.5
+                                ? { width: image.naturalWidth, height: image.naturalHeight }
+                                : null,
+                        );
+                    }}
                 />
                 <div
                     className="comparison-before"
@@ -116,6 +129,12 @@ export function FileComparison({
                         ? "Illustration only · not an engine result"
                         : "Watermarked preview · your download is the full, unmarked file"}
                 </span>
+                {enlarged && (
+                    <span>
+                        Shown enlarged. The file is {enlarged.width} × {enlarged.height} px, the size this
+                        examination asks for, so it looks softer here than it is.
+                    </span>
+                )}
             </figcaption>
         </figure>
     );

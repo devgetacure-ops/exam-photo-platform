@@ -367,6 +367,7 @@ export function KitCheckout({
     const [note, setNote] = useState("");
     const [busy, setBusy] = useState(false);
     const [pending, setPending] = useState(false);
+    const [windowOpen, setWindowOpen] = useState(false);
     const [simOrder, setSimOrder] = useState<Order | null>(null);
     const [failed, setFailed] = useState(false);
     const [ack, setAck] = useState(false);
@@ -500,13 +501,30 @@ export function KitCheckout({
         return () => clearTimeout(timer);
     }, [allReleased, onBusy, pendingKey]);
 
+    // Razorpay keeps its own "payment successful" screen up for a few seconds,
+    // and the server often confirms before it closes. The success moment and
+    // the move to the downloads wait for that window to go, or they play
+    // underneath it and the candidate sees neither (owner's testing, 1 Oct).
+    useEffect(() => {
+        if (!windowOpen || !allReleased) return;
+        const started = Date.now();
+        const timer = setInterval(() => {
+            const overlay = document.querySelector<HTMLElement>(".razorpay-container");
+            const showing = overlay !== null && overlay.offsetParent !== null && overlay.style.display !== "none";
+            // Twelve seconds is longer than Razorpay ever holds it; past that
+            // the files matter more than the choreography.
+            if (!showing || Date.now() - started > 12_000) setWindowOpen(false);
+        }, 250);
+        return () => clearInterval(timer);
+    }, [windowOpen, allReleased]);
+
     const stage: Stage = !files.length
         ? "empty"
-        : allReleased
+        : allReleased && !windowOpen
           ? "delivered"
           : failed
             ? "failed"
-            : pending || busy
+            : pending || busy || windowOpen
               ? "paying"
               : "review";
 
@@ -554,6 +572,9 @@ export function KitCheckout({
     // One set of outcomes, whichever window took the payment: Razorpay's, or
     // the test sheet on a machine running the payment simulator (DEC-089).
     const paymentSubmitted = () => {
+        // Razorpay may still be showing its own success screen when it calls
+        // this, so the window is marked closed by the check above, which
+        // looks at the overlay itself.
         setPending(true);
         setNote(
             "Payment submitted. We’re waiting for confirmed release of your files. Please don’t pay again.",
@@ -561,6 +582,7 @@ export function KitCheckout({
         void refresh();
     };
     const checkoutClosed = () => {
+        setWindowOpen(false);
         setBusy(false);
         setPending(true);
         onBusy(false);
@@ -570,6 +592,7 @@ export function KitCheckout({
         void refresh();
     };
     const paymentFailed = () => {
+        setWindowOpen(false);
         setBusy(false);
         setFailed(true);
         onBusy(false);
@@ -642,6 +665,7 @@ export function KitCheckout({
                 modal: { ondismiss: checkoutClosed },
             });
             checkout.on("payment.failed", paymentFailed);
+            setWindowOpen(true);
             checkout.open();
         } catch (err) {
             setError(

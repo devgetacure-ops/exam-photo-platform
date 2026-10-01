@@ -2352,6 +2352,28 @@ def record_feedback(feedback: SignedReviewIn) -> dict[str, Any]:
     return _save_review(feedback, "email", None)
 
 
+@app.get("/v1/feedback")
+def get_feedback(order_id: str, token: str) -> dict[str, Any]:
+    """What the emailed link's order has already said (owner, 1 October).
+
+    The email asks for a rating the downloads screen may already have taken.
+    The page shows that rating and its one code instead of an empty form that
+    reads as a second offer; `_save_review` never issues a second code either.
+    """
+    if not marketing.verify(service, "feedback", order_id, token):
+        raise HTTPException(status_code=403, detail="This link is not valid.")
+    order = service.orders.get(order_id)
+    if order is None or not order.paid_at:
+        raise HTTPException(status_code=404, detail="Paid order not found")
+    existing = service.ledger.review(order_id)
+    return {
+        "review": existing,
+        "reward_code": existing.get("reward_code") if existing else None,
+        "offer": service.ledger.offer_on("review_reward") and order.amount_paise > 0,
+        "tags": REVIEW_TAGS,
+    }
+
+
 @app.get("/v1/offers")
 def public_offers() -> dict[str, bool]:
     """Which offers the site should mention. Public."""

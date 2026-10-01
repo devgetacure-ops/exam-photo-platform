@@ -242,9 +242,13 @@
 
 /* "Did it work?" (DEC-111): one short form on a quiet page. */
 .euk-feedback {
-    max-width: 560px;
-    margin: 0 auto;
-    padding: 40px 16px 64px;
+    /* The page's own colour to the bottom and both edges: the card used to
+       sit on a strip of paper with the bare body showing under it, white in
+       dark mode (owner's screenshot, 1 October). */
+    min-height: 100dvh;
+    margin: 0;
+    padding: 40px max(16px, calc((100% - 560px) / 2)) 64px;
+    box-sizing: border-box;
 }
 
 .euk-feedback-form {

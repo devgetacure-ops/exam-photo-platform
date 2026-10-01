@@ -1230,9 +1230,74 @@
     margin: 0 0 6px;
 }
 
+/* The offer has to read as a reward, not as one more line asking for a
+   rating (owner's testing, 1 October): its own band, and the word that
+   matters set large. */
 .euk .euk-rate-offer {
-    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 4px 0 6px;
+    padding: 14px;
+    border: 3px solid var(--ink);
+    background: var(--signal);
+    color: #fff;
+    box-shadow: 5px 5px 0 var(--ink);
+}
+
+.euk .euk-rate-offer-tag {
+    flex: none;
+    padding: 6px 10px;
+    background: #fff;
     color: var(--signal-deep);
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    line-height: 1;
+    text-transform: uppercase;
+    transform: rotate(-4deg);
+}
+
+.euk .euk-rate-offer p {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin: 0;
+}
+
+.euk .euk-rate-offer strong {
+    font-size: 17px;
+    line-height: 1.25;
+}
+
+.euk .euk-rate-offer p span {
+    font-size: 13px;
+    opacity: 0.92;
+}
+
+.euk .euk-rate-summary {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 16px;
+    margin: 12px 0 0;
+}
+
+.euk .euk-rate-summary-stars {
+    color: var(--signal);
+    font-size: 20px;
+    letter-spacing: 2px;
+}
+
+.euk .euk-rate-summary-stars span {
+    color: var(--hairline);
+}
+
+.euk .euk-rate-reward-title {
+    margin: 0 0 6px;
+    font-size: 17px;
+    font-weight: 700;
 }
 
 .euk .euk-rate-stars {
@@ -1249,16 +1314,19 @@
 .euk .euk-rate-stars label {
     display: grid;
     place-items: center;
-    width: 44px;
-    height: 44px;
+    width: 52px;
+    height: 52px;
     cursor: pointer;
-    font-size: 30px;
+    font-size: 40px;
     line-height: 1;
-    color: var(--hairline);
+    /* Unlit stars were nearly invisible on the card; they are the control. */
+    color: var(--ink-55);
+    opacity: 0.55;
 }
 
 .euk .euk-rate-stars label[data-on="true"] {
     color: var(--signal);
+    opacity: 1;
 }
 
 .euk .euk-rate-stars input,
@@ -1334,18 +1402,31 @@
 
 .euk .euk-rate-reward {
     margin: 8px 0;
-    padding: 12px;
-    border: var(--rule-thin) dashed var(--signal);
-    border-radius: 8px;
+    padding: 14px;
+    border: 3px solid var(--ink);
     background: var(--paper);
+    box-shadow: 5px 5px 0 var(--signal);
+}
+
+.euk .euk-rate:focus,
+.euk .euk-rate-reward:focus {
+    outline: none;
 }
 
 .euk .euk-rate-code {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 12px;
-    font-size: 20px;
-    letter-spacing: 0.04em;
+    margin: 0;
+    font-size: 24px;
+    letter-spacing: 0.06em;
+}
+
+.euk .euk-rate-code .secondary-button {
+    margin: 0;
+    font-size: 15px;
+    letter-spacing: 0;
 }
 
 .euk .euk-rate-fine {
