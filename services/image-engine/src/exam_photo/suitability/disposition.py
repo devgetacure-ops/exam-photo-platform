@@ -56,6 +56,11 @@ class AppearanceFinding(BaseModel):
     message: str
     remedy: str
     measured_value: Optional[float] = None
+    #: Whether the API passes this finding's words on to the candidate
+    #: (DEC-116). Off by default: most findings here feed the disposition and
+    #: are worded for a reviewer. On only for a note written to be read, about
+    #: a photograph that is prepared all the same.
+    tell_candidate: bool = False
 
 
 class AppearanceSignals(BaseModel):

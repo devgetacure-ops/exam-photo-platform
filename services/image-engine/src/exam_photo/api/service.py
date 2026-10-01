@@ -210,6 +210,26 @@ def _alternate_filename(filename: str) -> str:
     return f"{stem}__alt.{extension}"
 
 
+def candidate_notes(appearance_findings: Any) -> List[str]:
+    """The appearance findings written to be read by the candidate (DEC-116).
+
+    One sentence each, the remedy after the observation. Everything else in the
+    appearance report feeds the disposition and stays where it is.
+    """
+    notes: List[str] = []
+    for finding in appearance_findings or []:
+        if not isinstance(finding, dict) or not finding.get("tell_candidate"):
+            continue
+        text = " ".join(
+            part.strip()
+            for part in (finding.get("message"), finding.get("remedy"))
+            if isinstance(part, str) and part.strip()
+        )
+        if text and text not in notes:
+            notes.append(text)
+    return notes
+
+
 def size_floor_finding(
     rule_dict: Dict[str, Any], byte_size: Optional[int]
 ) -> Optional[str]:
@@ -1586,6 +1606,14 @@ class ApiProcessingService:
             )
             if floor_note:
                 record.findings = [floor_note]
+            # DEC-116: notes the engine wrote for the candidate about a
+            # photograph it prepared anyway (warm light, an uneven cut-out).
+            # They were computed and then dropped here, so nobody was told.
+            notes = (
+                candidate_notes(result.appearance_findings) if result.is_valid else []
+            )
+            if notes:
+                record.findings = [*record.findings, *notes]
             record.artifact_names = artifact_names
             record.rule_compliant = result.rule_compliant
             record.visual_quality_acceptable = result.visual_quality_acceptable
@@ -1614,7 +1642,7 @@ class ApiProcessingService:
             # one, and neither is the same as no file at all.
             if not result.is_valid:
                 record.outcome = "not_produced" if not should_save_output else "blocked"
-            elif record.issue_codes:
+            elif record.issue_codes or notes:
                 record.outcome = "prepared_with_findings"
             else:
                 record.outcome = "prepared"

@@ -53,6 +53,18 @@ _HIGHLIGHT_CLIP_FRACTION = 0.10
 _CAST_NEUTRAL_MARGIN = -10.0
 _SEVERE_CAST_MARGIN = 35.0
 
+# Warm light is the opposite sign of the same measure, and it is *not*
+# corrected (DEC-116). Skin is red-dominant by nature, so past a point a warm
+# face cannot be told from a warmly lit one, and neutralising it from the face
+# would shift skin tone, which identity preservation forbids; the whole-image
+# correction above was tried on a sunset portrait at 15, 30 and 50 per cent and
+# changed nothing visible, because the sky balanced the face. So the candidate
+# is told instead. Across the 37 labelled photographs a face is found in, red
+# leads blue by at most 90.8 (87.7 among those labelled perfect); the sunset
+# portrait that prompted this reads 105.1. The margin sits above every labelled
+# photograph, so none of them gains the note.
+_WARM_LIGHT_MARGIN = 95.0
+
 # Normalised face sharpness below which a bounded sharpen helps.  Same measure
 # and calibration as the blur warning.
 _SOFT_SHARPNESS = 97.0
@@ -205,4 +217,18 @@ def severe_cast_detected(face: FaceToneMeasurements) -> bool:
         not face.is_monochrome
         and face.blue_minus_red is not None
         and face.blue_minus_red > _SEVERE_CAST_MARGIN
+    )
+
+
+def warm_light_detected(face: FaceToneMeasurements) -> bool:
+    """Whether the face is lit more warmly than any labelled photograph.
+
+    Low evening sun or a yellow bulb. Nothing is corrected for it -- see
+    ``_WARM_LIGHT_MARGIN`` -- the candidate is told, and the photograph is
+    prepared exactly as it would have been.
+    """
+    return (
+        not face.is_monochrome
+        and face.blue_minus_red is not None
+        and -face.blue_minus_red > _WARM_LIGHT_MARGIN
     )

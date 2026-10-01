@@ -11,6 +11,7 @@ from exam_photo.suitability.enhancement_planner import (
     FaceToneMeasurements,
     plan_enhancement,
     severe_cast_detected,
+    warm_light_detected,
 )
 
 
@@ -112,3 +113,15 @@ def test_every_adjustment_is_disclosed() -> None:
         face(tonal_range_p5_p95=40.0, shadow_clipped_fraction=0.4, sharpness=48.0)
     )
     assert len(plan.applied) == 3
+
+
+def test_warm_light_is_noticed_above_every_labelled_photograph_and_never_corrected():
+    """DEC-116. 90.8 is the warmest labelled face, 87.7 the warmest `perfect`."""
+    assert not warm_light_detected(face(blue_minus_red=-87.7))
+    assert not warm_light_detected(face(blue_minus_red=-90.8))
+    assert warm_light_detected(face(blue_minus_red=-105.1))
+    # The sign that marks coloured stage light is not warm light.
+    assert not warm_light_detected(face(blue_minus_red=58.8))
+    assert not warm_light_detected(face(blue_minus_red=-105.1, is_monochrome=True))
+    # Told, not touched: the plan for a warm face is the plan for any face.
+    assert plan_enhancement(face(blue_minus_red=-105.1)).is_noop

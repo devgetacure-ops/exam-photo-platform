@@ -74,6 +74,7 @@ from exam_photo.suitability.enhancement_planner import (
     apply_enhancement,
     plan_enhancement,
     severe_cast_detected,
+    warm_light_detected,
 )
 from exam_photo.suitability.issue_codes import SuitabilityIssueCode
 
@@ -1472,6 +1473,28 @@ class RuleOrchestratedPipeline:
                                     "ordinary white indoor lighting."
                                 ),
                                 measured_value=tone.blue_minus_red,
+                                tell_candidate=True,
+                            )
+                        )
+                    if warm_light_detected(tone) and appearance_report is not None:
+                        # DEC-116: said, not corrected. The photograph is
+                        # prepared exactly as it would have been.
+                        appearance_report.findings.append(
+                            AppearanceFinding(
+                                code=SuitabilityIssueCode.SUITABILITY_LOW_CONTRAST_WARNING,
+                                level=FindingLevel.POSSIBLE_ISSUE,
+                                message=(
+                                    "This photograph was taken in strong warm "
+                                    "light, such as evening sun or a yellow "
+                                    "bulb, so the colours look orange. We have "
+                                    "not changed them."
+                                ),
+                                remedy=(
+                                    "For natural colour, retake it in daylight "
+                                    "or indoors facing a window."
+                                ),
+                                measured_value=-(tone.blue_minus_red or 0.0),
+                                tell_candidate=True,
                             )
                         )
 
@@ -1709,6 +1732,33 @@ class RuleOrchestratedPipeline:
                 "background_uniformity": bg_uni,
                 "validation_issues": ref_result.validation.issue_codes,
             }
+
+            # DEC-116. The refiner already knows when the cut-out has gaps and
+            # used to say so only in this report, which no candidate reads.
+            # Measured on the 40 labelled photographs: six carry the flag and
+            # none of the ten labelled perfect does. Told, not blocked -- the
+            # photograph is prepared exactly as it would have been.
+            if (
+                appearance_report is not None
+                and SuitabilityIssueCode.REFINEMENT_LARGE_HOLES_DETECTED.value
+                in ref_result.validation.issue_codes
+            ):
+                appearance_report.findings.append(
+                    AppearanceFinding(
+                        code=SuitabilityIssueCode.REFINEMENT_LARGE_HOLES_DETECTED,
+                        level=FindingLevel.POSSIBLE_ISSUE,
+                        message=(
+                            "We had trouble separating you from the background, "
+                            "so the edges of the hair or shoulders may look "
+                            "uneven."
+                        ),
+                        remedy=(
+                            "Look at the edges in the preview. A plain wall "
+                            "behind you and even light give a cleaner result."
+                        ),
+                        tell_candidate=True,
+                    )
+                )
 
             dur_stage = (time.perf_counter() - t_stage) * 1000.0
             record_stage(
