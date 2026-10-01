@@ -178,6 +178,17 @@ CREATE TABLE IF NOT EXISTS coupons (
     created_at TEXT NOT NULL
 );
 
+-- A code a candidate typed that was turned away (DEC-120). One row per code,
+-- kit and reason: the quote is asked for every few seconds while the code sits
+-- in the box, and that is one attempt, not hundreds.
+CREATE TABLE IF NOT EXISTS coupon_attempts (
+    code TEXT NOT NULL,
+    kit_id TEXT NOT NULL,
+    reason TEXT NOT NULL,
+    at TEXT NOT NULL,
+    PRIMARY KEY (code, kit_id, reason)
+);
+
 CREATE TABLE IF NOT EXISTS suppressions (
     email TEXT PRIMARY KEY,
     at TEXT NOT NULL,
@@ -824,6 +835,26 @@ class Ledger:
 
     def coupons(self) -> List[Dict[str, Any]]:
         return self._rows("SELECT * FROM coupons ORDER BY created_at DESC")
+
+    def record_coupon_attempt(self, code: str, kit_id: str, reason: str) -> None:
+        """Remember that this kit tried a code that was refused, and why."""
+        self._write(
+            "INSERT OR IGNORE INTO coupon_attempts (code, kit_id, reason, at) "
+            "VALUES (?,?,?,?)",
+            (code[:32], kit_id[:80], reason[:40], now_iso()),
+        )
+
+    def coupon_attempts(self) -> List[Dict[str, Any]]:
+        return self._rows(
+            "SELECT code, kit_id, reason, at FROM coupon_attempts ORDER BY at DESC"
+        )
+
+    def activity_for(self, target: str) -> List[Dict[str, Any]]:
+        """What the operator did to one thing, oldest first."""
+        return self._rows(
+            "SELECT at, actor, action FROM activity WHERE target=? ORDER BY id",
+            (target,),
+        )
 
     def coupon_used(self, code: str) -> None:
         self._write("UPDATE coupons SET uses=uses+1 WHERE code=?", (code,))

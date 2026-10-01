@@ -5,25 +5,11 @@ import { ActionForm, Badge, Button, Card, CardHeader, Empty, Field, Input, PageH
 import { rupees } from "../../../../lib/operator/data";
 import { engineJson } from "../../../../lib/operator/engine";
 import { requireOperator } from "../../../../lib/operator/guard";
+import { couponTimeline, refusalWords, statusOf, STATUS_WORDS, type CouponRecord } from "../../../../lib/operator/coupon-timeline";
 
 export const metadata: Metadata = { title: "Coupons" };
 
-interface Coupon {
-    code: string;
-    kind: string;
-    value: number;
-    partner: string | null;
-    active: number;
-    max_uses: number | null;
-    uses: number;
-    expires_on: string | null;
-    created_at: string;
-    source: string;
-    issued_for_order: string | null;
-    orders: number;
-    revenue_paise: number;
-    discount_paise: number;
-}
+type Coupon = CouponRecord;
 
 function describe(coupon: Coupon) {
     if (coupon.kind === "free") return "Files free";
@@ -33,14 +19,24 @@ function describe(coupon: Coupon) {
 
 export default async function CouponsPage({ searchParams }: { searchParams: Promise<{ show?: string }> }) {
     await requireOperator();
-    const show = (await searchParams).show === "rewards" ? "rewards" : "yours";
-    const [coupons, reviews] = await Promise.all([engineJson<{ coupons: Coupon[] }>("/v1/operator/coupons"), engineJson<{ offer_on: boolean }>("/v1/operator/reviews?status=pending")]);
+    // Every code is on the page when it opens (DEC-120). The page used to open
+    // on "Your codes", so a review reward sat behind a tab and the section
+    // read as empty.
+    const asked = (await searchParams).show;
+    const show = asked === "rewards" || asked === "yours" ? asked : "all";
+    const [coupons, reviews] = await Promise.all([
+        engineJson<{ coupons: Coupon[]; unknown_attempts?: { code: string; kit_id: string; reason: string; at: string }[] }>("/v1/operator/coupons"),
+        engineJson<{ offer_on: boolean }>("/v1/operator/reviews?status=pending"),
+    ]);
     if (!coupons.ok) return <Problem what="coupons" error={coupons.error} />;
     const offerOn = reviews.ok && reviews.value.offer_on;
-    const mine = coupons.value.coupons.filter((c) => c.source !== "reward");
-    const rewards = coupons.value.coupons.filter((c) => c.source === "reward");
-    const list = show === "rewards" ? rewards : mine;
-    const back = show === "rewards" ? "/admin/coupons?show=rewards" : "/admin/coupons";
+    const today = new Date().toISOString().slice(0, 10);
+    const everything = [...coupons.value.coupons].sort((a, b) => b.created_at.localeCompare(a.created_at));
+    const mine = everything.filter((c) => c.source !== "reward");
+    const rewards = everything.filter((c) => c.source === "reward");
+    const list = show === "rewards" ? rewards : show === "yours" ? mine : everything;
+    const back = show === "all" ? "/admin/coupons" : `/admin/coupons?show=${show}`;
+    const strays = coupons.value.unknown_attempts ?? [];
 
     return (
         <>
@@ -70,7 +66,8 @@ export default async function CouponsPage({ searchParams }: { searchParams: Prom
                     <div className="flex self-start rounded-lg bg-[var(--op-muted-bg)] p-0.5">
                         {(
                             [
-                                ["yours", `Your codes ${mine.length}`, "/admin/coupons"],
+                                ["all", `All ${everything.length}`, "/admin/coupons"],
+                                ["yours", `Your codes ${mine.length}`, "/admin/coupons?show=yours"],
                                 ["rewards", `Review rewards ${rewards.length}`, "/admin/coupons?show=rewards"],
                             ] as const
                         ).map(([value, label, href]) => (
@@ -85,64 +82,90 @@ export default async function CouponsPage({ searchParams }: { searchParams: Prom
                         ))}
                     </div>
 
-                    <Card>
-                        {list.length === 0 ? (
-                            <Empty title={show === "rewards" ? "No review rewards yet" : "No codes yet"}>{show === "rewards" ? "They are created when a customer reviews while the offer runs." : "Make one with the form."}</Empty>
-                        ) : (
-                            <div className="op-scroll overflow-x-auto">
-                                <table className="w-full min-w-[640px] border-collapse text-sm">
-                                    <thead>
-                                        <tr className="border-b border-[var(--op-border)] bg-[var(--op-muted-bg)] text-left text-xs text-[var(--op-muted)]">
-                                            <th scope="col" className="px-5 py-2.5 font-medium">Code</th>
-                                            <th scope="col" className="px-3 py-2.5 font-medium">Gives</th>
-                                            <th scope="col" className="px-3 py-2.5 text-right font-medium">Used</th>
-                                            <th scope="col" className="px-3 py-2.5 text-right font-medium">Revenue</th>
-                                            <th scope="col" className="px-5 py-2.5 text-right font-medium">On</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {list.map((coupon) => (
-                                            <tr key={coupon.code} className={cn("border-b border-[var(--op-border)] last:border-0", !coupon.active && "opacity-60")}>
-                                                <td className="px-5 py-3">
-                                                    <div className="font-mono font-semibold">{coupon.code}</div>
-                                                    <div className="text-xs text-[var(--op-muted)]">
-                                                        {coupon.issued_for_order ? (
-                                                            <Link href={`/admin/orders?open=${coupon.issued_for_order}`} className="underline">
-                                                                for a review
+                    {list.length === 0 ? (
+                        <Card>
+                            <Empty title={show === "rewards" ? "No review rewards yet" : show === "yours" ? "No codes of your own yet" : "No codes yet"}>
+                                {show === "rewards" ? "They are created when a customer reviews while the offer runs." : "Make one with the form."}
+                            </Empty>
+                        </Card>
+                    ) : (
+                        list.map((coupon) => {
+                            const status = STATUS_WORDS[statusOf(coupon, today)];
+                            const events = couponTimeline(coupon, today);
+                            return (
+                                <Card key={coupon.code} className={cn(!coupon.active && "opacity-80")}>
+                                    <div className="flex flex-wrap items-start gap-x-4 gap-y-3 p-5">
+                                        <div className="min-w-0 flex-1">
+                                            <div className="flex flex-wrap items-center gap-2">
+                                                <span className="font-mono text-[15px] font-semibold">{coupon.code}</span>
+                                                <Badge tone={status.tone}>{status.label}</Badge>
+                                                <Badge tone="neutral">{coupon.source === "reward" ? "Review reward" : "Your code"}</Badge>
+                                            </div>
+                                            <p className="m-0 mt-1 text-[13px] text-[var(--op-muted)]">
+                                                {describe(coupon)} · used {coupon.uses}
+                                                {coupon.max_uses != null ? ` of ${coupon.max_uses}` : " times, no limit"}
+                                                {coupon.expires_on ? ` · last day ${coupon.expires_on}` : " · no last day"}
+                                                {coupon.orders > 0 ? ` · ${rupees(coupon.discount_paise)} given away, ${rupees(coupon.revenue_paise)} taken` : ""}
+                                            </p>
+                                        </div>
+                                        <ActionForm action={`/admin/actions/coupon-active/${coupon.code}`} back={back}>
+                                            <input type="hidden" name="active" value={coupon.active ? "false" : "true"} />
+                                            <button
+                                                type="submit"
+                                                role="switch"
+                                                aria-checked={Boolean(coupon.active)}
+                                                aria-label={`${coupon.code} ${coupon.active ? "on" : "off"}`}
+                                                className={cn("relative h-6 w-11 cursor-pointer rounded-full transition-colors", coupon.active ? "bg-[var(--op-good)]" : "bg-[var(--op-border-strong)]")}
+                                            >
+                                                <span className={cn("absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all", coupon.active ? "left-[22px]" : "left-0.5")} />
+                                            </button>
+                                        </ActionForm>
+                                    </div>
+                                    <ol className="m-0 list-none border-t border-[var(--op-border)] px-5 py-3 text-[13px]" aria-label={`${coupon.code} history`}>
+                                        {events.map((event, index) => (
+                                            <li key={`${event.at}-${index}`} className="flex gap-3 py-1.5">
+                                                <span
+                                                    aria-hidden="true"
+                                                    className={cn(
+                                                        "mt-1.5 h-2 w-2 flex-none rounded-full",
+                                                        event.kind === "used" ? "bg-[var(--op-good)]" : event.kind === "refused" || event.kind === "ended" ? "bg-[var(--op-bad)]" : "bg-[var(--op-border-strong)]",
+                                                    )}
+                                                />
+                                                <span className="min-w-0 flex-1">
+                                                    {event.text}
+                                                    {event.orderId ? (
+                                                        <>
+                                                            {" · "}
+                                                            <Link href={`/admin/orders?open=${event.orderId}`} className="underline">
+                                                                {event.orderId}
                                                             </Link>
-                                                        ) : (
-                                                            coupon.partner || "—"
-                                                        )}
-                                                        {coupon.expires_on ? ` · until ${coupon.expires_on}` : ""} · {when(coupon.created_at)}
-                                                    </div>
-                                                </td>
-                                                <td className="px-3 py-3">{describe(coupon)}</td>
-                                                <td className="op-num px-3 py-3 text-right">
-                                                    {coupon.uses}
-                                                    {coupon.max_uses != null ? ` / ${coupon.max_uses}` : ""}
-                                                </td>
-                                                <td className="op-num px-3 py-3 text-right">{rupees(coupon.revenue_paise)}</td>
-                                                <td className="px-5 py-3 text-right">
-                                                    <ActionForm action={`/admin/actions/coupon-active/${coupon.code}`} back={back}>
-                                                        <input type="hidden" name="active" value={coupon.active ? "false" : "true"} />
-                                                        <button
-                                                            type="submit"
-                                                            role="switch"
-                                                            aria-checked={Boolean(coupon.active)}
-                                                            aria-label={`${coupon.code} ${coupon.active ? "on" : "off"}`}
-                                                            className={cn("relative h-6 w-11 cursor-pointer rounded-full transition-colors", coupon.active ? "bg-[var(--op-good)]" : "bg-[var(--op-border-strong)]")}
-                                                        >
-                                                            <span className={cn("absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all", coupon.active ? "left-[22px]" : "left-0.5")} />
-                                                        </button>
-                                                    </ActionForm>
-                                                </td>
-                                            </tr>
+                                                        </>
+                                                    ) : null}
+                                                </span>
+                                                <span className="op-num flex-none text-[var(--op-muted)]">{event.kind === "ended" && event.at.endsWith("23:59:59") ? "" : when(event.at)}</span>
+                                            </li>
                                         ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        )}
-                    </Card>
+                                    </ol>
+                                </Card>
+                            );
+                        })
+                    )}
+
+                    {strays.length > 0 && (
+                        <Card>
+                            <CardHeader title="Codes tried that do not exist" description="What candidates typed under “Have a code?” that matched nothing. A code here many times may be one you announced and never made." />
+                            <ol className="m-0 list-none px-5 py-3 text-[13px]">
+                                {strays.map((attempt, index) => (
+                                    <li key={`${attempt.code}-${attempt.at}-${index}`} className="flex gap-3 py-1.5">
+                                        <span className="min-w-0 flex-1">
+                                            <span className="font-mono font-semibold">{attempt.code}</span> · {refusalWords(attempt.reason)}
+                                        </span>
+                                        <span className="op-num flex-none text-[var(--op-muted)]">{when(attempt.at)}</span>
+                                    </li>
+                                ))}
+                            </ol>
+                        </Card>
+                    )}
                 </div>
 
                 <Card className="h-fit">

@@ -339,6 +339,59 @@ def test_coupons_discount_on_the_server_and_never_below_a_rupee(api):
     )
 
 
+def test_the_console_shows_a_codes_whole_history(api):
+    """Created, used and on which order, switched, tried and refused (DEC-120)."""
+    client.post(
+        "/v1/operator/coupons",
+        headers=AUTH,
+        json={"code": "friend", "kind": "free", "value": 0, "max_uses": 1},
+    )
+    _prepared(api, "job_h1")
+    # Tried before it existed, mistyped, and asked for again and again while
+    # the code sat in the box: each refusal is remembered once.
+    for _ in range(3):
+        client.get(f"/v1/kits/{KIT}/quote?coupon=frend")
+    client.get(f"/v1/kits/{KIT}/quote?coupon=not a code!")
+
+    fresh = client.get("/v1/operator/coupons", headers=AUTH).json()
+    [code] = [c for c in fresh["coupons"] if c["code"] == "FRIEND"]
+    assert code["status"] == "unused" and code["redemptions"] == []
+    assert code["changes"][0]["action"] == "saved coupon FRIEND"
+    assert "issued_to" not in code
+    assert sorted((a["code"], a["reason"]) for a in fresh["unknown_attempts"]) == [
+        ("FREND", "unknown"),
+        ("NOT A CODE!", "not_a_code"),
+    ]
+
+    _paid(api, "order_H1", "h@example.com", amount=0)
+    order = api.orders.get("order_H1")
+    order.coupon_code, order.discount_paise = "FRIEND", 300
+    api.orders._path("order_H1").write_text(  # noqa: SLF001
+        order.model_dump_json(), encoding="utf-8"
+    )
+    assert api.ledger.claim_coupon("FRIEND") is True
+    client.get(f"/v1/kits/{KIT}/quote?coupon=friend")  # used up now: refused
+    client.post(
+        "/v1/operator/coupons/FRIEND/active",
+        headers=AUTH,
+        json={"active": False},
+    )
+
+    [code] = [
+        c
+        for c in client.get("/v1/operator/coupons", headers=AUTH).json()["coupons"]
+        if c["code"] == "FRIEND"
+    ]
+    assert code["status"] == "switched_off"
+    assert [r["order_id"] for r in code["redemptions"]] == ["order_H1"]
+    assert code["redemptions"][0]["discount_paise"] == 300 and code["orders"] == 1
+    assert [a["reason"] for a in code["attempts"]] == ["used_up"]
+    assert [c["action"] for c in code["changes"]] == [
+        "saved coupon FRIEND",
+        "coupon disabled",
+    ]
+
+
 def test_a_coupon_is_counted_once_paid_and_then_runs_out(api):
     from exam_photo.api.payments import ReleaseInstruction
 

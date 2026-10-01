@@ -1270,6 +1270,13 @@ def _priced(
         found = _valid_coupon(coupon)
         if found is None:
             status = "invalid"
+            # DEC-120: the operator sees which codes were tried and refused.
+            try:
+                service.ledger.record_coupon_attempt(
+                    coupon.strip().upper(), kit_id, _coupon_refusal(coupon)
+                )
+            except Exception:  # noqa: BLE001 - a broken ledger never blocks a sale
+                pass
         else:
             discount = Discount(found["code"], found["kind"], int(found["value"]))
             status = "applied"
@@ -1282,6 +1289,32 @@ def _priced(
     if status == "applied" and not quote.discount_paise:
         status = "no_effect"
     return quote, status
+
+
+def _coupon_state(found: dict[str, Any]) -> str:
+    """Where a code stands today, in the words the console shows (DEC-120)."""
+    if not found["active"]:
+        return "switched_off"
+    if (
+        found["expires_on"]
+        and found["expires_on"] < datetime.now(timezone.utc).date().isoformat()
+    ):
+        return "expired"
+    if found["max_uses"] is not None and found["uses"] >= found["max_uses"]:
+        return "used_up"
+    return "used" if found["uses"] else "unused"
+
+
+def _coupon_refusal(code: str) -> str:
+    """Why `_valid_coupon` turned this code away."""
+    normalised = code.strip().upper()
+    if not re.fullmatch(r"[A-Z0-9_-]{2,32}", normalised):
+        return "not_a_code"
+    try:
+        found = service.ledger.coupon(normalised)
+    except Exception:  # noqa: BLE001
+        return "unknown"
+    return _coupon_state(found) if found else "unknown"
 
 
 def _valid_coupon(code: str) -> Optional[dict[str, Any]]:
@@ -2050,24 +2083,50 @@ class CouponIn(BaseModel):
 
 @app.get("/v1/operator/coupons", dependencies=_OPERATOR)
 def operator_coupons() -> dict[str, Any]:
-    usage: dict[str, dict[str, int]] = {}
+    """Every code with its whole history (DEC-120).
+
+    Created, each time it was used and on which order, each time the operator
+    switched it, each time a candidate tried it and was refused, and where it
+    stands today. Codes that were tried and never existed are listed apart.
+    """
+    redemptions: dict[str, list[dict[str, Any]]] = {}
     for order in service.orders.recent(500000):
         if order.coupon_code and order.paid_at:
-            row = usage.setdefault(
-                order.coupon_code,
-                {"orders": 0, "revenue_paise": 0, "discount_paise": 0},
+            redemptions.setdefault(order.coupon_code, []).append(
+                {
+                    "order_id": order.order_id,
+                    "at": order.paid_at,
+                    "amount_paise": order.amount_paise,
+                    "discount_paise": order.discount_paise,
+                }
             )
-            row["orders"] += 1
-            row["revenue_paise"] += order.amount_paise
-            row["discount_paise"] += order.discount_paise
+    attempts: dict[str, list[dict[str, Any]]] = {}
+    for attempt in service.ledger.coupon_attempts():
+        attempts.setdefault(attempt["code"], []).append(attempt)
+
     coupons = service.ledger.coupons()
+    known = set()
     for coupon in coupons:
-        coupon.update(
-            usage.get(
-                coupon["code"], {"orders": 0, "revenue_paise": 0, "discount_paise": 0}
-            )
-        )
-    return {"coupons": coupons}
+        code = coupon["code"]
+        known.add(code)
+        used = sorted(redemptions.get(code, []), key=lambda r: str(r["at"]))
+        coupon["orders"] = len(used)
+        coupon["revenue_paise"] = sum(r["amount_paise"] for r in used)
+        coupon["discount_paise"] = sum(r["discount_paise"] for r in used)
+        coupon["redemptions"] = used
+        coupon["status"] = _coupon_state(coupon)
+        coupon["changes"] = service.ledger.activity_for(f"coupon:{code}")
+        coupon["attempts"] = attempts.get(code, [])
+        # Who a reward went to is the candidate's address and phone; the
+        # console links to the order instead.
+        coupon.pop("issued_to", None)
+    unknown = [
+        attempt
+        for code, rows in attempts.items()
+        if code not in known
+        for attempt in rows
+    ]
+    return {"coupons": coupons, "unknown_attempts": unknown}
 
 
 @app.post("/v1/operator/coupons", dependencies=_OPERATOR)
