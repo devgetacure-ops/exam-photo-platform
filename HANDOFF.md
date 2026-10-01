@@ -114,7 +114,9 @@ All live at `d7ad538`.
 - **Harsh light and an uneven cut-out are said, not corrected** (DEC-116): two `possible_issue` notes reach the candidate through `candidate_notes`; no pixel changes. The 40 labelled photographs give identical results before and after. GATE's crop was looked at and **left as it is**: its notice caps the face at 60–70% and the crop sits at 69%.
 - **"Ready" means the file still exists** (DEC-117): `useKitLiveness` asks the server, forgets deleted files, and nothing leads to payment for a file that is gone. The flow is keyed per examination.
 - **One review reward per person counts the phone** (DEC-118). Review codes do not expire (owner).
-- **Open**: 8 model-gated pipeline/API tests fail on this machine with `FACE_DETECTOR_FAILED`, before and after these changes; unexplained. `kit-checkout.test.tsx`'s two-second timing test fails only when the machine is busy.
+- **CI had been red since DEC-105 (20 September)**: four model-gated resolver tests still asserted Crop Mode B. Rewritten on 2 October (`773caad`) to assert Mode A at the size the resolver names. The other four failures seen locally were a model path given relative to the wrong folder: run the gated suites **from the repository root** with `model-assets/...` paths, as the workflow does. On Windows the pytest process can linger after printing its summary; read the log and stop it.
+- **Open**: `kit-checkout.test.tsx`'s two-second timing test fails only when the machine is busy.
+- **Old branches cleared (2 October)**: `feat/faster-matting` and `fix/matte-edge-quality` deleted, every commit already in `main`. Three `claude/*` worktrees from July and August still hold uncommitted edits; those are saved as patches in `C:\Projects\exam-photo-platform-archive\old-worktrees-2026-10-02` and the worktrees left for the owner to remove.
 
 ## Not yet verified on the live site
 
