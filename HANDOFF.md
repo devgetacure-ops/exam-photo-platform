@@ -106,8 +106,19 @@ PSC, which are the whole of Crop Mode B. Their fix is open: Mode B refuses to
 compose onto the background, so it turns away a head near an edge that Mode A
 accepts. Signatures and thumb impressions have no sweep of this kind yet. **28–29 September (DEC-114)**: one portrait through every photograph rule (665, locally) all prepared; four portraits through one examination per distinct photograph configuration (114, on this server, 151 min) and through the 22 supplement examinations (locally) -- every one 4/4. Deployed 29 September; the live catalogue reports 770.
 
+## Since the catalogue went to 770 (1–2 October, DEC-115 to DEC-118)
+
+All live at `d7ad538`.
+
+- **The phone flow leads forward** (DEC-115): a finished file goes to the next file or to "Check and pay"; the flow's place survives a reload; the success moment waits for Razorpay's own window to close; the review offer is a reward band, the form folds to its code, and the emailed link shows an existing review. `GET /v1/feedback` is the signed read.
+- **Harsh light and an uneven cut-out are said, not corrected** (DEC-116): two `possible_issue` notes reach the candidate through `candidate_notes`; no pixel changes. The 40 labelled photographs give identical results before and after. GATE's crop was looked at and **left as it is**: its notice caps the face at 60–70% and the crop sits at 69%.
+- **"Ready" means the file still exists** (DEC-117): `useKitLiveness` asks the server, forgets deleted files, and nothing leads to payment for a file that is gone. The flow is keyed per examination.
+- **One review reward per person counts the phone** (DEC-118). Review codes do not expire (owner).
+- **Open**: 8 model-gated pipeline/API tests fail on this machine with `FACE_DETECTOR_FAILED`, before and after these changes; unexplained. `kit-checkout.test.tsx`'s two-second timing test fails only when the machine is busy.
+
 ## Not yet verified on the live site
 
+0. **From DEC-115 to DEC-118, on a real phone**: the success moment after Razorpay closes; landing back on the file after the camera; "Prepare it again" on the pay screen; a clean start when changing examination in the installed app; a second review from the same phone earning no code.
 1. **A real candidate journey since 17 September.** No preparation has run on the live site since then: the crop fix (DEC-105), shrink-before-upload and the camera button (DEC-103), the next-step changes (DEC-107), the new waiting and success screens, the review box, and a free code at checkout (DEC-112) have never been exercised live. One phone journey settles all of them: prepare, pay Rs 3, review, then use the code on a second examination. The owner said on 24 September they would do this.
 2. **The full sweep after DEC-105.** It was stopped after one examination on the owner's instruction; the fix itself was verified on the owner's ten labelled photographs and against their approved outputs. Rerun with `scripts/smoke_catalogue_photographs.py` (about 70 minutes, no effect on the live site).
 3. **The delivery email in Outlook and the Gmail app.**
