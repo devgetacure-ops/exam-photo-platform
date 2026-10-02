@@ -1375,3 +1375,10 @@ Recommendation implemented locally: require explicitly configured persistent req
 - **Decision**: Add /we-vs-ai covering the complete preparation workflow and identity risks, using the existing site design. Compare general AI assistance fairly: free tools can work; paid plans do not guarantee compliance; detector deployment cannot be generalized. Retain support-state, estimate, live-capture and acceptance boundaries. Prices use shared helpers.
 - **Affected Modules**: web comparison route, navigation, sitemap and llms.txt. No processing, payment or storage changes.
 - **Evidence and QA**: docs/WE_VS_AI_BRIEF.md; local verification recorded there.
+
+### DEC-122: The Operator Sees Photos for 24 Hours
+- **Date**: 2026-10-03
+- **Status**: Decided by the owner; implemented.
+- **Decision**: After public launch the owner wants every uploaded and prepared file viewable in the console for 24 hours from the upload. The candidate's time limit is unchanged: at their deadline, or when they delete, the files leave every candidate route as before. Instead of being erased then, the job directory moves to `_held/`, which only the operator routes read; the sweeper erases it when the 24 hours end. `EXAM_PHOTO_OPERATOR_HOLD_SECONDS` sets the length; zero (the default) erases at the candidate's deadline. Amends DEC-064 and DEC-066 for deployments that set it.
+- **Affected Modules**: `api/storage.py`, `api/service.py`, `api/settings.py`, `api/app.py` (operator job and file routes, uploads `live` flag).
+- **Evidence and QA**: `tests/api/test_operator_hold.py` (7).

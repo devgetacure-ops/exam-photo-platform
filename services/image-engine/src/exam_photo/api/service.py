@@ -1061,6 +1061,45 @@ class ApiProcessingService:
     def order_gateway(self, gateway: OrderGateway) -> None:
         self._order_gateway = gateway
 
+    def remove_job_artifacts(self, record: ProcessingJobRecord) -> None:
+        """Take a job's files away from the candidate: erased, or held (DEC-122).
+
+        With `operator_hold_seconds` set, files younger than that move to the
+        operator's hold instead of being erased, and the sweeper erases them
+        when the hold ends. Either way no candidate route can reach them again.
+        """
+        if time.time() < self._hold_deadline(record.created_at):
+            self.store.hold_job_directory(record.job_id)
+        else:
+            self.store.delete_job_directory(record.job_id)
+
+    def _hold_deadline(self, created_at: str) -> float:
+        """Epoch second at which the operator's hold on a job ends."""
+        created = parse_manifest_timestamp(created_at)
+        if created is None or self.settings.operator_hold_seconds <= 0:
+            return 0.0
+        return created.timestamp() + self.settings.operator_hold_seconds
+
+    def _held_directory_deadline(self, held: Path) -> float:
+        # A held job nobody can date is erased rather than kept without limit.
+        try:
+            manifest = json.loads((held / "job.json").read_text(encoding="utf-8"))
+            return self._hold_deadline(str(manifest["created_at"]))
+        except (OSError, ValueError, KeyError, TypeError):
+            return 0.0
+
+    def held_job(self, job_id: str) -> Optional[ProcessingJobRecord]:
+        """The manifest of a job in the operator's hold, if it is still there."""
+        held = self.store.held_job_directory(job_id)
+        if held is None or time.time() >= self._held_directory_deadline(held):
+            return None
+        try:
+            return ProcessingJobRecord.model_validate_json(
+                (held / "job.json").read_text(encoding="utf-8")
+            )
+        except (OSError, ValueError):
+            return None
+
     def expire_job_if_due(self, record: ProcessingJobRecord) -> bool:
         """Erase a job whose retention deadline has passed, on the way to it.
 
@@ -1079,7 +1118,7 @@ class ApiProcessingService:
         if record.status == ApiJobStatus.DELETED or not record.is_expired():
             return False
         try:
-            self.store.delete_job_directory(record.job_id)
+            self.remove_job_artifacts(record)
         except OSError:
             # The sweeper in this or another worker may have removed the
             # directory already (DEC-064). The record is still marked below:
@@ -2117,6 +2156,8 @@ class ApiProcessingService:
         self.progress.sweep()
         # DEC-108: order records keep their own, much longer, clock.
         self.orders.sweep()
+        # DEC-122: the operator's hold ends here.
+        self.store.sweep_held(self._held_directory_deadline)
 
         records = self.registry.scan_manifests()
         deleted_count = 0
@@ -2124,7 +2165,7 @@ class ApiProcessingService:
         for record in records:
             if record.status != ApiJobStatus.DELETED and record.is_expired():
                 try:
-                    self.store.delete_job_directory(record.job_id)
+                    self.remove_job_artifacts(record)
                 except OSError:
                     # Another worker's sweeper may have removed this directory
                     # between the scan and now -- each uvicorn worker runs its

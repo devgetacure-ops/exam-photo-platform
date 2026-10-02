@@ -1561,16 +1561,29 @@ def get_operator_job(job_id: str) -> dict[str, Any]:
         raise HTTPException(status_code=400, detail="Invalid job ID format")
     record = _job_or_expired(job_id)
     if not record or record.status == ApiJobStatus.DELETED:
-        raise HTTPException(status_code=404, detail="Job not found")
+        record = service.held_job(job_id)
+        if record is None:
+            raise HTTPException(status_code=404, detail="Job not found")
     detail = _operator_job(record)
-    if service.store.file_exists(job_id, "report.json"):
+    report = _operator_file_path(job_id, "report.json")
+    if report is not None:
         try:
-            detail["report"] = json.loads(
-                service.store.read_file(job_id, "report.json")
-            )
+            detail["report"] = json.loads(report.read_text(encoding="utf-8"))
         except (ValueError, OSError):
             detail["report"] = None
     return detail
+
+
+def _operator_file_path(job_id: str, filename: str) -> Optional[Path]:
+    """A job's file for the operator: live, or in the hold (DEC-122)."""
+    try:
+        if service.store.file_exists(job_id, filename):
+            return service.store.get_file_path(job_id, filename)
+    except ValueError:
+        return None
+    if service.held_job(job_id) is None:
+        return None
+    return service.store.held_file_path(job_id, filename)
 
 
 @app.get(
@@ -1585,18 +1598,14 @@ def get_operator_job_file(job_id: str, filename: str) -> Response:
     """
     if not JOB_ID_REGEX.match(job_id):
         raise HTTPException(status_code=400, detail="Invalid job ID format")
-    record = _job_or_expired(job_id)
-    if not record or record.status == ApiJobStatus.DELETED:
-        raise HTTPException(status_code=404, detail="Job not found")
+    _job_or_expired(job_id)
     media = _OPERATOR_MEDIA.get(Path(filename).suffix.lower())
     if media is None or filename == "job.json":
         raise HTTPException(status_code=404, detail="File not found")
-    try:
-        if not service.store.file_exists(job_id, filename):
-            raise HTTPException(status_code=404, detail="File not found")
-        content = service.store.read_file(job_id, filename)
-    except ValueError:
-        raise HTTPException(status_code=404, detail="File not found") from None
+    path = _operator_file_path(job_id, filename)
+    if path is None:
+        raise HTTPException(status_code=404, detail="File not found")
+    content = path.read_bytes()
     return Response(
         content=content,
         media_type=media,
@@ -1742,8 +1751,9 @@ def operator_uploads(
     rows = service.ledger.uploads(query=q, since=since, limit=2000)
     for row in rows:
         live = service.registry.get_job(row["job_id"])
-        row["live"] = bool(
-            live and not live.is_expired() and live.status != ApiJobStatus.DELETED
+        row["live"] = (
+            bool(live and not live.is_expired() and live.status != ApiJobStatus.DELETED)
+            or service.held_job(row["job_id"]) is not None
         )
     return {"uploads": rows}
 
@@ -2636,6 +2646,8 @@ def _operator_job(record: ProcessingJobRecord) -> dict[str, Any]:
     job["released"] = service.output_is_released(record)
     files = []
     directory = service.settings.artifact_root / record.job_id
+    if not directory.is_dir():
+        directory = service.store.held_job_directory(record.job_id) or directory
     if directory.is_dir():
         for path in sorted(directory.iterdir()):
             if path.is_file() and path.suffix.lower() in _OPERATOR_MEDIA:
@@ -2758,8 +2770,8 @@ def delete_job(job_id: str) -> dict[str, str]:
     if not record or record.status == ApiJobStatus.DELETED:
         raise HTTPException(status_code=404, detail="Job not found or already deleted")
 
-    # 1. Delete all artifacts on disk (including job.json manifest)
-    service.store.delete_job_directory(job_id)
+    # 1. Take every artifact out of reach (held for the operator, DEC-122)
+    service.remove_job_artifacts(record)
 
     # 2. Update registry to DELETED (retains status in-memory only)
     service.registry.delete_job(job_id)

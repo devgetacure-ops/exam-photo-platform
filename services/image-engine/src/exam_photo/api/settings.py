@@ -80,6 +80,12 @@ class ApiSettings(BaseModel):
     #: `expires_at` was an assertion the service never acted on.
     cleanup_interval_seconds: int = 300
 
+    #: How long after its upload a job's files stay viewable in the operator
+    #: console, past the candidate's own deadline (DEC-122). The candidate's
+    #: deadline is untouched: at it, the files leave every candidate route.
+    #: Zero erases at the candidate's deadline, as before.
+    operator_hold_seconds: int = Field(default=0, ge=0)
+
     #: Shared secret for the operator surface (`/v1/process`,
     #: `/v1/rules/validate`, `/v1/cleanup-expired`, `/test`).  Empty leaves
     #: them open, which is right for local development and wrong in public;
@@ -296,6 +302,10 @@ def get_settings() -> ApiSettings:
             for origin in os.environ["EXAM_PHOTO_ALLOWED_ORIGINS"].split(",")
             if origin.strip()
         ]
+    if "EXAM_PHOTO_OPERATOR_HOLD_SECONDS" in os.environ:
+        kwargs["operator_hold_seconds"] = int(
+            os.environ["EXAM_PHOTO_OPERATOR_HOLD_SECONDS"]
+        )
     if "EXAM_PHOTO_CLEANUP_INTERVAL_SECONDS" in os.environ:
         kwargs["cleanup_interval_seconds"] = int(
             os.environ["EXAM_PHOTO_CLEANUP_INTERVAL_SECONDS"]

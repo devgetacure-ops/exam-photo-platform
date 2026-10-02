@@ -151,7 +151,7 @@ device. `/admin/rules` is unchanged.
 |---|---|
 | Overview | Money and orders against the period before, visitors who paid, rating, revenue and upload charts, **To do**, examinations, system health |
 | Orders | Every checkout; the panel has payer, files, timeline, **Mark refunded** (after refunding in Razorpay), saved replies, notes |
-| Uploads | Every preparation with time per step; the photograph only while the file is held; opening one is logged |
+| Uploads | Every preparation with time per step; the uploaded and prepared file for 24 hours from the upload (DEC-122; candidates still lose access at their own time limit); opening one is logged |
 | Customers | Every full address, where it came from, spend, orders, messages |
 | Inbox | Support-form questions, complaints and grievances matched to their order, with the 48-hour and one-month clocks; exam requests with *Most wanted* and one-click "it is added" email |
 | Reviews | Stars, options and words from the downloads screen and the delivery email; nothing is public until the candidate allowed it and the owner approves |

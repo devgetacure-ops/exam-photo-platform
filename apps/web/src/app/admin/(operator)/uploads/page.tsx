@@ -48,7 +48,7 @@ export default async function UploadsPage({ searchParams }: { searchParams: Prom
         <>
             <PageHeader
                 title="Uploads"
-                description="Every preparation, kept after the photograph is erased. The photograph shows only while it is still held."
+                description="Every preparation, kept after the photograph is erased. The uploaded and prepared files show for 24 hours from the upload."
                 actions={
                     <>
                         <div className="flex rounded-lg bg-[var(--op-muted-bg)] p-0.5">
