@@ -1368,3 +1368,10 @@ Recommendation implemented locally: require explicitly configured persistent req
 - **Consequences**: `test_operator_growth.py` +1 (the whole history through the API, a refusal remembered once), `coupon-timeline.test.ts` (5). Web 380 passed, engine API 371 passed. Seen on the local engine at desktop and 375 px with four codes in four states and one unknown attempt. Attempts before 2 October were never recorded and cannot be shown.
 - **Affected Modules**: `api/app.py` (`operator_coupons`, `_coupon_state`, `_coupon_refusal`, `_priced`), `api/ledger.py` (`coupon_attempts`, `activity_for`), `lib/operator/coupon-timeline.ts`, `app/admin/(operator)/coupons/page.tsx`.
 - **Approval Owner**: Product Owner
+
+### DEC-121: An Evidence-Led WE vs AI Page
+- **Date**: 2026-10-02
+- **Status**: Approved by owner request; implementation in this task.
+- **Decision**: Add /we-vs-ai covering the complete preparation workflow and identity risks, using the existing site design. Compare general AI assistance fairly: free tools can work; paid plans do not guarantee compliance; detector deployment cannot be generalized. Retain support-state, estimate, live-capture and acceptance boundaries. Prices use shared helpers.
+- **Affected Modules**: web comparison route, navigation, sitemap and llms.txt. No processing, payment or storage changes.
+- **Evidence and QA**: docs/WE_VS_AI_BRIEF.md; local verification recorded there.

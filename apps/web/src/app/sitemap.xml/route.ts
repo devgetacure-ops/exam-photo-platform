@@ -10,6 +10,7 @@ export async function GET() {
     const routes = [
         "/",
         "/exams",
+        "/we-vs-ai",
         ...EXAM_FAMILIES.map((family) => `/exams/${family.slug}`),
         "/compress-image",
         "/compress-pdf",

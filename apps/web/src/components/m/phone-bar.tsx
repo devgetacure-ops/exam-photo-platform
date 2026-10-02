@@ -28,6 +28,7 @@ const MENU: { group: string; links: { href: string; label: string }[] }[] = [
         links: [
             { href: "/exams", label: "Every examination, A to Z" },
             { href: "/about#how", label: "How it works" },
+            { href: "/we-vs-ai", label: "WE vs AI" },
             { href: "/about#pricing", label: "What it costs" },
             { href: "/compress-image", label: "Compress a photo to a size" },
             { href: "/pdf", label: "PDF tools" },

@@ -64,6 +64,9 @@ export function SiteHeader({
                             <Link href="/#pricing" className="euk-top-link">
                                 Pricing
                             </Link>
+                            <Link href="/we-vs-ai" className="euk-top-link">
+                                WE vs AI
+                            </Link>
                         </>
                     )}
                     <Link href="/exams" className="euk-top-exams">

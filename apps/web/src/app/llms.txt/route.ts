@@ -35,6 +35,7 @@ export async function GET() {
         "## Pages",
         "",
         `- [All examinations](${SITE_URL}/exams): every examination covered, A to Z`,
+        `- [WE vs AI](${SITE_URL}/we-vs-ai): exam-first preparation compared with general AI tools; identity, framing, file checks, pricing and limitations`,
         ...EXAM_FAMILIES.map(
             (family) =>
                 `- [${family.name} exams](${SITE_URL}/exams/${family.slug}): photograph and signature sizes for every ${family.phrase} examination covered`,
