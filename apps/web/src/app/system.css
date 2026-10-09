@@ -658,7 +658,11 @@ button:hover .euk-chevron {
     font-size: 11px;
 }
 
+/* The padding is the tap target; the negative margin gives the row back
+   its height, so the link is 44px to a finger and one line to the eye. */
 .euk-picker-foot a {
+    padding-block: 13px;
+    margin-block: -13px;
     color: var(--ink-55);
     text-decoration: underline;
     text-underline-offset: 4px;

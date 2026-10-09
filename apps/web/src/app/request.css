@@ -290,6 +290,36 @@
         box-shadow 140ms ease;
 }
 
+/* The topic list is a field like the others. Left bare it drew as the
+   browser's own 19px control between two framed inputs, too small to tap. */
+.euk .euk-slip select {
+    width: 100%;
+    appearance: none;
+    border: var(--rule) solid var(--ink);
+    border-radius: 0;
+    background-color: var(--paper);
+    background-image:
+        linear-gradient(45deg, transparent 50%, var(--ink) 50%),
+        linear-gradient(135deg, var(--ink) 50%, transparent 50%);
+    background-position:
+        right 20px center,
+        right 13px center;
+    background-size: 7px 7px;
+    background-repeat: no-repeat;
+    color: var(--ink);
+    padding: 13px 40px 13px 14px;
+    font-size: 17px;
+    line-height: 1.4;
+    text-overflow: ellipsis;
+    cursor: pointer;
+}
+
+.euk .euk-slip select:focus-visible {
+    outline: none;
+    border-color: var(--signal-deep);
+    box-shadow: 5px 5px 0 var(--signal);
+}
+
 .euk .euk-slip textarea {
     resize: vertical;
     min-height: 60px;

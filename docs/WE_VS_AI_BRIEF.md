@@ -46,3 +46,9 @@ No comparative benchmark was performed. No rejection statistics, testimonials, u
 - Production-font screenshots and machine QA: .impeccable/review/we-vs-ai/.
 - Impeccable detector: no findings. Independent finish reviewer: ship, no material fixes. Documenter: inherited system preserved; no global design changes.
 - Backend processing, payment and storage unchanged; backend tests not rerun for this frontend-only page. No deployment or live payment workflow performed.
+
+## Rebuilt, 2026-10-09
+
+The owner asked for the page to look like the rest of the site. It now reuses the landing page's section rhythm, price cards, chips and drawings; only the hero's two panes, the comparison table, the identity points and the questions are new, in `app/versus.css`. The first viewport is the same request typed twice (a prompt with the numbers left blank, against one examination name) and replaces the requirements sheet. Copy was cut to the site's voice with the claims, limits and sources above unchanged.
+
+Seen locally at 1440 and 375 px: no sideways scroll, no console errors. Screenshots of the lower phone sections could not be captured on this machine and were checked by measurement instead.

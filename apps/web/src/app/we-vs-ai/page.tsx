@@ -1,125 +1,459 @@
 import Link from "next/link";
-import { ArrowRight, Check, FileCheck2, ScanFace } from "lucide-react";
-import { SiteHeader } from "../../components/site-header";
-import { SiteFooter } from "../../components/site-footer";
+import { Reveal } from "../../components/euk/reveal";
+import {
+    CertificateDrawing,
+    PhotoDrawing,
+    SignatureDrawing,
+    ThumbDrawing,
+} from "../../components/euk/doodles";
+import { UntouchedMark } from "../../components/euk/principle-marks";
 import { JsonLd } from "../../components/json-ld";
-import { breadcrumbs, pageMetadata } from "../../lib/site";
+import { SiteFooter } from "../../components/site-footer";
+import { SiteHeader } from "../../components/site-header";
 import { rupees, tier } from "../../lib/kit-pricing";
-import styles from "./page.module.css";
+import { breadcrumbs, pageMetadata } from "../../lib/site";
 
 export const metadata = pageMetadata({
     title: "WE vs AI: exam photo preparation, compared",
-    description: "Can ChatGPT prepare your exam photo? Compare AI editing with ExamUploadKit: identity, framing, pixels, KB, DPI, filenames, preview and pricing.",
+    description:
+        "Can ChatGPT prepare your exam photo? Compare AI editing with ExamUploadKit: identity, framing, pixels, KB, DPI, filenames, preview and pricing.",
     path: "/we-vs-ai",
 });
 
-const comparisons = [
-    ["Finding the requirements", "You supply the right notice, cycle and instructions, then check the interpretation.", "Your selected exam loads its stored requirements. Published values and platform estimates are distinguished."],
-    ["Dimensions & aspect ratio", "AI-assisted code or a resize tool can set exact pixels if you provide the correct values.", "The stored configuration sets the output frame and dimensions for supported files; the subject is not stretched."],
-    ["File size & format", "You request an export, inspect the actual file and adjust compression if needed.", "Preparation targets the configured size limits and format, with final output checks and findings."],
-    ["DPI & resolution", "You must distinguish pixel dimensions from DPI metadata and specify what the notice actually asks for.", "DPI is applied when configured. An unpublished value is not presented as an official requirement."],
-    ["Face framing & coverage", "A clean background or correct pixel size does not establish correct head framing.", "Natural cropping aims to preserve the whole head. Coverage is a diagnostic, not a universal rejection threshold."],
-    ["Background & identity", "Editing and generative recreation are different operations. Ask for an edit and inspect whether your face or clothing changed.", "Background processing and restrained capture corrections preserve identity. No generated face, outfit or cosmetic makeover."],
-    ["Filename & other files", "You coordinate names and separate preparation steps for signatures, declarations and documents.", "Supported files share one exam-first workflow, with configured output naming and file-specific processing."],
-    ["Final review", "You are responsible for checking the exported file against the current notice.", "You review a watermarked preview and any findings before payment. Final acceptance remains the authority’s decision."],
+/**
+ * The comparison page: what an AI leaves to the candidate, set against what
+ * the examination's record already answers here.
+ *
+ * It is fair on purpose. A free AI can do most of this for a candidate who
+ * knows the numbers and checks the result, and the page says so; the argument
+ * is the work left over, not that the tools are bad. Nothing here is a
+ * benchmark, and no figure is quoted that we did not measure.
+ */
+
+const SSC_NOTICE =
+    "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_RHQ_2026_phase_xiv.pdf";
+const NIST_REPORT = "https://doi.org/10.6028/NIST.AI.100-4";
+const OPENAI_FREE = "https://help.openai.com/en/articles/9275245-chatgpt-free-tier-faq";
+
+/** What our side of the hero already holds, before the candidate types more. */
+const ON_FILE = ["Frame and pixels", "KB limit", "Format", "Background", "The other files too"];
+
+const ROWS = [
+    {
+        what: "The rules",
+        ai: "You find the notice and read it out.",
+        us: "Already on file for your examination.",
+    },
+    {
+        what: "Pixels",
+        ai: "Right, if you give it the right numbers.",
+        us: "Set from the examination's record.",
+    },
+    {
+        what: "KB and format",
+        ai: "Export, check the size, compress again.",
+        us: "Compressed to sit under the limit.",
+    },
+    {
+        what: "DPI",
+        ai: "Easy to confuse with pixels.",
+        us: "Applied where the examination asks for it.",
+    },
+    {
+        what: "Head framing",
+        ai: "A clean background isn't a correct crop.",
+        us: "Cropped to the frame. Never stretched.",
+    },
+    {
+        what: "Your face",
+        ai: "It may redraw it. You have to look.",
+        us: "Never redrawn, reshaped or whitened.",
+    },
+    {
+        what: "The other files",
+        ai: "One at a time, named by hand.",
+        us: "Signature, thumb, declaration and PDFs together.",
+    },
+    {
+        what: "The last check",
+        ai: "Yours to do.",
+        us: "A watermarked preview before you pay.",
+    },
 ];
 
-const questions = [
-    { question: "Can ChatGPT do the same thing?", answer: "It can help explain instructions, edit images and, with suitable tools or code, resize, compress and rename files. A careful user can assemble a working workflow. ExamUploadKit’s value is bringing stored exam requirements and supported preparation steps together, without asking you to assemble that workflow each time." },
-    { question: "Do I need ChatGPT Plus to prepare a photo?", answer: "Not necessarily. ChatGPT’s free tier includes image creation, uploads and data analysis with usage limits. Free does not mean incapable, and paid does not mean automatically compliant. What matters is the actual exported file and the applicable exam instructions." },
-    { question: "Will every exam portal detect an AI-generated photo?", answer: "We have not established that every portal uses an AI-image detector. Detection tools exist, but their performance varies; a detector result is not proof of acceptance or rejection. Some exams require live capture or a recent photograph. Follow those instructions regardless of whether an edited image might be detected." },
-    { question: "Does removing a watermark make an AI photo acceptable?", answer: "No. A missing visible watermark says nothing about whether the photograph is recent, authentic or permitted by the exam. Do not treat a detector score or watermark removal as a substitute for the authority’s instructions." },
-    { question: "Can I generate formal clothes or improve my face first?", answer: "Use a real recent photograph and follow the exam’s clothing and appearance instructions. Generating an outfit, reshaping facial features or cosmetically recreating the image can change what the photograph represents. ExamUploadKit does not perform those transformations." },
-    { question: "Is 75–80% face coverage compulsory for every exam?", answer: "No. Requirements and measurement methods vary. Our natural-framing objective is not a universal official threshold. A file with the correct pixels and KB can still have poor framing; conversely, one calculated coverage percentage alone cannot establish portal acceptance." },
-    { question: "Does ExamUploadKit use AI?", answer: "Yes. Computer-vision models help locate the face and separate the subject from the background. That is different from generating a new identity. We also use conventional image processing for tasks such as resizing and compression. We do not claim the service is AI-free." },
-    { question: "Can you verify recency, identity or every appearance rule?", answer: "No. We cannot establish from pixels alone that a photograph is recent or belongs to you, and we do not automatically detect every appearance issue. Read the exam’s instructions and review the result. If the portal requires live capture, complete it there." },
-    { question: "What if my exam or file is not fully supported?", answer: "The exam page distinguishes supported, partially supported, guidance-only and not-yet-supported requirements. Read that status before uploading. Partial support is not a claim that every requirement has been completed." },
-    { question: "Is portal acceptance guaranteed?", answer: "No. We prepare supported files against stored requirements; the exam authority makes the final decision. Check the current official notice, especially if its instructions have changed since the source used in our record." },
+const POINTS = [
+    {
+        title: "Editing isn't generating.",
+        body: "We find your face and lift it off the background. Then it's cropping, resizing and compression. No new face, no new outfit.",
+    },
+    {
+        title: "Live capture means live.",
+        body: "Some portals photograph you themselves, and no uploaded file replaces that. SSC's Phase-XIV/2026 notice is one.",
+        link: { href: SSC_NOTICE, label: "Read the notice" },
+    },
+    {
+        title: "Detection isn't the test.",
+        body: "Detectors exist and they are uneven. The question is whether the photograph follows the instructions, not whether an edit would be caught.",
+        link: { href: NIST_REPORT, label: "NIST's overview" },
+    },
 ];
+
+const YOURSELF = [
+    "You know the exact pixels and KB",
+    "You'll check the exported file",
+    "It's a single file",
+];
+
+const WITH_US = [
+    "You don't know the numbers",
+    "The form wants several files",
+    "The deadline is close",
+];
+
+const QUESTIONS = [
+    {
+        question: "Can ChatGPT do the same thing?",
+        answer: "Much of it. It can explain instructions, edit images and, with the right tools, resize, compress and rename files. A careful person can assemble a working routine. We bring your examination's stored requirements and the preparation together, so you don't assemble it each time.",
+    },
+    {
+        question: "Do I need ChatGPT Plus to prepare a photo?",
+        answer: "Not necessarily. ChatGPT's free tier includes image creation, uploads and data analysis, with usage limits. A paid plan doesn't make a file compliant and a free one doesn't make it wrong. What matters is the file you export.",
+    },
+    {
+        question: "Will every exam portal detect an AI-generated photo?",
+        answer: "We don't know that every portal runs a detector, and nobody should tell you they do. Detection tools exist and their accuracy varies. Some examinations require a recent photograph or live capture; follow that whether or not an edit would be noticed.",
+    },
+    {
+        question: "Does removing a watermark make an AI photo acceptable?",
+        answer: "No. A missing watermark says nothing about whether the photograph is recent, real or allowed by the examination.",
+    },
+    {
+        question: "Can I generate formal clothes or improve my face first?",
+        answer: "Use a real, recent photograph and follow the examination's instructions on clothing and appearance. A generated outfit or a reshaped face changes what the photograph is of. We don't do either.",
+    },
+    {
+        question: "Is 75–80% face coverage compulsory for every exam?",
+        answer: "No. Requirements differ and so do the ways they are measured. A file with the right pixels and KB can still be badly framed, and one coverage figure can't settle acceptance.",
+    },
+    {
+        question: "Does ExamUploadKit use AI?",
+        answer: "Yes. Computer-vision models find the face and separate you from the background. That is not the same as generating a person. Resizing and compression are ordinary image processing.",
+    },
+    {
+        question: "Can you verify that a photo is recent, or mine?",
+        answer: "No. Pixels can't prove a photograph is recent or belongs to you, and we don't detect every appearance rule. Read your examination's instructions and look at the preview.",
+    },
+    {
+        question: "What if my exam or file isn't fully supported?",
+        answer: "The examination's page says so for each file: supported, partly supported, guidance only, or not yet supported. A file we can't prepare has no upload button.",
+    },
+    {
+        question: "Is portal acceptance guaranteed?",
+        answer: "No. We prepare files to the stored requirements and the examination authority decides. Check the current official notice, especially if it has changed.",
+    },
+];
+
+/** A gap in the prompt: the number the candidate has to know. */
+function Blank({ wide = false }: { wide?: boolean }) {
+    return (
+        <span className={`euk-vs-blank ${wide ? "euk-vs-blank--wide" : ""}`}>
+            <span className="sr-only">blank</span>
+        </span>
+    );
+}
 
 export default function WeVsAi() {
     return (
-        <div className={`euk ${styles.page}`}>
+        <div className="euk euk-vs">
             <SiteHeader />
-            <JsonLd data={breadcrumbs([{ name: "Home", path: "/" }, { name: "WE vs AI", path: "/we-vs-ai" }])} />
-            <JsonLd data={{ "@context": "https://schema.org", "@type": "FAQPage", mainEntity: questions.map(({ question, answer }) => ({ "@type": "Question", name: question, acceptedAnswer: { "@type": "Answer", text: answer } })) }} />
+            <JsonLd
+                data={breadcrumbs([
+                    { name: "Home", path: "/" },
+                    { name: "WE vs AI", path: "/we-vs-ai" },
+                ])}
+            />
+            <JsonLd
+                data={{
+                    "@context": "https://schema.org",
+                    "@type": "FAQPage",
+                    mainEntity: QUESTIONS.map(({ question, answer }) => ({
+                        "@type": "Question",
+                        name: question,
+                        acceptedAnswer: { "@type": "Answer", text: answer },
+                    })),
+                }}
+            />
             <main id="main-content">
-                <section className={styles.hero} aria-labelledby="comparison-title">
-                    <div className={`euk-wrap ${styles.heroGrid}`}>
-                        <div>
-                            <h1 id="comparison-title" className={`euk-display ${styles.title}`}>WE <span>vs</span> AI</h1>
-                            <h2 className={styles.headline}>An edited photo is one step.<br />An exam upload is the whole job.</h2>
-                            <p className={styles.intro}>AI can help you make and edit images. ExamUploadKit connects your exam’s stored requirements to the files you need to submit.</p>
-                            <Link href="/exams" className="primary-button">Find your examination <ArrowRight size={18} aria-hidden="true" /></Link>
-                            <p className={styles.priceNote}>From {rupees(tier(1))}. Review the preview before you pay.</p>
+                {/* ---- hero ------------------------------------------------ */}
+                <section className="euk-vs-top">
+                    <div className="euk-wrap euk-vs-top-grid">
+                        <div className="euk-vs-top-say">
+                            <h1 className="euk-display euk-vs-title">
+                                We <span className="euk-mark">vs</span> AI
+                            </h1>
+                            <p className="euk-display euk-vs-claim">
+                                An AI edits a photo. Your exam wants a file.
+                            </p>
+                            <p className="euk-lede">
+                                A file has pixels, a KB limit, a format and a name, and it still
+                                has to be you. An AI does what you tell it. We already know what
+                                your examination asked for.
+                            </p>
+                            <div className="euk-vs-top-act">
+                                <Link href="/exams" className="primary-button">
+                                    Find your examination
+                                </Link>
+                                <span>From {rupees(tier(1))}. You see it before you pay.</span>
+                            </div>
                         </div>
-                        <div className={styles.requirementSheet}>
-                            <FileCheck2 size={36} strokeWidth={1.5} aria-hidden="true" />
-                            <h2>A file has more than<br />one requirement.</h2>
-                            <ul>{["Your real identity", "Natural head framing", "Required dimensions", "Allowed KB & format", "DPI & naming, when specified"].map((item) => <li key={item}><Check size={18} aria-hidden="true" /><span>{item}</span></li>)}</ul>
-                            <p>They need to work together.</p>
-                            <small>Requirements vary by exam. This is a checklist of considerations, not an acceptance certificate.</small>
+
+                        <div className="euk-vs-duel">
+                            <figure className="euk-vs-pane euk-vs-pane--ai">
+                                <figcaption>What you type into an AI</figcaption>
+                                <p className="euk-vs-prompt">
+                                    Crop this to <Blank /> × <Blank /> pixels. White background.
+                                    Keep it under <Blank /> KB, as a JPG. Don&rsquo;t change my
+                                    face. Name it <Blank wide />.
+                                </p>
+                                <p className="euk-vs-pane-foot">
+                                    Then check every one of those yourself.
+                                </p>
+                            </figure>
+                            <figure className="euk-vs-pane euk-vs-pane--us">
+                                <figcaption>What you type here</figcaption>
+                                <p className="euk-vs-field">
+                                    <svg
+                                        viewBox="0 0 20 20"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth={2.2}
+                                        aria-hidden="true"
+                                    >
+                                        <circle cx="8.5" cy="8.5" r="5.5" />
+                                        <path d="M13 13l5 5" strokeLinecap="round" />
+                                    </svg>
+                                    <span>IBPS PO</span>
+                                    <span className="euk-vs-caret" aria-hidden="true" />
+                                </p>
+                                <ul className="euk-vs-onfile">
+                                    {ON_FILE.map((item) => (
+                                        <li key={item}>{item}</li>
+                                    ))}
+                                </ul>
+                                <p className="euk-vs-pane-foot">Already on file.</p>
+                            </figure>
                         </div>
                     </div>
                 </section>
 
-                <nav className={styles.contents} aria-label="On this page"><div className="euk-wrap">{[["journey", "The workflow"], ["comparison", "Compare the details"], ["identity", "Your identity"], ["cost", "What it costs"], ["questions", "Your questions"]].map(([id, label]) => <a href={`#${id}`} key={id}>{label}</a>)}</div></nav>
-
-                <section id="journey" className={styles.section}>
+                {/* ---- the comparison --------------------------------------- */}
+                <section className="euk-section euk-section--alt" id="comparison">
                     <div className="euk-wrap">
-                        <h2 className={`euk-display ${styles.sectionTitle}`}>Less coordinating.<br />More getting it done.</h2>
-                        <p className={styles.lead}>A shop can help. A collection of online tools can help. The difference is how much of the preparation you still have to manage.</p>
-                        <div className={styles.journeys}>
-                            <article><h3>At a studio or cybercafé</h3><p>Bring the instructions. Explain the size. Get the photograph and files prepared with someone’s help.</p><p className={styles.takeaway}>You coordinate the visit and the requirements.</p></article>
-                            <article><h3>Across AI and editing tools</h3><ol><li>Edit the background</li><li>Resize to the required pixels</li><li>Compress to the KB limit</li><li>Rename the file</li><li>Check the complete result</li></ol><p className={styles.takeaway}>You connect the tools and verify the output.</p></article>
-                            <article className={styles.ourJourney}><h3>With ExamUploadKit</h3><ol><li>Choose your examination</li><li>Upload your originals</li><li>Review the preview and findings</li><li>Pay and download supported files</li></ol><p className={styles.takeaway}>The exam configures the preparation.</p></article>
-                        </div>
-                        <div className={styles.reality}><strong>Correct KB. Wrong framing. Still a problem.</strong><p>Changing a background, adding a generated outfit, resizing, compressing and renaming can leave the most important question unanswered: does the result meet this exam’s instructions? File size alone cannot answer it.</p></div>
+                        <Reveal>
+                            <h2 className="euk-display euk-h2">Eight things. Who does each.</h2>
+                            <p className="euk-lede">
+                                A routine you run yourself with an AI, next to the same job here.
+                            </p>
+                        </Reveal>
+                        <Reveal delay={120}>
+                            <table className="euk-vs-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">
+                                            <span className="sr-only">The requirement</span>
+                                        </th>
+                                        <th scope="col">You and an AI</th>
+                                        <th scope="col">Here</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {ROWS.map((row) => (
+                                        <tr key={row.what}>
+                                            <th scope="row">{row.what}</th>
+                                            <td data-tag="AI">{row.ai}</td>
+                                            <td data-tag="Us">{row.us}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </Reveal>
                     </div>
                 </section>
 
-                <section id="comparison" className={`${styles.section} ${styles.soft}`}>
+                {/* ---- identity --------------------------------------------- */}
+                <section className="euk-invert euk-section" id="identity">
+                    <div className="euk-wrap euk-vs-identity">
+                        <Reveal className="euk-vs-identity-head">
+                            <h2 className="euk-display euk-h2">
+                                Prepare the file.{" "}
+                                <span className="euk-mark">Keep the person.</span>
+                            </h2>
+                            <UntouchedMark className="euk-vs-identity-mark" />
+                            <p className="euk-lede">
+                                The photograph on your admit card has to be the person who walks
+                                into the hall. A more polished face is not a more suitable one.
+                            </p>
+                        </Reveal>
+                        <ul className="euk-vs-points">
+                            {POINTS.map((point, i) => (
+                                <li key={point.title}>
+                                    <Reveal delay={i * 110}>
+                                        <h3 className="euk-display">{point.title}</h3>
+                                        <p>
+                                            {point.body}
+                                            {point.link && (
+                                                <>
+                                                    {" "}
+                                                    <a
+                                                        href={point.link.href}
+                                                        className="euk-link"
+                                                        target="_blank"
+                                                        rel="noreferrer"
+                                                    >
+                                                        {point.link.label}
+                                                    </a>
+                                                </>
+                                            )}
+                                        </p>
+                                    </Reveal>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </section>
+
+                {/* ---- why pay, and what ------------------------------------ */}
+                <section className="euk-section" id="cost">
                     <div className="euk-wrap">
-                        <h2 className={`euk-display ${styles.sectionTitle}`}>The details make<br />the difference.</h2>
-                        <p className={styles.lead}>A practical comparison with a do-it-yourself AI workflow—not a claim that every AI platform has the same capabilities.</p>
-                        <div className={styles.comparison}>
-                            <div className={styles.columnHeads} aria-hidden="true"><span>The requirement</span><span>You + general AI tools</span><span>With ExamUploadKit</span></div>
-                            {comparisons.map(([topic, diy, euk]) => <article className={styles.comparisonRow} key={topic}><h3>{topic}</h3><div><span className={styles.mobileLabel}>You + general AI tools</span><p>{diy}</p></div><div className={styles.ourCell}><span className={styles.mobileLabel}>With ExamUploadKit</span><p>{euk}</p></div></article>)}
+                        <Reveal>
+                            <h2 className="euk-display euk-h2">
+                                A free AI can do this. So why pay {rupees(tier(1))}?
+                            </h2>
+                            <p className="euk-lede">
+                                For the part it leaves to you: knowing the numbers, and checking
+                                the result.{" "}
+                                <a
+                                    href={OPENAI_FREE}
+                                    className="euk-link"
+                                    target="_blank"
+                                    rel="noreferrer"
+                                >
+                                    What ChatGPT&rsquo;s free tier includes
+                                </a>
+                            </p>
+                        </Reveal>
+
+                        <div className="euk-value euk-vs-value">
+                            <Reveal className="euk-elsewhere">
+                                <h3>Do it yourself if</h3>
+                                <ul className="euk-chips">
+                                    {YOURSELF.map((item) => (
+                                        <li key={item} className="euk-chip">
+                                            {item}
+                                        </li>
+                                    ))}
+                                </ul>
+                                <p>
+                                    Then it may be all you need.{" "}
+                                    <Link href="/compress-image" className="euk-link">
+                                        Our compressor is free
+                                    </Link>
+                                </p>
+                            </Reveal>
+                            <Reveal delay={120} className="euk-free">
+                                <h3>Use us if</h3>
+                                <ul className="euk-chips">
+                                    {WITH_US.map((item) => (
+                                        <li key={item} className="euk-chip">
+                                            {item}
+                                        </li>
+                                    ))}
+                                </ul>
+                                <p>That is what this was built for.</p>
+                            </Reveal>
                         </div>
-                        <p className={styles.note}>This compares workflows, not benchmark scores. We have not run a controlled performance comparison against every AI tool.</p>
-                    </div>
-                </section>
 
-                <section id="identity" className={styles.section}>
-                    <div className={`euk-wrap ${styles.identityGrid}`}>
-                        <div className={styles.identityStatement}><ScanFace size={52} strokeWidth={1.3} aria-hidden="true" /><h2 className={`euk-display ${styles.sectionTitle}`}>Prepare the file.<br /><span>Keep the person.</span></h2><p>Your exam photo represents you. A more polished image is not necessarily a more suitable identity photograph.</p></div>
-                        <div className={styles.identityCopy}>
-                            <article><h3>Background editing is not identity generation.</h3><p>ExamUploadKit uses computer vision for face location and background separation. Resizing, compression and restrained capture corrections prepare the file; they do not generate a new face or outfit, reshape features or whiten skin.</p></article>
-                            <article><h3>Recent photos and live capture mean what they say.</h3><p>A generated portrait cannot prove recency. An uploaded file cannot replace live capture when the portal requires it. SSC’s Phase-XIV/2026 notice, for example, specifies live photograph capture. <a href="#source-ssc">Read the official notice.</a></p></article>
-                            <article><h3>AI detection is not an acceptance test.</h3><p>Detection methods exist, including methods that do not depend on a visible watermark. Their accuracy and limitations vary. We have no basis to say every exam portal uses them or can reliably identify the generator. <a href="#source-nist">See NIST’s research overview.</a></p><p>The useful question is whether your photograph follows the instructions—not whether an alteration might go undetected.</p></article>
+                        <div className="euk-price-grid euk-vs-prices">
+                            <Reveal className="euk-invert euk-price euk-price--kit">
+                                <p className="euk-price-name">The whole kit</p>
+                                <p className="euk-price-row">
+                                    <span className="euk-price-figure">{rupees(tier(2))}</span>
+                                </p>
+                                <p className="euk-price-files euk-vs-files" aria-hidden="true">
+                                    <PhotoDrawing />
+                                    <SignatureDrawing />
+                                    <ThumbDrawing />
+                                    <CertificateDrawing />
+                                </p>
+                                <p className="euk-price-body">
+                                    Two files or more. PDF work is free with them.
+                                </p>
+                                <Link href="/exams" className="primary-button">
+                                    Find your examination
+                                </Link>
+                            </Reveal>
+                            <Reveal delay={90} className="euk-price">
+                                <p className="euk-price-name">One file</p>
+                                <p className="euk-price-row">
+                                    <span className="euk-price-figure">{rupees(tier(1))}</span>
+                                </p>
+                                <p className="euk-price-files euk-vs-files" aria-hidden="true">
+                                    <PhotoDrawing />
+                                </p>
+                                <p className="euk-price-body">
+                                    Any single file, such as your photograph.
+                                </p>
+                                <Link href="/exams" className="euk-price-hit">
+                                    <span className="sr-only">Find your examination</span>
+                                </Link>
+                            </Reveal>
                         </div>
                     </div>
                 </section>
 
-                <section className={`${styles.section} ${styles.soft}`}>
-                    <div className={`euk-wrap ${styles.honesty}`}>
-                        <h2 className={`euk-display ${styles.sectionTitle}`}>Free AI can help.<br />So why pay us?</h2>
-                        <div><p className={styles.lead}>For the connected workflow, not because free tools are incapable.</p><p>ChatGPT’s free tier includes image creation, file uploads and data analysis, subject to limits. A subscription is not a certificate of exam compliance, and a free plan is not proof of a bad result. <a href="#source-openai">Check the current feature information.</a></p><p>If you know the specifications and are comfortable checking your exported files, doing it yourself may be enough. If you want supported preparation organised around your examination, that is what ExamUploadKit is built for.</p><Link href="/compress-image" className={styles.textLink}>Only need compression? Use our free tool <ArrowRight size={17} aria-hidden="true" /></Link></div>
+                {/* ---- questions -------------------------------------------- */}
+                <section className="euk-section euk-section--alt" id="questions">
+                    <div className="euk-wrap euk-vs-faq">
+                        <h2 className="euk-display euk-h2">Fair questions. Straight answers.</h2>
+                        <div className="euk-vs-faq-list">
+                            {QUESTIONS.map(({ question, answer }) => (
+                                <details key={question}>
+                                    <summary>{question}</summary>
+                                    <p>{answer}</p>
+                                </details>
+                            ))}
+                        </div>
                     </div>
                 </section>
 
-                <section id="cost" className={styles.section}>
-                    <div className={`euk-wrap ${styles.pricing}`}>
-                        <div><h2 className={`euk-display ${styles.sectionTitle}`}>See the result.<br />Then decide.</h2><p className={styles.lead}>Review the watermarked preview and any findings before paying for your prepared files.</p><p>Photographs, signatures, thumb impressions and handwritten declarations are chargeable. Supported document and PDF work is free.</p></div>
-                        <div className={styles.pricePanel}><div><span>One chargeable file</span><strong>{rupees(tier(1))}</strong></div><div><span>Two or more chargeable files</span><strong>{rupees(tier(2))}<small> total</small></strong></div><Link href="/exams" className="primary-button">Choose your exam <ArrowRight size={18} aria-hidden="true" /></Link><p>Check the support status for each file. Final acceptance is the examination authority’s decision.</p></div>
+                {/* ---- sources ---------------------------------------------- */}
+                <section className="euk-vs-sources" aria-labelledby="sources-title">
+                    <div className="euk-wrap">
+                        <h2 id="sources-title">Where this comes from</h2>
+                        <ul>
+                            <li>
+                                <a href={OPENAI_FREE} target="_blank" rel="noreferrer">
+                                    OpenAI: ChatGPT free tier FAQ
+                                </a>
+                            </li>
+                            <li>
+                                <a href={SSC_NOTICE} target="_blank" rel="noreferrer">
+                                    SSC: Phase-XIV/2026 Selection Posts notice
+                                </a>
+                            </li>
+                            <li>
+                                <a href={NIST_REPORT} target="_blank" rel="noreferrer">
+                                    NIST AI 100-4: Reducing Risks Posed by Synthetic Content
+                                </a>
+                            </li>
+                        </ul>
+                        <p>
+                            Read on 2 October 2026. We compared routines, not benchmark scores,
+                            and we are not affiliated with OpenAI or any examination authority.{" "}
+                            <Link href="/support">Tell us if something here is out of date</Link>
+                        </p>
                     </div>
                 </section>
-
-                <section id="questions" className={`${styles.section} ${styles.soft}`}>
-                    <div className={`euk-wrap ${styles.faqLayout}`}><h2 className={`euk-display ${styles.sectionTitle}`}>Fair questions.<br />Straight answers.</h2><div>{questions.map(({ question, answer }) => <details className={styles.faq} key={question}><summary>{question}</summary><p>{answer}</p></details>)}</div></div>
-                </section>
-
-                <section className={`${styles.section} ${styles.sources}`} aria-labelledby="sources-title"><div className="euk-wrap"><h2 id="sources-title">Sources and scope</h2><p>Reviewed 2 October 2026. Product descriptions cover supported preparation against stored requirements. Capabilities, plans and exam instructions can change; the current official notice takes precedence.</p><ol><li id="source-openai"><a href="https://help.openai.com/en/articles/9275245-chatgpt-free-tier-faq">OpenAI: ChatGPT Free Tier FAQ</a> — free features and usage limits.</li><li id="source-ssc"><a href="https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_RHQ_2026_phase_xiv.pdf">SSC: Phase-XIV/2026 Selection Posts notice</a> — exam-specific live photograph instructions, not a rule for every exam.</li><li id="source-nist"><a href="https://doi.org/10.6028/NIST.AI.100-4">NIST AI 100-4: Reducing Risks Posed by Synthetic Content</a> — provenance, watermarking and detection approaches and limitations.</li></ol><p>ExamUploadKit is an independent service, not affiliated with OpenAI or any examination authority. <Link href="/support">Report an outdated comparison or rule.</Link></p></div></section>
             </main>
             <SiteFooter />
         </div>

@@ -87,6 +87,14 @@
         background-color 120ms ease;
 }
 
+/* A finger needs 44; on a desktop the strip stays one compact row. */
+@media (max-width: 899px) {
+    .euk-az a {
+        width: 44px;
+        height: 44px;
+    }
+}
+
 .euk-az a:hover,
 .euk-az a:focus-visible {
     background: var(--ink);

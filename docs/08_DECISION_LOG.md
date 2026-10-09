@@ -1375,6 +1375,7 @@ Recommendation implemented locally: require explicitly configured persistent req
 - **Decision**: Add /we-vs-ai covering the complete preparation workflow and identity risks, using the existing site design. Compare general AI assistance fairly: free tools can work; paid plans do not guarantee compliance; detector deployment cannot be generalized. Retain support-state, estimate, live-capture and acceptance boundaries. Prices use shared helpers.
 - **Affected Modules**: web comparison route, navigation, sitemap and llms.txt. No processing, payment or storage changes.
 - **Evidence and QA**: docs/WE_VS_AI_BRIEF.md; local verification recorded there.
+- **Amended 2026-10-09**: The page was rebuilt in the landing page's own parts (section rhythm, price cards, chips, drawings) and its copy cut to the site's voice. The claims and their limits are unchanged; the three sources are unchanged. Styles moved from a page module to `app/versus.css`. The "on this page" strip, the studio/cybercafé journey and the repeated acceptance disclaimers were removed; the limits now sit once, in the questions.
 
 ### DEC-122: The Operator Sees Photos for 24 Hours
 - **Date**: 2026-10-03
@@ -1382,3 +1383,11 @@ Recommendation implemented locally: require explicitly configured persistent req
 - **Decision**: After public launch the owner wants every uploaded and prepared file viewable in the console for 24 hours from the upload. The candidate's time limit is unchanged: at their deadline, or when they delete, the files leave every candidate route as before. Instead of being erased then, the job directory moves to `_held/`, which only the operator routes read; the sweeper erases it when the 24 hours end. `EXAM_PHOTO_OPERATOR_HOLD_SECONDS` sets the length; zero (the default) erases at the candidate's deadline. Amends DEC-064 and DEC-066 for deployments that set it.
 - **Affected Modules**: `api/storage.py`, `api/service.py`, `api/settings.py`, `api/app.py` (operator job and file routes, uploads `live` flag).
 - **Evidence and QA**: `tests/api/test_operator_hold.py` (7).
+
+### DEC-123: The Landing Story Says Each Thing Once
+- **Date**: 2026-10-09
+- **Status**: Decided by the owner after a reviewer called the site text-heavy; implemented.
+- **Decision**: On the landing story (and `/about`, which is the same component) every file card, step and principle is one or two short sentences, the problem section states the routine once, and the "or, somewhere else" chips lose their repeated closing line. No claim, price, deletion time or source was removed. The phone home and the preparation flow were already short and are unchanged.
+- **Found in the same pass**: the topic list on the support form was an unstyled browser control 19px tall; the A to Z letters on `/exams` were 38px on a phone; the back link on a rules page was 23px tall; the "browse all" link under the search was 17px tall. All four are now at least 44px to a finger. Every public route was loaded at 375 and 1440 px: no sideways scroll, no broken image, one visible `h1` each.
+- **Affected Modules**: `components/home-story.tsx`, `components/euk/wipe-demo.tsx`, `app/story.css`, `app/request.css`, `app/directory.css`, `app/rules.css`, `app/system.css`.
+- **Approval Owner**: Product Owner

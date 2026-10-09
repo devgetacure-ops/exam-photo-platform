@@ -447,9 +447,7 @@ export function WipeDemo({
                     </h3>
                     <p>
                         What you gave us on one side, what came back on the
-                        other. Each frame works through its examples on its own;
-                        drag either and it stays where you put it, then picks
-                        itself up three seconds later.
+                        other. Drag either frame to compare.
                     </p>
                 </div>
                 <button

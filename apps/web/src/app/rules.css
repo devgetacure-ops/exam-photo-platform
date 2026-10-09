@@ -20,6 +20,8 @@
 
 .euk-rules-back {
     display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     gap: 8px;
     font-size: 15px;
     font-weight: 600;
@@ -34,7 +36,7 @@
 }
 
 .euk-rules-title {
-    margin-top: 18px;
+    margin-top: 8px;
     font-size: clamp(38px, 5vw, 72px);
     line-height: 0.88;
     text-wrap: balance;

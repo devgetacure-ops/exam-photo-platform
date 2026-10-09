@@ -13,10 +13,11 @@ they hit the upload step. **No segment boundary** — school entrance, higher
 education and government recruitment are all served. Where attention has to be
 prioritised, it goes to the examinations with the largest candidate volume.
 
-The catalogue's present weight: 76 of 132 examinations are government
-recruitment (Staff Selection Commission, Railway Recruitment Boards, UPSC,
-IBPS, state public service commissions), 16 higher education, 5 school
-entrance.
+The catalogue's present weight (770 examinations, counted 2026-10-09): the
+largest groups are institutional recruitment (114), state public service
+commissions (101), state entrance (92), national entrance (63), central
+recruitment (58), public-sector recruitment (55), teacher eligibility (50),
+police recruitment (46) and banking (35).
 
 The situation is specific and shapes everything: a deadline, often the last
 day, on a mid-range Android phone over mobile data. The candidate is not
@@ -32,9 +33,9 @@ identity.
 
 ## Product Purpose
 
-The application is not one photograph. Across the researched set it is roughly
-48 signature items, 44 photographs, 15 thumb impressions, 13 handwritten
-declarations and 40 certificate or identity scans. Today a candidate assembles
+The application is not one photograph. Across the catalogue it is 761
+photographs, 631 signatures, 64 thumb impressions, 25 handwritten declarations
+and 453 certificate or identity scans. Today a candidate assembles
 these across several free tools, each solving one part and undoing another.
 
 The product replaces that with one place that already knows what the
@@ -44,7 +45,7 @@ does not return to the portal a second time because a file was refused.
 ## Positioning
 
 **The examination's own published rules drive the machine, not a generic
-preset.** A rule record per examination — 132 of them, 418 requirements — is
+preset.** A rule record per examination — 770 of them, 2,010 requirements — is
 read at build time and drives crop, matte, background, resize, compression and
 filename. A neighbouring tool cannot truthfully copy this without doing the
 same research and encoding it.
@@ -78,9 +79,9 @@ signatures, thumb impressions, handwritten declarations, certificate and ID
 scans, and multi-page PDF assembly — adding, reordering, omitting and rotating
 pages.
 
-**Catalogue:** 132 examinations, 418 requirements. 314 supported, 29
-guidance-only, 3 partially supported, 72 not yet supported. **80 records carry
-no photograph specification at all** and are served for a signature or
+**Catalogue (counted 2026-10-09):** 770 examinations, 2,010 requirements. 1,803
+supported, 51 guidance-only, 30 partially supported, 126 not yet supported. **32
+records carry no photograph requirement at all** and are served for a signature or
 certificates alone.
 
 **Four support states, never collapsed to a boolean:** `supported`,
@@ -88,9 +89,8 @@ certificates alone.
 `partially_supported` means a file was produced that still needs something the
 platform cannot do, and must never read as success.
 
-**Pricing:** ₹3 for one chargeable image, ₹5 for two, ₹8 as a total ceiling
-covering everything an examination asks for. Displayed against struck prices of
-₹4, ₹8 and ₹10. PDF and document work is included free **only within a paid
+**Pricing:** ₹3 for one chargeable file, ₹5 for two or more, whatever the
+examination asks for. Displayed against struck prices of ₹5 and ₹10. PDF and document work is included free **only within a paid
 image order** — a documents-only kit cannot check out. *Open: the engine still
 prices a documents-only kit at zero, so this is enforced in the interface and
 not yet on the server.*
@@ -113,15 +113,16 @@ generated filenames carry no personal information. *Open: three examinations
 which would be the first personal data the product handles.*
 
 **Open, not to be invented:** per-examination candidate volume is not in the
-catalogue, so "most popular" cannot yet be ranked from data. Whether support is
-a private ticket queue or a public forum. The domain, which is not yet bought.
+catalogue, so "most popular" cannot yet be ranked from data.
 
 ## Brand Commitments
 
-**Name: examuploadkit.** Settled 2026-09-10. No domain registered yet.
+**Name: examuploadkit.** Settled 2026-09-10. The site is live at
+examuploadkit.com (since 2026-09-16).
 
-No logo, palette, typeface or identity asset exists. All of it is to be created
-for this product and approved by the owner. Earlier documents referred to the
+The identity is the one in the code: the thirteen-cell wordmark, the paper, ink
+and single signal-orange palette, Big Shoulders for display and Anek for text
+(`apps/web/src/app/system.css`). Support is a private form, not a public forum. Earlier documents referred to the
 product as "UploadReady"; that name is superseded.
 
 A quality contract borrowed from an unrelated product appears in historical
@@ -134,11 +135,11 @@ the files."* Where the platform does not know something, it says so.
 
 ## Evidence on Hand
 
-- **132 rule records** at `examples/rules/`, each with provenance and, where it
+- **770 rule records** at `examples/rules/`, each with provenance and, where it
   exists, an official source URL.
 - **Per-examination derived facts** at `examples/rules/candidate_facts.json`,
-  covering all 132 — generated from the records, never authored.
-- **63 interim placeholder values across 32 examinations**, marked
+  covering all 770 — generated from the records, never authored.
+- **287 interim placeholder values across 102 examinations**, marked
   `interim_default` and surfaced to the candidate as `est.` A redesign that
   drops that marker turns an honest disclosure into a silent claim.
 - **A citable rejection source:** SSC's 2022 Ladakh selection-post notice,

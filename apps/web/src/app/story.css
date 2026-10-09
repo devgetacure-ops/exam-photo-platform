@@ -2266,3 +2266,12 @@
     line-height: 1.55;
     color: var(--ink-55);
 }
+
+.euk-ledger-truth a {
+    font-weight: 600;
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--signal);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+}

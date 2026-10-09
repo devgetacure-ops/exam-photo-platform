@@ -8,6 +8,7 @@ import {
 import "./system.css";
 import "./app.css";
 import "./story.css";
+import "./versus.css";
 import "./request.css";
 import "./policy.css";
 import "./exam.css";

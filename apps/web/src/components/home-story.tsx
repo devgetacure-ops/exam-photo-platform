@@ -35,27 +35,27 @@ const KIT = [
     {
         name: "Photograph",
         Drawing: PhotoDrawing,
-        body: "Cropped to your examination's frame, with the background replaced and the file compressed under the limit and named the way the portal expects. Your face is left alone: no reshaping, no whitening.",
+        body: "Cropped to your examination's frame, on a plain background, under the file limit. Your face is left alone.",
     },
     {
         name: "Signature",
         Drawing: SignatureDrawing,
-        body: "The page cleared around your strokes and the ink made firm. Never stretched, because a stretched signature is no longer yours.",
+        body: "The page cleared around your strokes and the ink made firm. Never stretched.",
     },
     {
         name: "Thumb impression",
         Drawing: ThumbDrawing,
-        body: "Lighting evened out and cropped close, but never masked, so every ridge the authority needs to see survives.",
+        body: "Lighting evened and cropped close, never masked, so every ridge survives.",
     },
     {
         name: "Declaration",
         Drawing: DeclarationDrawing,
-        body: "We straighten your handwritten sheet so it reads clearly. The page stays whole and is never cropped down to the writing.",
+        body: "Your handwritten sheet straightened so it reads clearly. The page stays whole.",
     },
     {
         name: "Certificates and ID",
         Drawing: CertificateDrawing,
-        body: "A scan turned into a clean PDF, or an existing PDF put in order: pages added, removed, rearranged or merged.",
+        body: "A scan turned into a clean PDF, or an existing PDF put in order.",
     },
 ];
 
@@ -153,22 +153,22 @@ const PRINCIPLES = [
     {
         Mark: UntouchedMark,
         title: "It never changes your face.",
-        body: "Exposure and contrast, yes. Whitening or reshaping, never. The photograph on your admit card has to be the person who walks into the exam hall.",
+        body: "Exposure and contrast, yes. Whitening or reshaping, never.",
     },
     {
         Mark: EstimateMark,
         title: "It never guesses a rule.",
-        body: "Where an examination didn't publish a number, the value we use is marked est., so you know exactly which figures to check against your notification.",
+        body: "Where an examination didn't publish a number, ours is marked est.",
     },
     {
         Mark: NoPretenceMark,
         title: "It never pretends.",
-        body: "Some files we can't prepare. The portal might photograph you itself, or want your name printed on the image. When that happens the page says so, and there's no upload button pretending otherwise.",
+        body: "When we can't prepare a file, the page says so, and there's no upload button.",
     },
     {
         Mark: ForgetsMark,
         title: "It forgets you.",
-        body: "No account and nothing to sign up for. Your files are deleted within 30 minutes, or within an hour if you ask us to keep them.",
+        body: "No account. Your files are deleted within 30 minutes, or within an hour if you ask.",
     },
 ];
 
@@ -177,27 +177,27 @@ export function HomeStory({ examCount }: { examCount: number }) {
         {
             whose: "Yours",
             title: "Find your examination",
-            body: `Search by its name or its short form, like SSC CGL or IBPS PO. ${examCount} examinations are on file, each with the rules it published.`,
+            body: `Search by name or short form. ${examCount} examinations are on file.`,
         },
         {
             whose: "Yours",
             title: "Keep what you need",
-            body: "The full kit is already ticked. Untick anything your form doesn't ask for, and the price changes as you do.",
+            body: "The full kit is already ticked. Untick what your form doesn't ask for.",
         },
         {
             whose: "Ours",
             title: "We prepare it",
-            body: "Each file is made to your examination's own specification, and you watch it happen stage by stage.",
+            body: "Each file is made to your examination's own specification.",
         },
         {
             whose: "Yours",
             title: "Check before you pay",
-            body: "A watermarked preview of the real result, with a plain note of anything worth a second look.",
+            body: "A watermarked preview of the real result.",
         },
         {
             whose: "Yours",
             title: "Pay and keep",
-            body: "Download them, or have them emailed to you. Deleted within 30 minutes, or within an hour if you ask.",
+            body: "Download them or have them emailed. Deleted within 30 minutes, or an hour if you ask.",
         },
     ];
 
@@ -214,7 +214,7 @@ export function HomeStory({ examCount }: { examCount: number }) {
                             asks you to attach.
                         </h2>
                         <p className="euk-lede">
-                            An application is rarely one photograph. It&rsquo;s a photograph and a signature, often a thumb impression, sometimes a handwritten declaration, and a stack of certificates. Every one has its own pixel size and file limit, and we prepare all of them.
+                            An application is rarely one photograph. Every file has its own pixel size and limit, and we prepare all of them.
                         </p>
                     </Reveal>
 
@@ -345,14 +345,10 @@ export function HomeStory({ examCount }: { examCount: number }) {
                             </div>
                             <div className="euk-browser-page">
                                 <p>
-                                    Every year, crores of applications reach an
-                                    upload screen like the one you&rsquo;re
-                                    about to meet. So the routine goes: resize on one site, remove the background on another, compress somewhere else, convert the format and rename it yourself. Then you find the background was never actually removed, and you start again.
+                                    Resize on one site, remove the background on another, compress somewhere else, rename it yourself. Then the background was never actually removed, and you start again.
                                 </p>
                                 <p className="euk-problem-turn">
-                                    None of those tools has ever read your
-                                    examination&rsquo;s rules. That is the whole
-                                    problem, and it is the only thing we do.
+                                    None of those tools has read your examination&rsquo;s rules. That is the only thing we do.
                                 </p>
                             </div>
                         </Reveal>
@@ -364,33 +360,26 @@ export function HomeStory({ examCount }: { examCount: number }) {
                                 <li>
                                     <span className="euk-ledger-claim">Background removed</span>
                                     <span className="euk-ledger-truth">
-                                        A free AI tool does that part. It
-                                        won&rsquo;t resize the photo, get it
-                                        under the file limit, or name it the
-                                        way the portal wants.
+                                        Not resized, not under the limit, not named.
                                     </span>
                                 </li>
                                 <li>
                                     <span className="euk-ledger-claim">Cropped</span>
                                     <span className="euk-ledger-truth">
-                                        With no idea how much of the frame
-                                        your face is meant to fill.
+                                        With no idea how much of the frame your face should fill.
                                     </span>
                                 </li>
                                 <li>
                                     <span className="euk-ledger-claim">Ready to upload</span>
                                     <span className="euk-ledger-truth">
-                                        Nothing checked whether it&rsquo;s
-                                        blurred or too dark. We flag that
-                                        before you pay.
+                                        Nothing checked if it&rsquo;s blurred or too dark.
                                     </span>
                                 </li>
                                 <li>
                                     <span className="euk-ledger-claim">Just ask an AI</span>
                                     <span className="euk-ledger-truth">
-                                        Then write a prompt precise enough to
-                                        get every one of these right, and
-                                        check its work yourself.
+                                        Then write the prompt that gets all of this right.{" "}
+                                        <Link href="/we-vs-ai">We vs AI</Link>
                                     </span>
                                 </li>
                             </ul>
@@ -519,12 +508,7 @@ export function HomeStory({ examCount }: { examCount: number }) {
                             shouldn&rsquo;t cost you the biggest.
                         </h2>
                         <p>
-                            An application is where months, often years, of
-                            preparation meet a form. And the form is strict in ways that have nothing to do with how well you know the syllabus, like a file size in kilobytes or a name printed under the photograph.
-                        </p>
-                        <p>
-                            Examinations do turn applications away over
-                            this. SSC&rsquo;s 2022 notice for its Ladakh
+                            Years of preparation meet a form that is strict about kilobytes. SSC&rsquo;s 2022 notice for its Ladakh
                             selection posts lists unclear photographs and
                             illegible signatures among its grounds for
                             rejection.
@@ -611,9 +595,7 @@ export function HomeStory({ examCount }: { examCount: number }) {
                                 ))}
                             </ul>
                             <p>
-                                Turning a PDF page into an image runs inside
-                                your own browser, so that one is free for
-                                anybody, kit or no kit.{" "}
+                                PDF to image runs in your browser, free for anybody.{" "}
                                 <Link href="/pdf">See the PDF work</Link>
                             </p>
                         </Reveal>
@@ -629,10 +611,6 @@ export function HomeStory({ examCount }: { examCount: number }) {
                                     </li>
                                 ))}
                             </ul>
-                            <p>
-                                Six tabs, and not one of them has read your
-                                examination&rsquo;s rules.
-                            </p>
                         </Reveal>
                     </div>
 

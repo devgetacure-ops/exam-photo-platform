@@ -1,0 +1,519 @@
+/*
+ * ExamUploadKit — /we-vs-ai.
+ *
+ * The comparison page is built out of the landing page's own parts: the
+ * section rhythm, the price cards, the chips and the drawings all come from
+ * story.css. What is here is only what that page did not already have — the
+ * two panes in the hero, the comparison table, the three points on identity,
+ * and the questions.
+ */
+
+/* ---- hero: the same request, typed twice ------------------------------- */
+
+.euk-vs-top {
+    padding: 34px 20px 56px;
+}
+
+@media (min-width: 768px) {
+    .euk-vs-top {
+        padding: 88px 48px 104px;
+    }
+}
+
+.euk-vs-top-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px;
+}
+
+@media (min-width: 1100px) {
+    .euk-vs-top-grid {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+        gap: 72px;
+        align-items: center;
+    }
+}
+
+.euk-vs-title {
+    font-size: clamp(64px, 9.4vw, 96px);
+    line-height: 0.86;
+}
+
+.euk-vs-claim {
+    margin-top: 22px;
+    max-width: 16ch;
+    font-size: clamp(30px, 3.6vw, 48px);
+    line-height: 0.92;
+    text-wrap: balance;
+}
+
+.euk-vs-top-act {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px 22px;
+    margin-top: 30px;
+    font-size: 14px;
+    color: var(--ink-55);
+}
+
+/* Two panes, one above the other on a phone and side by side from a tablet.
+   They are drawn the way the landing page draws its browser window: the same
+   rule and the same hard drop, a diagram and not a screenshot. */
+.euk-vs-duel {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 22px;
+    /* the drop on the right-hand pane stays inside the page */
+    padding-right: var(--drop);
+}
+
+@media (min-width: 640px) {
+    .euk-vs-duel {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 26px;
+        align-items: stretch;
+    }
+}
+
+.euk-vs-pane {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    border: var(--rule) solid var(--ink);
+    background: var(--paper);
+    padding: 18px 18px 20px;
+}
+
+.euk-vs-pane figcaption {
+    padding-bottom: 12px;
+    border-bottom: var(--rule-thin) solid var(--hairline);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* Theirs is the open question: dashed, unshadowed, the way the landing page
+   draws "or, somewhere else". Ours is the solid one with the signal drop. */
+.euk-vs-pane--ai {
+    border-style: dashed;
+    border-color: var(--ink-40);
+    background: var(--paper-2);
+}
+
+.euk-vs-pane--us {
+    box-shadow: var(--drop) var(--drop) 0 var(--signal);
+}
+
+.euk .euk-vs-prompt {
+    margin-top: 16px;
+    font-size: 17px;
+    line-height: 1.9;
+    color: var(--ink-70);
+}
+
+/* A gap the candidate has to fill: the number only the notice has. */
+.euk-vs-blank {
+    display: inline-block;
+    width: 2.6em;
+    height: 1.1em;
+    vertical-align: -0.22em;
+    border-bottom: var(--rule) solid var(--signal);
+    background: var(--signal-soft);
+}
+
+.euk-vs-blank--wide {
+    width: 5.2em;
+}
+
+.euk .euk-vs-pane-foot {
+    margin-top: auto;
+    padding-top: 16px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+}
+
+.euk-vs-field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 16px;
+    border: var(--rule-thin) solid var(--ink);
+    padding: 11px 12px;
+    font-size: 17px;
+    font-weight: 500;
+}
+
+.euk-vs-field svg {
+    width: 18px;
+    height: 18px;
+    flex: none;
+}
+
+.euk-vs-caret {
+    width: 2px;
+    height: 1.15em;
+    margin-left: -7px;
+    background: var(--signal-deep);
+    animation: euk-vs-caret 1.1s steps(1) infinite;
+}
+
+@keyframes euk-vs-caret {
+    50% {
+        opacity: 0;
+    }
+}
+
+.euk-vs-onfile {
+    list-style: none;
+    margin: 12px 0 0;
+    padding: 0;
+}
+
+.euk .euk-vs-onfile li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 0;
+    font-size: 15px;
+    color: var(--ink-70);
+}
+
+/* A ticked box, drawn with two borders rather than a glyph. */
+.euk-vs-onfile li::before {
+    content: "";
+    width: 7px;
+    height: 12px;
+    flex: none;
+    margin: 0 5px 3px 4px;
+    border: solid var(--signal-deep);
+    border-width: 0 3px 3px 0;
+    rotate: 45deg;
+}
+
+/* ---- the comparison ---------------------------------------------------- */
+
+.euk-vs-table {
+    width: 100%;
+    margin-top: 44px;
+    border-collapse: collapse;
+    border-top: var(--rule) solid var(--ink);
+    text-align: left;
+}
+
+.euk-vs-table thead th {
+    padding: 14px 20px 12px;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.euk-vs-table tbody tr {
+    border-top: 2px solid var(--hairline);
+}
+
+.euk-vs-table tbody th {
+    padding: 20px 20px 20px 0;
+    width: 24%;
+    font-family: var(--font-shoulders), "Arial Narrow", sans-serif;
+    font-weight: 900;
+    font-size: 26px;
+    line-height: 0.96;
+    text-transform: uppercase;
+    vertical-align: top;
+}
+
+.euk-vs-table td {
+    padding: 20px;
+    width: 38%;
+    font-size: 17px;
+    line-height: 1.45;
+    vertical-align: top;
+}
+
+.euk-vs-table td:nth-child(2) {
+    color: var(--ink-55);
+}
+
+/* Our column is the paper one, ruled in the signal colour top to bottom. */
+.euk-vs-table th:last-child,
+.euk-vs-table td:last-child {
+    background: var(--paper);
+    font-weight: 600;
+    color: var(--ink);
+}
+
+.euk-vs-table thead th:last-child {
+    border-top: var(--rule) solid var(--signal);
+    translate: 0 calc(-1 * var(--rule));
+}
+
+/* On a phone a three-column table is a sideways strip. Each requirement
+   becomes its own short block: the name, their line, ours. */
+@media (max-width: 767px) {
+    .euk-vs-table {
+        margin-top: 32px;
+    }
+
+    .euk-vs-table thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+    }
+
+    .euk-vs-table,
+    .euk-vs-table tbody,
+    .euk-vs-table tr,
+    .euk-vs-table tbody th,
+    .euk-vs-table td {
+        display: block;
+        width: auto;
+    }
+
+    .euk-vs-table tbody tr {
+        padding: 16px 0 18px;
+    }
+
+    .euk-vs-table tbody tr:first-child {
+        border-top: 0;
+    }
+
+    .euk-vs-table tbody th {
+        padding: 0 0 8px;
+        font-size: 24px;
+    }
+
+    /* The side is named by a short tag in a fixed gutter, so both lines
+       start at the same edge and most of them hold to one or two lines. */
+    .euk-vs-table td {
+        display: grid;
+        grid-template-columns: 38px minmax(0, 1fr);
+        gap: 10px;
+        padding: 5px 0 5px 10px;
+        border-left: var(--rule) solid var(--hairline);
+        font-size: 16px;
+        line-height: 1.4;
+    }
+
+    .euk-vs-table td::before {
+        content: attr(data-tag);
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 1.75;
+        color: var(--ink-55);
+    }
+
+    .euk-vs-table td:last-child {
+        border-left-color: var(--signal);
+        background: none;
+    }
+
+    .euk-vs-table td:last-child::before {
+        color: var(--signal-deep);
+    }
+}
+
+/* On a phone the drawings in the price cards cost a screen between them. */
+@media (max-width: 639px) {
+    .euk-vs-files {
+        display: none;
+    }
+
+    .euk .euk-vs-prompt {
+        line-height: 1.75;
+    }
+}
+
+/* ---- identity ---------------------------------------------------------- */
+
+.euk-vs-identity {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 44px;
+}
+
+@media (min-width: 1024px) {
+    .euk-vs-identity {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 80px;
+        align-items: start;
+    }
+
+    .euk-vs-identity-head {
+        position: sticky;
+        top: calc(var(--bar) + 28px);
+    }
+}
+
+.euk-vs-identity-mark {
+    display: block;
+    width: min(260px, 70%);
+    height: auto;
+    margin-top: 34px;
+    color: var(--ink);
+}
+
+.euk-vs-points {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: var(--rule) solid var(--ink);
+}
+
+.euk-vs-points li {
+    padding: 26px 0 28px;
+    border-bottom: 2px solid var(--hairline);
+}
+
+.euk-vs-points h3 {
+    font-size: clamp(28px, 2.6vw, 38px);
+    line-height: 0.92;
+}
+
+.euk .euk-vs-points p {
+    margin-top: 12px;
+    max-width: 52ch;
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--ink-70);
+}
+
+/* ---- why pay ----------------------------------------------------------- */
+
+.euk-vs-value {
+    margin-top: 44px;
+}
+
+.euk-vs-prices {
+    margin-top: 18px;
+}
+
+/* ---- questions --------------------------------------------------------- */
+
+.euk-vs-faq {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+}
+
+@media (min-width: 1024px) {
+    .euk-vs-faq {
+        grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+        gap: 80px;
+        align-items: start;
+    }
+
+    .euk-vs-faq > h2 {
+        position: sticky;
+        top: calc(var(--bar) + 28px);
+    }
+}
+
+.euk-vs-faq-list {
+    border-top: var(--rule) solid var(--ink);
+}
+
+.euk-vs-faq-list details {
+    border-bottom: 2px solid var(--hairline);
+}
+
+.euk .euk-vs-faq-list summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    min-height: 56px;
+    padding: 14px 0;
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.35;
+    cursor: pointer;
+    list-style: none;
+}
+
+.euk-vs-faq-list summary::-webkit-details-marker {
+    display: none;
+}
+
+/* A plus that loses its upright when the answer is open. */
+.euk-vs-faq-list summary::after {
+    content: "";
+    width: 15px;
+    height: 15px;
+    flex: none;
+    background:
+        linear-gradient(var(--ink), var(--ink)) center / 100% 3px no-repeat,
+        linear-gradient(var(--ink), var(--ink)) center / 3px 100% no-repeat;
+    transition: rotate 180ms cubic-bezier(0.2, 0, 0.1, 1);
+}
+
+.euk-vs-faq-list details[open] summary::after {
+    background: linear-gradient(var(--signal-deep), var(--signal-deep)) center / 100% 3px
+        no-repeat;
+    rotate: 180deg;
+}
+
+.euk-vs-faq-list summary:hover {
+    color: var(--signal-deep);
+}
+
+.euk .euk-vs-faq-list details p {
+    padding: 0 0 22px;
+    max-width: 62ch;
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--ink-70);
+}
+
+/* ---- sources ----------------------------------------------------------- */
+
+.euk-vs-sources {
+    padding: 40px 20px 56px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink-55);
+}
+
+@media (min-width: 768px) {
+    .euk-vs-sources {
+        padding: 56px 48px 80px;
+    }
+}
+
+.euk-vs-sources h2 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+}
+
+.euk-vs-sources ul {
+    list-style: none;
+    margin: 10px 0 14px;
+    padding: 0;
+}
+
+.euk .euk-vs-sources li {
+    padding: 3px 0;
+}
+
+.euk-vs-sources a {
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--signal-deep);
+    text-underline-offset: 4px;
+}
+
+.euk .euk-vs-sources p {
+    max-width: 70ch;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .euk-vs-caret {
+        animation: none;
+    }
+
+    .euk-vs-faq-list summary::after {
+        transition: none;
+    }
+}
