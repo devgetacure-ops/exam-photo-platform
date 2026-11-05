@@ -1,0 +1,45 @@
+{
+  "generatedAt": "2026-10-01T19:49:24.719Z",
+  "dimensions": {
+    "width": 1080,
+    "height": 1350
+  },
+  "format": "PNG",
+  "sourceAssets": [
+    "apps/web/public/brand/examuploadkit-stacked-light.png",
+    "apps/web/public/examples/band/photo-a1-uploaded.jpg",
+    "apps/web/public/examples/band/photo-a1-prepared.jpg",
+    "apps/web/public/examples/band/sign-s1-prepared.jpg"
+  ],
+  "disclosure": "Photo and signature examples are the representational generated examples already disclosed on the product site; they are not candidate files.",
+  "files": [
+    "exports/instagram/carousels/exam/01-cover.png",
+    "exports/instagram/carousels/upload/01-cover.png",
+    "exports/instagram/carousels/kit/01-cover.png",
+    "exports/instagram/carousels/exam/02-a-particular-file.png",
+    "exports/instagram/carousels/exam/03-the-rule-stack.png",
+    "exports/instagram/carousels/exam/04-rules-change.png",
+    "exports/instagram/carousels/exam/05-exam-first.png",
+    "exports/instagram/carousels/exam/06-no-guessing.png",
+    "exports/instagram/carousels/exam/07-start-with-your-exam.png",
+    "exports/instagram/carousels/upload/02-search.png",
+    "exports/instagram/carousels/upload/03-see-the-files.png",
+    "exports/instagram/carousels/upload/04-upload-source.png",
+    "exports/instagram/carousels/upload/05-preview.png",
+    "exports/instagram/carousels/upload/06-review-price.png",
+    "exports/instagram/carousels/upload/07-download.png",
+    "exports/instagram/carousels/upload/08-try-the-flow.png",
+    "exports/instagram/carousels/kit/02-one-place.png",
+    "exports/instagram/carousels/kit/03-what-is-inside.png",
+    "exports/instagram/carousels/kit/04-rule-first.png",
+    "exports/instagram/carousels/kit/05-temporary-files.png",
+    "exports/instagram/carousels/kit/06-price.png",
+    "exports/instagram/carousels/kit/07-trust-boundary.png",
+    "exports/instagram/carousels/kit/08-find-your-exam.png"
+  ],
+  "reviewSheets": {
+    "exam": "exports/instagram/review-exam.png",
+    "upload": "exports/instagram/review-upload.png",
+    "kit": "exports/instagram/review-kit.png"
+  }
+}

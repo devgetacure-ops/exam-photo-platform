@@ -1,0 +1,65 @@
+{
+  "campaign": "ExamUploadKit launch v2",
+  "generatedAt": "2026-10-01T20:41:35.319Z",
+  "dimensions": {
+    "instagram": {
+      "width": 1080,
+      "height": 1350
+    },
+    "story": {
+      "width": 1080,
+      "height": 1920
+    },
+    "linkedin": {
+      "width": 1200,
+      "height": 627
+    },
+    "x": {
+      "width": 1600,
+      "height": 900
+    },
+    "reddit": {
+      "width": 1200,
+      "height": 628
+    }
+  },
+  "sourcePolicy": "Original generated photography supplies scene art. All copy and the authorised logo excerpts are composited deterministically. The logo is cropped and scaled only, without recolouring or reconstruction.",
+  "sourceArt": [
+    "source-art/why-problem.png",
+    "source-art/how-system.png",
+    "source-art/what-kit.png"
+  ],
+  "files": [
+    "exports/instagram/carousels/exam/01-cover.png",
+    "exports/instagram/carousels/exam/02-story.png",
+    "exports/instagram/carousels/exam/03-story.png",
+    "exports/instagram/carousels/exam/04-story.png",
+    "exports/instagram/carousels/exam/05-story.png",
+    "exports/instagram/carousels/exam/06-close.png",
+    "exports/instagram/carousels/upload/01-cover.png",
+    "exports/instagram/carousels/upload/02-story.png",
+    "exports/instagram/carousels/upload/03-story.png",
+    "exports/instagram/carousels/upload/04-story.png",
+    "exports/instagram/carousels/upload/05-story.png",
+    "exports/instagram/carousels/upload/06-story.png",
+    "exports/instagram/carousels/upload/07-close.png",
+    "exports/instagram/carousels/kit/01-cover.png",
+    "exports/instagram/carousels/kit/02-story.png",
+    "exports/instagram/carousels/kit/03-story.png",
+    "exports/instagram/carousels/kit/04-story.png",
+    "exports/instagram/carousels/kit/05-story.png",
+    "exports/instagram/carousels/kit/06-close.png",
+    "exports/story-status/01.png",
+    "exports/story-status/02.png",
+    "exports/story-status/03.png",
+    "exports/story-status/04.png",
+    "exports/linkedin/launch-editorial-1200x627.png",
+    "exports/x/launch-1600x900.png",
+    "exports/reddit/launch-context-1200x628.png"
+  ],
+  "reviews": {
+    "exam": "exports/instagram/review-exam.png",
+    "upload": "exports/instagram/review-upload.png",
+    "kit": "exports/instagram/review-kit.png"
+  }
+}

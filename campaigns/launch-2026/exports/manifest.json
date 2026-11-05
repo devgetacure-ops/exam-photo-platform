@@ -1,0 +1,52 @@
+{
+  "campaign": "ExamUploadKit launch 2026",
+  "generatedAt": "2026-10-01T19:39:35.072Z",
+  "source": "../../apps/web/public/brand/examuploadkit-stacked-light.png",
+  "sourcePolicy": "Authorised logo artwork is cropped and scaled only; lettering, rules, colour and proportions are unchanged.",
+  "canvas": {
+    "width": 1080,
+    "height": 1350
+  },
+  "profileCropSafeSquare": {
+    "left": 0,
+    "top": 135,
+    "width": 1080,
+    "height": 1080
+  },
+  "covers": [
+    {
+      "id": "01-exam",
+      "title": "EXAM",
+      "file": "exports/instagram/covers/01-exam.png",
+      "placed": {
+        "left": 232,
+        "top": 583,
+        "width": 616,
+        "height": 185
+      }
+    },
+    {
+      "id": "02-upload",
+      "title": "UPLOAD",
+      "file": "exports/instagram/covers/02-upload.png",
+      "placed": {
+        "left": 80,
+        "top": 583,
+        "width": 920,
+        "height": 185
+      }
+    },
+    {
+      "id": "03-kit",
+      "title": "KIT",
+      "file": "exports/instagram/covers/03-kit.png",
+      "placed": {
+        "left": 309,
+        "top": 583,
+        "width": 463,
+        "height": 185
+      }
+    }
+  ],
+  "preview": "exports/instagram/covers/00-pinned-profile-row-preview.png"
+}

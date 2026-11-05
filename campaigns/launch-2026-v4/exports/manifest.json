@@ -1,0 +1,45 @@
+{
+  "generatedAt": "2026-10-03T20:20:27.070Z",
+  "story": "guided application journey",
+  "sourcePolicy": "Interface crops are live-site captures from 2 October 2026. Diagrams explain verified product behavior; example photographs are the site's disclosed representational assets.",
+  "counts": {
+    "instagram": 8,
+    "linkedin": 8,
+    "reddit": 6,
+    "x": 4
+  },
+  "files": [
+    "exports/instagram-product-overview/01.png",
+    "exports/instagram-product-overview/02.png",
+    "exports/instagram-product-overview/03.png",
+    "exports/instagram-product-overview/04.png",
+    "exports/instagram-product-overview/05.png",
+    "exports/instagram-product-overview/06.png",
+    "exports/instagram-product-overview/07.png",
+    "exports/instagram-product-overview/08.png",
+    "exports/linkedin-product-overview/01.png",
+    "exports/linkedin-product-overview/02.png",
+    "exports/linkedin-product-overview/03.png",
+    "exports/linkedin-product-overview/04.png",
+    "exports/linkedin-product-overview/05.png",
+    "exports/linkedin-product-overview/06.png",
+    "exports/linkedin-product-overview/07.png",
+    "exports/linkedin-product-overview/08.png",
+    "exports/reddit-product-overview/01.png",
+    "exports/reddit-product-overview/02.png",
+    "exports/reddit-product-overview/03.png",
+    "exports/reddit-product-overview/04.png",
+    "exports/reddit-product-overview/05.png",
+    "exports/reddit-product-overview/06.png",
+    "exports/x-product-overview/01.png",
+    "exports/x-product-overview/02.png",
+    "exports/x-product-overview/03.png",
+    "exports/x-product-overview/04.png"
+  ],
+  "reviews": {
+    "instagram": "exports/reviews/instagram.png",
+    "linkedin": "exports/reviews/linkedin.png",
+    "reddit": "exports/reviews/reddit.png",
+    "x": "exports/reviews/x.png"
+  }
+}

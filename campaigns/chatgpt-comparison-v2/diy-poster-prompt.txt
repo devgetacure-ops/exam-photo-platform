@@ -1,0 +1,34 @@
+Create ONE exceptionally polished advertising infographic poster for ExamUploadKit, portrait 4:5, readable social media graphic. Visually DISTINCT from dark glass artwork: warm ivory paper, subtle fine paper texture, charcoal Swiss editorial typography, vivid vermilion accent, restrained technical diagram lines. Modern magazine advertisement, not a dense manual. Crisp hierarchy and abundant compositional space, excellent mobile legibility. No glass, no neon, no gradient, no 3D floating UI.
+Theme: changing file properties cannot establish photographic authenticity or correct head framing. Exact large top headline:
+"All that editing.
+Still not ready to submit."
+Below headline small intro: "The DIY photo-upload journey"
+Main composition: elegant winding vertical workflow of five stages in two offset columns connected by fine arrows, like editorial schematic. Use black line illustrations of a generic anonymous head-and-shoulders silhouette, a jacket, cropping frame, file and compression gauge; NOT actual product screenshots, not photorealistic faces. Each stage has a modest vermilion number, a distinct graphic, and exact concise text:
+"01  AI photo edit"
+"Remove the background. Generate formal clothing.
+Or recreate the photograph."
+"02  Resize"
+"Set pixel dimensions and DPI metadata."
+"03  Compress"
+"Adjust the file size in KB."
+"04  Rename"
+"Match the requested filename."
+"05  Check the actual requirement"
+"Correct file properties do not prove
+correct framing or an authentic photograph."
+Bottom third, dominant vermilion editorial callout, not a fake portal screenshot or fake rejection notice. Headline:
+"The file can still be rejected."
+Supporting text:
+"If identity, recency, framing or a stated
+face-coverage requirement is not met."
+Following short note legible:
+"AI edits may be detectable. Detection methods vary;
+do not assume every portal uses an AI detector."
+Final closing two lines in charcoal:
+"Keep your identity intact.
+Follow your exam’s current photo instructions."
+Footer website "examuploadkit.com"
+Small readable footer note "DPI metadata does not add image detail. Mandatory live capture must happen on the official portal."
+Brand name ExamUploadKit can appear as plain publisher text in footer, do not fabricate any logo. No seals, trust badges, numerical face percentage, free-tier claims, claims that any named AI tool always fails, detector accuracy statistics or actual portal results. All copy readable and accurate, no extra text. Design compelling single infographic ad, attractive typography and deliberate illustrations connecting stages.
+
+Final edit: Replace illustrative pixel numbers with Required pixels; 300 DPI with DPI if specified; 500 KB with Required KB. Remove approval checkmark from front-facing AI-edited illustration. Built-in image generation used for both passes.
