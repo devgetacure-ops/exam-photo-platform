@@ -1,0 +1,67 @@
+{
+  "title": "Choose the new product-overview structure",
+  "question": "Each option explains the same complete ExamUploadKit journey. Choose the reading pattern that busy Reddit, X and LinkedIn users should understand fastest.",
+  "options": [
+    {
+      "id": "guided-application-map",
+      "label": "Guided application map",
+      "kicker": "THE ROLL",
+      "thesis": "One continuous route from finding an exam to submitting the prepared files.",
+      "palette": ["#0b0c0e", "#f4f1ea", "#ff4d24", "#8a8d92"],
+      "materials": ["dark product canvas", "signal-orange route", "precise callouts"],
+      "viewport": "A numbered route crosses every slide; each stop expands one real product moment and hands the eye to the next.",
+      "risk": "Needs disciplined pacing so the route guides rather than decorates.",
+      "wireframe": {
+        "cols": 12,
+        "rows": 10,
+        "regions": [
+          {"label": "step + claim", "x": 0, "y": 0, "w": 5, "h": 3, "accent": true},
+          {"label": "annotated product moment", "x": 4, "y": 2, "w": 8, "h": 6},
+          {"label": "continuous route", "x": 0, "y": 8, "w": 12, "h": 1, "accent": true},
+          {"label": "proof / next", "x": 0, "y": 9, "w": 12, "h": 1}
+        ]
+      }
+    },
+    {
+      "id": "mobile-control-panels",
+      "label": "Mobile control panels",
+      "thesis": "A phone-led walkthrough pairs each action with the rule or system response it triggers.",
+      "palette": ["#0b0c0e", "#f4f1ea", "#ff4d24", "#8a8d92"],
+      "materials": ["mobile product frames", "enlarged UI fragments", "compact proof labels"],
+      "viewport": "One phone anchors each frame while magnified fragments explain search, requirements, processing, review and checkout.",
+      "risk": "Can feel like an app tutorial if the product mechanism is not made visually dominant.",
+      "wireframe": {
+        "cols": 12,
+        "rows": 10,
+        "regions": [
+          {"label": "phone", "x": 0, "y": 1, "w": 5, "h": 8, "accent": true},
+          {"label": "magnified action", "x": 5, "y": 1, "w": 7, "h": 4},
+          {"label": "what the system does", "x": 5, "y": 5, "w": 7, "h": 3},
+          {"label": "step marker", "x": 5, "y": 8, "w": 7, "h": 1}
+        ]
+      }
+    },
+    {
+      "id": "rules-to-result-chain",
+      "label": "Rules-to-result chain",
+      "thesis": "Every slide shows what the candidate supplies, what the exam requires and what ExamUploadKit produces.",
+      "palette": ["#0b0c0e", "#f4f1ea", "#ff4d24", "#8a8d92"],
+      "materials": ["three-part evidence bands", "real rule fragments", "prepared-output proofs"],
+      "viewport": "A repeated input → rule → result chain changes scale and composition at each stage of the journey.",
+      "risk": "The repeated logic must vary visually or it can become diagrammatic.",
+      "wireframe": {
+        "cols": 12,
+        "rows": 10,
+        "regions": [
+          {"label": "user action", "x": 0, "y": 1, "w": 4, "h": 7},
+          {"label": "exam rule", "x": 4, "y": 2, "w": 4, "h": 5, "accent": true},
+          {"label": "product result", "x": 8, "y": 1, "w": 4, "h": 7},
+          {"label": "plain-language takeaway", "x": 0, "y": 8, "w": 12, "h": 1}
+        ]
+      }
+    }
+  ],
+  "reroll": {"registers": ["safer", "bolder"]},
+  "buildPath": {"value": "code", "toggle": true},
+  "steer": true
+}

@@ -1,0 +1,32 @@
+[
+  {
+    "width": 390,
+    "status": 200,
+    "heading": "WE vs AI",
+    "canonical": "https://examuploadkit.com/we-vs-ai",
+    "overflow": false,
+    "faqs": 10
+  },
+  {
+    "width": 1440,
+    "status": 200,
+    "heading": "WE vs AI",
+    "canonical": "https://examuploadkit.com/we-vs-ai",
+    "overflow": false,
+    "faqs": 10
+  },
+  {
+    "keyboardDisclosure": true,
+    "errors": []
+  },
+  {
+    "route": "/sitemap.xml",
+    "status": 200,
+    "containsComparison": true
+  },
+  {
+    "route": "/llms.txt",
+    "status": 200,
+    "containsComparison": true
+  }
+]
