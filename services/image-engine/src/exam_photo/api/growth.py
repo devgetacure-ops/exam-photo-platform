@@ -388,3 +388,225 @@ def reconcile(service: "ApiService", force: bool = False) -> Dict[str, Any]:
     ledger.set_value("reconcile:at", now.isoformat())
     ledger.set_value("reconcile:result", json.dumps(result))
     return result
+
+
+# --- DEC-124: each visit, and how far it got ---------------------------------
+
+#: What the site may report a visitor doing. Anything else is dropped.
+ACTION_NAMES = frozenset(
+    {
+        "click",
+        "link",
+        "download",
+        "file_chosen",
+        "whatsapp",
+        "call",
+        "email_link",
+        "pay_opened",
+        "pay_succeeded",
+        "pay_failed",
+        "pay_closed",
+    }
+)
+
+#: Furthest first. A visit carries the furthest stage it reached.
+STAGES = (
+    "downloaded",
+    "paid",
+    "payment",
+    "uploaded",
+    "clicked",
+    "browsed",
+    "looked",
+)
+
+
+def visit_stage(
+    visit: Dict[str, Any], kits: List[Dict[str, Any]], actions: List[str]
+) -> str:
+    done = set(actions)
+    if any(k["delivered"] for k in kits) or "download" in done:
+        return "downloaded"
+    if any(k["paid"] for k in kits) or "pay_succeeded" in done:
+        return "paid"
+    if any(k["checkout"] for k in kits) or done & {"pay_opened", "pay_failed"}:
+        return "payment"
+    if any(k["uploaded"] for k in kits) or "file_chosen" in done:
+        return "uploaded"
+    if done:
+        return "clicked"
+    if int(visit.get("pages") or 0) > 1:
+        return "browsed"
+    return "looked"
+
+
+def _kit_exams(service: "ApiService", kit_ids: List[str]) -> Dict[str, List[str]]:
+    names: Dict[str, List[str]] = defaultdict(list)
+    if not kit_ids:
+        return names
+    for row in service.ledger.uploads(kit_ids=kit_ids, limit=5000):
+        name = row.get("exam_name") or row.get("exam_id")
+        if name and name not in names[row["kit_id"]]:
+            names[row["kit_id"]].append(name)
+    return names
+
+
+def visit_list(service: "ApiService", days: int = 7) -> List[Dict[str, Any]]:
+    now = datetime.now(timezone.utc)
+    since = (now - timedelta(days=days)).isoformat()
+    visits = service.ledger.visits(since)
+    kits = _kit_facts(service, (now - timedelta(days=days + 30)).isoformat())
+    actions = service.ledger.action_names(since)
+    all_kits = sorted({k for v in visits for k in v["kit_ids"]})
+    exams = _kit_exams(service, all_kits)
+    rows = []
+    for visit in visits:
+        joined = [kits[k] for k in visit["kit_ids"] if k in kits]
+        done = actions.get(visit["session_id"], [])
+        rows.append(
+            {
+                "session_id": visit["session_id"],
+                "first_at": visit["first_at"],
+                "last_at": visit["last_at"],
+                "active_seconds": visit["active_seconds"],
+                "pages": visit["pages"],
+                "actions": len(done),
+                "landing": visit.get("landing"),
+                "source": _source(visit),
+                "device": visit.get("device"),
+                "browser": visit.get("browser"),
+                "stage": visit_stage(visit, joined, done),
+                "exams": sorted(
+                    {e for k in visit["kit_ids"] for e in exams.get(k, [])}
+                ),
+                "revenue_paise": sum(k["revenue"] for k in joined),
+            }
+        )
+    rows.sort(key=lambda row: row["first_at"], reverse=True)
+    return rows
+
+
+def _rupees(paise: int) -> str:
+    return f"₹{paise / 100:,.2f}".replace(".00", "")
+
+
+_ACTION_TEXT = {
+    "download": ("Downloaded a file", "good"),
+    "file_chosen": ("Chose a file to upload", None),
+    "whatsapp": ("Tapped WhatsApp", None),
+    "call": ("Tapped to call", None),
+    "email_link": ("Tapped an email address", None),
+    "pay_opened": ("Opened the payment window", None),
+    "pay_succeeded": ("Payment went through", "good"),
+    "pay_failed": ("Payment failed", "bad"),
+    "pay_closed": ("Closed the payment window without paying", "bad"),
+}
+
+
+def _action_text(action: Dict[str, Any]) -> tuple[str, Optional[str]]:
+    name, label = action["name"], action.get("label")
+    if name == "click":
+        return (f"Tapped “{label}”" if label else "Tapped a button"), None
+    if name == "link":
+        return (f"Tapped the link “{label}”" if label else "Tapped a link"), None
+    text, tone = _ACTION_TEXT.get(name, (name, None))
+    if label and name in ("download", "file_chosen"):
+        text = f"{text} ({label})"
+    return text, tone
+
+
+def visit_detail(service: "ApiService", session: str) -> Optional[Dict[str, Any]]:
+    visit = service.ledger.visit(session)
+    if visit is None:
+        return None
+    events: List[Dict[str, Any]] = []
+
+    def add(
+        at: Optional[str], what: str, kind: str, tone: Optional[str] = None
+    ) -> None:
+        if at:
+            events.append({"at": at, "what": what, "kind": kind, "tone": tone})
+
+    for view in service.ledger.visit_pageviews(session):
+        add(view["at"], f"Opened {view['path']}", "page")
+    actions = service.ledger.visit_actions(session)
+    for action in actions:
+        text, tone = _action_text(action)
+        add(action["at"], text, "action", tone)
+
+    kit_ids = list(visit["kit_ids"])
+    if kit_ids:
+        for row in service.ledger.uploads(kit_ids=kit_ids, limit=500):
+            what = (
+                row.get("requirement_name") or row.get("requirement_type") or "a file"
+            )
+            exam = row.get("exam_name") or row.get("exam_id") or "an examination"
+            add(row["started_at"], f"Uploaded {what} for {exam}", "upload")
+            if row["status"] == "succeeded":
+                add(row.get("finished_at"), f"{what} prepared", "upload", "good")
+            elif row["status"] in ("error", "failed", "busy"):
+                reason = row.get("error") or row.get("outcome") or row["status"]
+                add(
+                    row.get("finished_at"),
+                    f"{what} not prepared: {reason}",
+                    "upload",
+                    "bad",
+                )
+        email: Optional[str] = None
+        revenue = 0
+        for order in service.orders.recent(500000):
+            if order.kit_id not in kit_ids:
+                continue
+            add(
+                order.created_at,
+                f"Started checkout · {_rupees(order.amount_paise)}",
+                "order",
+            )
+            for failed in order.failed_payments:
+                add(
+                    failed.get("at"),
+                    f"Payment failed: {failed.get('error') or 'no reason given'}",
+                    "order",
+                    "bad",
+                )
+            if order.paid_at:
+                revenue += order.amount_paise
+                add(
+                    order.paid_at,
+                    f"Paid {_rupees(order.amount_paise)}",
+                    "order",
+                    "good",
+                )
+            if order.delivered_at:
+                add(
+                    order.delivered_at,
+                    f"Files delivered by {order.delivery_method or 'download'}",
+                    "order",
+                    "good",
+                )
+            email = email or order.payer_email
+    else:
+        email, revenue = None, 0
+
+    events.sort(key=lambda event: event["at"])
+    kits = _kit_facts(service, "")
+    joined = [kits[k] for k in kit_ids if k in kits]
+    return {
+        "session_id": session,
+        "first_at": visit["first_at"],
+        "last_at": visit["last_at"],
+        "active_seconds": visit["active_seconds"],
+        "pages": visit["pages"],
+        "landing": visit.get("landing"),
+        "source": _source(visit),
+        "referrer_host": visit.get("referrer_host"),
+        "utm_campaign": visit.get("utm_campaign"),
+        "device": visit.get("device"),
+        "browser": visit.get("browser"),
+        "connection": visit.get("connection"),
+        "kit_ids": kit_ids,
+        "stage": visit_stage(visit, joined, [a["name"] for a in actions]),
+        "email": normalise_email(email),
+        "revenue_paise": revenue,
+        "events": events,
+    }

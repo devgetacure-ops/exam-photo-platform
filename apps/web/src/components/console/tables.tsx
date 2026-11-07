@@ -1,9 +1,9 @@
 "use client";
 
 import { useMemo } from "react";
-import type { Customer, OrderView, Ticket, UploadRow } from "../../lib/operator/data";
+import type { Customer, OrderView, Ticket, UploadRow, VisitRow } from "../../lib/operator/data";
 import { DataTable, type Chip, type Column } from "./data-table";
-import { when } from "../../lib/operator/format";
+import { stay, when } from "../../lib/operator/format";
 import { StateBadge } from "./ui";
 
 /**
@@ -246,6 +246,64 @@ export function TicketsTable({ tickets, chips, selected, chipParam = "view" }: {
                         <span className="text-xs text-[var(--op-faint)]">{when(t.created_at)}</span>
                     </span>
                     <StateBadge state={t.status} />
+                </span>
+            )}
+        />
+    );
+}
+
+function visitWhere(v: VisitRow) {
+    return [v.source, v.device, v.browser].filter(Boolean).join(" · ");
+}
+
+export function VisitsTable({ visits, chips, selected }: { visits: VisitRow[]; chips: Chip[]; selected?: string | null }) {
+    const columns = useMemo<Column<VisitRow>[]>(
+        () => [
+            { id: "first", header: "When", value: (v) => v.first_at, cell: (v) => <span className="op-num whitespace-nowrap text-[var(--op-muted)]">{when(v.first_at)}</span> },
+            {
+                id: "who",
+                header: "Came from · landed on",
+                value: (v) => `${visitWhere(v)} ${v.landing ?? ""} ${v.exams.join(" ")} ${v.session_id}`,
+                cell: (v) => (
+                    <span className="flex flex-col">
+                        <strong className="font-semibold">{visitWhere(v) || "Unknown"}</strong>
+                        <span className="text-xs text-[var(--op-muted)]">
+                            {v.landing ?? "/"}
+                            {v.exams.length > 0 && ` · ${v.exams.join(", ")}`}
+                        </span>
+                    </span>
+                ),
+            },
+            { id: "pages", header: "Pages", align: "right", value: (v) => v.pages, cell: (v) => <span className="op-num">{v.pages}</span> },
+            { id: "actions", header: "Taps", align: "right", value: (v) => v.actions, cell: (v) => <span className="op-num">{v.actions}</span> },
+            { id: "stay", header: "Time", align: "right", value: (v) => v.active_seconds, cell: (v) => <span className="op-num">{stay(v.active_seconds)}</span> },
+            { id: "stage", header: "Got as far as", value: (v) => v.stage, cell: (v) => <StateBadge state={`visit-${v.stage}`} /> },
+        ],
+        [],
+    );
+    return (
+        <DataTable
+            rows={visits}
+            columns={columns}
+            rowId={(v) => v.session_id}
+            selected={selected}
+            chips={chips}
+            chipParam="stage"
+            initialSort={{ id: "first", desc: true }}
+            searchPlaceholder="Filter by source, page, exam, device…"
+            empty={<p className="m-0 px-6 py-12 text-center text-[var(--op-muted)]">No visits match.</p>}
+            mobile={(v) => (
+                <span className="flex items-start gap-3">
+                    <span className="flex min-w-0 flex-1 flex-col">
+                        <strong className="truncate font-semibold">{visitWhere(v) || "Unknown"}</strong>
+                        <span className="truncate text-xs text-[var(--op-muted)]">
+                            {v.landing ?? "/"} · {when(v.first_at)}
+                        </span>
+                        <span className="text-xs text-[var(--op-muted)]">
+                            {v.pages} page{v.pages === 1 ? "" : "s"} · {v.actions} tap{v.actions === 1 ? "" : "s"} · {stay(v.active_seconds)}
+                        </span>
+                    </span>
+                    <StateBadge state={`visit-${v.stage}`} />
                 </span>
             )}
         />

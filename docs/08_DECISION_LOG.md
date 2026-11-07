@@ -1391,3 +1391,12 @@ Recommendation implemented locally: require explicitly configured persistent req
 - **Found in the same pass**: the topic list on the support form was an unstyled browser control 19px tall; the A to Z letters on `/exams` were 38px on a phone; the back link on a rules page was 23px tall; the "browse all" link under the search was 17px tall. All four are now at least 44px to a finger. Every public route was loaded at 375 and 1440 px: no sideways scroll, no broken image, one visible `h1` each.
 - **Affected Modules**: `components/home-story.tsx`, `components/euk/wipe-demo.tsx`, `app/story.css`, `app/request.css`, `app/directory.css`, `app/rules.css`, `app/system.css`.
 - **Approval Owner**: Product Owner
+
+### DEC-124: Every Visit, Step by Step
+- **Date**: 2026-11-07
+- **Status**: Decided by the owner ("I want to track everything"); implemented.
+- **Decision**: The console gains a Visits page: one row per visit (a browser tab's session), labelled with the furthest stage it reached — just looked, browsed, clicked, uploaded, reached payment, paid, downloaded — and filterable by that label. Opening a visit shows its timeline: every page opened, every button and link tapped (by the words on it), file picks, downloads, WhatsApp/call/email taps, the payment window opening, closing, failing or succeeding, and, joined by kit, its uploads, checkout, payment and delivery. Taps are captured by one site-wide listener, so new buttons are counted without extra code.
+- **Limits**: Only the words on what was pressed are kept, never anything typed; runs of six or more digits are dropped from a label. No IP address is stored. A visit carries an email only once its kit has a paid order whose payer gave one. `data-track-ignore` excludes an area. The admin pages are not tracked. Action rows are pruned with page views (400 days).
+- **Affected Modules**: `api/ledger.py` (`actions` table, `record_action`, `visit`, `visit_pageviews`, `visit_actions`, `action_names`), `api/growth.py` (`ACTION_NAMES`, `visit_stage`, `visit_list`, `visit_detail`), `api/app.py` (`action` beacon events, `GET /v1/operator/visits`, `GET /v1/operator/visits/{session}`), `lib/visit-beacon.ts`, `components/visit-beacon.tsx`, `components/exam/kit-checkout.tsx`, `components/console/*`, `app/admin/(operator)/visits/`.
+- **Evidence and QA**: `test_operator_growth.py` (6 new), `visit-actions.test.ts` (3); checked locally in the console.
+- **Approval Owner**: Product Owner

@@ -9,3 +9,9 @@ export function when(stamp?: string | null): string {
         ? `Today ${date.toLocaleTimeString("en-IN", { ...zone, hour: "2-digit", minute: "2-digit" })}`
         : date.toLocaleString("en-IN", { ...zone, day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
 }
+
+/** Seconds as "45 s" or "3 min" (DEC-124). */
+export function stay(seconds: number): string {
+    if (seconds < 60) return `${seconds} s`;
+    return `${Math.round(seconds / 60)} min`;
+}

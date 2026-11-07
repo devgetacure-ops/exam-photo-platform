@@ -620,3 +620,102 @@ def test_a_campaign_will_not_start_without_email(api):
     with pytest.raises(ValueError, match="not configured"):
         marketing.start_campaign(api, "o", "paid", "", "s", "b", runner=lambda w: w())
     assert api.ledger.campaigns() == []
+
+
+# --- DEC-124: each visit and how far it got ----------------------------------
+
+
+def _view(svc, session, path="/", kit=None):
+    svc.ledger.record_visit_event(
+        {"session_id": session, "type": "view", "path": path, "kit_id": kit}
+    )
+
+
+def _act(session, name, label=None, path="/exam/ctet"):
+    event = {"session_id": session, "type": "action", "name": name, "path": path}
+    if label:
+        event["label"] = label
+    return event
+
+
+def test_actions_are_recorded_only_from_the_known_list(api):
+    body = {
+        "events": [
+            _act("s_clicker", "click", "Start with SSC CGL"),
+            _act("s_clicker", "pay_opened"),
+            _act("s_clicker", "steal_cookies"),
+            {"session_id": "s_clicker", "type": "action"},
+            _act("bad", "click", "x"),
+        ]
+    }
+    assert client.post("/v1/operator/events", headers=AUTH, json=body).json() == {
+        "accepted": 2
+    }
+    names = [a["name"] for a in api.ledger.visit_actions("s_clicker")]
+    assert names == ["click", "pay_opened"]
+    # An action before any page view still opens the visit.
+    assert api.ledger.visit("s_clicker") is not None
+
+
+def test_each_visit_carries_the_furthest_stage_it_reached(api):
+    _view(api, "s_looked1")
+    _view(api, "s_browsed")
+    _view(api, "s_browsed", "/pricing")
+    _view(api, "s_clicked")
+    api.ledger.record_action("s_clicked", "click", "Pricing", "/")
+    _view(api, "s_chosefile")
+    api.ledger.record_action("s_chosefile", "file_chosen", "1 file", "/tools")
+    _view(api, "s_payer001", "/exam/ctet", kit=KIT)
+    api.ledger.upload_started("job_v1", kit_id=KIT, exam_name="CTET")
+    api.ledger.upload_finished("job_v1", status="succeeded", processing_seconds=9)
+    _paid(api, "order_V1", "p@example.com")
+
+    stages = {
+        row["session_id"]: row["stage"]
+        for row in client.get("/v1/operator/visits", headers=AUTH).json()["visits"]
+    }
+    assert stages == {
+        "s_looked1": "looked",
+        "s_browsed": "browsed",
+        "s_clicked": "clicked",
+        "s_chosefile": "uploaded",
+        "s_payer001": "paid",
+    }
+    payer = next(
+        row
+        for row in client.get("/v1/operator/visits", headers=AUTH).json()["visits"]
+        if row["session_id"] == "s_payer001"
+    )
+    assert payer["exams"] == ["CTET"] and payer["revenue_paise"] == 300
+
+
+def test_a_visit_reads_as_one_timeline(api):
+    _view(api, "s_journey", "/exam/ctet", kit=KIT)
+    api.ledger.record_action("s_journey", "click", "Upload photo", "/exam/ctet")
+    api.ledger.upload_started("job_t1", kit_id=KIT, exam_name="CTET")
+    api.ledger.upload_finished("job_t1", status="succeeded", processing_seconds=9)
+    api.ledger.record_action("s_journey", "pay_opened", None, "/exam/ctet")
+    _paid(api, "order_T1", "buyer@example.com")
+
+    data = client.get("/v1/operator/visits/s_journey", headers=AUTH).json()
+    said = [event["what"] for event in data["events"]]
+    assert said[0] == "Opened /exam/ctet"
+    assert "Tapped “Upload photo”" in said
+    assert "Opened the payment window" in said
+    assert "Paid ₹3" in said
+    assert data["stage"] == "paid" and data["email"] == "buyer@example.com"
+    assert [e["at"] for e in data["events"]] == sorted(e["at"] for e in data["events"])
+
+
+def test_unknown_or_malformed_visits_are_not_found(api):
+    assert client.get("/v1/operator/visits/s_nobody01", headers=AUTH).status_code == 404
+    assert client.get("/v1/operator/visits/bad", headers=AUTH).status_code == 404
+
+
+def test_the_visit_routes_refuse_without_the_token(api):
+    assert client.get("/v1/operator/visits").status_code in (401, 403)
+    assert client.get("/v1/operator/visits/s_journey").status_code in (401, 403)
+
+
+def test_stage_order_is_furthest_first():
+    assert growth.STAGES[0] == "downloaded" and growth.STAGES[-1] == "looked"

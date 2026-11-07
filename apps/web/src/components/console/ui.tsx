@@ -85,6 +85,14 @@ export const STATE: Record<string, { label: string; tone: Tone }> = {
     error: { label: "Error", tone: "bad" },
     busy: { label: "Refused: busy", tone: "warn" },
     failed: { label: "Failed", tone: "bad" },
+    // DEC-124: how far a visit got.
+    "visit-downloaded": { label: "Downloaded", tone: "good" },
+    "visit-paid": { label: "Paid", tone: "good" },
+    "visit-payment": { label: "Reached payment", tone: "warn" },
+    "visit-uploaded": { label: "Uploaded", tone: "info" },
+    "visit-clicked": { label: "Clicked", tone: "neutral" },
+    "visit-browsed": { label: "Browsed", tone: "neutral" },
+    "visit-looked": { label: "Just looked", tone: "neutral" },
 };
 
 export function StateBadge({ state }: { state: string }) {

@@ -151,6 +151,16 @@ CREATE TABLE IF NOT EXISTS pageviews (
 );
 CREATE INDEX IF NOT EXISTS pageviews_at ON pageviews(at);
 
+CREATE TABLE IF NOT EXISTS actions (
+    session_id TEXT NOT NULL,
+    at TEXT NOT NULL,
+    name TEXT NOT NULL,
+    label TEXT,
+    path TEXT
+);
+CREATE INDEX IF NOT EXISTS actions_session ON actions(session_id);
+CREATE INDEX IF NOT EXISTS actions_at ON actions(at);
+
 CREATE TABLE IF NOT EXISTS searches (
     at TEXT NOT NULL,
     query TEXT NOT NULL
@@ -759,6 +769,59 @@ class Ledger:
                     (session, stamp, str(event.get("path") or "/")[:300]),
                 )
 
+    def record_action(
+        self, session: str, name: str, label: Optional[str], path: Optional[str]
+    ) -> None:
+        """One click or step inside a visit: a button, a link, a payment (DEC-124)."""
+        stamp = now_iso()
+        with self._lock, self._db() as db:
+            known = db.execute(
+                "SELECT 1 FROM visits WHERE session_id=?", (session,)
+            ).fetchone()
+            if known is None:
+                db.execute(
+                    "INSERT INTO visits (session_id, first_at, last_at, landing) "
+                    "VALUES (?,?,?,?)",
+                    (session, stamp, stamp, path),
+                )
+            db.execute(
+                "INSERT INTO actions (session_id, at, name, label, path) "
+                "VALUES (?,?,?,?,?)",
+                (session, stamp, name, label, path),
+            )
+            db.execute(
+                "UPDATE visits SET last_at=? WHERE session_id=?", (stamp, session)
+            )
+
+    def visit(self, session: str) -> Optional[Dict[str, Any]]:
+        rows = self._rows("SELECT * FROM visits WHERE session_id=?", (session,))
+        if not rows:
+            return None
+        row = rows[0]
+        row["kit_ids"] = json.loads(row["kit_ids"])
+        return row
+
+    def visit_pageviews(self, session: str) -> List[Dict[str, Any]]:
+        return self._rows(
+            "SELECT at, path FROM pageviews WHERE session_id=? ORDER BY at",
+            (session,),
+        )
+
+    def visit_actions(self, session: str) -> List[Dict[str, Any]]:
+        return self._rows(
+            "SELECT at, name, label, path FROM actions WHERE session_id=? ORDER BY at",
+            (session,),
+        )
+
+    def action_names(self, since: str) -> Dict[str, List[str]]:
+        """Per session, the name of every action it took since `since`."""
+        found: Dict[str, List[str]] = {}
+        for row in self._rows(
+            "SELECT session_id, name FROM actions WHERE at >= ?", (since,)
+        ):
+            found.setdefault(row["session_id"], []).append(row["name"])
+        return found
+
     def record_empty_search(self, query: str) -> None:
         text = " ".join(query.split())[:120]
         if len(text) >= 2:
@@ -782,6 +845,7 @@ class Ledger:
     def prune_visits(self, keep_days: int = 400) -> None:
         cutoff = (datetime.now(timezone.utc) - timedelta(days=keep_days)).isoformat()
         self._write("DELETE FROM pageviews WHERE at < ?", (cutoff,))
+        self._write("DELETE FROM actions WHERE at < ?", (cutoff,))
 
     # --- deadlines -------------------------------------------------------
 
