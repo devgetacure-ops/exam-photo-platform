@@ -350,3 +350,31 @@ export function safeBack(value: unknown, fallback = "/admin"): string {
         ? text
         : fallback;
 }
+
+/** DEC-124: how far one visit got, furthest first. */
+export type VisitStage = "downloaded" | "paid" | "payment" | "uploaded" | "clicked" | "browsed" | "looked";
+
+export interface VisitRow {
+    session_id: string;
+    first_at: string;
+    last_at: string;
+    active_seconds: number;
+    pages: number;
+    actions: number;
+    landing: string | null;
+    source: string;
+    device: string | null;
+    browser: string | null;
+    stage: VisitStage;
+    exams: string[];
+    revenue_paise: number;
+}
+
+export interface VisitDetail extends Omit<VisitRow, "actions" | "exams"> {
+    referrer_host: string | null;
+    utm_campaign: string | null;
+    connection: string | null;
+    kit_ids: string[];
+    email: string | null;
+    events: { at: string; what: string; kind: "page" | "action" | "upload" | "order"; tone: "good" | "bad" | null }[];
+}

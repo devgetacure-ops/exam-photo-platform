@@ -1983,6 +1983,9 @@ class VisitEvent(BaseModel):
     browser: Optional[str] = None
     connection: Optional[str] = None
     query: Optional[str] = None
+    #: DEC-124: an action's kind and the words on what was pressed.
+    name: Optional[str] = None
+    label: Optional[str] = None
 
 
 class VisitBatch(BaseModel):
@@ -2006,6 +2009,16 @@ def operator_events(batch: VisitBatch) -> dict[str, Any]:
         if event.type == "search_empty":
             if event.query:
                 service.ledger.record_empty_search(event.query)
+                accepted += 1
+            continue
+        if event.type == "action":
+            if event.name in growth_views.ACTION_NAMES:
+                service.ledger.record_action(
+                    event.session_id,
+                    event.name,
+                    _short(event.label, 80),
+                    _short(event.path, 300),
+                )
                 accepted += 1
             continue
         if event.type not in ("view", "ping"):
@@ -2038,6 +2051,25 @@ def operator_growth(
     days: int = Query(default=30, ge=1, le=366),  # noqa: B008
 ) -> dict[str, Any]:
     return growth_views.growth(service, days)
+
+
+@app.get("/v1/operator/visits", dependencies=_OPERATOR)
+def operator_visits(
+    days: int = Query(default=7, ge=1, le=366),  # noqa: B008
+) -> dict[str, Any]:
+    """Every visit and how far it got (DEC-124)."""
+    return {"visits": growth_views.visit_list(service, days)}
+
+
+@app.get("/v1/operator/visits/{session_id}", dependencies=_OPERATOR)
+def operator_visit(session_id: str) -> dict[str, Any]:
+    """One visit from arrival to its last step (DEC-124)."""
+    if not _SESSION_ID.match(session_id):
+        raise HTTPException(status_code=404, detail="Unknown visit")
+    found = growth_views.visit_detail(service, session_id)
+    if found is None:
+        raise HTTPException(status_code=404, detail="Unknown visit")
+    return found
 
 
 @app.get("/v1/operator/reconcile", dependencies=_OPERATOR)

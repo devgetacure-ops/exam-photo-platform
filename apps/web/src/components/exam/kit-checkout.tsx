@@ -21,6 +21,7 @@ import { FileTypeDrawing } from "../euk/doodles";
 import { plainFindings } from "../../lib/finding-text";
 import { PreviewThumb } from "./preview-thumb";
 import { Note } from "../euk/note";
+import { reportAction } from "../../lib/visit-beacon";
 
 /**
  * Review, pay, receive.
@@ -611,6 +612,7 @@ export function KitCheckout({
     // One set of outcomes, whichever window took the payment: Razorpay's, or
     // the test sheet on a machine running the payment simulator (DEC-089).
     const paymentSubmitted = () => {
+        reportAction("pay_succeeded");
         // Razorpay may still be showing its own success screen when it calls
         // this, so the window is marked closed by the check above, which
         // looks at the overlay itself.
@@ -623,6 +625,7 @@ export function KitCheckout({
     const checkoutClosed = () => {
         setWindowOpen(false);
         if (releasedRef.current) return;
+        reportAction("pay_closed");
         setBusy(false);
         setPending(true);
         onBusy(false);
@@ -632,6 +635,7 @@ export function KitCheckout({
         void refresh();
     };
     const paymentFailed = () => {
+        reportAction("pay_failed");
         setWindowOpen(false);
         setBusy(false);
         setFailed(true);
@@ -708,6 +712,7 @@ export function KitCheckout({
             checkoutRef.current = checkout;
             releasedRef.current = false;
             setWindowOpen(true);
+            reportAction("pay_opened");
             checkout.open();
         } catch (err) {
             setError(

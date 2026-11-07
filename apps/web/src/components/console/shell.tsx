@@ -5,6 +5,7 @@ import { Command } from "cmdk";
 import {
     Activity,
     BarChart3,
+    Footprints,
     CalendarDays,
     Home,
     Image as ImageIcon,
@@ -60,6 +61,7 @@ const MAIN: NavItem[] = [
 ];
 
 const GROW: NavItem[] = [
+    { href: "/admin/visits", label: "Visits", icon: Footprints },
     { href: "/admin/growth", label: "Growth", icon: BarChart3 },
     { href: "/admin/marketing", label: "Marketing", icon: Mail },
     { href: "/admin/coupons", label: "Coupons", icon: Ticket },

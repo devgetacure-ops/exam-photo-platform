@@ -2,11 +2,12 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
-import { campaignFrom, currentKit, deviceOf, referrerHost, send, sessionId, tracked } from "../lib/visit-beacon";
+import { actionForClick, campaignFrom, currentKit, deviceOf, referrerHost, reportAction, send, sessionId, tracked } from "../lib/visit-beacon";
 
 /**
  * Counts a page view on every route change and the seconds the page was
- * actually visible (DEC-110). Draws nothing.
+ * actually visible (DEC-110), and every button, link, file pick and download
+ * along the way (DEC-124). Draws nothing.
  */
 export function VisitBeacon() {
     const pathname = usePathname() ?? "/";
@@ -59,6 +60,25 @@ export function VisitBeacon() {
             flush(true);
         };
     }, [pathname]);
+
+    useEffect(() => {
+        const click = (event: MouseEvent) => {
+            const action = actionForClick(event.target instanceof Element ? event.target : null);
+            if (action) reportAction(action.name, action.label);
+        };
+        const change = (event: Event) => {
+            const input = event.target;
+            if (!(input instanceof HTMLInputElement) || input.type !== "file" || !input.files?.length) return;
+            const count = input.files.length;
+            reportAction("file_chosen", `${count} file${count === 1 ? "" : "s"}`);
+        };
+        document.addEventListener("click", click, { capture: true });
+        document.addEventListener("change", change, { capture: true });
+        return () => {
+            document.removeEventListener("click", click, { capture: true });
+            document.removeEventListener("change", change, { capture: true });
+        };
+    }, []);
 
     return null;
 }

@@ -10,7 +10,7 @@ const KITS_KEY = "exam-photo:kits:v1";
 
 export interface VisitEvent {
     session_id: string;
-    type: "view" | "ping" | "search_empty";
+    type: "view" | "ping" | "search_empty" | "action";
     path?: string;
     kit_id?: string;
     seconds?: number;
@@ -22,7 +22,23 @@ export interface VisitEvent {
     browser?: string;
     connection?: string;
     query?: string;
+    name?: ActionName;
+    label?: string;
 }
+
+/** What a visitor did, beyond opening pages (DEC-124). The engine keeps the same list. */
+export type ActionName =
+    | "click"
+    | "link"
+    | "download"
+    | "file_chosen"
+    | "whatsapp"
+    | "call"
+    | "email_link"
+    | "pay_opened"
+    | "pay_succeeded"
+    | "pay_failed"
+    | "pay_closed";
 
 export function sessionId(storage: Pick<Storage, "getItem" | "setItem"> | null = safeSession()): string {
     try {
@@ -129,4 +145,43 @@ export function reportEmptySearch(query: string): void {
     if (text.length < 3 || text.toLowerCase() === lastReported) return;
     lastReported = text.toLowerCase();
     send([{ session_id: sessionId(), type: "search_empty", query: text.slice(0, 120) }]);
+}
+
+/** One step a visitor took on the current page (DEC-124). Never throws. */
+export function reportAction(name: ActionName, label?: string): void {
+    if (typeof window === "undefined" || !tracked(window.location.pathname)) return;
+    send([{ session_id: sessionId(), type: "action", name, path: window.location.pathname, kit_id: currentKit(), ...(label ? { label } : {}) }]);
+}
+
+/**
+ * The words on what was pressed, never anything the visitor typed. Long runs
+ * of digits are dropped so a phone or order number shown on a button is not
+ * kept.
+ */
+export function labelOf(element: Element): string | undefined {
+    const raw = element.getAttribute("data-track") || element.getAttribute("aria-label") || (element as HTMLElement).innerText || element.textContent || "";
+    const text = raw
+        .replace(/\d{6,}/g, "…")
+        .replace(/\s+/g, " ")
+        .trim()
+        .slice(0, 60);
+    return text || undefined;
+}
+
+/** Turn a click anywhere on the site into one action, or none. */
+export function actionForClick(target: Element | null): { name: ActionName; label?: string } | null {
+    if (!target) return null;
+    const element = target.closest("a, button, [role=button], [role=option], summary, [data-track]");
+    if (!element || element.closest("[data-track-ignore]")) return null;
+    if (element instanceof HTMLButtonElement && element.disabled) return null;
+    const label = labelOf(element);
+    if (element instanceof HTMLAnchorElement) {
+        const href = element.getAttribute("href") ?? "";
+        if (element.hasAttribute("download")) return { name: "download", label: element.getAttribute("download") || label };
+        if (/^https?:\/\/(wa\.me|api\.whatsapp\.com|chat\.whatsapp\.com)/i.test(href)) return { name: "whatsapp", label };
+        if (href.startsWith("tel:")) return { name: "call" };
+        if (href.startsWith("mailto:")) return { name: "email_link" };
+        return { name: "link", label };
+    }
+    return { name: "click", label };
 }
