@@ -253,7 +253,7 @@ export function TicketsTable({ tickets, chips, selected, chipParam = "view" }: {
 }
 
 function visitWhere(v: VisitRow) {
-    return [v.source, v.device, v.browser].filter(Boolean).join(" · ");
+    return [v.location, v.source, v.device].filter(Boolean).join(" · ");
 }
 
 export function VisitsTable({ visits, chips, selected }: { visits: VisitRow[]; chips: Chip[]; selected?: string | null }) {
@@ -262,7 +262,7 @@ export function VisitsTable({ visits, chips, selected }: { visits: VisitRow[]; c
             { id: "first", header: "When", value: (v) => v.first_at, cell: (v) => <span className="op-num whitespace-nowrap text-[var(--op-muted)]">{when(v.first_at)}</span> },
             {
                 id: "who",
-                header: "Came from · landed on",
+                header: "Where · came from · landed on",
                 value: (v) => `${visitWhere(v)} ${v.landing ?? ""} ${v.exams.join(" ")} ${v.session_id}`,
                 cell: (v) => (
                     <span className="flex flex-col">

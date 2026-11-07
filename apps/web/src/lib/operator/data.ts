@@ -365,6 +365,7 @@ export interface VisitRow {
     source: string;
     device: string | null;
     browser: string | null;
+    location: string | null;
     stage: VisitStage;
     exams: string[];
     revenue_paise: number;
