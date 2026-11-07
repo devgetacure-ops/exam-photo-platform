@@ -1400,3 +1400,11 @@ Recommendation implemented locally: require explicitly configured persistent req
 - **Affected Modules**: `api/ledger.py` (`actions` table, `record_action`, `visit`, `visit_pageviews`, `visit_actions`, `action_names`), `api/growth.py` (`ACTION_NAMES`, `visit_stage`, `visit_list`, `visit_detail`), `api/app.py` (`action` beacon events, `GET /v1/operator/visits`, `GET /v1/operator/visits/{session}`), `lib/visit-beacon.ts`, `components/visit-beacon.tsx`, `components/exam/kit-checkout.tsx`, `components/console/*`, `app/admin/(operator)/visits/`.
 - **Evidence and QA**: `test_operator_growth.py` (6 new), `visit-actions.test.ts` (3); checked locally in the console.
 - **Approval Owner**: Product Owner
+
+### DEC-125: Where Each Visit Came From
+- **Date**: 2026-11-08
+- **Status**: Decided by the owner; implemented.
+- **Decision**: Each visit records its city, region and country as Cloudflare names them (`cf-ipcity`, `cf-region`, `cf-ipcountry`). The web server reads the headers on page-view events and passes only those three values to the engine; the browser cannot supply them. The first location seen sticks for the visit. The Visits list and timeline show it. City and region need Cloudflare's managed transform "Add visitor location headers"; without it only the country arrives. Unknown (`XX`) and Tor (`T1`) countries are dropped. No IP address is stored, so this is an approximate location only.
+- **Affected Modules**: `app/api/events/route.ts`, `lib/visit-location.ts`, `api/ledger.py` (`visits.country/region/city`), `api/app.py`, `api/growth.py` (`visit_location`), the Visits page.
+- **Evidence and QA**: `visit-location.test.ts` (3), `test_operator_growth.py` (2 new).
+- **Approval Owner**: Product Owner

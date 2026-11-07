@@ -719,3 +719,36 @@ def test_the_visit_routes_refuse_without_the_token(api):
 
 def test_stage_order_is_furthest_first():
     assert growth.STAGES[0] == "downloaded" and growth.STAGES[-1] == "looked"
+
+
+def test_a_visit_keeps_its_first_location(api):
+    body = {
+        "events": [
+            {
+                "session_id": "s_located1",
+                "type": "view",
+                "path": "/",
+                "country": "IN",
+                "region": "Maharashtra",
+                "city": "Pune",
+            },
+            {
+                "session_id": "s_located1",
+                "type": "view",
+                "path": "/exams",
+                "country": "IN",
+                "region": "Karnataka",
+                "city": "Bengaluru",
+            },
+        ]
+    }
+    client.post("/v1/operator/events", headers=AUTH, json=body)
+    [row] = client.get("/v1/operator/visits", headers=AUTH).json()["visits"]
+    assert row["location"] == "Pune, Maharashtra, IN"
+    detail = client.get("/v1/operator/visits/s_located1", headers=AUTH).json()
+    assert detail["location"] == "Pune, Maharashtra, IN"
+
+
+def test_a_visit_with_only_a_country_says_so():
+    assert growth.visit_location({"country": "IN"}) == "IN"
+    assert growth.visit_location({}) is None

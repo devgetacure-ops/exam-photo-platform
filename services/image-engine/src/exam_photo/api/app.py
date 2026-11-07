@@ -1986,6 +1986,10 @@ class VisitEvent(BaseModel):
     #: DEC-124: an action's kind and the words on what was pressed.
     name: Optional[str] = None
     label: Optional[str] = None
+    #: DEC-125: set by the web server from Cloudflare's headers, never the browser.
+    country: Optional[str] = None
+    region: Optional[str] = None
+    city: Optional[str] = None
 
 
 class VisitBatch(BaseModel):
@@ -2040,6 +2044,9 @@ def operator_events(batch: VisitBatch) -> dict[str, Any]:
                 "device": _short(event.device, 20),
                 "browser": _short(event.browser, 30),
                 "connection": _short(event.connection, 10),
+                "country": _short(event.country, 2),
+                "region": _short(event.region, 60),
+                "city": _short(event.city, 60),
             }
         )
         accepted += 1

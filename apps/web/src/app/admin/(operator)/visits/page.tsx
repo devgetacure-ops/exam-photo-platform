@@ -72,11 +72,12 @@ export default async function VisitsPage({ searchParams }: { searchParams: Promi
 }
 
 function VisitSheet({ visit }: { visit: VisitDetail }) {
-    const where = [visit.source, visit.device, visit.browser].filter(Boolean).join(" · ");
+    const where = [visit.location, visit.source, visit.device].filter(Boolean).join(" · ");
     return (
         <Sheet title={where || "Visit"} subtitle={`${when(visit.first_at)} · ${visit.session_id}`} badge={<StateBadge state={`visit-${visit.stage}`} />}>
             <Facts
                 rows={[
+                    ["Location", visit.location ?? "Not known"],
                     ["Arrived", when(visit.first_at)],
                     ["Last seen", when(visit.last_at)],
                     ["Time on screen", stay(visit.active_seconds)],
@@ -84,6 +85,7 @@ function VisitSheet({ visit }: { visit: VisitDetail }) {
                     ["Landed on", visit.landing ?? "/"],
                     ["Came from", visit.referrer_host ?? visit.source],
                     ["Campaign", visit.utm_campaign],
+                    ["Device", [visit.device, visit.browser].filter(Boolean).join(" · ") || null],
                     ["Connection", visit.connection],
                     ["Customer", visit.email],
                     ["Paid", visit.revenue_paise ? rupees(visit.revenue_paise) : null],

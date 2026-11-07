@@ -1,4 +1,5 @@
 import { enginePost } from "../../../lib/operator/engine";
+import { locationFrom } from "../../../lib/visit-location";
 
 export const runtime = "nodejs";
 
@@ -34,6 +35,9 @@ export async function POST(request: Request) {
     seen.set(session, { minute, count });
     if (seen.size > 20000) seen.clear();
     if (count > PER_MINUTE) return done;
-    await enginePost("/v1/operator/events", { events: events.slice(0, 20) }).catch(() => null);
+    const where = locationFrom(request.headers);
+    const stamped = events.slice(0, 20).map((event) => (event && typeof event === "object" && (event as { type?: unknown }).type === "view" ? { ...event, ...where } : event));
+    await enginePost("/v1/operator/events", { events: stamped }).catch(() => null);
     return done;
 }
+

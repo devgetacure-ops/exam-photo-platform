@@ -243,6 +243,8 @@ CREATE TABLE IF NOT EXISTS feedback (
 #: column in `CREATE TABLE IF NOT EXISTS`, so a ledger created before these
 #: existed is brought up to date here, once, when it is first opened.
 _ADDED_COLUMNS = {
+    # DEC-125: where a visit came from, as Cloudflare names it. No IP.
+    "visits": {"country": "TEXT", "region": "TEXT", "city": "TEXT"},
     "feedback": {
         "rating": "INTEGER",
         "tags": "TEXT",
@@ -752,7 +754,9 @@ class Ledger:
             db.execute(
                 "UPDATE visits SET last_at=?, active_seconds=active_seconds+?, "
                 "pages=pages+?, exam_pages=exam_pages+?, kit_ids=?, "
-                "connection=COALESCE(?, connection) WHERE session_id=?",
+                "connection=COALESCE(?, connection), "
+                "country=COALESCE(country, ?), region=COALESCE(region, ?), "
+                "city=COALESCE(city, ?) WHERE session_id=?",
                 (
                     stamp,
                     max(0, min(seconds, 120)),
@@ -760,6 +764,9 @@ class Ledger:
                     1 if is_exam else 0,
                     json.dumps(kits[:20]),
                     event.get("connection"),
+                    event.get("country"),
+                    event.get("region"),
+                    event.get("city"),
                     session,
                 ),
             )

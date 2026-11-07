@@ -440,6 +440,16 @@ def visit_stage(
     return "looked"
 
 
+def visit_location(visit: Dict[str, Any]) -> Optional[str]:
+    """City, region, country, skipping what is missing or repeated (DEC-125)."""
+    parts: List[str] = []
+    for key in ("city", "region", "country"):
+        value = visit.get(key)
+        if value and value not in parts:
+            parts.append(str(value))
+    return ", ".join(parts) or None
+
+
 def _kit_exams(service: "ApiService", kit_ids: List[str]) -> Dict[str, List[str]]:
     names: Dict[str, List[str]] = defaultdict(list)
     if not kit_ids:
@@ -475,6 +485,7 @@ def visit_list(service: "ApiService", days: int = 7) -> List[Dict[str, Any]]:
                 "source": _source(visit),
                 "device": visit.get("device"),
                 "browser": visit.get("browser"),
+                "location": visit_location(visit),
                 "stage": visit_stage(visit, joined, done),
                 "exams": sorted(
                     {e for k in visit["kit_ids"] for e in exams.get(k, [])}
@@ -604,6 +615,7 @@ def visit_detail(service: "ApiService", session: str) -> Optional[Dict[str, Any]
         "device": visit.get("device"),
         "browser": visit.get("browser"),
         "connection": visit.get("connection"),
+        "location": visit_location(visit),
         "kit_ids": kit_ids,
         "stage": visit_stage(visit, joined, [a["name"] for a in actions]),
         "email": normalise_email(email),
