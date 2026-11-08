@@ -2770,8 +2770,8 @@
         "requirement_status": "Mandatory",
         "submission_method": "file_upload",
         "applicability": "All applicants",
-        "specification": "JPG/JPEG; 10-200 KB. Recent colour or black-and-white photograph; face must be clearly visible. Exact 2026 composition rules should be checked against the active bulletin.",
-        "evidence_status": "Current official photo evidence; current bulletin page available",
+        "specification": "JPG/JPEG; 10-200 KB. Recent passport-size colour photograph against a white background, with 80% of the face (without mask) visible, including ears.",
+        "evidence_status": "Official JEE (Main) Information Bulletin, Application Form step",
         "source_url": "https://jeemain.nta.nic.in/information-bulletin/",
         "important_note": null,
         "parsed": {
@@ -2794,15 +2794,15 @@
         "requirement_status": "Mandatory",
         "submission_method": "file_upload",
         "applicability": "All applicants",
-        "specification": "JPG/JPEG; commonly 4-30 KB in NTA application bulletins. Signature must be the candidate's own running signature and clearly legible.",
-        "evidence_status": "Current NTA application requirement; exact 2026 field should be rechecked",
+        "specification": "JPG/JPEG; 10-100 KB. Signature must be the candidate's own and clearly legible.",
+        "evidence_status": "Official JEE (Main) Information Bulletin, Application Form step",
         "source_url": "https://jeemain.nta.nic.in/information-bulletin/",
         "important_note": null,
         "parsed": {
           "file_size_kb": {
-            "minimum": 4.0,
-            "maximum": 30.0,
-            "source_wording": "4-30 KB"
+            "minimum": 10.0,
+            "maximum": 100.0,
+            "source_wording": "10-100 KB"
           },
           "formats": {
             "values": [
@@ -2868,6 +2868,54 @@
         "applicability": "All applicants where requested by the current form",
         "specification": "PDF; 50–300 KB",
         "evidence_status": "Official JEE (Main) 2026 Information Bulletin",
+        "source_url": "https://cdnbbsr.s3waas.gov.in/s3f8e59f4b2fe7c5705bf878bbd494ccdf/uploads/2025/11/202511021649722475.pdf",
+        "important_note": null,
+        "parsed": {
+          "specification_not_established": false,
+          "formats": {
+            "values": [
+              "PDF"
+            ],
+            "source_wording": "PDF"
+          },
+          "file_size_kb": {
+            "minimum": 50,
+            "maximum": 300,
+            "source_wording": "50-300 KB"
+          }
+        }
+      },
+      {
+        "name": "Certificate regarding physical limitation to write",
+        "requirement_status": "Conditional",
+        "submission_method": "document_scan_upload",
+        "applicability": "Candidates with a physical limitation to write",
+        "specification": "PDF; 50-300 KB; clearly legible",
+        "evidence_status": "Official JEE (Main) Information Bulletin, Application Form step",
+        "source_url": "https://cdnbbsr.s3waas.gov.in/s3f8e59f4b2fe7c5705bf878bbd494ccdf/uploads/2025/11/202511021649722475.pdf",
+        "important_note": null,
+        "parsed": {
+          "specification_not_established": false,
+          "formats": {
+            "values": [
+              "PDF"
+            ],
+            "source_wording": "PDF"
+          },
+          "file_size_kb": {
+            "minimum": 50,
+            "maximum": 300,
+            "source_wording": "50-300 KB"
+          }
+        }
+      },
+      {
+        "name": "Non-Indian passport",
+        "requirement_status": "Conditional",
+        "submission_method": "document_scan_upload",
+        "applicability": "Foreign nationals, including OCI holders",
+        "specification": "PDF; 50-300 KB; clearly legible",
+        "evidence_status": "Official JEE (Main) Information Bulletin, Application Form step",
         "source_url": "https://cdnbbsr.s3waas.gov.in/s3f8e59f4b2fe7c5705bf878bbd494ccdf/uploads/2025/11/202511021649722475.pdf",
         "important_note": null,
         "parsed": {

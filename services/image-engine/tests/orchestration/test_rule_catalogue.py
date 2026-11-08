@@ -184,6 +184,8 @@ def test_catalogue_wide_support_totals_match_the_recorded_figures():
     """DEC-056 quotes these; if the catalogue moves, the entry must be amended.
 
     DEC-114: the 2026-09-27 delivery added 639 examinations (131 -> 770), the last 22 from its supplement.
+    DEC-126: JEE (Main) gained the writing-limitation certificate (supported)
+    and the non-Indian passport (not yet supported).
     """
     catalogue = load_catalogue(CATALOGUE_ROOT)
 
@@ -192,11 +194,11 @@ def test_catalogue_wide_support_totals_match_the_recorded_figures():
         for support, count in support_counts(entry.rule).items():
             totals[support] += count
 
-    assert sum(totals.values()) == 2010
+    assert sum(totals.values()) == 2012
     # DEC-095 and DEC-099: NEET-PG's pre-saved photograph gained its size
     # and format (supported), as UP B.Ed's did.
-    assert totals[PlatformSupport.SUPPORTED] == 1803
+    assert totals[PlatformSupport.SUPPORTED] == 1804
     assert totals[PlatformSupport.GUIDANCE_ONLY] == 51
     # DEC-095: WBSSC's photograph needs the signature on it (partial).
     assert totals[PlatformSupport.PARTIALLY_SUPPORTED] == 30
-    assert totals[PlatformSupport.NOT_YET_SUPPORTED] == 126
+    assert totals[PlatformSupport.NOT_YET_SUPPORTED] == 127

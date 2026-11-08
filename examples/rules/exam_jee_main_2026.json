@@ -96,8 +96,8 @@
       "requirement_status": "mandatory",
       "platform_support": "supported",
       "applicability": "All applicants",
-      "content_instructions": "JPG/JPEG; 10-200 KB. Recent colour or black-and-white photograph; face must be clearly visible. Exact 2026 composition rules should be checked against the active bulletin.",
-      "evidence_status": "Current official photo evidence; current bulletin page available",
+      "content_instructions": "JPG/JPEG; 10-200 KB. Recent passport-size colour photograph against a white background, with 80% of the face (without mask) visible, including ears.",
+      "evidence_status": "Official JEE (Main) Information Bulletin, Application Form step",
       "rejection_conditions": [
         "A face mask/covering is restricted according to the stated policy."
       ]
@@ -110,14 +110,14 @@
       "requirement_status": "mandatory",
       "platform_support": "supported",
       "applicability": "All applicants",
-      "content_instructions": "JPG/JPEG; commonly 4-30 KB in NTA application bulletins. Signature must be the candidate's own running signature and clearly legible.",
-      "evidence_status": "Current NTA application requirement; exact 2026 field should be rechecked",
+      "content_instructions": "JPG/JPEG; 10-100 KB. Signature must be the candidate's own and clearly legible.",
+      "evidence_status": "Official JEE (Main) Information Bulletin, Application Form step",
       "file_spec": {
         "file_size": {
-          "maximum_bytes": 30000,
-          "minimum_bytes": 4000,
-          "published_minimum": 4.0,
-          "published_maximum": 30.0,
+          "maximum_bytes": 100000,
+          "minimum_bytes": 10000,
+          "published_minimum": 10.0,
+          "published_maximum": 100.0,
           "size_unit_as_published": "KB"
         },
         "formats": {
@@ -170,6 +170,46 @@
       "applicability": "All applicants where requested by the current form",
       "content_instructions": "PDF; 50\u2013300 KB",
       "evidence_status": "Official JEE (Main) 2026 Information Bulletin",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 300000,
+          "minimum_bytes": 50000,
+          "published_minimum": 50,
+          "published_maximum": 300,
+          "size_unit_as_published": "KB"
+        }
+      }
+    },
+    {
+      "requirement_id": "certificate_regarding_physical_limitation_to_wri",
+      "requirement_name": "Certificate regarding physical limitation to write",
+      "requirement_type": "certificate_scan",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "supported",
+      "applicability": "Candidates with a physical limitation to write",
+      "content_instructions": "PDF; 50-300 KB; clearly legible",
+      "evidence_status": "Official JEE (Main) Information Bulletin, Application Form step",
+      "file_spec": {
+        "file_size": {
+          "maximum_bytes": 300000,
+          "minimum_bytes": 50000,
+          "published_minimum": 50,
+          "published_maximum": 300,
+          "size_unit_as_published": "KB"
+        }
+      }
+    },
+    {
+      "requirement_id": "non_indian_passport",
+      "requirement_name": "Non-Indian passport",
+      "requirement_type": "other",
+      "submission_method": "document_scan_upload",
+      "requirement_status": "conditional",
+      "platform_support": "not_yet_supported",
+      "applicability": "Foreign nationals, including OCI holders",
+      "content_instructions": "PDF; 50-300 KB; clearly legible",
+      "evidence_status": "Official JEE (Main) Information Bulletin, Application Form step",
       "file_spec": {
         "file_size": {
           "maximum_bytes": 300000,
