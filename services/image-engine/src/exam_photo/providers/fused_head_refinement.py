@@ -10,6 +10,54 @@ from exam_photo.providers.head_estimation import (
     HeadEstimationResult,
 )
 
+# The crop planner's margin below the landmark chin for a beard, as a fraction
+# of the crown-to-chin span (``deterministic_crop_planner._CHIN_BEARD_MARGIN_RATIO``).
+# The head box is never cut shorter than the planner will protect anyway.
+_CHIN_BEARD_MARGIN_RATIO = 0.09
+
+# How much wider than the head a row below the mouth must be to count as a
+# collar or shoulders rather than a beard or neck.
+_COLLAR_WIDENING_RATIO = 1.2
+
+
+def mouth_line_y(face: FaceDetection) -> float | None:
+    landmarks = face.landmarks
+    if landmarks is None:
+        return None
+    centre = landmarks.custom_landmarks.get("mouth_center")
+    if centre is not None:
+        return float(centre.y)
+    if landmarks.mouth_left is not None and landmarks.mouth_right is not None:
+        return (landmarks.mouth_left.y + landmarks.mouth_right.y) / 2.0
+    return None
+
+
+def landmark_chin_y(face: FaceDetection) -> float | None:
+    landmarks = face.landmarks
+    if landmarks is None:
+        return None
+    refined = landmarks.custom_landmarks.get("refined_chin")
+    if refined is not None:
+        return float(refined.y)
+    return float(landmarks.chin.y) if landmarks.chin is not None else None
+
+
+def first_widening_row(
+    binary: np.ndarray[Any, Any],
+    y_start: int,
+    y_end: int,
+    x_min: int,
+    x_max: int,
+    core_width: float,
+) -> int | None:
+    """First row from ``y_start`` whose silhouette is clearly wider than the head."""
+    limit = core_width * _COLLAR_WIDENING_RATIO
+    for y in range(max(0, y_start), y_end):
+        xs = np.flatnonzero(binary[y, x_min:x_max])
+        if len(xs) > 0 and float(xs[-1] - xs[0]) > limit:
+            return y
+    return None
+
 
 class FusedHeadRefiner:
     """Refines coarse head estimation bounding box using segmenter alpha mask and face landmarks."""
@@ -100,6 +148,15 @@ class FusedHeadRefiner:
         # (cheekbone/ear level) since it scans the whole head band, not just
         # its lowest row.
         width_y_max = min(y_max, max(y_min, int(round(fb.bottom))))
+        # And it ends at the mouth line where there is one (DEC-131). The
+        # face box reaches below the chin, and a shirt collar can rise beside
+        # the jaw above it: on the owner's own photograph the head measured
+        # 219 px across to the mouth and 266 px by the chin, all of it collar.
+        # The widest part of a head (hair, ears, cheekbones) is above the
+        # mouth, so nothing that belongs to the head is lost.
+        mouth_y = mouth_line_y(face)
+        if mouth_y is not None:
+            width_y_max = min(width_y_max, max(y_min + 1, int(round(mouth_y))))
         width_roi_mask = np.zeros_like(binary)
         if width_y_max > y_min and x_max > x_min:
             width_roi_mask[y_min:width_y_max, x_min:x_max] = binary[
@@ -133,6 +190,26 @@ class FusedHeadRefiner:
             refined_bottom = max(refined_bottom, fb.bottom)
 
             refined_bottom = min(refined_bottom, bottom_limit)
+
+            # Below the mouth, the head ends where the silhouette suddenly
+            # widens past the head itself: that is a collar or shoulders. A
+            # beard or neck is narrower than the head and is kept. The bottom
+            # never rises above the chin plus the planner's beard margin, nor
+            # above the face box.
+            core_width = refined_right - refined_left
+            collar_y = first_widening_row(
+                binary, width_y_max, y_max, x_min, x_max, core_width
+            )
+            if collar_y is not None:
+                chin = landmark_chin_y(face)
+                chin_floor = (
+                    chin + _CHIN_BEARD_MARGIN_RATIO * max(1.0, chin - refined_top)
+                    if chin is not None
+                    else fb.bottom
+                )
+                refined_bottom = min(
+                    refined_bottom, max(float(collar_y), chin_floor, fb.bottom)
+                )
         else:
             # Fallback to coarse head bounding box
             refined_top = head_result.head_bounding_box.top

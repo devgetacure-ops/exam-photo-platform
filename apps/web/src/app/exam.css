@@ -1550,6 +1550,139 @@
     }
 }
 
+/* The in-page camera (DEC-131). A full-screen sheet on paper: the picture in
+   an ink frame, one round shutter in the signal colour. Rendered into <body>,
+   so it carries the .euk class itself for the tokens and buttons. */
+.euk-camera {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
+    background: var(--paper);
+    color: var(--ink);
+}
+
+.euk-camera-stage {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    border: var(--rule) solid var(--ink);
+    box-shadow: var(--drop-sm) var(--drop-sm) 0 var(--ink);
+    background: #111110;
+}
+
+.euk-camera-video,
+.euk-camera-still {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.euk-camera-video[hidden] {
+    display: none;
+}
+
+/* Mirrored like a mirror while framing; the photo itself is never mirrored. */
+.euk-camera[data-facing="user"] .euk-camera-video {
+    transform: scaleX(-1);
+}
+
+.euk-camera-still {
+    object-fit: contain;
+}
+
+.euk-camera-guide {
+    position: absolute;
+    left: 50%;
+    top: 46%;
+    width: min(58%, 300px);
+    aspect-ratio: 3 / 4;
+    transform: translate(-50%, -50%);
+    border: var(--rule) dashed rgba(255, 255, 255, 0.85);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.euk-camera-note {
+    position: absolute;
+    inset: auto 16px 16px;
+    display: grid;
+    gap: 12px;
+    justify-items: start;
+    margin: 0;
+    padding: 14px 16px;
+    border: var(--rule-thin) solid var(--ink);
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.45;
+}
+
+.euk-camera-note p {
+    margin: 0;
+}
+
+.euk-camera-tip {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.45;
+    text-align: center;
+}
+
+.euk-camera-actions {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 12px;
+    min-height: 76px;
+}
+
+.euk-camera-actions > .secondary-button {
+    justify-self: start;
+}
+
+.euk-camera-actions[data-state="taken"] {
+    grid-template-columns: auto 1fr;
+}
+
+.euk-camera-actions > .primary-button,
+.euk-camera-actions > .secondary-button {
+    min-height: 48px;
+    padding: 10px 20px;
+    font-size: 16px;
+}
+
+
+.euk-camera-shutter {
+    width: 72px;
+    height: 72px;
+    border: var(--rule) solid var(--ink);
+    border-radius: 50%;
+    background: var(--signal);
+    box-shadow: inset 0 0 0 5px var(--paper);
+    cursor: pointer;
+}
+
+.euk-camera-shutter:active {
+    transform: scale(0.94);
+}
+
+.euk-camera-shutter:disabled {
+    opacity: 0.4;
+    cursor: default;
+}
+
+.euk-camera-shutter:focus-visible {
+    outline: 3px solid var(--signal-deep);
+    outline-offset: 3px;
+}
+
 .euk .euk-drop-hint {
     font-size: 13px;
     line-height: 1.5;

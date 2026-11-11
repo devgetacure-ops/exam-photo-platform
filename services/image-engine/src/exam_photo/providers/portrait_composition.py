@@ -9,6 +9,10 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from exam_photo.models.geometry import BoundingBox
 from exam_photo.providers.face_detection import FaceDetection
+from exam_photo.providers.fused_head_refinement import (
+    first_widening_row,
+    mouth_line_y,
+)
 from exam_photo.providers.head_estimation import HeadEstimationResult
 
 
@@ -79,7 +83,7 @@ class DeterministicPortraitCompositionEstimator:
 
         observed_head_box = self._observed_upper_alpha_box(
             alpha_mask=alpha_mask,
-            face_box=face_box,
+            face=face,
             head_box=head_box,
             image_width=image_width,
             image_height=image_height,
@@ -156,7 +160,7 @@ class DeterministicPortraitCompositionEstimator:
         self,
         *,
         alpha_mask: Optional[np.ndarray[Any, Any]],
-        face_box: BoundingBox,
+        face: FaceDetection,
         head_box: BoundingBox,
         image_width: int,
         image_height: int,
@@ -165,6 +169,7 @@ class DeterministicPortraitCompositionEstimator:
         if alpha_mask is None:
             return None
 
+        face_box = face.bounding_box
         alpha = self._normalise_alpha(alpha_mask)
         if alpha.shape[0] != image_height or alpha.shape[1] != image_width:
             return None
@@ -194,6 +199,14 @@ class DeterministicPortraitCompositionEstimator:
         # widest point -- cheekbone/ear level -- since the scan covers the
         # whole head band, not just its lowest row).
         width_scan_bottom = min(bottom, int(round(face_box.bottom)))
+        # Ended at the mouth line where there is one, as the head refiner does
+        # (DEC-131): a collar can rise beside the jaw above the face box's
+        # bottom, and the widest part of the head is above the mouth.
+        mouth_y = mouth_line_y(face)
+        if mouth_y is not None:
+            width_scan_bottom = min(
+                width_scan_bottom, max(top + 1, int(round(mouth_y)))
+            )
         if right <= left or width_scan_bottom <= top:
             return None
 
@@ -202,6 +215,23 @@ class DeterministicPortraitCompositionEstimator:
         if len(width_ys) == 0:
             return None
         abs_width_xs = width_xs + left
+
+        # Below the mouth the head ends where the silhouette jumps wider than
+        # the head itself (a collar or shoulders), never above the head box
+        # or the face box. A beard or neck is narrower and is kept.
+        collar_y = first_widening_row(
+            alpha > 0.5,
+            width_scan_bottom,
+            bottom,
+            left,
+            right,
+            float(np.max(abs_width_xs) - np.min(abs_width_xs)),
+        )
+        if collar_y is not None:
+            bottom = max(
+                min(bottom, collar_y),
+                int(round(max(head_box.bottom, face_box.bottom))),
+            )
 
         full_roi = alpha[top:bottom, left:right] > 0.5
         ys, xs = np.where(full_roi)

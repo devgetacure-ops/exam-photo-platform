@@ -22,6 +22,7 @@ import { PreparationLoader } from "./preparation-loader";
 import { FileTypeDrawing } from "../euk/doodles";
 import { useUploadConsent } from "./upload-consent";
 import { randomHex } from "../../lib/random-hex";
+import { CameraCapture, inPageCameraAvailable } from "./camera-capture";
 
 /**
  * Preparing one requirement.
@@ -184,6 +185,7 @@ export function RequirementUpload({
     );
     const inputRef = useRef<HTMLInputElement>(null);
     const cameraRef = useRef<HTMLInputElement>(null);
+    const [cameraOpen, setCameraOpen] = useState(false);
     const { entries, record, forget } = useKit(examId);
     // Coming back to a file that is already ready shows that file, not an
     // empty upload form under a bar that says "Ready" (owner's testing,
@@ -490,12 +492,30 @@ export function RequirementUpload({
                 <button
                     type="button"
                     onClick={() => {
-                        if (consent.allow()) cameraRef.current?.click();
+                        if (!consent.allow()) return;
+                        // In the page where the browser can (DEC-131): the
+                        // camera app can cost the page its life on Android.
+                        if (inPageCameraAvailable()) setCameraOpen(true);
+                        else cameraRef.current?.click();
                     }}
                     className="secondary-button euk-drop-camera"
                 >
                     {photo ? tr("Take a photo now", "अभी फ़ोटो खींचें") : tr("Use the camera", "कैमरा इस्तेमाल करें")}
                 </button>
+                {cameraOpen && (
+                    <CameraCapture
+                        facing={photo ? "user" : "environment"}
+                        onClose={() => setCameraOpen(false)}
+                        onUseCameraApp={() => {
+                            setCameraOpen(false);
+                            cameraRef.current?.click();
+                        }}
+                        onCapture={(file) => {
+                            setCameraOpen(false);
+                            void submit(file);
+                        }}
+                    />
+                )}
                 <input
                     ref={cameraRef}
                     type="file"
