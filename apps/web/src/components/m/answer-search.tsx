@@ -49,7 +49,7 @@ export function AnswerSearch({ scope }: { scope: string }) {
                     enterKeyHint="search"
                     className="euk-searchfield"
                     value={query}
-                    placeholder="Search: payment, refund, email…"
+                    placeholder="Search: email, deleted, rejected…"
                     autoComplete="off"
                     onChange={(event) => filter(event.target.value)}
                 />

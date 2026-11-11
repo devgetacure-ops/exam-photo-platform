@@ -4,7 +4,7 @@ import "server-only";
  * How to reach the service, for the pages that have to say so.
  *
  * The owner's name and home address are never shown (owner, 2026-09-14): the
- * grievance officer is named by designation only, and the address block stays
+ * address block stays
  * empty until a business address, separate from the one on their identity
  * documents, is set. So this reads only the phone, the hours and that public
  * address -- never a name -- and never from the code.
@@ -16,8 +16,6 @@ import "server-only";
  */
 
 export { CONTACT_EMAILS } from "./site";
-
-export const GRIEVANCE_DESIGNATION = "Proprietor and Grievance Officer";
 
 export interface Business {
     phone: string;

@@ -14,7 +14,7 @@ export default function Privacy() {
             sections={[
                 {
                     title: "Temporary preparation",
-                    text: "Your uploads are processed to prepare the files you request. Access ends at the deadline shown in your kit, normally 30 minutes from preparation. An extension requested before expiry is bounded at one hour from creation. Payment does not extend storage. Downloaded files and email attachments remain with their recipients.",
+                    text: "Your uploads are processed to prepare the files you request. Access ends at the deadline shown in your kit, normally 30 minutes from preparation. An extension requested before expiry is bounded at one hour from creation. Downloaded files and email attachments remain with their recipients.",
                 },
                 {
                     title: "Your identity stays yours",
@@ -29,8 +29,8 @@ export default function Privacy() {
                     text: "Where the candidate is, or can be, under 18, the agreement ticked before the first upload confirms that a parent or guardian agrees to their files being prepared. A child's files are never used for tracking, profiling or advertising.",
                 },
                 {
-                    title: "Browser and payment records",
-                    text: "This browser stores kit references so you can return before expiry, your theme preference and the agreements you gave at upload. Clearing browser data can lose those references. Payment is handled through Razorpay. Order and delivery evidence may be kept separately from temporary images to investigate payment and delivery issues.",
+                    title: "What your browser keeps",
+                    text: "This browser stores kit references so you can return before expiry, your theme preference and the agreements you gave at upload. Clearing browser data can lose those references.",
                 },
                 {
                     title: "Cookies and visit counts",
@@ -38,7 +38,7 @@ export default function Privacy() {
                         process.env.NEXT_PUBLIC_CF_BEACON_TOKEN
                             ? "Visits are counted with Cloudflare Web Analytics, which sets no cookies, stores nothing on your device and builds no profile of you. "
                             : ""
-                    }Cloudflare's security check before a preparation, and Razorpay's payment window, may set their own cookies to do those jobs.`,
+                    }Cloudflare's security check before a preparation may set its own cookies to do that job.`,
                 },
                 {
                     title: "Email and requests",
@@ -46,11 +46,7 @@ export default function Privacy() {
                 },
                 {
                     title: "Your rights",
-                    text: "You can ask what personal data we hold about you, have it corrected or erased, withdraw an agreement you gave, and nominate someone to act for you if you cannot. Use the support form and include the relevant request reference, without attaching identity or payment information. Withdrawing an agreement stops further preparation; it does not recall files already delivered to you.",
-                },
-                {
-                    title: "Grievances",
-                    text: "A complaint about how your data or an order was handled goes to our Grievance Officer. Raise it through the support form and begin the message with the word Grievance. It is acknowledged within 48 hours and resolved within one month.",
+                    text: "You can ask what personal data we hold about you, have it corrected or erased, withdraw an agreement you gave, and nominate someone to act for you if you cannot. Use the support form and include the relevant request reference, without attaching identity documents. Withdrawing an agreement stops further preparation; it does not recall files already delivered to you.",
                 },
             ]}
         />

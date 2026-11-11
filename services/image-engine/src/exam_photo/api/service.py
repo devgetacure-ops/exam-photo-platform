@@ -16,6 +16,13 @@ from typing import Any, Dict, Iterator, List, Optional, Tuple
 import numpy as np
 from PIL import Image, ImageOps
 
+from exam_photo.api.billing.orders import OrderItem, OrderRegistry
+from exam_photo.api.billing.payments import ReleaseInstruction
+from exam_photo.api.billing.razorpay_orders import (
+    SIMULATED_ORDER_PREFIX,
+    OrderGateway,
+    gateway_for,
+)
 from exam_photo.api.contracts import ApiJobStatus, JobEntitlement
 from exam_photo.api.delivery import (
     TYPE_LABELS,
@@ -37,15 +44,8 @@ from exam_photo.api.jobs import (
     parse_manifest_timestamp,
 )
 from exam_photo.api.ledger import Ledger
-from exam_photo.api.orders import OrderItem, OrderRegistry
-from exam_photo.api.payments import ReleaseInstruction
 from exam_photo.api.progress import ProgressRegistry
 from exam_photo.api.protection import UsageRegistry
-from exam_photo.api.razorpay_orders import (
-    SIMULATED_ORDER_PREFIX,
-    OrderGateway,
-    gateway_for,
-)
 from exam_photo.api.settings import ApiSettings
 from exam_photo.api.storage import LocalArtifactStore
 from exam_photo.ink.paper_region import locate_paper
@@ -707,9 +707,8 @@ class ApiProcessingService:
             "warmup_seconds": elapsed,
             "error": self._warmup_error,
             "matting_backend": self.settings.matting_backend,
-            "purchase_gate": (
-                "enabled" if self.settings.purchase_gate_enabled else "disabled"
-            ),
+            "billing": "on" if self.settings.billing_enabled else "off",
+            "purchase_gate": "enabled" if self.gate_active else "disabled",
             # Surfaced because an unauthenticated operator surface is a
             # deployment mistake that is otherwise completely silent.
             "operator_surface": (
@@ -720,7 +719,9 @@ class ApiProcessingService:
             # that looks healthy and cannot take money. This is the one place
             # that state is visible.
             "payments": (
-                "simulated"
+                "off"
+                if not self.settings.billing_enabled
+                else "simulated"
                 if self.settings.payment_simulator_enabled
                 else "configured"
                 if self.settings.razorpay_webhook_secret
@@ -821,6 +822,8 @@ class ApiProcessingService:
                 output_bytes,
                 media_type=record.output_media_type,
                 details=self._preview_details(record, output_bytes),
+                # DEC-127: free, nothing is withheld, so the preview is clean.
+                marked=self.gate_active,
             )
         except PreviewUnavailableError:
             # A file that cannot be decoded, or a PDF pypdfium2 cannot render.
@@ -846,7 +849,7 @@ class ApiProcessingService:
         if PREVIEW_FILENAME not in record.artifact_names:
             record.artifact_names.append(PREVIEW_FILENAME)
         record.preview_filename = PREVIEW_FILENAME
-        record.preview_watermarked = True
+        record.preview_watermarked = self.gate_active
         record.preview_width = preview.width
         record.preview_height = preview.height
         return record
@@ -890,9 +893,19 @@ class ApiProcessingService:
         engine quality work needs: judging a matte on a watermarked
         half-resolution copy is judging it on the wrong thing.
         """
-        if not self.settings.purchase_gate_enabled:
+        if not self.gate_active:
             return True
         return record.entitlement == JobEntitlement.RELEASED
+
+    @property
+    def gate_active(self) -> bool:
+        """Whether prepared files wait for payment at all (DEC-063, DEC-127).
+
+        Only when billing is switched on *and* the gate is: a free host
+        releases everything, and an engine quality run with the gate off sees
+        clean files either way.
+        """
+        return self.settings.billing_enabled and self.settings.purchase_gate_enabled
 
     def release_job(
         self, job_id: str, payment: Optional[ReleaseInstruction] = None

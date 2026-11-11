@@ -235,8 +235,13 @@ def render_watermarked_preview(
     text: str = DEFAULT_WATERMARK_TEXT,
     details: Sequence[str] = (),
     media_type: Optional[str] = None,
+    marked: bool = True,
 ) -> WatermarkedPreview:
     """Make the watermarked preview of a finished image or PDF.
+
+    ``marked=False`` makes the same reduced picture with no mark, for a host
+    running free (billing off, DEC-127): nothing is withheld, so there is
+    nothing for a mark to protect.
 
     ``details`` are the file's own facts -- examination, dimensions, size,
     format, filename -- added to the mark after the fixed words.
@@ -263,13 +268,27 @@ def render_watermarked_preview(
         target = _preview_size(source.width, source.height)
         display = source.resize(target, Image.LANCZOS)
 
+    if not marked:
+        clean = display.convert("RGB")
+        clean.info.clear()
+        buffer = io.BytesIO()
+        clean.save(buffer, "JPEG", quality=_PREVIEW_JPEG_QUALITY, optimize=True)
+        return WatermarkedPreview(
+            content=buffer.getvalue(),
+            media_type=PREVIEW_MEDIA_TYPE,
+            width=clean.width,
+            height=clean.height,
+            source_width=source_width,
+            source_height=source_height,
+        )
+
     line = watermark_line(text, details)
-    marked = Image.alpha_composite(
+    marked_image = Image.alpha_composite(
         display.convert("RGBA"),
         _tiled_mark(display.size, line, _WATERMARK_ANGLE_DEGREES, _INK_ALPHA, 24),
     )
-    marked = Image.alpha_composite(
-        marked,
+    marked_image = Image.alpha_composite(
+        marked_image,
         _tiled_mark(
             display.size,
             watermark_line(text, ()),
@@ -282,15 +301,15 @@ def render_watermarked_preview(
     # Compositing does not carry EXIF forward, but ``info`` does travel: a JPEG
     # ``COM`` comment on the finished file once reached the preview intact.
     # Cleared explicitly, because a preview leaves the service as pixels only.
-    marked.info.clear()
+    marked_image.info.clear()
     buffer = io.BytesIO()
-    marked.save(buffer, "JPEG", quality=_PREVIEW_JPEG_QUALITY, optimize=True)
+    marked_image.save(buffer, "JPEG", quality=_PREVIEW_JPEG_QUALITY, optimize=True)
 
     return WatermarkedPreview(
         content=buffer.getvalue(),
         media_type=PREVIEW_MEDIA_TYPE,
-        width=marked.width,
-        height=marked.height,
+        width=marked_image.width,
+        height=marked_image.height,
         source_width=source_width,
         source_height=source_height,
     )

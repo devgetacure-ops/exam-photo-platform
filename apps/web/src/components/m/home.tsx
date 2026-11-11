@@ -63,8 +63,8 @@ export function PhoneHome({
                     <span>examinations on file</span>
                 </li>
                 <li>
-                    <strong>₹3</strong>
-                    <span>a file, ₹5 the whole kit</span>
+                    <strong>Free</strong>
+                    <span>every file, no watermark</span>
                 </li>
                 <li>
                     <strong>No</strong>

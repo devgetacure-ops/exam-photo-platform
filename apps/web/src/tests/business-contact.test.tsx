@@ -31,16 +31,19 @@ describe("how to reach the service", () => {
         const text = container.textContent ?? "";
         expect(text).not.toContain("Fictional Person Name");
         expect(text).not.toContain("Imaginary Lane");
-        expect(text).not.toMatch(/Proprietor\s*$/m);
-        expect(text).toContain("Proprietor and Grievance Officer");
+        expect(text).not.toContain("Grievance");
         expect(text).toContain("+91 00000 00000");
     });
 
-    test("the grievance officer is the designation alone", () => {
+    test("one email address answers everything (DEC-127)", () => {
         setOldAndNew();
-        const { getByText } = render(<BusinessContact />);
-        const cell = getByText(/Proprietor and Grievance Officer/);
-        expect(cell.textContent?.startsWith("Proprietor and Grievance Officer")).toBe(true);
+        const { getAllByRole } = render(<BusinessContact />);
+        const mail = getAllByRole("link").filter((a) =>
+            a.getAttribute("href")?.startsWith("mailto:"),
+        );
+        expect(mail.map((a) => a.getAttribute("href"))).toEqual([
+            "mailto:support@examuploadkit.com",
+        ]);
     });
 
     test("a published business address shows only once one is set", () => {

@@ -65,11 +65,13 @@ def api(tmp_path):
         service._email_sender,
     )
     service.settings = ApiSettings(
-        artifact_root=tmp_path / "artifacts", operator_token=OPERATOR
+        billing_enabled=True,
+        artifact_root=tmp_path / "artifacts",
+        operator_token=OPERATOR,
     )
     service.store = LocalArtifactStore(tmp_path / "artifacts")
     service.registry = JobRegistry(tmp_path / "artifacts")
-    from exam_photo.api.orders import OrderRegistry
+    from exam_photo.api.billing.orders import OrderRegistry
 
     service.orders = OrderRegistry(tmp_path / "artifacts")
     service.email_sender = FakeSender()
@@ -355,7 +357,7 @@ def test_a_configured_display_name_is_kept_as_it_is():
 
 
 def test_the_email_names_the_examination_and_the_order_that_paid_for_it(api):
-    from exam_photo.api.orders import OrderRegistry
+    from exam_photo.api.billing.orders import OrderRegistry
 
     record = _job(api, "job_named")
     record.requirement_id = "candidate_photograph"

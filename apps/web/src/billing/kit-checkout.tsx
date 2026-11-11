@@ -4,26 +4,40 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
     getApiBaseUrl,
-    jobOutputUrl,
     kitPackageDownloadUrl,
-} from "../../lib/api-client";
-import { getKit, type KitEntry } from "../../lib/kit-state";
-import type { ExamDetail } from "../../lib/types";
-import { publishCheckoutStage, publishJobs } from "./live-job-state";
-import { bringIntoView, focusQuietly } from "../../lib/scroll";
-import { EmailDelivery } from "./email-delivery";
+} from "../lib/api-client";
+import { getKit, type KitEntry } from "../lib/kit-state";
+import type { ExamDetail } from "../lib/types";
+import { publishCheckoutStage, publishJobs } from "../components/exam/live-job-state";
+import { bringIntoView, focusQuietly } from "../lib/scroll";
+import { EmailDelivery } from "../components/exam/email-delivery";
 import { PaymentScene } from "./payment-scene";
-import { KitSuccess } from "./kit-success";
+import { KitSuccess } from "../components/exam/kit-success";
 import { ReviewPanel } from "./review-panel";
 import { SimulatedCheckout } from "./simulated-checkout";
-import type { ExamFact } from "./exam-facts";
-import { FileTypeDrawing } from "../euk/doodles";
-import { plainFindings } from "../../lib/finding-text";
-import { PreviewThumb } from "./preview-thumb";
-import { Note } from "../euk/note";
-import { reportAction } from "../../lib/visit-beacon";
+import type { ExamFact } from "../components/exam/exam-facts";
+import { Note } from "../components/euk/note";
+import { reportAction } from "../lib/visit-beacon";
+import {
+    ExpiryClock,
+    FileRow,
+    clock,
+    jobDownloadable,
+    jobExpired,
+    type LiveJob,
+} from "../components/exam/kit-files";
+
+export {
+    ExpiryClock,
+    jobDownloadable,
+    jobExpired,
+    type LiveJob,
+} from "../components/exam/kit-files";
 
 /**
+ * Review, pay, receive. Billing only (DEC-127): rendered in place of
+ * `KitDownloads` when `BILLING_ENABLED` is on.
+ *
  * Review, pay, receive.
  *
  * Five designed stages over one set of server contracts, so each moment of the
@@ -42,16 +56,6 @@ import { reportAction } from "../../lib/visit-beacon";
  * files that were priced (DEC-071).
  */
 
-// Additive engine contracts, kept in the UI lane pending shared-client coordination.
-export interface LiveJob {
-    job_id: string;
-    status: string;
-    entitlement?: string;
-    expires_at?: string | null;
-    extendable?: boolean;
-    output_filename?: string | null;
-    output_url?: string | null;
-}
 interface Quote {
     amount_paise: number;
     list_amount_paise: number;
@@ -135,21 +139,6 @@ function loadCheckout(): Promise<void> {
         document.head.appendChild(script);
     });
 }
-export function jobExpired(job: LiveJob, now: number): boolean {
-    return (
-        job.status.toLowerCase() === "deleted" ||
-        (!!job.expires_at && Date.parse(job.expires_at) <= now)
-    );
-}
-export function jobDownloadable(job: LiveJob, now: number): boolean {
-    return (
-        job.entitlement === "released" &&
-        !!job.expires_at &&
-        Number.isFinite(Date.parse(job.expires_at)) &&
-        !jobExpired(job, now) &&
-        !!job.output_url
-    );
-}
 const money = (paise: number) =>
     new Intl.NumberFormat("en-IN", {
         style: "currency",
@@ -158,8 +147,6 @@ const money = (paise: number) =>
         maximumFractionDigits: 2,
     }).format(paise / 100);
 
-const clock = (ms: number) =>
-    new Date(ms).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
 
 interface Receipt {
     orderId: string;
@@ -171,182 +158,7 @@ type Stage = "empty" | "review" | "paying" | "failed" | "delivered";
 /** How long the success moment holds before the page moves on to the downloads. */
 const DOWNLOADS_AFTER_MS = 2000;
 
-/** The file retention window a fresh preparation gets, for the clock's bar. */
-const WINDOW_SECONDS = 30 * 60;
 
-/** Each digit in a box of its own width, so the text beside the clock never moves. */
-function Digits({ value }: { value: string }) {
-    return (
-        <>
-            {value.split("").map((digit, i) => (
-                <span key={i} className="euk-clock-digit">
-                    {digit}
-                </span>
-            ))}
-        </>
-    );
-}
-
-export function ExpiryClock({
-    seconds,
-    at,
-    delivered,
-}: {
-    seconds: number;
-    at: number;
-    delivered: boolean;
-}) {
-    const minutes = Math.floor(seconds / 60);
-    const rest = seconds % 60;
-    return (
-        <div className="euk-clock" data-urgent={seconds < 5 * 60}>
-            <div className="euk-clock-row">
-                <p className="euk-clock-figure" aria-hidden="true">
-                    <Digits value={String(minutes).padStart(2, "0")} />
-                    <span className="euk-clock-colon">:</span>
-                    <Digits value={String(rest).padStart(2, "0")} />
-                </p>
-                <div className="min-w-0">
-                    <p className="euk-clock-title">
-                        {delivered
-                            ? `Download them before ${clock(at)}`
-                            : `Deleted at ${clock(at)}`}
-                    </p>
-                    <p className="euk-clock-text">
-                        {delivered
-                            ? "After that they are deleted from our side and can’t be recovered. An emailed copy stays in your inbox."
-                            : "Files are deleted within 30 minutes of being prepared, or within an hour if you ask us to keep them. Paying doesn’t extend that, so download or email them straight after."}
-                    </p>
-                </div>
-            </div>
-            <span className="euk-clock-bar" aria-hidden="true">
-                <span
-                    style={{
-                        transform: `scaleX(${Math.min(1, seconds / WINDOW_SECONDS)})`,
-                    }}
-                />
-            </span>
-        </div>
-    );
-}
-
-function FileRow({
-    entry,
-    job,
-    now,
-    name,
-    partial,
-    reason,
-    extending,
-    onExtend,
-    onPrepareAgain,
-}: {
-    entry: KitEntry;
-    job?: LiveJob;
-    now: number;
-    name: string;
-    partial: boolean;
-    reason?: string;
-    extending: string | null;
-    onExtend: () => void;
-    /** Opens this file's own screen, where it can be added again. */
-    onPrepareAgain?: () => void;
-}) {
-    const expired = !!job && jobExpired(job, now);
-    const available = !!job && jobDownloadable(job, now);
-    const notes = plainFindings(entry.findings);
-    const seconds =
-        job?.expires_at && now > 0
-            ? Math.max(0, Math.ceil((Date.parse(job.expires_at) - now) / 1000))
-            : null;
-    return (
-        <li
-            className="euk-order-file"
-            data-state={expired ? "expired" : available ? "released" : "protected"}
-            data-thumb={(entry.previewUrl && !expired) || undefined}
-        >
-            {entry.previewUrl && !expired ? (
-                <PreviewThumb
-                    src={new URL(entry.previewUrl, getApiBaseUrl()).toString()}
-                    name={name}
-                />
-            ) : (
-                <FileTypeDrawing type={entry.requirementType} className="euk-order-icon" />
-            )}
-            <div className="euk-order-body">
-                <h3 className="euk-order-name">{name}</h3>
-                <p className="euk-order-filename">
-                    {job?.output_filename ?? entry.outputFilename}
-                </p>
-                <p className="euk-order-status">
-                    {expired
-                        ? "Expired — prepare this file again"
-                        : available
-                          ? "Released for download"
-                          : job
-                            ? "Protected until payment is confirmed"
-                            : "Checking availability…"}
-                    {!expired && seconds !== null && (
-                        <span className="euk-order-countdown">
-                            {" "}
-                            · deletes in {Math.floor(seconds / 60)}m{" "}
-                            {String(seconds % 60).padStart(2, "0")}s
-                        </span>
-                    )}
-                </p>
-                {reason === "document_work_is_free" && (
-                    <p className="euk-order-free">
-                        Document preparation included free with your purchase
-                    </p>
-                )}
-                {entry.outputMediaType === "application/pdf" && !entry.previewUrl && (
-                    <p className="euk-order-meta">PDF · no visual preview available</p>
-                )}
-                {partial && (
-                    <p className="euk-order-meta">
-                        Partly prepared — your exam still requires additional
-                        steps. Review its instructions.
-                    </p>
-                )}
-                {notes.length > 0 && (
-                    <details className="euk-order-findings">
-                        <summary>Worth a look ({notes.length})</summary>
-                        <ul>
-                            {notes.map((note) => (
-                                <li key={note}>{note}</li>
-                            ))}
-                        </ul>
-                    </details>
-                )}
-            </div>
-            <div className="euk-order-actions">
-                {/* An expired file used to be a dead end here: the row said
-                    to prepare it again and offered nowhere to do it (owner's
-                    testing, 1 October). */}
-                {expired && onPrepareAgain && (
-                    <button type="button" className="primary-button" onClick={onPrepareAgain}>
-                        Prepare it again
-                    </button>
-                )}
-                {available && (
-                    <a className="primary-button" href={jobOutputUrl(entry.jobId)}>
-                        Download file
-                    </a>
-                )}
-                {job?.extendable && !expired && (
-                    <button
-                        type="button"
-                        className="secondary-button"
-                        disabled={extending !== null}
-                        onClick={onExtend}
-                    >
-                        {extending === entry.jobId ? "Extending…" : "Keep for longer"}
-                    </button>
-                )}
-            </div>
-        </li>
-    );
-}
 
 export function KitCheckout({
     exam,

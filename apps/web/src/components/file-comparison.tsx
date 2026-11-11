@@ -1,5 +1,6 @@
 "use client";
 import { useId, useRef, useState } from "react";
+import { BILLING_ENABLED } from "../billing/config";
 
 /**
  * The upload beside its prepared preview, compared by dragging anywhere on the
@@ -61,7 +62,9 @@ export function FileComparison({
                     alt={
                         illustration
                             ? "Illustrated file preparation example"
-                            : "Prepared watermarked preview"
+                            : BILLING_ENABLED
+                              ? "Prepared watermarked preview"
+                              : "Prepared file preview"
                     }
                     draggable={false}
                     onLoad={(event) => {
@@ -138,7 +141,9 @@ export function FileComparison({
                 <span>
                     {illustration
                         ? "Illustration only · not an engine result"
-                        : "Watermarked preview · your download is the full, unmarked file"}
+                        : BILLING_ENABLED
+                          ? "Watermarked preview · your download is the full, unmarked file"
+                          : "Preview · your download is the full-size file"}
                 </span>
                 {enlarged && (
                     <span>

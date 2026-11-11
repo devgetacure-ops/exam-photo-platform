@@ -6,12 +6,15 @@ import Link from "next/link";
 import type { ExamDetail, RequirementSummary } from "../../lib/types";
 import { factAttribution, factUrl, type ExamFact } from "../exam/exam-facts";
 import { plainFindings } from "../../lib/finding-text";
-import { isOurs, kitPrice, rupees } from "../../lib/kit-pricing";
+import { isOurs } from "../../lib/requirement-support";
+import { BILLING_ENABLED } from "../../billing/config";
+import { kitPrice, rupees } from "../../billing/kit-pricing";
+import { KitCheckout } from "../../billing/kit-checkout";
+import { KitDownloads } from "../exam/kit-downloads";
 import { useKit } from "../exam/use-kit";
 import { useKitLiveness } from "../exam/use-kit-liveness";
 import { DocumentWorkspace } from "../exam/document-workspace";
 import { RequirementUpload } from "../exam/requirement-upload";
-import { KitCheckout } from "../exam/kit-checkout";
 import { SelectAllToggle } from "../exam/select-all-toggle";
 import { AppBar } from "./app-bar";
 import { ActionBar } from "./action-bar";
@@ -19,9 +22,10 @@ import { Sheet } from "./sheet";
 import { photographSpecRows, requirementSpecRows } from "../../lib/spec-format";
 
 /**
- * The paid path on a phone, as four screens rather than one long page.
+ * The path on a phone, as screens rather than one long page.
  *
- * Choose the files, add them one at a time, check what came back, pay. Each
+ * Choose the files, add them one at a time, download them (free, DEC-127;
+ * with billing on, the last screen is checkout instead). Each
  * screen asks for one thing and carries one action, in the bar under the
  * thumb; everything else a candidate might want — this file's rules, the
  * measurements, the price breakdown — opens as a sheet over the screen they
@@ -38,7 +42,7 @@ type Step = "files" | "add" | "pay";
 const STEP_LABELS: { id: Step; label: string }[] = [
     { id: "files", label: "Your files" },
     { id: "add", label: "Add them" },
-    { id: "pay", label: "Check" },
+    { id: "pay", label: BILLING_ENABLED ? "Check" : "Download" },
 ];
 
 function isDocument(requirement: RequirementSummary): boolean {
@@ -282,7 +286,7 @@ export function PrepareFlow({
                                 className="primary-button"
                                 onClick={() => go("pay", null, true)}
                             >
-                                Check and pay
+                                {BILLING_ENABLED ? "Check and pay" : "Get my files"}
                             </button>
                         )}
                     </ActionBar>
@@ -346,7 +350,7 @@ export function PrepareFlow({
                     </h2>
                     <p className="euk-m-lede">
                         Everything it asks for is ticked. Untick anything your form
-                        doesn&rsquo;t want, and the price follows.
+                        doesn&rsquo;t want{BILLING_ENABLED ? ", and the price follows" : ""}.
                     </p>
 
                     {ours.length > 0 && (
@@ -421,8 +425,10 @@ export function PrepareFlow({
                 <div className="euk-m-screen">
                     <h2 className="euk-display euk-m-title">Add your files</h2>
                     <p className="euk-m-lede">
-                        One at a time. Each one is prepared as soon as you add it, and
-                        you see the result before you pay.
+                        One at a time. Each one is prepared as soon as you add it
+                        {BILLING_ENABLED
+                            ? ", and you see the result before you pay."
+                            : ", and it is yours to download straight away."}
                     </p>
                     <ul className="euk-m-files">
                         {chosen.map((r) => {
@@ -502,14 +508,23 @@ export function PrepareFlow({
 
             {step === "pay" && (
                 <div className="euk-m-screen euk-m-screen--pay">
-                    <KitCheckout
-                        exam={exam}
-                        entries={entries}
-                        onBusy={setBusy}
-                        selectedRequirements={included}
-                        facts={facts}
-                        onPrepareAgain={(requirementId) => go("add", requirementId, true)}
-                    />
+                    {BILLING_ENABLED ? (
+                        <KitCheckout
+                            exam={exam}
+                            entries={entries}
+                            onBusy={setBusy}
+                            selectedRequirements={included}
+                            facts={facts}
+                            onPrepareAgain={(requirementId) => go("add", requirementId, true)}
+                        />
+                    ) : (
+                        <KitDownloads
+                            exam={exam}
+                            entries={entries}
+                            selectedRequirements={included}
+                            onPrepareAgain={(requirementId) => go("add", requirementId, true)}
+                        />
+                    )}
                 </div>
             )}
 
@@ -517,12 +532,12 @@ export function PrepareFlow({
                 <ActionBar
                     note={
                         <>
-                            {price.chargeable > 0 ? (
+                            {BILLING_ENABLED && price.chargeable > 0 ? (
                                 <strong>{rupees(price.amount)}</strong>
                             ) : (
                                 <strong>Free</strong>
                             )}
-                            {price.free > 0
+                            {BILLING_ENABLED && price.free > 0
                                 ? `${price.chosen} files, ${price.free} free`
                                 : `${price.chosen} file${price.chosen === 1 ? "" : "s"}`}
                         </>
@@ -545,8 +560,12 @@ export function PrepareFlow({
                             onClick={() => go("pay")}
                         >
                             {ready.length === chosen.length
-                                ? "Check and pay"
-                                : `Check ${ready.length} of ${chosen.length}`}
+                                ? BILLING_ENABLED
+                                    ? "Check and pay"
+                                    : "Get my files"
+                                : BILLING_ENABLED
+                                  ? `Check ${ready.length} of ${chosen.length}`
+                                  : `Get ${ready.length} of ${chosen.length}`}
                         </button>
                     )}
                 </ActionBar>

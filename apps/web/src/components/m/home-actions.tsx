@@ -30,7 +30,7 @@ export function HomeAction() {
             <ActionBar
                 note={
                     <>
-                        <strong>From ₹3</strong>
+                        <strong>Free</strong>
                         No account needed
                     </>
                 }

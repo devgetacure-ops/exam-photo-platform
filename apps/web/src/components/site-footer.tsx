@@ -29,15 +29,13 @@ const ENCLOSURES: {
             { href: "/we-vs-ai", label: "WE vs AI" },
             { href: "/compress-image", label: "Compress a photo to a size" },
             { href: "/pdf", label: "Free PDF tools" },
-            { href: "/#pricing", label: "Pricing" },
             { href: "/exam-request", label: "Request an examination" },
         ],
     },
     {
         group: "If something goes wrong",
         links: [
-            { href: "/support", label: "Support and grievances" },
-            { href: "/refund-policy", label: "Refunds" },
+            { href: "/support", label: "Support" },
         ],
     },
     {

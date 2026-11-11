@@ -6,6 +6,7 @@ import { rupees } from "../../../../lib/operator/data";
 import { engineJson } from "../../../../lib/operator/engine";
 import { requireOperator } from "../../../../lib/operator/guard";
 import { couponTimeline, refusalWords, statusOf, STATUS_WORDS, type CouponRecord } from "../../../../lib/operator/coupon-timeline";
+import { BILLING_ENABLED } from "../../../../billing/config";
 
 export const metadata: Metadata = { title: "Coupons" };
 
@@ -40,10 +41,18 @@ export default async function CouponsPage({ searchParams }: { searchParams: Prom
 
     return (
         <>
-            <PageHeader title="Coupons" description="Your own codes for partners and friends, and the free-files reward for reviews." />
+            <PageHeader
+                title="Coupons"
+                description={
+                    BILLING_ENABLED
+                        ? "Your own codes for partners and friends, and the free-files reward for reviews."
+                        : "An archive: the site is free (DEC-127), so codes can no longer be made, switched or used."
+                }
+            />
 
-            <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_380px]">
+            <div className={cn("grid gap-4", BILLING_ENABLED && "lg:grid-cols-[minmax(0,1fr)_380px]")}>
                 <div className="flex flex-col gap-4">
+                    {BILLING_ENABLED && (
                     <Card className={cn("flex flex-wrap items-center gap-4 p-5", offerOn && "border-[var(--op-good)]")}>
                         <div className="min-w-0 flex-1">
                             <div className="flex items-center gap-2">
@@ -62,6 +71,7 @@ export default async function CouponsPage({ searchParams }: { searchParams: Prom
                             </Button>
                         </ActionForm>
                     </Card>
+                    )}
 
                     <div className="flex self-start rounded-lg bg-[var(--op-muted-bg)] p-0.5">
                         {(
@@ -108,6 +118,7 @@ export default async function CouponsPage({ searchParams }: { searchParams: Prom
                                                 {coupon.orders > 0 ? ` · ${rupees(coupon.discount_paise)} given away, ${rupees(coupon.revenue_paise)} taken` : ""}
                                             </p>
                                         </div>
+                                        {BILLING_ENABLED && (
                                         <ActionForm action={`/admin/actions/coupon-active/${coupon.code}`} back={back}>
                                             <input type="hidden" name="active" value={coupon.active ? "false" : "true"} />
                                             <button
@@ -120,6 +131,7 @@ export default async function CouponsPage({ searchParams }: { searchParams: Prom
                                                 <span className={cn("absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all", coupon.active ? "left-[22px]" : "left-0.5")} />
                                             </button>
                                         </ActionForm>
+                                        )}
                                     </div>
                                     <ol className="m-0 list-none border-t border-[var(--op-border)] px-5 py-3 text-[13px]" aria-label={`${coupon.code} history`}>
                                         {events.map((event, index) => (
@@ -168,6 +180,7 @@ export default async function CouponsPage({ searchParams }: { searchParams: Prom
                     )}
                 </div>
 
+                {BILLING_ENABLED && (
                 <Card className="h-fit">
                     <CardHeader title="New code" description="Candidates type it under “Have a code?” before paying." />
                     <ActionForm action="/admin/actions/coupon" back="/admin/coupons" className="flex flex-col gap-4 p-5">
@@ -203,6 +216,7 @@ export default async function CouponsPage({ searchParams }: { searchParams: Prom
                         </Button>
                     </ActionForm>
                 </Card>
+                )}
             </div>
         </>
     );

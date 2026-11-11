@@ -1,8 +1,8 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { createRef } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { PaymentScene } from "../components/exam/payment-scene";
-import { ReviewPanel } from "../components/exam/review-panel";
+import { PaymentScene } from "./payment-scene";
+import { ReviewPanel } from "./review-panel";
 
 const TAGS = { good: ["Fast", "Easy to use"], bad: ["Too slow", "Confusing"] };
 

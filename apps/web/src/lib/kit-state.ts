@@ -17,6 +17,7 @@
  * account. It stops being acceptable the moment the product grows accounts.
  */
 
+import { randomHex } from "./random-hex";
 import type { ApiJobStatus, PreparationOutcome, PrepareRequirementResponse } from "./types";
 
 const STORAGE_KEY = "exam-photo:kits:v1";
@@ -27,11 +28,7 @@ export function isValidKitId(value: string): boolean {
 }
 
 function mintKitId(): string {
-  const random =
-    typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
-      ? crypto.randomUUID().replace(/-/g, "")
-      : Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2);
-  return `kit_${random}`.slice(0, 68);
+  return `kit_${randomHex()}`;
 }
 
 function nowIso(): string {
@@ -158,8 +155,9 @@ export function recordPreparation(
     outputFilename: response.output_filename ?? null,
     outputMediaType: response.output_media_type ?? null,
     outputUrl: response.output_url ?? null,
-    previewUrl:
-      response.preview_watermarked === true ? (response.preview_url ?? null) : null,
+    // The engine only offers a preview it may serve: marked while billing is
+    // on, clean while free (DEC-127).
+    previewUrl: response.preview_url ?? null,
     reportUrl: response.report_url ?? null,
     expiresAt: response.expires_at ?? null,
     findings: response.findings ?? [],

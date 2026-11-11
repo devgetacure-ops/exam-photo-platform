@@ -9,7 +9,7 @@ export const contentType = "image/png";
 export default function Image() {
     return new ImageResponse(
         (
-            <OgCard footer="Photograph, signature, thumb impression and documents · ₹3 a file · examuploadkit.com">
+            <OgCard footer="Photograph, signature, thumb impression and documents · Free · examuploadkit.com">
                 <div style={{ display: "flex", fontSize: 88, lineHeight: 1.02, color: og.INK }}>
                     You prepare for the exam.
                 </div>

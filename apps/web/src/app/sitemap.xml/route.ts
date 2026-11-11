@@ -20,7 +20,6 @@ export async function GET() {
         "/support",
         "/privacy",
         "/terms",
-        "/refund-policy",
         ...exams.flatMap((exam) => [
             `/exam/${encodeURIComponent(exam.exam_id)}`,
             `/exam/${encodeURIComponent(exam.exam_id)}/rules`,

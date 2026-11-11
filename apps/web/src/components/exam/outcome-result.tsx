@@ -163,40 +163,44 @@ export function OutcomeResult({
             </div>
 
             {/*
-                The preview is watermarked and served at reduced resolution by
-                the service; the clean file is what the candidate buys. That is
-                the protection that actually works — blocking right-click stops
-                nobody and would make a page selling precision feel cheap.
+                With billing on (DEC-063) the preview is watermarked and served
+                at reduced resolution; the clean file is what the candidate
+                buys. Free (DEC-127) the engine serves a clean preview and the
+                file itself downloads from the kit below.
             */}
-            {sourceUrl && result.preview_url && result.preview_watermarked === true ? (
+            {sourceUrl && result.preview_url ? (
                 <FileComparison
                     before={sourceUrl}
                     after={new URL(result.preview_url, getApiBaseUrl()).toString()}
                 />
             ) : (
-                result.preview_url &&
-                result.preview_watermarked === true && (
+                result.preview_url && (
                     <figure className="euk-outcome-preview">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                             src={new URL(result.preview_url, getApiBaseUrl()).toString()}
-                            onContextMenu={(event) => event.preventDefault()}
+                            onContextMenu={
+                                result.preview_watermarked
+                                    ? (event) => event.preventDefault()
+                                    : undefined
+                            }
                             draggable={false}
                             alt={`Prepared ${requirementName}`}
                         />
-                        <figcaption>Preview — watermarked until you buy it.</figcaption>
+                        {result.preview_watermarked && (
+                            <figcaption>Preview — watermarked until you buy it.</figcaption>
+                        )}
                     </figure>
                 )
             )}
 
-            {result.output_url &&
-                !(result.preview_url && result.preview_watermarked === true) && (
-                    <p className="euk-outcome-text">
-                        {result.output_media_type === "application/pdf"
-                            ? "PDF prepared. We couldn’t make a picture of it this time, so check its details before you buy."
-                            : "Your file was prepared. A protected preview is not available yet."}
-                    </p>
-                )}
+            {result.output_url && !result.preview_url && (
+                <p className="euk-outcome-text">
+                    {result.output_media_type === "application/pdf"
+                        ? "PDF prepared. We couldn’t make a picture of it this time, so check its details after you download it."
+                        : "Your file was prepared. A preview is not available this time; check the download."}
+                </p>
+            )}
 
             {expiry && !Number.isNaN(expiry.getTime()) && (
                 <p className="euk-outcome-expiry">

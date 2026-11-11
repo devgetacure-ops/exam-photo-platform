@@ -20,6 +20,7 @@ import { entryLive, resultFromEntry } from "../../lib/kit-liveness";
 import { PreparationLoader } from "./preparation-loader";
 import { FileTypeDrawing } from "../euk/doodles";
 import { useUploadConsent } from "./upload-consent";
+import { randomHex } from "../../lib/random-hex";
 
 /**
  * Preparing one requirement.
@@ -219,7 +220,7 @@ export function RequirementUpload({
                     : null;
             sourceRef.current = source;
             setSourceUrl(source);
-            const token = `prg_${crypto.randomUUID().replaceAll("-", "")}`;
+            const token = `prg_${randomHex()}`;
             setProgressToken(token);
             setPhase("working");
             onWorking?.(true);
@@ -481,13 +482,13 @@ export function RequirementUpload({
                     />
                     <p>
                         Adjusts exposure and colour only when your photograph
-                        needs it, and you review the change before paying. No
-                        whitening, reshaping or beauty filters.
+                        needs it, and you see the change before you download.
+                        No whitening, reshaping or beauty filters.
                     </p>
                 </div>
             )}
             <p className="euk-upload-note">
-                No account needed. Review the result before you pay.
+                Free. No account needed.
             </p>
         </div>
     );

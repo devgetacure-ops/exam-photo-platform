@@ -29,7 +29,6 @@ const MENU: { group: string; links: { href: string; label: string }[] }[] = [
             { href: "/exams", label: "Every examination, A to Z" },
             { href: "/about#how", label: "How it works" },
             { href: "/we-vs-ai", label: "WE vs AI" },
-            { href: "/about#pricing", label: "What it costs" },
             { href: "/compress-image", label: "Compress a photo to a size" },
             { href: "/pdf", label: "PDF tools" },
             { href: "/exam-request", label: "Ask for an examination" },
@@ -38,8 +37,7 @@ const MENU: { group: string; links: { href: string; label: string }[] }[] = [
     {
         group: "If something goes wrong",
         links: [
-            { href: "/support", label: "Support and grievances" },
-            { href: "/refund-policy", label: "Refunds" },
+            { href: "/support", label: "Support" },
         ],
     },
     {

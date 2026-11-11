@@ -13,10 +13,10 @@ import pytest
 from fastapi.testclient import TestClient
 
 from exam_photo.api.app import app
+from exam_photo.api.billing.orders import OrderItem, OrderRegistry
 from exam_photo.api.contracts import ApiJobStatus, JobEntitlement
 from exam_photo.api.jobs import JobRegistry
 from exam_photo.api.ledger import Ledger
-from exam_photo.api.orders import OrderItem, OrderRegistry
 from exam_photo.api.protection import UsageRegistry
 from exam_photo.api.settings import ApiSettings
 from exam_photo.api.storage import LocalArtifactStore
@@ -41,7 +41,9 @@ def api(tmp_path):
         service.usage,
     )
     root = tmp_path / "artifacts"
-    service.settings = ApiSettings(artifact_root=root, operator_token=OPERATOR)
+    service.settings = ApiSettings(
+        billing_enabled=True, artifact_root=root, operator_token=OPERATOR
+    )
     service.store = LocalArtifactStore(root)
     service.registry = JobRegistry(root)
     service.orders = OrderRegistry(root)

@@ -6,14 +6,12 @@ import type { KitEntry } from "../../lib/kit-state";
 import { RequirementPanel } from "./requirement-panel";
 import { useKit } from "./use-kit";
 import { ReportIssue } from "./report-issue";
-import { KitCheckout } from "./kit-checkout";
+import { KitCheckout } from "../../billing/kit-checkout";
+import { BILLING_ENABLED } from "../../billing/config";
+import { CHARGEABLE_TYPES, kitPrice, rupees } from "../../billing/kit-pricing";
+import { KitDownloads } from "./kit-downloads";
 import { FileTypeDrawing } from "../euk/doodles";
-import {
-    CHARGEABLE_TYPES,
-    isOurs,
-    kitPrice,
-    rupees,
-} from "../../lib/kit-pricing";
+import { isOurs } from "../../lib/requirement-support";
 import { nextStep, waitingFile } from "../../lib/kit-next";
 import { photographSpecRows, requirementSpecRows } from "../../lib/spec-format";
 import { toolsReplaced } from "../../lib/value-tools";
@@ -24,8 +22,8 @@ import type { ExamFact } from "./exam-facts";
 import { SelectAllToggle } from "./select-all-toggle";
 
 /**
- * The kit: every file this application asks for, what it costs, and the file
- * being worked on.
+ * The kit: every file this application asks for, and the file being worked
+ * on. While billing is on (DEC-127) it also says what the kit costs.
  *
  * The whole kit starts selected. The candidate unticks what they don't need
  * and the price follows, and the moment the selection is short of the whole
@@ -172,7 +170,9 @@ export function KitWorkspace({
         );
     };
     const checkoutStage = useCheckoutStage(exam.exam_id);
-    const paid = checkoutStage === "delivered";
+    // Free (DEC-127) there is no payment to wait for: downloads are simply
+    // there once a file is prepared. `paid` keeps its billing meaning.
+    const paid = BILLING_ENABLED && checkoutStage === "delivered";
     // The bar is hidden while the review itself is on screen, so the one
     // action is never shown twice (testing note E).
     const [reviewInView, setReviewInView] = useState(false);
@@ -323,6 +323,7 @@ export function KitWorkspace({
                                     const state = stateOf(entries[id], r);
                                     const meta = [
                                         shortSpec(exam, r),
+                                        !BILLING_ENABLED ||
                                         CHARGEABLE_TYPES.has(r.requirement_type)
                                             ? null
                                             : "free with the kit",
@@ -465,8 +466,11 @@ export function KitWorkspace({
                 {ours.length > 0 && (
                     <aside
                         className="euk-kit-side"
-                        aria-label="What your kit costs"
+                        aria-label={
+                            BILLING_ENABLED ? "What your kit costs" : "Your kit"
+                        }
                     >
+                        {BILLING_ENABLED && (
                         <div className="euk-kit-price">
                             <p className="euk-kit-price-name">{priceName}</p>
                             <p className="euk-kit-price-row">
@@ -500,6 +504,7 @@ export function KitWorkspace({
                                 confirmed when you review.
                             </p>
                         </div>
+                        )}
 
                         {tools.length >= 2 && (
                             <div className="euk-kit-without">
@@ -519,9 +524,11 @@ export function KitWorkspace({
                                     ))}
                                 </ul>
                                 <p>
-                                    {hasDocuments
-                                        ? "Here each file is one upload, and the PDF work is free with the kit."
-                                        : "Here each file is one upload."}
+                                    {!BILLING_ENABLED
+                                        ? "Here each file is one upload, and all of it is free."
+                                        : hasDocuments
+                                          ? "Here each file is one upload, and the PDF work is free with the kit."
+                                          : "Here each file is one upload."}
                                 </p>
                             </div>
                         )}
@@ -601,8 +608,9 @@ export function KitWorkspace({
                                                             goTo("kit-review")
                                                         }
                                                     >
-                                                        Review and pay{" "}
-                                                        {rupees(price.amount)}
+                                                        {BILLING_ENABLED
+                                                            ? `Review and pay ${rupees(price.amount)}`
+                                                            : "Go to your downloads"}
                                                     </button>
                                                 ) : (
                                                     <button
@@ -640,14 +648,23 @@ export function KitWorkspace({
             </div>
 
             <div id="kit-review" className="euk-wrap euk-kit-review">
-                <KitCheckout
-                    exam={exam}
-                    entries={entries}
-                    onBusy={setCheckoutBusy}
-                    preparationBusy={preparing}
-                    selectedRequirements={included}
-                    facts={facts}
-                />
+                {BILLING_ENABLED ? (
+                    <KitCheckout
+                        exam={exam}
+                        entries={entries}
+                        onBusy={setCheckoutBusy}
+                        preparationBusy={preparing}
+                        selectedRequirements={included}
+                        facts={facts}
+                    />
+                ) : (
+                    <KitDownloads
+                        exam={exam}
+                        entries={entries}
+                        selectedRequirements={included}
+                        onPrepareAgain={(id) => open(id, true)}
+                    />
+                )}
             </div>
 
             {ours.length > 0 && (
@@ -661,9 +678,11 @@ export function KitWorkspace({
                             ? "Paid"
                             : waiting
                               ? `${ready} of ${included.length} prepared`
-                              : priceName}
+                              : BILLING_ENABLED
+                                ? priceName
+                                : `${ready} prepared`}
                     </span>
-                    {!paid && !waiting && (
+                    {BILLING_ENABLED && !paid && !waiting && (
                         <strong className="euk-kit-bar-figure">
                             {rupees(price.amount)}
                         </strong>
@@ -693,7 +712,7 @@ export function KitWorkspace({
                             goTo("kit-review");
                         }}
                     >
-                        {paid
+                        {paid || !BILLING_ENABLED
                             ? "Downloads"
                             : waiting
                               ? "Review"

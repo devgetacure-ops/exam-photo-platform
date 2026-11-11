@@ -1,48 +1,48 @@
 import { pageMetadata } from "../../lib/site";
 import { PolicyPage } from "../../components/policy-page";
 export const metadata = pageMetadata({
-    title: "Terms and conditions",
+    title: "Terms of use",
     description:
-        "What ExamUploadKit prepares, how payment and delivery work, and the terms of using the service.",
+        "What ExamUploadKit prepares, its limits, and the terms of using a free service.",
     path: "/terms",
 });
 export default function Terms() {
     return (
         <PolicyPage
             title="Know what you’re getting."
-            intro="The boundaries of exam upload preparation."
+            intro="ExamUploadKit is free to use. These are the terms that come with it."
             sections={[
                 {
-                    title: "Preparation, with clear limits",
-                    text: "The selected exam record determines file preparation. Requirements marked partially supported need additional attention; guidance-only, physical-stage and unsupported requirements cannot be completed through our upload controls. Final application acceptance belongs to the examination authority, and we do not guarantee that any authority will accept a prepared file.",
+                    title: "What it does, and its limits",
+                    text: "The examination you choose decides how each file is prepared. Requirements marked partially supported need extra attention, and some steps can only be done by you. The examination authority alone decides whether to accept a file, and we cannot promise that it will.",
                 },
                 {
-                    title: "Review before payment",
-                    text: "Before you pay, make sure the examination and its cycle are the ones you are applying for, and look at each prepared preview against your official instructions. Where we estimated a value rather than read it from a notice, the page says so. You must have permission to upload and process the files you provide.",
-                },
-                {
-                    title: "Price and release",
-                    text: "The itemized server quote determines your payment. Only confirmed payment releases chargeable files. A payment window closing does not establish whether payment succeeded. Refresh the kit status before trying again.",
+                    title: "Check before you submit",
+                    text: "Make sure the examination and its cycle are the ones you are applying for, and check each prepared file against your official instructions. Where we estimated a value rather than read it from a notice, the page says so. You must have permission to upload the files you provide.",
                 },
                 {
                     title: "Save before expiry",
-                    text: "Files have a temporary availability window shown before payment and on delivery. Save released downloads before that deadline. Extensions must be requested while a file is still available. Deleted files cannot be restored.",
+                    text: "Files are available until the deadline shown in your kit. Save them before then. Deleted files cannot be restored.",
                 },
                 {
                     title: "Use responsibly",
-                    text: "Do not use this service to impersonate another person, falsify documents, compromise the service or submit files you are not authorized to use. The service prepares existing files; it does not create evidence of eligibility or admission.",
+                    text: "Do not use this service to impersonate another person, falsify documents, harm the service or submit files you are not allowed to use.",
                 },
                 {
                     title: "Your agreement",
-                    text: "Before your first file is prepared you tick one box agreeing to these terms and the privacy policy. That one agreement also confirms two things. If the candidate is under 18, a parent or legal guardian agrees to their files being prepared and to these terms, and is responsible for the use of the service on the candidate's behalf. And if you upload a thumb impression, you agree to it being processed only to prepare that file, as the privacy policy describes.",
+                    text: "Before your first file is prepared you tick one box agreeing to these terms and the privacy policy. If the candidate is under 18, it also confirms that a parent or guardian agrees. If you upload a thumb impression, it confirms you agree to it being processed only to prepare that file.",
+                },
+                {
+                    title: "Free, and supported by advertising",
+                    text: "There is no charge for any file. The site may show advertising to pay for itself. Advertising never touches your uploads or prepared files.",
                 },
                 {
                     title: "Our responsibility",
-                    text: "Our total liability for any claim relating to a kit is limited to the amount paid for that kit. We are not liable for indirect or consequential loss, including a missed application deadline or an application an authority rejects. Nothing in these terms limits a right you have under the Consumer Protection Act, 2019.",
+                    text: "The service is provided free and as it is. To the extent the law allows, we are not liable for any loss arising from its use, including a missed deadline or an application an authority rejects. Nothing here limits a right you have under the Consumer Protection Act, 2019.",
                 },
                 {
                     title: "An independent service",
-                    text: "ExamUploadKit is an independent service run by a sole proprietor in India. It is not connected with, authorised by or endorsed by any examination authority, board, commission or recruitment body named on this site. Their names are used only to identify the examination you are applying to.",
+                    text: "ExamUploadKit is independent. It is not connected with or endorsed by any examination authority named on this site; their names only identify the examination you are applying to.",
                 },
                 {
                     title: "Law and disputes",
@@ -50,7 +50,7 @@ export default function Terms() {
                 },
                 {
                     title: "Changes to these terms",
-                    text: "These terms were last updated on 14 September 2026. If they change in substance, the upload asks you to agree to them again before your next file.",
+                    text: "These terms were last updated on 11 November 2026, when the service became free.",
                 },
             ]}
         />

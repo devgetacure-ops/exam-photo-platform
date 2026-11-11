@@ -34,7 +34,9 @@ def api(tmp_path):
     from exam_photo.api.app import service
 
     original = (service.settings, service.store, service.registry, service.progress)
-    service.settings = ApiSettings(artifact_root=tmp_path / "artifacts")
+    service.settings = ApiSettings(
+        billing_enabled=True, artifact_root=tmp_path / "artifacts"
+    )
     service.store = LocalArtifactStore(tmp_path / "artifacts")
     service.registry = JobRegistry(tmp_path / "artifacts")
     service.progress = ProgressRegistry(tmp_path / "artifacts")

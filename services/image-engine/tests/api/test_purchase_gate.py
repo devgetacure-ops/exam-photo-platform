@@ -38,6 +38,7 @@ def api(tmp_path):
 
     original = (service.settings, service.store, service.registry)
     service.settings = ApiSettings(
+        billing_enabled=True,
         artifact_root=tmp_path / "artifacts",
         max_upload_bytes=8 * 1024 * 1024,
         job_ttl_seconds=3600,

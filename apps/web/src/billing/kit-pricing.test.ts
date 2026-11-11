@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { kitPrice, rupees, tier } from "../lib/kit-pricing";
+import { kitPrice, rupees, tier } from "./kit-pricing";
 import type { RequirementSummary } from "../lib/types";
 
 function requirement(

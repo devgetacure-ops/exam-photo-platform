@@ -24,8 +24,8 @@ vi.mock("../components/exam/document-workspace", () => ({
     ),
 }));
 
-vi.mock("../components/exam/kit-checkout", () => ({
-    KitCheckout: () => <div data-testid="checkout">Checkout</div>,
+vi.mock("../components/exam/kit-downloads", () => ({
+    KitDownloads: () => <div data-testid="downloads">Downloads</div>,
 }));
 
 function requirement(
@@ -75,7 +75,7 @@ describe("the phone flow", () => {
     });
     afterEach(() => cleanup());
 
-    test("it opens on the files this examination asks for, with the price", () => {
+    test("it opens on the files this examination asks for, free", () => {
         render(<PrepareFlow exam={exam} />);
 
         expect(screen.getByText(/asks you to upload/i)).toBeInTheDocument();
@@ -88,17 +88,17 @@ describe("the phone flow", () => {
         expect(within(yours).getByText("Portal declaration")).toBeInTheDocument();
 
         // The three required files are ticked, the conditional one is not, and
-        // the certificate among them is free.
-        expect(within(actionBar()).getByText("₹5")).toBeInTheDocument();
-        expect(within(actionBar()).getByText(/3 files, 1 free/)).toBeInTheDocument();
+        // nothing has a price (DEC-127).
+        expect(within(actionBar()).getByText("Free")).toBeInTheDocument();
+        expect(within(actionBar()).getByText(/3 files/)).toBeInTheDocument();
+        expect(within(actionBar()).queryByText(/₹/)).toBeNull();
     });
 
-    test("unticking a file changes what is charged", () => {
+    test("unticking a file changes the count", () => {
         render(<PrepareFlow exam={exam} />);
 
         fireEvent.click(screen.getByRole("checkbox", { name: /Recent photograph/i }));
-        expect(within(actionBar()).getByText("₹3")).toBeInTheDocument();
-        expect(within(actionBar()).getByText(/2 files, 1 free/)).toBeInTheDocument();
+        expect(within(actionBar()).getByText(/2 files/)).toBeInTheDocument();
     });
 
     test("the action moves to the next screen, and the marks follow", () => {
@@ -113,8 +113,8 @@ describe("the phone flow", () => {
 
         expect(screen.getByText("Add your files")).toBeInTheDocument();
         expect(marks()).toEqual(["done", "now", "-"]);
-        // Nothing is prepared yet, so there is nothing to check.
-        expect(screen.getByRole("button", { name: /Check 0 of 3/ })).toBeDisabled();
+        // Nothing is prepared yet, so there is nothing to download.
+        expect(screen.getByRole("button", { name: /Get 0 of 3/ })).toBeDisabled();
     });
 
     test("a file opens on its own screen, with its rules a tap away", () => {
@@ -271,8 +271,8 @@ describe("the phone flow", () => {
         fireEvent.click(screen.getByRole("button", { name: /Recent photograph/ }));
 
         expect(within(actionBar()).getByRole("button", { name: "Back to the list" })).toBeInTheDocument();
-        fireEvent.click(within(actionBar()).getByRole("button", { name: "Check and pay" }));
-        expect(screen.getByTestId("checkout")).toBeInTheDocument();
+        fireEvent.click(within(actionBar()).getByRole("button", { name: "Get my files" }));
+        expect(screen.getByTestId("downloads")).toBeInTheDocument();
     });
 
     test("a reload lands back on the file that was open, not on the list", async () => {
@@ -287,7 +287,7 @@ describe("the phone flow", () => {
             await screen.findByRole("heading", { level: 1, name: "Recent photograph" }),
         ).toBeInTheDocument();
     });
-    test("a file the server has deleted is not ready, and the flow does not lead to payment", () => {
+    test("a file the server has deleted is not ready, and the flow does not lead to downloads", () => {
         const goneExam = {
             ...exam,
             exam_id: "gone-exam",
@@ -321,10 +321,10 @@ describe("the phone flow", () => {
 
         const row = screen.getByRole("button", { name: /Recent photograph/ });
         expect(within(row).getByText("Expired. Add it again")).toBeInTheDocument();
-        expect(screen.getByRole("button", { name: /Check 0 of 1/ })).toBeDisabled();
+        expect(screen.getByRole("button", { name: /Get 0 of 1/ })).toBeDisabled();
 
         fireEvent.click(row);
         expect(within(actionBar()).getByRole("button", { name: "Do this later" })).toBeInTheDocument();
-        expect(within(actionBar()).queryByRole("button", { name: "Check and pay" })).toBeNull();
+        expect(within(actionBar()).queryByRole("button", { name: "Get my files" })).toBeNull();
     });
 });

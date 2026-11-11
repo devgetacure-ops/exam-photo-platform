@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { getApiBaseUrl } from "../../lib/api-client";
+import { getApiBaseUrl } from "../lib/api-client";
 
 /**
  * "How did we do?", under the downloads, once the payment is confirmed (DEC-112).

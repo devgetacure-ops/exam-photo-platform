@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { ReviewPanel } from "../../components/exam/review-panel";
+import { BILLING_ENABLED } from "../../billing/config";
+import { ReviewPanel } from "../../billing/review-panel";
 
 export const metadata: Metadata = {
     title: "How did we do?",
@@ -19,6 +20,9 @@ export default async function FeedbackPage({
     searchParams: Promise<{ o?: string; t?: string; a?: string }>;
 }) {
     const { o = "", t = "", a = "" } = await searchParams;
+    // Reviews hang off paid orders, so free (DEC-127) the old emails' links
+    // land on support instead, where a problem can still be raised.
+    if (!BILLING_ENABLED) redirect("/support");
     const valid = /^order_[A-Za-z0-9_-]{1,64}$/.test(o) && /^[a-f0-9]{32}$/.test(t);
     // "No, there was a problem" is a request for help, not a rating: it opens
     // the support form with the order already named (owner, 1 October).

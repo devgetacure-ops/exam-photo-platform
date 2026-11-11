@@ -3,11 +3,14 @@
 import Link from "next/link";
 
 import type { ExamDetail } from "../../lib/types";
-import { isOurs, kitPrice, rupees } from "../../lib/kit-pricing";
+import { BILLING_ENABLED } from "../../billing/config";
+import { kitPrice, rupees } from "../../billing/kit-pricing";
+import { isOurs } from "../../lib/requirement-support";
 import { ActionBar } from "./action-bar";
 
 /**
- * What the examination page offers a phone: the count, the price, and one way
+ * What the examination page offers a phone: the count, the price (billing
+ * only, DEC-127; free otherwise), and one way
  * in. The workspace itself is a desktop arrangement and is not shown here —
  * the flow at `/exam/[examId]/prepare` does that job a screen at a time.
  *
@@ -31,10 +34,12 @@ export function PrepareCta({ exam }: { exam: ExamDetail }) {
                 note={
                     <>
                         <strong>
-                            {price.kitChargeable > 0 ? rupees(price.kitAmount) : "Free"}
+                            {BILLING_ENABLED && price.kitChargeable > 0
+                                ? rupees(price.kitAmount)
+                                : "Free"}
                         </strong>
                         {price.kitFiles} file{price.kitFiles === 1 ? "" : "s"}
-                        {price.kitFree > 0 ? `, ${price.kitFree} free` : ""}
+                        {BILLING_ENABLED && price.kitFree > 0 ? `, ${price.kitFree} free` : ""}
                     </>
                 }
             >

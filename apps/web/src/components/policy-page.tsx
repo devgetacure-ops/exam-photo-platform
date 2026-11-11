@@ -7,11 +7,11 @@ import { PhonePolicy } from "./m/policy-phone";
 import { BusinessContact } from "./business-contact";
 
 /**
- * Privacy, terms and refunds.
+ * Privacy and terms.
  *
  * These are read by a candidate with a specific worry — what happens to my
- * photograph, will I get my money back — so the page is built for finding one
- * answer rather than reading top to bottom: the three policies are one strip
+ * photograph — so the page is built for finding one
+ * answer rather than reading top to bottom: the policies are one strip
  * apart, every section is linked from a list that stays in view on a desktop,
  * and the text runs at a reading size and measure. It ends on a way to ask,
  * because a policy that doesn't answer the question should hand over to

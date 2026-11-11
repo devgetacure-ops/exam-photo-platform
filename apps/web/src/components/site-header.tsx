@@ -61,9 +61,6 @@ export function SiteHeader({
                             <Link href="/pdf" className="euk-top-link">
                                 PDF tools
                             </Link>
-                            <Link href="/#pricing" className="euk-top-link">
-                                Pricing
-                            </Link>
                             <Link href="/we-vs-ai" className="euk-top-link">
                                 WE vs AI
                             </Link>

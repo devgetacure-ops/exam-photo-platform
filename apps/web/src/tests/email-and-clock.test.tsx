@@ -3,7 +3,7 @@ import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
 
 import { EmailDelivery } from "../components/exam/email-delivery";
-import { ExpiryClock } from "../components/exam/kit-checkout";
+import { ExpiryClock } from "../components/exam/kit-files";
 
 /**
  * Testing note 18: the clock's figures sit in boxes of one width, so nothing

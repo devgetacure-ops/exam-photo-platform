@@ -9,7 +9,6 @@ import { loadSearchIndex } from "../lib/catalogue.server";
 import { TOP_EXAMS } from "../lib/top-exams";
 import type { Metadata } from "next";
 import { JsonLd } from "../components/json-ld";
-import { rupees, tier } from "../lib/kit-pricing";
 import { ORGANIZATION_ID, SITE_URL, pageMetadata } from "../lib/site";
 
 /**
@@ -30,15 +29,10 @@ export async function generateMetadata(): Promise<Metadata> {
     const { exams } = await loadSearchIndex();
     return pageMetadata({
         title: `Exam photo and signature resizer for ${exams.length} Indian exams | ExamUploadKit`,
-        description: `Your photograph, signature, thumb impression and documents at the exact size, KB and format your examination publishes: SSC, UPSC, IBPS, NEET, JEE and more. ${rupees(tier(1))} a file, no account, previewed before you pay.`,
+        description: `Your photograph, signature, thumb impression and documents at the exact size, KB and format your examination publishes: SSC, UPSC, IBPS, NEET, JEE and more. Free, no account, no watermark.`,
         path: "/",
     });
 }
-
-const OFFERS = [
-    { name: "One file", files: 1 },
-    { name: "Two files or more", files: 2 },
-];
 
 export default async function Home() {
     const { exams, unavailable } = await loadSearchIndex();
@@ -62,12 +56,7 @@ export default async function Home() {
                     provider: { "@id": ORGANIZATION_ID },
                     areaServed: { "@type": "Country", name: "India" },
                     url: SITE_URL,
-                    offers: OFFERS.map((offer) => ({
-                        "@type": "Offer",
-                        name: offer.name,
-                        price: String(tier(offer.files) / 100),
-                        priceCurrency: "INR",
-                    })),
+                    offers: { "@type": "Offer", price: "0", priceCurrency: "INR" },
                 }}
             />
             <SiteHeader takesOverFrom="hero-search" />
@@ -91,7 +80,7 @@ export default async function Home() {
                         </div>
                         <p className="euk-hero-facts">
                             <span>No account</span>
-                            <span>From ₹3, PDF work free</span>
+                            <span>Free, no watermark</span>
                             <Link href="/exam-request">
                                 Not on the list? Tell us which one
                             </Link>

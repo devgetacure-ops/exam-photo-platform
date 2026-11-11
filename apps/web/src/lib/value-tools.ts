@@ -1,5 +1,5 @@
 import type { ExamDetail } from "./types";
-import { isOurs } from "./kit-pricing";
+import { isOurs } from "./requirement-support";
 
 export interface ReplacedTool {
     id: string;

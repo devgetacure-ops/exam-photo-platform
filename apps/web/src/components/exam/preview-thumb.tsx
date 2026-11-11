@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { BILLING_ENABLED } from "../../billing/config";
 
 /**
  * A prepared file's watermarked preview, small in the review, larger on a tap
@@ -47,9 +48,15 @@ export function PreviewThumb({ src, name }: { src: string; name: string }) {
                 {open && (
                     <>
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={src} alt={`${name}, watermarked preview`} draggable={false} />
+                        <img
+                            src={src}
+                            alt={BILLING_ENABLED ? `${name}, watermarked preview` : `${name}, preview`}
+                            draggable={false}
+                        />
                         <p className="euk-order-zoom-note">
-                            Watermarked preview. Your download is the full, unmarked file.
+                            {BILLING_ENABLED
+                                ? "Watermarked preview. Your download is the full, unmarked file."
+                                : "Preview. Your download is the full-size file."}
                         </p>
                         <button
                             type="button"

@@ -1,22 +1,15 @@
 import Link from "next/link";
 import { Reveal } from "../../components/euk/reveal";
-import {
-    CertificateDrawing,
-    PhotoDrawing,
-    SignatureDrawing,
-    ThumbDrawing,
-} from "../../components/euk/doodles";
 import { UntouchedMark } from "../../components/euk/principle-marks";
 import { JsonLd } from "../../components/json-ld";
 import { SiteFooter } from "../../components/site-footer";
 import { SiteHeader } from "../../components/site-header";
-import { rupees, tier } from "../../lib/kit-pricing";
 import { breadcrumbs, pageMetadata } from "../../lib/site";
 
 export const metadata = pageMetadata({
     title: "WE vs AI: exam photo preparation, compared",
     description:
-        "Can ChatGPT prepare your exam photo? Compare AI editing with ExamUploadKit: identity, framing, pixels, KB, DPI, filenames, preview and pricing.",
+        "Can ChatGPT prepare your exam photo? Compare AI editing with ExamUploadKit: identity, framing, pixels, KB, DPI, filenames, preview and cost.",
     path: "/we-vs-ai",
 });
 
@@ -77,7 +70,7 @@ const ROWS = [
     {
         what: "The last check",
         ai: "Yours to do.",
-        us: "A watermarked preview before you pay.",
+        us: "A preview of the finished file before you download.",
     },
 ];
 
@@ -203,7 +196,7 @@ export default function WeVsAi() {
                                 <Link href="/exams" className="primary-button">
                                     Find your examination
                                 </Link>
-                                <span>From {rupees(tier(1))}. You see it before you pay.</span>
+                                <span>Free. No account, no watermark.</span>
                             </div>
                         </div>
 
@@ -322,16 +315,16 @@ export default function WeVsAi() {
                     </div>
                 </section>
 
-                {/* ---- why pay, and what ------------------------------------ */}
+                {/* ---- both are free; which fits ---------------------------- */}
                 <section className="euk-section" id="cost">
                     <div className="euk-wrap">
                         <Reveal>
                             <h2 className="euk-display euk-h2">
-                                A free AI can do this. So why pay {rupees(tier(1))}?
+                                A free AI can do this. So can we, also free.
                             </h2>
                             <p className="euk-lede">
-                                For the part it leaves to you: knowing the numbers, and checking
-                                the result.{" "}
+                                The difference is the part an AI leaves to you: knowing the
+                                numbers, and checking the result.{" "}
                                 <a
                                     href={OPENAI_FREE}
                                     className="euk-link"
@@ -373,41 +366,9 @@ export default function WeVsAi() {
                             </Reveal>
                         </div>
 
-                        <div className="euk-price-grid euk-vs-prices">
-                            <Reveal className="euk-invert euk-price euk-price--kit">
-                                <p className="euk-price-name">The whole kit</p>
-                                <p className="euk-price-row">
-                                    <span className="euk-price-figure">{rupees(tier(2))}</span>
-                                </p>
-                                <p className="euk-price-files euk-vs-files" aria-hidden="true">
-                                    <PhotoDrawing />
-                                    <SignatureDrawing />
-                                    <ThumbDrawing />
-                                    <CertificateDrawing />
-                                </p>
-                                <p className="euk-price-body">
-                                    Two files or more. PDF work is free with them.
-                                </p>
-                                <Link href="/exams" className="primary-button">
-                                    Find your examination
-                                </Link>
-                            </Reveal>
-                            <Reveal delay={90} className="euk-price">
-                                <p className="euk-price-name">One file</p>
-                                <p className="euk-price-row">
-                                    <span className="euk-price-figure">{rupees(tier(1))}</span>
-                                </p>
-                                <p className="euk-price-files euk-vs-files" aria-hidden="true">
-                                    <PhotoDrawing />
-                                </p>
-                                <p className="euk-price-body">
-                                    Any single file, such as your photograph.
-                                </p>
-                                <Link href="/exams" className="euk-price-hit">
-                                    <span className="sr-only">Find your examination</span>
-                                </Link>
-                            </Reveal>
-                        </div>
+                        <Link href="/exams" className="primary-button">
+                            Find your examination
+                        </Link>
                     </div>
                 </section>
 

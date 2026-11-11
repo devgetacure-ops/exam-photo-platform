@@ -2,7 +2,7 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
 
-import { SimulatedCheckout } from "../components/exam/simulated-checkout";
+import { SimulatedCheckout } from "./simulated-checkout";
 
 /**
  * The test payment sheet (DEC-089). It must say it is a test before anything

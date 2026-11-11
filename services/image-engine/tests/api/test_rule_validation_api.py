@@ -87,6 +87,7 @@ def test_no_files_written_during_validation(sample_exact_rule, temp_artifact_roo
     # Override settings in app/service for testing
     original_settings = service.settings
     service.settings = ApiSettings(
+        billing_enabled=True,
         artifact_root=temp_artifact_root,
         max_upload_bytes=100000,
         job_ttl_seconds=10,

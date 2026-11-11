@@ -17,8 +17,8 @@ import {
 } from "./euk/principle-marks";
 
 /**
- * The long argument: what we do, how, the problem, why it exists, what it
- * costs, and the decisions behind it.
+ * The long argument: what we do, how, the problem, why it exists, that it
+ * is free, and the decisions behind it.
  *
  * On a desktop it follows the hero on the landing page. On a phone the home is
  * short and this lives at `/about`, one link away, because it is several
@@ -191,12 +191,12 @@ export function HomeStory({ examCount }: { examCount: number }) {
         },
         {
             whose: "Yours",
-            title: "Check before you pay",
-            body: "A watermarked preview of the real result.",
+            title: "Check the result",
+            body: "See the prepared file before you download it.",
         },
         {
             whose: "Yours",
-            title: "Pay and keep",
+            title: "Download, free",
             body: "Download them or have them emailed. Deleted within 30 minutes, or an hour if you ask.",
         },
     ];
@@ -493,7 +493,7 @@ export function HomeStory({ examCount }: { examCount: number }) {
                 <div className="euk-wrap euk-why">
                     <Reveal className="euk-scale" >
                         <span className="euk-scale-big euk-scale-big--small">
-                            ₹3
+                            Free
                         </span>
                         <span className="euk-scale-small">against</span>
                         <span className="euk-scale-big">
@@ -527,66 +527,28 @@ export function HomeStory({ examCount }: { examCount: number }) {
                 </div>
             </section>
 
-            {/* ---- pricing --------------------------------------------- */}
-            <section className="euk-section euk-section--alt" id="pricing">
+            {/* ---- free ------------------------------------------------ */}
+            <section className="euk-section euk-section--alt" id="free">
                 <div className="euk-wrap">
                     <Reveal>
                         <h2 className="euk-display euk-h2">
-                            The whole kit is ₹5.
+                            Every file is free.
                             {" "}
                             <br />
-                            However many files your exam asks for.
+                            However many your exam asks for.
                         </h2>
                         <p className="euk-lede">
-                            Most forms ask for more than two. Prepare them
-                            together and every file costs less.
+                            No account, no payment, no watermark.
                         </p>
                     </Reveal>
 
-                    <div className="euk-price-grid">
-                        <Reveal className="euk-invert euk-price euk-price--kit">
-                            <p className="euk-price-name">The whole kit</p>
-                            <p className="euk-price-row">
-                                <span className="euk-price-figure">₹5</span>
-                                <span className="euk-price-was">₹10</span>
-                            </p>
-                            <p className="euk-price-files" aria-hidden="true">
-                                <PhotoDrawing />
-                                <SignatureDrawing />
-                                <ThumbDrawing />
-                                <CertificateDrawing />
-                            </p>
-                            <p className="euk-price-body">
-                                Two files or more. The price stops at ₹5,
-                                whatever your examination asks for.
-                            </p>
-                            <Link href="/exams" className="primary-button">
-                                Find your examination
-                            </Link>
-                        </Reveal>
-                        <Reveal delay={90} className="euk-price">
-                            <p className="euk-price-name">One file</p>
-                            <p className="euk-price-row">
-                                <span className="euk-price-figure">₹3</span>
-                                <span className="euk-price-was">₹5</span>
-                            </p>
-                            <p className="euk-price-files" aria-hidden="true">
-                                <PhotoDrawing />
-                            </p>
-                            <p className="euk-price-body">
-                                Any single file, such as your photograph.
-                            </p>
-                            <Link href="/exams" className="euk-price-hit">
-                                <span className="sr-only">
-                                    Find your examination
-                                </span>
-                            </Link>
-                        </Reveal>
-                    </div>
+                    <Link href="/exams" className="primary-button">
+                        Find your examination
+                    </Link>
 
                     <div className="euk-value">
                         <Reveal className="euk-free">
-                            <h3>Every PDF job, free with any prepared file</h3>
+                            <h3>Every PDF job, free too</h3>
                             <ul className="euk-chips">
                                 {FREE_TOOLS.map((tool) => (
                                     <li key={tool} className="euk-chip">
@@ -595,7 +557,7 @@ export function HomeStory({ examCount }: { examCount: number }) {
                                 ))}
                             </ul>
                             <p>
-                                PDF to image runs in your browser, free for anybody.{" "}
+                                PDF to image runs in your browser.{" "}
                                 <Link href="/pdf">See the PDF work</Link>
                             </p>
                         </Reveal>
@@ -616,9 +578,8 @@ export function HomeStory({ examCount }: { examCount: number }) {
 
                     <p className="euk-retention">
                         Files are deleted within 30 minutes, or within an
-                        hour if you ask us to keep them. Payment doesn&rsquo;t
-                        extend that, so download them when they&rsquo;re
-                        ready.
+                        hour if you ask us to keep them, so download them
+                        when they&rsquo;re ready.
                     </p>
                 </div>
             </section>

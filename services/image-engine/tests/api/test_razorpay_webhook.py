@@ -19,14 +19,14 @@ import pytest
 from fastapi.testclient import TestClient
 
 from exam_photo.api.app import app
-from exam_photo.api.contracts import ApiJobStatus, JobEntitlement
-from exam_photo.api.jobs import JobRegistry
-from exam_photo.api.payments import (
+from exam_photo.api.billing.payments import (
     SIGNATURE_HEADER,
     WebhookRejectedError,
     signature_matches,
     verify_and_read,
 )
+from exam_photo.api.contracts import ApiJobStatus, JobEntitlement
+from exam_photo.api.jobs import JobRegistry
 from exam_photo.api.settings import ApiSettings
 from exam_photo.api.storage import LocalArtifactStore
 
@@ -42,6 +42,7 @@ def api(tmp_path):
 
     original = (service.settings, service.store, service.registry)
     service.settings = ApiSettings(
+        billing_enabled=True,
         artifact_root=tmp_path / "artifacts",
         razorpay_webhook_secret=SECRET,
     )

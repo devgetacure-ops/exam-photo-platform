@@ -195,12 +195,11 @@ export default function PdfPage() {
                             </ul>
                         </Reveal>
                         <Reveal delay={150} className="euk-pdfpage-cta">
-                            <h3>The PDF work is free with any file we prepare.</h3>
+                            <h3>Free, like every file we prepare.</h3>
                             <p>
-                                One prepared file is ₹3. Everything your
-                                examination asks for is ₹5. The PDF work is
-                                included in both, and it is the same work either
-                                way.
+                                The PDF work follows your examination&rsquo;s
+                                own rules for the page, the byte limit and the
+                                filename.
                             </p>
                             <Link href="/exams" className="primary-button">
                                 Find your examination

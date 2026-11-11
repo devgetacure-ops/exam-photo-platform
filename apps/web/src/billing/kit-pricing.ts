@@ -1,9 +1,13 @@
-import type { RequirementSummary } from "./types";
+import { isOurs } from "../lib/requirement-support";
+import type { RequirementSummary } from "../lib/types";
 
 /**
+ * What the kit costs, for display. Billing only (DEC-127): nothing outside
+ * `src/billing/` may import this while the site runs free.
+ *
  * What the kit costs, for display.
  *
- * The server decides the amount (DEC-070): `api/pricing.py` prices the kit
+ * The server decides the amount (DEC-070): `api/billing/pricing.py` prices the kit
  * from the prepared jobs and the order is created at that figure. This mirrors
  * its ladder only so the price can move as the candidate ticks and unticks
  * files, before anything has been prepared. The review always shows the
@@ -31,13 +35,6 @@ export function rupees(paise: number): string {
     return `₹${Math.round(paise) / 100}`;
 }
 
-/** A requirement the platform prepares a file for (DEC-056: never a boolean elsewhere). */
-export function isOurs(requirement: RequirementSummary): boolean {
-    return (
-        requirement.platform_support === "supported" ||
-        requirement.platform_support === "partially_supported"
-    );
-}
 
 export interface KitPrice {
     /** Files we prepare that are in the selection. */

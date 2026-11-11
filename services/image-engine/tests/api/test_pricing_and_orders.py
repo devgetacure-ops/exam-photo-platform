@@ -15,20 +15,20 @@ import pytest
 from fastapi.testclient import TestClient
 
 from exam_photo.api.app import app
-from exam_photo.api.contracts import ApiJobStatus, JobEntitlement
-from exam_photo.api.jobs import JobRegistry
-from exam_photo.api.pricing import (
+from exam_photo.api.billing.pricing import (
     LIST_LADDER_PAISE,
     PRICE_LADDER_PAISE,
     quote_for,
 )
-from exam_photo.api.razorpay_orders import (
+from exam_photo.api.billing.razorpay_orders import (
     CreatedOrder,
     OrderCreationError,
     UnconfiguredOrderGateway,
     gateway_for,
     order_notes,
 )
+from exam_photo.api.contracts import ApiJobStatus, JobEntitlement
+from exam_photo.api.jobs import JobRegistry
 from exam_photo.api.settings import ApiSettings
 from exam_photo.api.storage import LocalArtifactStore
 
@@ -73,7 +73,9 @@ def api(tmp_path):
         service.registry,
         service._order_gateway,
     )
-    service.settings = ApiSettings(artifact_root=tmp_path / "artifacts")
+    service.settings = ApiSettings(
+        billing_enabled=True, artifact_root=tmp_path / "artifacts"
+    )
     service.store = LocalArtifactStore(tmp_path / "artifacts")
     service.registry = JobRegistry(tmp_path / "artifacts")
     service.order_gateway = FakeGateway()
@@ -309,7 +311,7 @@ def test_a_host_without_credentials_gets_a_gateway_that_refuses():
 
 
 def test_credentials_produce_a_real_gateway():
-    from exam_photo.api.razorpay_orders import HttpOrderGateway
+    from exam_photo.api.billing.razorpay_orders import HttpOrderGateway
 
     assert isinstance(gateway_for("rzp_test_x", "secret"), HttpOrderGateway)
 

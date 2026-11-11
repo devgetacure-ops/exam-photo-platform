@@ -14,10 +14,10 @@ import {
     jobExpired,
     type LiveJob,
 } from "./kit-checkout";
-import type { ExamDetail } from "../../lib/types";
-import type { KitEntry } from "../../lib/kit-state";
+import type { ExamDetail } from "../lib/types";
+import type { KitEntry } from "../lib/kit-state";
 
-vi.mock("../../lib/kit-state", () => ({
+vi.mock("../lib/kit-state", () => ({
     getKit: () => ({ kitId: "kit_test" }),
 }));
 const entry: KitEntry = {

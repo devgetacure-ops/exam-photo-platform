@@ -110,6 +110,7 @@ def test_api_jobs_lifecycle(mock_pipeline_class, temp_artifact_root):
     original_root = settings.artifact_root
 
     service.settings = ApiSettings(
+        billing_enabled=True,
         artifact_root=temp_artifact_root,
         max_upload_bytes=1000,
         job_ttl_seconds=3600,
@@ -215,6 +216,7 @@ def test_upload_too_large(temp_artifact_root):
 
     # Set max limit to 10 bytes
     service.settings = ApiSettings(
+        billing_enabled=True,
         artifact_root=temp_artifact_root,
         max_upload_bytes=10,
         job_ttl_seconds=3600,

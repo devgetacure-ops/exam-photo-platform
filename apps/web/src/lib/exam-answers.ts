@@ -1,4 +1,4 @@
-import { isOurs } from "./kit-pricing";
+import { isOurs } from "./requirement-support";
 import { photographSpecRows, requirementSpecRows } from "./spec-format";
 import type { ExamDetail, RequirementSummary } from "./types";
 
@@ -137,7 +137,7 @@ export function examTitle(exam: ExamDetail): string {
  */
 export function examDescription(exam: ExamDetail): string {
     const specs = examSpecs(exam).slice(0, 2);
-    const tail = `Every file made to ${exam.conducting_body}’s published rules, and previewed before you pay.`;
+    const tail = `Every file made to ${exam.conducting_body}’s published rules, free.`;
     if (specs.length === 0) {
         return `Every file ${exam.exam_name} asks you to upload, with its size, dimensions and format. ${tail}`;
     }

@@ -5,6 +5,8 @@
  * the operator page.
  */
 
+import { randomHex } from "./random-hex";
+
 const SESSION_KEY = "euk:visit";
 const KITS_KEY = "exam-photo:kits:v1";
 
@@ -44,7 +46,7 @@ export function sessionId(storage: Pick<Storage, "getItem" | "setItem"> | null =
     try {
         const existing = storage?.getItem(SESSION_KEY);
         if (existing && /^[A-Za-z0-9_-]{8,64}$/.test(existing)) return existing;
-        const fresh = `s_${crypto.randomUUID().replace(/-/g, "").slice(0, 20)}`;
+        const fresh = `s_${randomHex().slice(0, 20)}`;
         storage?.setItem(SESSION_KEY, fresh);
         return fresh;
     } catch {

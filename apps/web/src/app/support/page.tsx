@@ -10,14 +10,14 @@ import { ActionBar } from "../../components/m/action-bar";
 import { AnswerSearch } from "../../components/m/answer-search";
 
 export const metadata: Metadata = {
-    title: "Support and grievances",
+    title: "Support",
     description:
-        "Paid but no files, a file the portal rejected, an email that didn’t arrive. The known ways out, and a private form for anything else.",
+        "A file the portal rejected, an email that didn’t arrive, a file deleted too soon. The known ways out, and a private form for anything else.",
     alternates: { canonical: "/support" },
 };
 
 /**
- * Support, redressal and requests.
+ * Support and requests.
  *
  * The brief asks for a forum. What a forum gives a candidate is the chance to
  * find that someone else hit the same problem and what fixed it; what it costs
@@ -28,8 +28,8 @@ export const metadata: Metadata = {
  * slip, with a reference, where nobody else sees it.
  *
  * Every answer is written against how the product actually behaves — the
- * payment confirmation wait, the deletion deadline, the download record — so
- * none of them promise a refund, a timeline or an outcome it can't keep.
+ * deletion deadline, the download record — so none of them promise an
+ * outcome it can't keep.
  */
 
 interface Answer {
@@ -38,66 +38,6 @@ interface Answer {
 }
 
 const GROUPS: { title: string; answers: Answer[] }[] = [
-    {
-        title: "About a payment",
-        answers: [
-            {
-                q: "I paid, but my files haven’t been released.",
-                a: (
-                    <>
-                        <p>
-                            Confirmation reaches us from the payment provider,
-                            and it can land a little after the checkout window
-                            closes. Go back to your examination in the same
-                            browser and press <strong>Refresh status</strong>.
-                        </p>
-                        <p>
-                            Please don&rsquo;t pay a second time while it&rsquo;s
-                            confirming. If the files still aren&rsquo;t
-                            released, write to us with the UPI reference or
-                            payment ID from your payment app.
-                        </p>
-                    </>
-                ),
-            },
-            {
-                q: "Money left my account, but checkout said the payment failed.",
-                a: (
-                    <>
-                        <p>
-                            Check the transaction in your UPI or banking app
-                            first. A payment that failed is reversed by your
-                            bank or UPI app, on their timeline rather than ours.
-                        </p>
-                        <p>
-                            If the app shows it as successful and you have no
-                            files, write to us with its reference.
-                        </p>
-                    </>
-                ),
-            },
-            {
-                q: "I was charged twice.",
-                a: (
-                    <>
-                        <p>
-                            Write to us with both references and we check each
-                            one against the payment record.
-                        </p>
-                        <p>
-                            Reporting it doesn&rsquo;t issue a refund by itself.
-                            A refund is confirmed once the payment provider
-                            processes it, as the{" "}
-                            <Link className="euk-link" href="/refund-policy">
-                                refund policy
-                            </Link>{" "}
-                            explains.
-                        </p>
-                    </>
-                ),
-            },
-        ],
-    },
     {
         title: "About your files",
         answers: [
@@ -112,10 +52,8 @@ const GROUPS: { title: string; answers: Answer[] }[] = [
                             deleting them means.
                         </p>
                         <p>
-                            If you paid and never got to download, write to us
-                            with the payment reference. We keep a record of
-                            downloads and of emails sent, and that record is
-                            what we check.
+                            It takes a minute to prepare it again, free, from
+                            the same examination page.
                         </p>
                     </>
                 ),
@@ -229,9 +167,8 @@ export default async function SupportPage({
                                 <span className="euk-mark">planned for it.</span>
                             </h1>
                             <p className="euk-lede">
-                                A payment that hasn&rsquo;t confirmed, a file
-                                the portal turned down, an email that
-                                didn&rsquo;t come. Each of these has a known way
+                                A file the portal turned down, an email that
+                                didn&rsquo;t come, a file deleted too soon. Each of these has a known way
                                 out, and it&rsquo;s written below. If yours
                                 isn&rsquo;t there, write to us. It stays
                                 private.
@@ -272,17 +209,6 @@ export default async function SupportPage({
                             ))}
 
                             <div className="euk-escalate">
-                                <h2 className="euk-display">
-                                    If our reply doesn&rsquo;t settle it
-                                </h2>
-                                <p>
-                                    Write again, quote your reference, and begin
-                                    the message with the word Grievance, so it
-                                    is read as one. A grievance is acknowledged
-                                    within 48 hours and resolved within one
-                                    month. Every reply comes by email, to the
-                                    address you gave.
-                                </p>
                                 <BusinessContact />
                             </div>
                         </div>

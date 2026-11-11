@@ -45,9 +45,10 @@ describe("dragging the comparison", () => {
         expect(clipOf(container)).toBe("inset(0 70% 0 0)");
     });
 
-    test("the caption says the download is unmarked, not that the preview is poor", () => {
+    test("the caption says the download is the full file, not that the preview is poor", () => {
         render(<FileComparison before="/a.jpg" after="/b.jpg" />);
-        expect(screen.getByText(/your download is the full, unmarked file/i)).toBeInTheDocument();
+        expect(screen.getByText(/your download is the full-size file/i)).toBeInTheDocument();
+        expect(screen.queryByText(/watermark/i)).toBeNull();
         expect(screen.queryByText(/reduced-resolution/i)).toBeNull();
     });
 });
@@ -58,7 +59,7 @@ describe("the preview in the review", () => {
         fireEvent.click(screen.getByRole("button", { name: "See the Candidate photograph preview larger" }));
         const dialog = container.querySelector("dialog") as HTMLDialogElement;
         expect(dialog).toHaveAttribute("open");
-        expect(screen.getByAltText("Candidate photograph, watermarked preview")).toBeInTheDocument();
+        expect(screen.getByAltText("Candidate photograph, preview")).toBeInTheDocument();
 
         fireEvent.click(screen.getByRole("button", { name: "Close" }));
         expect(dialog).not.toHaveAttribute("open");

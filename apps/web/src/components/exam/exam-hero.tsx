@@ -1,6 +1,6 @@
 import type { ExamDetail } from "../../lib/types";
 import type { LiveCaptureStance } from "../../lib/appearance-rules";
-import { isOurs } from "../../lib/kit-pricing";
+import { isOurs } from "../../lib/requirement-support";
 import { FileTypeDrawing } from "../euk/doodles";
 import { ExamFacts, type ExamFact } from "./exam-facts";
 

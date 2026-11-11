@@ -1,5 +1,4 @@
 import { loadExams } from "../../lib/catalogue.server";
-import { rupees, tier } from "../../lib/kit-pricing";
 import { CONTACT_EMAILS, SITE_URL } from "../../lib/site";
 import { EXAM_FAMILIES } from "../../lib/exam-families";
 
@@ -7,7 +6,7 @@ import { EXAM_FAMILIES } from "../../lib/exam-families";
  * `/llms.txt`: the site in plain words for AI answer engines (DEC-087).
  *
  * A proposed convention rather than a standard, and cheap to serve: what the
- * service is, what it costs, the promises it makes, and a link to every
+ * service is, that it is free, the promises it makes, and a link to every
  * examination's rules. Every statement here is one the site already makes on
  * its own pages; nothing is written only for a machine.
  */
@@ -25,8 +24,8 @@ export async function GET() {
         "## What it is",
         "",
         `- Covers ${exams.length} Indian examinations, each read from the rules its conducting body published.`,
-        `- Price: ${rupees(tier(1))} for one file, ${rupees(tier(2))} for two or more. No account is needed.`,
-        "- Each prepared file is shown as a watermarked preview before payment.",
+        "- Free. No account, no payment and no watermark; the site is supported by advertising.",
+        "- Each prepared file is shown before it is downloaded.",
         "- The face is never reshaped or whitened; only exposure, contrast, colour and sharpness are adjusted.",
         "- Uploaded and prepared files are deleted 30 minutes after preparation, or within an hour if the candidate asks for more time.",
         "- Where a notice gives no figure, the site shows its own estimate and marks it est.",
@@ -35,7 +34,7 @@ export async function GET() {
         "## Pages",
         "",
         `- [All examinations](${SITE_URL}/exams): every examination covered, A to Z`,
-        `- [WE vs AI](${SITE_URL}/we-vs-ai): exam-first preparation compared with general AI tools; identity, framing, file checks, pricing and limitations`,
+        `- [WE vs AI](${SITE_URL}/we-vs-ai): exam-first preparation compared with general AI tools; identity, framing, file checks and limitations`,
         ...EXAM_FAMILIES.map(
             (family) =>
                 `- [${family.name} exams](${SITE_URL}/exams/${family.slug}): photograph and signature sizes for every ${family.phrase} examination covered`,
@@ -44,8 +43,8 @@ export async function GET() {
         `- [Compress a PDF](${SITE_URL}/compress-pdf): compress a PDF to a KB limit, free, in the browser; nothing is uploaded`,
         `- Pages at ${SITE_URL}/resize/ answer each file size or pixel size an examination published, for example ${SITE_URL}/resize/photo-200x230`,
         `- [PDF work](${SITE_URL}/pdf): merge, reorder, compress, and PDF page to image`,
-        `- [Support](${SITE_URL}/support): payment, delivery and rejection problems`,
-        `- [Terms](${SITE_URL}/terms), [Privacy](${SITE_URL}/privacy), [Refunds](${SITE_URL}/refund-policy)`,
+        `- [Support](${SITE_URL}/support): download, email and rejection problems`,
+        `- [Terms](${SITE_URL}/terms), [Privacy](${SITE_URL}/privacy)`,
         `- Contact: ${CONTACT_EMAILS.support}`,
         "",
         "## Examinations: upload rules",

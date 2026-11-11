@@ -491,7 +491,7 @@ export function WipeDemo({
                     were made to show the difference rather than produced by our
                     engine. Your own file is prepared to your
                     examination&rsquo;s published rules, and you see it before
-                    you pay.
+                    you download.
                 </p>
             </div>
         </div>

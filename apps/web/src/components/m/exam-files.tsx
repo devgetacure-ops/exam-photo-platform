@@ -5,7 +5,7 @@ import { useState } from "react";
 
 import type { ExamDetail, RequirementSummary } from "../../lib/types";
 import { factAttribution, factUrl, type ExamFact } from "../exam/exam-facts";
-import { isOurs } from "../../lib/kit-pricing";
+import { isOurs } from "../../lib/requirement-support";
 import { photographSpecRows, requirementSpecRows } from "../../lib/spec-format";
 import { specimensFor } from "../../lib/specimens";
 import { SpecimenSheet } from "../exam/specimen-sheet";

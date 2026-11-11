@@ -26,7 +26,10 @@ DAY = 86400
 def _install(service, tmp_path, hold):
     root = tmp_path / "artifacts"
     service.settings = ApiSettings(
-        artifact_root=root, operator_token=OPERATOR, operator_hold_seconds=hold
+        billing_enabled=True,
+        artifact_root=root,
+        operator_token=OPERATOR,
+        operator_hold_seconds=hold,
     )
     service.store = LocalArtifactStore(root)
     service.registry = JobRegistry(root)

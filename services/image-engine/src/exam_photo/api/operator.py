@@ -15,8 +15,8 @@ from collections import Counter, defaultdict
 from datetime import datetime, timedelta, timezone
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
+from exam_photo.api.billing.orders import OrderRecord
 from exam_photo.api.ledger import normalise_email, parse
-from exam_photo.api.orders import OrderRecord
 
 if TYPE_CHECKING:  # pragma: no cover
     from exam_photo.api.service import ApiProcessingService as ApiService

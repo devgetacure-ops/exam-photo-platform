@@ -1,6 +1,6 @@
 "use client";
 import { useSyncExternalStore } from "react";
-import type { LiveJob } from "./kit-checkout";
+import type { LiveJob } from "./kit-files";
 
 // Share authoritative polling results with previews. Never persist image bytes.
 const jobs = new Map<string, LiveJob>();

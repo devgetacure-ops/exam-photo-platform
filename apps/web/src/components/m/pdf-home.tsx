@@ -83,8 +83,7 @@ export function PhonePdf() {
                         <p>
                             It runs alongside the file we prepare, so it follows your
                             examination&rsquo;s own rules for the page, the byte limit
-                            and the filename. One prepared file is ₹3, and the PDF work
-                            comes with it.
+                            and the filename. All of it is free.
                         </p>
                         <Link href="/exams" className="primary-button">
                             Find your examination

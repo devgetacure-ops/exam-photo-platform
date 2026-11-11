@@ -57,6 +57,14 @@ class ApiSettings(BaseModel):
     # watermarked half-resolution copy is judging it on the wrong thing.
     purchase_gate_enabled: bool = True
 
+    # DEC-127. The site runs free and is paid for by advertising, so every
+    # paid mechanism -- quotes, orders, Razorpay, coupons, the watermark and
+    # the purchase gate -- sits behind this one switch, off by default. With
+    # it off, a prepared file is released the moment it exists and its
+    # preview is clean. Everything that switch turns back on lives in
+    # `exam_photo.api.billing`; see that package for how to restore it.
+    billing_enabled: bool = False
+
     # Pipeline output and local CORS toggles
     allow_invalid_output_save: bool = False
     local_cors_enabled: bool = False
@@ -288,6 +296,9 @@ def get_settings() -> ApiSettings:
     if "EXAM_PHOTO_PURCHASE_GATE_ENABLED" in os.environ:
         val = os.environ["EXAM_PHOTO_PURCHASE_GATE_ENABLED"].lower()
         kwargs["purchase_gate_enabled"] = val in ("1", "true", "yes")
+    if "EXAM_PHOTO_BILLING" in os.environ:
+        val = os.environ["EXAM_PHOTO_BILLING"].lower()
+        kwargs["billing_enabled"] = val in ("1", "true", "yes", "on")
     if "EXAM_PHOTO_PAYMENT_SIMULATOR" in os.environ:
         val = os.environ["EXAM_PHOTO_PAYMENT_SIMULATOR"].lower()
         kwargs["payment_simulator_enabled"] = val in ("1", "true", "yes")

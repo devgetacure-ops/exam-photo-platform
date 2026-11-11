@@ -175,9 +175,9 @@ describe("preparing one requirement", () => {
         expect(screen.getByText(/add a photo of your signature/i)).toBeTruthy();
     });
 
-    test("it says the file is seen before payment", () => {
+    test("it says the file is free", () => {
         renderUpload();
-        expect(screen.getByText(/before you pay/i)).toBeTruthy();
+        expect(screen.getByText(/Free\. No account needed/i)).toBeTruthy();
     });
 
     test("a password-protected PDF is turned away before it is uploaded", async () => {
@@ -355,7 +355,7 @@ describe("preparing one requirement", () => {
 });
 
 describe("the outcome view", () => {
-    test("clean output is never exposed as an unpaid preview", () => {
+    test("with no preview, the output itself is not shown as one", () => {
         render(
             <OutcomeResult
                 result={prepared({ output_url: "/v1/jobs/job_1/output" })}
@@ -365,7 +365,7 @@ describe("the outcome view", () => {
         );
         expect(screen.queryByRole("img")).toBeNull();
         expect(
-            screen.getByText(/protected preview is not available/i),
+            screen.getByText(/preview is not available this time/i),
         ).toBeTruthy();
     });
     test("the preview is labelled as watermarked until purchase", () => {

@@ -1,9 +1,10 @@
-import { CONTACT_EMAILS, GRIEVANCE_DESIGNATION, readBusiness } from "../lib/business";
+import { CONTACT_EMAILS, readBusiness } from "../lib/business";
 
 /**
  * How to reach the service: shown on the terms, the privacy policy and
- * support. No personal name and no home address, ever (owner, 2026-09-14);
- * the grievance officer is the designation and its address. Renders nothing
+ * support. No personal name and no home address, ever (owner, 2026-09-14).
+ * One address for everything (DEC-127): support answers privacy and
+ * complaints too. Renders nothing
  * until the phone and hours are set in the environment.
  */
 export function BusinessContact() {
@@ -32,29 +33,9 @@ export function BusinessContact() {
                     <dd>{business.hours}</dd>
                 </div>
                 <div>
-                    <dt>Support</dt>
+                    <dt>Email</dt>
                     <dd>
                         <a href={`mailto:${CONTACT_EMAILS.support}`}>{CONTACT_EMAILS.support}</a>
-                    </dd>
-                </div>
-                <div>
-                    <dt>Grievance Officer</dt>
-                    <dd>
-                        {GRIEVANCE_DESIGNATION}
-                        <br />
-                        <a href={`mailto:${CONTACT_EMAILS.grievance}`}>{CONTACT_EMAILS.grievance}</a>
-                    </dd>
-                </div>
-                <div>
-                    <dt>Privacy</dt>
-                    <dd>
-                        <a href={`mailto:${CONTACT_EMAILS.privacy}`}>{CONTACT_EMAILS.privacy}</a>
-                    </dd>
-                </div>
-                <div>
-                    <dt>Legal notices</dt>
-                    <dd>
-                        <a href={`mailto:${CONTACT_EMAILS.legal}`}>{CONTACT_EMAILS.legal}</a>
                     </dd>
                 </div>
             </dl>

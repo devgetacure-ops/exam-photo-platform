@@ -158,7 +158,6 @@ export function RequestForm({
                     kind,
                     exam: data.get("exam"),
                     topic: data.get("topic") ?? undefined,
-                    payment_reference: data.get("payment_reference") ?? undefined,
                     email: data.get("email"),
                     message: data.get("message"),
                     consent: data.get("consent") === "on",
@@ -309,35 +308,16 @@ export function RequestForm({
                 </div>
 
                 {kind === "support" && (
-                    <>
-                        <div className="euk-field">
-                            <label htmlFor="request-topic" className="euk-field-label">
-                                What is this about?
-                            </label>
-                            <select id="request-topic" name="topic" defaultValue="question">
-                                <option value="question">A question</option>
-                                <option value="complaint">A problem with a payment or a file</option>
-                                <option value="grievance">A grievance about how my data or order was handled</option>
-                            </select>
-                        </div>
-                        <div className="euk-field">
-                            <label htmlFor="request-payment" className="euk-field-label">
-                                Payment reference
-                            </label>
-                            <p id="request-payment-hint" className="euk-field-hint">
-                                Optional. The UPI reference or payment ID from your payment app finds your order fastest.
-                            </p>
-                            <input
-                                id="request-payment"
-                                name="payment_reference"
-                                type="text"
-                                maxLength={80}
-                                autoComplete="off"
-                                placeholder="pay_… or UPI reference"
-                                aria-describedby="request-payment-hint"
-                            />
-                        </div>
-                    </>
+                    <div className="euk-field">
+                        <label htmlFor="request-topic" className="euk-field-label">
+                            What is this about?
+                        </label>
+                        <select id="request-topic" name="topic" defaultValue="question">
+                            <option value="question">A question</option>
+                            <option value="complaint">A problem with a file</option>
+                            <option value="grievance">How my data was handled</option>
+                        </select>
+                    </div>
                 )}
 
                 <div className="euk-field">

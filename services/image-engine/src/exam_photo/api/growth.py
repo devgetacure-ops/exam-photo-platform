@@ -14,9 +14,9 @@ from collections import defaultdict
 from datetime import date, datetime, timedelta, timezone
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
+from exam_photo.api.billing.razorpay_orders import fetch_payments
 from exam_photo.api.ledger import normalise_email, parse
 from exam_photo.api.operator import IST, order_emails
-from exam_photo.api.razorpay_orders import fetch_payments
 
 if TYPE_CHECKING:  # pragma: no cover
     from exam_photo.api.service import ApiProcessingService as ApiService

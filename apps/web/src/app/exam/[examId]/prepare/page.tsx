@@ -32,7 +32,7 @@ export async function generateMetadata({
 
     return {
         title: `Prepare your ${exam.exam_name} files`,
-        description: `Add your photograph, signature and documents for ${exam.exam_name}, one at a time, and see each one before you pay.`,
+        description: `Add your photograph, signature and documents for ${exam.exam_name}, one at a time, and download each one free.`,
         robots: { index: false, follow: true },
         alternates: { canonical: `/exam/${exam.exam_id}` },
     };

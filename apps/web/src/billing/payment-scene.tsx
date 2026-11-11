@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, type ReactNode, type RefObject } from "react";
-import { factAttribution, type ExamFact } from "./exam-facts";
+import { factAttribution, type ExamFact } from "../components/exam/exam-facts";
 
 /**
  * The wait between paying and receiving.
