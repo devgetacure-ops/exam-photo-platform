@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useTr } from "../locale-context";
 
 export function ReportIssue({
     examName,
@@ -9,6 +12,7 @@ export function ReportIssue({
     requirementName?: string;
     ruleId?: string;
 }) {
+    const tr = useTr();
     const context = [examName, requirementName, ruleId]
         .filter(Boolean)
         .join(" · ");
@@ -17,7 +21,7 @@ export function ReportIssue({
             className="quiet-link"
             href={`/support?exam=${encodeURIComponent(context)}`}
         >
-            Report an issue
+            {tr("Report an issue", "समस्या बताएँ")}
         </Link>
     );
 }

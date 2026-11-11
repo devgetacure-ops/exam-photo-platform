@@ -230,7 +230,7 @@ describe("preparing one requirement", () => {
                 "This PDF is password-protected, so we can’t open it. Upload a copy of the PDF without a password.",
             ),
         ).toBeTruthy();
-        expect(screen.getByText(/Nothing has been charged/)).toBeTruthy();
+        expect(screen.queryByText(/charged/i)).toBeNull();
     });
 
     test("a clean result reports Ready", async () => {
@@ -259,7 +259,7 @@ describe("preparing one requirement", () => {
         expect(screen.getByText(/50 KB ceiling is our estimate/i)).toBeTruthy();
     });
 
-    test("a blocked result explains itself and charges nothing", async () => {
+    test("a blocked result explains itself, with no word of charging (DEC-127)", async () => {
         prepareRequirement.mockResolvedValue(
             prepared({ outcome: "blocked", issue_codes: ["NO_FACE_DETECTED"] }),
         );
@@ -271,7 +271,7 @@ describe("preparing one requirement", () => {
             ).toBeTruthy(),
         );
         expect(screen.getByText(/could not find a face/i)).toBeTruthy();
-        expect(screen.getByText(/nothing has been charged/i)).toBeTruthy();
+        expect(screen.queryByText(/charged/i)).toBeNull();
     });
 
     test("a support-gate refusal is guidance, never an error (DEC-056)", async () => {

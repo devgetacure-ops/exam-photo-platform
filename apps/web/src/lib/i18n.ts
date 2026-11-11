@@ -20,6 +20,12 @@ export function languageAlternates(path: string): Record<string, string> {
 
 const HI_VALUE_WORDS: [RegExp, string][] = [
     [/\bpreferred\b/gi, "(सुझाया गया)"],
+    [/^up to (.+)$/i, "अधिकतम $1"],
+    [/^at least (.+)$/i, "कम से कम $1"],
+    [/^(.+) ratio$/i, "$1 अनुपात"],
+    [/^plain, light$/i, "सादा, हल्का"],
+    [/^plain$/i, "सादा"],
+    [/\bbytes\b/gi, "बाइट"],
     [/\bwhite\b/gi, "सफ़ेद"],
     [/\bor\b/gi, "या"],
     [/\bmaximum\b/gi, "अधिकतम"],

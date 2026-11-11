@@ -11,6 +11,7 @@ import { EmailDelivery } from "./email-delivery";
 import { ExpiryClock, FileRow, clock, jobDownloadable, type LiveJob } from "./kit-files";
 import { KitSuccess } from "./kit-success";
 import { publishCheckoutStage, publishJobs } from "./live-job-state";
+import { useTr } from "../locale-context";
 
 /**
  * The kit's downloads, free (DEC-127).
@@ -40,6 +41,7 @@ export function KitDownloads({
     const completeKitSelected = prepared.length === files.length;
     const revisionKey = files.map((e) => `${e.jobId}:${e.updatedAt}`).join(",");
     const signature = files.map((e) => e.jobId).join(",");
+    const tr = useTr();
     const [jobs, setJobs] = useState<Record<string, LiveJob>>({});
     const [error, setError] = useState("");
     const [note, setNote] = useState("");
@@ -74,10 +76,10 @@ export function KitDownloads({
         setNow(Date.now());
         setError(
             results.some((r) => r.status === "rejected")
-                ? "Some files couldn’t be checked. Refresh the page to try again."
+                ? tr("Some files couldn’t be checked. Refresh the page to try again.", "कुछ फ़ाइलें जाँची नहीं जा सकीं। पेज रीफ़्रेश करके फिर कोशिश करें।")
                 : "",
         );
-    }, [signature]);
+    }, [signature, tr]);
 
     useEffect(() => {
         mounted.current = true;
@@ -130,11 +132,11 @@ export function KitDownloads({
                 new URL(`/v1/jobs/${encodeURIComponent(id)}/extend`, getApiBaseUrl()),
                 { method: "POST", cache: "no-store", signal: AbortSignal.timeout(15000) },
             );
-            if (!response.ok) throw new Error("Could not keep this file for longer.");
+            if (!response.ok) throw new Error(tr("Could not keep this file for longer.", "इस फ़ाइल का समय नहीं बढ़ सका।"));
             await refresh();
-            setNote("The new deletion time is shown below.");
+            setNote(tr("The new deletion time is shown below.", "हटाने का नया समय नीचे दिखाया गया है।"));
         } catch (err) {
-            setError(err instanceof Error ? err.message : "Could not keep this file for longer.");
+            setError(err instanceof Error ? err.message : tr("Could not keep this file for longer.", "इस फ़ाइल का समय नहीं बढ़ सका।"));
         } finally {
             setExtending(null);
         }
@@ -144,9 +146,9 @@ export function KitDownloads({
         return (
             <section className="euk-review-empty" aria-labelledby="review-empty-title">
                 <h2 id="review-empty-title" className="euk-review-empty-title">
-                    Your downloads appear here
+                    {tr("Your downloads appear here", "आपके डाउनलोड यहाँ दिखेंगे")}
                 </h2>
-                <p>Prepare a file above and it lands here, ready to download. Free.</p>
+                <p>{tr("Prepare a file above and it lands here, ready to download. Free.", "ऊपर कोई फ़ाइल तैयार करें, वह यहाँ डाउनलोड के लिए आ जाएगी। मुफ़्त।")}</p>
             </section>
         );
 
@@ -168,10 +170,10 @@ export function KitDownloads({
                         <ExpiryClock seconds={secondsLeft} at={earliest} delivered />
                     )}
                     <div className="euk-delivered-head">
-                        <h3 id="kit-downloads">Your downloads</h3>
+                        <h3 id="kit-downloads">{tr("Your downloads", "आपके डाउनलोड")}</h3>
                         {completeKitSelected && kitId && files.length > 1 && (
                             <a className="primary-button" href={kitPackageDownloadUrl(kitId)}>
-                                Download everything (ZIP)
+                                {tr("Download everything (ZIP)", "सब एक साथ डाउनलोड करें (ZIP)")}
                             </a>
                         )}
                     </div>
@@ -200,8 +202,10 @@ export function KitDownloads({
                         })}
                     </ol>
                     <Note className="euk-delivered-note">
-                        Save them somewhere you will find on the day you upload, not only in
-                        Downloads.
+                        {tr(
+                            "Save them somewhere you will find on the day you upload, not only in Downloads.",
+                            "इन्हें ऐसी जगह सेव करें जहाँ अपलोड वाले दिन मिल जाएँ, सिर्फ़ Downloads में नहीं।",
+                        )}
                     </Note>
                     {error && (
                         <p className="euk-total-alert" role="alert">
@@ -229,14 +233,14 @@ export function KitDownloads({
                             target="_blank"
                             rel="noreferrer"
                         >
-                            Send yourself a reminder on WhatsApp
+                            {tr("Send yourself a reminder on WhatsApp", "WhatsApp पर खुद को याद दिलाएँ")}
                         </a>
-                        <p>WhatsApp carries the link and the deletion time, not the files.</p>
+                        <p>{tr("WhatsApp carries the link and the deletion time, not the files.", "WhatsApp पर लिंक और हटने का समय जाता है, फ़ाइलें नहीं।")}</p>
                     </div>
                     <p className="euk-order-help">
-                        Something wrong with a file?{" "}
+                        {tr("Something wrong with a file?", "किसी फ़ाइल में गड़बड़?")}{" "}
                         <Link className="euk-link" href="/support">
-                            Tell us
+                            {tr("Tell us", "हमें बताएँ")}
                         </Link>
                         .
                     </p>

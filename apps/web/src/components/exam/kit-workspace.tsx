@@ -5,6 +5,7 @@ import type { ExamDetail, RequirementSummary } from "../../lib/types";
 import type { KitEntry } from "../../lib/kit-state";
 import { RequirementPanel } from "./requirement-panel";
 import { useKit } from "./use-kit";
+import { useTr } from "../locale-context";
 import { ReportIssue } from "./report-issue";
 import { KitCheckout } from "../../billing/kit-checkout";
 import { BILLING_ENABLED } from "../../billing/config";
@@ -46,21 +47,22 @@ type Tone = "idle" | "done" | "check" | "retry";
 function stateOf(
     entry: KitEntry | undefined,
     requirement: RequirementSummary,
+    tr: (english: string, hindi: string) => string,
 ): { text: string; tone: Tone } {
-    if (!entry) return { text: "Not added yet", tone: "idle" };
+    if (!entry) return { text: tr("Not added yet", "अभी जोड़ी नहीं गई"), tone: "idle" };
     if (
         entry.outcome === "prepared_with_findings" &&
         plainFindings(entry.findings).length > 0
     )
-        return { text: "Worth a look", tone: "check" };
+        return { text: tr("Worth a look", "एक बार देख लें"), tone: "check" };
     if (
         entry.outcome === "prepared" ||
         entry.outcome === "prepared_with_findings"
     )
         return requirement.platform_support === "partially_supported"
-            ? { text: "One step yours", tone: "check" }
-            : { text: "Prepared", tone: "done" };
-    return { text: "Try again", tone: "retry" };
+            ? { text: tr("One step yours", "एक काम आपका"), tone: "check" }
+            : { text: tr("Prepared", "तैयार"), tone: "done" };
+    return { text: tr("Try again", "फिर से कोशिश करें"), tone: "retry" };
 }
 
 function shortSpec(exam: ExamDetail, requirement: RequirementSummary): string {
@@ -88,14 +90,17 @@ function whenPhrase(requirement: RequirementSummary): string | null {
     }
 }
 
-function yoursPhrase(requirement: RequirementSummary): string {
+function yoursPhrase(
+    requirement: RequirementSummary,
+    tr: (english: string, hindi: string) => string,
+): string {
     switch (requirement.platform_support) {
         case "not_yet_supported":
-            return "We can’t prepare this yet";
+            return tr("We can’t prepare this yet", "इसे हम अभी तैयार नहीं कर सकते");
         case "physical_stage":
-            return "Done in person";
+            return tr("Done in person", "यह खुद जाकर होता है");
         default:
-            return "You complete this";
+            return tr("You complete this", "यह आप पूरा करेंगे");
     }
 }
 
@@ -115,6 +120,7 @@ export function KitWorkspace({
         () => requirements.filter((r) => !isOurs(r)),
         [requirements],
     );
+    const tr = useTr();
     const { entries } = useKit(exam.exam_id);
     const [selectedId, setSelectedId] = useState(
         ours[0]?.requirement_id ?? requirements[0]?.requirement_id ?? "",
@@ -285,12 +291,12 @@ export function KitWorkspace({
                 <section className="euk-kit-list" aria-labelledby="kit-title">
                     <div className="euk-kit-head">
                         <h2 id="kit-title" className="euk-display">
-                            {ours.length ? "Your kit" : "What it asks for"}
+                            {ours.length ? tr("Your kit", "आपकी किट") : tr("What it asks for", "इसमें क्या चाहिए")}
                         </h2>
                         {ours.length > 0 && (
                             <div className="euk-kit-head-meta">
                                 <p className="euk-kit-progress">
-                                    {ready} of {ours.length} prepared
+                                    {tr(`${ready} of ${ours.length} prepared`, `${ours.length} में से ${ready} तैयार`)}
                                 </p>
                                 {!paid && (
                                     <SelectAllToggle
@@ -314,13 +320,13 @@ export function KitWorkspace({
                     {ours.length > 0 && (
                         <fieldset className="euk-kit-fieldset" disabled={busy}>
                             <legend className="sr-only">
-                                Files we prepare for this application
+                                {tr("Files we prepare for this application", "इस आवेदन के लिए हम जो फ़ाइलें तैयार करते हैं")}
                             </legend>
                             <ul className="euk-kit-files">
                                 {ours.map((r) => {
                                     const id = r.requirement_id;
                                     const on = included.includes(id);
-                                    const state = stateOf(entries[id], r);
+                                    const state = stateOf(entries[id], r, tr);
                                     const meta = [
                                         shortSpec(exam, r),
                                         !BILLING_ENABLED ||
@@ -342,7 +348,7 @@ export function KitWorkspace({
                                                 type="checkbox"
                                                 className="euk-kit-check"
                                                 checked={on}
-                                                aria-label={`Include ${r.requirement_name} in your kit`}
+                                                aria-label={tr(`Include ${r.requirement_name} in your kit`, `${r.requirement_name} को अपनी किट में शामिल करें`)}
                                                 onChange={(event) =>
                                                     toggle(
                                                         id,
@@ -379,7 +385,7 @@ export function KitWorkspace({
                                                     id &&
                                                     !paid && (
                                                         <span className="euk-kit-next">
-                                                            Next
+                                                            {tr("Next", "अगला")}
                                                         </span>
                                                     )}
                                                 {state.tone !== "idle" && (
@@ -407,9 +413,9 @@ export function KitWorkspace({
                                                    text because hidden text
                                                    inside this button would
                                                    inherit its capitals. */
-                                                aria-label={`${entries[id] ? "Open" : "Add"} ${r.requirement_name}`}
+                                                aria-label={`${entries[id] ? tr("Open", "खोलें") : tr("Add", "जोड़ें")} ${r.requirement_name}`}
                                             >
-                                                {entries[id] ? "Open" : "Add"}
+                                                {entries[id] ? tr("Open", "खोलें") : tr("Add", "जोड़ें")}
                                             </button>
                                         </li>
                                     );
@@ -422,8 +428,8 @@ export function KitWorkspace({
                         <div className="euk-kit-yours">
                             <h3 className="euk-kit-yours-title">
                                 {yours.length === 1
-                                    ? "One you complete yourself"
-                                    : `${yours.length} you complete yourself`}
+                                    ? tr("One you complete yourself", "एक आपको खुद पूरा करना है")
+                                    : tr(`${yours.length} you complete yourself`, `${yours.length} आपको खुद पूरे करने हैं`)}
                             </h3>
                             <ul>
                                 {yours.map((r) => (
@@ -453,7 +459,7 @@ export function KitWorkspace({
                                                 {r.requirement_name}
                                             </span>
                                             <span className="euk-kit-yours-state">
-                                                {yoursPhrase(r)}
+                                                {yoursPhrase(r, tr)}
                                             </span>
                                         </button>
                                     </li>
@@ -467,7 +473,7 @@ export function KitWorkspace({
                     <aside
                         className="euk-kit-side"
                         aria-label={
-                            BILLING_ENABLED ? "What your kit costs" : "Your kit"
+                            BILLING_ENABLED ? "What your kit costs" : tr("Your kit", "आपकी किट")
                         }
                     >
                         {BILLING_ENABLED && (
@@ -508,10 +514,12 @@ export function KitWorkspace({
 
                         {tools.length >= 2 && (
                             <div className="euk-kit-without">
-                                <h3>The other way</h3>
+                                <h3>{tr("The other way", "दूसरा तरीका")}</h3>
                                 <p>
-                                    These files would take {tools.length}{" "}
-                                    separate tools, usually on separate sites:
+                                    {tr(
+                                        `These files would take ${tools.length} separate tools, usually on separate sites:`,
+                                        `इन फ़ाइलों के लिए ${tools.length} अलग-अलग टूल लगते, अक्सर अलग-अलग साइटों पर:`,
+                                    )}
                                 </p>
                                 <ul className="euk-chips">
                                     {tools.map((tool) => (
@@ -525,7 +533,7 @@ export function KitWorkspace({
                                 </ul>
                                 <p>
                                     {!BILLING_ENABLED
-                                        ? "Here each file is one upload, and all of it is free."
+                                        ? tr("Here each file is one upload, and all of it is free.", "यहाँ हर फ़ाइल एक अपलोड में, और सब मुफ़्त।")
                                         : hasDocuments
                                           ? "Here each file is one upload, and the PDF work is free with the kit."
                                           : "Here each file is one upload."}
@@ -540,7 +548,7 @@ export function KitWorkspace({
                 <div className="euk-wrap euk-kit-panels">
                     <fieldset className="euk-kit-panelset" disabled={busy}>
                         <legend className="sr-only">
-                            The file you are working on
+                            {tr("The file you are working on", "जिस फ़ाइल पर आप काम कर रहे हैं")}
                         </legend>
                         {requirements.map((r, i) => {
                             const id = r.requirement_id;
@@ -555,13 +563,13 @@ export function KitWorkspace({
                                 >
                                     {excluded && (
                                         <div className="euk-kit-excluded">
-                                            <p>This file isn’t in your kit.</p>
+                                            <p>{tr("This file isn’t in your kit.", "यह फ़ाइल आपकी किट में नहीं है।")}</p>
                                             <button
                                                 type="button"
                                                 className="secondary-button"
                                                 onClick={() => toggle(id, true)}
                                             >
-                                                Add it to the kit
+                                                {tr("Add it to the kit", "इसे किट में जोड़ें")}
                                             </button>
                                         </div>
                                     )}
@@ -587,8 +595,8 @@ export function KitWorkspace({
                                                         ? "Paid. Your downloads are below"
                                                         : onward.kind ===
                                                             "review"
-                                                          ? `All ${onward.total} file${onward.total === 1 ? "" : "s"} in your kit are prepared`
-                                                          : `${onward.prepared} of ${onward.total} prepared`}
+                                                          ? tr(`All ${onward.total} file${onward.total === 1 ? "" : "s"} in your kit are prepared`, `आपकी किट की सभी ${onward.total} फ़ाइलें तैयार हैं`)
+                                                          : tr(`${onward.prepared} of ${onward.total} prepared`, `${onward.total} में से ${onward.prepared} तैयार`)}
                                                 </p>
                                                 {paid ? (
                                                     <button
@@ -598,7 +606,7 @@ export function KitWorkspace({
                                                             goTo("kit-review")
                                                         }
                                                     >
-                                                        Go to your downloads
+                                                        {tr("Go to your downloads", "अपने डाउनलोड पर जाएँ")}
                                                     </button>
                                                 ) : onward.kind === "review" ? (
                                                     <button
@@ -610,7 +618,7 @@ export function KitWorkspace({
                                                     >
                                                         {BILLING_ENABLED
                                                             ? `Review and pay ${rupees(price.amount)}`
-                                                            : "Go to your downloads"}
+                                                            : tr("Go to your downloads", "अपने डाउनलोड पर जाएँ")}
                                                     </button>
                                                 ) : (
                                                     <button
@@ -623,7 +631,7 @@ export function KitWorkspace({
                                                             )
                                                         }
                                                     >
-                                                        Next: {onward.name}
+                                                        {tr("Next", "अगला")}: {onward.name}
                                                     </button>
                                                 )}
                                             </div>
@@ -637,14 +645,14 @@ export function KitWorkspace({
 
             <div className="euk-wrap euk-kit-links">
                 <Link href={`/exam/${exam.exam_id}/rules`}>
-                    Rules and sources
+                    {tr("Rules and sources", "नियम और स्रोत")}
                 </Link>
                 <ReportIssue
                     examName={exam.exam_name}
                     requirementName={selected?.requirement_name}
                     ruleId={exam.rule_id}
                 />
-                <Link href="/exams">Change exam</Link>
+                <Link href="/exams">{tr("Change exam", "परीक्षा बदलें")}</Link>
             </div>
 
             <div id="kit-review" className="euk-wrap euk-kit-review">
@@ -677,10 +685,10 @@ export function KitWorkspace({
                         {paid
                             ? "Paid"
                             : waiting
-                              ? `${ready} of ${included.length} prepared`
+                              ? tr(`${ready} of ${included.length} prepared`, `${included.length} में से ${ready} तैयार`)
                               : BILLING_ENABLED
                                 ? priceName
-                                : `${ready} prepared`}
+                                : tr(`${ready} prepared`, `${ready} तैयार`)}
                     </span>
                     {BILLING_ENABLED && !paid && !waiting && (
                         <strong className="euk-kit-bar-figure">
@@ -699,7 +707,7 @@ export function KitWorkspace({
                             className="euk-kit-bar-go"
                             onClick={() => open(waiting.requirementId, true)}
                         >
-                            Next: {waiting.name}
+                            {tr("Next", "अगला")}: {waiting.name}
                         </button>
                     )}
                     <a
@@ -713,7 +721,7 @@ export function KitWorkspace({
                         }}
                     >
                         {paid || !BILLING_ENABLED
-                            ? "Downloads"
+                            ? tr("Downloads", "डाउनलोड")
                             : waiting
                               ? "Review"
                               : "Review and pay"}

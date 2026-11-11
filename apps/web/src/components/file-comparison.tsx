@@ -1,6 +1,7 @@
 "use client";
 import { useId, useRef, useState } from "react";
 import { BILLING_ENABLED } from "../billing/config";
+import { useTr } from "./locale-context";
 
 /**
  * The upload beside its prepared preview, compared by dragging anywhere on the
@@ -21,6 +22,7 @@ export function FileComparison({
     after: string;
     illustration?: boolean;
 }) {
+    const tr = useTr();
     const [position, setPosition] = useState(50);
     // A 150 x 200 photograph drawn three times its size looks soft, and was
     // read as a poor result (owner's testing, 1 October). Said plainly when
@@ -64,7 +66,7 @@ export function FileComparison({
                             ? "Illustrated file preparation example"
                             : BILLING_ENABLED
                               ? "Prepared watermarked preview"
-                              : "Prepared file preview"
+                              : tr("Prepared file preview", "तैयार फ़ाइल का प्रीव्यू")
                     }
                     draggable={false}
                     onLoad={(event) => {
@@ -87,7 +89,7 @@ export function FileComparison({
                         alt={
                             illustration
                                 ? "Illustration with simulated poor exposure"
-                                : "Your original upload"
+                                : tr("Your original upload", "आपकी असली अपलोड")
                         }
                         draggable={false}
                     />
@@ -101,9 +103,9 @@ export function FileComparison({
                 </span>
                 <div className="comparison-labels" aria-hidden="true">
                     <span>
-                        {illustration ? "The starting point" : "Original"}
+                        {illustration ? "The starting point" : tr("Original", "असली")}
                     </span>
-                    <span>{illustration ? "The possibility" : "Preview"}</span>
+                    <span>{illustration ? "The possibility" : tr("Preview", "प्रीव्यू")}</span>
                 </div>
                 <input
                     id={id}
@@ -113,29 +115,29 @@ export function FileComparison({
                     max="100"
                     value={position}
                     onChange={(e) => setPosition(Number(e.target.value))}
-                    aria-label="Compare original and prepared preview"
-                    aria-valuetext={`${position}% original visible`}
+                    aria-label={tr("Compare original and prepared preview", "असली और तैयार फ़ाइल की तुलना करें")}
+                    aria-valuetext={tr(`${position}% original visible`, `${position}% असली दिख रही है`)}
                 />
             </div>
             <figcaption>
-                <label htmlFor={id}>Drag across the picture, or use the arrow keys</label>
+                <label htmlFor={id}>{tr("Drag across the picture, or use the arrow keys", "तस्वीर पर खींचें, या तीर वाली कुंजियाँ दबाएँ")}</label>
                 {/* Two buttons that look like buttons, the one in view marked:
                     as plain words nobody knew they could be tapped (owner's
                     testing, 1 October). */}
-                <div className="comparison-actions" role="group" aria-label="Show">
+                <div className="comparison-actions" role="group" aria-label={tr("Show", "दिखाएँ")}>
                     <button
                         type="button"
                         aria-pressed={position >= 50}
                         onClick={() => setPosition(100)}
                     >
-                        Original
+                        {tr("Original", "असली")}
                     </button>
                     <button
                         type="button"
                         aria-pressed={position < 50}
                         onClick={() => setPosition(0)}
                     >
-                        Preview
+                        {tr("Preview", "प्रीव्यू")}
                     </button>
                 </div>
                 <span>
@@ -143,12 +145,14 @@ export function FileComparison({
                         ? "Illustration only · not an engine result"
                         : BILLING_ENABLED
                           ? "Watermarked preview · your download is the full, unmarked file"
-                          : "Preview · your download is the full-size file"}
+                          : tr("Preview · your download is the full-size file", "प्रीव्यू · डाउनलोड में पूरी साइज़ की फ़ाइल मिलेगी")}
                 </span>
                 {enlarged && (
                     <span>
-                        Shown enlarged. The file is {enlarged.width} × {enlarged.height} px, the size this
-                        examination asks for, so it looks softer here than it is.
+                        {tr(
+                            `Shown enlarged. The file is ${enlarged.width} × ${enlarged.height} px, the size this examination asks for, so it looks softer here than it is.`,
+                            `बड़ा करके दिखाया गया है। फ़ाइल ${enlarged.width} × ${enlarged.height} px की है, जितनी यह परीक्षा माँगती है, इसलिए यहाँ थोड़ी धुंधली लगती है।`,
+                        )}
                     </span>
                 )}
             </figcaption>

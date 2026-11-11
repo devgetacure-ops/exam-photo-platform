@@ -901,11 +901,12 @@ button:hover .euk-chevron {
 }
 
 /* ---- Hindi (DEC-129): same site, Devanagari faces ------------------------- */
+[lang="hi"] .euk,
 .euk [lang="hi"],
 .euk[lang="hi"] {
     font-family: var(--font-anek-hindi), var(--font-anek), ui-sans-serif, system-ui, sans-serif;
 }
-.euk [lang="hi"] .euk-display,
+[lang="hi"] .euk-display,
 .euk[lang="hi"] .euk-display {
     font-family: var(--font-anek-hindi), var(--font-shoulders), sans-serif;
     font-weight: 700;

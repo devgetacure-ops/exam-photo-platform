@@ -3,6 +3,7 @@
 import { useEffect, type RefObject } from "react";
 
 import { markInstallMoment } from "../../lib/install";
+import { useTr } from "../locale-context";
 
 /**
  * The moment the files are the candidate's.
@@ -26,6 +27,7 @@ export function KitSuccess({
 }) {
     // The files are the candidate's: the strongest moment there is to offer
     // the site a place on the home screen.
+    const tr = useTr();
     useEffect(() => {
         markInstallMoment();
     }, []);
@@ -57,7 +59,7 @@ export function KitSuccess({
                     <path className="euk-done-spark euk-done-spark--2" pathLength={1} d="M14 18 V 32 M7 25 H 21" />
                     <path className="euk-done-spark euk-done-spark--3" pathLength={1} d="M226 86 V 100 M219 93 H 233" />
                 </svg>
-                <p className="euk-done-stamp">All the best</p>
+                <p className="euk-done-stamp">{tr("All the best", "शुभकामनाएँ")}</p>
             </div>
 
             <div className="euk-done-copy">
@@ -67,14 +69,15 @@ export function KitSuccess({
                     tabIndex={-1}
                     className="euk-display euk-done-title"
                 >
-                    We’ve prepared the files.
+                    {tr("We’ve prepared the files.", "फ़ाइलें हमने तैयार कर दीं।")}
                     <br />
-                    <span className="euk-mark">Now it’s your exam.</span>
+                    <span className="euk-mark">{tr("Now it’s your exam.", "अब आपकी परीक्षा की बारी।")}</span>
                 </h2>
                 <p className="euk-done-lede">
-                    All the best for {examName}. The part we could do is
-                    finished. The part that decides it is the preparation, and
-                    that was always yours.
+                    {tr(
+                        `All the best for ${examName}. The part we could do is finished. The part that decides it is the preparation, and that was always yours.`,
+                        `${examName} के लिए शुभकामनाएँ। जो हम कर सकते थे, वह हो गया। जो तय करेगा, वह आपकी तैयारी है, और वह हमेशा आपकी थी।`,
+                    )}
                 </p>
             </div>
         </div>

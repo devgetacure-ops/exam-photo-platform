@@ -11,6 +11,9 @@ import { BILLING_ENABLED } from "../../billing/config";
 import { kitPrice, rupees } from "../../billing/kit-pricing";
 import { KitCheckout } from "../../billing/kit-checkout";
 import { KitDownloads } from "../exam/kit-downloads";
+import { useLocale, useTr } from "../locale-context";
+import { localePath, localValue } from "../../lib/i18n";
+import { toolText } from "../../lib/i18n-tool";
 import { useKit } from "../exam/use-kit";
 import { useKitLiveness } from "../exam/use-kit-liveness";
 import { DocumentWorkspace } from "../exam/document-workspace";
@@ -39,10 +42,10 @@ import { photographSpecRows, requirementSpecRows } from "../../lib/spec-format";
 
 type Step = "files" | "add" | "pay";
 
-const STEP_LABELS: { id: Step; label: string }[] = [
-    { id: "files", label: "Your files" },
-    { id: "add", label: "Add them" },
-    { id: "pay", label: BILLING_ENABLED ? "Check" : "Download" },
+const STEP_LABELS: { id: Step; label: string; hindi: string }[] = [
+    { id: "files", label: "Your files", hindi: "आपकी फ़ाइलें" },
+    { id: "add", label: "Add them", hindi: "जोड़ें" },
+    { id: "pay", label: BILLING_ENABLED ? "Check" : "Download", hindi: "डाउनलोड" },
 ];
 
 function isDocument(requirement: RequirementSummary): boolean {
@@ -65,6 +68,8 @@ export function PrepareFlow({
         () => requirements.filter((r) => !isOurs(r)),
         [requirements],
     );
+    const tr = useTr();
+    const locale = useLocale();
     const { entries, forget } = useKit(exam.exam_id);
     // "Ready" is only true while the server still holds the file (owner's
     // testing, 1 October): a deleted one is forgotten and has to be added again.
@@ -216,7 +221,7 @@ export function PrepareFlow({
                             className="euk-m-linkbtn"
                             onClick={() => setSheet("rules")}
                         >
-                            Rules
+                            {tr("Rules", "नियम")}
                         </button>
                     }
                 />
@@ -244,13 +249,13 @@ export function PrepareFlow({
                 </div>
 
                 {!busy && !done && (
-                    <ActionBar note="Add this file">
+                    <ActionBar note={tr("Add this file", "यह फ़ाइल जोड़ें")}>
                         <button
                             type="button"
                             className="secondary-button"
                             onClick={() => window.history.back()}
                         >
-                            Do this later
+                            {tr("Do this later", "बाद में करें")}
                         </button>
                     </ActionBar>
                 )}
@@ -261,13 +266,13 @@ export function PrepareFlow({
                     <ActionBar
                         note={
                             <span className="euk-m-barnote">
-                                <strong>Ready</strong>
+                                <strong>{tr("Ready", "तैयार")}</strong>
                                 <button
                                     type="button"
                                     className="quiet-link"
                                     onClick={() => window.history.back()}
                                 >
-                                    Back to the list
+                                    {tr("Back to the list", "सूची पर वापस")}
                                 </button>
                             </span>
                         }
@@ -286,7 +291,7 @@ export function PrepareFlow({
                                 className="primary-button"
                                 onClick={() => go("pay", null, true)}
                             >
-                                {BILLING_ENABLED ? "Check and pay" : "Get my files"}
+                                {BILLING_ENABLED ? "Check and pay" : tr("Get my files", "मेरी फ़ाइलें लें")}
                             </button>
                         )}
                     </ActionBar>
@@ -294,26 +299,29 @@ export function PrepareFlow({
 
                 <Sheet
                     open={sheet === "rules"}
-                    title={`${active.requirement_name}: the rules`}
+                    title={tr(`${active.requirement_name}: the rules`, `${active.requirement_name}: नियम`)}
                     onClose={() => setSheet(null)}
                 >
                     <dl className="euk-m-specs">
                         {rows.map((row) => (
                             <div key={row.term}>
-                                <dt>{row.term}</dt>
+                                <dt>{toolText(locale, row.term)}</dt>
                                 <dd>
-                                    {row.value}
+                                    {localValue(locale, row.value)}
                                     {row.estimated ? (
-                                        <span className="euk-m-est"> est.</span>
+                                        <span className="euk-m-est"> {tr("est.", "अनुमानित")}</span>
                                     ) : null}
                                 </dd>
                             </div>
                         ))}
                     </dl>
                     <p className="euk-m-sheet-note">
-                        Every figure comes from what {exam.conducting_body} published.{" "}
+                        {tr(
+                            `Every figure comes from what ${exam.conducting_body} published.`,
+                            `हर आँकड़ा ${exam.conducting_body} के प्रकाशित नियमों से है।`,
+                        )}{" "}
                         <Link href={`/exam/${exam.exam_id}/rules`}>
-                            The full rules and their sources
+                            {tr("The full rules and their sources", "पूरे नियम और उनके स्रोत (अंग्रेज़ी में)")}
                         </Link>
                     </p>
                 </Sheet>
@@ -327,18 +335,18 @@ export function PrepareFlow({
             <AppBar
                 title={exam.exam_name}
                 onBack={step === "files" ? undefined : () => window.history.back()}
-                backHref={step === "files" ? `/exam/${exam.exam_id}` : undefined}
+                backHref={step === "files" ? localePath(locale, `/exam/${exam.exam_id}`) : undefined}
                 pinned
             />
 
-            <ol className="euk-m-steps" aria-label="Progress">
+            <ol className="euk-m-steps" aria-label={tr("Progress", "प्रगति")}>
                 {STEP_LABELS.map((item, i) => (
                     <li
                         key={item.id}
                         data-state={i < stepIndex ? "done" : i === stepIndex ? "now" : undefined}
                         aria-current={i === stepIndex ? "step" : undefined}
                     >
-                        <span>{item.label}</span>
+                        <span>{tr(item.label, item.hindi)}</span>
                     </li>
                 ))}
             </ol>
@@ -346,17 +354,19 @@ export function PrepareFlow({
             {step === "files" && (
                 <div className="euk-m-screen">
                     <h2 className="euk-display euk-m-title">
-                        What {exam.exam_name} asks you to upload
+                        {tr(`What ${exam.exam_name} asks you to upload`, `${exam.exam_name} में क्या अपलोड करना है`)}
                     </h2>
                     <p className="euk-m-lede">
-                        Everything it asks for is ticked. Untick anything your form
-                        doesn&rsquo;t want{BILLING_ENABLED ? ", and the price follows" : ""}.
+                        {tr(
+                            `Everything it asks for is ticked. Untick anything your form doesn’t want${BILLING_ENABLED ? ", and the price follows" : ""}.`,
+                            "जो कुछ माँगा गया है, सब पर टिक लगा है। जो आपके फ़ॉर्म में नहीं चाहिए, उसका टिक हटा दें।",
+                        )}
                     </p>
 
                     {ours.length > 0 && (
                         <div className="euk-m-selectrow">
                             <p>
-                                {included.length} of {ours.length} ticked
+                                {tr(`${included.length} of ${ours.length} ticked`, `${ours.length} में से ${included.length} पर टिक`)}
                             </p>
                             <SelectAllToggle
                                 className="euk-m-selectall"
@@ -390,10 +400,10 @@ export function PrepareFlow({
                                             <strong>{r.requirement_name}</strong>
                                             <span>
                                                 {r.requirement_status === "mandatory"
-                                                    ? "Required by this form"
-                                                    : "Optional"}
+                                                    ? tr("Required by this form", "इस फ़ॉर्म में ज़रूरी")
+                                                    : tr("Optional", "वैकल्पिक")}
                                                 {r.platform_support === "partially_supported"
-                                                    ? " · we prepare part of this"
+                                                    ? tr(" · we prepare part of this", " · इसका कुछ हिस्सा हम तैयार करते हैं")
                                                     : ""}
                                             </span>
                                         </span>
@@ -406,15 +416,17 @@ export function PrepareFlow({
 
                     {yours.length > 0 && (
                         <div className="euk-m-yours">
-                            <h3>You do these yourself</h3>
+                            <h3>{tr("You do these yourself", "ये आप खुद करेंगे")}</h3>
                             <ul>
                                 {yours.map((r) => (
                                     <li key={r.requirement_id}>{r.requirement_name}</li>
                                 ))}
                             </ul>
                             <p>
-                                This examination handles them in its own portal, so there
-                                is nothing for us to prepare.
+                                {tr(
+                                    "This examination handles them in its own portal, so there is nothing for us to prepare.",
+                                    "ये परीक्षा अपने पोर्टल पर ही करवाती है, इसलिए हमें कुछ तैयार नहीं करना।",
+                                )}
                             </p>
                         </div>
                     )}
@@ -423,12 +435,14 @@ export function PrepareFlow({
 
             {step === "add" && (
                 <div className="euk-m-screen">
-                    <h2 className="euk-display euk-m-title">Add your files</h2>
+                    <h2 className="euk-display euk-m-title">{tr("Add your files", "अपनी फ़ाइलें जोड़ें")}</h2>
                     <p className="euk-m-lede">
-                        One at a time. Each one is prepared as soon as you add it
                         {BILLING_ENABLED
-                            ? ", and you see the result before you pay."
-                            : ", and it is yours to download straight away."}
+                            ? "One at a time. Each one is prepared as soon as you add it, and you see the result before you pay."
+                            : tr(
+                                  "One at a time. Each one is prepared as soon as you add it, and it is yours to download straight away.",
+                                  "एक-एक करके। हर फ़ाइल जोड़ते ही तैयार हो जाती है, और तुरंत डाउनलोड के लिए आपकी।",
+                              )}
                     </p>
                     <ul className="euk-m-files">
                         {chosen.map((r) => {
@@ -471,14 +485,14 @@ export function PrepareFlow({
                                             <strong>{r.requirement_name}</strong>
                                             <span>
                                                 {lapsed
-                                                    ? "Expired. Add it again"
+                                                    ? tr("Expired. Add it again", "समय ख़त्म। फिर से जोड़ें")
                                                     : tone === "check"
-                                                    ? "Ready, with a note to read"
+                                                    ? tr("Ready, with a note to read", "तैयार, एक बात पढ़ लें")
                                                     : tone === "done"
-                                                      ? "Ready"
+                                                      ? tr("Ready", "तैयार")
                                                       : tone === "retry"
-                                                        ? "Try again"
-                                                        : "Not added yet"}
+                                                        ? tr("Try again", "फिर से कोशिश करें")
+                                                        : tr("Not added yet", "अभी जोड़ी नहीं गई")}
                                             </span>
                                         </span>
                                         <span
@@ -535,11 +549,11 @@ export function PrepareFlow({
                             {BILLING_ENABLED && price.chargeable > 0 ? (
                                 <strong>{rupees(price.amount)}</strong>
                             ) : (
-                                <strong>Free</strong>
+                                <strong>{tr("Free", "मुफ़्त")}</strong>
                             )}
                             {BILLING_ENABLED && price.free > 0
                                 ? `${price.chosen} files, ${price.free} free`
-                                : `${price.chosen} file${price.chosen === 1 ? "" : "s"}`}
+                                : tr(`${price.chosen} file${price.chosen === 1 ? "" : "s"}`, `${price.chosen} फ़ाइल`)}
                         </>
                     }
                 >
@@ -550,7 +564,7 @@ export function PrepareFlow({
                             disabled={chosen.length === 0}
                             onClick={() => go("add")}
                         >
-                            Add your files
+                            {tr("Add your files", "अपनी फ़ाइलें जोड़ें")}
                         </button>
                     ) : (
                         <button
@@ -562,10 +576,10 @@ export function PrepareFlow({
                             {ready.length === chosen.length
                                 ? BILLING_ENABLED
                                     ? "Check and pay"
-                                    : "Get my files"
+                                    : tr("Get my files", "मेरी फ़ाइलें लें")
                                 : BILLING_ENABLED
                                   ? `Check ${ready.length} of ${chosen.length}`
-                                  : `Get ${ready.length} of ${chosen.length}`}
+                                  : tr(`Get ${ready.length} of ${chosen.length}`, `${chosen.length} में से ${ready.length} लें`)}
                         </button>
                     )}
                 </ActionBar>

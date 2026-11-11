@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { BILLING_ENABLED } from "../../billing/config";
+import { useTr } from "../locale-context";
 
 /**
  * A prepared file's watermarked preview, small in the review, larger on a tap
@@ -9,6 +10,7 @@ import { BILLING_ENABLED } from "../../billing/config";
  * button, Escape, or a tap outside the picture.
  */
 export function PreviewThumb({ src, name }: { src: string; name: string }) {
+    const tr = useTr();
     const [open, setOpen] = useState(false);
     const ref = useRef<HTMLDialogElement>(null);
 
@@ -30,7 +32,7 @@ export function PreviewThumb({ src, name }: { src: string; name: string }) {
                 type="button"
                 className="euk-order-thumb"
                 onClick={() => setOpen(true)}
-                aria-label={`See the ${name} preview larger`}
+                aria-label={tr(`See the ${name} preview larger`, `${name} का प्रीव्यू बड़ा देखें`)}
             >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={src} alt="" draggable={false} />
@@ -38,7 +40,7 @@ export function PreviewThumb({ src, name }: { src: string; name: string }) {
             <dialog
                 ref={ref}
                 className="euk-order-zoom"
-                aria-label={`${name} preview`}
+                aria-label={tr(`${name} preview`, `${name} का प्रीव्यू`)}
                 onClose={() => setOpen(false)}
                 onCancel={() => setOpen(false)}
                 onClick={(event) => {
@@ -56,14 +58,14 @@ export function PreviewThumb({ src, name }: { src: string; name: string }) {
                         <p className="euk-order-zoom-note">
                             {BILLING_ENABLED
                                 ? "Watermarked preview. Your download is the full, unmarked file."
-                                : "Preview. Your download is the full-size file."}
+                                : tr("Preview. Your download is the full-size file.", "प्रीव्यू। डाउनलोड में पूरी साइज़ की फ़ाइल मिलेगी।")}
                         </p>
                         <button
                             type="button"
                             className="secondary-button"
                             onClick={() => setOpen(false)}
                         >
-                            Close
+                            {tr("Close", "बंद करें")}
                         </button>
                     </>
                 )}

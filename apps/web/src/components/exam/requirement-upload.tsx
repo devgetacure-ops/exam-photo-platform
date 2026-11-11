@@ -8,6 +8,7 @@ import { prepareUpload, uploadRefusal } from "../../lib/upload-image";
 import { isPasswordLocked, lockedPdfMessage } from "../../lib/pdfjs";
 import { startKit } from "../../lib/kit-state";
 import { useKit } from "./use-kit";
+import { useTr } from "../locale-context";
 import {
     RequirementNotServedError,
     type RequirementNotServed,
@@ -58,28 +59,34 @@ interface Props {
 const ACCEPT = "image/jpeg,image/png,image/webp,application/pdf";
 
 /** What we ask the candidate for, in their words rather than the schema's. */
-const PROMPT: Record<string, string> = {
-    photograph: "Add a photo of yourself",
-    signature: "Add a photo of your signature",
-    thumb_impression: "Add a photo of your thumb impression",
-    handwritten_declaration: "Add a photo of the written declaration",
-    certificate_scan: "Add your certificate",
-    identity_document: "Add your identity document",
+const PROMPT: Record<string, [string, string]> = {
+    photograph: ["Add a photo of yourself", "अपनी फ़ोटो जोड़ें"],
+    signature: ["Add a photo of your signature", "अपने हस्ताक्षर की फ़ोटो जोड़ें"],
+    thumb_impression: ["Add a photo of your thumb impression", "अपने अंगूठे के निशान की फ़ोटो जोड़ें"],
+    handwritten_declaration: ["Add a photo of the written declaration", "लिखी हुई घोषणा की फ़ोटो जोड़ें"],
+    certificate_scan: ["Add your certificate", "अपना प्रमाणपत्र जोड़ें"],
+    identity_document: ["Add your identity document", "अपना पहचान पत्र जोड़ें"],
 };
 
-function candidateError(error: unknown): string {
+function candidateError(error: unknown, tr: (english: string, hindi: string) => string): string {
     const detail = error instanceof Error ? error.message.toLowerCase() : "";
     if (detail.includes("birefnet") || detail.includes("download_birefnet")) {
-        return "Photo preparation is temporarily unavailable. Please try again shortly.";
+        return tr(
+            "Photo preparation is temporarily unavailable. Please try again shortly.",
+            "फ़ोटो तैयार करना अभी कुछ देर के लिए बंद है। थोड़ी देर बाद फिर कोशिश करें।",
+        );
     }
     if (
         detail.includes("not reachable") ||
         detail.includes("failed to fetch") ||
         detail.includes("network")
     ) {
-        return "We can’t reach file preparation right now. Please try again in a moment.";
+        return tr(
+            "We can’t reach file preparation right now. Please try again in a moment.",
+            "अभी फ़ाइल तैयार करने वाली सेवा तक नहीं पहुँच पा रहे। थोड़ी देर में फिर कोशिश करें।",
+        );
     }
-    return "We couldn’t prepare that file. Please try again.";
+    return tr("We couldn’t prepare that file. Please try again.", "यह फ़ाइल तैयार नहीं हो सकी। फिर से कोशिश करें।");
 }
 
 function LightingSwitch({
@@ -159,12 +166,13 @@ export function RequirementUpload({
         requirementType,
     );
     const photo = requirementType === "photograph";
+    const tr = useTr();
     const consent = useUploadConsent();
 
     const submit = useCallback(
         async (chosen: File) => {
             if (challengeKey && !challengeToken) {
-                setMessage("Complete the verification before uploading.");
+                setMessage(tr("Complete the verification before uploading.", "अपलोड से पहले जाँच पूरी करें।"));
                 setPhase("error");
                 return;
             }
@@ -179,7 +187,7 @@ export function RequirementUpload({
             const file = prepared.file;
             if (file.size > 5 * 1024 * 1024) {
                 setPhase("error");
-                setMessage("Choose a PDF smaller than 5 MB.");
+                setMessage(tr("Choose a PDF smaller than 5 MB.", "5 MB से छोटी PDF चुनें।"));
                 return;
             }
             if (
@@ -190,7 +198,10 @@ export function RequirementUpload({
             ) {
                 setPhase("error");
                 setMessage(
-                    "Choose a JPEG, PNG or WebP image for this requirement.",
+                    tr(
+                        "Choose a JPEG, PNG or WebP image for this requirement.",
+                        "इसके लिए JPEG, PNG या WebP फ़ोटो चुनें।",
+                    ),
                 );
                 return;
             }
@@ -200,7 +211,7 @@ export function RequirementUpload({
                 const check = validateImageFile(file);
                 if (!check.valid) {
                     setPhase("error");
-                    setMessage(check.error ?? "That file will not work.");
+                    setMessage(check.error ?? tr("That file will not work.", "यह फ़ाइल नहीं चलेगी।"));
                     return;
                 }
             }
@@ -251,12 +262,13 @@ export function RequirementUpload({
                     return;
                 }
                 setPhase("error");
-                setMessage(candidateError(error));
+                setMessage(candidateError(error, tr));
             } finally {
                 onWorking?.(false);
             }
         },
         [
+            tr,
             examId,
             examName,
             requirementId,
@@ -311,7 +323,7 @@ export function RequirementUpload({
                     !["blocked", "not_produced"].includes(result.outcome) && (
                     <div className="euk-lighting">
                         <LightingSwitch
-                            title="Intelligent lighting"
+                            title={tr("Intelligent lighting", "समझदार रोशनी")}
                             checked={result.enhancement_enabled}
                             disabled={
                                 switching ||
@@ -341,7 +353,7 @@ export function RequirementUpload({
                                     setMessage(
                                         error instanceof Error
                                             ? error.message
-                                            : "Could not switch lighting.",
+                                            : tr("Could not switch lighting.", "रोशनी बदली नहीं जा सकी।"),
                                     );
                                 } finally {
                                     setSwitching(false);
@@ -351,12 +363,12 @@ export function RequirementUpload({
                         />
                         <p role="status">
                             {switching
-                                ? "Updating your preview…"
+                                ? tr("Updating your preview…", "प्रीव्यू बदल रहा है…")
                                 : !result.enhancement_enabled
-                                  ? "Original lighting preserved."
+                                  ? tr("Original lighting preserved.", "असली रोशनी जस की तस रखी गई।")
                                   : result.enhancements_applied?.length
                                     ? result.enhancements_applied.join(" · ")
-                                    : "Your photograph needed no correction."}
+                                    : tr("Your photograph needed no correction.", "आपकी फ़ोटो में किसी सुधार की ज़रूरत नहीं थी।")}
                         </p>
                         {message && (
                             <p role="alert" className="euk-lighting-error">
@@ -412,7 +424,9 @@ export function RequirementUpload({
                     }}
                     className="primary-button euk-drop-button"
                 >
-                    {PROMPT[requirementType] ?? "Add your file"}
+                    {PROMPT[requirementType]
+                        ? tr(PROMPT[requirementType][0], PROMPT[requirementType][1])
+                        : tr("Add your file", "अपनी फ़ाइल जोड़ें")}
                 </button>
                 {/* The camera, directly (owner's note, 16 September). An installed
                     app hands the picker to Android, which offers the camera only
@@ -427,7 +441,7 @@ export function RequirementUpload({
                     }}
                     className="secondary-button euk-drop-camera"
                 >
-                    {photo ? "Take a photo now" : "Use the camera"}
+                    {photo ? tr("Take a photo now", "अभी फ़ोटो खींचें") : tr("Use the camera", "कैमरा इस्तेमाल करें")}
                 </button>
                 <input
                     ref={cameraRef}
@@ -444,15 +458,15 @@ export function RequirementUpload({
                     }}
                 />
                 <p className="euk-drop-hint">
-                    or drop it here: JPEG, PNG, WebP up to 40&nbsp;MB
-                    {documents ? "; PDF up to 5 MB" : ""}
+                    {tr("or drop it here: JPEG, PNG, WebP up to 40 MB", "या यहाँ छोड़ें: JPEG, PNG, WebP, 40 MB तक")}
+                    {documents ? tr("; PDF up to 5 MB", "; PDF 5 MB तक") : ""}
                 </p>
                 <input
                     ref={inputRef}
                     type="file"
                     accept={documents ? ACCEPT : "image/jpeg,image/png,image/webp"}
                     className="sr-only"
-                    aria-label={`Upload for ${requirementName}`}
+                    aria-label={tr(`Upload for ${requirementName}`, `${requirementName} के लिए अपलोड`)}
                     onChange={(event) => {
                         const file = event.target.files?.[0];
                         if (file && consent.allow()) void submit(file);
@@ -475,20 +489,21 @@ export function RequirementUpload({
             {photo && (
                 <div className="euk-lighting">
                     <LightingSwitch
-                        title="Intelligent lighting adjustment"
-                        label="Intelligent lighting adjustment"
+                        title={tr("Intelligent lighting adjustment", "रोशनी अपने-आप ठीक करें")}
+                        label={tr("Intelligent lighting adjustment", "रोशनी अपने-आप ठीक करें")}
                         checked={enhancementEnabled}
                         onChange={setEnhancementEnabled}
                     />
                     <p>
-                        Adjusts exposure and colour only when your photograph
-                        needs it, and you see the change before you download.
-                        No whitening, reshaping or beauty filters.
+                        {tr(
+                            "Adjusts exposure and colour only when your photograph needs it, and you see the change before you download. No whitening, reshaping or beauty filters.",
+                            "रोशनी और रंग तभी ठीक करता है जब फ़ोटो को ज़रूरत हो, और डाउनलोड से पहले आप बदलाव देखते हैं। कोई गोरापन, चेहरा बदलना या ब्यूटी फ़िल्टर नहीं।",
+                        )}
                     </p>
                 </div>
             )}
             <p className="euk-upload-note">
-                Free. No account needed.
+                {tr("Free. No account needed.", "मुफ़्त। कोई अकाउंट नहीं चाहिए।")}
             </p>
         </div>
     );

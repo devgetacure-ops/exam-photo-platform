@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useTr } from "../locale-context";
 import { emailKit } from "../../lib/journey-client";
 import { getReadiness } from "../../lib/api-client";
 
@@ -50,6 +51,7 @@ export function EmailDelivery({
     released: boolean;
 }) {
     const saved = drafts.get(kitId);
+    const tr = useTr();
     const [address, setAddress] = useState(saved?.address ?? "");
     const [auto, setAuto] = useState(saved?.auto ?? false);
     const [state, setState] = useState<"idle" | "sending" | "sent" | "error">(
@@ -92,10 +94,13 @@ export function EmailDelivery({
             const receipt = await emailKit(kitId, trimmed, jobIds);
             if (!receipt.sent)
                 throw new Error(
-                    "Email was not sent. Your downloads are still available.",
+                    tr("Email was not sent. Your downloads are still available.", "ईमेल नहीं गया। आपके डाउनलोड अब भी उपलब्ध हैं।"),
                 );
             setMessage(
-                `Sent ${receipt.filenames.length} file${receipt.filenames.length === 1 ? "" : "s"} to ${receipt.masked_address}. Check your inbox and spam folder.`,
+                tr(
+                    `Sent ${receipt.filenames.length} file${receipt.filenames.length === 1 ? "" : "s"} to ${receipt.masked_address}. Check your inbox and spam folder.`,
+                    `${receipt.filenames.length} फ़ाइल ${receipt.masked_address} पर भेजी गईं। इनबॉक्स और स्पैम फ़ोल्डर देखें।`,
+                ),
             );
             setState("sent");
             drafts.delete(kitId);
@@ -104,7 +109,7 @@ export function EmailDelivery({
             setMessage(
                 error instanceof Error
                     ? error.message
-                    : "Email could not be sent. Please download your files.",
+                    : tr("Email could not be sent. Please download your files.", "ईमेल नहीं भेजा जा सका। कृपया अपनी फ़ाइलें डाउनलोड करें।"),
             );
         }
     }
@@ -138,18 +143,18 @@ export function EmailDelivery({
                 <div className="min-w-0">
                     <h3>
                         {released
-                            ? "A copy for your inbox"
+                            ? tr("A copy for your inbox", "आपके इनबॉक्स के लिए एक कॉपी")
                             : "Email them to yourself as well"}
                     </h3>
                     <p>
                         {released
-                            ? "Keep the files after ours are deleted."
+                            ? tr("Keep the files after ours are deleted.", "हमारी तरफ़ से हटने के बाद भी फ़ाइलें आपके पास रहेंगी।")
                             : "Leave your address and they are sent the moment payment is confirmed on this page."}
                     </p>
                 </div>
             </div>
             <label htmlFor="delivery-email" className="euk-email-label">
-                Email address <span>(optional)</span>
+                {tr("Email address", "ईमेल पता")} <span>{tr("(optional)", "(अगर चाहें)")}</span>
             </label>
             <div className="euk-email-row">
                 <input
@@ -181,12 +186,12 @@ export function EmailDelivery({
                         disabled={!valid || state === "sending" || state === "sent"}
                     >
                         {state === "sending"
-                            ? "Sending…"
+                            ? tr("Sending…", "भेज रहे हैं…")
                             : state === "sent"
-                              ? "Sent"
+                              ? tr("Sent", "भेज दिया")
                               : state === "error"
-                                ? "Try email again"
-                                : "Email my files"}
+                                ? tr("Try email again", "ईमेल फिर से भेजें")
+                                : tr("Email my files", "मेरी फ़ाइलें ईमेल करें")}
                     </button>
                 )}
             </div>

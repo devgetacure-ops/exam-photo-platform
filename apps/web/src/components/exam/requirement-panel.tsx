@@ -9,6 +9,9 @@ import { RequirementUpload } from "./requirement-upload";
 import { SpecimenSheet, Tick, Cross } from "./specimen-sheet";
 import { ReportIssue } from "./report-issue";
 import { FileTypeDrawing } from "../euk/doodles";
+import { useLocale, useTr } from "../locale-context";
+import { localValue } from "../../lib/i18n";
+import { toolText } from "../../lib/i18n-tool";
 
 /**
  * One file, curated for itself.
@@ -27,71 +30,102 @@ function meaningful(value?: string | null): string | null {
     return value && !MEANINGLESS.test(value.trim()) ? value : null;
 }
 
-function backgroundPhrase(raw: unknown): string | null {
+function backgroundPhrase(raw: unknown, tr: (english: string, hindi: string) => string): string | null {
     const background = raw as { mode?: string; required_colour?: string } | undefined;
     switch (background?.mode) {
         case "exact_colour": {
             const colour = background.required_colour;
-            if (!colour) return "the exact colour it asks for";
+            if (!colour) return tr("the exact colour it asks for", "ठीक वही रंग जो माँगा गया है");
             if (colour.startsWith("#"))
                 return colour.toUpperCase() === "#FFFFFF"
-                    ? "plain white"
-                    : "the exact colour it asks for";
-            return `plain ${colour.toLowerCase()}`;
+                    ? tr("plain white", "सादा सफ़ेद")
+                    : tr("the exact colour it asks for", "ठीक वही रंग जो माँगा गया है");
+            return tr(`plain ${colour.toLowerCase()}`, `सादा ${colour.toLowerCase()}`);
         }
         case "plain_light":
-            return "plain and light";
+            return tr("plain and light", "सादा और हल्का");
         case "plain_background":
-            return "plain";
+            return tr("plain", "सादा");
         default:
             return null;
     }
 }
 
-function introFor(r: RequirementSummary, exam: ExamDetail): string {
+function introFor(r: RequirementSummary, exam: ExamDetail, tr: (english: string, hindi: string) => string): string {
     if (r.platform_support === "not_yet_supported")
-        return "We can’t prepare this file yet. Here is what the notice asks, so you can do it yourself.";
+        return tr(
+            "We can’t prepare this file yet. Here is what the notice asks, so you can do it yourself.",
+            "यह फ़ाइल हम अभी तैयार नहीं कर सकते। नोटिस में क्या माँगा गया है, वह यहाँ है, ताकि आप खुद कर सकें।",
+        );
     if (r.platform_support === "physical_stage")
-        return "This happens in person, at a later stage. Here is what the notice asks.";
+        return tr(
+            "This happens in person, at a later stage. Here is what the notice asks.",
+            "यह बाद के चरण में खुद जाकर होता है। नोटिस में क्या माँगा गया है, वह यहाँ है।",
+        );
     if (r.platform_support === "guidance_only")
         return r.submission_method === "official_live_capture"
-            ? "The portal takes this photograph itself. There is nothing to upload."
-            : "This is a step you take yourself. Here is what the notice asks.";
+            ? tr(
+                  "The portal takes this photograph itself. There is nothing to upload.",
+                  "यह फ़ोटो पोर्टल खुद खींचता है। अपलोड करने को कुछ नहीं है।",
+              )
+            : tr(
+                  "This is a step you take yourself. Here is what the notice asks.",
+                  "यह काम आपको खुद करना है। नोटिस में क्या माँगा गया है, वह यहाँ है।",
+              );
 
     const partial =
         r.platform_support === "partially_supported"
-            ? " One thing it asks for, we can’t add yet. It is named below."
+            ? tr(
+                  " One thing it asks for, we can’t add yet. It is named below.",
+                  " इसमें माँगी गई एक चीज़ हम अभी नहीं जोड़ सकते। वह नीचे बताई गई है।",
+              )
             : "";
     switch (r.requirement_type) {
         case "photograph": {
             const background = backgroundPhrase(
                 (exam.image_requirements as Record<string, unknown>)?.background,
+                tr,
             );
-            return `Any clear photo of you will do. We frame it, ${background ? `make the background ${background}, ` : ""}and size it to the rules.${partial}`;
+            return tr(
+                `Any clear photo of you will do. We frame it, ${background ? `make the background ${background}, ` : ""}and size it to the rules.${partial}`,
+                `आपकी कोई भी साफ़ फ़ोटो चलेगी। हम उसे सही फ़्रेम में रखते हैं, ${background ? `बैकग्राउंड ${background} करते हैं, ` : ""}और नियमों के हिसाब से साइज़ करते हैं।${partial}`,
+            );
         }
         case "signature":
-            return `Sign on plain paper and take a photo of it. We crop to the ink and size it to the rules, without stretching a stroke.${partial}`;
+            return tr(
+                `Sign on plain paper and take a photo of it. We crop to the ink and size it to the rules, without stretching a stroke.${partial}`,
+                `सादे काग़ज़ पर हस्ताक्षर करें और उसकी फ़ोटो लें। हम स्याही के हिसाब से काटते हैं और नियमों के हिसाब से साइज़ करते हैं, बिना किसी लकीर को खींचे।${partial}`,
+            );
         case "thumb_impression":
-            return `Press your thumb on plain paper and take a photo of it. We crop to the impression and size it to the rules.${partial}`;
+            return tr(
+                `Press your thumb on plain paper and take a photo of it. We crop to the impression and size it to the rules.${partial}`,
+                `सादे काग़ज़ पर अंगूठा लगाएँ और उसकी फ़ोटो लें। हम निशान के हिसाब से काटते हैं और नियमों के हिसाब से साइज़ करते हैं।${partial}`,
+            );
         case "handwritten_declaration":
-            return `Write it out on plain paper and photograph the whole page. We size it to the rules and never crop the page down to the writing.${partial}`;
+            return tr(
+                `Write it out on plain paper and photograph the whole page. We size it to the rules and never crop the page down to the writing.${partial}`,
+                `इसे सादे काग़ज़ पर लिखें और पूरे पन्ने की फ़ोटो लें। हम इसे नियमों के हिसाब से साइज़ करते हैं, पन्ने को लिखावट तक कभी नहीं काटते।${partial}`,
+            );
         default:
-            return `Bring the pages as photos or PDFs. Put them in order, leave out what isn’t needed, and we make one file to the rules.${partial}`;
+            return tr(
+                `Bring the pages as photos or PDFs. Put them in order, leave out what isn’t needed, and we make one file to the rules.${partial}`,
+                `पन्ने फ़ोटो या PDF के रूप में लाएँ। उन्हें क्रम में रखें, जो ज़रूरी नहीं उसे हटाएँ, और हम नियमों के हिसाब से एक फ़ाइल बनाते हैं।${partial}`,
+            );
     }
 }
 
-const GOOD: Record<string, string> = {
-    photograph: "A good photograph, and what to avoid",
-    signature: "A good signature, and what to avoid",
-    thumb_impression: "A good thumb impression, and what to avoid",
-    handwritten_declaration: "A good declaration, and what to avoid",
+const GOOD: Record<string, [string, string]> = {
+    photograph: ["A good photograph, and what to avoid", "अच्छी फ़ोटो, और किन बातों से बचें"],
+    signature: ["A good signature, and what to avoid", "अच्छा हस्ताक्षर, और किन बातों से बचें"],
+    thumb_impression: ["A good thumb impression, and what to avoid", "अंगूठे का अच्छा निशान, और किन बातों से बचें"],
+    handwritten_declaration: ["A good declaration, and what to avoid", "अच्छी घोषणा, और किन बातों से बचें"],
 };
 
-const VERDICT_WORD: Record<Verdict, string> = {
-    prohibited: "Not allowed",
-    conditional: "Allowed, on a condition",
-    required: "Required",
-    permitted: "Allowed",
+const VERDICT_WORD: Record<Verdict, [string, string]> = {
+    prohibited: ["Not allowed", "मना है"],
+    conditional: ["Allowed, on a condition", "शर्त के साथ चलेगा"],
+    required: ["Required", "ज़रूरी"],
+    permitted: ["Allowed", "चलेगा"],
 };
 
 function VerdictMark({ verdict }: { verdict: Verdict }) {
@@ -122,6 +156,8 @@ export function RequirementPanel({
     onWorking?: (value: boolean) => void;
 }) {
     const r = requirement;
+    const locale = useLocale();
+    const tr = useTr();
     const supported =
         r.platform_support === "supported" ||
         r.platform_support === "partially_supported";
@@ -148,13 +184,13 @@ export function RequirementPanel({
                 <FileTypeDrawing type={r.requirement_type} className="euk-file-icon" />
                 <div className="min-w-0">
                     <h2 className="euk-display euk-file-title">{r.requirement_name}</h2>
-                    <p className="euk-file-intro">{introFor(r, exam)}</p>
+                    <p className="euk-file-intro">{introFor(r, exam, tr)}</p>
                 </div>
             </header>
 
             {r.requirement_status === "conditional" && meaningful(r.applicability) && (
                 <p className="euk-file-when">
-                    <strong>Only if it applies to you.</strong> {r.applicability}
+                    <strong>{tr("Only if it applies to you.", "सिर्फ़ तभी, जब यह आप पर लागू हो।")}</strong> {r.applicability}
                 </p>
             )}
 
@@ -163,11 +199,11 @@ export function RequirementPanel({
                     <p>
                         {instructions ||
                             meaningful(r.notes) ||
-                            "Complete this requirement through the examination’s official instructions."}
+                            tr("Complete this requirement through the examination’s official instructions.", "यह काम परीक्षा के आधिकारिक निर्देशों के अनुसार पूरा करें।")}
                     </p>
                     {r.rejection_conditions.length > 0 && (
                         <>
-                            <h3 className="euk-file-h3">What the notice says gets rejected</h3>
+                            <h3 className="euk-file-h3">{tr("What the notice says gets rejected", "नोटिस के अनुसार क्या अस्वीकार होता है")}</h3>
                             <ul>
                                 {r.rejection_conditions.map((condition) => (
                                     <li key={condition}>{condition}</li>
@@ -176,7 +212,7 @@ export function RequirementPanel({
                         </>
                     )}
                     <Link className="euk-link" href={rulesHref}>
-                        Read the examination’s sources
+                        {tr("Read the examination’s sources", "परीक्षा के स्रोत पढ़ें (अंग्रेज़ी में)")}
                     </Link>
                 </div>
             ) : (
@@ -186,17 +222,22 @@ export function RequirementPanel({
                         {rows.length > 0 && (
                             <dl
                                 className="euk-measure"
-                                aria-label={`${r.requirement_name} specification`}
+                                aria-label={tr(`${r.requirement_name} specification`, `${r.requirement_name} के नियम`)}
                             >
                                 {rows.map((row) => (
                                     <div key={row.term} className="euk-measure-cell">
-                                        <dt>{row.term}</dt>
+                                        <dt>{toolText(locale, row.term)}</dt>
                                         <dd>
-                                            {row.value}
+                                            {localValue(locale, row.value)}
                                             {row.estimated && (
-                                                <abbr title="Platform estimate: this value has not been established by an official source.">
+                                                <abbr
+                                                    title={tr(
+                                                        "Platform estimate: this value has not been established by an official source.",
+                                                        "हमारा अनुमान: यह मान किसी आधिकारिक स्रोत से तय नहीं हुआ है।",
+                                                    )}
+                                                >
                                                     {" "}
-                                                    est.
+                                                    {tr("est.", "अनुमानित")}
                                                 </abbr>
                                             )}
                                         </dd>
@@ -206,11 +247,11 @@ export function RequirementPanel({
                         )}
                         {partial && (
                             <div className="euk-file-partial">
-                                <p className="euk-file-partial-title">One step stays yours</p>
+                                <p className="euk-file-partial-title">{tr("One step stays yours", "एक काम आपका रहेगा")}</p>
                                 <p>
-                                    {guidance.find((g) => g.id === "imprint")?.detail ||
+                                    {toolText(locale, guidance.find((g) => g.id === "imprint")?.detail ?? "") ||
                                         meaningful(r.notes) ||
-                                        "Check the examination’s instructions before submitting."}
+                                        tr("Check the examination’s instructions before submitting.", "जमा करने से पहले परीक्षा के निर्देश देख लें।")}
                                 </p>
                             </div>
                         )}
@@ -241,33 +282,39 @@ export function RequirementPanel({
                         {specimens.length > 0 && (
                             <>
                                 <h3 className="euk-file-h3">
-                                    {GOOD[r.requirement_type] ?? "A good document, and what to avoid"}
+                                    {GOOD[r.requirement_type]
+                                        ? tr(GOOD[r.requirement_type][0], GOOD[r.requirement_type][1])
+                                        : tr("A good document, and what to avoid", "अच्छा दस्तावेज़, और किन बातों से बचें")}
                                 </h3>
                                 <SpecimenSheet
+                                    locale={locale}
                                     specimens={specimens}
-                                    note={`Drawn to show each rule. Marked from ${exam.conducting_body}’s published rules and the checks we run on every upload.`}
+                                    note={tr(
+                                        `Drawn to show each rule. Marked from ${exam.conducting_body}’s published rules and the checks we run on every upload.`,
+                                        `हर नियम दिखाने के लिए बनाया गया। ${exam.conducting_body} के प्रकाशित नियमों और हर अपलोड पर हमारी जाँच के आधार पर।`,
+                                    )}
                                 />
                             </>
                         )}
 
                         {guidance.length > 0 && (
                             <>
-                                <h3 className="euk-file-h3">What the notice says about how you look</h3>
+                                <h3 className="euk-file-h3">{tr("What the notice says about how you look", "आप कैसे दिखें, इस पर नोटिस क्या कहता है")}</h3>
                                 <ul className="euk-verdicts">
                                     {guidance.map((g) => (
                                         <li key={g.id} className={`euk-verdict euk-verdict--${g.verdict}`}>
                                             <VerdictMark verdict={g.verdict} />
                                             <div className="min-w-0">
                                                 <p className="euk-verdict-title">
-                                                    {g.title}{" "}
+                                                    {toolText(locale, g.title)}{" "}
                                                     <span className="euk-verdict-word">
-                                                        {VERDICT_WORD[g.verdict]}
+                                                        {tr(VERDICT_WORD[g.verdict][0], VERDICT_WORD[g.verdict][1])}
                                                     </span>
                                                 </p>
-                                                <p>{g.detail}</p>
+                                                <p>{toolText(locale, g.detail)}</p>
                                                 {g.sourceWording && (
                                                     <p className="euk-verdict-quote">
-                                                        The notice: “{g.sourceWording}”
+                                                        {tr("The notice", "नोटिस")}: “{g.sourceWording}”
                                                     </p>
                                                 )}
                                             </div>
@@ -280,13 +327,13 @@ export function RequirementPanel({
                         <div className="euk-file-mores">
                             {instructions && (
                                 <details className="euk-file-more">
-                                    <summary>How the notice says to prepare it</summary>
+                                    <summary>{tr("How the notice says to prepare it", "नोटिस के अनुसार इसे कैसे तैयार करें")}</summary>
                                     <p>{instructions}</p>
                                 </details>
                             )}
                             <details className="euk-file-more">
-                                <summary>What may be rejected</summary>
-                                <h4>By the examination authority</h4>
+                                <summary>{tr("What may be rejected", "क्या अस्वीकार हो सकता है")}</summary>
+                                <h4>{tr("By the examination authority", "परीक्षा संस्था द्वारा")}</h4>
                                 {r.rejection_conditions.length ? (
                                     <ul>
                                         {r.rejection_conditions.map((condition) => (
@@ -295,15 +342,23 @@ export function RequirementPanel({
                                     </ul>
                                 ) : (
                                     <p>
-                                        No specific rejection conditions are recorded
-                                        for this file. Check the linked source.
+                                        {tr(
+                                            "No specific rejection conditions are recorded for this file. Check the linked source.",
+                                            "इस फ़ाइल के लिए अस्वीकृति की कोई ख़ास शर्त दर्ज नहीं है। दिए गए स्रोत को देखें।",
+                                        )}
                                     </p>
                                 )}
-                                <h4>When we can’t prepare a file</h4>
+                                <h4>{tr("When we can’t prepare a file", "जब हम फ़ाइल तैयार नहीं कर पाते")}</h4>
                                 <p>
                                     {photo
-                                        ? "We need a readable image with one clear, detectable face. Anything else we notice is shown for you to review."
-                                        : "We need a readable file. We’ll tell you if we can’t prepare it or can’t meet a specification."}
+                                        ? tr(
+                                              "We need a readable image with one clear, detectable face. Anything else we notice is shown for you to review.",
+                                              "हमें एक साफ़ फ़ोटो चाहिए जिसमें एक चेहरा साफ़ पहचाना जा सके। और कुछ भी दिखे तो वह आपको जाँचने के लिए दिखाया जाता है।",
+                                          )
+                                        : tr(
+                                              "We need a readable file. We’ll tell you if we can’t prepare it or can’t meet a specification.",
+                                              "हमें पढ़ने लायक फ़ाइल चाहिए। अगर हम उसे तैयार न कर पाएँ या कोई नियम पूरा न हो, तो हम बताएँगे।",
+                                          )}
                                 </p>
                             </details>
                         </div>
@@ -311,8 +366,8 @@ export function RequirementPanel({
                         <p className="euk-file-sources">
                             <Link href={rulesHref}>
                                 {official
-                                    ? "View the examination’s sources"
-                                    : "View the sources we found"}
+                                    ? tr("View the examination’s sources", "परीक्षा के स्रोत देखें (अंग्रेज़ी में)")
+                                    : tr("View the sources we found", "हमें मिले स्रोत देखें (अंग्रेज़ी में)")}
                             </Link>
                             <ReportIssue
                                 examName={exam.exam_name}

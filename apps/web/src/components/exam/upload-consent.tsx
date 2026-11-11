@@ -3,6 +3,7 @@
 import { type ReactNode, useState, useSyncExternalStore } from "react";
 
 import { giveTermsConsent, readTermsAccepted, subscribeConsent } from "../../lib/consent";
+import { useTr } from "../locale-context";
 
 /**
  * The one agreement asked above an upload, before the first file (DEC-086,
@@ -32,6 +33,7 @@ export function useUploadConsent(): UploadConsent {
 
     // Shown once it is known to be missing, and kept on screen while the
     // candidate ticks, so the box never disappears under their finger.
+    const tr = useTr();
     const [asked, setAsked] = useState(false);
     const [nudge, setNudge] = useState(false);
     if (known && !accepted && !asked) setAsked(true);
@@ -53,20 +55,20 @@ export function useUploadConsent(): UploadConsent {
                         onChange={(event) => giveTermsConsent(event.target.checked)}
                     />
                     <span>
-                        I have read and agree to the{" "}
+                        {tr("I have read and agree to the", "मैंने")}{" "}
                         <a href="/terms" target="_blank" rel="noreferrer">
-                            terms and conditions
+                            {tr("terms and conditions", "नियम और शर्तें")}
                         </a>{" "}
-                        and the{" "}
+                        {tr("and the", "और")}{" "}
                         <a href="/privacy" target="_blank" rel="noreferrer">
-                            privacy policy
+                            {tr("privacy policy", "प्राइवेसी नीति")}
                         </a>
-                        .
+                        {tr(".", " पढ़ ली हैं और मैं सहमत हूँ।")}
                     </span>
                 </label>
                 {nudge && !accepted && (
                     <p className="euk-upload-consent-nudge" role="alert">
-                        Tick this first, then add your file.
+                        {tr("Tick this first, then add your file.", "पहले यह टिक करें, फिर अपनी फ़ाइल जोड़ें।")}
                     </p>
                 )}
             </div>

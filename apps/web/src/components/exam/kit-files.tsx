@@ -5,6 +5,8 @@ import type { KitEntry } from "../../lib/kit-state";
 import { plainFindings } from "../../lib/finding-text";
 import { FileTypeDrawing } from "../euk/doodles";
 import { PreviewThumb } from "./preview-thumb";
+import { useLocale, useTr } from "../locale-context";
+import { toolText } from "../../lib/i18n-tool";
 
 /**
  * A kit's prepared files and their deletion clock, shared by the free
@@ -67,6 +69,7 @@ export function ExpiryClock({
     at: number;
     delivered: boolean;
 }) {
+    const tr = useTr();
     const minutes = Math.floor(seconds / 60);
     const rest = seconds % 60;
     return (
@@ -80,13 +83,19 @@ export function ExpiryClock({
                 <div className="min-w-0">
                     <p className="euk-clock-title">
                         {delivered
-                            ? `Download them before ${clock(at)}`
-                            : `Deleted at ${clock(at)}`}
+                            ? tr(`Download them before ${clock(at)}`, `${clock(at)} से पहले डाउनलोड कर लें`)
+                            : tr(`Deleted at ${clock(at)}`, `${clock(at)} पर हट जाएँगी`)}
                     </p>
                     <p className="euk-clock-text">
                         {delivered
-                            ? "After that they are deleted from our side and can’t be recovered. An emailed copy stays in your inbox."
-                            : "Files are deleted within 30 minutes of being prepared, or within an hour if you ask us to keep them. Download or email them straight after."}
+                            ? tr(
+                                  "After that they are deleted from our side and can’t be recovered. An emailed copy stays in your inbox.",
+                                  "उसके बाद ये हमारी तरफ़ से हट जाती हैं और वापस नहीं मिलतीं। ईमेल की गई कॉपी आपके इनबॉक्स में रहती है।",
+                              )
+                            : tr(
+                                  "Files are deleted within 30 minutes of being prepared, or within an hour if you ask us to keep them. Download or email them straight after.",
+                                  "फ़ाइलें तैयार होने के 30 मिनट में हट जाती हैं, या कहने पर एक घंटे में। तैयार होते ही डाउनलोड या ईमेल कर लें।",
+                              )}
                     </p>
                 </div>
             </div>
@@ -123,6 +132,8 @@ export function FileRow({
     /** Opens this file's own screen, where it can be added again. */
     onPrepareAgain?: () => void;
 }) {
+    const tr = useTr();
+    const locale = useLocale();
     const expired = !!job && jobExpired(job, now);
     const available = !!job && jobDownloadable(job, now);
     const notes = plainFindings(entry.findings);
@@ -151,17 +162,19 @@ export function FileRow({
                 </p>
                 <p className="euk-order-status">
                     {expired
-                        ? "Expired — prepare this file again"
+                        ? tr("Expired — prepare this file again", "समय ख़त्म, यह फ़ाइल फिर से तैयार करें")
                         : available
-                          ? "Ready to download"
+                          ? tr("Ready to download", "डाउनलोड के लिए तैयार")
                           : job
                             ? "Protected until payment is confirmed"
-                            : "Checking availability…"}
+                            : tr("Checking availability…", "जाँच रहे हैं…")}
                     {!expired && seconds !== null && (
                         <span className="euk-order-countdown">
                             {" "}
-                            · deletes in {Math.floor(seconds / 60)}m{" "}
-                            {String(seconds % 60).padStart(2, "0")}s
+                            {tr(
+                                `· deletes in ${Math.floor(seconds / 60)}m ${String(seconds % 60).padStart(2, "0")}s`,
+                                `· ${Math.floor(seconds / 60)} मिनट ${String(seconds % 60).padStart(2, "0")} सेकंड में हटेगी`,
+                            )}
                         </span>
                     )}
                 </p>
@@ -175,16 +188,18 @@ export function FileRow({
                 )}
                 {partial && (
                     <p className="euk-order-meta">
-                        Partly prepared — your exam still requires additional
-                        steps. Review its instructions.
+                        {tr(
+                            "Partly prepared — your exam still requires additional steps. Review its instructions.",
+                            "कुछ हद तक तैयार, आपकी परीक्षा में अभी और कदम बाकी हैं। उसके निर्देश देख लें।",
+                        )}
                     </p>
                 )}
                 {notes.length > 0 && (
                     <details className="euk-order-findings">
-                        <summary>Worth a look ({notes.length})</summary>
+                        <summary>{tr(`Worth a look (${notes.length})`, `एक बार देख लें (${notes.length})`)}</summary>
                         <ul>
                             {notes.map((note) => (
-                                <li key={note}>{note}</li>
+                                <li key={note}>{toolText(locale, note)}</li>
                             ))}
                         </ul>
                     </details>
@@ -196,12 +211,12 @@ export function FileRow({
                     testing, 1 October). */}
                 {expired && onPrepareAgain && (
                     <button type="button" className="primary-button" onClick={onPrepareAgain}>
-                        Prepare it again
+                        {tr("Prepare it again", "फिर से तैयार करें")}
                     </button>
                 )}
                 {available && (
                     <a className="primary-button" href={jobOutputUrl(entry.jobId)}>
-                        Download file
+                        {tr("Download file", "फ़ाइल डाउनलोड करें")}
                     </a>
                 )}
                 {job?.extendable && !expired && (
@@ -211,7 +226,7 @@ export function FileRow({
                         disabled={extending !== null}
                         onClick={onExtend}
                     >
-                        {extending === entry.jobId ? "Extending…" : "Keep for longer"}
+                        {extending === entry.jobId ? tr("Extending…", "समय बढ़ा रहे हैं…") : tr("Keep for longer", "ज़्यादा देर रखें")}
                     </button>
                 )}
             </div>

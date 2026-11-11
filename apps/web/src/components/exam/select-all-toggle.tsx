@@ -1,5 +1,7 @@
 "use client";
 
+import { useTr } from "../locale-context";
+
 /**
  * One control for the whole selection, on the desktop kit and the phone flow.
  *
@@ -22,6 +24,7 @@ export function SelectAllToggle({
     className: string;
 }) {
     const clearing = selected > 0;
+    const tr = useTr();
     return (
         <button
             type="button"
@@ -29,7 +32,7 @@ export function SelectAllToggle({
             disabled={disabled}
             onClick={clearing ? onClear : onSelectAll}
         >
-            {clearing ? "Clear all" : "Select all"}
+            {clearing ? tr("Clear all", "सब हटाएँ") : tr("Select all", "सब चुनें")}
         </button>
     );
 }

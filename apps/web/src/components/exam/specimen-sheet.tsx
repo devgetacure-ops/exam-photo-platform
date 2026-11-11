@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 import type { Specimen, SpecimenId } from "../../lib/specimens";
+import type { Locale } from "../../lib/i18n";
+import { toolText } from "../../lib/i18n-tool";
 
 /**
  * The specimen sheet: one accepted example, then the ones that are not.
@@ -327,9 +329,12 @@ export function Cross() {
 export function SpecimenSheet({
     specimens,
     note,
+    locale = "en",
 }: {
     specimens: Specimen[];
     note: string;
+    /** DEC-129: captions in Hindi on a Hindi page. */
+    locale?: Locale;
 }) {
     return (
         <figure className="euk-specimens">
@@ -360,9 +365,15 @@ export function SpecimenSheet({
                             </div>
                             <p className="euk-specimen-caption">
                                 <span className="sr-only">
-                                    {specimen.ok ? "Accepted: " : "Not accepted: "}
+                                    {locale === "hi"
+                                        ? specimen.ok
+                                            ? "स्वीकार: "
+                                            : "अस्वीकार: "
+                                        : specimen.ok
+                                          ? "Accepted: "
+                                          : "Not accepted: "}
                                 </span>
-                                {specimen.caption}
+                                {toolText(locale, specimen.caption)}
                             </p>
                         </li>
                     );

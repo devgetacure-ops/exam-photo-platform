@@ -14,6 +14,9 @@ import {
 } from "../../lib/finding-text";
 import { FileComparison } from "../file-comparison";
 import { useLiveJob } from "./live-job-state";
+import { useLocale, useTr } from "../locale-context";
+import { toolText } from "../../lib/i18n-tool";
+import { BILLING_ENABLED } from "../../billing/config";
 import { Cross, Tick } from "./specimen-sheet";
 
 /**
@@ -53,6 +56,8 @@ export function OutcomeResult({
     sourceUrl,
     partiallySupported = false,
 }: Props) {
+    const tr = useTr();
+    const locale = useLocale();
     const live = useLiveJob(result.job_id);
     const [now, setNow] = useState(0);
     useEffect(() => {
@@ -86,13 +91,15 @@ export function OutcomeResult({
     if (expired)
         return (
             <div className="euk-outcome euk-outcome--expired">
-                <p className="euk-outcome-title">This file has expired.</p>
+                <p className="euk-outcome-title">{tr("This file has expired.", "इस फ़ाइल का समय ख़त्म हो गया।")}</p>
                 <p className="euk-outcome-text">
-                    The preview and download are no longer available. Prepare it
-                    again to start a new retention window.
+                    {tr(
+                        "The preview and download are no longer available. Prepare it again to start a new retention window.",
+                        "प्रीव्यू और डाउनलोड अब उपलब्ध नहीं हैं। इसे फिर से तैयार करें।",
+                    )}
                 </p>
                 <button className="secondary-button" onClick={onReplace}>
-                    Prepare again
+                    {tr("Prepare again", "फिर से तैयार करें")}
                 </button>
             </div>
         );
@@ -104,7 +111,7 @@ export function OutcomeResult({
                     <span className="euk-outcome-mark" aria-hidden="true">
                         <Cross />
                     </span>
-                    <p className="euk-outcome-title">We could not prepare this one</p>
+                    <p className="euk-outcome-title">{tr("We could not prepare this one", "यह फ़ाइल तैयार नहीं हो सकी")}</p>
                 </div>
                 <ul>
                     {(() => {
@@ -113,17 +120,17 @@ export function OutcomeResult({
                         );
                         return lines.length > 0 ? lines : [issueText("")];
                     })().map((line) => (
-                        <li key={line}>{line}</li>
+                        <li key={line}>{toolText(locale, line)}</li>
                     ))}
                 </ul>
                 <p className="euk-outcome-text">
-                    Nothing has been charged.{" "}
+                    {BILLING_ENABLED && "Nothing has been charged. "}
                     {photo
-                        ? RETAKE_GUIDANCE
-                        : "Try a different file and we will have another go."}
+                        ? toolText(locale, RETAKE_GUIDANCE)
+                        : tr("Try a different file and we will have another go.", "कोई दूसरी फ़ाइल आज़माएँ, हम फिर कोशिश करेंगे।")}
                 </p>
                 <button type="button" className="secondary-button" onClick={onReplace}>
-                    Try another file
+                    {tr("Try another file", "दूसरी फ़ाइल आज़माएँ")}
                 </button>
             </div>
         );
@@ -140,10 +147,10 @@ export function OutcomeResult({
                 <div className="min-w-0">
                     <p className="euk-outcome-title">
                         {partiallySupported
-                            ? "Partly prepared — further steps needed"
+                            ? tr("Partly prepared — further steps needed", "कुछ हद तक तैयार, आगे के कदम बाकी")
                             : hasFindings
-                              ? "Ready — with something to check"
-                              : "Ready"}
+                              ? tr("Ready — with something to check", "तैयार, पर कुछ देख लें")
+                              : tr("Ready", "तैयार")}
                     </p>
                     <p className="euk-outcome-spec">
                         {[
@@ -158,7 +165,7 @@ export function OutcomeResult({
                     </p>
                 </div>
                 <button type="button" onClick={onReplace} className="euk-outcome-replace">
-                    Replace
+                    {tr("Replace", "बदलें")}
                 </button>
             </div>
 
@@ -185,7 +192,7 @@ export function OutcomeResult({
                                     : undefined
                             }
                             draggable={false}
-                            alt={`Prepared ${requirementName}`}
+                            alt={tr(`Prepared ${requirementName}`, `तैयार ${requirementName}`)}
                         />
                         {result.preview_watermarked && (
                             <figcaption>Preview — watermarked until you buy it.</figcaption>
@@ -197,30 +204,36 @@ export function OutcomeResult({
             {result.output_url && !result.preview_url && (
                 <p className="euk-outcome-text">
                     {result.output_media_type === "application/pdf"
-                        ? "PDF prepared. We couldn’t make a picture of it this time, so check its details after you download it."
-                        : "Your file was prepared. A preview is not available this time; check the download."}
+                        ? tr(
+                              "PDF prepared. We couldn’t make a picture of it this time, so check its details after you download it.",
+                              "PDF तैयार है। इस बार इसकी तस्वीर नहीं बन सकी, इसलिए डाउनलोड के बाद इसे जाँच लें।",
+                          )
+                        : tr(
+                              "Your file was prepared. A preview is not available this time; check the download.",
+                              "आपकी फ़ाइल तैयार है। इस बार प्रीव्यू नहीं है, डाउनलोड करके जाँच लें।",
+                          )}
                 </p>
             )}
 
             {expiry && !Number.isNaN(expiry.getTime()) && (
                 <p className="euk-outcome-expiry">
-                    Scheduled for deletion at{" "}
+                    {tr("Scheduled for deletion at", "हटाने का समय:")}{" "}
                     <time dateTime={deadline ?? undefined} suppressHydrationWarning>
                         {expiry.toLocaleTimeString([], {
                             hour: "numeric",
                             minute: "2-digit",
                         })}
                     </time>
-                    . Extension options are in your kit below.
+                    {tr(". Extension options are in your kit below.", "। समय बढ़ाने का विकल्प नीचे आपकी किट में है।")}
                 </p>
             )}
 
             {hasFindings && substantive.length > 0 && (
                 <div className="euk-outcome-block">
-                    <p className="euk-outcome-sub">Worth checking before you submit</p>
+                    <p className="euk-outcome-sub">{tr("Worth checking before you submit", "जमा करने से पहले देख लें")}</p>
                     <ul>
                         {substantive.map((finding) => (
-                            <li key={finding}>{finding}</li>
+                            <li key={finding}>{toolText(locale, finding)}</li>
                         ))}
                     </ul>
                 </div>
@@ -228,10 +241,10 @@ export function OutcomeResult({
 
             {routine.length > 0 && (
                 <details className="euk-outcome-changes">
-                    <summary>What we changed ({routine.length})</summary>
+                    <summary>{tr(`What we changed (${routine.length})`, `हमने क्या बदला (${routine.length})`)}</summary>
                     <ul>
                         {routine.map((finding) => (
-                            <li key={finding}>{ROUTINE_NOTES[finding]}</li>
+                            <li key={finding}>{toolText(locale, ROUTINE_NOTES[finding])}</li>
                         ))}
                     </ul>
                 </details>
@@ -245,10 +258,10 @@ export function OutcomeResult({
             */}
             {result.is_valid === false && result.issue_codes.length > 0 && (
                 <div className="euk-outcome-block">
-                    <p className="euk-outcome-sub">What we noticed</p>
+                    <p className="euk-outcome-sub">{tr("What we noticed", "हमने क्या देखा")}</p>
                     <ul>
                         {plainFindings(result.issue_codes).map((line) => (
-                            <li key={line}>{line}</li>
+                            <li key={line}>{toolText(locale, line)}</li>
                         ))}
                     </ul>
                 </div>

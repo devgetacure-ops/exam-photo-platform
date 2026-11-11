@@ -7,6 +7,8 @@ import { BILLING_ENABLED } from "../../billing/config";
 import { kitPrice, rupees } from "../../billing/kit-pricing";
 import { isOurs } from "../../lib/requirement-support";
 import { ActionBar } from "./action-bar";
+import { useLocale, useTr } from "../locale-context";
+import { localePath } from "../../lib/i18n";
 
 /**
  * What the examination page offers a phone: the count, the price (billing
@@ -26,6 +28,8 @@ export function PrepareCta({ exam }: { exam: ExamDetail }) {
         ours.map((r) => r.requirement_id),
     );
 
+    const tr = useTr();
+    const locale = useLocale();
     if (ours.length === 0) return null;
 
     return (
@@ -36,15 +40,15 @@ export function PrepareCta({ exam }: { exam: ExamDetail }) {
                         <strong>
                             {BILLING_ENABLED && price.kitChargeable > 0
                                 ? rupees(price.kitAmount)
-                                : "Free"}
+                                : tr("Free", "मुफ़्त")}
                         </strong>
-                        {price.kitFiles} file{price.kitFiles === 1 ? "" : "s"}
+                        {tr(`${price.kitFiles} file${price.kitFiles === 1 ? "" : "s"}`, `${price.kitFiles} फ़ाइल`)}
                         {BILLING_ENABLED && price.kitFree > 0 ? `, ${price.kitFree} free` : ""}
                     </>
                 }
             >
-                <Link href={`/exam/${exam.exam_id}/prepare`} className="primary-button">
-                    Prepare my files
+                <Link href={localePath(locale, `/exam/${exam.exam_id}/prepare`)} className="primary-button">
+                    {tr("Prepare my files", "मेरी फ़ाइलें तैयार करें")}
                 </Link>
             </ActionBar>
         </div>

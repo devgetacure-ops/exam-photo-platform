@@ -10,6 +10,7 @@ import { KitWorkspace } from "../../../../components/exam/kit-workspace";
 import { PrepareCta } from "../../../../components/m/prepare-cta";
 import { ExamFiles } from "../../../../components/m/exam-files";
 import { JsonLd } from "../../../../components/json-ld";
+import { LocaleProvider } from "../../../../components/locale-context";
 import { AdSlot } from "../../../../components/ad-slot";
 import { ExamRelated } from "../../../../components/exam/exam-related";
 import { examQuickAnswer, examSpecs } from "../../../../lib/exam-answers";
@@ -20,8 +21,8 @@ import { breadcrumbs, pageMetadata } from "../../../../lib/site";
  * One examination, in Hindi (DEC-129). The same page as `/exam/[examId]`:
  * what the authority asks for, the answer and the related examinations are
  * in Hindi; the examination's name and every figure stay as published. The
- * preparation tool itself is still English for now, and the page says so
- * rather than leaving a candidate to find out.
+ * preparation tool speaks Hindi through `LocaleProvider`; wording quoted
+ * from a notice stays as the authority wrote it.
  */
 
 export async function generateStaticParams() {
@@ -85,13 +86,11 @@ export default async function HindiExamPage({
             <SiteHeader mobileTitle={`${exam.exam_name} अपलोड किट`} examName={exam.exam_name} />
             <div lang="hi">
                 <ExamHero exam={exam} facts={[]} liveCapture={liveCapture} locale="hi" />
-                <p className="euk-hi-tool-note">
-                    नीचे दिया फ़ाइल तैयार करने वाला टूल अभी अंग्रेज़ी में है। फ़ोटो जोड़ें, हम उसे{" "}
-                    {exam.exam_name} के नियमों के हिसाब से तैयार कर देंगे, मुफ़्त।
-                </p>
+                <LocaleProvider locale="hi">
+                    <ExamFiles exam={exam} facts={[]} />
+                    <KitWorkspace exam={exam} facts={[]} />
+                </LocaleProvider>
             </div>
-            <ExamFiles exam={exam} facts={[]} />
-            <KitWorkspace exam={exam} facts={[]} />
             <div className="euk">
                 <AdSlot name="exam-after-kit" />
             </div>
@@ -99,7 +98,11 @@ export default async function HindiExamPage({
                 <ExamRelated exam={exam} locale="hi" />
             </div>
             <SiteFooter />
-            <PrepareCta exam={exam} />
+            <div lang="hi">
+                <LocaleProvider locale="hi">
+                    <PrepareCta exam={exam} />
+                </LocaleProvider>
+            </div>
         </main>
     );
 }
