@@ -11,6 +11,7 @@ import { KitWorkspace } from "../../../components/exam/kit-workspace";
 import { PrepareCta } from "../../../components/m/prepare-cta";
 import { ExamFiles } from "../../../components/m/exam-files";
 import { JsonLd } from "../../../components/json-ld";
+import { AdSlot } from "../../../components/ad-slot";
 import { examDescription, examTitle } from "../../../lib/exam-answers";
 import { breadcrumbs, pageMetadata } from "../../../lib/site";
 
@@ -86,6 +87,9 @@ export default async function ExamPage({
             <ExamHero exam={exam} facts={facts} liveCapture={liveCapture} />
             <ExamFiles exam={exam} facts={facts} />
             <KitWorkspace exam={exam} facts={facts} />
+            <div className="euk">
+                <AdSlot name="exam-after-kit" />
+            </div>
             <SiteFooter />
             {/* After the footer, so the bar's spacer is the last thing in the
                 document and the footer's end is never under the fixed bar. */}

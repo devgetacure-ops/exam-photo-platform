@@ -1,6 +1,7 @@
 import type { ExamDetail } from "../../lib/types";
 import type { LiveCaptureStance } from "../../lib/appearance-rules";
 import { isOurs } from "../../lib/requirement-support";
+import { ExamAnswer } from "./exam-answer";
 import { FileTypeDrawing } from "../euk/doodles";
 import { ExamFacts, type ExamFact } from "./exam-facts";
 
@@ -70,6 +71,7 @@ export function ExamHero({
                     <p className="euk-exam-lede">
                         {lede(requirements.length, ours.length)}
                     </p>
+                    <ExamAnswer exam={exam} />
                     {groups.size > 0 && (
                         <ul className="euk-exam-files" aria-label="Files we prepare for it">
                             {[...groups].map(([type, count]) => {

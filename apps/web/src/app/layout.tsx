@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
+import { ADSENSE_CLIENT, adsEnabled } from "../lib/ads";
 import {
     Big_Shoulders,
     Anek_Latin,
@@ -179,6 +180,14 @@ export default function RootLayout({
                 <VisitBeacon />
                 {/* Cloudflare Web Analytics (DEC-097): visit counts with no
                     cookie and no profile. Nothing loads unless the token is set. */}
+                {/* AdSense (DEC-127): nothing loads until the publisher id is set. */}
+                {adsEnabled() && (
+                    <Script
+                        strategy="lazyOnload"
+                        crossOrigin="anonymous"
+                        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}`}
+                    />
+                )}
                 {process.env.NEXT_PUBLIC_CF_BEACON_TOKEN && (
                     <Script
                         strategy="afterInteractive"

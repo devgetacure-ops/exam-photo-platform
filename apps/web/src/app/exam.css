@@ -2454,3 +2454,66 @@
         animation: none;
     }
 }
+
+/* ---- The answer, first (DEC-127) ------------------------------------------ */
+
+.euk .euk-answer-card {
+    margin-top: 24px;
+    max-width: 640px;
+    background: var(--paper);
+    border: var(--rule) solid var(--ink);
+    box-shadow: var(--drop) var(--drop) 0 var(--ink);
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.euk .euk-answer-kicker {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--signal-deep);
+}
+.euk .euk-answer-sentence {
+    margin: 0;
+    font-size: clamp(16px, 1.3vw, 18px);
+    line-height: 1.5;
+}
+.euk .euk-answer-specs {
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 14px;
+}
+.euk .euk-answer-specs div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.euk .euk-answer-specs dt {
+    font-size: 13px;
+    color: var(--ink-70);
+}
+.euk .euk-answer-specs dd {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+}
+.euk .euk-answer-specs abbr {
+    text-decoration: none;
+    font-weight: 500;
+    color: var(--ink-70);
+}
+.euk .euk-answer-source {
+    margin: 0;
+    padding-top: 10px;
+    border-top: var(--rule-thin) solid var(--hairline);
+    font-size: 14px;
+    line-height: 1.5;
+}
+.euk .euk-answer-source a {
+    color: var(--ink);
+    font-weight: 700;
+}

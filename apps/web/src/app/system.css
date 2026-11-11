@@ -873,3 +873,29 @@ button:hover .euk-chevron {
         display: none;
     }
 }
+
+/* ---- Advertising (DEC-127): labelled, with space held so nothing jumps ---- */
+.euk .euk-ad {
+    margin: 32px auto;
+    max-width: 970px;
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+.euk .euk-ad-label {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-55);
+}
+.euk .euk-ad-unit {
+    width: 100%;
+    min-height: 280px;
+}
+@media (min-width: 1000px) {
+    .euk .euk-ad-unit {
+        min-height: 90px;
+    }
+}

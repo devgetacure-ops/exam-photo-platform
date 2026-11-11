@@ -12,6 +12,7 @@ import { SiteHeader } from "../../../../components/site-header";
 import { SiteFooter } from "../../../../components/site-footer";
 import { Chevron } from "../../../../components/euk/doodles";
 import { ExamShortAnswers } from "../../../../components/exam/exam-short-answers";
+import { AdSlot } from "../../../../components/ad-slot";
 import { JsonLd } from "../../../../components/json-ld";
 import { examAnswers } from "../../../../lib/exam-answers";
 import { breadcrumbs, pageMetadata } from "../../../../lib/site";
@@ -121,6 +122,7 @@ export default async function RulesPage({
             <div className="euk-rules-body">
             <div className="euk-wrap euk-rules-stack">
                 <ExamShortAnswers answers={answers} />
+                <AdSlot name="rules-mid" />
                 <section aria-labelledby="rules-files">
                     <h2 id="rules-files" className="euk-display euk-rules-h2">
                         The files

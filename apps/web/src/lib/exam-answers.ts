@@ -77,6 +77,34 @@ export function examSpecs(exam: ExamDetail): { type: string; label: string; rows
     return out.sort((a, b) => Number(b.type === "photograph") - Number(a.type === "photograph"));
 }
 
+/**
+ * The answer in one sentence, for the top of the examination page (DEC-127):
+ * the line an answer engine quotes and a candidate reads before anything
+ * else. Built from the same rows as `examAnswers`, so the two never differ.
+ * Null when the record publishes no figure for any file we prepare.
+ */
+export function examQuickAnswer(exam: ExamDetail): string | null {
+    const parts = examSpecs(exam).map(
+        ({ label, rows }) =>
+            `a ${label} of ${rows
+                .filter((row) => row.term !== "Background")
+                .map((row) => `${readable(row.value)}${row.estimated ? " (est.)" : ""}`)
+                .join(", ")}`,
+    );
+    if (parts.length === 0) return null;
+    const list =
+        parts.length === 1
+            ? parts[0]
+            : `${parts.slice(0, -1).join(", ")} and ${parts[parts.length - 1]}`;
+    return `${exam.exam_name} asks for ${list}.`;
+}
+
+/** The official document the rules were read from, when the record names one. */
+export function examSource(exam: ExamDetail): { title: string; url: string | null } | null {
+    const notice = exam.source_evidence.find((source) => source.official_source && source.document_title);
+    return notice?.document_title ? { title: notice.document_title, url: notice.source_url ?? null } : null;
+}
+
 export function examAnswers(exam: ExamDetail): ExamAnswer[] {
     const answers: ExamAnswer[] = examSpecs(exam).map(({ label, rows }) => ({
         question: `What is the ${label} size for ${exam.exam_name}?`,
