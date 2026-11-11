@@ -15,20 +15,22 @@ from exam_photo.providers.head_estimation import (
 # The head box is never cut shorter than the planner will protect anyway.
 _CHIN_BEARD_MARGIN_RATIO = 0.09
 
-# How much wider than the head a row below the mouth must be to count as a
-# collar or shoulders rather than a beard or neck.
-_COLLAR_WIDENING_RATIO = 1.2
+# Below the nose, a row that reaches further than this fraction of the head's
+# width past either side of the head is a collar or a shoulder, not head. A
+# beard, jaw or neck stays inside the head's own span.
+_COLLAR_OVERHANG_RATIO = 0.10
 
 
-def mouth_line_y(face: FaceDetection) -> float | None:
+def nose_line_y(face: FaceDetection) -> float | None:
+    """Lowest line above which the silhouette can only be head (hair, ears)."""
     landmarks = face.landmarks
     if landmarks is None:
         return None
+    if landmarks.nose_tip is not None:
+        return float(landmarks.nose_tip.y)
     centre = landmarks.custom_landmarks.get("mouth_center")
     if centre is not None:
         return float(centre.y)
-    if landmarks.mouth_left is not None and landmarks.mouth_right is not None:
-        return (landmarks.mouth_left.y + landmarks.mouth_right.y) / 2.0
     return None
 
 
@@ -42,21 +44,44 @@ def landmark_chin_y(face: FaceDetection) -> float | None:
     return float(landmarks.chin.y) if landmarks.chin is not None else None
 
 
-def first_widening_row(
+def head_span(
     binary: np.ndarray[Any, Any],
-    y_start: int,
-    y_end: int,
+    y_top: int,
+    nose_y: float,
+    width_end: int,
+    scan_end: int,
     x_min: int,
     x_max: int,
-    core_width: float,
-) -> int | None:
-    """First row from ``y_start`` whose silhouette is clearly wider than the head."""
-    limit = core_width * _COLLAR_WIDENING_RATIO
-    for y in range(max(0, y_start), y_end):
+) -> tuple[float, float, int | None] | None:
+    """The head's left and right, and the first collar or shoulder row (DEC-131).
+
+    The span is measured from the top of the band down to the nose, where the
+    silhouette can only be hair, ears and face. Below it, rows widen the span
+    while they stay within it (jaw, beard); the first row that reaches clearly
+    past either side is a collar or shoulder. It ends the head's width, and
+    the caller uses it to end the head's height. Rows below ``width_end`` (the
+    face box's bottom) never widen the head, as before.
+    """
+    nose = max(y_top + 1, int(round(nose_y)))
+    left = right = None
+    for y in range(max(0, y_top), min(nose, scan_end)):
         xs = np.flatnonzero(binary[y, x_min:x_max])
-        if len(xs) > 0 and float(xs[-1] - xs[0]) > limit:
-            return y
-    return None
+        if len(xs) > 0:
+            left = xs[0] if left is None else min(left, xs[0])
+            right = xs[-1] if right is None else max(right, xs[-1])
+    if left is None or right is None:
+        return None
+    ref_left, ref_right = float(left), float(right)
+    overhang = _COLLAR_OVERHANG_RATIO * max(1.0, ref_right - ref_left)
+    for y in range(nose, scan_end):
+        xs = np.flatnonzero(binary[y, x_min:x_max])
+        if len(xs) == 0:
+            continue
+        if xs[0] < ref_left - overhang or xs[-1] > ref_right + overhang:
+            return float(x_min + left), float(x_min + right), y
+        if y < width_end:
+            left, right = min(left, xs[0]), max(right, xs[-1])
+    return float(x_min + left), float(x_min + right), None
 
 
 class FusedHeadRefiner:
@@ -148,15 +173,6 @@ class FusedHeadRefiner:
         # (cheekbone/ear level) since it scans the whole head band, not just
         # its lowest row.
         width_y_max = min(y_max, max(y_min, int(round(fb.bottom))))
-        # And it ends at the mouth line where there is one (DEC-131). The
-        # face box reaches below the chin, and a shirt collar can rise beside
-        # the jaw above it: on the owner's own photograph the head measured
-        # 219 px across to the mouth and 266 px by the chin, all of it collar.
-        # The widest part of a head (hair, ears, cheekbones) is above the
-        # mouth, so nothing that belongs to the head is lost.
-        mouth_y = mouth_line_y(face)
-        if mouth_y is not None:
-            width_y_max = min(width_y_max, max(y_min + 1, int(round(mouth_y))))
         width_roi_mask = np.zeros_like(binary)
         if width_y_max > y_min and x_max > x_min:
             width_roi_mask[y_min:width_y_max, x_min:x_max] = binary[
@@ -169,6 +185,19 @@ class FusedHeadRefiner:
             refined_top = float(np.min(ys))
             refined_left = float(np.min(width_xs))
             refined_right = float(np.max(width_xs))
+            # A collar or shoulder can rise beside the jaw above the face
+            # box's bottom (DEC-131: on the owner's own photograph the head is
+            # 219 px across and the collar made it 355). Where the nose is
+            # known, the width comes from the head alone.
+            nose_y = nose_line_y(face)
+            span = (
+                head_span(binary, y_min, nose_y, width_y_max, y_max, x_min, x_max)
+                if nose_y is not None
+                else None
+            )
+            collar_y = None
+            if span is not None:
+                refined_left, refined_right, collar_y = span
             # Bottom of head is neck level
             refined_bottom = float(np.max(ys))
 
@@ -191,15 +220,9 @@ class FusedHeadRefiner:
 
             refined_bottom = min(refined_bottom, bottom_limit)
 
-            # Below the mouth, the head ends where the silhouette suddenly
-            # widens past the head itself: that is a collar or shoulders. A
-            # beard or neck is narrower than the head and is kept. The bottom
-            # never rises above the chin plus the planner's beard margin, nor
-            # above the face box.
-            core_width = refined_right - refined_left
-            collar_y = first_widening_row(
-                binary, width_y_max, y_max, x_min, x_max, core_width
-            )
+            # The head also ends at the collar or shoulder row. It never
+            # ends above the chin plus the planner's beard margin, nor above
+            # the face box.
             if collar_y is not None:
                 chin = landmark_chin_y(face)
                 chin_floor = (

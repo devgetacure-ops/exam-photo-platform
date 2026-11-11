@@ -107,3 +107,37 @@ def test_a_beard_on_a_narrow_neck_is_kept_whole() -> None:
         image=image, face=face, head_result=geometric, alpha_mask=alpha
     )
     assert before.head_bounding_box.bottom >= 180
+
+
+def test_a_shoulder_rising_on_one_side_above_the_mouth_is_not_head() -> None:
+    """A leaning subject's shoulder can rise past the mouth on one side.
+
+    Labelled photograph 25: the shoulder entered above the mouth line, so a
+    width read down to the mouth still took it in, and the lopsided head box
+    made tall frames looser. The head's span is read down to the nose only.
+    """
+    from exam_photo.models.geometry import Landmarks, Point
+
+    image = Image.new("RGB", (240, 280), (240, 240, 240))
+    face = FaceDetection(
+        bounding_box=BoundingBox(left=80, top=80, right=150, bottom=158),
+        confidence=0.98,
+        landmarks=Landmarks(
+            left_eye=Point(x=130, y=105),
+            right_eye=Point(x=100, y=105),
+            nose_tip=Point(x=115, y=122),
+            chin=Point(x=115, y=150),
+            custom_landmarks={"mouth_center": Point(x=115, y=135)},
+        ),
+    )
+    geometric = LandmarkGeometricHeadEstimator().estimate_head(image, face, None)
+
+    alpha = np.zeros((280, 240), dtype=np.float32)
+    alpha[40:152, 72:158] = 1.0  # head
+    alpha[128:280, 30:120] = 1.0  # left shoulder, rising above the mouth
+
+    refined = FusedHeadRefiner().refine_head_estimation(
+        image=image, face=face, head_result=geometric, alpha_mask=alpha
+    )
+    assert refined.head_bounding_box.left >= 71
+    assert refined.head_bounding_box.contains(face.bounding_box)
