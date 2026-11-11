@@ -1438,3 +1438,12 @@ Recommendation implemented locally: require explicitly configured persistent req
 - **Affected Modules**: `components/exam/exam-answer.tsx`, `exam-hero.tsx`, `lib/exam-answers.ts`, `app/exam.css`, `components/ad-slot.tsx`, `lib/ads.ts`, `app/ads.txt/`, `app/layout.tsx`, `app/system.css`, examination and rules pages, `deploy/`.
 - **Evidence and QA**: `exam-answer-and-ads.test.tsx` (4); checked on the CTET page at 375 px and desktop.
 - **Approval Owner**: Product Owner
+
+### DEC-129: Hindi Examination Pages, Starting With What Is Searched
+- **Date**: 2026-11-11
+- **Status**: Decided by the owner (English and Hindi now, more later); first slice implemented.
+- **Decision**: Hindi lives under `/hi`, and English keeps its addresses. Each of the 770 examinations gets `/hi/exam/[examId]`. Its title, description, introduction, "जवाब" answer card and related examinations are written in Hindi. Examination names, figures and units stay exactly as published, and the few English words inside published values ("preferred", colours) are translated by a fixed list (`localValue`). Each English page and its Hindi twin name each other with `hreflang` (en-IN, hi-IN, x-default English). Each Hindi page is its own canonical and is in the sitemap. Every exam page carries a switch to the other language. Hindi text is set in Anek Devanagari, the Devanagari sibling of the body face, so it reads as the same site; Hindi headings use its bold, because Big Shoulders has no Devanagari. The "worth knowing" note is left off Hindi pages because its text is English.
+- **Not yet in Hindi**: the preparation tool, header, footer and other pages. Each Hindi page says plainly, in Hindi, that the tool below is still in English. The tool's strings are the next step.
+- **Affected Modules**: `lib/i18n.ts` (new), `lib/exam-answers.ts` (`examQuickAnswer` takes a locale), `lib/site.ts` (`languages`, `locale`), `components/exam/exam-hero.tsx`, `exam-answer.tsx`, `exam-related.tsx`, `app/hi/exam/[examId]/page.tsx` (new), `app/exam/[examId]/page.tsx`, `app/sitemap.xml`, `app/layout.tsx` (Anek Devanagari), `app/system.css`, `app/exam.css`.
+- **Evidence and QA**: `hindi.test.ts` (4); `/hi/exam/ctet-september-2026` checked at 375 px for title, hreflang, canonical, no sideways scroll and Hindi links to Hindi pages.
+- **Approval Owner**: Product Owner

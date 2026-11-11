@@ -899,3 +899,17 @@ button:hover .euk-chevron {
         min-height: 90px;
     }
 }
+
+/* ---- Hindi (DEC-129): same site, Devanagari faces ------------------------- */
+.euk [lang="hi"],
+.euk[lang="hi"] {
+    font-family: var(--font-anek-hindi), var(--font-anek), ui-sans-serif, system-ui, sans-serif;
+}
+.euk [lang="hi"] .euk-display,
+.euk[lang="hi"] .euk-display {
+    font-family: var(--font-anek-hindi), var(--font-shoulders), sans-serif;
+    font-weight: 700;
+    text-transform: none;
+    letter-spacing: 0;
+    line-height: 1.2;
+}

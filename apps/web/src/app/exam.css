@@ -37,6 +37,10 @@
     font-size: 15px;
     color: var(--ink-55);
     max-width: none;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 14px;
 }
 
 .euk-exam-title {
@@ -2574,4 +2578,29 @@
     .euk .euk-related-list a {
         transition: none;
     }
+}
+
+/* The other language, beside who set the rules (DEC-129). */
+.euk .euk-exam-lang {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 12px;
+    border: var(--rule-thin) solid var(--ink);
+    color: var(--ink);
+    font-weight: 600;
+    text-decoration: none;
+    vertical-align: middle;
+}
+.euk .euk-exam-lang:hover,
+.euk .euk-exam-lang:focus-visible {
+    background: var(--signal-soft);
+}
+.euk .euk-hi-tool-note {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 14px 20px;
+    font-size: 15px;
+    line-height: 1.6;
+    border-bottom: var(--rule-thin) solid var(--hairline);
 }

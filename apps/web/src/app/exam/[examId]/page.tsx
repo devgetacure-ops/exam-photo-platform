@@ -15,6 +15,7 @@ import { AdSlot } from "../../../components/ad-slot";
 import { ExamRelated } from "../../../components/exam/exam-related";
 import { examDescription, examTitle } from "../../../lib/exam-answers";
 import { breadcrumbs, pageMetadata } from "../../../lib/site";
+import { languageAlternates } from "../../../lib/i18n";
 
 /**
  * One examination: what it asks for, the kit that answers it, and each file
@@ -47,6 +48,7 @@ export async function generateMetadata({
         description: examDescription(exam),
         path: `/exam/${exam.exam_id}`,
         image: `/exam/${exam.exam_id}/opengraph-image`,
+        languages: languageAlternates(`/exam/${exam.exam_id}`),
     });
 }
 

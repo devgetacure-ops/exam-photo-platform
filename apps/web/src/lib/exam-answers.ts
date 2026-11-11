@@ -1,5 +1,6 @@
 import { isOurs } from "./requirement-support";
 import { photographSpecRows, requirementSpecRows } from "./spec-format";
+import { COPY, localValue, type Locale } from "./i18n";
 import type { ExamDetail, RequirementSummary } from "./types";
 
 /**
@@ -83,21 +84,38 @@ export function examSpecs(exam: ExamDetail): { type: string; label: string; rows
  * else. Built from the same rows as `examAnswers`, so the two never differ.
  * Null when the record publishes no figure for any file we prepare.
  */
-export function examQuickAnswer(exam: ExamDetail): string | null {
-    const parts = examSpecs(exam).map(
-        ({ label, rows }) =>
-            `a ${label} of ${rows
-                .filter((row) => row.term !== "Background")
-                .map((row) => `${readable(row.value)}${row.estimated ? " (est.)" : ""}`)
-                .join(", ")}`,
-    );
-    if (parts.length === 0) return null;
+export function examQuickAnswer(exam: ExamDetail, locale: Locale = "en"): string | null {
+    const specs = examSpecs(exam);
+    if (specs.length === 0) return null;
+    const figures = (rows: Row[]) =>
+        rows
+            .filter((row) => row.term !== "Background")
+            .map(
+                (row) =>
+                    `${localValue(locale, row.value)}${row.estimated ? ` (${COPY[locale].estimated})` : ""}`,
+            )
+            .join(", ");
+    if (locale === "hi") {
+        // "413 × 531 px, 10–100 KB, JPEG की फ़ोटो": the figures, then the file,
+        // with the postposition that agrees with the file's gender.
+        const parts = specs.map(
+            ({ type, rows }) =>
+                `${figures(rows)} ${HI_FEMININE.has(type) ? "की" : "का"} ${COPY.hi.searchLabel[type] ?? type}`,
+        );
+        const list =
+            parts.length === 1 ? parts[0] : `${parts.slice(0, -1).join(", ")} और ${parts[parts.length - 1]}`;
+        return `${exam.exam_name} के लिए ${list} चाहिए।`;
+    }
+    const parts = specs.map(({ label, rows }) => `a ${label} of ${figures(rows)}`);
     const list =
         parts.length === 1
             ? parts[0]
             : `${parts.slice(0, -1).join(", ")} and ${parts[parts.length - 1]}`;
     return `${exam.exam_name} asks for ${list}.`;
 }
+
+/** Hindi files that take "की" rather than "का". */
+const HI_FEMININE = new Set(["photograph", "handwritten_declaration"]);
 
 /** The official document the rules were read from, when the record names one. */
 export function examSource(exam: ExamDetail): { title: string; url: string | null } | null {

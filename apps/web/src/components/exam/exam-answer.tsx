@@ -1,13 +1,7 @@
 import Link from "next/link";
 import { examQuickAnswer, examSource, examSpecs } from "../../lib/exam-answers";
+import { COPY, localValue, type Locale } from "../../lib/i18n";
 import type { ExamDetail } from "../../lib/types";
-
-const TITLE: Record<string, string> = {
-    photograph: "Photograph",
-    signature: "Signature",
-    thumb_impression: "Thumb impression",
-    handwritten_declaration: "Declaration",
-};
 
 /**
  * The answer, first (DEC-127). One sentence a search or answer engine can
@@ -15,8 +9,9 @@ const TITLE: Record<string, string> = {
  * before the candidate is asked to do anything. Every value is the record's;
  * our own estimates keep their "est." here as everywhere else.
  */
-export function ExamAnswer({ exam }: { exam: ExamDetail }) {
-    const sentence = examQuickAnswer(exam);
+export function ExamAnswer({ exam, locale = "en" }: { exam: ExamDetail; locale?: Locale }) {
+    const copy = COPY[locale];
+    const sentence = examQuickAnswer(exam, locale);
     const specs = examSpecs(exam).slice(0, 4);
     if (!sentence || specs.length === 0) return null;
     const source = examSource(exam);
@@ -24,19 +19,19 @@ export function ExamAnswer({ exam }: { exam: ExamDetail }) {
     return (
         <section className="euk-answer-card" aria-labelledby="exam-answer-title">
             <p id="exam-answer-title" className="euk-answer-kicker">
-                The answer
+                {copy.answer}
             </p>
             <p className="euk-answer-sentence">{sentence}</p>
             <dl className="euk-answer-specs">
                 {specs.map(({ type, rows }) => (
                     <div key={type}>
-                        <dt>{TITLE[type] ?? type}</dt>
+                        <dt>{copy.fileNames[type]?.[0] ?? type}</dt>
                         <dd>
                             {rows.map((row, i) => (
                                 <span key={row.term}>
                                     {i > 0 && " · "}
-                                    {row.value.replace(/#fff(fff)?\b/gi, "white")}
-                                    {row.estimated && <abbr title="our estimate"> est.</abbr>}
+                                    {localValue(locale, row.value)}
+                                    {row.estimated && <abbr title={copy.estimatedTitle}> {copy.estimated}</abbr>}
                                 </span>
                             ))}
                         </dd>
@@ -46,7 +41,7 @@ export function ExamAnswer({ exam }: { exam: ExamDetail }) {
             <p className="euk-answer-source">
                 {source ? (
                     <>
-                        From {source.url ? (
+                        {copy.from} {source.url ? (
                             <a href={source.url} target="_blank" rel="noreferrer">
                                 {source.title} ↗
                             </a>
@@ -56,7 +51,7 @@ export function ExamAnswer({ exam }: { exam: ExamDetail }) {
                         .{" "}
                     </>
                 ) : null}
-                <Link href={`/exam/${exam.exam_id}/rules`}>Every rule, in full</Link>
+                <Link href={`/exam/${exam.exam_id}/rules`}>{copy.everyRule}</Link>
             </p>
         </section>
     );

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { loadExams } from "../../lib/catalogue.server";
 import { examSpecs } from "../../lib/exam-answers";
 import { familyOf } from "../../lib/exam-families";
+import { COPY, localePath, localValue, type Locale } from "../../lib/i18n";
 import type { ExamDetail } from "../../lib/types";
 
 const SHOWN = 6;
@@ -30,7 +31,8 @@ function overlap(a: Set<string>, b: Set<string>): number {
  * family, each with its photograph size so the list answers on its own. A
  * candidate applies to several in one season; this is where the next one is.
  */
-export async function ExamRelated({ exam }: { exam: ExamDetail }) {
+export async function ExamRelated({ exam, locale = "en" }: { exam: ExamDetail; locale?: Locale }) {
+    const copy = COPY[locale];
     const family = familyOf(exam.category);
     if (!family) return null;
     const members = (await loadExams()).filter(
@@ -48,7 +50,7 @@ export async function ExamRelated({ exam }: { exam: ExamDetail }) {
         const photo = examSpecs(other).find((spec) => spec.type === "photograph");
         const size = photo?.rows
             .filter((row) => row.term === "Dimensions" || row.term === "File size")
-            .map((row) => `${row.value}${row.estimated ? " (est.)" : ""}`)
+            .map((row) => `${localValue(locale, row.value)}${row.estimated ? ` (${copy.estimated})` : ""}`)
             .join(" · ");
         return { id: other.exam_id, name: other.exam_name, size };
     });
@@ -57,20 +59,20 @@ export async function ExamRelated({ exam }: { exam: ExamDetail }) {
         <section className="euk-related" aria-labelledby="exam-related-title">
             <div className="euk-wrap">
                 <h2 id="exam-related-title" className="euk-display euk-related-title">
-                    Applying to more?
+                    {copy.relatedTitle}
                 </h2>
                 <ul className="euk-related-list">
                     {shown.map((item) => (
                         <li key={item.id}>
-                            <Link href={`/exam/${item.id}`}>
+                            <Link href={localePath(locale, `/exam/${item.id}`)}>
                                 <strong>{item.name}</strong>
-                                {item.size && <span>Photo {item.size}</span>}
+                                {item.size && <span>{copy.relatedPhoto} {item.size}</span>}
                             </Link>
                         </li>
                     ))}
                 </ul>
                 <Link className="euk-link euk-related-all" href={`/exams/${family.slug}`}>
-                    All {members.length + 1} {family.phrase} examinations
+                    {copy.relatedAll(members.length + 1, family.phrase)}
                 </Link>
             </div>
         </section>

@@ -32,6 +32,8 @@ export function pageMetadata({
     path,
     index = true,
     image = "/opengraph-image",
+    languages,
+    locale = "en_IN",
 }: {
     title: string;
     description: string;
@@ -45,18 +47,22 @@ export function pageMetadata({
      * takes precedence over this.
      */
     image?: string;
+    /** Every language this page exists in, by hreflang (DEC-129). */
+    languages?: Record<string, string>;
+    /** Open Graph locale: "en_IN" or "hi_IN". */
+    locale?: string;
 }): Metadata {
     const images = [{ url: image, width: 1200, height: 630, alt: title }];
     return {
         title,
         description,
-        alternates: { canonical: path },
+        alternates: languages ? { canonical: path, languages } : { canonical: path },
         openGraph: {
             title,
             description,
             url: path,
             siteName: SITE_NAME,
-            locale: "en_IN",
+            locale,
             type: "website",
             images,
         },

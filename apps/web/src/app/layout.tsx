@@ -4,6 +4,7 @@ import { ADSENSE_CLIENT, adsEnabled } from "../lib/ads";
 import {
     Big_Shoulders,
     Anek_Latin,
+    Anek_Devanagari,
     Petrona,
 } from "next/font/google";
 import "./system.css";
@@ -63,6 +64,16 @@ const anek = Anek_Latin({
     variable: "--font-anek",
     subsets: ["latin"],
     display: "swap",
+});
+
+// Hindi pages (DEC-129): the Devanagari sibling of the body face, so a Hindi
+// page reads as the same site. Big Shoulders has no Devanagari; Hindi
+// headings take this face's bold instead.
+const anekHindi = Anek_Devanagari({
+    variable: "--font-anek-hindi",
+    subsets: ["devanagari"],
+    display: "swap",
+    weight: ["500", "600", "700"],
 });
 
 const petrona = Petrona({
@@ -157,7 +168,7 @@ export default function RootLayout({
             suppressHydrationWarning
             lang="en-IN"
             data-theme="light"
-            className={`${shoulders.variable} ${anek.variable} ${petrona.variable} h-full antialiased`}
+            className={`${shoulders.variable} ${anek.variable} ${anekHindi.variable} ${petrona.variable} h-full antialiased`}
         >
             <head>
                 <script

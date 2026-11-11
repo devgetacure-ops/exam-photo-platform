@@ -23,6 +23,8 @@ export async function GET() {
         ...exams.flatMap((exam) => [
             `/exam/${encodeURIComponent(exam.exam_id)}`,
             `/exam/${encodeURIComponent(exam.exam_id)}/rules`,
+            // DEC-129: each examination's Hindi page.
+            `/hi/exam/${encodeURIComponent(exam.exam_id)}`,
         ]),
     ];
     const escape = (text: string) =>

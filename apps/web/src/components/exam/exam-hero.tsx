@@ -1,6 +1,8 @@
+import Link from "next/link";
 import type { ExamDetail } from "../../lib/types";
 import type { LiveCaptureStance } from "../../lib/appearance-rules";
 import { isOurs } from "../../lib/requirement-support";
+import { COPY, type Locale } from "../../lib/i18n";
 import { ExamAnswer } from "./exam-answer";
 import { FileTypeDrawing } from "../euk/doodles";
 import { ExamFacts, type ExamFact } from "./exam-facts";
@@ -14,18 +16,8 @@ import { ExamFacts, type ExamFact } from "./exam-facts";
  * the page no other site has, so it is set where the eye lands second.
  */
 
-const NAMES: Record<string, [string, string]> = {
-    photograph: ["Photograph", "photographs"],
-    signature: ["Signature", "signatures"],
-    thumb_impression: ["Thumb impression", "thumb impressions"],
-    handwritten_declaration: ["Declaration", "declarations"],
-    portal_declaration: ["Declaration", "declarations"],
-    certificate_scan: ["Certificate", "certificates"],
-    identity_document: ["ID document", "ID documents"],
-    other: ["Other file", "other files"],
-};
-
-function lede(total: number, ours: number): string {
+function lede(total: number, ours: number, locale: Locale): string {
+    if (locale === "hi") return ledeHindi(total, ours);
     if (total === 0) {
         return "We haven’t finished reading what this application asks for, so there is nothing to prepare yet.";
     }
@@ -42,15 +34,35 @@ function lede(total: number, ours: number): string {
     return `This application asks for ${files}. We prepare ${ours}; the other ${rest} ${rest === 1 ? "is a step" : "are steps"} you take yourself, explained below.`;
 }
 
+function ledeHindi(total: number, ours: number): string {
+    if (total === 0) {
+        return "यह आवेदन किन फ़ाइलों की माँग करता है, यह हम अभी पढ़ रहे हैं, इसलिए अभी तैयार करने को कुछ नहीं है।";
+    }
+    const files = total === 1 ? "एक फ़ाइल" : `${total} फ़ाइलें`;
+    if (ours === total) {
+        return total === 1
+            ? "इस आवेदन में एक फ़ाइल चाहिए, और उसे हम तैयार करते हैं।"
+            : `इस आवेदन में ${files} चाहिए। हम सभी तैयार करते हैं।`;
+    }
+    if (ours === 0) {
+        return `इस आवेदन में ${files} चाहिए, पर इनमें से कोई भी हम अभी तैयार नहीं कर सकते। हर एक नीचे समझाई गई है।`;
+    }
+    const rest = total - ours;
+    return `इस आवेदन में ${files} चाहिए। ${ours} हम तैयार करते हैं; बाकी ${rest} आपको खुद करनी होंगी, जो नीचे समझाई गई हैं।`;
+}
+
 export function ExamHero({
     exam,
     facts,
     liveCapture,
+    locale = "en",
 }: {
     exam: ExamDetail;
     facts: ExamFact[];
     liveCapture: LiveCaptureStance;
+    locale?: Locale;
 }) {
+    const copy = COPY[locale];
     const requirements = exam.requirements ?? [];
     const ours = requirements.filter(isOurs);
     const groups = new Map<string, number>();
@@ -61,21 +73,31 @@ export function ExamHero({
     return (
         <section className="euk-exam-hero" aria-labelledby="exam-title">
             <div
-                className={`euk-wrap euk-exam-hero-grid${facts.length ? "" : " euk-exam-hero-grid--solo"}`}
+                className={`euk-wrap euk-exam-hero-grid${facts.length && locale === "en" ? "" : " euk-exam-hero-grid--solo"}`}
             >
                 <div className="min-w-0">
-                    <p className="euk-exam-meta">Set by {exam.conducting_body}</p>
+                    <p className="euk-exam-meta">
+                        {copy.setBy(exam.conducting_body)}
+                        <Link
+                            className="euk-exam-lang"
+                            href={locale === "hi" ? `/exam/${exam.exam_id}` : `/hi/exam/${exam.exam_id}`}
+                            hrefLang={locale === "hi" ? "en" : "hi"}
+                            lang={locale === "hi" ? "en" : "hi"}
+                        >
+                            {locale === "hi" ? "Read in English" : "हिंदी में पढ़ें"}
+                        </Link>
+                    </p>
                     <h1 id="exam-title" className="euk-display euk-exam-title">
                         {exam.exam_name}
                     </h1>
                     <p className="euk-exam-lede">
-                        {lede(requirements.length, ours.length)}
+                        {lede(requirements.length, ours.length, locale)}
                     </p>
-                    <ExamAnswer exam={exam} />
+                    <ExamAnswer exam={exam} locale={locale} />
                     {groups.size > 0 && (
                         <ul className="euk-exam-files" aria-label="Files we prepare for it">
                             {[...groups].map(([type, count]) => {
-                                const [one, many] = NAMES[type] ?? NAMES.other;
+                                const [one, many] = copy.fileNames[type] ?? copy.fileNames.other;
                                 return (
                                     <li key={type}>
                                         <FileTypeDrawing type={type} />
@@ -93,19 +115,20 @@ export function ExamHero({
                     */}
                     {liveCapture === "additional" && (
                         <p className="euk-exam-live">
-                            This examination also photographs you on the portal.
-                            That is in addition to the photograph you upload
-                            here, not instead of it.
+                            {locale === "hi"
+                                ? "यह परीक्षा पोर्टल पर आपकी फ़ोटो भी खींचती है। यह यहाँ अपलोड की जाने वाली फ़ोटो के अलावा है, उसकी जगह नहीं।"
+                                : "This examination also photographs you on the portal. That is in addition to the photograph you upload here, not instead of it."}
                         </p>
                     )}
                     {liveCapture === "instead" && (
                         <p className="euk-exam-live">
-                            This examination photographs you itself, so there is
-                            no photograph to upload.
+                            {locale === "hi"
+                                ? "यह परीक्षा आपकी फ़ोटो खुद खींचती है, इसलिए अपलोड करने के लिए कोई फ़ोटो नहीं है।"
+                                : "This examination photographs you itself, so there is no photograph to upload."}
                         </p>
                     )}
                 </div>
-                {facts.length > 0 && (
+                {facts.length > 0 && locale === "en" && (
                     <div className="euk-exam-tip">
                         <ExamFacts facts={facts} examName={exam.exam_name} />
                     </div>
