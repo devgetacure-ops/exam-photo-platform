@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { prepareRequirement } from "../../lib/api-client";
+import { ApiStatusError, prepareRequirement } from "../../lib/api-client";
 import { validateImageFile } from "../../lib/file-validation";
 import { prepareUpload, uploadRefusal } from "../../lib/upload-image";
 import { isPasswordLocked, lockedPdfMessage } from "../../lib/pdfjs";
@@ -68,8 +68,36 @@ const PROMPT: Record<string, [string, string]> = {
     identity_document: ["Add your identity document", "अपना पहचान पत्र जोड़ें"],
 };
 
+/** Wait for the bot check's pass, up to `ms`; empty if it never came. */
+async function waitForPass(pass: { current: string }, ms: number): Promise<string> {
+    const until = Date.now() + ms;
+    while (!pass.current && Date.now() < until) {
+        await new Promise((resolve) => setTimeout(resolve, 250));
+    }
+    return pass.current;
+}
+
 function candidateError(error: unknown, tr: (english: string, hindi: string) => string): string {
     const detail = error instanceof Error ? error.message.toLowerCase() : "";
+    if (error instanceof ApiStatusError) {
+        // The server or Cloudflare answering for it: busy, restarting or
+        // out of capacity. Not the candidate's file.
+        if (error.status === 429 || error.status >= 500) {
+            return tr(
+                "Our server is busy right now. Please try again in a minute.",
+                "हमारा सर्वर अभी व्यस्त है। एक मिनट बाद फिर कोशिश करें।",
+            );
+        }
+        if (error.status === 403) {
+            return tr(
+                "We couldn’t confirm this upload came from a browser. Please try again.",
+                "हम पुष्टि नहीं कर सके कि यह अपलोड ब्राउज़र से आया है। फिर से कोशिश करें।",
+            );
+        }
+        if (error.status === 413) {
+            return tr("That file is too large. Please choose a smaller one.", "यह फ़ाइल बहुत बड़ी है। छोटी फ़ाइल चुनें।");
+        }
+    }
     if (detail.includes("birefnet") || detail.includes("download_birefnet")) {
         return tr(
             "Photo preparation is temporarily unavailable. Please try again shortly.",
@@ -78,6 +106,7 @@ function candidateError(error: unknown, tr: (english: string, hindi: string) => 
     }
     if (
         detail.includes("not reachable") ||
+        detail.includes("could not reach") ||
         detail.includes("failed to fetch") ||
         detail.includes("network")
     ) {
@@ -134,7 +163,13 @@ export function RequirementUpload({
     const [refusal, setRefusal] = useState<RequirementNotServed | null>(null);
     const [message, setMessage] = useState<string | null>(null);
     const challengeKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
-    const [challengeToken, setChallengeToken] = useState("");
+    // The current pass from the bot check, read when a file is chosen. A ref,
+    // because the check can finish while a file is already on its way in.
+    const passRef = useRef("");
+    const takePass = useCallback((pass: string) => {
+        passRef.current = pass;
+    }, []);
+    const [challengeRound, setChallengeRound] = useState(0);
     const [enhancementEnabled, setEnhancementEnabled] = useState(true);
     const [switching, setSwitching] = useState(false);
     const [progressToken, setProgressToken] = useState<string>();
@@ -171,10 +206,23 @@ export function RequirementUpload({
 
     const submit = useCallback(
         async (chosen: File) => {
-            if (challengeKey && !challengeToken) {
-                setMessage(tr("Complete the verification before uploading.", "अपलोड से पहले जाँच पूरी करें।"));
-                setPhase("error");
-                return;
+            // The check usually finishes on its own within a few seconds; a
+            // photo taken straight away waits for it rather than failing.
+            let pass = passRef.current;
+            if (challengeKey && !pass) {
+                setMessage(tr("Checking your browser…", "आपका ब्राउज़र जाँच रहे हैं…"));
+                pass = await waitForPass(passRef, 15000);
+                if (!pass) {
+                    setMessage(
+                        tr(
+                            "The browser check didn’t finish. Wait a few seconds, then add your file again.",
+                            "ब्राउज़र की जाँच पूरी नहीं हुई। कुछ सेकंड रुककर फ़ाइल फिर से जोड़ें।",
+                        ),
+                    );
+                    setPhase("error");
+                    return;
+                }
+                setMessage(null);
             }
             // A phone photograph of any size, or a WebP, is made into a JPEG the
             // engine takes before it is uploaded (DEC-103). PDFs pass untouched.
@@ -250,7 +298,7 @@ export function RequirementUpload({
                     kitId: kit.kitId,
                     enhancementEnabled,
                     progressToken: token,
-                    challengeToken,
+                    challengeToken: pass,
                 });
                 record(prepared, examName);
                 setResult(prepared);
@@ -265,6 +313,11 @@ export function RequirementUpload({
                 setMessage(candidateError(error, tr));
             } finally {
                 onWorking?.(false);
+                // A pass is good once: spend it and ask for the next.
+                if (challengeKey) {
+                    passRef.current = "";
+                    setChallengeRound((round) => round + 1);
+                }
             }
         },
         [
@@ -277,7 +330,6 @@ export function RequirementUpload({
             enhancementEnabled,
             onWorking,
             challengeKey,
-            challengeToken,
         ],
     );
 
@@ -401,7 +453,8 @@ export function RequirementUpload({
             {challengeKey && (
                 <PreparationChallenge
                     siteKey={challengeKey}
-                    onToken={setChallengeToken}
+                    onToken={takePass}
+                    round={challengeRound}
                 />
             )}
             {consent.panel}

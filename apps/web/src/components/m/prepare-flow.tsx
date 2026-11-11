@@ -248,7 +248,9 @@ export function PrepareFlow({
                     )}
                 </div>
 
-                {!busy && !done && (
+                {/* "Do this later" goes back to the list, which only means
+                    something when there is another file to do instead. */}
+                {!busy && !done && chosen.length > 1 && (
                     <ActionBar note={tr("Add this file", "यह फ़ाइल जोड़ें")}>
                         <button
                             type="button"

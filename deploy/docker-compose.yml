@@ -71,7 +71,9 @@ services:
     # resident, peaking near 2.9 GB during inference. This limit is a
     # tripwire, not a target: if the container is being OOM-killed, the box is
     # too small -- do not lower the limit to make the symptom go away.
-    mem_limit: ${ENGINE_MEM_LIMIT:-4g}
+    # 8g since 11 November 2026: a photograph peaked at ~4.2 GB on the live
+    # 16 GB host and 4g killed the engine mid-request (Cloudflare 502).
+    mem_limit: ${ENGINE_MEM_LIMIT:-8g}
     healthcheck:
       # Inherited from the image, restated so it is visible where an operator
       # looks. `/ready`, never `/health`.

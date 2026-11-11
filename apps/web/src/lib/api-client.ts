@@ -196,6 +196,21 @@ export async function getOutputBlob(jobId: string): Promise<Blob> {
  * Kept private so the catalogue calls do not each re-implement it; the older
  * functions above are left as they were.
  */
+/**
+ * A preparation the server answered but refused, with its HTTP status, so the
+ * page can say what actually happened: the server busy or restarting (502,
+ * 503, 504, 520-524 from Cloudflare), the browser check failing (403), or the
+ * file itself (4xx with the engine's own words).
+ */
+export class ApiStatusError extends Error {
+    status: number;
+    constructor(message: string, status: number) {
+        super(message);
+        this.name = "ApiStatusError";
+        this.status = status;
+    }
+}
+
 async function errorDetail(
     response: Response,
     fallback: string,
@@ -323,11 +338,12 @@ export async function prepareRequirement({
                 throw new RequirementNotServedError(info);
         }
         if (!response.ok) {
-            throw new Error(await errorDetail(response, "Preparation failed"));
+            throw new ApiStatusError(await errorDetail(response, "Preparation failed"), response.status);
         }
         return await response.json();
     } catch (error) {
         if (error instanceof RequirementNotServedError) throw error;
+        if (error instanceof ApiStatusError) throw error;
         throw unreachableApiMessage(error);
     }
 }

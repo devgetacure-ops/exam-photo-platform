@@ -324,7 +324,8 @@ describe("the phone flow", () => {
         expect(screen.getByRole("button", { name: /Get 0 of 1/ })).toBeDisabled();
 
         fireEvent.click(row);
-        expect(within(actionBar()).getByRole("button", { name: "Do this later" })).toBeInTheDocument();
-        expect(within(actionBar()).queryByRole("button", { name: "Get my files" })).toBeNull();
+        // One file: "Do this later" would lead nowhere, so it is not offered.
+        expect(screen.queryByRole("button", { name: "Do this later" })).toBeNull();
+        expect(screen.queryByRole("button", { name: "Get my files" })).toBeNull();
     });
 });
