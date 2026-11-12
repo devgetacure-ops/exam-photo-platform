@@ -45,7 +45,7 @@ from exam_photo.api.jobs import (
 )
 from exam_photo.api.ledger import Ledger
 from exam_photo.api.progress import ProgressRegistry
-from exam_photo.api.protection import UsageRegistry
+from exam_photo.api.protection import RateLimiter, UsageRegistry
 from exam_photo.api.settings import ApiSettings
 from exam_photo.api.storage import LocalArtifactStore
 from exam_photo.ink.paper_region import locate_paper
@@ -306,6 +306,10 @@ class ApiProcessingService:
         self.explicit_refusals = 0
         #: Per-kit counters, surviving retention (DEC-073).
         self.usage = UsageRegistry(settings.artifact_root)
+        # DEC-134: rolling-hour limits; their size is read from settings on
+        # every call, so a changed setting applies at once.
+        self._kit_rate_limit = RateLimiter(0)
+        self._ip_rate_limit = RateLimiter(0)
         #: Ephemeral per-preparation progress (DEC-075).
         self.progress = ProgressRegistry(settings.artifact_root)
         #: Overwritten wholesale in tests, like `store` and `registry`, so no
@@ -400,6 +404,16 @@ class ApiProcessingService:
                 except Exception:
                     self._not_ink_unavailable = True
             return self._not_ink_detector
+
+    @property
+    def kit_rate_limit(self) -> RateLimiter:
+        self._kit_rate_limit.limit = self.settings.rate_limit_per_kit_hour
+        return self._kit_rate_limit
+
+    @property
+    def ip_rate_limit(self) -> RateLimiter:
+        self._ip_rate_limit.limit = self.settings.rate_limit_per_ip_hour
+        return self._ip_rate_limit
 
     def _upload_is_explicit(self, upload: bytes) -> bool:
         """Whether an image upload is explicit (DEC-133).

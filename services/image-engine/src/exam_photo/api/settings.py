@@ -124,6 +124,13 @@ class ApiSettings(BaseModel):
     # that costs sales when it is set too low.
     free_preparation_allowance: int = 0
 
+    # DEC-134: rolling one-hour limits on preparation. Per kit (one browser)
+    # is the real limit on a person; per visitor address is generous because
+    # carrier-grade NAT shares one address among many candidates, and only
+    # stops scripts. 0 switches either off.
+    rate_limit_per_kit_hour: int = 20
+    rate_limit_per_ip_hour: int = 120
+
     # Cloudflare Turnstile. Empty means no challenge, and unlike the payment
     # secrets this fails *open* -- an unchallenged preparation costs some CPU,
     # while refusing every candidate over a misconfiguration costs the product.
@@ -323,6 +330,14 @@ def get_settings() -> ApiSettings:
         )
     if "EXAM_PHOTO_OPERATOR_TOKEN" in os.environ:
         kwargs["operator_token"] = os.environ["EXAM_PHOTO_OPERATOR_TOKEN"]
+    if "EXAM_PHOTO_RATE_LIMIT_PER_KIT_HOUR" in os.environ:
+        kwargs["rate_limit_per_kit_hour"] = int(
+            os.environ["EXAM_PHOTO_RATE_LIMIT_PER_KIT_HOUR"]
+        )
+    if "EXAM_PHOTO_RATE_LIMIT_PER_IP_HOUR" in os.environ:
+        kwargs["rate_limit_per_ip_hour"] = int(
+            os.environ["EXAM_PHOTO_RATE_LIMIT_PER_IP_HOUR"]
+        )
     if "EXAM_PHOTO_FREE_PREPARATION_ALLOWANCE" in os.environ:
         kwargs["free_preparation_allowance"] = int(
             os.environ["EXAM_PHOTO_FREE_PREPARATION_ALLOWANCE"]

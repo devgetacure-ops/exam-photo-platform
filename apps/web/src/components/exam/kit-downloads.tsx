@@ -163,7 +163,7 @@ export function KitDownloads({
 
     return (
         <section className="euk-delivered" aria-labelledby="done-title">
-            <KitSuccess examName={exam.exam_name} titleRef={headingRef} />
+            <KitSuccess examName={exam.exam_name} titleRef={headingRef} filesId="kit-downloads" />
             <div className="euk-delivered-grid">
                 <div className="min-w-0">
                     {secondsLeft !== null && earliest !== null && (

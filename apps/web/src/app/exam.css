@@ -2111,6 +2111,29 @@
     overflow-wrap: anywhere;
 }
 
+/* A reopened file (DEC-134): said plainly, with a new one on offer. */
+.euk .euk-ready-again {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 16px;
+    margin-bottom: 16px;
+    padding: 14px 16px;
+    border: var(--rule-thin) solid var(--ok-line);
+    background: var(--ok-fill);
+}
+.euk .euk-ready-again p {
+    flex: 1 1 220px;
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.5;
+}
+.euk .euk-ready-again .secondary-button {
+    min-height: 44px;
+    padding: 8px 16px;
+    font-size: 15px;
+}
+
 .euk-outcome-replace {
     flex-shrink: 0;
     margin-left: auto;

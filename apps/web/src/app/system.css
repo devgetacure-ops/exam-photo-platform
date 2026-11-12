@@ -877,6 +877,11 @@ button:hover .euk-chevron {
 /* ---- Advertising (DEC-127): labelled, with space held so nothing jumps ---- */
 .euk .euk-ad {
     margin: 32px auto;
+    /* Full width of its column, up to a leaderboard. Without it the slot
+       shrank to its label inside the rules page's stack (DEC-134). */
+    width: 100%;
+    box-sizing: border-box;
+    align-self: stretch;
     max-width: 970px;
     padding: 0 16px;
     display: flex;
@@ -898,6 +903,54 @@ button:hover .euk-chevron {
     .euk .euk-ad-unit {
         min-height: 90px;
     }
+}
+/* On a phone the page ends under a sticky action bar. Generous space keeps
+   the ad clear of it, so nobody taps an ad meaning to tap the button. */
+@media (max-width: 899px) {
+    .euk .euk-ad {
+        margin: 56px auto calc(var(--bar) + 72px);
+    }
+}
+
+/* The ad-blocker gate (DEC-134): the whole site, covered, until ads are let
+   through. Paper card on a dimmed page, in the house style. */
+.euk-adgate {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: grid;
+    place-items: center;
+    padding: 16px;
+    background: rgba(17, 17, 16, 0.72);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+.euk-adgate-card {
+    width: min(100%, 460px);
+    padding: 28px 24px;
+    border: var(--rule) solid var(--ink);
+    box-shadow: var(--drop) var(--drop) 0 var(--ink);
+    background: var(--paper);
+    color: var(--ink);
+}
+.euk-adgate-title {
+    margin: 0 0 14px;
+    font-size: clamp(26px, 6vw, 34px);
+    line-height: 1.05;
+}
+.euk-adgate-card p {
+    margin: 0 0 12px;
+    font-size: 16px;
+    line-height: 1.55;
+}
+.euk-adgate-how {
+    color: var(--ink-70);
+}
+.euk .euk-adgate-refresh {
+    width: 100%;
+    min-height: 52px;
+    margin-top: 8px;
+    font-size: 16px;
 }
 
 /* ---- Hindi (DEC-129): same site, Devanagari faces ------------------------- */

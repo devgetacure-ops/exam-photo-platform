@@ -652,6 +652,24 @@ async def prepare_requirement(
                 ),
             ) from None
 
+    # DEC-134: a rolling hour per browser, and a generous one per address.
+    visitor = _visitor_ip(request)
+    wait = max(
+        service.kit_rate_limit.retry_after(kit),
+        service.ip_rate_limit.retry_after(visitor),
+    )
+    if wait:
+        raise HTTPException(
+            status_code=429,
+            detail=(
+                "Too many files prepared in the last hour. Please try again "
+                f"in about {max(1, round(wait / 60))} minutes."
+            ),
+            headers={"Retry-After": str(wait)},
+        )
+    service.kit_rate_limit.record(kit)
+    service.ip_rate_limit.record(visitor)
+
     upload = await _read_upload(file)
     job_id = service.generate_job_id()
     if kit:

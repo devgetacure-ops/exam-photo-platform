@@ -21,9 +21,13 @@ import { useTr } from "../locale-context";
 export function KitSuccess({
     examName,
     titleRef,
+    filesId,
 }: {
     examName: string;
     titleRef: RefObject<HTMLHeadingElement | null>;
+    /** The id of the downloads heading. On a phone the files sit a full
+     *  screen below the good wishes, so a button says where they are. */
+    filesId?: string;
 }) {
     // The files are the candidate's: the strongest moment there is to offer
     // the site a place on the home screen.
@@ -79,6 +83,20 @@ export function KitSuccess({
                         `${examName} के लिए शुभकामनाएँ। जो हम कर सकते थे, वह हो गया। जो तय करेगा, वह आपकी तैयारी है, और वह हमेशा आपकी थी।`,
                     )}
                 </p>
+                {filesId && (
+                    <button
+                        type="button"
+                        className="secondary-button euk-done-files"
+                        onClick={() =>
+                            document
+                                .getElementById(filesId)
+                                ?.scrollIntoView({ behavior: "smooth", block: "start" })
+                        }
+                    >
+                        {tr("Your files are below", "आपकी फ़ाइलें नीचे हैं")}
+                        <span className="euk-done-files-arrow" aria-hidden="true">↓</span>
+                    </button>
+                )}
             </div>
         </div>
     );

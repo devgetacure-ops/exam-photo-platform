@@ -227,3 +227,55 @@ def verify_turnstile(
 
     if not body.get("success"):
         raise ChallengeFailedError(f"challenge rejected: {body.get('error-codes')}")
+
+
+class RateLimiter:
+    """A rolling one-hour limit per key, in memory (DEC-134).
+
+    Two of them guard preparation: one per kit (one browser), which is the
+    real limit on a person, and one per visitor address, set generously
+    because carrier-grade NAT puts many candidates behind one address
+    (DEC-064); it only stops scripts. A restart forgets everything, which is
+    fine for a speed limit. ``limit <= 0`` switches it off.
+    """
+
+    WINDOW_SECONDS = 3600.0
+
+    def __init__(self, limit: int) -> None:
+        import threading
+
+        self.limit = limit
+        self._hits: Dict[str, List[float]] = {}
+        self._lock = threading.Lock()
+
+    def retry_after(self, key: Optional[str], now: Optional[float] = None) -> int:
+        """Seconds until ``key`` may go again; 0 when it may go now."""
+        import time
+
+        if self.limit <= 0 or not key:
+            return 0
+        now = time.time() if now is None else now
+        with self._lock:
+            recent = [
+                t for t in self._hits.get(key, []) if now - t < self.WINDOW_SECONDS
+            ]
+            self._hits[key] = recent
+            if len(recent) < self.limit:
+                return 0
+            return max(1, int(self.WINDOW_SECONDS - (now - recent[0])) + 1)
+
+    def record(self, key: Optional[str], now: Optional[float] = None) -> None:
+        import time
+
+        if self.limit <= 0 or not key:
+            return
+        now = time.time() if now is None else now
+        with self._lock:
+            self._hits.setdefault(key, []).append(now)
+            if len(self._hits) > 50_000:
+                cutoff = now - self.WINDOW_SECONDS
+                self._hits = {
+                    k: [t for t in v if t > cutoff]
+                    for k, v in self._hits.items()
+                    if v and v[-1] > cutoff
+                }

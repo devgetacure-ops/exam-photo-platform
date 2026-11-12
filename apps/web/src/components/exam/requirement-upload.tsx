@@ -78,11 +78,18 @@ async function waitForPass(pass: { current: string }, ms: number): Promise<strin
     return pass.current;
 }
 
-function candidateError(error: unknown, tr: (english: string, hindi: string) => string): string {
+export function candidateError(error: unknown, tr: (english: string, hindi: string) => string): string {
     const detail = error instanceof Error ? error.message.toLowerCase() : "";
     if (error instanceof ApiStatusError) {
         // The server or Cloudflare answering for it: busy, restarting or
         // out of capacity. Not the candidate's file.
+        // DEC-134: the hourly limit, not a busy server.
+        if (error.status === 429 && detail.includes("last hour")) {
+            return tr(
+                "You’ve prepared a lot of files in the last hour. Please try again in a little while.",
+                "आपने पिछले एक घंटे में बहुत सारी फ़ाइलें बनाई हैं। थोड़ी देर बाद फिर कोशिश करें।",
+            );
+        }
         if (error.status === 429 || error.status >= 500) {
             return tr(
                 "Our server is busy right now. Please try again in a minute.",
@@ -366,8 +373,45 @@ export function RequirementUpload({
     }
 
     if (result && (phase === "done" || phase === "idle")) {
+        const startOver = () => {
+            forget(requirementId);
+            setResult(null);
+            if (sourceRef.current) URL.revokeObjectURL(sourceRef.current);
+            sourceRef.current = null;
+            setSourceUrl(null);
+            setPhase("idle");
+        };
+        // Reopened, not just prepared: say the file is already there and
+        // offer a new one plainly, rather than a small "Replace" the owner's
+        // own testing missed (DEC-134).
+        const reopened = !fresh && !!saved;
+        const preparedAt = saved?.updatedAt
+            ? new Date(saved.updatedAt).toLocaleTimeString(undefined, {
+                  hour: "numeric",
+                  minute: "2-digit",
+              })
+            : null;
         return (
             <>
+                {reopened && (
+                    <div className="euk-ready-again" role="status">
+                        <p>
+                            <strong>{tr("This file is ready.", "यह फ़ाइल तैयार है।")}</strong>{" "}
+                            {preparedAt
+                                ? tr(
+                                      `Prepared at ${preparedAt}. Download it below, or prepare a new one.`,
+                                      `${preparedAt} पर तैयार हुई। नीचे से डाउनलोड करें, या नई बनाएँ।`,
+                                  )
+                                : tr(
+                                      "Download it below, or prepare a new one.",
+                                      "नीचे से डाउनलोड करें, या नई बनाएँ।",
+                                  )}
+                        </p>
+                        <button type="button" className="secondary-button" onClick={startOver}>
+                            {tr("Prepare a new one", "नई फ़ाइल बनाएँ")}
+                        </button>
+                    </div>
+                )}
                 {/* DEC-095: offered only where switching shows a difference
                     a person can see; the engine withholds the alternate
                     otherwise, so there is nothing to switch to. */}
@@ -436,15 +480,7 @@ export function RequirementUpload({
                     requirementName={requirementName}
                     sourceUrl={sourceUrl}
                     partiallySupported={partiallySupported}
-                    onReplace={() => {
-                        forget(requirementId);
-                        setResult(null);
-                        if (sourceRef.current)
-                            URL.revokeObjectURL(sourceRef.current);
-                        sourceRef.current = null;
-                        setSourceUrl(null);
-                        setPhase("idle");
-                    }}
+                    onReplace={startOver}
                 />
             </>
         );

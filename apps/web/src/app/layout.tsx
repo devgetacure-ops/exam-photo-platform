@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { ADSENSE_CLIENT, adsEnabled } from "../lib/ads";
+import { AdblockGate } from "../components/adblock-gate";
 import {
     Big_Shoulders,
     Anek_Latin,
@@ -192,6 +193,8 @@ export default function RootLayout({
                 {/* Cloudflare Web Analytics (DEC-097): visit counts with no
                     cookie and no profile. Nothing loads unless the token is set. */}
                 {/* AdSense (DEC-127): nothing loads until the publisher id is set. */}
+                {/* DEC-134: with ads on, an ad blocker covers the site until it is off. */}
+                {adsEnabled() && <AdblockGate />}
                 {adsEnabled() && (
                     <Script
                         strategy="lazyOnload"
