@@ -76,6 +76,7 @@ from exam_photo.suitability.enhancement_planner import (
     severe_cast_detected,
     warm_light_detected,
 )
+from exam_photo.suitability.far_subject import too_far_for_a_tight_crop
 from exam_photo.suitability.issue_codes import SuitabilityIssueCode
 
 # Face-detection confidence ladder.  The primary threshold is the provider
@@ -1241,6 +1242,35 @@ class RuleOrchestratedPipeline:
                     dur=0.0,
                     summary=f"Crop planning failed: {e}",
                 )
+
+        # DEC-132: a face too far away to read closely leaves the head small in
+        # the frame. The photo is delivered, and the candidate is told why.
+        if (
+            not failed
+            and isinstance(crop_res, CropPlanResult)
+            and appearance_report is not None
+            and face is not None
+            and ref_result is not None
+            and too_far_for_a_tight_crop(
+                face, ref_result.refined_alpha_mask, crop_res.head_height_ratio
+            )
+        ):
+            appearance_report.findings.append(
+                AppearanceFinding(
+                    code=SuitabilityIssueCode.SUITABILITY_FACE_REGION_TOO_SMALL,
+                    level=FindingLevel.POSSIBLE_ISSUE,
+                    message=(
+                        "You were too far from the camera, so your head is "
+                        "small in the finished photo."
+                    ),
+                    remedy=(
+                        "Retake it standing closer, so your head and "
+                        "shoulders fill most of the picture."
+                    ),
+                    measured_value=crop_res.head_height_ratio,
+                    tell_candidate=True,
+                )
+            )
         else:
             record_stage(
                 PipelineStage.CROP_PLANNING,

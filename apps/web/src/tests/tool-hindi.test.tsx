@@ -43,6 +43,12 @@ describe("the tool in Hindi", () => {
         expect(untranslated).toEqual([]);
     });
 
+    it("has Hindi for the stand-closer note on a far-away photo (DEC-132)", () => {
+        const note =
+            "You were too far from the camera, so your head is small in the finished photo. Retake it standing closer, so your head and shoulders fill most of the picture.";
+        expect(toolText("hi", note)).not.toBe(note);
+    });
+
     it("leaves a notice's own words alone", () => {
         const quoted = "Candidates must upload a recent colour photograph.";
         expect(toolText("hi", quoted)).toBe(quoted);

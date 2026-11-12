@@ -78,6 +78,9 @@ const HI: Record<string, string> = {
     "The photo is too bright.": "फ़ोटो बहुत ज़्यादा चमकीली है।",
     "The eyes look closed.": "आँखें बंद लग रही हैं।",
     "The face is too small in the frame. Use a photo taken closer.": "फ़्रेम में चेहरा बहुत छोटा है। पास से खींची फ़ोटो लें।",
+    // A note the engine writes for a photo it still prepares (DEC-132).
+    "You were too far from the camera, so your head is small in the finished photo. Retake it standing closer, so your head and shoulders fill most of the picture.":
+        "आप कैमरे से बहुत दूर थे, इसलिए तैयार फ़ोटो में आपका सिर छोटा है। पास खड़े होकर फिर से खींचें, ताकि सिर और कंधे तस्वीर का ज़्यादातर हिस्सा भरें।",
     "The photo is too small to prepare. Use the original from the camera, not a screenshot or a forwarded copy.":
         "फ़ोटो तैयार करने के लिए बहुत छोटी है। कैमरे की असली फ़ोटो लें, स्क्रीनशॉट या फ़ॉरवर्ड की हुई कॉपी नहीं।",
     "The photo is slightly blurred.": "फ़ोटो थोड़ी धुंधली है।",
