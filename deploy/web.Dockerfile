@@ -77,7 +77,12 @@ WORKDIR /repo/apps/web
 COPY --from=build /repo/apps/web/package.json /repo/apps/web/package-lock.json ./
 RUN npm ci --omit=dev
 
-COPY --from=build /repo/apps/web/.next ./.next
+# DEC-136: pages re-render every few minutes and after a console edit, and
+# Next writes the fresh copies under .next, so the app's user (uid 10002,
+# created below) owns all of it. Owned here, as it is copied: a `chown -R`
+# afterwards copies the whole folder into a second layer, which doubled the
+# image and filled the server's disk (12 November).
+COPY --from=build --chown=10002:10002 /repo/apps/web/.next ./.next
 COPY --from=build /repo/apps/web/public ./public
 COPY --from=build /repo/apps/web/next.config.ts ./
 # Carried into the runtime stage too, so anything rendered on demand rather
@@ -94,10 +99,7 @@ RUN useradd --system --uid 10002 --create-home --home-dir /home/web web \
     # output is root's, so the app's user could not create that folder and
     # every image was resized again on every request (logs, 2 October).
     && mkdir -p /repo/apps/web/.next/cache/images \
-    # DEC-136: pages re-render every few minutes and after a console edit,
-    # and Next writes the fresh copies under .next, so the app's user owns
-    # all of it, not only the image cache.
-    && chown -R web:web /repo/apps/web/.next
+    && chown -R web:web /repo/apps/web/.next/cache
 USER web
 
 EXPOSE 3000
