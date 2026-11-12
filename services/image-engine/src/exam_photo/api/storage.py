@@ -67,6 +67,12 @@ class LocalArtifactStore:
         """Get the absolute Path to a file inside the job directory."""
         return self._validate_file_path(job_id, filename)
 
+    def delete_file(self, job_id: str, filename: str) -> None:
+        """Remove one file from a job's directory, if it is there."""
+        file_path = self._validate_file_path(job_id, filename)
+        if file_path.is_file():
+            file_path.unlink()
+
     def delete_job_directory(self, job_id: str) -> None:
         """Completely remove the job's directory and all its files from disk."""
         job_dir = self._validate_job_id(job_id)

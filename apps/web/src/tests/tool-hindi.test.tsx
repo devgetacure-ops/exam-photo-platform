@@ -49,6 +49,12 @@ describe("the tool in Hindi", () => {
         expect(toolText("hi", note)).not.toBe(note);
     });
 
+    it("has Hindi for the shirtless note (DEC-133)", () => {
+        const note =
+            "You appear to be without a shirt. Exam photos are taken in everyday clothes, so wear a shirt or top and retake it.";
+        expect(toolText("hi", note)).not.toBe(note);
+    });
+
     it("leaves a notice's own words alone", () => {
         const quoted = "Candidates must upload a recent colour photograph.";
         expect(toolText("hi", quoted)).toBe(quoted);

@@ -63,6 +63,19 @@ needs torch.
 docker compose -f deploy/docker-compose.yml --profile setup run --rm model-fetch
 ```
 
+On a host whose volume was filled before DEC-133, fetch only the two
+subject-check models (the YuNet face verifier, 232 KB, and the explicit-image
+classifier, 87 MB) rather than running the whole fetch again:
+
+```bash
+docker compose -f deploy/docker-compose.yml --profile setup build model-fetch
+docker compose -f deploy/docker-compose.yml --profile setup run --rm model-fetch python scripts/download_subject_checks.py --yes
+```
+
+`/ready` reports `"subject_checks": "on"` once both are in place. Without them
+the engine still prepares photographs, but objects, group photographs and
+explicit uploads are not caught.
+
 Then bring it up:
 
 ```bash

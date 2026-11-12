@@ -57,6 +57,7 @@ from exam_photo.providers.refiners.morphological_refiner import (
 from exam_photo.providers.segmenters.mediapipe_segmenter import (
     MediapipeSubjectSegmenter,
 )
+from exam_photo.providers.subject_checks import load_face_verifier
 from exam_photo.rule_validation import validate_exam_rule
 from exam_photo.suitability.appearance_signals import (
     measure_appearance_signals,
@@ -78,6 +79,13 @@ from exam_photo.suitability.enhancement_planner import (
 )
 from exam_photo.suitability.far_subject import too_far_for_a_tight_crop
 from exam_photo.suitability.issue_codes import SuitabilityIssueCode
+from exam_photo.suitability.subject_rules import (
+    REAL_FACE_SWITCH_MIN_SCORE,
+    SHIRTLESS_MIN_SKIN_FRACTION,
+    chest_skin_fraction,
+    real_face_confirmed,
+    second_person_present,
+)
 
 # Face-detection confidence ladder.  The primary threshold is the provider
 # default; the recovery levels are only consulted when the primary pass returns
@@ -102,6 +110,45 @@ def _monochrome_accepted(rule: Optional[ExamRule]) -> Optional[bool]:
         return None
     appearance = rule.image_requirements.appearance
     return appearance.monochrome_accepted if appearance is not None else None
+
+
+def _shift_detection(face: Any, dx: float, dy: float) -> Any:
+    """A face detection moved by (dx, dy): box and every landmark."""
+
+    def point(p: Any) -> Any:
+        if p is None:
+            return None
+        return p.model_copy(update={"x": p.x + dx, "y": p.y + dy})
+
+    box = face.bounding_box
+    landmarks = face.landmarks
+    if landmarks is not None:
+        landmarks = landmarks.model_copy(
+            update={
+                "left_eye": point(landmarks.left_eye),
+                "right_eye": point(landmarks.right_eye),
+                "nose_tip": point(landmarks.nose_tip),
+                "mouth_left": point(landmarks.mouth_left),
+                "mouth_right": point(landmarks.mouth_right),
+                "chin": point(landmarks.chin),
+                "custom_landmarks": {
+                    k: point(v) for k, v in landmarks.custom_landmarks.items()
+                },
+            }
+        )
+    return face.model_copy(
+        update={
+            "bounding_box": box.model_copy(
+                update={
+                    "left": box.left + dx,
+                    "top": box.top + dy,
+                    "right": box.right + dx,
+                    "bottom": box.bottom + dy,
+                }
+            ),
+            "landmarks": landmarks,
+        }
+    )
 
 
 def _find_repo_root() -> Path:
@@ -441,6 +488,57 @@ class RuleOrchestratedPipeline:
         self._matting_segmenter: Optional[Any] = None
         self._face_landmarker: Optional[Any] = None
         self._face_landmarker_unavailable = False
+        self._face_verifier: Optional[Any] = None
+        self._face_verifier_loaded = False
+
+    def _redetect_near(
+        self, image: Image.Image, box: Any
+    ) -> Optional[tuple[Any, float]]:
+        """BlazeFace's own detection of the face YuNet found at ``box``.
+
+        Runs on a region three faces wide around it, where the face is large
+        enough for the short-range model, and maps the result back. Returns
+        the detection and the confidence tier it was found at, or None.
+        """
+        size = max(box.width, box.height)
+        left = max(0, int(box.left - size))
+        top = max(0, int(box.top - size))
+        right = min(image.width, int(box.right + size))
+        bottom = min(image.height, int(box.bottom + size))
+        if right - left < 8 or bottom - top < 8:
+            return None
+        region = image.crop((left, top, right, bottom))
+        cx = (box.left + box.right) / 2.0 - left
+        cy = (box.top + box.bottom) / 2.0 - top
+        detector = MediapipeFaceDetector(
+            model_path=self.face_model_path,
+            expected_sha256=self.face_expected_sha256,
+            min_detection_confidence=_FACE_PRIMARY_CONFIDENCE,
+        )
+        with detector:
+            for tier in (_FACE_PRIMARY_CONFIDENCE, *_FACE_RECOVERY_CONFIDENCES):
+                found = detector.detect_faces(
+                    region, config={"min_detection_confidence": tier}
+                ).detections
+                hits = [
+                    d
+                    for d in found
+                    if d.bounding_box.left <= cx <= d.bounding_box.right
+                    and d.bounding_box.top <= cy <= d.bounding_box.bottom
+                ]
+                if hits:
+                    return _shift_detection(hits[0], left, top), tier
+        return None
+
+    def _subject_face_verifier(self) -> Optional[Any]:
+        """The YuNet face verifier (DEC-133), or None when it is not installed."""
+        if not self._face_verifier_loaded:
+            self._face_verifier_loaded = True
+            try:
+                self._face_verifier = load_face_verifier(_find_repo_root())
+            except Exception:  # noqa: BLE001
+                self._face_verifier = None
+        return self._face_verifier
 
     def _segmenter_for_matting(self) -> Any:
         """The subject segmenter this pipeline mattes with.
@@ -845,6 +943,87 @@ class RuleOrchestratedPipeline:
                 PipelineStage.FACE_DETECTION,
                 PipelineStageStatus.SKIPPED,
             )
+
+        # DEC-133: a second, independent face detector confirms the subject is
+        # a real human face and that nobody else of similar size is in the
+        # photograph. BlazeFace alone accepted a bottle, a laptop, a cartoon
+        # and an Instagram collage, at its lowest confidence tier, and missed
+        # the second person in two of four group photographs.
+        if not failed and norm_result is not None and face is not None:
+            verifier = self._subject_face_verifier()
+            if verifier is not None:
+                verified = verifier.detect(norm_result.image)
+                problem: Optional[str] = None
+                if not real_face_confirmed(verified, face.bounding_box):
+                    # BlazeFace can settle on the wrong spot while the real
+                    # face is elsewhere: on three labelled photographs YuNet
+                    # found it at 0.91-0.93 well away from BlazeFace's box,
+                    # and the crop had been framed around nothing. Re-detect
+                    # there with BlazeFace, so every later stage keeps the box
+                    # convention it was calibrated on.
+                    clear = [
+                        f for f in verified if f.score >= REAL_FACE_SWITCH_MIN_SCORE
+                    ]
+                    moved = (
+                        self._redetect_near(norm_result.image, clear[0].box)
+                        if clear
+                        else None
+                    )
+                    if moved is None:
+                        problem = "No real human face was found in this photograph."
+                    else:
+                        face, tier = moved
+                        try:
+                            face = self._refine_face_landmarks(norm_result.image, face)
+                        except Exception:  # noqa: BLE001
+                            pass
+                        appearance_report = evaluate_disposition(
+                            measure_appearance_signals(
+                                norm_result.image,
+                                [face],
+                                detection_confidence=tier,
+                                landmarks_available=bool(
+                                    (face.provider_metadata or {}).get(
+                                        "dense_landmarks_found", False
+                                    )
+                                ),
+                                target_height_px=(
+                                    plan.output_preparation_config.target_height
+                                    if plan is not None
+                                    and plan.output_preparation_config
+                                    else None
+                                ),
+                                target_head_height_ratio=(
+                                    plan.crop_config.target_head_height_ratio
+                                    if plan is not None and plan.crop_config
+                                    else None
+                                ),
+                            ),
+                            monochrome_accepted=_monochrome_accepted(rule),
+                        )
+                        if appearance_report.disposition is Disposition.BLOCK:
+                            problem = (
+                                appearance_report.block_reason
+                                or "No real human face was found in this photograph."
+                            )
+                if problem is None and second_person_present(verified):
+                    problem = (
+                        "More than one person appears in this photograph, so it is "
+                        "not clear whose passport photograph to produce."
+                    )
+                if problem is not None:
+                    face = None
+                    failed = True
+                    pipeline_issues.append(
+                        PipelineIssueCode.PIPELINE_FACE_COUNT_INVALID
+                    )
+                    record_stage(
+                        PipelineStage.FACE_DETECTION,
+                        PipelineStageStatus.FAILED,
+                        issues=["FACE_COUNT_INVALID"],
+                        dur=0.0,
+                        summary=problem,
+                    )
 
         # Stage 4: Head Estimation
         head_result = None
@@ -1271,6 +1450,32 @@ class RuleOrchestratedPipeline:
                     tell_candidate=True,
                 )
             )
+
+        # DEC-133: a shirtless photograph is prepared, with a note.
+        if (
+            not failed
+            and appearance_report is not None
+            and face is not None
+            and norm_result is not None
+            and ref_result is not None
+        ):
+            chest = chest_skin_fraction(
+                norm_result.image, face, ref_result.refined_alpha_mask
+            )
+            if chest is not None and chest >= SHIRTLESS_MIN_SKIN_FRACTION:
+                appearance_report.findings.append(
+                    AppearanceFinding(
+                        code=SuitabilityIssueCode.SUITABILITY_ATTIRE_UNSUITABLE,
+                        level=FindingLevel.POSSIBLE_ISSUE,
+                        message="You appear to be without a shirt.",
+                        remedy=(
+                            "Exam photos are taken in everyday clothes, so wear "
+                            "a shirt or top and retake it."
+                        ),
+                        measured_value=chest,
+                        tell_candidate=True,
+                    )
+                )
         else:
             record_stage(
                 PipelineStage.CROP_PLANNING,

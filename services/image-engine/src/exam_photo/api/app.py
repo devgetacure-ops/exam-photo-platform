@@ -645,6 +645,10 @@ async def prepare_requirement(
                 detail=(
                     f"This session has prepared {err.used} files without a "
                     "purchase. Buy the ones you need and you can carry on."
+                    if service.settings.billing_enabled
+                    # DEC-127: nothing is sold while the service is free.
+                    else f"This session has prepared {err.used} files. Please "
+                    "come back a little later to prepare more."
                 ),
             ) from None
 

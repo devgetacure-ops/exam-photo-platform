@@ -1,0 +1,14 @@
+{
+  "_comment": "On-server explicit-image check (DEC-133). An int8 ONNX export of Falconsai/nsfw_image_detection (ViT-base, classes normal/nsfw). Chosen over NudeNet, whose repository is AGPL-3.0. Runs before an upload is stored; scores 0.000-0.005 on every ordinary test photograph.",
+  "name": "NSFW image classifier (ViT, ONNX int8)",
+  "variant": "nsfw_image_detection-ONNX/model_quantized",
+  "filename": "model_quantized.onnx",
+  "source_url": "https://huggingface.co/onnx-community/nsfw_image_detection-ONNX/resolve/main/onnx/model_quantized.onnx",
+  "sha256": "d9afb1e057104e6cc8616d174f0f6a8b8b0389c839eea7d5efa4bdf1a77efd27",
+  "size_bytes": 87333629,
+  "licence": "Apache-2.0",
+  "licence_url": "https://huggingface.co/Falconsai/nsfw_image_detection",
+  "local_model_path_default": "model-assets/nsfw/model_quantized.onnx",
+  "input": {"size": 224, "mean": 0.5, "std": 0.5, "labels": ["normal", "nsfw"]},
+  "redistribution_notes": "Apache-2.0 (base model Falconsai/nsfw_image_detection). Suitable for commercial use."
+}

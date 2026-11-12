@@ -100,6 +100,10 @@ const HI: Record<string, string> = {
     "This looks like a photograph, not a thumb impression. Press your thumb on plain white paper and take a photo of just the impression.":
         "यह अंगूठे का निशान नहीं, फ़ोटो लग रही है। सादे सफ़ेद काग़ज़ पर अंगूठा लगाएँ और सिर्फ़ निशान की फ़ोटो लें।",
     "We need exactly one face in the photo.": "फ़ोटो में ठीक एक चेहरा होना चाहिए।",
+    "We can't use this photo. Upload a photo of just your face and shoulders.":
+        "हम यह फ़ोटो इस्तेमाल नहीं कर सकते। सिर्फ़ अपने चेहरे और कंधों की फ़ोटो अपलोड करें।",
+    "You appear to be without a shirt. Exam photos are taken in everyday clothes, so wear a shirt or top and retake it.":
+        "लगता है आपने शर्ट नहीं पहनी है। परीक्षा की फ़ोटो सामान्य कपड़ों में खींची जाती है, इसलिए शर्ट या टॉप पहनकर फिर से खींचें।",
     "Even at its smallest, this file is over the examination's size limit.": "सबसे छोटा करने पर भी यह फ़ाइल परीक्षा की साइज़ सीमा से बड़ी है।",
     "We couldn't size this file exactly to the examination's dimensions.": "यह फ़ाइल परीक्षा के बताए आकार में ठीक नहीं बैठ सकी।",
     "This examination's record needs fixing on our side. Please tell us.": "इस परीक्षा की जानकारी हमारी तरफ़ से ठीक करनी है। कृपया हमें बताएँ।",

@@ -69,6 +69,7 @@ from exam_photo.orchestration.rule_catalogue import Catalogue, load_catalogue
 
 # Lazy imports for rule pipeline to avoid importing heavy libraries at startup
 from exam_photo.orchestration.rule_pipeline import (
+    PipelineIssueCode,
     RuleOrchestratedPipeline,
     RulePipelineConfig,
 )
@@ -86,12 +87,17 @@ from exam_photo.preview import (
     render_watermarked_preview,
 )
 from exam_photo.providers.mediapipe_face_detector import MediapipeFaceDetector
+from exam_photo.providers.subject_checks import (
+    ExplicitImageClassifier,
+    load_explicit_classifier,
+)
 from exam_photo.suitability.not_ink import (
     LIKELY_FACE_CONFIDENCE,
     REFUSAL_CODE,
     REFUSAL_TEXT,
     looks_like_a_photograph,
 )
+from exam_photo.suitability.subject_rules import EXPLICIT_MIN_SCORE
 
 
 class UploadLimitExceededError(ValueError):
@@ -210,6 +216,10 @@ def _alternate_filename(filename: str) -> str:
     return f"{stem}__alt.{extension}"
 
 
+#: The issue code for an explicit upload (DEC-133). The site words it.
+CONTENT_NOT_ALLOWED = "CONTENT_NOT_ALLOWED"
+
+
 def candidate_notes(appearance_findings: Any) -> List[str]:
     """The appearance findings written to be read by the candidate (DEC-116).
 
@@ -292,6 +302,8 @@ class ApiProcessingService:
         #: Preparations refused because every slot was busy, since the last
         #: health sample (DEC-109).
         self.busy_refusals = 0
+        #: Uploads refused as explicit since the service started (DEC-133).
+        self.explicit_refusals = 0
         #: Per-kit counters, surviving retention (DEC-073).
         self.usage = UsageRegistry(settings.artifact_root)
         #: Ephemeral per-preparation progress (DEC-075).
@@ -309,6 +321,10 @@ class ApiProcessingService:
         self._not_ink_detector: Optional[MediapipeFaceDetector] = None
         self._not_ink_unavailable = False
         self._not_ink_lock = threading.Lock()
+        # DEC-133: the explicit-image check, loaded once on first use.
+        self._explicit_classifier: Optional[ExplicitImageClassifier] = None
+        self._explicit_unavailable = False
+        self._explicit_lock = threading.Lock()
         self.repo_root = find_repo_root()
 
         # Load existing manifests on startup
@@ -384,6 +400,47 @@ class ApiProcessingService:
                 except Exception:
                     self._not_ink_unavailable = True
             return self._not_ink_detector
+
+    def _upload_is_explicit(self, upload: bytes) -> bool:
+        """Whether an image upload is explicit (DEC-133).
+
+        Asked before anything is written to disk, so an explicit upload is
+        never stored, previewed or shown in the operator console. A PDF, an
+        undecodable file or a missing model answers no: the ordinary path then
+        reports the file as it always has.
+        """
+        if upload.startswith(b"%PDF-"):
+            return False
+        with self._explicit_lock:
+            if self._explicit_classifier is None and not self._explicit_unavailable:
+                try:
+                    self._explicit_classifier = load_explicit_classifier(self.repo_root)
+                except Exception:
+                    self._explicit_classifier = None
+                if self._explicit_classifier is None:
+                    self._explicit_unavailable = True
+            classifier = self._explicit_classifier
+        if classifier is None:
+            return False
+        try:
+            with Image.open(io.BytesIO(upload)) as opened:
+                image = ImageOps.exif_transpose(opened).convert("RGB")
+            image.thumbnail((640, 640))
+            return classifier.score(image) >= EXPLICIT_MIN_SCORE
+        except Exception:
+            return False
+
+    def _refuse_explicit(self, record: ProcessingJobRecord) -> ProcessingJobRecord:
+        """Close a job whose upload was explicit; nothing of it is kept."""
+        self.explicit_refusals += 1
+        record.status = ApiJobStatus.FAILED
+        record.is_valid = False
+        record.outcome = "not_produced"
+        record.issue_codes = [CONTENT_NOT_ALLOWED]
+        record.findings = []
+        record.artifact_names = []
+        self.registry.update_job(record)
+        return record
 
     def _upload_is_a_photograph(self, upload: bytes, kind: str) -> bool:
         """Whether a signature or thumb impression upload is a photograph instead.
@@ -708,6 +765,19 @@ class ApiProcessingService:
             "error": self._warmup_error,
             "matting_backend": self.settings.matting_backend,
             "billing": "on" if self.settings.billing_enabled else "off",
+            # DEC-133: whether the face verifier and explicit-image check are
+            # installed. "off" means they were never fetched on this host.
+            "subject_checks": (
+                "on"
+                if (
+                    self.repo_root
+                    / "model-assets/yunet/face_detection_yunet_2023mar.onnx"
+                ).is_file()
+                and (
+                    self.repo_root / "model-assets/nsfw/model_quantized.onnx"
+                ).is_file()
+                else "off"
+            ),
             "purchase_gate": "enabled" if self.gate_active else "disabled",
             # Surfaced because an unauthenticated operator surface is a
             # deployment mistake that is otherwise completely silent.
@@ -1577,6 +1647,9 @@ class ApiProcessingService:
             record.entitlement = JobEntitlement.RELEASED
         self.registry.update_job(record)
 
+        if self._upload_is_explicit(image_bytes):
+            return self._refuse_explicit(record)
+
         self.store.write_file(job_id, "input.jpg", image_bytes)
         self.store.write_file(
             job_id,
@@ -1692,6 +1765,16 @@ class ApiProcessingService:
             # DEC-056's third state, on the photograph path too: a compliant
             # file with warnings against it is not the same outcome as a clean
             # one, and neither is the same as no file at all.
+            # DEC-133: an upload refused as not one person's portrait (no real
+            # face, or more than one person) is deleted at once rather than
+            # kept for a day; there is nothing in it anyone needs.
+            if (
+                PipelineIssueCode.PIPELINE_FACE_COUNT_INVALID.value
+                in record.issue_codes
+            ):
+                self.store.delete_file(job_id, "input.jpg")
+                artifact_names = [n for n in artifact_names if n != "input.jpg"]
+                record.artifact_names = artifact_names
             if not result.is_valid:
                 record.outcome = "not_produced" if not should_save_output else "blocked"
             elif record.issue_codes or notes:
@@ -1787,6 +1870,9 @@ class ApiProcessingService:
         record.requirement_type = requirement.requirement_type.value
         record.platform_support = requirement.platform_support.value
         self.registry.update_job(record)
+
+        if self._upload_is_explicit(upload):
+            return self._refuse_explicit(record)
 
         self.store.write_file(job_id, "input.bin", upload)
         artifact_names = ["input.bin"]

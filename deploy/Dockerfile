@@ -124,6 +124,7 @@ CMD ["sh", "-c", "set -e; \
     python scripts/download_segmenter.py --variant selfie_multiclass_256x256 --yes; \
     python scripts/download_segmenter.py --variant selfie_bin_general --yes; \
     python scripts/download_face_landmarker.py --yes; \
+    python scripts/download_subject_checks.py --yes; \
     python scripts/download_birefnet.py --yes; \
     python scripts/export_birefnet_onnx.py; \
     echo 'Model assets ready.'"]

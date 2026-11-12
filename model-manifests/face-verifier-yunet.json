@@ -1,0 +1,13 @@
+{
+  "_comment": "Second, independent face detector (DEC-133). BlazeFace finds the subject; YuNet confirms it is a real human face and counts people. Measured on the labelled set: every real photograph scores 0.85-0.95, every object under 0.4.",
+  "name": "OpenCV Zoo YuNet face detector",
+  "variant": "face_detection_yunet_2023mar",
+  "filename": "face_detection_yunet_2023mar.onnx",
+  "source_url": "https://huggingface.co/opencv/face_detection_yunet/resolve/main/face_detection_yunet_2023mar.onnx",
+  "sha256": "8f2383e4dd3cfbb4553ea8718107fc0423210dc964f9f4280604804ed2552fa4",
+  "size_bytes": 232589,
+  "licence": "MIT",
+  "licence_url": "https://huggingface.co/opencv/face_detection_yunet/blob/main/LICENSE",
+  "local_model_path_default": "model-assets/yunet/face_detection_yunet_2023mar.onnx",
+  "redistribution_notes": "MIT licence (Copyright (c) 2020 Shiqi Yu). Suitable for commercial use."
+}

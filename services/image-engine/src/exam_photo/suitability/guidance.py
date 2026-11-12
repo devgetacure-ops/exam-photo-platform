@@ -85,6 +85,9 @@ _GUIDANCE_MAP: Dict[SuitabilityIssueCode, str] = {
     SuitabilityIssueCode.SUITABILITY_FACE_OCCLUDED: (
         "Please remove face coverings, masks, or objects blocking your face."
     ),
+    SuitabilityIssueCode.SUITABILITY_ATTIRE_UNSUITABLE: (
+        "Please wear a shirt or top, as you would for the examination."
+    ),
     SuitabilityIssueCode.SUITABILITY_OCCLUSION_CHECK_UNAVAILABLE: (
         "Face occlusion check was unavailable."
     ),

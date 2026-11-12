@@ -74,6 +74,8 @@ export const ISSUE_TEXT: Readonly<Record<string, string>> = {
     PIPELINE_INPUT_INVALID: UNREADABLE,
     PIPELINE_RULE_INVALID: "This examination's record needs fixing on our side. Please tell us.",
     PIPELINE_ERROR: "Something went wrong while preparing this file. Please try again.",
+    // DEC-133: an explicit upload. Plain and neutral; it is never stored.
+    CONTENT_NOT_ALLOWED: "We can't use this photo. Upload a photo of just your face and shoulders.",
     DELIVERABLE_PREPARATION_ERROR: UNREADABLE,
 };
 
