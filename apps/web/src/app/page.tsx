@@ -7,6 +7,9 @@ import { SiteFooter } from "../components/site-footer";
 import { SiteHeader } from "../components/site-header";
 import { loadSearchIndex } from "../lib/catalogue.server";
 import { TOP_EXAMS } from "../lib/top-exams";
+import { ClosingSoonBanner } from "../components/hot/closing-soon-banner";
+import { OpenNow } from "../components/hot/open-now";
+import { todayKey } from "../lib/deadlines";
 import type { Metadata } from "next";
 import { JsonLd } from "../components/json-ld";
 import { ORGANIZATION_ID, SITE_URL, pageMetadata } from "../lib/site";
@@ -36,6 +39,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function Home() {
     const { exams, unavailable } = await loadSearchIndex();
+    const builtOn = todayKey();
 
     // Shortcuts under the hero. An id that has left the catalogue drops out
     // here rather than shipping as a link to nothing.
@@ -60,6 +64,8 @@ export default async function Home() {
                 }}
             />
             <SiteHeader takesOverFrom="hero-search" />
+            {/* DEC-135: the most urgent application deadline, for everyone. */}
+            <ClosingSoonBanner builtOn={builtOn} />
             <main id="main-content">
                 <PhoneHome examCount={exams.length} shortcuts={shortcuts} />
 
@@ -103,6 +109,9 @@ export default async function Home() {
                         )}
                     </div>
                 </section>
+
+                {/* DEC-135: applications open now, and the way to every deadline. */}
+                <OpenNow builtOn={builtOn} />
 
                 <HomeStory examCount={exams.length} />
             </main>

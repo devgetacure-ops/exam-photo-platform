@@ -967,3 +967,255 @@ button:hover .euk-chevron {
     letter-spacing: 0;
     line-height: 1.2;
 }
+
+/* ---- Application deadlines (DEC-135) --------------------------------------
+   One stamp, in the house's state colours: orange when time is short, green
+   while open, blue before opening, grey once applications have closed. */
+.euk .euk-dstamp {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    width: fit-content;
+    padding: 3px 8px;
+    border: var(--rule-thin) solid currentColor;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    line-height: 1.3;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transform: rotate(-1.5deg);
+}
+.euk .euk-dstamp[data-state="closing"],
+.euk .euk-dstamp[data-state="extended"] {
+    color: var(--signal-deep);
+    background: var(--signal-soft);
+}
+.euk .euk-dstamp[data-state="open"] {
+    color: var(--ok-line);
+    background: var(--ok-fill);
+}
+.euk .euk-dstamp[data-state="opening"] {
+    color: var(--guide-line);
+    background: var(--guide-fill);
+}
+.euk .euk-dstamp[data-state="exam-ahead"] {
+    color: var(--notyet-line);
+    background: var(--notyet-fill);
+}
+
+/* B: the banner under the header: an ink band, the stamp in signal orange,
+   so the one date that matters most is the first thing seen. */
+.euk-dbanner {
+    background: var(--paper);
+}
+.euk .euk-dbanner .euk-dstamp {
+    color: var(--signal-ink);
+    background: var(--signal);
+    border-color: var(--signal);
+    font-size: 13px;
+}
+.euk-dbanner-inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 14px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+}
+@media (max-width: 899px) {
+    .euk-dbanner-inner {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+}
+.euk-dbanner-text {
+    flex: 1 1 260px;
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.45;
+}
+.euk .euk-dbanner-go {
+    color: var(--signal);
+    font-weight: 700;
+    white-space: nowrap;
+    text-decoration: underline;
+    text-decoration-color: var(--signal);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+}
+
+/* A: applications open now. */
+.euk-opennow {
+    padding: 48px 0 40px;
+    border-top: var(--rule) solid var(--ink);
+    background: var(--paper-2);
+}
+@media (max-width: 899px) {
+    .euk-opennow {
+        padding: 32px 16px calc(var(--bar) + 48px);
+    }
+}
+.euk-opennow-title {
+    margin: 0 0 24px;
+    font-size: clamp(30px, 5vw, 48px);
+    line-height: 1;
+}
+.euk-opennow-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.euk .euk-opennow-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 100%;
+    padding: 18px;
+    border: var(--rule) solid var(--ink);
+    box-shadow: var(--drop-sm) var(--drop-sm) 0 var(--ink);
+    background: var(--paper);
+    color: var(--ink);
+    text-decoration: none;
+    transition: transform 120ms ease, box-shadow 120ms ease;
+}
+.euk .euk-opennow-card:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: calc(var(--drop-sm) + 2px) calc(var(--drop-sm) + 2px) 0 var(--ink);
+}
+.euk-opennow-name {
+    font-size: 18px;
+    line-height: 1.25;
+}
+.euk-opennow-dates {
+    font-size: 14px;
+    color: var(--ink-70);
+}
+.euk-opennow-go {
+    margin-top: auto;
+    font-weight: 700;
+}
+.euk-opennow-more {
+    margin: 24px 0 0;
+    font-weight: 700;
+}
+
+/* C: the deadlines page. */
+.euk-deadlines-page {
+    padding: 40px 20px 72px;
+}
+.euk-deadlines-title {
+    margin: 0 0 12px;
+    font-size: clamp(36px, 7vw, 64px);
+    line-height: 0.95;
+}
+.euk-deadlines-lede {
+    max-width: 60ch;
+    margin: 0 0 32px;
+    color: var(--ink-70);
+    line-height: 1.55;
+}
+.euk-deadlines-group {
+    margin-bottom: 40px;
+}
+.euk-deadlines-head {
+    margin: 0 0 12px;
+    padding-bottom: 8px;
+    border-bottom: var(--rule) solid var(--ink);
+}
+.euk-deadlines-rows {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.euk-deadlines-row {
+    display: grid;
+    gap: 10px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--hairline);
+}
+.euk-deadlines-main {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.euk .euk-deadlines-name {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--ink);
+}
+.euk-deadlines-body {
+    font-size: 14px;
+    color: var(--ink-55);
+}
+.euk-deadlines-dates {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 24px;
+    margin: 0;
+    font-size: 15px;
+}
+.euk-deadlines-dates dt {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-55);
+}
+.euk-deadlines-dates dd {
+    margin: 2px 0 0;
+}
+.euk-deadlines-ext {
+    color: var(--signal-deep);
+    font-weight: 700;
+}
+.euk-deadlines-foot {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 20px;
+    margin: 0;
+    font-size: 14px;
+}
+.euk-deadlines-foot a:first-child {
+    font-weight: 700;
+}
+.euk-deadlines-foot a + a {
+    color: var(--ink-55);
+}
+.euk-deadlines-empty {
+    color: var(--ink-70);
+}
+@media (min-width: 900px) {
+    .euk-deadlines-row {
+        grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+        align-items: start;
+        column-gap: 32px;
+    }
+    .euk-deadlines-foot {
+        grid-column: 1 / -1;
+    }
+}
+
+/* The dates on an examination's own page. */
+.euk-examdl {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+    margin: 12px 0 0;
+    font-size: 15px;
+}
+.euk-examdl a {
+    font-weight: 700;
+}
+
+/* D: the smaller stamp beside a name in a list. */
+.euk .euk-dstamp--small {
+    margin: 4px 0 2px;
+    font-size: 11px;
+    padding: 2px 6px;
+}

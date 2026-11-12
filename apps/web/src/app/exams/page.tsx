@@ -1,3 +1,5 @@
+import { OpenTag } from "../../components/hot/open-tag";
+import { todayKey } from "../../lib/deadlines";
 import Link from "next/link";
 import { loadSearchIndex } from "../../lib/catalogue.server";
 import { ExamSearch } from "../../components/exam-search";
@@ -39,6 +41,7 @@ function initial(name: string): string {
 
 export default async function ExamsPage() {
     const { exams, unavailable } = await loadSearchIndex();
+    const builtOn = todayKey();
 
     const groups = new Map<string, typeof exams>();
     for (const exam of [...exams].sort((a, b) => a.name.localeCompare(b.name))) {
@@ -136,6 +139,7 @@ export default async function ExamsPage() {
                                         <Link href={`/exam/${exam.id}`} className="euk-dir-item">
                                             <span className="min-w-0">
                                                 <span className="euk-dir-name">{exam.name}</span>
+                                                <OpenTag examId={exam.id} builtOn={builtOn} />
                                                 <span className="euk-dir-meta">
                                                     {exam.body}
                                                     {exam.year ? ` · ${exam.year}` : ""}

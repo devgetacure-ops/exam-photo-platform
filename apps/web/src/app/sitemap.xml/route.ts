@@ -10,6 +10,9 @@ export async function GET() {
     const routes = [
         "/",
         "/exams",
+        // DEC-135: application deadlines, in both languages.
+        "/deadlines",
+        "/hi/deadlines",
         "/we-vs-ai",
         ...EXAM_FAMILIES.map((family) => `/exams/${family.slug}`),
         "/compress-image",

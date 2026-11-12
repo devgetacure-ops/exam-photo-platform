@@ -58,6 +58,9 @@ export function SiteHeader({
                             <Link href="/#how" className="euk-top-link">
                                 How it works
                             </Link>
+                            <Link href="/deadlines" className="euk-top-link">
+                                Deadlines
+                            </Link>
                             <Link href="/pdf" className="euk-top-link">
                                 PDF tools
                             </Link>

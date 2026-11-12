@@ -1,5 +1,6 @@
 "use client";
 
+import { OpenTag } from "./hot/open-tag";
 import Link from "next/link";
 import { useEffect } from "react";
 import type { ExamPicker } from "../lib/use-exam-picker";
@@ -80,6 +81,7 @@ export function ExamResults({
                 >
                     <span className="euk-results-name">
                         <span>{row.entry.name}</span>
+                        <OpenTag examId={row.entry.id} />
                         <span className="euk-results-body">
                             {row.entry.body}
                             {row.via && (

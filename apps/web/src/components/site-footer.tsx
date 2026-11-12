@@ -25,6 +25,7 @@ const ENCLOSURES: {
         group: "For your application",
         links: [
             { href: "/exams", label: "All examinations" },
+            { href: "/deadlines", label: "Application deadlines" },
             { href: "/#how", label: "How it works" },
             { href: "/we-vs-ai", label: "WE vs AI" },
             { href: "/compress-image", label: "Compress a photo to a size" },

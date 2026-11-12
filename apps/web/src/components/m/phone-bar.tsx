@@ -27,6 +27,7 @@ const MENU: { group: string; links: { href: string; label: string }[] }[] = [
         group: "Your application",
         links: [
             { href: "/exams", label: "Every examination, A to Z" },
+            { href: "/deadlines", label: "Application deadlines" },
             { href: "/about#how", label: "How it works" },
             { href: "/we-vs-ai", label: "WE vs AI" },
             { href: "/compress-image", label: "Compress a photo to a size" },

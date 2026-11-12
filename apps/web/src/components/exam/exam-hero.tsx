@@ -1,3 +1,5 @@
+import { ExamDeadline } from "../hot/exam-deadline";
+import { todayKey } from "../../lib/deadlines";
 import Link from "next/link";
 import type { ExamDetail } from "../../lib/types";
 import type { LiveCaptureStance } from "../../lib/appearance-rules";
@@ -90,6 +92,8 @@ export function ExamHero({
                     <h1 id="exam-title" className="euk-display euk-exam-title">
                         {exam.exam_name}
                     </h1>
+                    {/* DEC-135: application dates, when the list has them. */}
+                    <ExamDeadline examId={exam.exam_id} builtOn={todayKey()} locale={locale} />
                     <p className="euk-exam-lede">
                         {lede(requirements.length, ours.length, locale)}
                     </p>

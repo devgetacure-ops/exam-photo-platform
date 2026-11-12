@@ -799,7 +799,8 @@
 
 @media (max-width: 899px) {
     /* The desktop hero and the long argument. The argument is at /about. */
-    .euk-home #main-content > :not(.euk-mhome) {
+    /* Applications open now stays (DEC-135): on a phone it matters most. */
+    .euk-home #main-content > :not(.euk-mhome):not([data-phone-keep]) {
         display: none;
     }
 }
