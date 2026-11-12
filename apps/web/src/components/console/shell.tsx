@@ -55,6 +55,8 @@ const MAIN: NavItem[] = [
     { href: "/admin", label: "Overview", icon: Home },
     { href: "/admin/orders", label: "Orders", icon: Receipt, count: (b) => b.refund_due, urgent: (b) => b.refund_due > 0 },
     { href: "/admin/uploads", label: "Uploads", icon: ImageIcon },
+    // DEC-136: every examination, its dates and its record. Replaces Calendar.
+    { href: "/admin/exams", label: "Exams", icon: CalendarDays },
     { href: "/admin/customers", label: "Customers", icon: Users },
     { href: "/admin/inbox", label: "Inbox", icon: Inbox, count: (b) => b.inbox_open, urgent: (b) => b.inbox_overdue > 0 },
     { href: "/admin/reviews", label: "Reviews", icon: Star, count: (b) => b.reviews_pending },
@@ -65,7 +67,6 @@ const GROW: NavItem[] = [
     { href: "/admin/growth", label: "Growth", icon: BarChart3 },
     { href: "/admin/marketing", label: "Marketing", icon: Mail },
     { href: "/admin/coupons", label: "Coupons", icon: Ticket },
-    { href: "/admin/calendar", label: "Calendar", icon: CalendarDays },
     { href: "/admin/activity", label: "Activity", icon: Activity },
 ];
 

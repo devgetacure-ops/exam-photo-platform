@@ -16,6 +16,10 @@ import { AdSlot } from "../../../../components/ad-slot";
 import { JsonLd } from "../../../../components/json-ld";
 import { examAnswers } from "../../../../lib/exam-answers";
 import { breadcrumbs, pageMetadata } from "../../../../lib/site";
+
+// DEC-136: re-rendered every 5 minutes, and at once after a console edit,
+// so the owner's changes to records and dates reach this page.
+export const revalidate = 300;
 
 /**
  * The reference half of an examination: every file's published rules, the

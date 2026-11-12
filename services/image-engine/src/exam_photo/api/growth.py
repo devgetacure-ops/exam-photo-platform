@@ -280,12 +280,15 @@ def calendar(service: "ApiService") -> List[Dict[str, Any]]:
     rows = []
     for entry in service.catalogue.listed():
         deadline = deadlines.get(entry.exam_id)
-        closes = date.fromisoformat(deadline["closes_on"]) if deadline else None
+        last = (
+            (deadline.get("extended_to") or deadline["closes_on"]) if deadline else None
+        )
+        closes = date.fromisoformat(last) if last else None
         rows.append(
             {
                 "exam_id": entry.exam_id,
                 "exam_name": entry.rule.exam.exam_name,
-                "closes_on": deadline["closes_on"] if deadline else None,
+                "closes_on": last or None,
                 "days_left": (closes - today).days if closes else None,
                 "note": deadline["note"] if deadline else None,
                 "auto_remind": bool(deadline and deadline["auto_remind"]),

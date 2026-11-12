@@ -158,6 +158,49 @@ function toDetail(raw: RawRule): ExamDetail | null {
  * take down the whole site.
  */
 export async function loadExams(): Promise<ExamDetail[]> {
+  const files = await loadFileExams();
+  // DEC-136: the owner's console edits, laid over the files. With no engine
+  // (a build, a laptop without it) there are none and the files stand.
+  const edits = await engineEdits();
+  const ids = Object.keys(edits);
+  if (ids.length === 0) return files;
+  const key = ids.sort().map((id) => `${id}:${JSON.stringify(edits[id]).length}`).join("|");
+  if (mergedExams && mergedExams.files === files && mergedExams.key === key) return mergedExams.exams;
+  const exams = files.map((exam) => (edits[exam.exam_id] ? (toDetail(edits[exam.exam_id]) ?? exam) : exam));
+  mergedExams = { files, key, exams };
+  return exams;
+}
+
+let mergedExams: { files: ExamDetail[]; key: string; exams: ExamDetail[] } | null = null;
+let editsCache: { at: number; records: Record<string, RawRule> } | null = null;
+
+/**
+ * The records the owner edited in the console, from the engine (DEC-136).
+ * Asked at most once a minute, with a short timeout, and treated as none on
+ * any failure: an unreachable engine must never take the site's pages down.
+ */
+async function engineEdits(): Promise<Record<string, RawRule>> {
+  const now = Date.now();
+  if (editsCache && now - editsCache.at < 60_000) return editsCache.records;
+  let records: Record<string, RawRule> = {};
+  try {
+    const base = (process.env.EUK_ENGINE_INTERNAL_URL ?? "http://engine:8000").replace(/\/+$/, "");
+    const response = await fetch(`${base}/v1/catalogue/edits`, {
+      next: { revalidate: 60 },
+      signal: AbortSignal.timeout(1500),
+    });
+    if (response.ok) {
+      const body = (await response.json()) as { records?: Record<string, RawRule> };
+      records = body.records ?? {};
+    }
+  } catch {
+    records = {};
+  }
+  editsCache = { at: now, records };
+  return records;
+}
+
+async function loadFileExams(): Promise<ExamDetail[]> {
   // 748 records since DEC-114, and every examination page asks for one of
   // them through this list: read them once per catalogue state, not once per
   // request. The directory's modification time moves whenever a record is

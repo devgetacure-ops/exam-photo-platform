@@ -46,3 +46,14 @@ export async function enginePost(path: string, body: unknown): Promise<Response>
         signal: AbortSignal.timeout(10_000),
     });
 }
+
+/** Any other write to the engine's operator surface (DEC-136): PUT, DELETE. */
+export async function engineSend(method: "PUT" | "DELETE", path: string, body?: unknown): Promise<Response> {
+    return fetch(`${engineBase()}${path}`, {
+        method,
+        headers: { "X-Operator-Token": token(), "Content-Type": "application/json" },
+        body: body === undefined ? undefined : JSON.stringify(body),
+        cache: "no-store",
+        signal: AbortSignal.timeout(15_000),
+    });
+}

@@ -1,7 +1,8 @@
 "use client";
 
-import { deadlineFor, deadlineStatus, isOpen, opensSoon, todayKey } from "../../lib/deadlines";
+import { deadlineStatus, isOpen, opensSoon, todayKey } from "../../lib/deadlines";
 import { useToday } from "../../lib/use-today";
+import { useDeadlines } from "../../lib/use-deadlines";
 import { DeadlineStamp } from "./deadline-stamp";
 
 /**
@@ -11,7 +12,8 @@ import { DeadlineStamp } from "./deadline-stamp";
  */
 export function OpenTag({ examId, builtOn }: { examId: string; builtOn?: string }) {
     const today = useToday(builtOn ?? todayKey());
-    const entry = deadlineFor(examId);
+    const entries = useDeadlines();
+    const entry = entries.find((item) => item.examId === examId);
     if (!entry) return null;
     const status = deadlineStatus(entry, today);
     if (!isOpen(status) && !opensSoon(status)) return null;

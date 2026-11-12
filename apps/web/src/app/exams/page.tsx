@@ -10,6 +10,10 @@ import { JsonLd } from "../../components/json-ld";
 import { absoluteUrl, breadcrumbs, pageMetadata } from "../../lib/site";
 import { EXAM_FAMILIES } from "../../lib/exam-families";
 
+// DEC-136: re-rendered every 5 minutes, and at once after a console edit,
+// so the owner's changes to records and dates reach this page.
+export const revalidate = 300;
+
 export async function generateMetadata() {
     const { exams } = await loadSearchIndex();
     return pageMetadata({

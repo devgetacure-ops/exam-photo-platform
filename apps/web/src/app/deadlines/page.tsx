@@ -2,9 +2,14 @@ import { DeadlinesList } from "../../components/hot/deadlines-list";
 import { JsonLd } from "../../components/json-ld";
 import { SiteFooter } from "../../components/site-footer";
 import { SiteHeader } from "../../components/site-header";
-import { DEADLINES, todayKey } from "../../lib/deadlines";
+import { todayKey } from "../../lib/deadlines";
+import { loadDeadlines } from "../../lib/deadlines.server";
 import { languageAlternates } from "../../lib/i18n";
 import { absoluteUrl, breadcrumbs, pageMetadata } from "../../lib/site";
+
+// DEC-136: re-rendered every 5 minutes, and at once after a console edit,
+// so the owner's changes to records and dates reach this page.
+export const revalidate = 300;
 
 /** Application deadlines, with every last date and exam date (DEC-135). */
 export function generateMetadata() {
@@ -17,8 +22,9 @@ export function generateMetadata() {
     });
 }
 
-export default function DeadlinesPage() {
+export default async function DeadlinesPage() {
     const builtOn = todayKey();
+    const deadlines = await loadDeadlines();
     return (
         <>
             <SiteHeader />
@@ -28,8 +34,8 @@ export default function DeadlinesPage() {
                         "@context": "https://schema.org",
                         "@type": "ItemList",
                         name: "Examination application deadlines",
-                        numberOfItems: DEADLINES.length,
-                        itemListElement: DEADLINES.map((entry, index) => ({
+                        numberOfItems: deadlines.length,
+                        itemListElement: deadlines.map((entry, index) => ({
                             "@type": "ListItem",
                             position: index + 1,
                             name: entry.examName,
@@ -48,7 +54,7 @@ export default function DeadlinesPage() {
                     <p className="euk-deadlines-lede">
                         Last dates to apply, extensions and exam dates. Check the official notice before you apply.
                     </p>
-                    <DeadlinesList builtOn={builtOn} />
+                    <DeadlinesList builtOn={builtOn} initial={deadlines} />
                 </div>
             </main>
             <SiteFooter />

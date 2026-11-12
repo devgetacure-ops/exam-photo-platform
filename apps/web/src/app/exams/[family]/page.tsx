@@ -15,6 +15,10 @@ import { SiteFooter } from "../../../components/site-footer";
 import { JsonLd } from "../../../components/json-ld";
 import { Chevron } from "../../../components/euk/doodles";
 import { absoluteUrl, breadcrumbs, pageMetadata } from "../../../lib/site";
+
+// DEC-136: re-rendered every 5 minutes, and at once after a console edit,
+// so the owner's changes to records and dates reach this page.
+export const revalidate = 300;
 
 /**
  * A family hub (DEC-096): every examination in one family, with its

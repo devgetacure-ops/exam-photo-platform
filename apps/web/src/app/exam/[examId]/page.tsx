@@ -16,6 +16,10 @@ import { ExamRelated } from "../../../components/exam/exam-related";
 import { examDescription, examTitle } from "../../../lib/exam-answers";
 import { breadcrumbs, pageMetadata } from "../../../lib/site";
 import { languageAlternates } from "../../../lib/i18n";
+
+// DEC-136: re-rendered every 5 minutes, and at once after a console edit,
+// so the owner's changes to records and dates reach this page.
+export const revalidate = 300;
 
 /**
  * One examination: what it asks for, the kit that answers it, and each file

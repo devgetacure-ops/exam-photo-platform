@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 
-import { deadlineFor, deadlineStatus, shortDate } from "../../lib/deadlines";
+import { deadlineStatus, shortDate } from "../../lib/deadlines";
 import { useToday } from "../../lib/use-today";
+import { useDeadlines } from "../../lib/use-deadlines";
 import { DeadlineStamp } from "./deadline-stamp";
 
 /**
@@ -21,7 +22,8 @@ export function ExamDeadline({
     locale?: "en" | "hi";
 }) {
     const today = useToday(builtOn);
-    const entry = deadlineFor(examId);
+    const entries = useDeadlines();
+    const entry = entries.find((item) => item.examId === examId);
     if (!entry) return null;
     const status = deadlineStatus(entry, today);
     if (status.state === "past") return null;

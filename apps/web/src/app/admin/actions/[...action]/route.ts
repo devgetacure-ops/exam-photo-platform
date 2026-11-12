@@ -2,8 +2,17 @@ import { operatorFromHeaders } from "../../../../lib/operator/access";
 import { actionFor, doneMessage, postedFromHere } from "../../../../lib/operator/actions";
 import { safeBack } from "../../../../lib/operator/data";
 import { enginePost } from "../../../../lib/operator/engine";
+import { revalidatePath } from "next/cache";
 
 export const runtime = "nodejs";
+
+function refreshDatePages(examId: string | undefined) {
+    for (const path of ["/", "/deadlines", "/hi/deadlines", "/exams"]) revalidatePath(path);
+    if (examId) {
+        revalidatePath(`/exam/${examId}`);
+        revalidatePath(`/hi/exam/${examId}`);
+    }
+}
 
 function back(to: string, params: Record<string, string>): Response {
     const url = new URL(to, "http://operator.local");
@@ -40,6 +49,9 @@ export async function POST(request: Request, { params }: { params: Promise<{ act
     } catch {
         return back(to, { failed: "The engine could not be reached. Nothing was changed." });
     }
+
+    // DEC-136: dates show on public pages; refresh them now, not in 5 minutes.
+    if (kind === "exam-dates" || kind === "dates-import") refreshDatePages(id);
 
     const extra: Record<string, string> = { done: doneMessage(kind, form) };
     // A test send returns to the composer with what was typed still in it.

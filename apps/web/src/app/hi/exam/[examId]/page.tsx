@@ -16,6 +16,10 @@ import { ExamRelated } from "../../../../components/exam/exam-related";
 import { examQuickAnswer, examSpecs } from "../../../../lib/exam-answers";
 import { COPY, languageAlternates } from "../../../../lib/i18n";
 import { breadcrumbs, pageMetadata } from "../../../../lib/site";
+
+// DEC-136: re-rendered every 5 minutes, and at once after a console edit,
+// so the owner's changes to records and dates reach this page.
+export const revalidate = 300;
 
 /**
  * One examination, in Hindi (DEC-129). The same page as `/exam/[examId]`:

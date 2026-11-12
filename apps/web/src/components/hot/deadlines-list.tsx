@@ -3,7 +3,6 @@
 import Link from "next/link";
 
 import {
-    DEADLINES,
     byUrgency,
     deadlineStatus,
     shortDate,
@@ -11,6 +10,7 @@ import {
     type DeadlineState,
 } from "../../lib/deadlines";
 import { useToday } from "../../lib/use-today";
+import { useDeadlines } from "../../lib/use-deadlines";
 import { DeadlineStamp } from "./deadline-stamp";
 
 /**
@@ -26,11 +26,21 @@ const GROUPS: { id: string; states: DeadlineState[]; en: string; hi: string }[] 
     { id: "exam", states: ["exam-ahead"], en: "Applications closed, exam ahead", hi: "आवेदन बंद, परीक्षा आगे" },
 ];
 
-export function DeadlinesList({ builtOn, locale = "en" }: { builtOn: string; locale?: "en" | "hi" }) {
+export function DeadlinesList({
+    builtOn,
+    locale = "en",
+    initial,
+}: {
+    builtOn: string;
+    locale?: "en" | "hi";
+    /** The list as the server had it, so the page's HTML is current. */
+    initial?: readonly Deadline[];
+}) {
     const today = useToday(builtOn);
+    const entries = useDeadlines(initial);
     const hi = locale === "hi";
     const prefix = hi ? "/hi" : "";
-    const sorted = [...DEADLINES].sort(byUrgency(today));
+    const sorted = [...entries].sort(byUrgency(today));
     const groups = GROUPS.map((group) => ({
         ...group,
         entries: sorted.filter((entry) => group.states.includes(deadlineStatus(entry, today).state)),

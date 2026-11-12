@@ -55,6 +55,7 @@ from exam_photo.api.contracts import (
     UnavailableExamResponse,
 )
 from exam_photo.api.delivery import EmailRejectedError
+from exam_photo.api.exam_edits import EditRefusedError
 from exam_photo.api.jobs import KIT_ID_REGEX, ProcessingJobRecord
 from exam_photo.api.ledger import (
     REVIEW_STATES,
@@ -1914,6 +1915,262 @@ def operator_set_deadline(exam_id: str, deadline: DeadlineIn) -> dict[str, Any]:
         f"exam:{exam_id}",
     )
     return {"ok": True}
+
+
+# --- Exams: the owner's edits and dates (DEC-136) ---------------------------
+
+
+_DATE_FIELDS = ("opens_on", "closes_on", "extended_to", "exam_date", "last_verified")
+
+
+def _raw_record(entry: Any) -> dict[str, Any]:
+    """The record as written, not as the model would re-serialise it."""
+    try:
+        payload = json.loads(Path(entry.source_path).read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return dict(entry.rule.model_dump(mode="json", exclude_none=True))
+    if isinstance(payload, dict) and "record" in payload and "edited_at" in payload:
+        return dict(payload["record"])
+    return dict(payload)
+
+
+def _dates_row(row: Optional[dict[str, Any]]) -> dict[str, Any]:
+    row = row or {}
+    return {
+        "opens_on": row.get("opens_on") or None,
+        "closes_on": row.get("closes_on") or None,
+        "extended_to": row.get("extended_to") or None,
+        "exam_date": row.get("exam_date") or None,
+        "exam_date_note": row.get("exam_date_note") or None,
+        "source_url": row.get("source_url") or None,
+        "last_verified": row.get("last_verified") or None,
+        "note": row.get("note") or None,
+        "auto_remind": bool(row.get("auto_remind")),
+    }
+
+
+@app.get("/v1/operator/exams", dependencies=_OPERATOR)
+def operator_exams() -> dict[str, Any]:
+    """Every examination, for the console's Exams page."""
+    edits = service.exam_edits.all()
+    dates = service.ledger.deadlines()
+    demand = {row["exam_id"]: row for row in growth_views.calendar(service)}
+    rows = []
+    for entry in service.catalogue.listed():
+        exam = entry.rule.exam
+        prepared = sum(
+            1
+            for r in entry.rule.requirements or []
+            if getattr(r.platform_support, "value", r.platform_support)
+            in ("supported", "partially_supported")
+        )
+        edit = edits.get(entry.exam_id)
+        rows.append(
+            {
+                "exam_id": entry.exam_id,
+                "exam_name": exam.exam_name,
+                "short_name": (exam.aliases[0] if exam.aliases else None),
+                "conducting_body": exam.conducting_body,
+                "files": prepared,
+                "edited": edit is not None,
+                "edited_at": edit.edited_at if edit else None,
+                "dates": _dates_row(dates.get(entry.exam_id)),
+                "uploads_30d": demand.get(entry.exam_id, {}).get("uploads_30d", 0),
+            }
+        )
+    return {"exams": rows}
+
+
+@app.get("/v1/operator/exams/{exam_id}", dependencies=_OPERATOR)
+def operator_exam(exam_id: str) -> dict[str, Any]:
+    entry = service.catalogue.get(exam_id)
+    if entry is None:
+        raise HTTPException(status_code=404, detail="Unknown examination")
+    base = service.base_catalogue.get(exam_id)
+    edit = service.exam_edits.get(exam_id)
+    return {
+        "exam_id": exam_id,
+        "record": _raw_record(entry),
+        "original": _raw_record(base) if base is not None else None,
+        "edited": edit is not None,
+        "edited_at": edit.edited_at if edit else None,
+        "edited_by": edit.edited_by if edit else None,
+        "dates": _dates_row(service.ledger.deadlines().get(exam_id)),
+    }
+
+
+class ExamRecordIn(BaseModel):
+    actor: str = "operator"
+    record: dict[str, Any]
+
+
+@app.put("/v1/operator/exams/{exam_id}/record", dependencies=_OPERATOR)
+def operator_save_exam(exam_id: str, body: ExamRecordIn) -> Any:
+    if service.base_catalogue.get(exam_id) is None:
+        raise HTTPException(status_code=404, detail="Unknown examination")
+    try:
+        edit = service.exam_edits.save(exam_id, body.record, body.actor)
+    except EditRefusedError as refused:
+        return JSONResponse(
+            status_code=422,
+            content={
+                "detail": "The record was not saved.",
+                "problems": refused.problems,
+            },
+        )
+    service.apply_exam_edits()
+    service.ledger.log(body.actor, "edited the examination record", f"exam:{exam_id}")
+    return {"ok": True, "edited_at": edit.edited_at}
+
+
+@app.delete("/v1/operator/exams/{exam_id}/record", dependencies=_OPERATOR)
+def operator_revert_exam(exam_id: str, actor: str = "operator") -> dict[str, Any]:
+    if service.base_catalogue.get(exam_id) is None:
+        raise HTTPException(status_code=404, detail="Unknown examination")
+    removed = service.exam_edits.remove(exam_id)
+    service.apply_exam_edits()
+    if removed:
+        service.ledger.log(actor, "reverted the examination record", f"exam:{exam_id}")
+    return {"ok": True, "reverted": removed}
+
+
+class ExamDatesIn(BaseModel):
+    actor: str = "operator"
+    opens_on: Optional[str] = None
+    closes_on: Optional[str] = None
+    extended_to: Optional[str] = None
+    exam_date: Optional[str] = None
+    exam_date_note: Optional[str] = None
+    source_url: Optional[str] = None
+    last_verified: Optional[str] = None
+    note: Optional[str] = None
+    auto_remind: Optional[bool] = None
+
+
+def _check_dates(dates: dict[str, Any]) -> Optional[str]:
+    parsed: dict[str, datetime] = {}
+    for name in _DATE_FIELDS:
+        value = dates.get(name)
+        if not value:
+            continue
+        try:
+            parsed[name] = datetime.strptime(str(value), "%Y-%m-%d")
+        except ValueError:
+            return name.replace("_", " ") + ": use YYYY-MM-DD"
+    if "extended_to" in parsed and "closes_on" not in parsed:
+        return "An extended date needs the original last date too."
+    if "extended_to" in parsed and parsed["extended_to"] <= parsed["closes_on"]:
+        return "The extended date must be after the original last date."
+    if (
+        "opens_on" in parsed
+        and "closes_on" in parsed
+        and parsed["opens_on"] > parsed["closes_on"]
+    ):
+        return "Applications cannot open after they close."
+    url = dates.get("source_url")
+    if url and not str(url).startswith(("https://", "http://")):
+        return "The source must be a web address."
+    return None
+
+
+@app.post("/v1/operator/exams/{exam_id}/dates", dependencies=_OPERATOR)
+def operator_save_dates(exam_id: str, body: ExamDatesIn) -> dict[str, Any]:
+    if service.catalogue.get(exam_id) is None:
+        raise HTTPException(status_code=404, detail="Unknown examination")
+    fields = body.model_dump(exclude={"actor"}, exclude_none=True)
+    problem = _check_dates(fields)
+    if problem:
+        raise HTTPException(status_code=422, detail=problem)
+    service.ledger.save_dates(exam_id, fields, body.actor)
+    service.ledger.log(body.actor, "updated the dates", f"exam:{exam_id}")
+    return {"ok": True}
+
+
+class DatesImportIn(BaseModel):
+    actor: str = "operator"
+    entries: List[dict[str, Any]]
+
+
+@app.post("/v1/operator/dates/import", dependencies=_OPERATOR)
+def operator_import_dates(body: DatesImportIn) -> dict[str, Any]:
+    """Fill dates from the site's bundled list where the console has none.
+
+    Never overwrites an examination the owner already gave dates to.
+    """
+    existing = service.ledger.deadlines()
+    added, skipped = 0, 0
+    for item in body.entries:
+        exam_id = str(item.get("examId") or "")
+        if not exam_id or exam_id in existing or service.catalogue.get(exam_id) is None:
+            skipped += 1
+            continue
+        fields = {
+            "opens_on": item.get("opens"),
+            "closes_on": item.get("closes"),
+            "extended_to": item.get("extendedTo"),
+            "exam_date": item.get("examDate"),
+            "exam_date_note": item.get("examDateNote"),
+            "source_url": item.get("sourceUrl"),
+            "last_verified": item.get("lastVerified"),
+        }
+        if _check_dates(fields):
+            skipped += 1
+            continue
+        service.ledger.save_dates(exam_id, fields, body.actor)
+        added += 1
+    if added:
+        service.ledger.log(
+            body.actor, f"imported dates for {added} examinations", "dates"
+        )
+    return {"added": added, "skipped": skipped}
+
+
+@app.get("/v1/deadlines")
+def public_deadlines() -> Response:
+    """Every examination's application dates, for the site (DEC-136)."""
+    entries = []
+    for exam_id, row in service.ledger.deadlines().items():
+        entry = service.catalogue.get(exam_id)
+        if entry is None:
+            continue
+        dates = _dates_row(row)
+        if not (dates["closes_on"] or dates["exam_date"]):
+            continue
+        exam = entry.rule.exam
+        entries.append(
+            {
+                "examId": exam_id,
+                "examName": exam.exam_name,
+                "shortName": (exam.aliases[0] if exam.aliases else None),
+                "conductingBody": exam.conducting_body,
+                "opens": dates["opens_on"],
+                "closes": dates["closes_on"],
+                "extendedTo": dates["extended_to"],
+                "examDate": dates["exam_date"],
+                "examDateNote": dates["exam_date_note"],
+                "sourceUrl": dates["source_url"],
+                "lastVerified": dates["last_verified"],
+            }
+        )
+    return JSONResponse(
+        {"entries": entries}, headers={"Cache-Control": "public, max-age=60"}
+    )
+
+
+@app.get("/v1/catalogue/edits")
+def public_catalogue_edits() -> Response:
+    """The owner's edited records, as served, for the site's pages (DEC-136).
+
+    Public on purpose: every rule is already shown on the examination's page.
+    """
+    records: dict[str, Any] = {}
+    for exam_id, edit in service.exam_edits.all().items():
+        entry = service.catalogue.get(exam_id)
+        if entry is not None and Path(entry.source_path) == edit.path:
+            records[exam_id] = edit.record
+    return JSONResponse(
+        {"records": records}, headers={"Cache-Control": "public, max-age=60"}
+    )
 
 
 # --- Release 3: coupons, campaigns, unsubscribe, feedback (DEC-111) ---------

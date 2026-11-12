@@ -1,17 +1,69 @@
 {
  "entries": [
   {
+   "examId": "common-admission-test-2025",
+   "examName": "Common Admission Test 2026",
+   "shortName": "CAT 2026",
+   "conductingBody": "Indian Institutes of Management",
+   "opens": "2026-08-03",
+   "closes": "2026-09-15",
+   "extendedTo": null,
+   "examDate": "2026-11-29",
+   "examDateNote": null,
+   "sourceUrl": "https://iimcat.ac.in/",
+   "lastVerified": "2026-11-12"
+  },
+  {
+   "examId": "gate-2026",
+   "examName": "GATE 2027",
+   "shortName": "Graduate Aptitude Test in Engineering",
+   "conductingBody": "IIT Guwahati",
+   "opens": null,
+   "closes": "2026-10-16",
+   "extendedTo": null,
+   "examDate": "2027-02-06",
+   "examDateNote": "Also 7, 13, 14, 20 and 21 February",
+   "sourceUrl": "https://gate2027.iitm.ac.in/",
+   "lastVerified": "2026-11-12"
+  },
+  {
+   "examId": "common-law-admission-test-clat-ug-pg",
+   "examName": "Common Law Admission Test (CLAT UG & PG)",
+   "shortName": "CLAT",
+   "conductingBody": "Consortium of National Law Universities (NLUs)",
+   "opens": null,
+   "closes": "2026-10-31",
+   "extendedTo": null,
+   "examDate": "2026-12-06",
+   "examDateNote": null,
+   "sourceUrl": "https://consortiumofnlus.ac.in/",
+   "lastVerified": "2026-11-12"
+  },
+  {
+   "examId": "all-india-law-entrance-test-ailet",
+   "examName": "All India Law Entrance Test (AILET)",
+   "shortName": "AILET",
+   "conductingBody": "National Law University Delhi (NLU Delhi)",
+   "opens": null,
+   "closes": "2026-11-10",
+   "extendedTo": null,
+   "examDate": "2026-12-13",
+   "examDateNote": null,
+   "sourceUrl": "https://nationallawuniversitydelhi.in/",
+   "lastVerified": "2026-11-12"
+  },
+  {
    "examId": "railway-recruitment-boards-non-technical-popular-categories-undergraduate-posts-",
    "examName": "Railway Recruitment Boards Non-Technical Popular Categories Undergraduate Posts (RRB NTPC UG)",
    "shortName": "RRB NTPC Undergraduate",
    "conductingBody": "Railway Recruitment Boards (RRBs), Ministry of Railways, Government of India",
-   "opens": null,
+   "opens": "2026-10-15",
    "closes": "2026-11-13",
    "extendedTo": null,
    "examDate": null,
    "examDateNote": null,
-   "sourceUrl": "https://www.freejobalert.com/latest-notifications/",
-   "lastVerified": null
+   "sourceUrl": "https://www.rrbapply.gov.in/",
+   "lastVerified": "2026-11-12"
   },
   {
    "examId": "icai-examination-portal",
@@ -27,6 +79,19 @@
    "lastVerified": "2026-09-24"
   },
   {
+   "examId": "jee-main-2026",
+   "examName": "JEE (Main) 2027",
+   "shortName": "JEE Main",
+   "conductingBody": "National Testing Agency",
+   "opens": "2026-10-24",
+   "closes": "2026-11-22",
+   "extendedTo": null,
+   "examDate": null,
+   "examDateNote": "Session 1, late January 2027",
+   "sourceUrl": "https://jeemain.nta.nic.in/",
+   "lastVerified": "2026-11-12"
+  },
+  {
    "examId": "symbiosis-national-aptitude-test-snap",
    "examName": "Symbiosis National Aptitude Test (SNAP)",
    "shortName": "SNAP",
@@ -34,10 +99,10 @@
    "opens": null,
    "closes": "2026-11-25",
    "extendedTo": null,
-   "examDate": null,
-   "examDateNote": null,
+   "examDate": "2026-12-13",
+   "examDateNote": "Also 19 and 26 December",
    "sourceUrl": "https://www.snaptest.org/",
-   "lastVerified": "2026-09-24"
+   "lastVerified": "2026-11-12"
   },
   {
    "examId": "national-institute-of-design-design-aptitude-test-nid-dat",
@@ -48,9 +113,9 @@
    "closes": "2026-11-30",
    "extendedTo": null,
    "examDate": "2026-12-20",
-   "examDateNote": "|| (Prelims) || Dec 2026 / Jan 2027",
-   "sourceUrl": "https://design.careers360.com/articles/nid-application-form-2027-out || https://design.careers360.com/articles/nid-dat-application-form || https://admissions.nid.edu/",
-   "lastVerified": "2026-09-24"
+   "examDateNote": "DAT Prelims",
+   "sourceUrl": "https://admissions.nid.edu/",
+   "lastVerified": "2026-11-12"
   },
   {
    "examId": "k-l-engineering-entrance-examination-kleee",
@@ -74,9 +139,9 @@
    "closes": "2026-12-04",
    "extendedTo": null,
    "examDate": "2026-12-19",
-   "examDateNote": "and",
-   "sourceUrl": "https://www.slat-test.org/register.php",
-   "lastVerified": "2026-09-24"
+   "examDateNote": "Test 2 on 26 December",
+   "sourceUrl": "https://www.slat-test.org/",
+   "lastVerified": "2026-11-12"
   },
   {
    "examId": "xavier-aptitude-test",
@@ -89,7 +154,7 @@
    "examDate": "2027-01-03",
    "examDateNote": null,
    "sourceUrl": "https://xatonline.in/",
-   "lastVerified": "2026-09-24"
+   "lastVerified": "2026-11-12"
   },
   {
    "examId": "upsc-central-industrial-security-force-assistant-commandants-executive-ldce-cisf",
@@ -112,23 +177,10 @@
    "opens": "2026-12-02",
    "closes": "2026-12-22",
    "extendedTo": null,
-   "examDate": null,
-   "examDateNote": "11 Apr 2027",
-   "sourceUrl": "https://www.upsc.gov.in/examinations/exam-calendar",
-   "lastVerified": "2026-09-24"
-  },
-  {
-   "examId": "upsc-nda-na-examination-ii-2026",
-   "examName": "UPSC NDA & NA Examination (II) 2027",
-   "shortName": "NDA II 2027",
-   "conductingBody": "Union Public Service Commission",
-   "opens": "2026-12-02",
-   "closes": "2026-12-22",
-   "extendedTo": null,
-   "examDate": null,
-   "examDateNote": "11 Apr 2027",
-   "sourceUrl": "https://www.upsc.gov.in/examinations/exam-calendar",
-   "lastVerified": "2026-09-24"
+   "examDate": "2027-04-11",
+   "examDateNote": null,
+   "sourceUrl": "https://upsc.gov.in/",
+   "lastVerified": "2026-11-12"
   },
   {
    "examId": "upsc-civil-services-examination-2026",
@@ -139,9 +191,9 @@
    "closes": "2027-02-02",
    "extendedTo": null,
    "examDate": "2027-05-23",
-   "examDateNote": "Prelims ; Mains from || Prelims ; Mains onward",
-   "sourceUrl": "https://www.upscplanner.com/articles/upsc-exam-calendar-2027 || https://www.upsc.gov.in/examinations/exam-calendar || https://www.clearias.com/upsc-calendar/",
-   "lastVerified": "2026-09-24"
+   "examDateNote": "Prelims",
+   "sourceUrl": "https://upsc.gov.in/",
+   "lastVerified": "2026-11-12"
   },
   {
    "examId": "upsc-indian-forest-service-examination-upsc-ifos-main-examination",
@@ -152,9 +204,9 @@
    "closes": "2027-02-02",
    "extendedTo": null,
    "examDate": "2027-05-23",
-   "examDateNote": "Prelims ; Mains from",
-   "sourceUrl": "https://www.upscplanner.com/articles/upsc-exam-calendar-2027",
-   "lastVerified": "2026-09-24"
+   "examDateNote": "Through the CSE Prelims",
+   "sourceUrl": "https://upsc.gov.in/",
+   "lastVerified": "2026-11-12"
   },
   {
    "examId": "upsc-capf-assistant-commandants-examination-2026",
@@ -192,8 +244,34 @@
    "extendedTo": null,
    "examDate": "2027-07-18",
    "examDateNote": null,
-   "sourceUrl": "https://www.upsc.gov.in/sites/default/files/Calendar-Year-2027-Engl-200526_0.pdf",
-   "lastVerified": "2026-09-24"
+   "sourceUrl": "https://upsc.gov.in/",
+   "lastVerified": "2026-11-12"
+  },
+  {
+   "examId": "upsc-combined-defence-services-examination-ii-2026",
+   "examName": "UPSC Combined Defence Services Examination (II) 2027",
+   "shortName": "CDS II 2027",
+   "conductingBody": "Union Public Service Commission",
+   "opens": "2027-05-12",
+   "closes": "2027-06-01",
+   "extendedTo": null,
+   "examDate": "2027-09-19",
+   "examDateNote": null,
+   "sourceUrl": "https://upsc.gov.in/",
+   "lastVerified": "2026-11-12"
+  },
+  {
+   "examId": "upsc-nda-na-examination-ii-2026",
+   "examName": "UPSC NDA & NA Examination (II) 2027",
+   "shortName": "NDA II 2027",
+   "conductingBody": "Union Public Service Commission",
+   "opens": "2027-05-12",
+   "closes": "2027-06-01",
+   "extendedTo": null,
+   "examDate": "2027-09-19",
+   "examDateNote": null,
+   "sourceUrl": "https://upsc.gov.in/",
+   "lastVerified": "2026-11-12"
   },
   {
    "examId": "jharkhand-combined-entrance-competitive-examination-jcece",

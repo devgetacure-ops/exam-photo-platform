@@ -94,7 +94,10 @@ RUN useradd --system --uid 10002 --create-home --home-dir /home/web web \
     # output is root's, so the app's user could not create that folder and
     # every image was resized again on every request (logs, 2 October).
     && mkdir -p /repo/apps/web/.next/cache/images \
-    && chown -R web:web /repo/apps/web/.next/cache
+    # DEC-136: pages re-render every few minutes and after a console edit,
+    # and Next writes the fresh copies under .next, so the app's user owns
+    # all of it, not only the image cache.
+    && chown -R web:web /repo/apps/web/.next
 USER web
 
 EXPOSE 3000

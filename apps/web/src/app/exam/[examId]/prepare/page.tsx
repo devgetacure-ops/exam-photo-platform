@@ -4,6 +4,10 @@ import { notFound } from "next/navigation";
 import { loadExam, loadExams } from "../../../../lib/catalogue.server";
 import { loadExamFacts } from "../../../../lib/exam-facts.server";
 import { PrepareFlow } from "../../../../components/m/prepare-flow";
+
+// DEC-136: re-rendered every 5 minutes, and at once after a console edit,
+// so the owner's changes to records and dates reach this page.
+export const revalidate = 300;
 
 /**
  * The flow: choose the files, add them, check, pay.

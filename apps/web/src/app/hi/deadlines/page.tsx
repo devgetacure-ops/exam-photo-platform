@@ -2,8 +2,13 @@ import { DeadlinesList } from "../../../components/hot/deadlines-list";
 import { SiteFooter } from "../../../components/site-footer";
 import { SiteHeader } from "../../../components/site-header";
 import { todayKey } from "../../../lib/deadlines";
+import { loadDeadlines } from "../../../lib/deadlines.server";
 import { languageAlternates } from "../../../lib/i18n";
 import { pageMetadata } from "../../../lib/site";
+
+// DEC-136: re-rendered every 5 minutes, and at once after a console edit,
+// so the owner's changes to records and dates reach this page.
+export const revalidate = 300;
 
 /** The deadlines page in Hindi (DEC-135). */
 export function generateMetadata() {
@@ -17,7 +22,8 @@ export function generateMetadata() {
     });
 }
 
-export default function HindiDeadlinesPage() {
+export default async function HindiDeadlinesPage() {
+    const deadlines = await loadDeadlines();
     return (
         <>
             <SiteHeader />
@@ -27,7 +33,7 @@ export default function HindiDeadlinesPage() {
                     <p className="euk-deadlines-lede">
                         आवेदन की आख़िरी तारीख़, बढ़ाई गई तारीख़ और परीक्षा की तारीख़। आवेदन से पहले आधिकारिक सूचना ज़रूर देखें।
                     </p>
-                    <DeadlinesList builtOn={todayKey()} locale="hi" />
+                    <DeadlinesList builtOn={todayKey()} locale="hi" initial={deadlines} />
                 </div>
             </main>
             <SiteFooter />

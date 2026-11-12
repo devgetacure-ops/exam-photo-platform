@@ -256,6 +256,15 @@ _ADDED_COLUMNS = {
         "source": "TEXT",
         "kit_id": "TEXT",
     },
+    # DEC-136: the whole of an examination's dates, edited in the console.
+    "deadlines": {
+        "opens_on": "TEXT",
+        "extended_to": "TEXT",
+        "exam_date": "TEXT",
+        "exam_date_note": "TEXT",
+        "source_url": "TEXT",
+        "last_verified": "TEXT",
+    },
     "coupons": {
         "source": "TEXT NOT NULL DEFAULT 'manual'",
         "issued_for_order": "TEXT",
@@ -871,6 +880,38 @@ class Ledger:
             "INSERT OR REPLACE INTO deadlines (exam_id, closes_on, note, auto_remind, "
             "set_by, set_at) VALUES (?,?,?,?,?,?)",
             (exam_id, closes_on, note[:300], 1 if auto_remind else 0, actor, now_iso()),
+        )
+
+    def save_dates(self, exam_id: str, fields: Dict[str, Any], actor: str) -> None:
+        """Every date field of an examination at once (DEC-136).
+
+        ``closes_on`` is the original last date; ``extended_to`` a later one.
+        With no date at all the row is removed, as ``set_deadline`` does. The
+        reminder switch and note are kept as they were unless given.
+        """
+        dates = ("opens_on", "closes_on", "extended_to", "exam_date")
+        if not any(fields.get(k) for k in dates):
+            self._write("DELETE FROM deadlines WHERE exam_id=?", (exam_id,))
+            return
+        current = self.deadlines().get(exam_id) or {}
+        self._write(
+            "INSERT OR REPLACE INTO deadlines (exam_id, closes_on, note, auto_remind, "
+            "set_by, set_at, opens_on, extended_to, exam_date, exam_date_note, "
+            "source_url, last_verified) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+            (
+                exam_id,
+                fields.get("closes_on") or "",
+                str(fields.get("note", current.get("note")) or "")[:300],
+                1 if fields.get("auto_remind", current.get("auto_remind")) else 0,
+                actor,
+                now_iso(),
+                fields.get("opens_on") or None,
+                fields.get("extended_to") or None,
+                fields.get("exam_date") or None,
+                (str(fields.get("exam_date_note") or "")[:120]) or None,
+                (str(fields.get("source_url") or "")[:500]) or None,
+                fields.get("last_verified") or None,
+            ),
         )
 
     def deadlines(self) -> Dict[str, Dict[str, Any]]:

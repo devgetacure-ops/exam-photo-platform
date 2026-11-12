@@ -13,6 +13,10 @@ import { todayKey } from "../lib/deadlines";
 import type { Metadata } from "next";
 import { JsonLd } from "../components/json-ld";
 import { ORGANIZATION_ID, SITE_URL, pageMetadata } from "../lib/site";
+
+// DEC-136: re-rendered every 5 minutes, and at once after a console edit,
+// so the owner's changes to records and dates reach this page.
+export const revalidate = 300;
 
 /**
  * The landing page, in the order the brief sets: the hero, then what we do,

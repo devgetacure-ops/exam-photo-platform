@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 
-import { DEADLINES, byUrgency, deadlineStatus, isOpen, opensSoon } from "../../lib/deadlines";
+import { byUrgency, deadlineStatus, isOpen, opensSoon } from "../../lib/deadlines";
+import { useDeadlines } from "../../lib/use-deadlines";
 import { useToday } from "../../lib/use-today";
 import { DeadlineStamp } from "./deadline-stamp";
 
@@ -15,7 +16,8 @@ import { DeadlineStamp } from "./deadline-stamp";
  */
 export function ClosingSoonBanner({ builtOn }: { builtOn: string }) {
     const today = useToday(builtOn);
-    const pick = [...DEADLINES]
+    const entries = useDeadlines();
+    const pick = [...entries]
         .filter((entry) => {
             const status = deadlineStatus(entry, today);
             return isOpen(status) || opensSoon(status);

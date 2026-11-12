@@ -71,6 +71,36 @@ export function actionFor(kind: string, id: string | undefined, form: FormData, 
             body: { actor, closes_on: closesOn || null, note: text(form, "note", 300), auto_remind: text(form, "auto_remind", 5) === "yes" },
         };
     }
+    if (kind === "exam-dates") {
+        // DEC-136: every date of one examination, from the Exams page.
+        if (!id || !/^[a-z0-9][a-z0-9_-]{1,160}$/.test(id)) return { error: "invalid examination" };
+        const fields: Record<string, string | null> = {};
+        for (const name of ["opens_on", "closes_on", "extended_to", "exam_date", "last_verified"]) {
+            const value = text(form, name, 10);
+            if (value && !/^\d{4}-\d{2}-\d{2}$/.test(value)) return { error: `invalid ${name.replace("_", " ")}` };
+            fields[name] = value || null;
+        }
+        return {
+            path: `/v1/operator/exams/${id}/dates`,
+            body: {
+                actor,
+                ...fields,
+                exam_date_note: text(form, "exam_date_note", 120) || null,
+                source_url: text(form, "source_url", 500) || null,
+                note: text(form, "note", 300),
+                auto_remind: text(form, "auto_remind", 5) === "yes",
+            },
+        };
+    }
+    if (kind === "dates-import") {
+        let entries: unknown = [];
+        try {
+            entries = JSON.parse(text(form, "entries", 200_000) || "[]");
+        } catch {
+            return { error: "invalid list" };
+        }
+        return { path: "/v1/operator/dates/import", body: { actor, entries } };
+    }
     if (kind === "coupon") {
         const code = text(form, "code", 32).toUpperCase();
         const couponKind = text(form, "kind", 10);
@@ -142,6 +172,10 @@ export function doneMessage(kind: string, form: FormData): string {
             return "Saved.";
         case "refund":
             return value("undo") === "true" ? "Refund mark removed." : "Marked refunded.";
+        case "exam-dates":
+            return "Dates saved. The site shows them within a minute.";
+        case "dates-import":
+            return "Dates imported where none were set.";
         case "deadline":
             return value("closes_on") ? `Closing date set to ${value("closes_on")}.` : "Closing date cleared.";
         case "coupon":

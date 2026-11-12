@@ -5,6 +5,10 @@ import { loadExam, loadExams } from "../../../../../lib/catalogue.server";
 import { PrepareFlow } from "../../../../../components/m/prepare-flow";
 import { LocaleProvider } from "../../../../../components/locale-context";
 
+// DEC-136: re-rendered every 5 minutes, and at once after a console edit,
+// so the owner's changes to records and dates reach this page.
+export const revalidate = 300;
+
 /**
  * The phone flow, in Hindi (DEC-129). Not indexed, like the English flow:
  * the Hindi examination page is the one a search should land on.

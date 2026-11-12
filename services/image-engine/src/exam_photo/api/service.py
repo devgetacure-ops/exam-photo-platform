@@ -37,6 +37,7 @@ from exam_photo.api.delivery import (
     sender_for,
     validate_address,
 )
+from exam_photo.api.exam_edits import ExamEdits, overlay
 from exam_photo.api.jobs import (
     EmailAttempt,
     JobRegistry,
@@ -366,7 +367,9 @@ class ApiProcessingService:
         # picker request would otherwise re-read and re-validate the whole
         # directory.  `reload_catalogue` exists for the case where it does
         # change under a running service.
-        self.catalogue = load_catalogue(self.catalogue_root)
+        # DEC-136: the owner's console edits are laid over it.
+        self.base_catalogue = load_catalogue(self.catalogue_root)
+        self.catalogue = overlay(self.base_catalogue, self.exam_edits.all())
 
     @property
     def catalogue_root(self) -> Path:
@@ -385,7 +388,17 @@ class ApiProcessingService:
 
     def reload_catalogue(self) -> Catalogue:
         """Re-read the catalogue from disk, e.g. after re-running the encoder."""
-        self.catalogue = load_catalogue(self.catalogue_root)
+        self.base_catalogue = load_catalogue(self.catalogue_root)
+        return self.apply_exam_edits()
+
+    @property
+    def exam_edits(self) -> ExamEdits:
+        """The owner's saved edits to examination records (DEC-136)."""
+        return ExamEdits(self.settings.artifact_root)
+
+    def apply_exam_edits(self) -> Catalogue:
+        """Lay the saved edits over the repository's records, now."""
+        self.catalogue = overlay(self.base_catalogue, self.exam_edits.all())
         return self.catalogue
 
     def _not_ink_face_detector(self) -> Optional[MediapipeFaceDetector]:

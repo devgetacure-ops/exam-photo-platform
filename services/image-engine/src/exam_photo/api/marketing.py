@@ -248,19 +248,20 @@ def run_automations(service: "ApiService", now: Optional[datetime] = None) -> Li
         return []
     started: List[str] = []
     for exam_id, deadline in ledger.deadlines().items():
-        if not deadline["auto_remind"]:
+        # DEC-136: an extended last date is the one to remind about.
+        last_date = deadline.get("extended_to") or deadline["closes_on"]
+        if not deadline["auto_remind"] or not last_date:
             continue
         remind_on = (
-            datetime.fromisoformat(deadline["closes_on"])
-            - timedelta(days=REMIND_DAYS_BEFORE)
+            datetime.fromisoformat(last_date) - timedelta(days=REMIND_DAYS_BEFORE)
         ).date()
-        key = f"auto-remind:{exam_id}:{deadline['closes_on']}"
+        key = f"auto-remind:{exam_id}:{last_date}"
         if remind_on != local.date() or ledger.alert_sent(key):
             continue
         ledger.mark_alert_sent(key)
         entry = service.catalogue.get(exam_id)
         name = entry.rule.exam.exam_name if entry is not None else exam_id
-        subject, body = deadline_message(name, deadline["closes_on"], _site(service))
+        subject, body = deadline_message(name, last_date, _site(service))
         try:
             campaign = start_campaign(
                 service, "automatic", "paid_exam", exam_id, subject, body
