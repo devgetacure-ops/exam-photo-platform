@@ -1944,6 +1944,7 @@ def _dates_row(row: Optional[dict[str, Any]]) -> dict[str, Any]:
         "exam_date_note": row.get("exam_date_note") or None,
         "source_url": row.get("source_url") or None,
         "last_verified": row.get("last_verified") or None,
+        "candidates": row.get("candidates"),
         "note": row.get("note") or None,
         "auto_remind": bool(row.get("auto_remind")),
     }
@@ -2043,6 +2044,7 @@ class ExamDatesIn(BaseModel):
     exam_date_note: Optional[str] = None
     source_url: Optional[str] = None
     last_verified: Optional[str] = None
+    candidates: Optional[int] = None
     note: Optional[str] = None
     auto_remind: Optional[bool] = None
 
@@ -2093,16 +2095,31 @@ class DatesImportIn(BaseModel):
 
 @app.post("/v1/operator/dates/import", dependencies=_OPERATOR)
 def operator_import_dates(body: DatesImportIn) -> dict[str, Any]:
-    """Fill dates from the site's bundled list where the console has none.
-
-    Never overwrites an examination the owner already gave dates to.
+    """Fill gaps from the site's bundled list: dates where the console has
+    none, and a candidate count where one is missing. Never overwrites.
     """
     existing = service.ledger.deadlines()
     added, skipped = 0, 0
     for item in body.entries:
         exam_id = str(item.get("examId") or "")
-        if not exam_id or exam_id in existing or service.catalogue.get(exam_id) is None:
+        if not exam_id or service.catalogue.get(exam_id) is None:
             skipped += 1
+            continue
+        current = existing.get(exam_id)
+        if current is not None:
+            # DEC-137: a figure the console lacks is filled in; nothing the
+            # owner set is overwritten.
+            if current.get("candidates") is None and item.get("candidates"):
+                kept = {k: current.get(k) for k in _DATE_FIELDS}
+                kept.update(
+                    exam_date_note=current.get("exam_date_note"),
+                    source_url=current.get("source_url"),
+                    candidates=item.get("candidates"),
+                )
+                service.ledger.save_dates(exam_id, kept, body.actor)
+                added += 1
+            else:
+                skipped += 1
             continue
         fields = {
             "opens_on": item.get("opens"),
@@ -2112,6 +2129,7 @@ def operator_import_dates(body: DatesImportIn) -> dict[str, Any]:
             "exam_date_note": item.get("examDateNote"),
             "source_url": item.get("sourceUrl"),
             "last_verified": item.get("lastVerified"),
+            "candidates": item.get("candidates"),
         }
         if _check_dates(fields):
             skipped += 1
@@ -2150,6 +2168,7 @@ def public_deadlines() -> Response:
                 "examDateNote": dates["exam_date_note"],
                 "sourceUrl": dates["source_url"],
                 "lastVerified": dates["last_verified"],
+                "candidates": dates["candidates"],
             }
         )
     return JSONResponse(

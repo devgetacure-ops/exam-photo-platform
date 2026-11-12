@@ -21,6 +21,8 @@ export interface Deadline {
     examDateNote: string | null;
     sourceUrl: string | null;
     lastVerified: string | null;
+    /** How many sat it in the last cycle (DEC-137): bigger exams come first. */
+    candidates?: number | null;
 }
 
 export const DEADLINES: readonly Deadline[] = (data as { entries: Deadline[] }).entries;
@@ -108,6 +110,16 @@ export function byUrgency(today: string) {
         const sb = deadlineStatus(b, today);
         return rank[sa.state] - rank[sb.state] || (sa.days ?? 9999) - (sb.days ?? 9999);
     };
+}
+
+/**
+ * Largest first (DEC-137), most urgent among equals; an examination with no
+ * figure goes after every one that has one.
+ */
+export function byVolume(today: string) {
+    const urgency = byUrgency(today);
+    return (a: Deadline, b: Deadline): number =>
+        (b.candidates ?? -1) - (a.candidates ?? -1) || urgency(a, b);
 }
 
 export function deadlineFor(examId: string): Deadline | undefined {

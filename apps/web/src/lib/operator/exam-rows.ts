@@ -18,6 +18,7 @@ export interface ExamRow {
         exam_date_note: string | null;
         source_url: string | null;
         last_verified: string | null;
+        candidates: number | null;
         note: string | null;
         auto_remind: boolean;
     };
@@ -36,6 +37,7 @@ export function asDeadline(row: ExamRow): Deadline {
         examDateNote: row.dates.exam_date_note,
         sourceUrl: row.dates.source_url,
         lastVerified: row.dates.last_verified,
+        candidates: row.dates.candidates,
     };
 }
 

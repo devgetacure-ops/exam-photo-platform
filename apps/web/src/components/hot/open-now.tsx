@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-import { byUrgency, deadlineStatus, isOpen, shortDate } from "../../lib/deadlines";
+import { byVolume, deadlineStatus, isOpen, shortDate } from "../../lib/deadlines";
 import { useDeadlines } from "../../lib/use-deadlines";
 import { useToday } from "../../lib/use-today";
 import { DeadlineStamp } from "./deadline-stamp";
@@ -17,7 +17,7 @@ export function OpenNow({ builtOn, limit = 6 }: { builtOn: string; limit?: numbe
     const entries = useDeadlines();
     const open = [...entries]
         .filter((entry) => isOpen(deadlineStatus(entry, today)))
-        .sort(byUrgency(today))
+        .sort(byVolume(today))
         .slice(0, limit);
     if (open.length === 0) return null;
     return (

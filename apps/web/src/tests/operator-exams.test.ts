@@ -23,6 +23,7 @@ describe("exam dates from the console", () => {
                 source_url: "https://jeemain.nta.nic.in/",
                 last_verified: "2026-11-12",
                 auto_remind: "yes",
+                candidates: "14,52,445",
             }),
             "owner",
         );
@@ -39,6 +40,7 @@ describe("exam dates from the console", () => {
                 source_url: "https://jeemain.nta.nic.in/",
                 note: "",
                 auto_remind: true,
+                candidates: 1452445,
             },
         });
     });

@@ -1019,9 +1019,78 @@ button:hover .euk-chevron {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 8px 14px;
+    gap: 6px 14px;
     padding-top: 12px;
-    padding-bottom: 12px;
+    padding-bottom: 8px;
+}
+/* DEC-137: every slide in one grid cell, so the band is as tall as the
+   longest and never jumps as they change. */
+.euk-dbanner-track {
+    display: grid;
+    flex: 1 1 100%;
+    min-width: 0;
+    overflow: hidden;
+}
+.euk-dbanner-slide {
+    grid-area: 1 / 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 14px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(32px);
+    transition:
+        opacity 0.35s ease,
+        transform 0.35s ease,
+        visibility 0s linear 0.35s;
+}
+.euk-dbanner-slide[data-active] {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition:
+        opacity 0.35s ease,
+        transform 0.35s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+    .euk-dbanner-slide {
+        transform: none;
+        transition: none;
+    }
+}
+.euk-dbanner-nav {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-left: -10px;
+}
+.euk .euk-dbanner-dot,
+.euk .euk-dbanner-pause {
+    display: inline-grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--ink);
+    cursor: pointer;
+}
+.euk .euk-dbanner-dot::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border: 1.5px solid var(--ink);
+    border-radius: 50%;
+}
+.euk .euk-dbanner-dot[aria-current]::before {
+    background: var(--signal);
+    border-color: var(--signal);
+}
+.euk .euk-dbanner-pause {
+    font-size: 11px;
+    letter-spacing: -1px;
 }
 @media (max-width: 899px) {
     .euk-dbanner-inner {

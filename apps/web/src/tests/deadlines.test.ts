@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { byUrgency, deadlineStatus, stampText, type Deadline } from "../lib/deadlines";
+import { byUrgency, byVolume, deadlineStatus, stampText, type Deadline } from "../lib/deadlines";
 
 /** What a deadline means on a given day (DEC-135). */
 
@@ -57,6 +57,15 @@ describe("deadline status", () => {
         const c = entry({ examId: "c", opens: "2026-12-02", closes: "2026-12-31" });
         const order = [a, b, c].sort(byUrgency("2026-12-01")).map((x) => x.examId);
         expect(order).toEqual(["b", "a", "c"]);
+    });
+
+    it("puts bigger examinations first, then the soonest, then those with no count (DEC-137)", () => {
+        const small = entry({ examId: "small", closes: "2026-12-05", candidates: 90000 });
+        const big = entry({ examId: "big", closes: "2026-12-30", candidates: 1400000 });
+        const unknownSoon = entry({ examId: "u1", closes: "2026-12-03" });
+        const unknownLate = entry({ examId: "u2", closes: "2026-12-20", candidates: null });
+        const order = [unknownLate, small, unknownSoon, big].sort(byVolume("2026-12-01")).map((x) => x.examId);
+        expect(order).toEqual(["big", "small", "u1", "u2"]);
     });
 
     it("speaks Hindi", () => {

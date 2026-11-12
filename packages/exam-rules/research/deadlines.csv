@@ -1,23 +1,23 @@
-exam_id,exam_name,registration_opens,registration_closes,extended_to,exam_date,exam_date_note,source_url,last_verified
-common-admission-test-2025,Common Admission Test 2026,2026-08-03,2026-09-15,,2026-11-29,,https://iimcat.ac.in/,2026-11-12
-gate-2026,GATE 2027,,2026-10-16,,2027-02-06,"Also 7, 13, 14, 20 and 21 February",https://gate2027.iitm.ac.in/,2026-11-12
-common-law-admission-test-clat-ug-pg,Common Law Admission Test (CLAT UG & PG),,2026-10-31,,2026-12-06,,https://consortiumofnlus.ac.in/,2026-11-12
-all-india-law-entrance-test-ailet,All India Law Entrance Test (AILET),,2026-11-10,,2026-12-13,,https://nationallawuniversitydelhi.in/,2026-11-12
-railway-recruitment-boards-non-technical-popular-categories-undergraduate-posts-,Railway Recruitment Boards Non-Technical Popular Categories Undergraduate Posts (RRB NTPC UG),2026-10-15,2026-11-13,,,,https://www.rrbapply.gov.in/,2026-11-12
-icai-examination-portal,ICAI Examination Portal,2026-11-03,2026-11-16,,,Jan 2027 schedule announced,https://www.icai.org/,2026-09-24
-jee-main-2026,JEE (Main) 2027,2026-10-24,2026-11-22,,,"Session 1, late January 2027",https://jeemain.nta.nic.in/,2026-11-12
-symbiosis-national-aptitude-test-snap,Symbiosis National Aptitude Test (SNAP),,2026-11-25,,2026-12-13,Also 19 and 26 December,https://www.snaptest.org/,2026-11-12
-national-institute-of-design-design-aptitude-test-nid-dat,National Institute of Design Design Aptitude Test (NID DAT),2026-09-10,2026-11-30,,2026-12-20,DAT Prelims,https://admissions.nid.edu/,2026-11-12
-k-l-engineering-entrance-examination-kleee,K L Engineering Entrance Examination (KLEEE),2026-09-18,2026-12-02,,2026-12-03,to,https://www.kluniversity.in/,
-symbiosis-law-admission-test-slat,Symbiosis Law Admission Test (SLAT),2026-08-21,2026-12-04,,2026-12-19,Test 2 on 26 December,https://www.slat-test.org/,2026-11-12
-xavier-aptitude-test,Xavier Aptitude Test,2026-07-15,2026-12-06,,2027-01-03,,https://xatonline.in/,2026-11-12
-upsc-central-industrial-security-force-assistant-commandants-executive-ldce-cisf,UPSC Central Industrial Security Force Assistant Commandants Executive LDCE (CISF AC EXE LDCE),2026-11-25,2026-12-15,,,14 Mar 2027,https://www.upsc.gov.in/examinations/exam-calendar,2026-09-24
-upsc-combined-defence-services-examination-i-upsc-cds-i,UPSC Combined Defence Services Examination I (UPSC CDS I),2026-12-02,2026-12-22,,2027-04-11,,https://upsc.gov.in/,2026-11-12
-upsc-civil-services-examination-2026,UPSC Civil Services Examination 2027,2027-01-13,2027-02-02,,2027-05-23,Prelims,https://upsc.gov.in/,2026-11-12
-upsc-indian-forest-service-examination-upsc-ifos-main-examination,UPSC Indian Forest Service Examination (UPSC IFoS Main Examination),2027-01-13,2027-02-02,,2027-05-23,Through the CSE Prelims,https://upsc.gov.in/,2026-11-12
-upsc-capf-assistant-commandants-examination-2026,UPSC CAPF (Assistant Commandants) Examination 2027,2027-02-17,2027-03-09,,2027-07-04,,https://www.upsc.gov.in/sites/default/files/Calendar-Year-2027-Engl-200526_0.pdf,2026-09-24
-gail-india-limited-executive-trainee-et-direct-recruitment,GAIL (India) Limited Executive Trainee (ET) Direct Recruitment,,2027-03-18,,,,https://www.freejobalert.com/government-jobs/,2026-09-24
-upsc-combined-medical-services-examination-upsc-cms,UPSC Combined Medical Services Examination (UPSC CMS),2027-03-03,2027-03-23,,2027-07-18,,https://upsc.gov.in/,2026-11-12
-upsc-combined-defence-services-examination-ii-2026,UPSC Combined Defence Services Examination (II) 2027,2027-05-12,2027-06-01,,2027-09-19,,https://upsc.gov.in/,2026-11-12
-upsc-nda-na-examination-ii-2026,UPSC NDA & NA Examination (II) 2027,2027-05-12,2027-06-01,,2027-09-19,,https://upsc.gov.in/,2026-11-12
-jharkhand-combined-entrance-competitive-examination-jcece,Jharkhand Combined Entrance Competitive Examination (JCECE),2027-05-19,2027-06-12,,,,https://collegedunia.com/exams/jcece,2026-09-24
+exam_id,exam_name,registration_opens,registration_closes,extended_to,exam_date,exam_date_note,source_url,last_verified,candidates
+common-admission-test-2025,Common Admission Test 2026,2026-08-03,2026-09-15,,2026-11-29,,https://iimcat.ac.in/,2026-11-12,295000
+gate-2026,GATE 2027,,2026-10-16,,2027-02-06,"Also 7, 13, 14, 20 and 21 February",https://gate2027.iitm.ac.in/,2026-11-12,936019
+common-law-admission-test-clat-ug-pg,Common Law Admission Test (CLAT UG & PG),,2026-10-31,,2026-12-06,,https://consortiumofnlus.ac.in/,2026-11-12,92344
+all-india-law-entrance-test-ailet,All India Law Entrance Test (AILET),,2026-11-10,,2026-12-13,,https://nationallawuniversitydelhi.in/,2026-11-12,23960
+railway-recruitment-boards-non-technical-popular-categories-undergraduate-posts-,Railway Recruitment Boards Non-Technical Popular Categories Undergraduate Posts (RRB NTPC UG),2026-10-15,2026-11-13,,,,https://www.rrbapply.gov.in/,2026-11-12,6326818
+icai-examination-portal,ICAI Examination Portal,2026-11-03,2026-11-16,,,Jan 2027 schedule announced,https://www.icai.org/,2026-09-24,306159
+jee-main-2026,JEE (Main) 2027,2026-10-24,2026-11-22,,,"Session 1, late January 2027",https://jeemain.nta.nic.in/,2026-11-12,1452445
+symbiosis-national-aptitude-test-snap,Symbiosis National Aptitude Test (SNAP),,2026-11-25,,2026-12-13,Also 19 and 26 December,https://www.snaptest.org/,2026-11-12,155000
+national-institute-of-design-design-aptitude-test-nid-dat,National Institute of Design Design Aptitude Test (NID DAT),2026-09-10,2026-11-30,,2026-12-20,DAT Prelims,https://admissions.nid.edu/,2026-11-12,
+k-l-engineering-entrance-examination-kleee,K L Engineering Entrance Examination (KLEEE),2026-09-18,2026-12-02,,2026-12-03,to,https://www.kluniversity.in/,,
+symbiosis-law-admission-test-slat,Symbiosis Law Admission Test (SLAT),2026-08-21,2026-12-04,,2026-12-19,Test 2 on 26 December,https://www.slat-test.org/,2026-11-12,
+xavier-aptitude-test,Xavier Aptitude Test,2026-07-15,2026-12-06,,2027-01-03,,https://xatonline.in/,2026-11-12,142235
+upsc-central-industrial-security-force-assistant-commandants-executive-ldce-cisf,UPSC Central Industrial Security Force Assistant Commandants Executive LDCE (CISF AC EXE LDCE),2026-11-25,2026-12-15,,,14 Mar 2027,https://www.upsc.gov.in/examinations/exam-calendar,2026-09-24,
+upsc-combined-defence-services-examination-i-upsc-cds-i,UPSC Combined Defence Services Examination I (UPSC CDS I),2026-12-02,2026-12-22,,2027-04-11,,https://upsc.gov.in/,2026-11-12,
+upsc-civil-services-examination-2026,UPSC Civil Services Examination 2027,2027-01-13,2027-02-02,,2027-05-23,Prelims,https://upsc.gov.in/,2026-11-12,819372
+upsc-indian-forest-service-examination-upsc-ifos-main-examination,UPSC Indian Forest Service Examination (UPSC IFoS Main Examination),2027-01-13,2027-02-02,,2027-05-23,Through the CSE Prelims,https://upsc.gov.in/,2026-11-12,
+upsc-capf-assistant-commandants-examination-2026,UPSC CAPF (Assistant Commandants) Examination 2027,2027-02-17,2027-03-09,,2027-07-04,,https://www.upsc.gov.in/sites/default/files/Calendar-Year-2027-Engl-200526_0.pdf,2026-09-24,300000
+gail-india-limited-executive-trainee-et-direct-recruitment,GAIL (India) Limited Executive Trainee (ET) Direct Recruitment,,2027-03-18,,,,https://www.freejobalert.com/government-jobs/,2026-09-24,
+upsc-combined-medical-services-examination-upsc-cms,UPSC Combined Medical Services Examination (UPSC CMS),2027-03-03,2027-03-23,,2027-07-18,,https://upsc.gov.in/,2026-11-12,
+upsc-combined-defence-services-examination-ii-2026,UPSC Combined Defence Services Examination (II) 2027,2027-05-12,2027-06-01,,2027-09-19,,https://upsc.gov.in/,2026-11-12,
+upsc-nda-na-examination-ii-2026,UPSC NDA & NA Examination (II) 2027,2027-05-12,2027-06-01,,2027-09-19,,https://upsc.gov.in/,2026-11-12,
+jharkhand-combined-entrance-competitive-examination-jcece,Jharkhand Combined Entrance Competitive Examination (JCECE),2027-05-19,2027-06-12,,,,https://collegedunia.com/exams/jcece,2026-09-24,

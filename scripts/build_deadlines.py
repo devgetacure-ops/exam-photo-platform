@@ -13,6 +13,8 @@ to be edited by hand, in Excel or any spreadsheet, one row per examination:
     exam_date_note        free text, e.g. "Prelims" or "To be announced"
     source_url            where the dates were read
     last_verified         YYYY-MM-DD the row was last checked
+    candidates            how many sat it in the last cycle, digits only (DEC-137);
+                          the site shows bigger examinations first
 
 Two commands:
 
@@ -54,6 +56,7 @@ COLUMNS = [
     "exam_date_note",
     "source_url",
     "last_verified",
+    "candidates",
 ]
 DATE_FIELDS = ("registration_opens", "registration_closes", "extended_to", "exam_date", "last_verified")
 
@@ -128,6 +131,10 @@ def build() -> int:
         if dates["registration_opens"] and dates["registration_closes"] and dates["registration_opens"] > dates["registration_closes"]:
             problems.append(f"{where}: registration_opens is after registration_closes")
             continue
+        candidates = row["candidates"].replace(",", "").strip()
+        if candidates and not candidates.isdigit():
+            problems.append(f"{where}: candidates must be a whole number")
+            continue
         exam = exams[row["exam_id"]]
         entries.append(
             {
@@ -142,6 +149,7 @@ def build() -> int:
                 "examDateNote": row["exam_date_note"] or None,
                 "sourceUrl": row["source_url"] or None,
                 "lastVerified": row["last_verified"] or None,
+                "candidates": int(candidates) if candidates else None,
             }
         )
     if problems:

@@ -44,7 +44,13 @@ export default async function ExamsPage({ searchParams }: { searchParams: Promis
     ];
     const selected = open ? all.find((row) => row.exam_id === open) : undefined;
     const back = `/admin/exams?${new URLSearchParams({ ...(show ? { show } : {}), ...(open ? { open } : {}) })}`;
-    const notInEngine = DEADLINES.filter((entry) => !all.find((row) => row.exam_id === entry.examId && hasDates(row)));
+    // Bundled rows that would fill a gap: dates where the console has none,
+    // or a candidate count where one is missing (DEC-137).
+    const notInEngine = DEADLINES.filter((entry) => {
+        const row = all.find((r) => r.exam_id === entry.examId);
+        if (!row) return false;
+        return !hasDates(row) || (row.dates.candidates == null && entry.candidates != null);
+    });
 
     return (
         <>
@@ -55,7 +61,7 @@ export default async function ExamsPage({ searchParams }: { searchParams: Promis
                     notInEngine.length > 0 ? (
                         <ActionForm action="/admin/actions/dates-import" back="/admin/exams?show=dates">
                             <input type="hidden" name="entries" value={JSON.stringify(notInEngine)} />
-                            <Button type="submit">Import {notInEngine.length} dates from the bundled list</Button>
+                            <Button type="submit">Fill {notInEngine.length} gaps from the bundled list</Button>
                         </ActionForm>
                     ) : null
                 }
@@ -89,6 +95,9 @@ export default async function ExamsPage({ searchParams }: { searchParams: Promis
                                     <Input type="date" name="exam_date" defaultValue={selected.dates.exam_date ?? ""} />
                                 </Field>
                             </div>
+                            <Field label="Candidates" hint="How many sat it last time; bigger exams are shown first">
+                                <Input inputMode="numeric" name="candidates" defaultValue={selected.dates.candidates ?? ""} placeholder="e.g. 1400000" />
+                            </Field>
                             <Field label="Exam date note" hint="e.g. Prelims, or To be announced">
                                 <Input name="exam_date_note" maxLength={120} defaultValue={selected.dates.exam_date_note ?? ""} />
                             </Field>

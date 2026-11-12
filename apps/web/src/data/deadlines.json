@@ -11,7 +11,8 @@
    "examDate": "2026-11-29",
    "examDateNote": null,
    "sourceUrl": "https://iimcat.ac.in/",
-   "lastVerified": "2026-11-12"
+   "lastVerified": "2026-11-12",
+   "candidates": 295000
   },
   {
    "examId": "gate-2026",
@@ -24,7 +25,8 @@
    "examDate": "2027-02-06",
    "examDateNote": "Also 7, 13, 14, 20 and 21 February",
    "sourceUrl": "https://gate2027.iitm.ac.in/",
-   "lastVerified": "2026-11-12"
+   "lastVerified": "2026-11-12",
+   "candidates": 936019
   },
   {
    "examId": "common-law-admission-test-clat-ug-pg",
@@ -37,7 +39,8 @@
    "examDate": "2026-12-06",
    "examDateNote": null,
    "sourceUrl": "https://consortiumofnlus.ac.in/",
-   "lastVerified": "2026-11-12"
+   "lastVerified": "2026-11-12",
+   "candidates": 92344
   },
   {
    "examId": "all-india-law-entrance-test-ailet",
@@ -50,7 +53,8 @@
    "examDate": "2026-12-13",
    "examDateNote": null,
    "sourceUrl": "https://nationallawuniversitydelhi.in/",
-   "lastVerified": "2026-11-12"
+   "lastVerified": "2026-11-12",
+   "candidates": 23960
   },
   {
    "examId": "railway-recruitment-boards-non-technical-popular-categories-undergraduate-posts-",
@@ -63,7 +67,8 @@
    "examDate": null,
    "examDateNote": null,
    "sourceUrl": "https://www.rrbapply.gov.in/",
-   "lastVerified": "2026-11-12"
+   "lastVerified": "2026-11-12",
+   "candidates": 6326818
   },
   {
    "examId": "icai-examination-portal",
@@ -76,7 +81,8 @@
    "examDate": null,
    "examDateNote": "Jan 2027 schedule announced",
    "sourceUrl": "https://www.icai.org/",
-   "lastVerified": "2026-09-24"
+   "lastVerified": "2026-09-24",
+   "candidates": 306159
   },
   {
    "examId": "jee-main-2026",
@@ -89,7 +95,8 @@
    "examDate": null,
    "examDateNote": "Session 1, late January 2027",
    "sourceUrl": "https://jeemain.nta.nic.in/",
-   "lastVerified": "2026-11-12"
+   "lastVerified": "2026-11-12",
+   "candidates": 1452445
   },
   {
    "examId": "symbiosis-national-aptitude-test-snap",
@@ -102,7 +109,8 @@
    "examDate": "2026-12-13",
    "examDateNote": "Also 19 and 26 December",
    "sourceUrl": "https://www.snaptest.org/",
-   "lastVerified": "2026-11-12"
+   "lastVerified": "2026-11-12",
+   "candidates": 155000
   },
   {
    "examId": "national-institute-of-design-design-aptitude-test-nid-dat",
@@ -115,7 +123,8 @@
    "examDate": "2026-12-20",
    "examDateNote": "DAT Prelims",
    "sourceUrl": "https://admissions.nid.edu/",
-   "lastVerified": "2026-11-12"
+   "lastVerified": "2026-11-12",
+   "candidates": null
   },
   {
    "examId": "k-l-engineering-entrance-examination-kleee",
@@ -128,7 +137,8 @@
    "examDate": "2026-12-03",
    "examDateNote": "to",
    "sourceUrl": "https://www.kluniversity.in/",
-   "lastVerified": null
+   "lastVerified": null,
+   "candidates": null
   },
   {
    "examId": "symbiosis-law-admission-test-slat",
@@ -141,7 +151,8 @@
    "examDate": "2026-12-19",
    "examDateNote": "Test 2 on 26 December",
    "sourceUrl": "https://www.slat-test.org/",
-   "lastVerified": "2026-11-12"
+   "lastVerified": "2026-11-12",
+   "candidates": null
   },
   {
    "examId": "xavier-aptitude-test",
@@ -154,7 +165,8 @@
    "examDate": "2027-01-03",
    "examDateNote": null,
    "sourceUrl": "https://xatonline.in/",
-   "lastVerified": "2026-11-12"
+   "lastVerified": "2026-11-12",
+   "candidates": 142235
   },
   {
    "examId": "upsc-central-industrial-security-force-assistant-commandants-executive-ldce-cisf",
@@ -167,7 +179,8 @@
    "examDate": null,
    "examDateNote": "14 Mar 2027",
    "sourceUrl": "https://www.upsc.gov.in/examinations/exam-calendar",
-   "lastVerified": "2026-09-24"
+   "lastVerified": "2026-09-24",
+   "candidates": null
   },
   {
    "examId": "upsc-combined-defence-services-examination-i-upsc-cds-i",
@@ -180,7 +193,8 @@
    "examDate": "2027-04-11",
    "examDateNote": null,
    "sourceUrl": "https://upsc.gov.in/",
-   "lastVerified": "2026-11-12"
+   "lastVerified": "2026-11-12",
+   "candidates": null
   },
   {
    "examId": "upsc-civil-services-examination-2026",
@@ -193,7 +207,8 @@
    "examDate": "2027-05-23",
    "examDateNote": "Prelims",
    "sourceUrl": "https://upsc.gov.in/",
-   "lastVerified": "2026-11-12"
+   "lastVerified": "2026-11-12",
+   "candidates": 819372
   },
   {
    "examId": "upsc-indian-forest-service-examination-upsc-ifos-main-examination",
@@ -206,7 +221,8 @@
    "examDate": "2027-05-23",
    "examDateNote": "Through the CSE Prelims",
    "sourceUrl": "https://upsc.gov.in/",
-   "lastVerified": "2026-11-12"
+   "lastVerified": "2026-11-12",
+   "candidates": null
   },
   {
    "examId": "upsc-capf-assistant-commandants-examination-2026",
@@ -219,7 +235,8 @@
    "examDate": "2027-07-04",
    "examDateNote": null,
    "sourceUrl": "https://www.upsc.gov.in/sites/default/files/Calendar-Year-2027-Engl-200526_0.pdf",
-   "lastVerified": "2026-09-24"
+   "lastVerified": "2026-09-24",
+   "candidates": 300000
   },
   {
    "examId": "gail-india-limited-executive-trainee-et-direct-recruitment",
@@ -232,7 +249,8 @@
    "examDate": null,
    "examDateNote": null,
    "sourceUrl": "https://www.freejobalert.com/government-jobs/",
-   "lastVerified": "2026-09-24"
+   "lastVerified": "2026-09-24",
+   "candidates": null
   },
   {
    "examId": "upsc-combined-medical-services-examination-upsc-cms",
@@ -245,7 +263,8 @@
    "examDate": "2027-07-18",
    "examDateNote": null,
    "sourceUrl": "https://upsc.gov.in/",
-   "lastVerified": "2026-11-12"
+   "lastVerified": "2026-11-12",
+   "candidates": null
   },
   {
    "examId": "upsc-combined-defence-services-examination-ii-2026",
@@ -258,7 +277,8 @@
    "examDate": "2027-09-19",
    "examDateNote": null,
    "sourceUrl": "https://upsc.gov.in/",
-   "lastVerified": "2026-11-12"
+   "lastVerified": "2026-11-12",
+   "candidates": null
   },
   {
    "examId": "upsc-nda-na-examination-ii-2026",
@@ -271,7 +291,8 @@
    "examDate": "2027-09-19",
    "examDateNote": null,
    "sourceUrl": "https://upsc.gov.in/",
-   "lastVerified": "2026-11-12"
+   "lastVerified": "2026-11-12",
+   "candidates": null
   },
   {
    "examId": "jharkhand-combined-entrance-competitive-examination-jcece",
@@ -284,7 +305,8 @@
    "examDate": null,
    "examDateNote": null,
    "sourceUrl": "https://collegedunia.com/exams/jcece",
-   "lastVerified": "2026-09-24"
+   "lastVerified": "2026-09-24",
+   "candidates": null
   }
  ]
 }

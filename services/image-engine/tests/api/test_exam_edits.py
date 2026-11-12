@@ -150,3 +150,33 @@ def test_import_fills_only_examinations_without_dates(api):
     dates = api.ledger.deadlines()
     assert dates[EXAM]["closes_on"] == "2026-12-10"
     assert dates["ctet-september-2026"]["closes_on"] == "2026-12-20"
+
+
+def test_candidates_are_saved_and_filled_in_without_touching_dates(api):
+    """DEC-137: a candidate count rides with the dates, and the import fills a
+    missing one on a row that already has dates, leaving those dates alone."""
+    client.post(
+        f"/v1/operator/exams/{EXAM}/dates",
+        headers=AUTH,
+        json={"closes_on": "2026-12-10"},
+    )
+    assert api.ledger.deadlines()[EXAM]["candidates"] is None
+    response = client.post(
+        "/v1/operator/dates/import",
+        headers=AUTH,
+        json={
+            "entries": [{"examId": EXAM, "closes": "2026-12-31", "candidates": 1452445}]
+        },
+    )
+    assert response.json() == {"added": 1, "skipped": 0}
+    row = api.ledger.deadlines()[EXAM]
+    assert row["closes_on"] == "2026-12-10"
+    assert row["candidates"] == 1452445
+    client.post(
+        f"/v1/operator/exams/{EXAM}/dates",
+        headers=AUTH,
+        json={"closes_on": "2026-12-10", "candidates": 900},
+    )
+    assert api.ledger.deadlines()[EXAM]["candidates"] == 900
+    public = client.get("/v1/deadlines").json()
+    assert any(entry.get("candidates") == 900 for entry in public["entries"])

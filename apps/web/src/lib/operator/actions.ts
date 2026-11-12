@@ -86,6 +86,10 @@ export function actionFor(kind: string, id: string | undefined, form: FormData, 
                 actor,
                 ...fields,
                 exam_date_note: text(form, "exam_date_note", 120) || null,
+                // DEC-137: digits only; blank keeps what was there.
+                candidates: /^\d{1,9}$/.test(text(form, "candidates", 12).replace(/[,\s]/g, ""))
+                    ? Number(text(form, "candidates", 12).replace(/[,\s]/g, ""))
+                    : null,
                 source_url: text(form, "source_url", 500) || null,
                 note: text(form, "note", 300),
                 auto_remind: text(form, "auto_remind", 5) === "yes",

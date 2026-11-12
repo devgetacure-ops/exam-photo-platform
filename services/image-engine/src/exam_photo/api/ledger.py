@@ -264,6 +264,8 @@ _ADDED_COLUMNS = {
         "exam_date_note": "TEXT",
         "source_url": "TEXT",
         "last_verified": "TEXT",
+        # DEC-137: how many sit it (the last cycle's figure), for ordering.
+        "candidates": "INTEGER",
     },
     "coupons": {
         "source": "TEXT NOT NULL DEFAULT 'manual'",
@@ -897,7 +899,7 @@ class Ledger:
         self._write(
             "INSERT OR REPLACE INTO deadlines (exam_id, closes_on, note, auto_remind, "
             "set_by, set_at, opens_on, extended_to, exam_date, exam_date_note, "
-            "source_url, last_verified) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+            "source_url, last_verified, candidates) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
             (
                 exam_id,
                 fields.get("closes_on") or "",
@@ -911,6 +913,9 @@ class Ledger:
                 (str(fields.get("exam_date_note") or "")[:120]) or None,
                 (str(fields.get("source_url") or "")[:500]) or None,
                 fields.get("last_verified") or None,
+                int(fields["candidates"])
+                if fields.get("candidates") not in (None, "")
+                else current.get("candidates"),
             ),
         )
 
