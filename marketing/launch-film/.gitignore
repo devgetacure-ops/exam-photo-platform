@@ -1,0 +1,8 @@
+node_modules
+out
+
+# Inputs, not source: the candidate photo and what is derived from it (facial
+# landmarks included -- see CLAUDE.md), and the licensed score. Regenerate the
+# photo assets with scripts/photo_assets.py; the score is supplied by the owner.
+public/photo/
+public/audio/

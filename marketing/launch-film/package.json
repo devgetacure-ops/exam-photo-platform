@@ -1,0 +1,33 @@
+{
+  "name": "euk-launch-film",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "studio": "remotion studio",
+    "typecheck": "tsc",
+    "capture": "node scripts/capture.cjs",
+    "render": "remotion render LaunchFilm out/launch-film-4x5.mp4 --codec h264 --crf 16",
+    "still": "remotion still LaunchFilm"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@remotion/cli": "4.0.539",
+    "@remotion/google-fonts": "4.0.539",
+    "@remotion/motion-blur": "4.0.539",
+    "@remotion/noise": "4.0.539",
+    "@remotion/paths": "4.0.539",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "remotion": "4.0.539"
+  },
+  "devDependencies": {
+    "@types/react": "19.1.8",
+    "playwright": "1.55.0",
+    "typescript": "5.8.3"
+  },
+  "private": true
+}

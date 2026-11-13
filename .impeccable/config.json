@@ -12,6 +12,15 @@
         ],
         "createdAt": "2026-09-11T11:02:33.283Z",
         "reason": "Claude (agent) triage: the flagged rule (.euk-slip-submit[aria-disabled]::after) is a 4px sending-progress bar along the foot of the submit button, not a side accent border on a card"
+      },
+      {
+        "rule": "side-tab",
+        "value": "*",
+        "files": [
+          "marketing/launch-film/src/scenes/Act1.tsx"
+        ],
+        "createdAt": "2026-11-12T20:42:04.995Z",
+        "reason": "Claude: intentional depiction of a generic exam-portal error message in the film's 'bad workflow' act, not our UI"
       }
     ]
   }
