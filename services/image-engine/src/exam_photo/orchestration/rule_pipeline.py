@@ -57,6 +57,7 @@ from exam_photo.providers.refiners.morphological_refiner import (
 from exam_photo.providers.segmenters.mediapipe_segmenter import (
     MediapipeSubjectSegmenter,
 )
+from exam_photo.providers.strand_matting import recover_strand_alpha
 from exam_photo.providers.subject_checks import load_face_verifier
 from exam_photo.rule_validation import validate_exam_rule
 from exam_photo.suitability.appearance_signals import (
@@ -1577,6 +1578,71 @@ class RuleOrchestratedPipeline:
                     issues=["CROP_REGION_MATTE_FAILED"],
                     dur=0.0,
                     summary=f"Crop-region matte refinement failed: {e}",
+                )
+
+        # Stage 7A2: strand-level alpha in the soft band (DEC-138).  The model's
+        # boundary is a smooth hull that ignores individual strands; where the
+        # background is plain, the photograph's own colours say how much of each
+        # edge pixel is hair.  Confined to the crop region the output shows, and
+        # a no-op wherever colour cannot be trusted.  A failure keeps the model's
+        # matte, so this can degrade nothing but itself.
+        if (
+            not failed
+            and plan is not None
+            and norm_result is not None
+            and ref_result is not None
+            and crop_res is not None
+            and crop_res.crop_box is not None
+            and self._matting_segmenter is not None
+        ):
+            t_stage = time.perf_counter()
+            try:
+                src_w, src_h = norm_result.image.size
+                box = crop_res.crop_box
+                mx = 0.06 * (box.right - box.left)
+                my = 0.06 * (box.bottom - box.top)
+                sx0 = max(0, int(math.floor(box.left - mx)))
+                sy0 = max(0, int(math.floor(box.top - my)))
+                sx1 = min(src_w, int(math.ceil(box.right + mx)))
+                sy1 = min(src_h, int(math.ceil(box.bottom + my)))
+                region_rgb = (
+                    np.asarray(
+                        norm_result.image.convert("RGB").crop((sx0, sy0, sx1, sy1)),
+                        dtype=np.float32,
+                    )
+                    / 255.0
+                )
+                alpha_now = np.asarray(ref_result.refined_alpha_mask, dtype=np.float32)
+                out_w, _out_h, _box, _trim = resolve_composite_frame(
+                    plan.output_preparation_config, box
+                )
+                magnification = out_w / max(1.0, box.right - box.left)
+                strand = recover_strand_alpha(
+                    region_rgb,
+                    alpha_now[sy0:sy1, sx0:sx1],
+                    magnification=magnification,
+                )
+                if strand.applied:
+                    updated = np.array(alpha_now, dtype=np.float32, copy=True)
+                    updated[sy0:sy1, sx0:sx1] = strand.alpha
+                    ref_result.refined_alpha_mask = updated
+                record_stage(
+                    PipelineStage.MASK_REFINEMENT,
+                    PipelineStageStatus.PASSED,
+                    dur=(time.perf_counter() - t_stage) * 1000.0,
+                    summary=(
+                        f"Strand alpha {strand.reason}: {strand.changed_pixels} of "
+                        f"{strand.band_pixels} band pixels, mean change "
+                        f"{strand.mean_abs_change:.3f}."
+                    ),
+                )
+            except Exception as e:  # noqa: BLE001
+                record_stage(
+                    PipelineStage.MASK_REFINEMENT,
+                    PipelineStageStatus.WARNING,
+                    issues=["STRAND_MATTING_FAILED"],
+                    dur=0.0,
+                    summary=f"Strand-level alpha recovery failed: {e}",
                 )
 
         # Stage 7B: Foreground Decontamination
